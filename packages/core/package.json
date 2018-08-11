@@ -14,10 +14,10 @@
         "RNAnalytics.podspec"
     ],
     "scripts": {
+        "build:clean": "rimraf build",
         "build:ts": "run-p build:ts:*",
         "build:ts:cjs": "tsc --target es5 --outDir build/cjs --module commonjs",
         "build:ts:esm": "tsc --target es5 --outDir build/esm --module esnext",
-        "build:clean": "rimraf build",
         "build": "run-s build:{clean,ts}",
         "docs:clean": "rimraf docs",
         "docs:gen": "typedoc --out docs --ignoreCompilerErrors --excludePrivate --excludeExternals --theme markdown --mode file --entrypoint Analytics --gitRevision master",

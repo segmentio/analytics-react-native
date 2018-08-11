@@ -5,11 +5,8 @@
   "scripts": {
     "build": "run-s build:{project,ios,android}",
     "build:project": "./generate.sh",
-    "build:android": "cd project/android && ./gradlew build",
-    "build:ios": "run-s fastlane:{install,code-sign,build}",
-    "fastlane:install": "bundle install --path vendor/bundle",
-    "fastlane:code-sign": "cd project/ios && bundle exec fastlane run automatic_code_signing use_automatic_signing:true",
-    "fastlane:build": "cd project/ios && bundle exec fastlane gym --scheme project"
+    "build:android": "./build_android.sh",
+    "build:ios": "./build_ios.sh"
   },
   "devDependencies": {
     "react-native-cli": "^2.0.1"
