@@ -1,1 +1,13 @@
 .DS_Store
+
+*.iml
+*.log
+build/
+coverage/
+node_modules/
+xcuserdata/
+vendor/
+.bundle/
+.gradle
+
+packages/test-app/project

@@ -1,0 +1,84 @@
+- name: Mixpanel
+- name: Google Analytics
+- name: Adjust
+- name: Amplitude
+- name: Countly
+- name: Flurry
+- name: Crittercism
+- name: Facebook App Events
+  ios:
+    pod:
+      name: Segment-Facebook-App-Events
+  android:
+    # Doesn't exist
+    disabled: true
+
+- name: Localytics
+  android:
+    maven:
+      repo: https://maven.localytics.com/public
+
+- name: Quantcast
+  ios:
+    # Only compatible 3.0.x
+    disabled: true
+
+- name: Intercom
+  ios:
+    pod:
+      version: 1.0.0-beta
+
+- name: Tapstream
+  ios:
+    # https://github.com/tapstream/analytics-ios-integration-tapstream
+    # Only compatible 3.0.x
+    disabled: true
+    pod:
+      name: Tapstream-Segment
+
+- name: Appboy
+  android:
+    maven:
+      repo: https://appboy.github.io/appboy-android-sdk/sdk
+      name: com.appboy:appboy-segment-integration
+
+- name: Firebase
+  android:
+    maven:
+      repo: https://maven.google.com
+
+- name: Bugsnag
+
+- name: ComScore
+  # https://github.com/segment-integrations/analytics-android-integration-comscore
+  android:
+    disabled: true
+    maven:
+      repo: https://comscore.bintray.com/Analytics
+
+- name: Taplytics
+  android:
+    # Maven resolution is broken
+    disabled: true
+
+- name: AppsFlyer
+  # https://github.com/AppsFlyerSDK/segment-appsflyer-ios
+  ios:
+    pod:
+      name: 'segment-appsflyer-ios'
+  # https://github.com/AppsFlyerSDK/AppsFlyer-Segment-Integration
+  android:
+    factory:
+      class: AppsflyerIntegration
+    maven:
+      name: com.appsflyer:segment-android-integration
+      version: 1.+
+
+- name: Branch
+  # https://github.com/BranchMetrics/Segment-Branch-iOS
+  ios:
+    prefix: BNC
+  # https://github.com/BranchMetrics/Segment-Branch-Android
+  android:
+    maven:
+      name: io.branch.segment.analytics.android.integrations:branch

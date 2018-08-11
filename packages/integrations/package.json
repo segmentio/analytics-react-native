@@ -1,0 +1,18 @@
+{
+  "name": "@local/integrations",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "clean": "rimraf build",
+    "generate:integrations": "node src/gen-integrations",
+    "generate:readme": "node src/gen-readme",
+    "generate": "run-p generate:*",
+    "build": "run-s clean generate"
+  },
+  "dependencies": {
+    "fs-extra": "^7.0.0",
+    "markdown-table": "^1.1.2",
+    "mustache": "^2.3.0",
+    "yaml": "^1.0.0-rc.7"
+  }
+}
