@@ -90,7 +90,16 @@ function prepareiOS({ template, name, out, ios, nativeModule, slug }) {
 	])
 }
 
-function prepareJs({ name, npm, nativeModule, out, template, ios, android }) {
+function prepareJs({
+	name,
+	npm,
+	nativeModule,
+	out,
+	template,
+	ios,
+	android,
+	slug
+}) {
 	return Promise.all([
 		safeWrite(
 			path.resolve(out, 'package.json'),
@@ -110,7 +119,8 @@ function prepareJs({ name, npm, nativeModule, out, template, ios, android }) {
 			nativeModule,
 			disable_ios: String(ios.disabled || false),
 			disable_android: String(android.disabled || false)
-		})
+		}),
+		template('index.d.ts.tpl', { slug: slug() }, 'index.d.ts')
 	])
 }
 
