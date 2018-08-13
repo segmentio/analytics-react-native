@@ -27,6 +27,6 @@ fs.writeFileSync(
 		.readFileSync(readme, 'utf-8')
 		.replace(
 			/<!-- AUTOGEN:INTEGRATIONS:BEGIN -->(.*)<!-- AUTOGEN:INTEGRATIONS:END -->/s,
-			`<!-- AUTOGEN:INTEGRATIONS:BEGIN -->\n${table}\n<!-- AUTOGEN:INTEGRATIONS:END -->`
+			`<!-- AUTOGEN:INTEGRATIONS:BEGIN -->\n\n${table}\n\n<!-- AUTOGEN:INTEGRATIONS:END -->`
 		)
 )
