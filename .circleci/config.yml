@@ -34,7 +34,7 @@ jobs:
       - checkout
       - *getDeps
       - run: yarn commitlint-circle
-      - run: yarn core lint
+      - run: yarn lint
 
   test-core:
     <<: *nodeJob
