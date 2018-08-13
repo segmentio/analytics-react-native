@@ -1,89 +1,69 @@
-import React, {Component} from 'react'
-import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native'
+import React, { Component } from 'react'
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 import analytics from '@segment/react-native'
 
-const Button = ({title, onPress}) => (
-  <TouchableOpacity
-    style={styles.button}
-    onPress={onPress}
-  >
-    <Text style={styles.text}>
-      {title}
-    </Text>
-  </TouchableOpacity>
+const Button = ({ title, onPress }) => (
+	<TouchableOpacity style={styles.button} onPress={onPress}>
+		<Text style={styles.text}>{title}</Text>
+	</TouchableOpacity>
 )
 
-const screenHome = () =>
-  analytics.screen('Home')
+const screenHome = () => analytics.screen('Home')
 
-const flush = () =>
-  analytics.flush()
+const flush = () => analytics.flush()
 
-const pizzaEaten = () =>
-  analytics.track('Pizza Eaten')
+const pizzaEaten = () => analytics.track('Pizza Eaten')
 
 const trackOrder = () =>
-  analytics
-    .track('Order Completed')
-    .track('Order Cancelled', {
-      order_id: 323
-    })
-    .identify('userIdOnly')
-    .identify('userId', {
-      age: 32
-    })
-    .alias('newlyAliasedId')
-    .screen('User Login Screen', {
-      method: 'google'
-    })
+	analytics
+		.track('Order Completed')
+		.track('Order Cancelled', {
+			order_id: 323
+		})
+		.identify('userIdOnly')
+		.identify('userId', {
+			age: 32
+		})
+		.alias('newlyAliasedId')
+		.screen('User Login Screen', {
+			method: 'google'
+		})
 
 export default class App extends Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Image
-          source={{uri: 'https://i.imgur.com/GrCdId0.png'}}
-          resizeMode='contain'
-          style={styles.logo}
-        />
-        <Button
-          title='Screen: Home'
-          onPress={screenHome}
-        />
-        <Button
-          title='Track: Order Complete'
-          onPress={trackOrder}
-        />
-        <Button
-          title='Flush'
-          onPress={flush}
-        />
-        <Button
-          title='Track: Pizza Eaten'
-          onPress={pizzaEaten}
-        />
-      </View>
-    );
-  }
+	render() {
+		return (
+			<View style={styles.container}>
+				<Image
+					source={{ uri: 'https://i.imgur.com/GrCdId0.png' }}
+					resizeMode="contain"
+					style={styles.logo}
+				/>
+				<Button title="Screen: Home" onPress={screenHome} />
+				<Button title="Track: Order Complete" onPress={trackOrder} />
+				<Button title="Flush" onPress={flush} />
+				<Button title="Track: Pizza Eaten" onPress={pizzaEaten} />
+			</View>
+		)
+	}
 }
 
 const styles = StyleSheet.create({
-  logo: {
-    height: 150,
-    margin: 50,
-    width: 240,
-    height:	160
-  },
-  button: {
-    margin: 20
-  },
-  text: {
-    color: '#FBFAF9'
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    backgroundColor: '#32A75D',
-  }
+	logo: {
+		height: 150,
+		margin: 50,
+		width: 240,
+		height: 160
+	},
+	button: {
+		margin: 20
+	},
+	text: {
+		color: '#FBFAF9'
+	},
+	container: {
+		flex: 1,
+		justifyContent: 'flex-start',
+		alignItems: 'center',
+		backgroundColor: '#32A75D'
+	}
 })

@@ -14,7 +14,7 @@ The hassle-free way to add analytics to your React-Native app.
 #### iOS
 
 - CocoaPods (**recommended**)
-    - [Don't have CocoaPods setup?](#setup-cocoapods-in-an-existing-project)
+  - [Don't have CocoaPods setup?](#setup-cocoapods-in-an-existing-project)
 - or [manually install `Analytics`](#ios-support-without-cocoapods)
 
 ## Installation
@@ -30,6 +30,7 @@ $ yarn react-native link
 
 See the [API docs](packages/core/docs/classes/analytics.client.md) for more details.
 
+<!-- prettier-ignore -->
 ```js
 import analytics from '@segment/react-native'
 import Mixpanel from '@segment/react-native-mixpanel'
@@ -65,8 +66,8 @@ analytics.screen('Home')
 
 There are two ways to send data to your analytics services through this library:
 
-1. [Through the Segment servers](#cloud-based-connection-modes)
-2. [Directly from the device using bundled SDK’s](#packaging-device-based-destination-sdks)
+1.  [Through the Segment servers](#cloud-based-connection-modes)
+2.  [Directly from the device using bundled SDK’s](#packaging-device-based-destination-sdks)
 
 **Note**: Refer to the specific destination’s docs to see if your tool must be bundled in the app or sent server-side.
 
@@ -88,23 +89,23 @@ $ yarn add @segment/react-native-google-analytics
 $ yarn react-native link
 ```
 
-In your code : 
+In your code :
 
 ```js
 import analytics from '@segment/react-native'
 import GoogleAnalytics from '@segment/react-native-google-analytics'
 
 await analytics
-    .configure()
-        .using(GoogleAnalytics)
-        // ...
-    .setup('writeKey')
-
+  .configure()
+  .using(GoogleAnalytics)
+  // ...
+  .setup('writeKey')
 ```
 
 #### Integrations
 
 <!-- AUTOGEN:INTEGRATIONS:BEGIN -->
+
 | Name                                                                                               | iOS                | Android            | npm package                                                                                                                    |
 | -------------------------------------------------------------------------------------------------- | ------------------ | ------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
 | [Adjust](https://www.npmjs.com/package/@segment/react-native-adjust)                               | :white_check_mark: | :white_check_mark: | [`@segment/react-native-adjust`](https://www.npmjs.com/package/@segment/react-native-adjust)                                   |
@@ -126,8 +127,8 @@ await analytics
 | [Quantcast](https://www.npmjs.com/package/@segment/react-native-quantcast-android)                 | :x:                | :white_check_mark: | [`@segment/react-native-quantcast-android`](https://www.npmjs.com/package/@segment/react-native-quantcast-android)             |
 | [Taplytics](https://www.npmjs.com/package/@segment/react-native-taplytics-ios)                     | :white_check_mark: | :x:                | [`@segment/react-native-taplytics-ios`](https://www.npmjs.com/package/@segment/react-native-taplytics-ios)                     |
 | [Tapstream](https://www.npmjs.com/package/@segment/react-native-tapstream-android)                 | :x:                | :white_check_mark: | [`@segment/react-native-tapstream-android`](https://www.npmjs.com/package/@segment/react-native-tapstream-android)             |
-<!-- AUTOGEN:INTEGRATIONS:END -->
 
+<!-- AUTOGEN:INTEGRATIONS:END -->
 
 ## Troubleshooting
 
@@ -141,28 +142,30 @@ However, if you cannot use Cocoapods, you can manually install our dynamic frame
 
 Here are the steps for installing manually:
 
-1. Download the [latest built SDK](https://github.com/segmentio/analytics-ios/releases), and unzip the zip file.
-2. Drag the unzipped Analytics.framework folder into your Xcode project.
-   Make sure to check `Copy items if needed`.
-   ![Add Analytics.framework](docs/ios/add-analytics-framework.png)
-3. In the `General` tab for your project, search for `Embedded Binaries` and add the `Analytics.framework`.
-   ![Embed Analytics.framework](docs/ios/embed-analytics-framework.png)
+1.  Download the [latest built SDK](https://github.com/segmentio/analytics-ios/releases), and unzip the zip file.
+2.  Drag the unzipped Analytics.framework folder into your Xcode project.
+    Make sure to check `Copy items if needed`.
+    ![Add Analytics.framework](docs/ios/add-analytics-framework.png)
+3.  In the `General` tab for your project, search for `Embedded Binaries` and add the `Analytics.framework`.
+    ![Embed Analytics.framework](docs/ios/embed-analytics-framework.png)
 
 Please note, if you are choosing to not use a dependency manager, you must keep files up-to-date with regularly scheduled, manual updates.
 
 ### Setup CocoaPods in an existing project
 
-1. Check that `ios/Podfile` doesn't exist
-2. `cd ios`
-3. `pod init`
-4. Open `Podfile`
-5. Edit your app `target` to have these `pod` declarations and the `Add new pods below this line` comment :
-   ```ruby
-   target 'MyReactNativeApp' do
-     pod 'React', :path => '../node_modules/react-native'
-     pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
+1.  Check that `ios/Podfile` doesn't exist
+2.  `cd ios`
+3.  `pod init`
+4.  Open `Podfile`
+5.  Edit your app `target` to have these `pod` declarations and the `Add new pods below this line` comment :
 
-     # Add new pods below this line
-   end
-   ```
-6. `pod install`
+    ```ruby
+    target 'MyReactNativeApp' do
+      pod 'React', :path => '../node_modules/react-native'
+      pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
+
+      # Add new pods below this line
+    end
+    ```
+
+6.  `pod install`
