@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 import analytics from '@segment/react-native'
 
+const calls = require('./calls.json')
+
 const Button = ({ title, onPress }) => (
 	<TouchableOpacity style={styles.button} onPress={onPress}>
 		<Text style={styles.text}>{title}</Text>
@@ -29,6 +31,15 @@ const trackOrder = () =>
 			method: 'google'
 		})
 
+let buildId = null
+const testSuite = () =>
+	calls.forEach(([call, name, props = {}]) =>
+		analytics[call](name, {
+			...props,
+			buildId
+		})
+	)
+
 export default class App extends Component {
 	render() {
 		return (
@@ -42,6 +53,7 @@ export default class App extends Component {
 				<Button title="Track: Order Complete" onPress={trackOrder} />
 				<Button title="Flush" onPress={flush} />
 				<Button title="Track: Pizza Eaten" onPress={pizzaEaten} />
+				<Button title="Launch test suite" onPress={testSuite} />
 			</View>
 		)
 	}

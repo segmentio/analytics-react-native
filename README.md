@@ -24,8 +24,6 @@ $ yarn add @segment/react-native
 $ yarn react-native link
 ```
 
-> All integrations have the same version as `@segment/react-native`
-
 ## Usage
 
 See the [API docs](packages/core/docs/classes/analytics.client.md) for more details.
@@ -103,6 +101,8 @@ await analytics
 ```
 
 #### Integrations
+
+> All integrations have the same version as `@segment/react-native`
 
 <!-- AUTOGEN:INTEGRATIONS:BEGIN -->
 

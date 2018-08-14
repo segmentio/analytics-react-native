@@ -5,10 +5,16 @@ defaults:
   requiresTestApp: &requiresTestApp
     requires:
       - build-test-app
+  attach: &attach
+    attach_workspace:
+      at: .
   getDeps: &getDeps
     restore_cache:
-      key: yarn-{{ checksum "yarn.lock" }}
+      key: yarn-cache-{{ checksum "yarn.lock" }}
+  job: &job
+    working_directory: /tmp/project
   nodeJob: &nodeJob
+    <<: *job
     docker:
       - image: circleci/node:8
 
@@ -21,7 +27,7 @@ jobs:
       - *getDeps
       - run: yarn install --frozen-lockfile
       - save_cache:
-          key: yarn-{{ checksum "yarn.lock" }}
+          key: yarn-cache-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
             - packages/core/node_modules
@@ -71,44 +77,40 @@ jobs:
     steps:
       - checkout
       - *getDeps
-      - attach_workspace:
-          at: .
+      - *attach
 
-      - run: yarn test-app build:project
+      - run: yarn test-app build
       - persist_to_workspace:
           root: .
           paths:
             - packages/test-app/project
-  build-test-app-android:
+
+  test-android:
+    <<: *job
     docker:
       - image: circleci/android:api-26-node8-alpha
     steps:
       - checkout
-      - attach_workspace:
-          at: .
-      - run: yarn test-app build:android
+      - *getDeps
+      - *attach
 
-  build-test-app-ios:
+      - run: yarn test-app test:android
+
+  test-ios:
+    <<: *job
     macos:
       xcode: "9.4.0"
-    environment:
-      # Needed for fastlane, see https://docs.fastlane.tools/getting-started/ios/setup/#set-up-environment-variables
-      LC_ALL: en_US.UTF-8
-      LANG: en_US.UTF-8
     steps:
       - checkout
-      - attach_workspace:
-          at: .
+      # macOS VMs doesn't support Docker based caches
+      - run: yarn install --frozen-lockfile
+      - *attach
+      - run: brew tap wix/brew
+      - run: brew install wix/brew/applesimutils
 
       - restore_cache:
           key: cocoapods-specs
-      - restore_cache:
-          key: gem-{{ checksum "packages/test-app/Gemfile.lock" }}
-      - run: yarn test-app build:ios
-      - save_cache:
-          key: gem-{{ checksum "packages/test-app/Gemfile.lock" }}
-          paths:
-            - packages/test-app/vendor/bundle
+      - run: yarn test-app test:ios
       - save_cache:
           key: cocoapods-specs
           paths:
@@ -120,12 +122,12 @@ workflows:
   build_and_test:
     jobs:
       - install
-      - lint: *requiresInstall
+      - test-android: *requiresTestApp
+      - test-ios: *requiresTestApp
       - test-core: *requiresInstall
-      - build-core: *requiresInstall
+      - lint: *requiresInstall
       - build-integrations: *requiresInstall
-      - build-test-app-android: *requiresTestApp
-      - build-test-app-ios: *requiresTestApp
+      - build-core: *requiresInstall
       - build-test-app:
           requires:
             - build-core

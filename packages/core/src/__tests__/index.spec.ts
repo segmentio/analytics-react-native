@@ -1,4 +1,4 @@
-import { analytics } from '..'
+import analytics from '..'
 import { Analytics } from '../analytics'
 
 jest.mock('../bridge')

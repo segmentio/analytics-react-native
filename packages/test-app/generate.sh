@@ -7,9 +7,10 @@ install_command="file:$pwd/../core"
 integrations_require=""
 
 rm -rf project
+
 yarn react-native init project
 
-cp App.js project/
+cp -r App.js calls.json project/
 cd project
 
 build_dir=$pwd/../integrations/build
@@ -21,27 +22,13 @@ done
 
 yarn add $install_command
 
-write_key="qGHfVyLQjydiD6A3dipTZqbHvhlYJKFC"
+cat << EOF >> App.js
+buildId = '$CIRCLE_WORKFLOW_ID'
 
-js="
 analytics
   .configure()
     .using($integrations_require)
-    .recordScreenViews()
     .debug()
-  .setup('$write_key')
-    .then(() => {
-      analytics.track('Test', {
-        with: {
-          some: ['prop', 'erties']
-        }
-      });
-      console.log('Analytics ready')
-    })
-    .catch(err => {
-      console.error('Analytics error', err);
-      throw err
-    })
-"
-
-echo $js >> App.js
+  .setup('$SEGMENT_WRITE_TOKEN')
+    .then(() => console.log('Analytics ready'))
+EOF

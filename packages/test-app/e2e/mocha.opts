@@ -1,0 +1,3 @@
+--recursive
+--timeout 1200000
+--bail
