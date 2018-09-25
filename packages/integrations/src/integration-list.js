@@ -19,7 +19,9 @@ module.exports = parse(
 			ios,
 			android,
 			npm: {
-				package: `@segment/react-native-${slug('-').toLowerCase()}${suffix}`
+				package: `@segment/analytics-react-native-${slug(
+					'-'
+				).toLowerCase()}${suffix}`
 			}
 		}
 	})

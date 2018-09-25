@@ -1,5 +1,5 @@
 {
-  "name": "@segment/react-native",
+  "name": "@segment/analytics-react-native",
   "version": "0.0.1",
   "description": "The hassle-free way to add analytics to your React-Native app.",
   "license": "MIT",
