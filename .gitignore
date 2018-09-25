@@ -9,5 +9,6 @@ xcuserdata/
 vendor/
 .bundle/
 .gradle
+.vscode/
 
 packages/test-app/project
