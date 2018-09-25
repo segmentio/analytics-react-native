@@ -12,7 +12,7 @@
   "dependencies": {
     "fs-extra": "^7.0.0",
     "markdown-table": "^1.1.2",
-    "mustache": "^2.3.0",
+    "mustache": "^3.0.0",
     "yaml": "^1.0.0-rc.7"
   }
 }
