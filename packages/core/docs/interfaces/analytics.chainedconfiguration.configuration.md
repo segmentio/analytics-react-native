@@ -34,7 +34,7 @@
 
 *Inherited from [Base](analytics.chainedconfiguration.base.md).[android](analytics.chainedconfiguration.base.md#android)*
 
-*Defined in analytics.ts:193*
+*Defined in [analytics.ts:193](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L193)*
 
 Access Android specific settings
 
@@ -47,7 +47,7 @@ ___
 
 ▸ **debug**(): `this`
 
-*Defined in analytics.ts:223*
+*Defined in [analytics.ts:223](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L223)*
 
 **Returns:** `this`
 
@@ -58,7 +58,7 @@ ___
 
 ▸ **flushAt**(at: *`number`*): `this`
 
-*Defined in analytics.ts:218*
+*Defined in [analytics.ts:218](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L218)*
 
 The number of queued events that the analytics client should flush at.
 
@@ -81,7 +81,7 @@ ___
 
 *Inherited from [Base](analytics.chainedconfiguration.base.md).[ios](analytics.chainedconfiguration.base.md#ios)*
 
-*Defined in analytics.ts:189*
+*Defined in [analytics.ts:189](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L189)*
 
 Access iOS specific settings
 
@@ -94,7 +94,7 @@ ___
 
 ▸ **recordScreenViews**(): `this`
 
-*Defined in analytics.ts:202*
+*Defined in [analytics.ts:202](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L202)*
 
 Whether the analytics client should automatically make a screen call when a view controller is added to a view hierarchy. Because the iOS underlying implementation uses method swizzling, we recommend initializing the analytics client as early as possible (before any screens are displayed).
 
@@ -109,7 +109,7 @@ ___
 
 *Inherited from [Base](analytics.chainedconfiguration.base.md).[setup](analytics.chainedconfiguration.base.md#setup)*
 
-*Defined in analytics.ts:185*
+*Defined in [analytics.ts:185](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L185)*
 
 Finalize the configuration and initialize the Analytics client.
 
@@ -128,7 +128,7 @@ ___
 
 ▸ **trackAppLifecycleEvents**(): `this`
 
-*Defined in analytics.ts:207*
+*Defined in [analytics.ts:207](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L207)*
 
 Enable the automatic tracking of application lifecycle events, such as "Application Installed", "Application Updated" and "Application Opened".
 
@@ -141,7 +141,7 @@ ___
 
 ▸ **trackAttributionData**(): `this`
 
-*Defined in analytics.ts:211*
+*Defined in [analytics.ts:211](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L211)*
 
 Whether the analytics client should automatically track attribution data from enabled providers using the mobile service.
 
@@ -154,7 +154,7 @@ ___
 
 ▸ **using**(...integrations: *[Integration](../#integration)[]*): `this`
 
-*Defined in analytics.ts:222*
+*Defined in [analytics.ts:222](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L222)*
 
 Register a set of integrations to be used with this Analytics instance.
 

@@ -36,7 +36,7 @@
 
 **● ready**: *`false`* = false
 
-*Defined in analytics.ts:13*
+*Defined in [analytics.ts:13](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L13)*
 
 Whether the client is ready to send events to Segment.
 
@@ -52,7 +52,7 @@ ___
 
 ▸ **alias**(newId: *`string`*): `this`
 
-*Defined in analytics.ts:115*
+*Defined in [analytics.ts:115](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L115)*
 
 Merge two user identities, effectively connecting two sets of user data as one. This may not be supported by all integrations.
 
@@ -73,7 +73,7 @@ ___
 
 ▸ **catch**(handler: *[ErrorHandler]()*): `this`
 
-*Defined in analytics.ts:23*
+*Defined in [analytics.ts:23](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L23)*
 
 Catch React-Native bridge errors
 
@@ -94,7 +94,7 @@ ___
 
 ▸ **configure**(): [Configuration](../interfaces/analytics.chainedconfiguration.configuration.md)
 
-*Defined in analytics.ts:43*
+*Defined in [analytics.ts:43](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L43)*
 
 Configure the Analytics module.
 
@@ -119,7 +119,7 @@ ___
 
 ▸ **disable**(): `this`
 
-*Defined in analytics.ts:154*
+*Defined in [analytics.ts:154](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L154)*
 
 Completely disable the sending of any analytics data.
 
@@ -134,7 +134,7 @@ ___
 
 ▸ **enable**(): `this`
 
-*Defined in analytics.ts:144*
+*Defined in [analytics.ts:144](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L144)*
 
 Enable the sending of analytics data. Enabled by default.
 
@@ -149,7 +149,7 @@ ___
 
 ▸ **flush**(): `this`
 
-*Defined in analytics.ts:135*
+*Defined in [analytics.ts:135](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L135)*
 
 Trigger an upload of all queued events.
 
@@ -164,7 +164,7 @@ ___
 
 ▸ **group**(groupId: *`string`*, traits?: *[JsonMap]()*): `this`
 
-*Defined in analytics.ts:102*
+*Defined in [analytics.ts:102](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L102)*
 
 Associate a user with a group, organization, company, project, or w/e _you_ call them.
 
@@ -186,7 +186,7 @@ ___
 
 ▸ **identify**(userId: *`string`*, traits?: *[JsonMap]()*): `this`
 
-*Defined in analytics.ts:90*
+*Defined in [analytics.ts:90](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L90)*
 
 Associate a user with their unique ID and record traits about them.
 
@@ -208,7 +208,7 @@ ___
 
 ▸ **reset**(): `this`
 
-*Defined in analytics.ts:125*
+*Defined in [analytics.ts:125](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L125)*
 
 Reset any user state that is cached on the device.
 
@@ -223,7 +223,7 @@ ___
 
 ▸ **screen**(name: *`string`*, properties?: *[JsonMap]()*): `this`
 
-*Defined in analytics.ts:76*
+*Defined in [analytics.ts:76](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L76)*
 
 Record the screens or views your users see.
 
@@ -245,7 +245,7 @@ ___
 
 ▸ **track**(event: *`string`*, properties?: *[JsonMap]()*): `this`
 
-*Defined in analytics.ts:58*
+*Defined in [analytics.ts:58](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L58)*
 
 Record the actions your users perform.
 

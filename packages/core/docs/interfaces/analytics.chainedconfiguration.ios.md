@@ -30,7 +30,7 @@
 
 *Inherited from [Base](analytics.chainedconfiguration.base.md).[android](analytics.chainedconfiguration.base.md#android)*
 
-*Defined in analytics.ts:193*
+*Defined in [analytics.ts:193](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L193)*
 
 Access Android specific settings
 
@@ -45,7 +45,7 @@ ___
 
 *Inherited from [Base](analytics.chainedconfiguration.base.md).[ios](analytics.chainedconfiguration.base.md#ios)*
 
-*Defined in analytics.ts:189*
+*Defined in [analytics.ts:189](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L189)*
 
 Access iOS specific settings
 
@@ -60,7 +60,7 @@ ___
 
 *Inherited from [Base](analytics.chainedconfiguration.base.md).[setup](analytics.chainedconfiguration.base.md#setup)*
 
-*Defined in analytics.ts:185*
+*Defined in [analytics.ts:185](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L185)*
 
 Finalize the configuration and initialize the Analytics client.
 
@@ -79,7 +79,7 @@ ___
 
 ▸ **trackAdvertising**(): `this`
 
-*Defined in analytics.ts:230*
+*Defined in [analytics.ts:230](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L230)*
 
 Whether the analytics client should track advertisting info.
 
@@ -92,7 +92,7 @@ ___
 
 ▸ **trackDeepLinks**(): `this`
 
-*Defined in analytics.ts:236*
+*Defined in [analytics.ts:236](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L236)*
 
 Whether the analytics client should automatically track deep links.
 
