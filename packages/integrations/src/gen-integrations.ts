@@ -1,36 +1,44 @@
-const fs = require('fs-extra')
-const path = require('path')
-const mustache = require('mustache')
-const pkg = require('../package.json')
+import fs from 'fs-extra'
+import path from 'path'
+import mustache from 'mustache'
+import pkg from '../package.json'
+
+import integrations, { Integration } from './integration-list'
+
+interface Context extends Integration {
+	nativeModule: string
+	out: string
+	template: (template: string, view: {}, dest?: string) => Promise<void>
+}
 
 const root = path.resolve(__dirname, '..')
-const integrations = require('./integration-list')
 
-const safeWrite = async (file, contents) => {
+const safeWrite = async (file: string, contents: string) => {
 	await fs.mkdirp(path.dirname(file))
 	await fs.writeFile(file, contents)
 }
 
-function prepareAndroid({ template, name, android, nativeModule, slug }) {
+async function prepareAndroid({ template, name, android, nativeModule, slug }: Context) {
 	const identifier = slug('.').toLowerCase()
+	const classSlug = `${slug()}Integration`
 	const {
 		maven: {
-			repo,
+			repo = undefined,
 			name: depName = `com.segment.analytics.android.integrations:${slug(
 				'-'
 			).toLowerCase()}`,
 			version = '+@aar'
 		} = {},
 		factory: {
-			class: factoryClass = `${slug()}Integration`,
-			import: factoryImport = `com.segment.analytics.android.integrations.${identifier}.${factoryClass}`
+			class: factoryClass = classSlug,
+			import: factoryImport = `com.segment.analytics.android.integrations.${identifier}.${classSlug}`
 		} = {}
 	} = android
 	const classpath = `com.segment.analytics.reactnative.integration.${identifier}`
 	const dependency = `${depName}:${version}`
 	const root = 'android/src/main'
 
-	return Promise.all([
+	await Promise.all([
 		template('android/build.gradle', { dependency, maven: repo }),
 
 		template(`${root}/AndroidManifest.xml`, { classpath }),
@@ -45,22 +53,25 @@ function prepareAndroid({ template, name, android, nativeModule, slug }) {
 	])
 }
 
-function prepareiOS({ template, name, out, ios, nativeModule, slug }) {
+async function prepareiOS({ template, name, out, ios, nativeModule, slug }: Context) {
 	const xcodeProject = 'ios/RNAnalyticsIntegration.xcodeproj'
 	const targetXcodeProject = `ios/${nativeModule}.xcodeproj`
 	const pod_name = `RNAnalyticsIntegration-${slug('-')}`
 	const {
 		pod: {
 			name: pod_dependency = `Segment-${slug()}`,
-			version: pod_version
+			version: pod_version = undefined
 		} = {},
-		prefix = 'SEG',
-		className = `${prefix}${slug()}IntegrationFactory`,
+		prefix = 'SEG'
+	} = ios
+	const classSlug = `${prefix}${slug()}IntegrationFactory`
+	const {
+		className = classSlug,
 		framework = pod_dependency,
-		header = className
+		header = classSlug
 	} = ios
 
-	return Promise.all([
+	await Promise.all([
 		fs.copy(
 			path.resolve(root, 'template', xcodeProject, 'project.xcworkspace'),
 			path.resolve(out, targetXcodeProject, 'project.xcworkspace')
@@ -90,7 +101,7 @@ function prepareiOS({ template, name, out, ios, nativeModule, slug }) {
 	])
 }
 
-function prepareJs({
+async function prepareJs({
 	name,
 	npm,
 	nativeModule,
@@ -99,8 +110,8 @@ function prepareJs({
 	ios,
 	android,
 	slug
-}) {
-	return Promise.all([
+}: Context) {
+	await Promise.all([
 		safeWrite(
 			path.resolve(out, 'package.json'),
 			JSON.stringify(
@@ -124,26 +135,25 @@ function prepareJs({
 	])
 }
 
-function genIntegration({ name, ios, android, npm, slug }) {
+function genIntegration({ name, ios, android, npm, slug }: Integration) {
 	const out = path.resolve(root, 'build', npm.package)
 	const nativeModule = `RNAnalyticsIntegration_${slug('_')}`
-	const template = async (template, view, dest = template) =>
-		safeWrite(
-			path.resolve(out, dest),
-			mustache.render(
-				await fs.readFile(path.resolve(root, 'template', template), 'utf-8'),
-				view
-			)
-		)
-	const ctx = {
+	const ctx: Context = {
 		name,
 		out,
 		nativeModule,
 		npm,
-		template,
 		ios,
 		android,
-		slug
+		slug,
+		template: async (template, view, dest = template) =>
+			await safeWrite(
+				path.resolve(out, dest),
+				mustache.render(
+					await fs.readFile(path.resolve(root, 'template', template), 'utf-8'),
+					view
+				)
+			)
 	}
 
 	const tasks = [prepareJs(ctx)]

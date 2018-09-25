@@ -1,13 +1,13 @@
-const mdtable = require('markdown-table')
-const fs = require('fs')
-const path = require('path')
+import mdtable from 'markdown-table'
+import fs from 'fs'
+import path from 'path'
 
-const integrations = require('./integration-list')
+import integrations from './integration-list'
 
 const YES = ':white_check_mark:'
 const NO = ':x:'
 
-const table = mdtable([
+const table: string = mdtable([
 	['Name', 'iOS', 'Android', 'npm package'],
 	...integrations
 		.sort((a, b) => a.name.localeCompare(b.name))
