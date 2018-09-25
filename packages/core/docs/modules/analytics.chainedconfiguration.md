@@ -1,4 +1,4 @@
-[@segment/react-native](../README.md) > [ChainedConfiguration](../modules/analytics.chainedconfiguration.md)
+[@segment/analytics-react-native](../README.md) > [ChainedConfiguration](../modules/analytics.chainedconfiguration.md)
 
 # Module: ChainedConfiguration
 

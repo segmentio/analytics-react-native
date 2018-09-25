@@ -1,4 +1,4 @@
-[@segment/react-native](../README.md) > [Client](../classes/analytics.client.md)
+[@segment/analytics-react-native](../README.md) > [Client](../classes/analytics.client.md)
 
 # Class: Client
 

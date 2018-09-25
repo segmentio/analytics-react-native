@@ -20,7 +20,6 @@ export function configure(
 			writeKey: ''
 		},
 		ios: {
-			recordBluetooth: false,
 			trackAdvertising: false,
 			trackDeepLinks: false,
 			writeKey: ''
@@ -34,7 +33,6 @@ export function configure(
 		}),
 		ios: () => ({
 			...baseMatcher,
-			recordBluetooth: toggle(config.ios, 'recordBluetooth', true),
 			trackAdvertising: toggle(config.ios, 'trackAdvertising', true),
 			trackDeepLinks: toggle(config.ios, 'trackDeepLinks', true)
 		}),

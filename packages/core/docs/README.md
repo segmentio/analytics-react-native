@@ -23,7 +23,7 @@
 
 ###  Integration
 
-**ΤIntegration**: * `function` &#124; `object`
+**Ƭ Integration**: * `function` &#124; `object`
 *
 
 *Defined in analytics.ts:170*
@@ -33,7 +33,7 @@ ___
 
 ###  WriteKey
 
-**ΤWriteKey**: * `string` &#124; `object`
+**Ƭ WriteKey**: * `string` &#124; `object`
 *
 
 *Defined in analytics.ts:172*

@@ -19,7 +19,6 @@ const defaultConfig = {
 		writeKey
 	},
 	ios: {
-		recordBluetooth: false,
 		trackAdvertising: false,
 		trackDeepLinks: false,
 		writeKey
@@ -44,7 +43,6 @@ it('produces a valid configuration', async () => {
 		.flushAt(42)
 		.debug()
 		.ios()
-		.recordBluetooth()
 		.trackAdvertising()
 		.trackDeepLinks()
 		.android()

@@ -1,5 +1,5 @@
 {
-  "name": "@segment-meta/analytics-react-native",
+  "name": "@internal/analytics-react-native",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -14,7 +14,7 @@
     ]
   },
   "scripts": {
-    "core": "yarn workspace @segment/react-native",
+    "core": "yarn workspace @segment/analytics-react-native",
     "integrations": "yarn workspace @local/integrations",
     "test-app": "yarn workspace @local/test-app",
     "build:core": "yarn core build",

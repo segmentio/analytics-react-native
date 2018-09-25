@@ -1,4 +1,4 @@
-[@segment/react-native](../README.md) > [ChainedConfiguration](../modules/analytics.chainedconfiguration.md) > [Base](../interfaces/analytics.chainedconfiguration.base.md)
+[@segment/analytics-react-native](../README.md) > [ChainedConfiguration](../modules/analytics.chainedconfiguration.md) > [Base](../interfaces/analytics.chainedconfiguration.base.md)
 
 # Interface: Base
 

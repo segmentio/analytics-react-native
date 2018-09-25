@@ -225,13 +225,6 @@ export namespace Analytics {
 		// tslint:disable-next-line
 		export interface iOS extends Base {
 			/**
-			 * Whether the analytics client should record bluetooth information.
-			 *
-			 * When enabled please make sure to add a description for `NSBluetoothPeripheralUsageDescription` in
-			 * your `Info.plist` explaining explaining why your app is accessing Bluetooth APIs.
-			 */
-			recordBluetooth(): this
-			/**
 			 * Whether the analytics client should track advertisting info.
 			 */
 			trackAdvertising(): this

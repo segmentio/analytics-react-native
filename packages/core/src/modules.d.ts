@@ -8,7 +8,6 @@ declare module 'react-native' {
 			flushAt: number
 
 			ios: {
-				recordBluetooth: boolean
 				trackAdvertising: boolean
 				trackDeepLinks: boolean
 				writeKey: string

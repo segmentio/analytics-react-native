@@ -1,4 +1,4 @@
-[@segment/react-native](../README.md) > [ChainedConfiguration](../modules/analytics.chainedconfiguration.md) > [Android](../interfaces/analytics.chainedconfiguration.android.md)
+[@segment/analytics-react-native](../README.md) > [ChainedConfiguration](../modules/analytics.chainedconfiguration.md) > [Android](../interfaces/analytics.chainedconfiguration.android.md)
 
 # Interface: Android
 
@@ -42,7 +42,7 @@ ___
 
 ▸ **disableDeviceId**(): `this`
 
-*Defined in analytics.ts:254*
+*Defined in analytics.ts:247*
 
 Disable the collection of the device identifier. Enabled by default.
 

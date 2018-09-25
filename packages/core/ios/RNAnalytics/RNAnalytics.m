@@ -36,7 +36,6 @@ RCT_EXPORT_METHOD(setup:(NSDictionary*)options) {
     config.trackApplicationLifecycleEvents = [options[@"trackAppLifecycleEvents"] boolValue];
     config.trackAttributionData = [options[@"trackAttributionData"] boolValue];
     config.flushAt = [options[@"flushAt"] integerValue];
-    config.shouldUseBluetooth = [options[@"ios"][@"recordBluetooth"] boolValue];
     config.enableAdvertisingTracking = [options[@"ios"][@"trackAdvertising"] boolValue];
     
     for(id factory in RNAnalyticsIntegrations) {

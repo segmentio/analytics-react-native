@@ -1,4 +1,4 @@
-[@segment/react-native](../README.md) > [ChainedConfiguration](../modules/analytics.chainedconfiguration.md) > [iOS](../interfaces/analytics.chainedconfiguration.ios.md)
+[@segment/analytics-react-native](../README.md) > [ChainedConfiguration](../modules/analytics.chainedconfiguration.md) > [iOS](../interfaces/analytics.chainedconfiguration.ios.md)
 
 # Interface: iOS
 
@@ -14,7 +14,6 @@
 
 * [android](analytics.chainedconfiguration.ios.md#android)
 * [ios](analytics.chainedconfiguration.ios.md#ios)
-* [recordBluetooth](analytics.chainedconfiguration.ios.md#recordbluetooth)
 * [setup](analytics.chainedconfiguration.ios.md#setup)
 * [trackAdvertising](analytics.chainedconfiguration.ios.md#trackadvertising)
 * [trackDeepLinks](analytics.chainedconfiguration.ios.md#trackdeeplinks)
@@ -53,21 +52,6 @@ Access iOS specific settings
 **Returns:** [iOS](analytics.chainedconfiguration.ios.md)
 
 ___
-<a id="recordbluetooth"></a>
-
-###  recordBluetooth
-
-▸ **recordBluetooth**(): `this`
-
-*Defined in analytics.ts:233*
-
-Whether the analytics client should record bluetooth information.
-
-When enabled please make sure to add a description for `NSBluetoothPeripheralUsageDescription` in your `Info.plist` explaining explaining why your app is accessing Bluetooth APIs.
-
-**Returns:** `this`
-
-___
 <a id="setup"></a>
 
 ###  setup
@@ -95,7 +79,7 @@ ___
 
 ▸ **trackAdvertising**(): `this`
 
-*Defined in analytics.ts:237*
+*Defined in analytics.ts:230*
 
 Whether the analytics client should track advertisting info.
 
@@ -108,7 +92,7 @@ ___
 
 ▸ **trackDeepLinks**(): `this`
 
-*Defined in analytics.ts:243*
+*Defined in analytics.ts:236*
 
 Whether the analytics client should automatically track deep links.
 
