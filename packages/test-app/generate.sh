@@ -20,7 +20,7 @@ for integration in `cd $build_dir && echo @segment/*`; do
     integrations_require+="require('$integration'),"
 done
 
-yarn add $install_command
+yarn add $install_command @babel/runtime
 
 cat << EOF >> App.js
 buildId = '$CIRCLE_WORKFLOW_ID'

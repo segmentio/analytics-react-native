@@ -13,37 +13,6 @@ export const toggle = <T, K extends string, O extends { [P in K]: T }>(
 		return this
 	} as T extends O[K] ? <S>(this: S) => S : <S>(this: S, a: O[K]) => S
 
-export interface NativeDelegate {
-	ready: boolean
+export function assertNever(never: never) {
+	throw new Error('Expected never, got ' + never)
 }
-export type ErrorHandler = (err: Error) => void
-export const nativeWrapper = <T extends NativeDelegate>(
-	delegate: T,
-	handler: ErrorHandler,
-	queue: Array<() => void> = []
-) => ({
-	call: <F extends () => void>(fn: F) => {
-		async function run() {
-			try {
-				await fn()
-			} catch (err) {
-				return handler(err)
-			}
-		}
-
-		if (delegate.ready) {
-			run()
-		} else {
-			queue.push(run)
-		}
-
-		return delegate
-	},
-	ready() {
-		delegate.ready = true
-
-		while (queue.length) {
-			queue.shift()!()
-		}
-	}
-})

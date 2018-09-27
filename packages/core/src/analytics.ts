@@ -1,6 +1,6 @@
-import Bridge from './bridge'
+import bridge, { Bridge, ErrorHandler, NativeWrapper } from './bridge'
 import { configure } from './configuration'
-import { ErrorHandler, nativeWrapper } from './utils'
+import { MiddlewareChain, Middleware } from './middleware'
 
 export namespace Analytics {
 	export class Client {
@@ -12,8 +12,11 @@ export namespace Analytics {
 		 */
 		public readonly ready = false
 
-		private readonly wrapper = nativeWrapper(this, err => this.handleError(err))
+		private readonly wrapper = new NativeWrapper(this, err =>
+			this.handleError(err)
+		)
 		private readonly handlers: ErrorHandler[] = []
+		private readonly middlewares = new MiddlewareChain(this.wrapper)
 
 		/**
 		 * Catch React-Native bridge errors
@@ -22,6 +25,12 @@ export namespace Analytics {
 		 */
 		public catch(handler: ErrorHandler) {
 			this.handlers.push(handler)
+
+			return this
+		}
+
+		public middleware(middleware: Middleware) {
+			this.middlewares.add(middleware)
 
 			return this
 		}
@@ -55,8 +64,8 @@ export namespace Analytics {
 		 * @param properties A dictionary of properties for the event.
 		 * If the event was 'Added to Shopping Cart', it might have properties like price, productType, etc.
 		 */
-		public track(event: string, properties: JsonMap = {}) {
-			return this.wrapper.call(() => Bridge.track(event, properties))
+		public async track(event: string, properties: bridge.JsonMap = {}) {
+			await this.middlewares.run('track', { event, props: properties })
 		}
 
 		/**
@@ -73,8 +82,8 @@ export namespace Analytics {
 		 * @param properties A dictionary of properties for the screen view event.
 		 * If the event was 'Added to Shopping Cart', it might have properties like price, productType, etc.
 		 */
-		public screen(name: string, properties: JsonMap = {}) {
-			return this.wrapper.call(() => Bridge.screen(name, properties))
+		public async screen(name: string, properties: bridge.JsonMap = {}) {
+			await this.middlewares.run('screen', { name, props: properties })
 		}
 
 		/**
@@ -82,13 +91,13 @@ export namespace Analytics {
 		 *
 		 * When you learn more about who your user is, you can record that information with identify.
 		 *
-		 * @param userId database ID (or email address) for this user.
+		 * @param user database ID (or email address) for this user.
 		 * If you don't have a userId but want to record traits, you should pass nil.
 		 * For more information on how we generate the UUID and Apple's policies on IDs, see https://segment.io/libraries/ios#ids
 		 * @param traits A dictionary of traits you know about the user. Things like: email, name, plan, etc.
 		 */
-		public identify(userId: string, traits: JsonMap = {}) {
-			return this.wrapper.call(() => Bridge.identify(userId, traits))
+		public async identify(user: string, traits: bridge.JsonMap = {}) {
+			await this.middlewares.run('identify', { user, props: traits })
 		}
 
 		/**
@@ -99,8 +108,8 @@ export namespace Analytics {
 		 * @param groupId A database ID for this group.
 		 * @param traits A dictionary of traits you know about the group. Things like: name, employees, etc.
 		 */
-		public group(groupId: string, traits: JsonMap = {}) {
-			return this.wrapper.call(() => Bridge.group(groupId, traits))
+		public async group(groupId: string, traits: bridge.JsonMap = {}) {
+			await this.middlewares.run('group', { groupId, props: traits })
 		}
 
 		/**
@@ -112,8 +121,8 @@ export namespace Analytics {
 		 * @param newId The new ID you want to alias the existing ID to.
 		 * The existing ID will be either the previousId if you have called identify, or the anonymous ID.
 		 */
-		public alias(newId: string) {
-			return this.wrapper.call(() => Bridge.alias(newId))
+		public async alias(newId: string) {
+			await this.wrapper.run('alias', alias => alias(newId))
 		}
 
 		/**
@@ -122,8 +131,8 @@ export namespace Analytics {
 		 * This is useful when a user logs out and you want to clear the identity.
 		 * It will clear any traits or userId's cached on the device.
 		 */
-		public reset() {
-			return this.wrapper.call(Bridge.reset)
+		public async reset() {
+			await this.wrapper.run('reset', reset => reset())
 		}
 
 		/**
@@ -132,8 +141,8 @@ export namespace Analytics {
 		 * This is useful when you want to force all messages queued on the device to be uploaded.
 		 * Please note that not all integrations respond to this method.
 		 */
-		public flush() {
-			return this.wrapper.call(Bridge.flush)
+		public async flush() {
+			await this.wrapper.run('flush', flush => flush())
 		}
 
 		/**
@@ -141,8 +150,8 @@ export namespace Analytics {
 		 *
 		 * Occasionally used in conjunction with disable user opt-out handling.
 		 */
-		public enable() {
-			return this.wrapper.call(Bridge.enable)
+		public async enable() {
+			await this.wrapper.run('enable', enable => enable())
 		}
 
 		/**
@@ -151,8 +160,8 @@ export namespace Analytics {
 		 * If you have a way for users to actively or passively (sometimes based on location) opt-out of
 		 * analytics data collection, you can use this method to turn off all data collection.
 		 */
-		public disable() {
-			return this.wrapper.call(Bridge.disable)
+		public async disable() {
+			await this.wrapper.run('disable', disable => disable())
 		}
 
 		private handleError(error: Error) {
@@ -248,10 +257,3 @@ export namespace Analytics {
 		}
 	}
 }
-
-export type JsonValue = boolean | number | string | null | JsonList | JsonMap
-export interface JsonMap {
-	[key: string]: JsonValue
-	[index: number]: JsonValue
-}
-export interface JsonList extends Array<JsonValue> {}
