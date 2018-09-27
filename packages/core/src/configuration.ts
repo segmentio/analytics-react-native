@@ -7,7 +7,7 @@ export function configure(
 	done: () => void
 ): Analytics.ChainedConfiguration.Configuration {
 	const promises: Array<Promise<void | null>> = []
-	const config = {
+	const config: Bridge.Configuration = {
 		flushAt: 20,
 
 		debug: false,
@@ -29,7 +29,12 @@ export function configure(
 	const baseMatcher = {
 		android: () => ({
 			...baseMatcher,
-			disableDeviceId: toggle(config.android, 'collectDeviceId', false)
+			disableDeviceId: toggle(config.android, 'collectDeviceId', false),
+			flushInterval(interval: number) {
+				config.android.flushInterval = interval
+
+				return this
+			}
 		}),
 		ios: () => ({
 			...baseMatcher,

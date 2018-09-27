@@ -5,6 +5,7 @@
     "prettier": true,
     "no-console": false,
     "no-namespace": false,
-    "interface-name": false
+    "interface-name": false,
+    "no-internal-module": false
   }
 }

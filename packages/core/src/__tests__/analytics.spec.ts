@@ -64,17 +64,20 @@ it('waits for .setup()', async () => {
 	expect(Bridge.track).toHaveBeenNthCalledWith(2, 'test 2', {})
 })
 
+const ctx = {}
+
 it('does .track()', () =>
-	testCall('track')('Added to cart', { productId: 'azertyuiop' }))
+	testCall('track')('Added to cart', { productId: 'azertyuiop' }, ctx))
 
 it('does .screen()', () =>
-	testCall('screen')('Shopping cart', { from: 'Product page' }))
+	testCall('screen')('Shopping cart', { from: 'Product page' }, ctx))
 
-it('does .identify()', () => testCall('identify')('sloth', { eats: 'leaves' }))
+it('does .identify()', () =>
+	testCall('identify')('sloth', { eats: 'leaves' }, ctx))
 
-it('does .group()', () => testCall('group')('bots', { humans: false }))
+it('does .group()', () => testCall('group')('bots', { humans: false }, ctx))
 
-it('does .alias()', () => testCall('alias')('new alias'))
+it('does .alias()', () => testCall('alias')('new alias', ctx))
 
 it('does .reset()', testCall('reset'))
 it('does .flush()', testCall('flush'))

@@ -30,7 +30,7 @@
 
 ▸ **android**(): [Android](analytics.chainedconfiguration.android.md)
 
-*Defined in [analytics.ts:193](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L193)*
+*Defined in [analytics.ts:203](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L203)*
 
 Access Android specific settings
 
@@ -43,7 +43,7 @@ ___
 
 ▸ **ios**(): [iOS](analytics.chainedconfiguration.ios.md)
 
-*Defined in [analytics.ts:189](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L189)*
+*Defined in [analytics.ts:199](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L199)*
 
 Access iOS specific settings
 
@@ -56,7 +56,7 @@ ___
 
 ▸ **setup**(writeKey: *[WriteKey](../#writekey)*): `Promise`<[Client](../classes/analytics.client.md)>
 
-*Defined in [analytics.ts:185](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L185)*
+*Defined in [analytics.ts:195](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L195)*
 
 Finalize the configuration and initialize the Analytics client.
 

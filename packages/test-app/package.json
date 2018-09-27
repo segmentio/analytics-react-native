@@ -23,7 +23,7 @@
     "configurations": {
       "ios": {
         "binaryPath": "project/ios/build/Build/Products/Release-iphonesimulator/project.app",
-        "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace project/ios/project.xcworkspace -scheme project -configuration Release -sdk iphonesimulator -derivedDataPath project/ios/build -quiet",
+        "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace project/ios/project.xcworkspace -scheme project -configuration Release -sdk iphonesimulator -derivedDataPath project/ios/build -quiet -UseModernBuildSystem=NO",
         "type": "ios.simulator",
         "name": "iPhone 7"
       },

@@ -26,7 +26,7 @@
 **Ƭ Integration**: * `function` &#124; `object`
 *
 
-*Defined in [analytics.ts:170](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L170)*
+*Defined in [analytics.ts:180](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L180)*
 
 ___
 <a id="writekey"></a>
@@ -36,7 +36,7 @@ ___
 **Ƭ WriteKey**: * `string` &#124; `object`
 *
 
-*Defined in [analytics.ts:172](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L172)*
+*Defined in [analytics.ts:182](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L182)*
 
 ___
 

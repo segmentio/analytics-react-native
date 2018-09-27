@@ -22,6 +22,7 @@
 * [flush](analytics.client.md#flush)
 * [group](analytics.client.md#group)
 * [identify](analytics.client.md#identify)
+* [middleware](analytics.client.md#middleware)
 * [reset](analytics.client.md#reset)
 * [screen](analytics.client.md#screen)
 * [track](analytics.client.md#track)
@@ -36,7 +37,7 @@
 
 **● ready**: *`false`* = false
 
-*Defined in [analytics.ts:13](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L13)*
+*Defined in [analytics.ts:14](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L14)*
 
 Whether the client is ready to send events to Segment.
 
@@ -50,9 +51,9 @@ ___
 
 ###  alias
 
-▸ **alias**(newId: *`string`*): `this`
+▸ **alias**(newId: *`string`*): `Promise`<`void`>
 
-*Defined in [analytics.ts:115](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L115)*
+*Defined in [analytics.ts:125](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L125)*
 
 Merge two user identities, effectively connecting two sets of user data as one. This may not be supported by all integrations.
 
@@ -64,7 +65,7 @@ When you learn more about who the group is, you can record that information with
 | ------ | ------ | ------ |
 | newId | `string` |  The new ID you want to alias the existing ID to. The existing ID will be either the previousId if you have called identify, or the anonymous ID. |
 
-**Returns:** `this`
+**Returns:** `Promise`<`void`>
 
 ___
 <a id="catch"></a>
@@ -73,7 +74,7 @@ ___
 
 ▸ **catch**(handler: *[ErrorHandler]()*): `this`
 
-*Defined in [analytics.ts:23](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L23)*
+*Defined in [analytics.ts:27](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L27)*
 
 Catch React-Native bridge errors
 
@@ -94,7 +95,7 @@ ___
 
 ▸ **configure**(): [Configuration](../interfaces/analytics.chainedconfiguration.configuration.md)
 
-*Defined in [analytics.ts:43](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L43)*
+*Defined in [analytics.ts:53](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L53)*
 
 Configure the Analytics module.
 
@@ -117,54 +118,54 @@ ___
 
 ###  disable
 
-▸ **disable**(): `this`
+▸ **disable**(): `Promise`<`void`>
 
-*Defined in [analytics.ts:154](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L154)*
+*Defined in [analytics.ts:164](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L164)*
 
 Completely disable the sending of any analytics data.
 
 If you have a way for users to actively or passively (sometimes based on location) opt-out of analytics data collection, you can use this method to turn off all data collection.
 
-**Returns:** `this`
+**Returns:** `Promise`<`void`>
 
 ___
 <a id="enable"></a>
 
 ###  enable
 
-▸ **enable**(): `this`
+▸ **enable**(): `Promise`<`void`>
 
-*Defined in [analytics.ts:144](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L144)*
+*Defined in [analytics.ts:154](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L154)*
 
 Enable the sending of analytics data. Enabled by default.
 
 Occasionally used in conjunction with disable user opt-out handling.
 
-**Returns:** `this`
+**Returns:** `Promise`<`void`>
 
 ___
 <a id="flush"></a>
 
 ###  flush
 
-▸ **flush**(): `this`
+▸ **flush**(): `Promise`<`void`>
 
-*Defined in [analytics.ts:135](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L135)*
+*Defined in [analytics.ts:145](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L145)*
 
 Trigger an upload of all queued events.
 
 This is useful when you want to force all messages queued on the device to be uploaded. Please note that not all integrations respond to this method.
 
-**Returns:** `this`
+**Returns:** `Promise`<`void`>
 
 ___
 <a id="group"></a>
 
 ###  group
 
-▸ **group**(groupId: *`string`*, traits?: *[JsonMap]()*): `this`
+▸ **group**(groupId: *`string`*, traits?: *`JsonMap`*): `Promise`<`void`>
 
-*Defined in [analytics.ts:102](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L102)*
+*Defined in [analytics.ts:112](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L112)*
 
 Associate a user with a group, organization, company, project, or w/e _you_ call them.
 
@@ -175,18 +176,18 @@ When you learn more about who the group is, you can record that information with
 | Param | Type | Default value | Description |
 | ------ | ------ | ------ | ------ |
 | groupId | `string` | - |  A database ID for this group. |
-| `Default value` traits | [JsonMap]() |  {} |  A dictionary of traits you know about the group. Things like: name, employees, etc. |
+| `Default value` traits | `JsonMap` |  {} |  A dictionary of traits you know about the group. Things like: name, employees, etc. |
 
-**Returns:** `this`
+**Returns:** `Promise`<`void`>
 
 ___
 <a id="identify"></a>
 
 ###  identify
 
-▸ **identify**(userId: *`string`*, traits?: *[JsonMap]()*): `this`
+▸ **identify**(user: *`string`*, traits?: *`JsonMap`*): `Promise`<`void`>
 
-*Defined in [analytics.ts:90](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L90)*
+*Defined in [analytics.ts:100](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L100)*
 
 Associate a user with their unique ID and record traits about them.
 
@@ -196,8 +197,25 @@ When you learn more about who your user is, you can record that information with
 
 | Param | Type | Default value | Description |
 | ------ | ------ | ------ | ------ |
-| userId | `string` | - |  database ID (or email address) for this user. If you don't have a userId but want to record traits, you should pass nil. For more information on how we generate the UUID and Apple's policies on IDs, see [https://segment.io/libraries/ios#ids](https://segment.io/libraries/ios#ids) |
-| `Default value` traits | [JsonMap]() |  {} |  A dictionary of traits you know about the user. Things like: email, name, plan, etc. |
+| user | `string` | - |  database ID (or email address) for this user. If you don't have a userId but want to record traits, you should pass nil. For more information on how we generate the UUID and Apple's policies on IDs, see [https://segment.io/libraries/ios#ids](https://segment.io/libraries/ios#ids) |
+| `Default value` traits | `JsonMap` |  {} |  A dictionary of traits you know about the user. Things like: email, name, plan, etc. |
+
+**Returns:** `Promise`<`void`>
+
+___
+<a id="middleware"></a>
+
+###  middleware
+
+▸ **middleware**(middleware: *[Middleware]()*): `this`
+
+*Defined in [analytics.ts:33](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L33)*
+
+**Parameters:**
+
+| Param | Type |
+| ------ | ------ |
+| middleware | [Middleware]() |
 
 **Returns:** `this`
 
@@ -206,24 +224,24 @@ ___
 
 ###  reset
 
-▸ **reset**(): `this`
+▸ **reset**(): `Promise`<`void`>
 
-*Defined in [analytics.ts:125](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L125)*
+*Defined in [analytics.ts:135](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L135)*
 
 Reset any user state that is cached on the device.
 
 This is useful when a user logs out and you want to clear the identity. It will clear any traits or userId's cached on the device.
 
-**Returns:** `this`
+**Returns:** `Promise`<`void`>
 
 ___
 <a id="screen"></a>
 
 ###  screen
 
-▸ **screen**(name: *`string`*, properties?: *[JsonMap]()*): `this`
+▸ **screen**(name: *`string`*, properties?: *`JsonMap`*): `Promise`<`void`>
 
-*Defined in [analytics.ts:76](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L76)*
+*Defined in [analytics.ts:86](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L86)*
 
 Record the screens or views your users see.
 
@@ -234,18 +252,18 @@ When a user views a screen in your app, you'll want to record that here. For som
 | Param | Type | Default value | Description |
 | ------ | ------ | ------ | ------ |
 | name | `string` | - |  The title of the screen being viewed. We recommend using human-readable names like 'Photo Feed' or 'Completed Purchase Screen'. |
-| `Default value` properties | [JsonMap]() |  {} |  A dictionary of properties for the screen view event. If the event was 'Added to Shopping Cart', it might have properties like price, productType, etc. |
+| `Default value` properties | `JsonMap` |  {} |  A dictionary of properties for the screen view event. If the event was 'Added to Shopping Cart', it might have properties like price, productType, etc. |
 
-**Returns:** `this`
+**Returns:** `Promise`<`void`>
 
 ___
 <a id="track"></a>
 
 ###  track
 
-▸ **track**(event: *`string`*, properties?: *[JsonMap]()*): `this`
+▸ **track**(event: *`string`*, properties?: *`JsonMap`*): `Promise`<`void`>
 
-*Defined in [analytics.ts:58](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L58)*
+*Defined in [analytics.ts:68](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L68)*
 
 Record the actions your users perform.
 
@@ -256,9 +274,9 @@ When a user performs an action in your app, you'll want to track that action for
 | Param | Type | Default value | Description |
 | ------ | ------ | ------ | ------ |
 | event | `string` | - |  The name of the event you're tracking. We recommend using human-readable names like \`Played a Song\` or \`Updated Status\`. |
-| `Default value` properties | [JsonMap]() |  {} |  A dictionary of properties for the event. If the event was 'Added to Shopping Cart', it might have properties like price, productType, etc. |
+| `Default value` properties | `JsonMap` |  {} |  A dictionary of properties for the event. If the event was 'Added to Shopping Cart', it might have properties like price, productType, etc. |
 
-**Returns:** `this`
+**Returns:** `Promise`<`void`>
 
 ___
 

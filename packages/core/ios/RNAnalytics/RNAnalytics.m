@@ -46,25 +46,38 @@ RCT_EXPORT_METHOD(setup:(NSDictionary*)options) {
     [SEGAnalytics setupWithConfiguration:config];
 }
 
-RCT_EXPORT_METHOD(track:(NSString*)name :(NSDictionary*)properties) {
-    [SEGAnalytics.sharedAnalytics track:name properties:properties];
+#define withContext(context) @{@"context": context}
+
+RCT_EXPORT_METHOD(track:(NSString*)name :(NSDictionary*)properties :(NSDictionary*)context) {
+    [SEGAnalytics.sharedAnalytics track:name
+                             properties:properties
+                                options:withContext(context)];
 }
 
-RCT_EXPORT_METHOD(screen:(NSString*)name :(NSDictionary*)properties) {
-    [SEGAnalytics.sharedAnalytics screen:name properties:properties];
+RCT_EXPORT_METHOD(screen:(NSString*)name :(NSDictionary*)properties :(NSDictionary*)context) {
+    [SEGAnalytics.sharedAnalytics screen:name
+                              properties:properties
+                                 options:withContext(context)];
 }
 
-RCT_EXPORT_METHOD(identify:(NSString*)userId :(NSDictionary*)traits) {
-    [SEGAnalytics.sharedAnalytics identify:userId traits:traits];
+RCT_EXPORT_METHOD(identify:(NSString*)userId :(NSDictionary*)traits :(NSDictionary*)context) {
+    [SEGAnalytics.sharedAnalytics identify:userId
+                                    traits:traits
+                                   options:withContext(context)];
 }
 
-RCT_EXPORT_METHOD(group:(NSString*)groupId :(NSDictionary*)traits) {
-    [SEGAnalytics.sharedAnalytics group:groupId traits:traits];
+RCT_EXPORT_METHOD(group:(NSString*)groupId :(NSDictionary*)traits :(NSDictionary*)context) {
+    [SEGAnalytics.sharedAnalytics group:groupId
+                                 traits:traits
+                                options:withContext(context)];
 }
 
-RCT_EXPORT_METHOD(alias:(NSString*)newId) {
-    [SEGAnalytics.sharedAnalytics alias:newId];
+RCT_EXPORT_METHOD(alias:(NSString*)newId :(NSDictionary*)context) {
+    [SEGAnalytics.sharedAnalytics alias:newId
+                                options:withContext(context)];
 }
+
+#undef withContext
 
 RCT_EXPORT_METHOD(reset) {
     [SEGAnalytics.sharedAnalytics reset];

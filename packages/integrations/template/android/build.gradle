@@ -14,7 +14,6 @@ buildscript {
 
 android {
     compileSdkVersion 26
-    buildToolsVersion = '26.0.3'
 
     defaultConfig {
         minSdkVersion 16
@@ -40,5 +39,5 @@ repositories {
 dependencies {
     implementation '{{{dependency}}}'
 
-    compileOnly project(":@segment_react-native")
+    compileOnly project(":@segment_analytics-react-native")
 }

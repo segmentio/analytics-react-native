@@ -32,6 +32,7 @@ import com.segment.analytics.Analytics
 import com.segment.analytics.Properties
 import com.segment.analytics.Traits
 import com.segment.analytics.ValueMap
+import java.util.concurrent.TimeUnit
 
 class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaModule(context) {
     private val analytics
@@ -58,6 +59,13 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
             builder.trackAttributionInformation()
         }
 
+        if(options.hasKey("flushInterval")) {
+            builder.flushInterval(
+                options.getInt("flushInterval").toLong(),
+                TimeUnit.MILLISECONDS
+            )
+        }
+
         if(options.getBoolean("debug")) {
             builder.logLevel(Analytics.LogLevel.VERBOSE)
         }
@@ -68,23 +76,23 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
     }
 
     @ReactMethod
-    fun track(event: String, properties: ReadableMap) = 
+    fun track(event: String, properties: ReadableMap, context: ReadableMap) = 
         analytics.track(event, Properties() from properties)
 
     @ReactMethod
-    fun screen(name: String, properties: ReadableMap) =
+    fun screen(name: String, properties: ReadableMap, context: ReadableMap) =
         analytics.screen(name, Properties() from properties)
 
     @ReactMethod
-    fun identify(userId: String, traits: ReadableMap) =
+    fun identify(userId: String, traits: ReadableMap, context: ReadableMap) =
         analytics.identify(userId, Traits() from traits, null)
 
     @ReactMethod
-    fun group(groupId: String, traits: ReadableMap) =
+    fun group(groupId: String, traits: ReadableMap, context: ReadableMap) =
         analytics.group(groupId, Traits() from traits)
 
     @ReactMethod
-    fun alias(newId: String) =
+    fun alias(newId: String, context: ReadableMap) =
         analytics.alias(newId)
 
     @ReactMethod
