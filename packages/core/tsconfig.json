@@ -1,0 +1,8 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "build",
+    "lib": ["es5", "es2015.promise", "dom"]
+  },
+  "include": ["src/**/*.ts"]
+}

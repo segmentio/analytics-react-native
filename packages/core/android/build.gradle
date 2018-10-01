@@ -1,0 +1,41 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'https://maven.google.com' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.1.4'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.60'
+    }
+}
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion = '26.0.3'
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 26
+        versionCode 1
+        versionName '1.0'
+    }
+}
+
+repositories {
+    maven {
+        url "$rootDir/../node_modules/react-native/android"
+        name 'React Native (local)'
+    }
+    mavenCentral()
+}
+
+
+dependencies {
+    api 'com.segment.analytics.android:analytics:4.+'
+
+    api 'com.facebook.react:react-native:+'
+    api 'org.jetbrains.kotlin:kotlin-stdlib:1.2.+'
+}

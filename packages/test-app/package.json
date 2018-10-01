@@ -1,0 +1,38 @@
+{
+  "name": "@local/test-app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "./generate.sh",
+    "test:ios": "./test_ios.sh",
+    "test:android": "./test_android.sh",
+    "test": "run-s test:{ios,android}"
+  },
+  "devDependencies": {
+    "react-native-cli": "^2.0.1"
+  },
+  "dependencies": {
+    "detox": "^8.1.4",
+    "isomorphic-fetch": "^2.2.1",
+    "mocha": "^5.2.0"
+  },
+  "detox": {
+    "test-runner": "mocha",
+    "specs": "e2e",
+    "runner-config": "e2e/mocha.opts",
+    "configurations": {
+      "ios": {
+        "binaryPath": "project/ios/build/Build/Products/Release-iphonesimulator/project.app",
+        "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace project/ios/project.xcworkspace -scheme project -configuration Release -sdk iphonesimulator -derivedDataPath project/ios/build -quiet -UseModernBuildSystem=NO",
+        "type": "ios.simulator",
+        "name": "iPhone 7"
+      },
+      "android": {
+        "binaryPath": "project/android/app/build/outputs/apk/debug/app-debug.apk",
+        "build": "cd project/android && ./gradlew assembleDebug",
+        "type": "android.emulator",
+        "name": "Nexus_5X_API_26"
+      }
+    }
+  }
+}
