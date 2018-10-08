@@ -26,6 +26,7 @@
 * [reset](analytics.client.md#reset)
 * [screen](analytics.client.md#screen)
 * [track](analytics.client.md#track)
+* [useNativeConfiguration](analytics.client.md#usenativeconfiguration)
 
 ---
 
@@ -37,7 +38,7 @@
 
 **● ready**: *`false`* = false
 
-*Defined in [analytics.ts:14](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L14)*
+*Defined in analytics.ts:14*
 
 Whether the client is ready to send events to Segment.
 
@@ -53,7 +54,7 @@ ___
 
 ▸ **alias**(newId: *`string`*): `Promise`<`void`>
 
-*Defined in [analytics.ts:125](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L125)*
+*Defined in analytics.ts:173*
 
 Merge two user identities, effectively connecting two sets of user data as one. This may not be supported by all integrations.
 
@@ -74,7 +75,7 @@ ___
 
 ▸ **catch**(handler: *[ErrorHandler]()*): `this`
 
-*Defined in [analytics.ts:27](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L27)*
+*Defined in analytics.ts:27*
 
 Catch React-Native bridge errors
 
@@ -95,7 +96,7 @@ ___
 
 ▸ **configure**(): [Configuration](../interfaces/analytics.chainedconfiguration.configuration.md)
 
-*Defined in [analytics.ts:53](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L53)*
+*Defined in analytics.ts:101*
 
 Configure the Analytics module.
 
@@ -120,7 +121,7 @@ ___
 
 ▸ **disable**(): `Promise`<`void`>
 
-*Defined in [analytics.ts:164](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L164)*
+*Defined in analytics.ts:212*
 
 Completely disable the sending of any analytics data.
 
@@ -135,7 +136,7 @@ ___
 
 ▸ **enable**(): `Promise`<`void`>
 
-*Defined in [analytics.ts:154](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L154)*
+*Defined in analytics.ts:202*
 
 Enable the sending of analytics data. Enabled by default.
 
@@ -150,7 +151,7 @@ ___
 
 ▸ **flush**(): `Promise`<`void`>
 
-*Defined in [analytics.ts:145](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L145)*
+*Defined in analytics.ts:193*
 
 Trigger an upload of all queued events.
 
@@ -165,7 +166,7 @@ ___
 
 ▸ **group**(groupId: *`string`*, traits?: *`JsonMap`*): `Promise`<`void`>
 
-*Defined in [analytics.ts:112](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L112)*
+*Defined in analytics.ts:160*
 
 Associate a user with a group, organization, company, project, or w/e _you_ call them.
 
@@ -187,7 +188,7 @@ ___
 
 ▸ **identify**(user: *`string`*, traits?: *`JsonMap`*): `Promise`<`void`>
 
-*Defined in [analytics.ts:100](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L100)*
+*Defined in analytics.ts:148*
 
 Associate a user with their unique ID and record traits about them.
 
@@ -209,13 +210,34 @@ ___
 
 ▸ **middleware**(middleware: *[Middleware]()*): `this`
 
-*Defined in [analytics.ts:33](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L33)*
+*Defined in analytics.ts:65*
+
+Append a new middleware to the middleware chain.
+
+Middlewares are a powerful mechanism that can augment the events collected by the SDK. A middleware is a simple function that is invoked by the Segment SDK and can be used to monitor, modify or reject events.
+
+Middlewares are invoked for all events, including automatically tracked events, and external event sources like Adjust and Optimizely. This offers you the ability the customize those messages to fit your use case even if the event was sent outside your source code.
+
+The key thing to observe here is that the output produced by the first middleware feeds into the second. This allows you to chain and compose independent middlewares!
+
+For example, you might want to record the device year class with your events. Previously, you would have to do this everywhere you trigger an event with the Segment SDK. With middlewares, you can do this in a single place :
+
+```js
+import DeviceYearClass from 'react-native-device-year-class'
+
+analytics.middleware(async ({next, context}) =>
+  next({
+    ...context,
+    device_year_class: await DeviceYearClass()
+  })
+)
+```
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| middleware | [Middleware]() |
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| middleware | [Middleware]() |   |
 
 **Returns:** `this`
 
@@ -226,7 +248,7 @@ ___
 
 ▸ **reset**(): `Promise`<`void`>
 
-*Defined in [analytics.ts:135](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L135)*
+*Defined in analytics.ts:183*
 
 Reset any user state that is cached on the device.
 
@@ -241,7 +263,7 @@ ___
 
 ▸ **screen**(name: *`string`*, properties?: *`JsonMap`*): `Promise`<`void`>
 
-*Defined in [analytics.ts:86](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L86)*
+*Defined in analytics.ts:134*
 
 Record the screens or views your users see.
 
@@ -263,7 +285,7 @@ ___
 
 ▸ **track**(event: *`string`*, properties?: *`JsonMap`*): `Promise`<`void`>
 
-*Defined in [analytics.ts:68](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L68)*
+*Defined in analytics.ts:116*
 
 Record the actions your users perform.
 
@@ -277,6 +299,21 @@ When a user performs an action in your app, you'll want to track that action for
 | `Default value` properties | `JsonMap` |  {} |  A dictionary of properties for the event. If the event was 'Added to Shopping Cart', it might have properties like price, productType, etc. |
 
 **Returns:** `Promise`<`void`>
+
+___
+<a id="usenativeconfiguration"></a>
+
+###  useNativeConfiguration
+
+▸ **useNativeConfiguration**(): `this`
+
+*Defined in analytics.ts:77*
+
+Use the native configuration.
+
+You'll need to call this method when you configure Analytics's singleton using the native API.
+
+**Returns:** `this`
 
 ___
 

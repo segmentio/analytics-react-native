@@ -30,7 +30,7 @@
 
 *Inherited from [Base](analytics.chainedconfiguration.base.md).[android](analytics.chainedconfiguration.base.md#android)*
 
-*Defined in [analytics.ts:203](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L203)*
+*Defined in analytics.ts:251*
 
 Access Android specific settings
 
@@ -43,7 +43,7 @@ ___
 
 ▸ **disableDeviceId**(): `this`
 
-*Defined in [analytics.ts:257](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L257)*
+*Defined in analytics.ts:305*
 
 Disable the collection of the device identifier. Enabled by default.
 
@@ -62,7 +62,7 @@ ___
 
 ▸ **flushInterval**(every: *`number`*): `this`
 
-*Defined in [analytics.ts:264](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L264)*
+*Defined in analytics.ts:312*
 
 Set the interval at which the client should flush events. The client will automatically flush events to Segment every [flushInterval](analytics.chainedconfiguration.android.md#flushinterval) duration, regardless of [flushAt](analytics.chainedconfiguration.configuration.md#flushat).
 
@@ -83,7 +83,7 @@ ___
 
 *Inherited from [Base](analytics.chainedconfiguration.base.md).[ios](analytics.chainedconfiguration.base.md#ios)*
 
-*Defined in [analytics.ts:199](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L199)*
+*Defined in analytics.ts:247*
 
 Access iOS specific settings
 
@@ -98,7 +98,7 @@ ___
 
 *Inherited from [Base](analytics.chainedconfiguration.base.md).[setup](analytics.chainedconfiguration.base.md#setup)*
 
-*Defined in [analytics.ts:195](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L195)*
+*Defined in analytics.ts:243*
 
 Finalize the configuration and initialize the Analytics client.
 
