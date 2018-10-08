@@ -115,11 +115,19 @@ jobs:
           key: cocoapods-specs
           paths:
             - ~/.cocoapods
+  publish:
+    <<: *nodeJob
+    steps:
+      - checkout
+      - *getDeps
+      - *attach
+      - run: npm config set "//registry.npmjs.org/:_authToken" $NPM_AUTH
+      - run: yarn deploy
 
 workflows:
   version: 2
 
-  build_and_test:
+  build_test_and_publish:
     jobs:
       - install
       - test-android: *requiresTestApp
@@ -132,3 +140,15 @@ workflows:
           requires:
             - build-core
             - build-integrations
+      - publish:
+          requires:
+            - build-test-app
+            - test-android
+            - test-ios
+            - test-core
+            - lint
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*(-.+)?/
+            branches:
+              ignore: /.*/

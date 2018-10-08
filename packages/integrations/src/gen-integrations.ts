@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
 import path from 'path'
 import mustache from 'mustache'
-import pkg from '../package.json'
+import pkg from '../../core/package.json'
 
 import integrations, { Integration } from './integration-list'
 

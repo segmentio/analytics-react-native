@@ -1,6 +1,5 @@
 {
   "name": "@internal/analytics-react-native",
-  "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "private": true,
@@ -26,6 +25,7 @@
     "lint:prettier": "prettier $(git ls-files '**/*.ts' '**/*.js' '**/*.json' '**/*.md') --list-different",
     "lint:core": "yarn core lint",
     "lint": "run-s lint:*",
+    "deploy": "run-s 'core deploy' 'integrations deploy'",
     "docs:core": "yarn core docs",
     "docs": "run-s docs:*",
     "cz": "git-cz",
