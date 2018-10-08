@@ -18,7 +18,13 @@ const safeWrite = async (file: string, contents: string) => {
 	await fs.writeFile(file, contents)
 }
 
-async function prepareAndroid({ template, name, android, nativeModule, slug }: Context) {
+async function prepareAndroid({
+	template,
+	name,
+	android,
+	nativeModule,
+	slug
+}: Context) {
 	const identifier = slug('.').toLowerCase()
 	const classSlug = `${slug()}Integration`
 	const {
@@ -53,7 +59,14 @@ async function prepareAndroid({ template, name, android, nativeModule, slug }: C
 	])
 }
 
-async function prepareiOS({ template, name, out, ios, nativeModule, slug }: Context) {
+async function prepareiOS({
+	template,
+	name,
+	out,
+	ios,
+	nativeModule,
+	slug
+}: Context) {
 	const xcodeProject = 'ios/RNAnalyticsIntegration.xcodeproj'
 	const targetXcodeProject = `ios/${nativeModule}.xcodeproj`
 	const pod_name = `RNAnalyticsIntegration-${slug('-')}`

@@ -6,7 +6,7 @@ export default new Analytics.Client().middleware(payload => {
 		test: ''
 	})
 
-	switch(payload.type) {
+	switch (payload.type) {
 		case 'alias':
 			return payload.next(payload.context, {
 				newId: ''

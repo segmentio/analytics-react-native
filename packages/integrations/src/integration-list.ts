@@ -1,4 +1,4 @@
-import {parse} from 'yaml'
+import { parse } from 'yaml'
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
 

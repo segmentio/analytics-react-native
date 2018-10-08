@@ -31,7 +31,7 @@
     "cz": "git-cz",
     "precommit": "lint-staged",
     "commitmsg": "commitlint -E GIT_PARAMS",
-    "lint-staged:ts": "run-p build:core docs:core && git add packages/core/docs",
+    "lint-staged:ts": "run-p docs:core && git add packages/core/docs",
     "lint-staged:integrations": "yarn integrations generate:readme && git add README.md"
   },
   "commitlint": {
@@ -45,7 +45,7 @@
     }
   },
   "lint-staged": {
-    "packages/core/src/**/*.ts": [
+    "packages/*/src/**/*.ts": [
       "prettier --write",
       "yarn lint-staged:ts"
     ],
