@@ -62,7 +62,6 @@ it('produces a valid configuration', async () => {
 			writeKey
 		},
 		ios: {
-			recordBluetooth: true,
 			trackAdvertising: true,
 			trackDeepLinks: true,
 			writeKey

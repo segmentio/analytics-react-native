@@ -30,7 +30,7 @@
 
 *Inherited from [Base](analytics.chainedconfiguration.base.md).[android](analytics.chainedconfiguration.base.md#android)*
 
-*Defined in analytics.ts:251*
+*Defined in analytics.ts:252*
 
 Access Android specific settings
 
@@ -43,7 +43,7 @@ ___
 
 ▸ **disableDeviceId**(): `this`
 
-*Defined in analytics.ts:305*
+*Defined in analytics.ts:306*
 
 Disable the collection of the device identifier. Enabled by default.
 
@@ -62,7 +62,7 @@ ___
 
 ▸ **flushInterval**(every: *`number`*): `this`
 
-*Defined in analytics.ts:312*
+*Defined in analytics.ts:313*
 
 Set the interval at which the client should flush events. The client will automatically flush events to Segment every [flushInterval](analytics.chainedconfiguration.android.md#flushinterval) duration, regardless of [flushAt](analytics.chainedconfiguration.configuration.md#flushat).
 
@@ -83,7 +83,7 @@ ___
 
 *Inherited from [Base](analytics.chainedconfiguration.base.md).[ios](analytics.chainedconfiguration.base.md#ios)*
 
-*Defined in analytics.ts:247*
+*Defined in analytics.ts:248*
 
 Access iOS specific settings
 
@@ -98,7 +98,7 @@ ___
 
 *Inherited from [Base](analytics.chainedconfiguration.base.md).[setup](analytics.chainedconfiguration.base.md#setup)*
 
-*Defined in analytics.ts:243*
+*Defined in analytics.ts:244*
 
 Finalize the configuration and initialize the Analytics client.
 

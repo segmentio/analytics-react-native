@@ -30,7 +30,7 @@
 
 *Inherited from [Base](analytics.chainedconfiguration.base.md).[android](analytics.chainedconfiguration.base.md#android)*
 
-*Defined in analytics.ts:251*
+*Defined in analytics.ts:252*
 
 Access Android specific settings
 
@@ -45,7 +45,7 @@ ___
 
 *Inherited from [Base](analytics.chainedconfiguration.base.md).[ios](analytics.chainedconfiguration.base.md#ios)*
 
-*Defined in analytics.ts:247*
+*Defined in analytics.ts:248*
 
 Access iOS specific settings
 
@@ -60,7 +60,7 @@ ___
 
 *Inherited from [Base](analytics.chainedconfiguration.base.md).[setup](analytics.chainedconfiguration.base.md#setup)*
 
-*Defined in analytics.ts:243*
+*Defined in analytics.ts:244*
 
 Finalize the configuration and initialize the Analytics client.
 
@@ -79,7 +79,7 @@ ___
 
 ▸ **trackAdvertising**(): `this`
 
-*Defined in analytics.ts:288*
+*Defined in analytics.ts:289*
 
 Whether the analytics client should track advertisting info.
 
@@ -92,7 +92,7 @@ ___
 
 ▸ **trackDeepLinks**(): `this`
 
-*Defined in analytics.ts:294*
+*Defined in analytics.ts:295*
 
 Whether the analytics client should automatically track deep links.
 

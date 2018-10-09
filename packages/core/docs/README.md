@@ -26,7 +26,7 @@
 **Ƭ Integration**: * `function` &#124; `object`
 *
 
-*Defined in analytics.ts:228*
+*Defined in analytics.ts:229*
 
 ___
 <a id="writekey"></a>
@@ -36,7 +36,7 @@ ___
 **Ƭ WriteKey**: * `string` &#124; `object`
 *
 
-*Defined in analytics.ts:230*
+*Defined in analytics.ts:231*
 
 ___
 

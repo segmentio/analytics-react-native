@@ -38,7 +38,7 @@
 
 **● ready**: *`false`* = false
 
-*Defined in analytics.ts:14*
+*Defined in analytics.ts:15*
 
 Whether the client is ready to send events to Segment.
 
@@ -54,7 +54,7 @@ ___
 
 ▸ **alias**(newId: *`string`*): `Promise`<`void`>
 
-*Defined in analytics.ts:173*
+*Defined in analytics.ts:174*
 
 Merge two user identities, effectively connecting two sets of user data as one. This may not be supported by all integrations.
 
@@ -75,7 +75,7 @@ ___
 
 ▸ **catch**(handler: *[ErrorHandler]()*): `this`
 
-*Defined in analytics.ts:27*
+*Defined in analytics.ts:28*
 
 Catch React-Native bridge errors
 
@@ -96,7 +96,7 @@ ___
 
 ▸ **configure**(): [Configuration](../interfaces/analytics.chainedconfiguration.configuration.md)
 
-*Defined in analytics.ts:101*
+*Defined in analytics.ts:102*
 
 Configure the Analytics module.
 
@@ -121,7 +121,7 @@ ___
 
 ▸ **disable**(): `Promise`<`void`>
 
-*Defined in analytics.ts:212*
+*Defined in analytics.ts:213*
 
 Completely disable the sending of any analytics data.
 
@@ -136,7 +136,7 @@ ___
 
 ▸ **enable**(): `Promise`<`void`>
 
-*Defined in analytics.ts:202*
+*Defined in analytics.ts:203*
 
 Enable the sending of analytics data. Enabled by default.
 
@@ -151,7 +151,7 @@ ___
 
 ▸ **flush**(): `Promise`<`void`>
 
-*Defined in analytics.ts:193*
+*Defined in analytics.ts:194*
 
 Trigger an upload of all queued events.
 
@@ -166,7 +166,7 @@ ___
 
 ▸ **group**(groupId: *`string`*, traits?: *`JsonMap`*): `Promise`<`void`>
 
-*Defined in analytics.ts:160*
+*Defined in analytics.ts:161*
 
 Associate a user with a group, organization, company, project, or w/e _you_ call them.
 
@@ -188,7 +188,7 @@ ___
 
 ▸ **identify**(user: *`string`*, traits?: *`JsonMap`*): `Promise`<`void`>
 
-*Defined in analytics.ts:148*
+*Defined in analytics.ts:149*
 
 Associate a user with their unique ID and record traits about them.
 
@@ -210,7 +210,7 @@ ___
 
 ▸ **middleware**(middleware: *[Middleware]()*): `this`
 
-*Defined in analytics.ts:65*
+*Defined in analytics.ts:66*
 
 Append a new middleware to the middleware chain.
 
@@ -248,7 +248,7 @@ ___
 
 ▸ **reset**(): `Promise`<`void`>
 
-*Defined in analytics.ts:183*
+*Defined in analytics.ts:184*
 
 Reset any user state that is cached on the device.
 
@@ -263,7 +263,7 @@ ___
 
 ▸ **screen**(name: *`string`*, properties?: *`JsonMap`*): `Promise`<`void`>
 
-*Defined in analytics.ts:134*
+*Defined in analytics.ts:135*
 
 Record the screens or views your users see.
 
@@ -285,7 +285,7 @@ ___
 
 ▸ **track**(event: *`string`*, properties?: *`JsonMap`*): `Promise`<`void`>
 
-*Defined in analytics.ts:116*
+*Defined in analytics.ts:117*
 
 Record the actions your users perform.
 
@@ -307,7 +307,7 @@ ___
 
 ▸ **useNativeConfiguration**(): `this`
 
-*Defined in analytics.ts:77*
+*Defined in analytics.ts:78*
 
 Use the native configuration.
 

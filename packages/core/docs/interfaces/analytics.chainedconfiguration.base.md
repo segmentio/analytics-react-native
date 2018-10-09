@@ -30,7 +30,7 @@
 
 ▸ **android**(): [Android](analytics.chainedconfiguration.android.md)
 
-*Defined in analytics.ts:251*
+*Defined in analytics.ts:252*
 
 Access Android specific settings
 
@@ -43,7 +43,7 @@ ___
 
 ▸ **ios**(): [iOS](analytics.chainedconfiguration.ios.md)
 
-*Defined in analytics.ts:247*
+*Defined in analytics.ts:248*
 
 Access iOS specific settings
 
@@ -56,7 +56,7 @@ ___
 
 ▸ **setup**(writeKey: *[WriteKey](../#writekey)*): `Promise`<[Client](../classes/analytics.client.md)>
 
-*Defined in analytics.ts:243*
+*Defined in analytics.ts:244*
 
 Finalize the configuration and initialize the Analytics client.
 

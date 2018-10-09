@@ -1,6 +1,7 @@
-import { ErrorHandler, JsonMap, NativeWrapper } from './bridge'
+import { JsonMap } from './bridge'
 import { configure } from './configuration'
 import { Middleware, MiddlewareChain } from './middleware'
+import { ErrorHandler, NativeWrapper } from './wrapper'
 
 // prettier-ignore
 export module Analytics {
@@ -99,7 +100,7 @@ export module Analytics {
 		 * ```
 		 */
 		public configure() {
-			return configure(this, this.wrapper.ready)
+			return configure(this, () => this.wrapper.ready())
 		}
 
 		/**

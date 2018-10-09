@@ -1,5 +1,6 @@
-import { JsonMap, NativeWrapper } from './bridge'
+import { JsonMap } from './bridge'
 import { assertNever } from './utils'
+import { NativeWrapper } from './wrapper'
 
 export interface MiddlewarePayload<T extends string, D extends {}> {
 	type: T
@@ -169,9 +170,10 @@ const makePayload = <T extends Payload['type'], P extends PayloadFromType<T>>(
 	context: Context,
 	data: P['data'],
 	next: (ctx?: Context, data?: P['data']) => void = notImplemented('next')
-): P => ({
-	...(data as any),
-	context,
-	next,
-	type
-})
+) =>
+	({
+		data,
+		context,
+		next,
+		type
+	} as P)
