@@ -172,8 +172,8 @@ const makePayload = <T extends Payload['type'], P extends PayloadFromType<T>>(
 	next: (ctx?: Context, data?: P['data']) => void = notImplemented('next')
 ) =>
 	({
-		data,
 		context,
+		data,
 		next,
 		type
 	} as P)
