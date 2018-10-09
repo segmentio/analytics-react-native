@@ -46,6 +46,7 @@ it('produces a valid configuration', async () => {
 		.trackAdvertising()
 		.trackDeepLinks()
 		.android()
+		.flushInterval(72)
 		.disableDeviceId()
 		.setup(writeKey)
 
@@ -59,6 +60,7 @@ it('produces a valid configuration', async () => {
 
 		android: {
 			collectDeviceId: false,
+			flushInterval: 72,
 			writeKey
 		},
 		ios: {
