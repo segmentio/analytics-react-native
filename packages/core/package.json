@@ -1,6 +1,6 @@
 {
   "name": "@segment/analytics-react-native",
-  "version": "0.0.1-alpha.2",
+  "version": "0.0.1-alpha.3",
   "description": "The hassle-free way to add analytics to your React-Native app.",
   "license": "MIT",
   "main": "build/cjs/index.js",
@@ -23,7 +23,8 @@
     "docs:gen": "typedoc --out docs --module esnext --ignoreCompilerErrors --excludePrivate --excludeExternals --theme markdown --mode file --entrypoint Analytics --gitRevision master",
     "docs": "run-s docs:{clean,gen}",
     "lint": "tslint -p .",
-    "test": "jest"
+    "test": "jest",
+    "deploy": "npm publish"
   },
   "devDependencies": {
     "@types/jest": "^23.3.1",

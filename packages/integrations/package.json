@@ -8,7 +8,8 @@
     "generate:integrations": "yarn ts src/gen-integrations",
     "generate:readme": "yarn ts src/gen-readme",
     "generate": "run-p generate:*",
-    "build": "run-s clean generate"
+    "build": "run-s clean generate",
+    "deploy": "./deploy.sh"
   },
   "dependencies": {
     "fs-extra": "^7.0.0",
