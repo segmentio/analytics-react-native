@@ -9,7 +9,9 @@ The hassle-free way to add analytics to your React-Native app.
 #### Android
 
 - Gradle 4+
+  - Run `./gradlew wrapper --gradle-version=4.4` in your `android` folder
 - Build Tools 3+
+  - Upgrade `com.android.tools.build:gradle` to `3.1.4` in your `android/build.gradle` file
 
 #### iOS
 
