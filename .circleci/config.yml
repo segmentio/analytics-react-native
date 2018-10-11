@@ -1,8 +1,14 @@
 defaults:
+  noTagFilters: &noTagFilters
+    filters:
+      tags:
+        only: /.*/
   requiresInstall: &requiresInstall
+    <<: *noTagFilters
     requires:
       - install
   requiresTestApp: &requiresTestApp
+    <<: *noTagFilters
     requires:
       - build-test-app
   attach: &attach
@@ -141,6 +147,7 @@ workflows:
             - build-core
             - build-integrations
       - publish:
+          context: snyk
           requires:
             - build-test-app
             - test-android
