@@ -14,8 +14,8 @@ let restoreConsole: RestoreConsole = null!
 
 const ctx = {
 	library: {
-		name: '',
-		version: ''
+		name: 'analytics-react-native',
+		version: require('../../package.json').version
 	}
 }
 
