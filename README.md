@@ -43,7 +43,6 @@ analytics
         .trackAppLifecycleEvents()
         .trackAttributionData()
         .ios()
-            .recordBluetooth()
             .trackAdvertising()
             .trackDeepLinks()
         .android()
