@@ -8,6 +8,7 @@
 #import "RNAnalytics.h"
 
 #import <Analytics/SEGAnalytics.h>
+#import <React/RCTBridge.h>
 
 static NSMutableSet* RNAnalyticsIntegrations = nil;
 static NSLock* RNAnalyticsIntegrationsLock = nil;
@@ -29,9 +30,11 @@ static NSLock* RNAnalyticsIntegrationsLock = nil;
 
 RCT_EXPORT_MODULE()
 
+@synthesize bridge = _bridge;
+
 RCT_EXPORT_METHOD(setup:(NSDictionary*)options) {
     SEGAnalyticsConfiguration* config = [SEGAnalyticsConfiguration configurationWithWriteKey:options[@"ios"][@"writeKey"]];
-
+    
     config.recordScreenViews = [options[@"recordScreenViews"] boolValue];
     config.trackApplicationLifecycleEvents = [options[@"trackAppLifecycleEvents"] boolValue];
     config.trackAttributionData = [options[@"trackAttributionData"] boolValue];
@@ -44,6 +47,19 @@ RCT_EXPORT_METHOD(setup:(NSDictionary*)options) {
     
     [SEGAnalytics debug:[options[@"debug"] boolValue]];
     [SEGAnalytics setupWithConfiguration:config];
+    
+    // On iOS we use method swizzling to intercept lifecycle events
+    // However, React-Native calls our library after applicationDidFinishLaunchingWithOptions: is called
+    // We fix this by manually calling this method at setup-time
+    // TODO(fathyb): We should probably implement a dedicated API on the native part
+    if(config.trackApplicationLifecycleEvents) {
+        SEL selector = @selector(_applicationDidFinishLaunchingWithOptions:);
+        
+        if ([SEGAnalytics.sharedAnalytics respondsToSelector:selector]) {
+            [SEGAnalytics.sharedAnalytics performSelector:selector
+                                               withObject:_bridge.launchOptions];
+        }
+    }
 }
 
 #define withContext(context) @{@"context": context}
