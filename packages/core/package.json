@@ -25,7 +25,7 @@
     "docs": "run-s docs:{clean,gen}",
     "lint": "tslint -p .",
     "test": "jest",
-    "deploy": "npm publish"
+    "deploy": "./deploy.sh"
   },
   "devDependencies": {
     "@types/jest": "^23.3.1",
