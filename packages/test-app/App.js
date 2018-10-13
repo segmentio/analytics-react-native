@@ -16,20 +16,20 @@ const flush = () => analytics.flush()
 
 const pizzaEaten = () => analytics.track('Pizza Eaten')
 
-const trackOrder = () =>
-	analytics
-		.track('Order Completed')
-		.track('Order Cancelled', {
-			order_id: 323
-		})
-		.identify('userIdOnly')
-		.identify('userId', {
-			age: 32
-		})
-		.alias('newlyAliasedId')
-		.screen('User Login Screen', {
-			method: 'google'
-		})
+const trackOrder = () => {
+	analytics.track('Order Completed')
+	analytics.track('Order Cancelled', {
+		order_id: 323
+	})
+	analytics.identify('userIdOnly')
+	analytics.identify('userId', {
+		age: 32
+	})
+	analytics.alias('newlyAliasedId')
+	analytics.screen('User Login Screen', {
+		method: 'google'
+	})
+}
 
 let buildId = null
 const testSuite = () =>
