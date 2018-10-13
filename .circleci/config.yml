@@ -66,6 +66,7 @@ jobs:
           root: .
           paths:
             - packages/core/build/**/*
+            - packages/core/build/package.json
 
   build-integrations:
     <<: *nodeJob
