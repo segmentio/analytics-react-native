@@ -26,7 +26,6 @@ async function prepareAndroid({
 	slug
 }: Context) {
 	const identifier = slug('.').toLowerCase()
-	const classSlug = `${slug()}Integration`
 	const {
 		maven: {
 			repo = undefined,
@@ -35,11 +34,11 @@ async function prepareAndroid({
 			).toLowerCase()}`,
 			version = '+@aar'
 		} = {},
-		factory: {
-			class: factoryClass = classSlug,
-			import: factoryImport = `com.segment.analytics.android.integrations.${identifier}.${classSlug}`
-		} = {}
+		factory: { class: factoryClass = `${slug()}Integration` } = {}
 	} = android
+	const {
+		import: factoryImport = `com.segment.analytics.android.integrations.${identifier}.${factoryClass}`
+	} = android.factory || {}
 	const classpath = `com.segment.analytics.reactnative.integration.${identifier}`
 	const dependency = `${depName}:${version}`
 	const root = 'android/src/main'
