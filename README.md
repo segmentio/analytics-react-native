@@ -2,7 +2,7 @@
 
 The hassle-free way to add analytics to your React-Native app.
 
-[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/) ![CircleCI](https://img.shields.io/circleci/project/github/segment/analytics-react-native.svg) ![Codecov](https://img.shields.io/codecov/c/github/segment/analytics-react-native.svg) ![npm](https://img.shields.io/npm/v/@segment/analytics-react-native.svg)
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/) ![CircleCI](https://img.shields.io/circleci/project/github/segmentio/analytics-react-native/master.svg) ![Codecov](https://img.shields.io/codecov/c/github/segmentio/analytics-react-native.svg) ![npm](https://img.shields.io/npm/v/@segment/analytics-react-native.svg)
 
 ## Prerequisite
 
