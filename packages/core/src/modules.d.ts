@@ -1,3 +1,4 @@
+declare module '*.json'
 declare module 'react-native' {
 	export namespace NativeModules.RNAnalytics {
 		export interface Configuration {

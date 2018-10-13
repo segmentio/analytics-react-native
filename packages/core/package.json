@@ -18,7 +18,7 @@
     "build:ts": "run-p build:ts:*",
     "build:ts:cjs": "tsc --target es5 --outDir build/cjs --module commonjs",
     "build:ts:esm": "tsc --target es5 --outDir build/esm --module esnext",
-    "build:pkg": "ts-node src/make-pkg.ts > build/package.json",
+    "build:pkg": "ts-node -T src/make-pkg.ts > build/package.json",
     "build": "run-s build:{clean,ts,pkg}",
     "docs:clean": "rimraf docs",
     "docs:gen": "typedoc --out docs --module esnext --ignoreCompilerErrors --excludePrivate --excludeExternals --theme markdown --mode file --entrypoint Analytics --gitRevision master",
