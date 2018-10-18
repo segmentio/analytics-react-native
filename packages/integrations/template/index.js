@@ -6,6 +6,14 @@ var disabled =
 			? '{{disable_android}}' === 'true'
 			: true
 
-module.exports = disabled
-	? { disabled: true }
-	: ReactNative.NativeModules['{{{nativeModule}}}'].setup
+if (disabled) {
+	module.exports = { disabled: true }
+} else {
+	var bridge = ReactNative.NativeModules['{{{nativeModule}}}']
+
+	if (!bridge) {
+		throw new Error('Failed to load {{{name}}} integration native module')
+	}
+
+	module.exports = bridge.setup
+}
