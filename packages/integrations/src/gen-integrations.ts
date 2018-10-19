@@ -140,6 +140,7 @@ async function prepareJs({
 		),
 		template('index.js', {
 			nativeModule,
+			name,
 			disable_ios: String(ios.disabled || false),
 			disable_android: String(android.disabled || false)
 		}),

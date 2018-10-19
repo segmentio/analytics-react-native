@@ -170,3 +170,62 @@ Please note, if you are choosing to not use a dependency manager, you must keep 
     ```
 
 6.  `pod install`
+
+### "Failed to load [...] native module"
+
+If you're getting a `Failed to load [...] native module` error, it means that some native code hasn't been injected to your native project.
+
+#### iOS
+
+If you're using Cocoapods, check that your `ios/Podfile` file contains the right pods :
+
+- `Failed to load Analytics native module`, look for the core native module:
+  ```ruby
+  pod 'RNAnalytics', :path => '../node_modules/@segment/analytics-react-native'
+  ```
+- `Failed to load [...] integration native module`, look for the integration native module, example with Google Analytics:
+  ```ruby
+  pod 'RNAnalyticsIntegration-Google-Analytics', :path => '../node_modules/@segment/analytics-react-native-google-analytics'
+  ```
+
+Also check that your `Podfile` is synchronized with your workspace, run `pod install` in your `ios` folder.
+
+If you're not using Cocoapods please check that you followed the [iOS support without CocoaPods](#ios-support-without-cocoapods) instructions carefully.
+
+#### Android
+
+Check that `android/app/src/main/.../MainApplication.java` contains a reference to the native module:
+
+- `Failed to load Analytics native module`, look for the core native module:
+
+  ```java
+  import com.segment.analytics.reactnative.core.RNAnalyticsPackage;
+
+  // ...
+
+  @Override
+  protected List<ReactPackage> getPackages() {
+      return Arrays.<ReactPackage>asList(
+          new MainReactPackage(),
+          // ...
+          new RNAnalyticsPackage()
+      );
+  }
+  ```
+
+- `Failed to load [...] integration native module`, look for the integration native module, example with Google Analytics:
+
+  ```java
+  import com.segment.analytics.reactnative.integration.google.analytics.RNAnalyticsIntegration_Google_AnalyticsPackage;
+
+  // ...
+
+  @Override
+  protected List<ReactPackage> getPackages() {
+      return Arrays.<ReactPackage>asList(
+          new MainReactPackage(),
+          // ...
+          new RNAnalyticsIntegration_Google_AnalyticsPackage()
+      );
+  }
+  ```
