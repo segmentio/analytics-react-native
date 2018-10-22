@@ -2,18 +2,17 @@
 
 ## Index
 
-### Modules
-
-* [ChainedConfiguration](modules/analytics.chainedconfiguration.md)
-
 ### Classes
 
 * [Client](classes/analytics.client.md)
 
+### Interfaces
+
+* [Configuration](interfaces/analytics.configuration.md)
+
 ### Type aliases
 
 * [Integration](#integration)
-* [WriteKey](#writekey)
 
 ---
 
@@ -26,17 +25,7 @@
 **Ƭ Integration**: * `function` &#124; `object`
 *
 
-*Defined in analytics.ts:229*
-
-___
-<a id="writekey"></a>
-
-###  WriteKey
-
-**Ƭ WriteKey**: * `string` &#124; `object`
-*
-
-*Defined in analytics.ts:231*
+*Defined in [analytics.ts:8](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L8)*
 
 ___
 

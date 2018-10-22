@@ -1,115 +1,76 @@
-import Bridge from '../bridge'
 import { configure } from '../configuration'
 
-jest.mock('../bridge')
-
-const config = () => configure(null as any, jest.fn())
 const writeKey = 'test-write-key'
 
-const defaultConfig = {
-	flushAt: 20,
-
-	debug: false,
-	recordScreenViews: false,
-	trackAppLifecycleEvents: false,
-	trackAttributionData: false,
-
-	android: {
-		collectDeviceId: true,
-		writeKey
-	},
-	ios: {
-		trackAdvertising: false,
-		trackDeepLinks: false,
-		writeKey
-	}
-}
-
-beforeEach(() => {
-	;(Bridge.setup as jest.Mock).mockClear()
-})
-
 it('uses the default configuration', async () => {
-	await config().setup(writeKey)
+	expect(await configure(writeKey, {})).toEqual({
+		debug: false,
+		flushAt: 20,
+		recordScreenViews: false,
+		trackAppLifecycleEvents: false,
+		trackAttributionData: false,
+		writeKey,
 
-	expect(Bridge.setup).toHaveBeenLastCalledWith(defaultConfig)
+		android: {
+			collectDeviceId: true,
+			flushInterval: undefined
+		},
+		ios: {
+			trackAdvertising: false,
+			trackDeepLinks: false
+		}
+	})
 })
 
 it('produces a valid configuration', async () => {
-	await config()
-		.recordScreenViews()
-		.trackAppLifecycleEvents()
-		.trackAttributionData()
-		.flushAt(42)
-		.debug()
-		.ios()
-		.trackAdvertising()
-		.trackDeepLinks()
-		.android()
-		.flushInterval(72)
-		.disableDeviceId()
-		.setup(writeKey)
-
-	expect(Bridge.setup).toHaveBeenLastCalledWith({
-		flushAt: 42,
-
+	const config = await configure(writeKey, {
 		debug: true,
+		flushAt: 42,
 		recordScreenViews: true,
 		trackAppLifecycleEvents: true,
 		trackAttributionData: true,
 
 		android: {
 			collectDeviceId: false,
-			flushInterval: 72,
-			writeKey
+			flushInterval: 72
 		},
 		ios: {
 			trackAdvertising: true,
-			trackDeepLinks: true,
-			writeKey
+			trackDeepLinks: true
 		}
 	})
-})
 
-it('supports per-platform write keys', async () => {
-	const android = 'write key android'
-	const ios = 'write key ios'
+	expect(config).toEqual({
+		debug: true,
+		flushAt: 42,
+		recordScreenViews: true,
+		trackAppLifecycleEvents: true,
+		trackAttributionData: true,
+		writeKey,
 
-	await config().setup({ ios, android })
-
-	expect(Bridge.setup).toHaveBeenLastCalledWith({
-		...defaultConfig,
 		android: {
-			...defaultConfig.android,
-			writeKey: android
+			collectDeviceId: false,
+			flushInterval: 72
 		},
 		ios: {
-			...defaultConfig.ios,
-			writeKey: ios
+			trackAdvertising: true,
+			trackDeepLinks: true
 		}
 	})
 })
 
 it('waits for integrations to register', async () => {
-	const stub = jest.fn(async t =>
-		setTimeout(() => {
-			expect(Bridge.setup).not.toHaveBeenCalled()
-			t()
-		}, 500)
-	)
+	const stub = jest.fn(t => setTimeout(t, 500))
 
-	await config()
-		.using(() => ({ then: stub }))
-		.setup(writeKey)
+	await configure(writeKey, {
+		using: [() => ({ then: stub })]
+	})
 
 	expect(stub).toHaveBeenCalled()
-	expect(Bridge.setup).toHaveBeenCalled()
 })
 
 it('supports disabled integrations', async () => {
-	await config()
-		.using({ disabled: true })
-		.setup(writeKey)
-
-	expect(Bridge.setup).toHaveBeenCalled()
+	await configure(writeKey, {
+		using: [{ disabled: true }]
+	})
 })

@@ -2,21 +2,20 @@ declare module '*.json'
 declare module 'react-native' {
 	export namespace NativeModules.RNAnalytics {
 		export interface Configuration {
+			writeKey: string
 			recordScreenViews: boolean
 			trackAppLifecycleEvents: boolean
 			trackAttributionData: boolean
 			debug: boolean
 			flushAt: number
 
+			android: {
+				flushInterval?: number
+				collectDeviceId: boolean
+			}
 			ios: {
 				trackAdvertising: boolean
 				trackDeepLinks: boolean
-				writeKey: string
-			}
-			android: {
-				flushInterval?: number
-				writeKey: string
-				collectDeviceId: boolean
 			}
 		}
 
