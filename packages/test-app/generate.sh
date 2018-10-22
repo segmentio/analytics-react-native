@@ -26,11 +26,12 @@ cat << EOF >> App.js
 buildId = '$CIRCLE_WORKFLOW_ID'
 
 analytics
-  .configure()
-    .using($integrations_require)
-    .debug()
-  .setup('$SEGMENT_WRITE_TOKEN')
-    .then(() => console.log('Analytics ready'))
+  .setup('$SEGMENT_WRITE_TOKEN', {
+    using: [$integrations_require],
+    debug: true
+  })
+  .then(() => console.log('Analytics ready'))
+  .catch(err => console.error('Analytics error', err))
 EOF
 
 ../android-workaround.js

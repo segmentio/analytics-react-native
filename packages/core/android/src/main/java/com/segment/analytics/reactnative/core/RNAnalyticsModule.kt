@@ -42,9 +42,8 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
 
     @ReactMethod
     fun setup(options: ReadableMap) {
-        val android = options.getMap("android")
         val builder = Analytics
-                .Builder(reactApplicationContext, android.getString("writeKey"))
+                .Builder(reactApplicationContext, options.getString("writeKey"))
                 .flushQueueSize(options.getInt("flushAt"))
 
         if(options.getBoolean("recordScreenViews")) {
