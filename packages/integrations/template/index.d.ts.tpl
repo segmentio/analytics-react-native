@@ -1,5 +1,5 @@
 declare const {{{slug}}}Integration:
     | {disabled: true}
-    | (() => void)
+    | (() => Promise<void>)
 
 export = {{{slug}}}Integration
