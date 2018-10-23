@@ -33,7 +33,7 @@ RCT_EXPORT_MODULE()
 @synthesize bridge = _bridge;
 
 RCT_EXPORT_METHOD(setup:(NSDictionary*)options) {
-    SEGAnalyticsConfiguration* config = [SEGAnalyticsConfiguration configurationWithWriteKey:options[@"ios"][@"writeKey"]];
+    SEGAnalyticsConfiguration* config = [SEGAnalyticsConfiguration configurationWithWriteKey:options[@"writeKey"]];
     
     config.recordScreenViews = [options[@"recordScreenViews"] boolValue];
     config.trackApplicationLifecycleEvents = [options[@"trackAppLifecycleEvents"] boolValue];

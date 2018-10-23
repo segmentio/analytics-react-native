@@ -1,10 +1,91 @@
-import { JsonMap } from './bridge'
+import Bridge, { JsonMap } from './bridge'
 import { configure } from './configuration'
 import { Middleware, MiddlewareChain } from './middleware'
 import { ErrorHandler, NativeWrapper } from './wrapper'
 
 // prettier-ignore
 export module Analytics {
+	export type Integration = (() => PromiseLike<void>) | { disabled: true }
+
+	export interface Configuration {
+		/**
+		 * Whether the analytics client should automatically track application lifecycle events, such as
+		 * "Application Installed", "Application Updated" and "Application Opened".
+		 * 
+		 * Disabled by default.
+		 */
+		recordScreenViews?: boolean
+		/**
+		 * Whether the analytics client should automatically make a screen call when a
+		 * view controller is added to a view hierarchy.
+		 * Because the iOS underlying implementation uses method swizzling,
+		 * we recommend initializing the analytics client as early as possible.
+		 * 
+		 * Disabled by default.
+		 */
+		trackAppLifecycleEvents?: boolean
+		/**
+		 * Whether the analytics client should automatically track attribution data from enabled providers using the mobile service.
+		 * 
+		 * Disabled by default.
+		 */
+		trackAttributionData?: boolean
+
+		/**
+		 * Register a set of integrations to be used with this Analytics instance.
+		 */
+		using?: Integration[]
+		debug?: boolean
+
+		/**
+		 * The number of queued events that the analytics client should flush at.
+		 * Setting this to `1` will not queue any events and will use more battery.
+		 * 
+		 * `20` by default.
+		 */
+		flushAt?: number
+
+		/**
+		 * iOS specific settings.
+		 */
+		ios?: {
+			/**
+			 * Whether the analytics client should track advertisting info.
+			 * 
+			 * Disabled by default.
+			 */
+			trackAdvertising?: boolean
+			/**
+			 * Whether the analytics client should automatically track deep links.
+			 * You'll still need to call the continueUserActivity and openURL methods on the native analytics client.
+			 * 
+			 * Disabled by default.
+			 */
+			trackDeepLinks?: boolean
+		}
+		/**
+		 * Android specific settings.
+		 */
+		android?: {
+			/**
+			 * Set the interval in milliseconds at which the client should flush events. The client will automatically flush
+			 * events to Segment every {@link flushInterval} duration, regardless of {@link flushAt}.
+			 */
+			flushInterval?: number
+
+			/**
+			 * Whether the analytics client should client the device identifier.
+			 * The device identifier is obtained using :
+			 * - `android.provider.Settings.Secure.ANDROID_ID`
+			 * - `android.os.Build.SERIAL`
+			 * - or Telephony Identifier retrieved via TelephonyManager as available
+			 * 
+			 * Enabled by default.
+			 */
+			collectDeviceId?: boolean
+		}
+	}
+
 	export class Client {
 		/**
 		 * Whether the client is ready to send events to Segment.
@@ -86,21 +167,26 @@ export module Analytics {
 		}
 
 		/**
-		 * Configure the Analytics module.
+		 * Setup the Analytics module. All calls made before are queued
+		 * and only executed if the configuration was successful.
 		 *
-		 * This method returns a fluent-style API to configure the SDK :
 		 * ```js
-		 * analytics
-		 *   .configure()
-		 *     .using(Mixpanel, GoogleAnalytics)
-		 *     .trackAppLifecycle()
-		 *     .ios()
-		 *       .trackDeepLinks()
-		 *   .setup("YOUR_WRITE_KEY")
+		 * await analytics.setup('YOUR_WRITE_KEY', {
+		 *   using: [Mixpanel, GoogleAnalytics],
+		 *   trackAppLifecycleEvents: true,
+		 *   ios: {
+		 *     trackDeepLinks: true
+		 *   }
+		 * })
 		 * ```
+		 * 
+		 * @param writeKey Your Segment.io write key
+		 * @param configuration An optional {@link Configuration} object.
 		 */
-		public configure() {
-			return configure(this, () => this.wrapper.ready())
+		public async setup(writeKey: string, configuration: Configuration = {}) {
+			await Bridge.setup(await configure(writeKey, configuration))
+
+			this.wrapper.ready()
 		}
 
 		/**
@@ -223,94 +309,6 @@ export module Analytics {
 			} else {
 				handlers.forEach(handler => handler(error))
 			}
-		}
-	}
-
-	export type Integration = (() => PromiseLike<void>) | { disabled: true }
-
-	export type WriteKey =
-		| string
-		| {
-				android: string
-				ios: string
-		  }
-
-	export module ChainedConfiguration {
-		export interface Base {
-			/**
-			 * Finalize the configuration and initialize the Analytics client.
-			 * @param writeKey your Segment.io write key
-			 */
-			setup(writeKey: WriteKey): Promise<Client>
-			/**
-			 * Access iOS specific settings
-			 */
-			ios(): iOS
-			/**
-			 * Access Android specific settings
-			 */
-			android(): Android
-		}
-		export interface Configuration extends Base {
-			/**
-			 * Whether the analytics client should automatically make a screen call when a
-			 * view controller is added to a view hierarchy.
-			 * Because the iOS underlying implementation uses method swizzling,
-			 * we recommend initializing the analytics client as early as possible (before any screens are displayed).
-			 */
-			recordScreenViews(): this
-			/**
-			 * Enable the automatic tracking of application lifecycle events, such as
-			 * "Application Installed", "Application Updated" and "Application Opened".
-			 */
-			trackAppLifecycleEvents(): this
-			/**
-			 * Whether the analytics client should automatically track attribution data from enabled providers using the mobile service.
-			 */
-			trackAttributionData(): this
-			/**
-			 * The number of queued events that the analytics client should flush at.
-			 *
-			 * Setting this to `1` will not queue any events and will use more battery.
-			 * `20` by default.
-			 */
-			flushAt(at: number): this
-			/**
-			 * Register a set of integrations to be used with this Analytics instance.
-			 */
-			using(...integrations: Integration[]): this
-			debug(): this
-		}
-		// tslint:disable-next-line
-		export interface iOS extends Base {
-			/**
-			 * Whether the analytics client should track advertisting info.
-			 */
-			trackAdvertising(): this
-			/**
-			 * Whether the analytics client should automatically track deep links.
-			 *
-			 * You'll still need to call the continueUserActivity and openURL methods on the analytics client.
-			 */
-			trackDeepLinks(): this
-		}
-		export interface Android extends Base {
-			/**
-			 * Disable the collection of the device identifier. Enabled by default.
-			 *
-			 * The device identifier is obtained using :
-			 * - `android.provider.Settings.Secure.ANDROID_ID`
-			 * - `android.os.Build.SERIAL`
-			 * - or Telephony Identifier retrieved via TelephonyManager as available
-			 */
-			disableDeviceId(): this
-			/**
-			 * Set the interval at which the client should flush events. The client will automatically flush
-			 * events to Segment every {@link flushInterval} duration, regardless of {@link flushAt}.
-			 * 
-			 * @param every the interval in milliseconds
-			 */
-			flushInterval(every: number): this
 		}
 	}
 }

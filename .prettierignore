@@ -1,1 +1,3 @@
-packages/core/docs
+packages/core/docs/
+build/
+node_modules/

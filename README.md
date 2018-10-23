@@ -37,17 +37,21 @@ import Mixpanel from '@segment/analytics-react-native-mixpanel'
 import GoogleAnalytics from '@segment/analytics-react-native-google-analytics'
 
 analytics
-    .configure()
-        .using(Mixpanel, GoogleAnalytics)
-        .recordScreenViews()
-        .trackAppLifecycleEvents()
-        .trackAttributionData()
-        .ios()
-            .trackAdvertising()
-            .trackDeepLinks()
-        .android()
-            .disableDevicedId()
-    .setup("writeKey")
+    .setup('writeKey', {
+        using: [Mixpanel, GoogleAnalytics],
+        recordScreenViews: true,
+        trackAppLifecycleEvents: true,
+        trackAttributionData: true,
+
+        android: {
+            flushInterval: 60,
+            collectDeviceId: true
+        },
+        ios: {
+            trackAdvertising: true,
+            trackDeepLinks: true
+        }
+    })
     .then(() =>
         console.log('Analytics is ready')
     )
@@ -94,11 +98,9 @@ In your code :
 import analytics from '@segment/analytics-react-native'
 import GoogleAnalytics from '@segment/analytics-react-native-google-analytics'
 
-await analytics
-  .configure()
-  .using(GoogleAnalytics)
-  // ...
-  .setup('writeKey')
+await analytics.setup('writeKey', {
+    using: [GoogleAnalytics]
+})
 ```
 
 #### Integrations

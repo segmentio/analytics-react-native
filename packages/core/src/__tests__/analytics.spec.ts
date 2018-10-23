@@ -24,7 +24,7 @@ beforeEach(async () => {
 	analytics = new Analytics.Client()
 	Object.keys(Bridge).forEach(key => getBridgeStub(key as any).mockClear())
 
-	await analytics.configure().setup('write key')
+	await analytics.setup('write key')
 })
 
 afterEach(() => {
@@ -53,7 +53,7 @@ it('waits for .setup()', async () => {
 	client.track('test 2')
 
 	expect(Bridge.track).not.toHaveBeenCalled()
-	await client.configure().setup('key')
+	await client.setup('key')
 
 	expect(Bridge.track).toHaveBeenNthCalledWith(1, 'test 1', {}, ctx)
 	expect(Bridge.track).toHaveBeenNthCalledWith(2, 'test 2', {}, ctx)
