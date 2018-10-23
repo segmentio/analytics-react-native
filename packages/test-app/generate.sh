@@ -32,3 +32,5 @@ analytics
   .setup('$SEGMENT_WRITE_TOKEN')
     .then(() => console.log('Analytics ready'))
 EOF
+
+../android-workaround.js
