@@ -1,18 +1,18 @@
 import { Analytics } from './analytics'
-import Bridge from './bridge'
+import { Configuration } from './bridge'
 
 const defaults = {
 	android: ({
 		collectDeviceId = true,
 		flushInterval
-	}: Partial<Bridge.Configuration['android']>) => ({
+	}: Partial<Configuration['android']>) => ({
 		collectDeviceId,
 		flushInterval
 	}),
 	ios: ({
 		trackAdvertising = false,
 		trackDeepLinks = false
-	}: Partial<Bridge.Configuration['ios']>) => ({
+	}: Partial<Configuration['ios']>) => ({
 		trackAdvertising,
 		trackDeepLinks
 	})
@@ -31,7 +31,7 @@ export const configure = async (
 		ios = {},
 		android = {}
 	}: Analytics.Configuration
-): Promise<Bridge.Configuration> => {
+): Promise<Configuration> => {
 	await Promise.all(
 		using.map(
 			async integration =>
