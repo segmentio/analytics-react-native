@@ -1,0 +1,12 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-native",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "outDir": "build",
+    "lib": ["es2015"],
+    "typeRoots": ["node_modules/@types"]
+  },
+  "include": ["./App.tsx"]
+}
