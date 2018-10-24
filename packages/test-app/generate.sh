@@ -10,28 +10,27 @@ rm -rf project
 
 yarn react-native init project
 
-cp -r App.js calls.json project/
+cp -r src/* project/
 cd project
+rm App.js
+
+sed -i -e "s/SEGMENT_WRITE_TOKEN/$SEGMENT_WRITE_TOKEN/g" App.tsx
+sed -i -e "s/CIRCLE_WORKFLOW_ID/$CIRCLE_WORKFLOW_ID/g" App.tsx
 
 build_dir=$pwd/../integrations/build
+counter=0
 
 for integration in `cd $build_dir && echo @segment/*`; do
+    counter=$((counter+1))
     install_command+=" file:$build_dir/$integration"
-    integrations_require+="require('$integration'),"
+    integrations_require+="import integration_$counter from '$integration';"
+    integrations_require+="SEGMENT_INTEGRATIONS.push(integration_$counter);"
 done
 
+echo -e $integrations_require >> App.tsx
+
 yarn add $install_command @babel/runtime
-
-cat << EOF >> App.js
-buildId = '$CIRCLE_WORKFLOW_ID'
-
-analytics
-  .setup('$SEGMENT_WRITE_TOKEN', {
-    using: [$integrations_require],
-    debug: true
-  })
-  .then(() => console.log('Analytics ready'))
-  .catch(err => console.error('Analytics error', err))
-EOF
+yarn add typescript react-native-typescript-transformer @types/{react,react-native} --dev
+yarn tsc
 
 ../android-workaround.js
