@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.0.1-beta.2"></a>
+## [0.0.1-beta.2](https://github.com/segmentio/analytics-react-native/compare/v0.0.1-beta.1...v0.0.1-beta.2) (2018-10-24)
+
+
+### Bug Fixes
+
+* **android:** pull android tool versions from root project ([#12](https://github.com/segmentio/analytics-react-native/issues/12)) ([3f1eb3c](https://github.com/segmentio/analytics-react-native/commit/3f1eb3c)), closes [/github.com/frostney/react-native-create-library/blob/master/templates/android.js#L28](https://github.com//github.com/frostney/react-native-create-library/blob/master/templates/android.js/issues/L28)
+* **core:** fix TypeScript typings ([fe7933c](https://github.com/segmentio/analytics-react-native/commit/fe7933c)), closes [#11](https://github.com/segmentio/analytics-react-native/issues/11)
+
+
+### Features
+
+* **core:** export TypeScript public interfaces ([9978cd7](https://github.com/segmentio/analytics-react-native/commit/9978cd7))
+
+
+
 <a name="0.0.1-beta.1"></a>
 ## [0.0.1-beta.1](https://github.com/segmentio/analytics-react-native/compare/v0.0.1-beta.0...v0.0.1-beta.1) (2018-10-23)
 
