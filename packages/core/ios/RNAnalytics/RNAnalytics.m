@@ -32,7 +32,10 @@ RCT_EXPORT_MODULE()
 
 @synthesize bridge = _bridge;
 
-RCT_EXPORT_METHOD(setup:(NSDictionary*)options) {
+RCT_EXPORT_METHOD(setup:(NSDictionary*)options
+          setupResolver:(RCTPromiseResolveBlock)resolve
+          setupRejecter:(RCTPromiseRejectBlock)reject)
+{
     SEGAnalyticsConfiguration* config = [SEGAnalyticsConfiguration configurationWithWriteKey:options[@"writeKey"]];
     
     config.recordScreenViews = [options[@"recordScreenViews"] boolValue];
@@ -46,7 +49,13 @@ RCT_EXPORT_METHOD(setup:(NSDictionary*)options) {
     }
     
     [SEGAnalytics debug:[options[@"debug"] boolValue]];
-    [SEGAnalytics setupWithConfiguration:config];
+
+    @try {
+        [SEGAnalytics setupWithConfiguration:config];
+    }
+    @catch (NSException *exception) {
+        reject(exception);
+    }
     
     // On iOS we use method swizzling to intercept lifecycle events
     // However, React-Native calls our library after applicationDidFinishLaunchingWithOptions: is called
@@ -60,6 +69,7 @@ RCT_EXPORT_METHOD(setup:(NSDictionary*)options) {
                                                withObject:_bridge.launchOptions];
         }
     }
+    resolve(YES);
 }
 
 #define withContext(context) @{@"context": context}

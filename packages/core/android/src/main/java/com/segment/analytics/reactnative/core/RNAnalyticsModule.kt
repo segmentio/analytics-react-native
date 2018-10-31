@@ -28,6 +28,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.bridge.Promise
 import com.segment.analytics.Analytics
 import com.segment.analytics.Properties
 import com.segment.analytics.Traits
@@ -41,7 +42,7 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
     override fun getName() = "RNAnalytics"
 
     @ReactMethod
-    fun setup(options: ReadableMap) {
+    fun setup(options: ReadableMap, promise: Promise) {
         val builder = Analytics
                 .Builder(reactApplicationContext, options.getString("writeKey"))
                 .flushQueueSize(options.getInt("flushAt"))
@@ -69,9 +70,14 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
             builder.logLevel(Analytics.LogLevel.VERBOSE)
         }
 
-        Analytics.setSingletonInstance(
-            RNAnalytics.buildWithIntegrations(builder)
-        )
+        try {
+            Analytics.setSingletonInstance(
+                RNAnalytics.buildWithIntegrations(builder)
+            )
+            promise.resolve(true)
+        } catch(e: Exception) {
+            promise.reject("E_SEGMENT_ERROR", e)
+        }
     }
 
     @ReactMethod
