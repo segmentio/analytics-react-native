@@ -38,7 +38,7 @@ export const configure = async (
 		)
 	)
 
-	return {
+	const config = {
 		debug,
 		flushAt,
 		recordScreenViews,
@@ -48,5 +48,11 @@ export const configure = async (
 
 		android: defaults.android(android),
 		ios: defaults.ios(ios)
+	}
+	const json = JSON.stringify(config)
+
+	return {
+		...config,
+		json
 	}
 }

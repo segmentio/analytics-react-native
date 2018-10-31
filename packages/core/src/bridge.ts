@@ -7,6 +7,7 @@ export interface Configuration {
 	trackAttributionData: boolean
 	debug: boolean
 	flushAt: number
+	json: string
 
 	android: {
 		flushInterval?: number

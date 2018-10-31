@@ -32,7 +32,24 @@ RCT_EXPORT_MODULE()
 
 @synthesize bridge = _bridge;
 
-RCT_EXPORT_METHOD(setup:(NSDictionary*)options) {
+static NSString* singletonJsonConfig = nil;
+
+RCT_EXPORT_METHOD(
+     setup:(NSDictionary*)options
+          :(RCTPromiseResolveBlock)resolver
+          :(RCTPromiseRejectBlock)rejecter
+) {
+    NSString* json = options[@"json"];
+
+    if(singletonJsonConfig != nil) {
+        if(json == singletonJsonConfig) {
+            return resolver(nil);
+        }
+        else {
+            return rejecter(@"E_SEGMENT_RECONFIGURED", @"Duplicate Analytics client", nil);
+        }
+    }
+
     SEGAnalyticsConfiguration* config = [SEGAnalyticsConfiguration configurationWithWriteKey:options[@"writeKey"]];
     
     config.recordScreenViews = [options[@"recordScreenViews"] boolValue];
@@ -46,7 +63,13 @@ RCT_EXPORT_METHOD(setup:(NSDictionary*)options) {
     }
     
     [SEGAnalytics debug:[options[@"debug"] boolValue]];
-    [SEGAnalytics setupWithConfiguration:config];
+
+    @try {
+        [SEGAnalytics setupWithConfiguration:config];
+    }
+    @catch(NSException* error) {
+        return rejecter(@"E_SEGMENT_ERROR", @"Unexpected native Analtyics error", error);
+    }
     
     // On iOS we use method swizzling to intercept lifecycle events
     // However, React-Native calls our library after applicationDidFinishLaunchingWithOptions: is called
@@ -60,6 +83,9 @@ RCT_EXPORT_METHOD(setup:(NSDictionary*)options) {
                                                withObject:_bridge.launchOptions];
         }
     }
+
+    singletonJsonConfig = json;
+    resolver(nil);
 }
 
 #define withContext(context) @{@"context": context}
