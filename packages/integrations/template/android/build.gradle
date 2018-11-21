@@ -43,5 +43,5 @@ repositories {
 dependencies {
     implementation '{{{dependency}}}'
 
-    compileOnly project(":@segment_analytics-react-native")
+    compileOnly project(":@segment/analytics-react-native")
 }
