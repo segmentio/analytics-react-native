@@ -13,47 +13,47 @@ export interface MiddlewarePayload<T extends string, D extends {}> {
 
 export interface TrackPayload
 	extends MiddlewarePayload<
-			'track',
-			{
-				event: string
-				properties: JsonMap
-			}
-		> {}
+		'track',
+		{
+			event: string
+			properties: JsonMap
+		}
+	> {}
 
 export interface ScreenPayload
 	extends MiddlewarePayload<
-			'screen',
-			{
-				name: string
-				properties: JsonMap
-			}
-		> {}
+		'screen',
+		{
+			name: string
+			properties: JsonMap
+		}
+	> {}
 
 export interface IdentifyPayload
 	extends MiddlewarePayload<
-			'identify',
-			{
-				user: string
-				traits: JsonMap
-			}
-		> {}
+		'identify',
+		{
+			user: string
+			traits: JsonMap
+		}
+	> {}
 
 export interface GroupPayload
 	extends MiddlewarePayload<
-			'group',
-			{
-				groupId: string
-				traits: JsonMap
-			}
-		> {}
+		'group',
+		{
+			groupId: string
+			traits: JsonMap
+		}
+	> {}
 
 export interface AliasPayload
 	extends MiddlewarePayload<
-			'alias',
-			{
-				newId: string
-			}
-		> {}
+		'alias',
+		{
+			newId: string
+		}
+	> {}
 
 export interface Context extends JsonMap {
 	library: {

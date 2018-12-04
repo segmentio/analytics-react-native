@@ -33,9 +33,8 @@ export const configure = async (
 	}: Analytics.Configuration
 ): Promise<Configuration> => {
 	await Promise.all(
-		using.map(
-			async integration =>
-				typeof integration === 'function' ? await integration() : null
+		using.map(async integration =>
+			typeof integration === 'function' ? await integration() : null
 		)
 	)
 

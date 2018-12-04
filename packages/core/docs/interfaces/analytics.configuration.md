@@ -30,7 +30,7 @@
 **● android**: * `undefined` &#124; `object`
 *
 
-*Defined in [analytics.ts:69](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L69)*
+*Defined in analytics.ts:69*
 
 Android specific settings.
 
@@ -42,7 +42,7 @@ ___
 **● debug**: * `undefined` &#124; `false` &#124; `true`
 *
 
-*Defined in [analytics.ts:38](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L38)*
+*Defined in analytics.ts:38*
 
 ___
 <a id="flushat"></a>
@@ -52,7 +52,7 @@ ___
 **● flushAt**: * `undefined` &#124; `number`
 *
 
-*Defined in [analytics.ts:46](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L46)*
+*Defined in analytics.ts:46*
 
 The number of queued events that the analytics client should flush at. Setting this to `1` will not queue any events and will use more battery.
 
@@ -66,7 +66,7 @@ ___
 **● ios**: * `undefined` &#124; `object`
 *
 
-*Defined in [analytics.ts:51](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L51)*
+*Defined in analytics.ts:51*
 
 iOS specific settings.
 
@@ -78,7 +78,7 @@ ___
 **● recordScreenViews**: * `undefined` &#124; `false` &#124; `true`
 *
 
-*Defined in [analytics.ts:17](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L17)*
+*Defined in analytics.ts:17*
 
 Whether the analytics client should automatically track application lifecycle events, such as "Application Installed", "Application Updated" and "Application Opened".
 
@@ -92,7 +92,7 @@ ___
 **● trackAppLifecycleEvents**: * `undefined` &#124; `false` &#124; `true`
 *
 
-*Defined in [analytics.ts:26](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L26)*
+*Defined in analytics.ts:26*
 
 Whether the analytics client should automatically make a screen call when a view controller is added to a view hierarchy. Because the iOS underlying implementation uses method swizzling, we recommend initializing the analytics client as early as possible.
 
@@ -106,7 +106,7 @@ ___
 **● trackAttributionData**: * `undefined` &#124; `false` &#124; `true`
 *
 
-*Defined in [analytics.ts:32](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L32)*
+*Defined in analytics.ts:32*
 
 Whether the analytics client should automatically track attribution data from enabled providers using the mobile service.
 
@@ -119,7 +119,7 @@ ___
 
 **● using**: *[Integration](../#integration)[]*
 
-*Defined in [analytics.ts:37](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L37)*
+*Defined in analytics.ts:37*
 
 Register a set of integrations to be used with this Analytics instance.
 
