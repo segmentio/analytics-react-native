@@ -9,17 +9,17 @@ export module Analytics {
 
 	export interface Configuration {
 		/**
-		 * Whether the analytics client should automatically track application lifecycle events, such as
-		 * "Application Installed", "Application Updated" and "Application Opened".
+		 * Whether the analytics client should automatically make a screen call when a
+		 * view controller is added to a view hierarchy.
+		 * Because the iOS underlying implementation uses method swizzling,
+		 * we recommend initializing the analytics client as early as possible.
 		 * 
 		 * Disabled by default.
 		 */
 		recordScreenViews?: boolean
 		/**
-		 * Whether the analytics client should automatically make a screen call when a
-		 * view controller is added to a view hierarchy.
-		 * Because the iOS underlying implementation uses method swizzling,
-		 * we recommend initializing the analytics client as early as possible.
+		 * Whether the analytics client should automatically track application lifecycle events, such as
+		 * "Application Installed", "Application Updated" and "Application Opened".
 		 * 
 		 * Disabled by default.
 		 */
