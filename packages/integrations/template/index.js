@@ -3,8 +3,8 @@ var disabled =
 	ReactNative.Platform.OS === 'ios'
 		? '{{disable_ios}}' === 'true'
 		: ReactNative.Platform.OS === 'android'
-			? '{{disable_android}}' === 'true'
-			: true
+		? '{{disable_android}}' === 'true'
+		: true
 
 if (disabled) {
 	module.exports = { disabled: true }
