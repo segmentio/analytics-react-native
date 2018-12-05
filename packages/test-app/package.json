@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "build": "./generate.sh",
-    "test:ios": "./test_ios.sh",
+    "test:ios:cocoapods": "COCOAPODS=yes ./test_ios.sh",
+    "test:ios:vanilla": "COCOAPODS=no ./test_ios.sh",
     "test:android": "./test_android.sh",
     "test": "run-s test:{ios,android}"
   },
@@ -12,7 +13,7 @@
     "react-native-cli": "^2.0.1"
   },
   "dependencies": {
-    "detox": "^8.1.4",
+    "detox": "^9",
     "isomorphic-fetch": "^2.2.1",
     "mocha": "^5.2.0"
   },
@@ -21,7 +22,13 @@
     "specs": "e2e",
     "runner-config": "e2e/mocha.opts",
     "configurations": {
-      "ios": {
+      "ios-vanilla": {
+        "binaryPath": "project/ios/build/Build/Products/Release-iphonesimulator/project.app",
+        "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project project/ios/project.xcodeproj -scheme project -configuration Release -sdk iphonesimulator -derivedDataPath project/ios/build -quiet -UseModernBuildSystem=NO",
+        "type": "ios.simulator",
+        "name": "iPhone 7"
+      },
+      "ios-cocoapods": {
         "binaryPath": "project/ios/build/Build/Products/Release-iphonesimulator/project.app",
         "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace project/ios/project.xcworkspace -scheme project -configuration Release -sdk iphonesimulator -derivedDataPath project/ios/build -quiet -UseModernBuildSystem=NO",
         "type": "ios.simulator",

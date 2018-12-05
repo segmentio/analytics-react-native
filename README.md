@@ -99,7 +99,7 @@ import analytics from '@segment/analytics-react-native'
 import GoogleAnalytics from '@segment/analytics-react-native-google-analytics'
 
 await analytics.setup('writeKey', {
-    using: [GoogleAnalytics]
+  using: [GoogleAnalytics]
 })
 ```
 
@@ -145,12 +145,9 @@ However, if you cannot use Cocoapods, you can manually install our dynamic frame
 
 Here are the steps for installing manually:
 
-1.  Download the [latest built SDK](https://github.com/segmentio/analytics-ios/releases), and unzip the zip file.
-2.  Drag the unzipped Analytics.framework folder into your Xcode project.
-    Make sure to check `Copy items if needed`.
-    ![Add Analytics.framework](docs/ios/add-analytics-framework.png)
-3.  In the `General` tab for your project, search for `Embedded Binaries` and add the `Analytics.framework`.
-    ![Embed Analytics.framework](docs/ios/embed-analytics-framework.png)
+1. Add `analytics-ios` as a npm dependency: `yarn add @segment/analytics-ios@github:segmentio/analytics-ios#3.6.10`
+2. In the `General` tab for your project, search for `Embedded Binaries` and add the `Analytics.framework`
+   ![Embed Analytics.framework](https://segment.com/docs/sources/mobile/react-native/images/embed-analytics-framework.png)
 
 Please note, if you are choosing to not use a dependency manager, you must keep files up-to-date with regularly scheduled, manual updates.
 
