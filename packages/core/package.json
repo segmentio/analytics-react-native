@@ -1,6 +1,6 @@
 {
   "name": "@segment/analytics-react-native",
-  "version": "0.0.1-beta.2",
+  "version": "0.0.1-beta.3",
   "description": "The hassle-free way to add analytics to your React-Native app.",
   "license": "MIT",
   "main": "build/cjs/index.js",
