@@ -7,8 +7,33 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B3E7B58A1CC2AC0600A0062D /* RNAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RNAnalytics.m */; };
+		4B5DE17A21B9DF4B00BF8844 /* Analytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5DE17421B9DF3900BF8844 /* Analytics.framework */; };
+		B3E7B58A1CC2AC0600A0062D /* RNAnalytics/RNAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RNAnalytics/RNAnalytics.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4B5DE17321B9DF3900BF8844 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B5DE16E21B9DF3900BF8844 /* Analytics.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EADEB85B1DECD080005322DA;
+			remoteInfo = Analytics;
+		};
+		4B5DE17521B9DF3900BF8844 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B5DE16E21B9DF3900BF8844 /* Analytics.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EADEB86A1DECD0EF005322DA;
+			remoteInfo = AnalyticsTests;
+		};
+		4B5DE17721B9DF4700BF8844 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B5DE16E21B9DF3900BF8844 /* Analytics.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = EADEB85A1DECD080005322DA;
+			remoteInfo = Analytics;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		58B511D91A9E6C8500147676 /* CopyFiles */ = {
@@ -24,8 +49,9 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libRNAnalytics.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNAnalytics.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3E7B5881CC2AC0600A0062D /* RNAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNAnalytics/RNAnalytics.h; sourceTree = "<group>"; };
-		B3E7B5891CC2AC0600A0062D /* RNAnalytics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNAnalytics/RNAnalytics.m; sourceTree = "<group>"; };
+		4B5DE16E21B9DF3900BF8844 /* Analytics.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Analytics.xcodeproj; path = "../../analytics-ios/Analytics.xcodeproj"; sourceTree = "<group>"; };
+		B3E7B5881CC2AC0600A0062D /* RNAnalytics/RNAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNAnalytics/RNAnalytics.h; sourceTree = "<group>"; };
+		B3E7B5891CC2AC0600A0062D /* RNAnalytics/RNAnalytics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNAnalytics/RNAnalytics.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B5DE17A21B9DF4B00BF8844 /* Analytics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -47,12 +74,30 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		4B5DE16F21B9DF3900BF8844 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4B5DE17421B9DF3900BF8844 /* Analytics.framework */,
+				4B5DE17621B9DF3900BF8844 /* AnalyticsTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4B5DE17921B9DF4B00BF8844 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				B3E7B5881CC2AC0600A0062D /* RNAnalytics.h */,
-				B3E7B5891CC2AC0600A0062D /* RNAnalytics.m */,
+				4B5DE16E21B9DF3900BF8844 /* Analytics.xcodeproj */,
+				B3E7B5881CC2AC0600A0062D /* RNAnalytics/RNAnalytics.h */,
+				B3E7B5891CC2AC0600A0062D /* RNAnalytics/RNAnalytics.m */,
 				134814211AA4EA7D00B7C361 /* Products */,
+				4B5DE17921B9DF4B00BF8844 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -70,6 +115,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				4B5DE17821B9DF4700BF8844 /* PBXTargetDependency */,
 			);
 			name = RNAnalytics;
 			productName = RCTDataManager;
@@ -100,6 +146,12 @@
 			mainGroup = 58B511D21A9E6C8500147676;
 			productRefGroup = 58B511D21A9E6C8500147676;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 4B5DE16F21B9DF3900BF8844 /* Products */;
+					ProjectRef = 4B5DE16E21B9DF3900BF8844 /* Analytics.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				58B511DA1A9E6C8500147676 /* RNAnalytics */,
@@ -107,16 +159,41 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXReferenceProxy section */
+		4B5DE17421B9DF3900BF8844 /* Analytics.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Analytics.framework;
+			remoteRef = 4B5DE17321B9DF3900BF8844 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B5DE17621B9DF3900BF8844 /* AnalyticsTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AnalyticsTests.xctest;
+			remoteRef = 4B5DE17521B9DF3900BF8844 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
 /* Begin PBXSourcesBuildPhase section */
 		58B511D71A9E6C8500147676 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3E7B58A1CC2AC0600A0062D /* RNAnalytics.m in Sources */,
+				B3E7B58A1CC2AC0600A0062D /* RNAnalytics/RNAnalytics.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4B5DE17821B9DF4700BF8844 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Analytics;
+			targetProxy = 4B5DE17721B9DF4700BF8844 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		58B511ED1A9E6C8500147676 /* Debug */ = {
@@ -204,7 +281,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
-				"$(inherited)",
+					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../../../React/**",
 					"$(SRCROOT)/../../react-native/React/**",

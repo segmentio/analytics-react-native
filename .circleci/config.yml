@@ -103,7 +103,21 @@ jobs:
 
       - run: yarn test-app test:android
 
-  test-ios:
+  test-ios-vanilla:
+    <<: *job
+    macos:
+      xcode: "9.4.0"
+    steps:
+      - checkout
+      # macOS VMs doesn't support Docker based caches
+      - run: yarn install --frozen-lockfile
+      - *attach
+      - run: brew tap wix/brew
+      - run: brew install wix/brew/applesimutils
+
+      - run: yarn test-app test:ios:vanilla
+
+  test-ios-cocoapods:
     <<: *job
     macos:
       xcode: "9.4.0"
@@ -117,7 +131,7 @@ jobs:
 
       - restore_cache:
           key: cocoapods-specs
-      - run: yarn test-app test:ios
+      - run: yarn test-app test:ios:cocoapods
       - save_cache:
           key: cocoapods-specs
           paths:
@@ -138,7 +152,8 @@ workflows:
     jobs:
       - install
       - test-android: *requiresTestApp
-      - test-ios: *requiresTestApp
+      - test-ios-vanilla: *requiresTestApp
+      - test-ios-cocoapods: *requiresTestApp
       - test-core: *requiresInstall
       - lint: *requiresInstall
       - build-integrations: *requiresInstall
@@ -152,7 +167,8 @@ workflows:
           requires:
             - build-test-app
             - test-android
-            - test-ios
+            - test-ios-vanilla
+            - test-ios-cocoapods
             - test-core
             - lint
           filters:
