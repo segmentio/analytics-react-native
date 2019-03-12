@@ -100,7 +100,6 @@ jobs:
       - checkout
       - *getDeps
       - *attach
-
       - run: yarn test-app test:android
 
   test-ios-vanilla:

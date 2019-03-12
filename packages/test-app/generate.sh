@@ -8,7 +8,7 @@ integrations_require=""
 
 rm -rf project
 
-yarn react-native init project --version=react-native@0.58.4
+yarn react-native init project --version=react-native@0.59.2
 
 cp -r src/* project/
 cd project

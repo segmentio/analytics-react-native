@@ -37,7 +37,9 @@ it('catches bridge errors', async () => {
 	const error = new Error('test-error')
 	const onError = jest.fn()
 
-	getBridgeStub('track').mockImplementationOnce(() => Promise.reject(error))
+	getBridgeStub('track').mockImplementationOnce(
+		() => Promise.reject(error) as any
+	)
 	analytics.catch(onError)
 	analytics.track('test')
 
@@ -82,7 +84,9 @@ it('logs uncaught bridge errors', async () => {
 		message: 'test-error'
 	}
 
-	getBridgeStub('track').mockImplementationOnce(() => Promise.reject(error))
+	getBridgeStub('track').mockImplementationOnce(
+		() => Promise.reject(error) as any
+	)
 
 	expect(analytics.track('test')).rejects.toBe(error)
 	expect(console.error).not.toHaveBeenCalled()
