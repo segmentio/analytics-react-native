@@ -32,5 +32,3 @@ echo -e $integrations_require >> requires.js
 yarn add $install_command @babel/runtime
 yarn add typescript react-native-typescript-transformer @types/{react,react-native} --dev
 yarn tsc
-
-../android-workaround.js
