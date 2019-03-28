@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
-import analytics, { Analytics } from '@segment/analytics-react-native'
+import analytics from '@segment/analytics-react-native'
 
 type Call = ['identify' | 'track', string, {}]
 
@@ -81,14 +81,12 @@ const styles = StyleSheet.create({
   }
 })
 
-const SEGMENT_INTEGRATIONS: Analytics.Integration[] = []
+import integrations from './integrations.gen'
 
-setTimeout(() => {
-  analytics
+analytics
     .setup('SEGMENT_WRITE_TOKEN', {
       debug: true,
-      using: SEGMENT_INTEGRATIONS
+      using: integrations
     })
     .then(() => console.log('Analytics ready'))
     .catch(err => console.error(err))
-})
