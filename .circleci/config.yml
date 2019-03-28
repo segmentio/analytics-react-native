@@ -95,7 +95,7 @@ jobs:
   test-android:
     <<: *job
     docker:
-      - image: circleci/android:api-26-node8-alpha
+      - image: circleci/android:api-26-node
     steps:
       - checkout
       - *getDeps

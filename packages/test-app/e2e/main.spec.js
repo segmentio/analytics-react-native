@@ -40,12 +40,15 @@ const callProperties = {
 
 async function hasMatchingCall(type, name, props) {
 	const properties = callProperties[type]
+	const interval = 10 * 1000 // 10 seconds
+	const timeout = 5 * 60 * 1000 // 5 minutes
+	const start = Date.now()
 
 	if (!properties) {
 		throw new Error(`Unknown call type ${type}`)
 	}
 
-	for (let i = 0; i < 10; i++) {
+	while (Date.now() - start < timeout) {
 		const headers = {
 			Authorization: 'Basic ' + Buffer.from(E2E_TOKEN + ':').toString('base64')
 		}
@@ -68,7 +71,7 @@ async function hasMatchingCall(type, name, props) {
 			return
 		}
 
-		await sleep(1000)
+		await sleep(interval)
 	}
 
 	throw new Error('Cannot find call')
