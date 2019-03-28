@@ -40,7 +40,7 @@ const callProperties = {
 
 async function hasMatchingCall(type, name, props) {
 	const properties = callProperties[type]
-	const interval = 1000 // 1 second
+	const interval = 10 * 1000 // 10 seconds
 	const timeout = 5 * 60 * 1000 // 5 minutes
 	const start = Date.now()
 
