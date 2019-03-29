@@ -42,7 +42,7 @@ RCT_EXPORT_METHOD(
     NSString* json = options[@"json"];
 
     if(singletonJsonConfig != nil) {
-        if(json == singletonJsonConfig) {
+        if([json isEqualToString:singletonJsonConfig]) {
             return resolver(nil);
         }
         else {
