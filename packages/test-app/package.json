@@ -2,6 +2,11 @@
   "name": "@local/test-app",
   "version": "0.0.0",
   "private": true,
+  "workspaces": {
+    "nohoist": [
+      "detox"
+    ]
+  },
   "scripts": {
     "build": "./generate.sh",
     "test:ios:cocoapods": "COCOAPODS=yes ./test_ios.sh",
@@ -10,35 +15,35 @@
     "test": "run-s test:{ios,android}"
   },
   "devDependencies": {
+    "jest": "^24.5.0",
     "react-native-cli": "^2.0.1"
   },
   "dependencies": {
-    "detox": "^9",
-    "isomorphic-fetch": "^2.2.1",
-    "mocha": "^5.2.0"
+    "detox": "^12.1.1",
+    "isomorphic-fetch": "^2.2.1"
   },
   "detox": {
-    "test-runner": "mocha",
+    "test-runner": "jest",
     "specs": "e2e",
-    "runner-config": "e2e/mocha.opts",
+    "runner-config": "e2e/config.json",
     "configurations": {
       "ios-vanilla": {
-        "binaryPath": "project/ios/build/Build/Products/Release-iphonesimulator/project.app",
-        "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project project/ios/project.xcodeproj -scheme project -configuration Release -sdk iphonesimulator -derivedDataPath project/ios/build -quiet -UseModernBuildSystem=NO",
+        "binaryPath": "project/ios/build/Build/Products/Release-iphonesimulator/TestApp.app",
+        "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project project/ios/TestApp.xcodeproj -scheme TestApp -configuration Release -sdk iphonesimulator -derivedDataPath project/ios/build -quiet -UseModernBuildSystem=NO",
         "type": "ios.simulator",
-        "name": "iPhone 7"
+        "name": "iPhone X"
       },
       "ios-cocoapods": {
-        "binaryPath": "project/ios/build/Build/Products/Release-iphonesimulator/project.app",
-        "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace project/ios/project.xcworkspace -scheme project -configuration Release -sdk iphonesimulator -derivedDataPath project/ios/build -quiet -UseModernBuildSystem=NO",
+        "binaryPath": "project/ios/build/Build/Products/Release-iphonesimulator/TestApp.app",
+        "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace project/ios/TestApp.xcworkspace -scheme TestApp -configuration Release -sdk iphonesimulator -derivedDataPath project/ios/build -quiet -UseModernBuildSystem=NO",
         "type": "ios.simulator",
-        "name": "iPhone 7"
+        "name": "iPhone X"
       },
       "android": {
         "binaryPath": "project/android/app/build/outputs/apk/debug/app-debug.apk",
-        "build": "cd project/android && ./gradlew assembleDebug",
+        "build": "cd project/android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug",
         "type": "android.emulator",
-        "name": "Nexus_5X_API_26"
+        "name": "Nexus_5X_API_27"
       }
     }
   }

@@ -1,13 +1,9 @@
 #!/bin/bash
 
-set -e
+set -ex
 
 pushd project
-    pushd android
-        export GRADLE_OPTS="-Xmx1024m"
-
-        yarn react-native link
-    popd
+    yarn react-native link
 popd
 
 yarn detox build --configuration android

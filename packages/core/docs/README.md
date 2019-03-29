@@ -22,10 +22,9 @@
 
 ###  Integration
 
-**Ƭ Integration**: * `function` &#124; `object`
-*
+**Ƭ Integration**: *`function` \| `object`*
 
-*Defined in analytics.ts:8*
+*Defined in [analytics.ts:8](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L8)*
 
 ___
 

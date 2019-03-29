@@ -1,22 +1,23 @@
 #!/bin/bash
 
-set -e
+set -ex
 
 cfg=""
 
 pushd project/ios
     if [[ $COCOAPODS == "yes" ]]; then
-        cp ../../src/Podfile .
+        cp -r ../../patches/Podfile .
         yarn react-native link
         pod install
-        cat ../requires.js >> ../App.tsx
         cfg="cocoapods"
     else
-        rm -rf project.xcodeproj
-        cp -r ../../src/project.xcodeproj project.xcodeproj
+        echo "import {Analytics} from '@segment/analytics-react-native'" > ../integrations.gen.ts
+        echo "export default [] as Analytics.Integration[]" >> ../integrations.gen.ts
+        rm -rf TestApp.xcodeproj
+        cp -r ../../patches/TestApp.xcodeproj .
         yarn remove $(cd ../../../integrations/build && echo @segment/*)
-        yarn add @segment/analytics-ios@github:segmentio/analytics-ios#3.6.10
         yarn react-native link
+        yarn add @segment/analytics-ios@github:segmentio/analytics-ios#3.6.10
         cfg="vanilla"
     fi
 popd

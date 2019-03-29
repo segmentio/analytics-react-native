@@ -20,7 +20,7 @@ if (CIRCLE_WORKFLOW_ID) {
 		await element(by.text('Flush')).tap()
 
 		await Promise.all(
-			require('../src/calls.json').map(([type, ...args]) =>
+			require('../seed/calls.json').map(([type, ...args]) =>
 				hasMatchingCall(type, ...args)
 			)
 		)

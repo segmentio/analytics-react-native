@@ -60,7 +60,7 @@ it('produces a valid configuration', async () => {
 })
 
 it('waits for integrations to register', async () => {
-	const stub = jest.fn(t => setTimeout(t, 500))
+	const stub: any = jest.fn(t => setTimeout(t, 500))
 
 	await configure(writeKey, {
 		using: [() => ({ then: stub })]
