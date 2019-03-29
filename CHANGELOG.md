@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.0.1-beta.4"></a>
+
+## [0.0.1-beta.4](https://github.com/segmentio/analytics-react-native/compare/v0.0.1-beta.3...v0.0.1-beta.4) (2019-03-29)
+
+### Bug Fixes
+
+- **core:** fix duplicate client error in dev mode ([#51](https://github.com/segmentio/analytics-react-native/issues/51)) ([cb66749](https://github.com/segmentio/analytics-react-native/commit/cb66749)), closes [#16](https://github.com/segmentio/analytics-react-native/issues/16) [#15](https://github.com/segmentio/analytics-react-native/issues/15)
+- **core:** React-Native 0.59 Support ([#50](https://github.com/segmentio/analytics-react-native/issues/50)) ([a78c94e](https://github.com/segmentio/analytics-react-native/commit/a78c94e)), closes [#46](https://github.com/segmentio/analytics-react-native/issues/46) [#44](https://github.com/segmentio/analytics-react-native/issues/44)
+
 <a name="0.0.1-beta.3"></a>
 
 ## [0.0.1-beta.3](https://github.com/segmentio/analytics-react-native/compare/v0.0.1-beta.2...v0.0.1-beta.3) (2018-12-12)
