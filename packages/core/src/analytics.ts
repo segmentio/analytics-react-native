@@ -184,8 +184,9 @@ export module Analytics {
 		 * @param configuration An optional {@link Configuration} object.
 		 */
 		public async setup(writeKey: string, configuration: Configuration = {}) {
-			await Bridge.setup(await configure(writeKey, configuration))
-
+			await Bridge.setup(
+				await configure(writeKey, configuration)
+			)
 			this.wrapper.ready()
 		}
 
