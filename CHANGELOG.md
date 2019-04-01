@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.0.1-beta.5"></a>
+
+## [0.0.1-beta.5](https://github.com/segmentio/analytics-react-native/compare/v0.0.1-beta.4...v0.0.1-beta.5) (2019-04-01)
+
+### Bug Fixes
+
+- **android:** fix missing classes at runtime ([#52](https://github.com/segmentio/analytics-react-native/issues/52)) ([bcf19f7](https://github.com/segmentio/analytics-react-native/commit/bcf19f7)), closes [#34](https://github.com/segmentio/analytics-react-native/issues/34) [#35](https://github.com/segmentio/analytics-react-native/issues/35)
+
 <a name="0.0.1-beta.4"></a>
 
 ## [0.0.1-beta.4](https://github.com/segmentio/analytics-react-native/compare/v0.0.1-beta.3...v0.0.1-beta.4) (2019-03-29)
