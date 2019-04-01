@@ -54,13 +54,6 @@ If you are part of a new startup  (&lt;$5M raised, &lt;2 years since founding), 
 
 ## Prerequisite
 
-#### Android
-
-- Gradle 4+
-  - Run `./gradlew wrapper --gradle-version=4.4` in your `android` folder
-- Build Tools 3+
-  - Upgrade `com.android.tools.build:gradle` to `3.1.4` in your `android/build.gradle` file
-
 #### iOS
 
 - CocoaPods (**recommended**)
