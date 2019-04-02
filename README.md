@@ -12,16 +12,18 @@ The hassle-free way to add analytics to your React-Native app.
 Analytics helps you measure your users, product, and business. It unlocks insights into your app's funnel, core business metrics, and whether you have product-market fit.
 
 ## How to get started
+
 1. **Collect analytics data** from your app(s).
-    - The top 200 Segment companies collect data from 5+ source types (web, mobile, server, CRM, etc.).
+   - The top 200 Segment companies collect data from 5+ source types (web, mobile, server, CRM, etc.).
 2. **Send the data to analytics tools** (for example, Google Analytics, Amplitude, Mixpanel).
-    - Over 250+ Segment companies send data to eight categories of destinations such as analytics tools, warehouses, email marketing and remarketing systems, session recording, and more.
+   - Over 250+ Segment companies send data to eight categories of destinations such as analytics tools, warehouses, email marketing and remarketing systems, session recording, and more.
 3. **Explore your data** by creating metrics (for example, new signups, retention cohorts, and revenue generation).
-    - The best Segment companies use retention cohorts to measure product market fit. Netflix has 70% paid retention after 12 months, 30% after 7 years.
+   - The best Segment companies use retention cohorts to measure product market fit. Netflix has 70% paid retention after 12 months, 30% after 7 years.
 
 [Segment](https://segment.com) collects analytics data and allows you to send it to more than 250 apps (such as Google Analytics, Mixpanel, Optimizely, Facebook Ads, Slack, Sentry) just by flipping a switch. You only need one Segment code snippet, and you can turn integrations on and off at will, with no additional code. [Sign up with Segment today](https://app.segment.com/signup).
 
 ### Why?
+
 1. **Power all your analytics apps with the same data**. Instead of writing code to integrate all of your tools individually, send data to Segment, once.
 
 2. **Install tracking for the last time**. We're the last integration you'll ever need to write. You only need to instrument Segment once. Reduce all of your tracking code and advertising tags into a single set of API calls.
@@ -30,17 +32,21 @@ Analytics helps you measure your users, product, and business. It unlocks insigh
 
 4. **Query your data in SQL**. Slice, dice, and analyze your data in detail with Segment SQL. We'll transform and load your customer behavioral data directly from your apps into Amazon Redshift, Google BigQuery, or Postgres. Save weeks of engineering time by not having to invent your own data warehouse and ETL pipeline.
 
-    For example, you can capture data on any app:
-    ```js
-    analytics.track('Order Completed', { price: 99.84 })
-    ```
-    Then, query the resulting data in SQL:
-    ```sql
-    select * from app.order_completed
-    order by price desc
-    ```
+   For example, you can capture data on any app:
+
+   ```js
+   analytics.track('Order Completed', { price: 99.84 })
+   ```
+
+   Then, query the resulting data in SQL:
+
+   ```sql
+   select * from app.order_completed
+   order by price desc
+   ```
 
 ### 🚀 Startup Program
+
 <div align="center">
   <a href="https://segment.com/startups"><img src="https://user-images.githubusercontent.com/16131737/53128952-08d3d400-351b-11e9-9730-7da35adda781.png" /></a>
 </div>
@@ -48,17 +54,10 @@ If you are part of a new startup  (&lt;$5M raised, &lt;2 years since founding), 
 
 ## Prerequisite
 
-#### Android
-
-- Gradle 4+
-  - Run `./gradlew wrapper --gradle-version=4.4` in your `android` folder
-- Build Tools 3+
-  - Upgrade `com.android.tools.build:gradle` to `3.1.4` in your `android/build.gradle` file
-
 #### iOS
 
 - CocoaPods (**recommended**)
-  - [Don't have CocoaPods setup?](#setup-cocoapods-in-an-existing-project)
+  - Don't have CocoaPods setup? Follow [these instructions](https://facebook.github.io/react-native/docs/integration-with-existing-apps#configuring-cocoapods-dependencies).
 - or [manually install `Analytics`](#ios-support-without-cocoapods)
 
 ## Installation
@@ -192,25 +191,6 @@ Here are the steps for installing manually:
    ![Embed Analytics.framework](https://segment.com/docs/sources/mobile/react-native/images/embed-analytics-framework.png)
 
 Please note, if you are choosing to not use a dependency manager, you must keep files up-to-date with regularly scheduled, manual updates.
-
-### Setup CocoaPods in an existing project
-
-1.  Check that `ios/Podfile` doesn't exist
-2.  `cd ios`
-3.  `pod init`
-4.  Open `Podfile`
-5.  Edit your app `target` to have these `pod` declarations and the `Add new pods below this line` comment :
-
-    ```ruby
-    target 'MyReactNativeApp' do
-      pod 'React', :path => '../node_modules/react-native'
-      pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
-
-      # Add new pods below this line
-    end
-    ```
-
-6.  `pod install`
 
 ### "Failed to load [...] native module"
 
