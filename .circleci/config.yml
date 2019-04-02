@@ -149,7 +149,10 @@ workflows:
 
   build_test_and_publish:
     jobs:
-      - install
+      - install:
+          filters:
+            tags:
+              only: /.*/
       - test-android: *requiresTestApp
       - test-ios-vanilla: *requiresTestApp
       - test-ios-cocoapods: *requiresTestApp
@@ -158,6 +161,9 @@ workflows:
       - build-integrations: *requiresInstall
       - build-core: *requiresInstall
       - build-test-app:
+          filters:
+            tags:
+              only: /.*/
           requires:
             - build-core
             - build-integrations
@@ -174,4 +180,4 @@ workflows:
             tags:
               only: /v[0-9]+(\.[0-9]+)*(-.+)?/
             branches:
-              ignore: /.*/
+              ignore: /.*
