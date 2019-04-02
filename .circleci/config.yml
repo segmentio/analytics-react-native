@@ -1,16 +1,4 @@
 defaults:
-  noTagFilters: &noTagFilters
-    filters:
-      tags:
-        only: /.*/
-  requiresInstall: &requiresInstall
-    <<: *noTagFilters
-    requires:
-      - install
-  requiresTestApp: &requiresTestApp
-    <<: *noTagFilters
-    requires:
-      - build-test-app
   attach: &attach
     attach_workspace:
       at: .
@@ -153,20 +141,55 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - test-android: *requiresTestApp
-      - test-ios-vanilla: *requiresTestApp
-      - test-ios-cocoapods: *requiresTestApp
-      - test-core: *requiresInstall
-      - lint: *requiresInstall
-      - build-integrations: *requiresInstall
-      - build-core: *requiresInstall
-      - build-test-app:
+      - build-integrations:
+          requires:
+            - install
           filters:
             tags:
               only: /.*/
+      - build-core:
+          requires:
+            - install
+          filters:
+            tags:
+              only: /.*/
+      - build-test-app:
           requires:
             - build-core
             - build-integrations
+          filters:
+            tags:
+              only: /.*/
+      - test-core:
+          requires:
+            - install
+          filters:
+            tags:
+              only: /.*/
+      - test-android:
+          requires:
+            -  build-test-app
+          filters:
+            tags:
+              only: /.*/
+      - test-ios-vanilla:
+          requires:
+            -  build-test-app
+          filters:
+            tags:
+              only: /.*/
+      - test-ios-cocoapods:
+          requires:
+            -  build-test-app
+          filters:
+            tags:
+              only: /.*/
+      - lint:
+          requires:
+            - install
+          filters:
+            tags:
+              only: /.*/
       - publish:
           context: snyk
           requires:
@@ -177,7 +200,7 @@ workflows:
             - test-core
             - lint
           filters:
+            branches:
+              ignore: /.*/
             tags:
               only: /v[0-9]+(\.[0-9]+)*(-.+)?/
-            branches:
-              ignore: /.*
