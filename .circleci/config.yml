@@ -130,6 +130,7 @@ jobs:
       - *getDeps
       - *attach
       - run: npm config set "//registry.npmjs.org/:_authToken" $NPM_AUTH
+      - run: npm config set @segment:registry https://registry.npmjs.org/ --global
       - run: yarn deploy
 
 workflows:
