@@ -33,6 +33,12 @@ const trackOrder = () => {
   })
 }
 
+const logAnonymousId = () => {
+  analytics.getAnonymousId((anonymousId: string) => {
+    console.log(`anonymousId: ${anonymousId}`)
+  })
+}
+
 const buildId = 'CIRCLE_WORKFLOW_ID'
 
 const testSuite = () =>
@@ -61,6 +67,7 @@ export default class App extends Component {
         <Button title="Flush" onPress={flush} />
         <Button title="Track: Pizza Eaten" onPress={pizzaEaten} />
         <Button title="Launch test suite" onPress={testSuite} />
+        <Button title="Log anonymousId" onPress={logAnonymousId} />
       </View>
     )
   }

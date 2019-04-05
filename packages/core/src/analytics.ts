@@ -301,6 +301,11 @@ export module Analytics {
 			await this.wrapper.run('disable', disable => disable())
 		}
 
+		/** Retrieve the anonymousId. */
+		public async getAnonymousId(callback: (anonymousId: string) => void) {
+			await this.wrapper.run('getAnonymousId', getAnonymousId => getAnonymousId(callback))
+		}
+
 		private handleError(error: Error) {
 			const { handlers } = this
 

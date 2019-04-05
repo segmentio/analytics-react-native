@@ -3,6 +3,7 @@ export default {
 	disable: jest.fn(),
 	enable: jest.fn(),
 	flush: jest.fn(),
+	getAnonymousId: jest.fn(),
 	group: jest.fn(),
 	identify: jest.fn(),
 	reset: jest.fn(),
