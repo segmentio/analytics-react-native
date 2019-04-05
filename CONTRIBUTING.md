@@ -3,22 +3,18 @@
 If you would like to contribute code to `analytics-react-native` you can do so through
 GitHub by forking the repository and sending a pull request.
 
-Development occurs on the `develop` branch, and pull requests must be opened against
-the `develop` branch. Every second Wednesday, `master` is taggged and released, and
-`develop` is merged into `master`. In general, code will be available on `master`
-for two weeks before being tagged as a stable release.
-
-Critical bug fixes will be cherry picked into `master` after being merged into
-`develop` and released immediately.
-
 When submitting code, please make every effort to follow existing conventions
 and style in order to keep the code as readable as possible. Please also make
-sure your code runs by [Building](#building) and [Testing](#testing).
+sure your code runs by [building](#building) and [testing](#testing).
+
+## Style Guide
+
+We use [prettier](https://www.github.com/prettier/prettier) to format our code, and [commitzen](http://commitizen.github.io/cz-cli/) to format commits.
 
 ## Building an integration
 
 To build an integration you'll first need to integrate it using the native Analytics SDK, here's a documentation to do so [for iOS](https://github.com/segmentio/analytics-ios/blob/master/CONTRIBUTING.md) or [for Android](https://github.com/segmentio/analytics-android/blob/master/CONTRIBUTING.md).
-When your integration is ready you'll need to add it to [`integrations.yml`](https://github.com/segmentio/analytics-react-native/blob/develop/packages/integrations/integrations.yml) and check it works by [Building](#building) and [Testing](#testing).
+When your integration is ready you'll need to add it to [`integrations.yml`](https://github.com/segmentio/analytics-react-native/blob/develop/packages/integrations/integrations.yml) and check it works by [building](#building) and [testing](#testing).
 
 ## Environment
 
