@@ -79,7 +79,7 @@ it('does .flush()', testCall('flush'))
 it('does .enable()', testCall('enable'))
 it('does .disable()', testCall('disable'))
 
-it('does .getAnonymousId()', () => testCall('getAnonymousId')(jest.fn()))
+it('does .getAnonymousId()', testCall('getAnonymousId'))
 
 it('logs uncaught bridge errors', async () => {
 	const error = {

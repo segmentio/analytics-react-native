@@ -137,10 +137,12 @@ RCT_EXPORT_METHOD(disable) {
     [SEGAnalytics.sharedAnalytics disable];
 }
 
-RCT_EXPORT_METHOD(getAnonymousId:(RCTResponseSenderBlock)callback)
+RCT_EXPORT_METHOD(
+    getAnonymousId:(RCTPromiseResolveBlock)resolver
+                  :(RCTPromiseRejectBlock)rejecter)
 {
   NSString *anonymousId = [SEGAnalytics.sharedAnalytics getAnonymousId];
-  callback(@[anonymousId]);
+  resolver(anonymousId);
 }
 
 @end

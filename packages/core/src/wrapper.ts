@@ -12,6 +12,13 @@ export class NativeWrapper<T extends NativeDelegate> {
 		private readonly queue: Array<() => void> = []
 	) {}
 
+	/**
+	 * Run a bridge method.
+	 * It first waits for `.setup()` or `.useNativeConfiguration()` to be
+	 * called and redirects exceptions to `handler`.
+	 * @param method Name of the method to call.
+	 * @param caller Function with the bridge function as first argument.
+	 */
 	public async run<M extends keyof Bridge>(
 		method: M,
 		caller: (fn: Bridge[M]) => Promise<void>
@@ -31,6 +38,15 @@ export class NativeWrapper<T extends NativeDelegate> {
 				return handler(err)
 			}
 		}
+	}
+
+	/** Waits for `.setup()` or `.useNativeConfiguration()` to be called. */
+	public async wait() {
+		if (this.delegate.ready) {
+			return
+		}
+
+		return new Promise(resolve => this.queue.push(resolve))
 	}
 
 	public ready() {

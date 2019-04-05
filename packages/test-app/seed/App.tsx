@@ -33,10 +33,8 @@ const trackOrder = () => {
   })
 }
 
-const logAnonymousId = () => {
-  analytics.getAnonymousId((anonymousId: string) => {
-    console.log(`anonymousId: ${anonymousId}`)
-  })
+const logAnonymousId = async () => {
+  console.log('anonymousId: %s', await analytics.getAnonymousId())
 }
 
 const buildId = 'CIRCLE_WORKFLOW_ID'
