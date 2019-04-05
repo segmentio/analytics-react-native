@@ -105,6 +105,8 @@ export module Analytics {
 		 * Catch React-Native bridge errors
 		 *
 		 * These errors are emitted when calling the native counterpart.
+		 * This only applies to methods with no return value (`Promise<void>`),
+		 * methods like `getAnonymousId` do reject promises.
 		 */
 		public catch(handler: ErrorHandler) {
 			this.handlers.push(handler)
