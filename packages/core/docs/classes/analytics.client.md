@@ -140,19 +140,13 @@ ___
 
 ###  getAnonymousId
 
-▸ **getAnonymousId**(callback: *`function`*): `Promise`<`void`>
+▸ **getAnonymousId**(): `Promise`<`string`>
 
 *Defined in [analytics.ts:305](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L305)*
 
 Retrieve the anonymousId.
 
-**Parameters:**
-
-| Name | Type |
-| ------ | ------ |
-| callback | `function` |
-
-**Returns:** `Promise`<`void`>
+**Returns:** `Promise`<`string`>
 
 ___
 <a id="group"></a>

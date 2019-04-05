@@ -302,8 +302,10 @@ export module Analytics {
 		}
 
 		/** Retrieve the anonymousId. */
-		public async getAnonymousId(callback: (anonymousId: string) => void) {
-			await this.wrapper.run('getAnonymousId', getAnonymousId => getAnonymousId(callback))
+		public async getAnonymousId(): Promise<string> {
+			await this.wrapper.wait()
+
+			return Bridge.getAnonymousId()
 		}
 
 		private handleError(error: Error) {
