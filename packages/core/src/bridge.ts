@@ -37,6 +37,7 @@ export interface Bridge {
 	flush(): Promise<void>
 	enable(): Promise<void>
 	disable(): Promise<void>
+	getAnonymousId(callback: (anonymousId: string) => void): Promise<void>
 }
 
 const bridge: Bridge = NativeModules.RNAnalytics

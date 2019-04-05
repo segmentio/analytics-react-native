@@ -19,6 +19,7 @@
 * [disable](analytics.client.md#disable)
 * [enable](analytics.client.md#enable)
 * [flush](analytics.client.md#flush)
+* [getAnonymousId](analytics.client.md#getanonymousid)
 * [group](analytics.client.md#group)
 * [identify](analytics.client.md#identify)
 * [middleware](analytics.client.md#middleware)
@@ -131,6 +132,25 @@ ___
 Trigger an upload of all queued events.
 
 This is useful when you want to force all messages queued on the device to be uploaded. Please note that not all integrations respond to this method.
+
+**Returns:** `Promise`<`void`>
+
+___
+<a id="getanonymousid"></a>
+
+###  getAnonymousId
+
+▸ **getAnonymousId**(callback: *`function`*): `Promise`<`void`>
+
+*Defined in [analytics.ts:305](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L305)*
+
+Retrieve the anonymousId.
+
+**Parameters:**
+
+| Name | Type |
+| ------ | ------ |
+| callback | `function` |
 
 **Returns:** `Promise`<`void`>
 

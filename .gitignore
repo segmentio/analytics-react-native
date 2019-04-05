@@ -12,3 +12,7 @@ vendor/
 .vscode/
 
 packages/test-app/project
+
+.classpath
+.project
+.settings/
