@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.1.0-beta.0"></a>
+
+# [0.1.0-beta.0](https://github.com/segmentio/analytics-react-native/compare/v0.0.1-beta.5...v0.1.0-beta.0) (2019-04-08)
+
+### Features
+
+- **anonymousid:** add a method to retrieve the anonymousId ([988f382](https://github.com/segmentio/analytics-react-native/commit/988f382))
+- **tools:** add stale config ([16a8b20](https://github.com/segmentio/analytics-react-native/commit/16a8b20))
+
 <a name="0.0.1-beta.5"></a>
 
 ## [0.0.1-beta.5](https://github.com/segmentio/analytics-react-native/compare/v0.0.1-beta.4...v0.0.1-beta.5) (2019-04-01)
