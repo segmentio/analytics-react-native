@@ -235,7 +235,7 @@ export module Analytics {
 		 * For more information on how we generate the UUID and Apple's policies on IDs, see https://segment.io/libraries/ios#ids
 		 * @param traits A dictionary of traits you know about the user. Things like: email, name, plan, etc.
 		 */
-		public async identify(user: string, traits: JsonMap = {}) {
+		public async identify(user: string | null, traits: JsonMap = {}) {
 			await this.middlewares.run('identify', { user, traits })
 		}
 
