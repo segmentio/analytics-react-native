@@ -26,6 +26,7 @@ package com.segment.analytics.reactnative.core
 
 import com.facebook.react.bridge.*
 import com.segment.analytics.Analytics
+import com.segment.analytics.Options
 import com.segment.analytics.Properties
 import com.segment.analytics.Traits
 import com.segment.analytics.ValueMap
@@ -95,23 +96,43 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
 
     @ReactMethod
     fun track(event: String, properties: ReadableMap, context: ReadableMap) = 
-        analytics.track(event, Properties() from properties)
+        analytics.track(
+            event, 
+            Properties() from properties, 
+            Options() from context
+        )
 
     @ReactMethod
     fun screen(name: String, properties: ReadableMap, context: ReadableMap) =
-        analytics.screen(name, Properties() from properties)
+        analytics.screen(
+            null, 
+            name, 
+            Properties() from properties, 
+            Options() from context
+        )
 
     @ReactMethod
     fun identify(userId: String, traits: ReadableMap, context: ReadableMap) =
-        analytics.identify(userId, Traits() from traits, null)
+        analytics.identify(
+            userId, 
+            Traits() from traits, 
+            Options() from context
+        )
 
     @ReactMethod
     fun group(groupId: String, traits: ReadableMap, context: ReadableMap) =
-        analytics.group(groupId, Traits() from traits)
+        analytics.group(
+            groupId, 
+            Traits() from traits, 
+            Options() from context
+        )
 
     @ReactMethod
     fun alias(newId: String, context: ReadableMap) =
-        analytics.alias(newId)
+        analytics.alias(
+            newId, 
+            Options() from context
+        )
 
     @ReactMethod
     fun reset() =
@@ -136,6 +157,14 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
 
 private infix fun<T: ValueMap> T.from(source: ReadableMap): T {
     putAll(source.toHashMap())
+
+    return this
+}
+
+private infix fun<T: Options> T.from(source: ReadableMap): T {
+    source.toHashMap().forEach {(key, value) -> 
+        putContext(key, value)
+    }
 
     return this
 }
