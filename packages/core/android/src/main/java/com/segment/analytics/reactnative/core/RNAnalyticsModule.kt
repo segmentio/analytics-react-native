@@ -114,7 +114,7 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
         }
 
         val builder = Analytics
-                .Builder(reactApplicationContext, options.getString("writeKey"))
+                .Builder(reactApplicationContext, writeKey)
                 .flushQueueSize(options.getInt("flushAt"))
 
         if(options.getBoolean("recordScreenViews")) {
