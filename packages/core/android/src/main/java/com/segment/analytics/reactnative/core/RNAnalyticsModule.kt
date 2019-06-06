@@ -24,11 +24,14 @@
 
 package com.segment.analytics.reactnative.core
 
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import com.facebook.react.bridge.*
 import com.segment.analytics.Analytics
 import com.segment.analytics.Properties
 import com.segment.analytics.Traits
 import com.segment.analytics.ValueMap
+import com.segment.analytics.internal.Utils.getSegmentSharedPreferences
 import java.util.concurrent.TimeUnit
 
 class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaModule(context) {
@@ -39,11 +42,67 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
 
     companion object {
         private var singletonJsonConfig: String? = null
+        private var key: String? = null
+        private var versionKey = "version"
+        private var buildKey = "build"
+    }
+
+    private fun getPackageInfo(): PackageInfo {
+        val packageManager = reactApplicationContext.packageManager
+        try {
+            return packageManager.getPackageInfo(reactApplicationContext.packageName, 0)
+        } catch (e: PackageManager.NameNotFoundException) {
+            throw AssertionError("Package not found: " + reactApplicationContext.packageName)
+        }
+    }
+
+    /**
+     * Tracks application lifecycle events - Application Installed, Application Updated and Application Opened
+     * This is built to exactly mirror the application lifecycle tracking in analytics-android
+     */
+    private fun trackApplicationLifecycleEvents() {
+        // Get the current version.
+        var packageInfo = this.getPackageInfo()
+        val currentVersion = packageInfo.versionName
+        val currentBuild = packageInfo.versionCode
+
+        // Get the previous recorded version.
+        val sharedPreferences = getSegmentSharedPreferences(reactApplicationContext, key)
+        val previousVersion = sharedPreferences.getString(versionKey, null)
+        val previousBuild = sharedPreferences.getInt(buildKey, -1)
+
+        // Check and track Application Installed or Application Updated.
+        if (previousBuild == -1) {
+            var installedProperties = Properties()
+            installedProperties[versionKey] = currentVersion
+            installedProperties[buildKey] = currentBuild
+            analytics.track("Application Installed", installedProperties)
+        } else if (currentBuild != previousBuild) {
+            var updatedProperties = Properties()
+            updatedProperties[versionKey] = currentVersion
+            updatedProperties[buildKey] = currentBuild
+            updatedProperties["previous_$versionKey"] = previousVersion
+            updatedProperties["previous_$buildKey"] = previousBuild
+            analytics.track("Application Updated", updatedProperties)
+        }
+
+        // Track Application Opened.
+        var appOpenedProperties = Properties()
+        appOpenedProperties[versionKey] = currentVersion
+        appOpenedProperties[buildKey] = currentBuild
+        analytics.track("Application Opened", appOpenedProperties)
+
+        // Update the recorded version.
+        val editor = sharedPreferences.edit()
+        editor.putString(versionKey, currentVersion)
+        editor.putInt(buildKey, currentBuild)
+        editor.apply()
     }
 
     @ReactMethod
     fun setup(options: ReadableMap, promise: Promise) {
         val json = options.getString("json")
+        val writeKey = options.getString("writeKey")
 
         if(singletonJsonConfig != null) {
             if(json == singletonJsonConfig) {
@@ -55,16 +114,13 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
         }
 
         val builder = Analytics
-                .Builder(reactApplicationContext, options.getString("writeKey"))
+                .Builder(reactApplicationContext, writeKey)
                 .flushQueueSize(options.getInt("flushAt"))
 
         if(options.getBoolean("recordScreenViews")) {
             builder.recordScreenViews()
         }
 
-        if(options.getBoolean("trackAppLifecycleEvents")) {
-            builder.trackApplicationLifecycleEvents()
-        }
 
         if(options.getBoolean("trackAttributionData")) {
             builder.trackAttributionInformation()
@@ -90,6 +146,12 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
         }
 
         singletonJsonConfig = json
+        key = writeKey
+
+        if(options.getBoolean("trackAppLifecycleEvents")) {
+            this.trackApplicationLifecycleEvents()
+        }
+
         promise.resolve(null)
     }
 
