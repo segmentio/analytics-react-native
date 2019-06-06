@@ -12,7 +12,9 @@
     "test:ios:cocoapods": "COCOAPODS=yes ./test_ios.sh",
     "test:ios:vanilla": "COCOAPODS=no ./test_ios.sh",
     "test:android": "./test_android.sh",
-    "test": "run-s test:{ios,android}"
+    "test": "run-s test:{ios,android}",
+    "detox:build": "detox build",
+    "detox:test": "detox test"
   },
   "devDependencies": {
     "jest": "^24.5.0",
