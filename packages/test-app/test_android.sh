@@ -6,7 +6,7 @@ pushd project
     yarn react-native link
 popd
 
-yarn detox:build --configuration android
+detox build --configuration android
 
 # Android E2E tests are not working yet
-# yarn detox:test --configuration android
+# detox test --configuration android
