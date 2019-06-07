@@ -6,13 +6,19 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [1.0.1-beta.0](https://github.com/segmentio/analytics-react-native/compare/v1.0.0...v1.0.1-beta.0) (2019-06-06)
 
+### Bug Fixes
+
+- **android:** fix application lifecycle event tracking ([#73](https://github.com/segmentio/analytics-react-native/pull/73))
+
 <a name="1.0.0"></a>
 
 # [1.0.0](https://github.com/segmentio/analytics-react-native/compare/v0.1.0-beta.0...v1.0.0) (2019-06-05)
 
+Promote pre-release version to a stable release.
+
 <a name="0.1.0-beta.0"></a>
 
-# [0.1.0-beta.0](https://github.com/segmentio/analytics-react-native/compare/v0.0.1-beta.5...v0.1.0-beta.0) (2019-04-08)
+## [0.1.0-beta.0](https://github.com/segmentio/analytics-react-native/compare/v0.0.1-beta.5...v0.1.0-beta.0) (2019-04-08)
 
 ### Features
 
