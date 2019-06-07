@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.0.1"></a>
+
+## [1.0.1](https://github.com/segmentio/analytics-react-native/compare/v1.0.0...v1.0.1) (2019-06-07)
+
+- **build:** this fixes a release bug in 1.0.0 that omitted any transpiled files in the published version.
+
 <a name="1.0.1-beta.0"></a>
 
 ## [1.0.1-beta.0](https://github.com/segmentio/analytics-react-native/compare/v1.0.0...v1.0.1-beta.0) (2019-06-06)
@@ -15,6 +21,8 @@ All notable changes to this project will be documented in this file. See [standa
 # [1.0.0](https://github.com/segmentio/analytics-react-native/compare/v0.1.0-beta.0...v1.0.0) (2019-06-05)
 
 Promote pre-release version to a stable release.
+
+Note: This release was published with a bug that omitted transpiled file which makes it unusable. A fix has been published in 1.0.1, and this version has been marked as deprecated.
 
 <a name="0.1.0-beta.0"></a>
 
