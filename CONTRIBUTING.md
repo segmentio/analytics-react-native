@@ -49,6 +49,59 @@ $ yarn
 $ yarn test
 ```
 
+### End-to-end testing
+
+End-to-end testing is done using [Detox](https://github.com/wix/Detox).
+
+These tests are primarily built to be run on CI. The following instructions describe how to run them locally.
+
+Tested on Mac only.
+
+#### iOS
+
+First, install your dependencies as described in [Step 1: Install dependencies](https://github.com/wix/Detox/blob/master/docs/Introduction.GettingStarted.md#step-1-install-dependencies).
+
+```bash
+yarn # install project dependencies
+yarn build # build project and integrations
+cd packages/test-app
+yarn test:ios:cocoapods # or test:ios:vanilla
+```
+
+For subsequent runs, you may need to do `rm -rf project && ./generate.sh` before running the test command.
+
+### Android
+
+Set up an Android emulator locally. The easiest way to do this is to install and launch Android Studio, and [manage your virtual devices](https://developer.android.com/studio/run/managing-avds) through the UI.
+
+Check you have at least one emulator installed with `emulator -list-avds`. Now open `./packages/test-app/package.json` and ensure that the `name` under `"android.emu.release"` is one of the emulators in your list (change it if not, but do not commit this change).
+
+```bash
+yarn # install project dependencies
+yarn build # build project and integrations
+cd packages/test-app
+SEGMENT_WRITE_TOKEN=test yarn test:android
+```
+
+**Note:** A non-empty value of SEGMENT_WRITE_TOKEN is required for Android (but not iOS), because the native library will do a not null check for it and your application will crash.
+
+**Note:** you can also run the emulator in debug mode, but you'll have to start the packager manually. Assuming you've already installed dependencies and built the project:
+
+Build the android project and start the packager:
+
+```bash
+cd packages/test-app
+SEGMENT_WRITE_TOKEN=test detox build -c android.emu.debug
+cd project
+yarn start
+```
+
+In a new terminal window, run:
+
+```bash
+detox test -c android.emu.debug
+```
+
 ### Architecture
 
 - `packages/core`: the `@segment/analytics-react-native` module

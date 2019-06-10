@@ -26,6 +26,9 @@ android {
         versionName '1.0'
 
     }
+    packagingOptions {
+        pickFirst  "META-INF/*"
+    }
 }
 
 repositories {

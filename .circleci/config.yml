@@ -93,7 +93,7 @@ jobs:
   test-ios-vanilla:
     <<: *job
     macos:
-      xcode: "9.4.0"
+      xcode: '10.0.0'
     steps:
       - checkout
       # macOS VMs doesn't support Docker based caches
@@ -107,7 +107,7 @@ jobs:
   test-ios-cocoapods:
     <<: *job
     macos:
-      xcode: "9.4.0"
+      xcode: '10.0.0'
     steps:
       - checkout
       # macOS VMs doesn't support Docker based caches
@@ -169,19 +169,19 @@ workflows:
               only: /.*/
       - test-android:
           requires:
-            -  build-test-app
+            - build-test-app
           filters:
             tags:
               only: /.*/
       - test-ios-vanilla:
           requires:
-            -  build-test-app
+            - build-test-app
           filters:
             tags:
               only: /.*/
       - test-ios-cocoapods:
           requires:
-            -  build-test-app
+            - build-test-app
           filters:
             tags:
               only: /.*/

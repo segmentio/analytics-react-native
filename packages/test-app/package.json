@@ -12,16 +12,14 @@
     "test:ios:cocoapods": "COCOAPODS=yes ./test_ios.sh",
     "test:ios:vanilla": "COCOAPODS=no ./test_ios.sh",
     "test:android": "./test_android.sh",
-    "test": "run-s test:{ios,android}",
-    "detox:build": "detox build",
-    "detox:test": "detox test"
+    "test": "run-s test:{ios,android}"
   },
   "devDependencies": {
     "jest": "^24.5.0",
     "react-native-cli": "^2.0.1"
   },
   "dependencies": {
-    "detox": "^12.1.1",
+    "detox": "^12.11.0",
     "isomorphic-fetch": "^2.2.1"
   },
   "detox": {
@@ -41,11 +39,17 @@
         "type": "ios.simulator",
         "name": "iPhone X"
       },
-      "android": {
+      "android.emu.release": {
+        "binaryPath": "project/android/app/build/outputs/apk/release/app-release.apk",
+        "build": "cd project/android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release",
+        "type": "android.emulator",
+        "name": "Nexus_5X_API_28"
+      },
+      "android.emu.debug": {
         "binaryPath": "project/android/app/build/outputs/apk/debug/app-debug.apk",
         "build": "cd project/android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug",
         "type": "android.emulator",
-        "name": "Nexus_5X_API_27"
+        "name": "Nexus_5X_API_28"
       }
     }
   }

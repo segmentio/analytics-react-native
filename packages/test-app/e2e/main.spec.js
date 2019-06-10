@@ -14,7 +14,7 @@ it('sends events and does not crash', async () => {
 	await sleep(5 * 1000)
 })
 
-if (CIRCLE_WORKFLOW_ID) {
+if (CIRCLE_WORKFLOW_ID && E2E_TOKEN) {
 	it('sends events to the webhook', async () => {
 		await element(by.text('Launch test suite')).tap()
 		await element(by.text('Flush')).tap()
