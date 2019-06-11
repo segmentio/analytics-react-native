@@ -6,7 +6,11 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [1.0.1](https://github.com/segmentio/analytics-react-native/compare/v1.0.0...v1.0.1) (2019-06-07)
 
+### Bug Fixes
+
 - **build:** this fixes a release bug in 1.0.0 that omitted any transpiled files in the published version.
+
+Note: This release does not include any of the changes from version `1.0.1-beta.0` (specifically, it does not include the android application lifecycle event tracking bug fix). The changes from `1.0.1-beta.0` will be available in a future release.
 
 <a name="1.0.1-beta.0"></a>
 
