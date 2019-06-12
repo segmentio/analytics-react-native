@@ -26,7 +26,8 @@
     "lint": "tslint -p .",
     "test": "jest",
     "deploy": "./deploy.sh",
-    "release": "standard-version --infile ../../CHANGELOG.md"
+    "release": "standard-version --infile ../../CHANGELOG.md",
+    "prepublish": "yarn build"
   },
   "devDependencies": {
     "@types/jest": "^23.3.1",
