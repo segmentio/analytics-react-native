@@ -67,7 +67,7 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
             val iterator = integrations.keySetIterator()
             while (iterator.hasNextKey()) {
                 val nextKey = iterator.nextKey()
-                options.setIntegration(iterator.nextKey(), integrations.getBoolean(nextKey))
+                options.setIntegration(nextKey, integrations.getBoolean(nextKey))
             }
         }
         return options;
@@ -171,20 +171,20 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
     }
 
     @ReactMethod
-    fun track(event: String, properties: ReadableMap, context: ReadableMap) =
-        analytics.track(event, Properties() from properties, this.getOptions(properties))
+    fun track(event: String, properties: ReadableMap, options: ReadableMap, context: ReadableMap) =
+        analytics.track(event, Properties() from properties, this.getOptions(options))
 
     @ReactMethod
     fun screen(name: String, properties: ReadableMap, context: ReadableMap) =
         analytics.screen(name, Properties() from properties)
 
     @ReactMethod
-    fun identify(userId: String, traits: ReadableMap, context: ReadableMap) =
-        analytics.identify(userId, Traits() from traits, this.getOptions(traits))
+    fun identify(userId: String, traits: ReadableMap, options: ReadableMap, context: ReadableMap) =
+        analytics.identify(userId, Traits() from traits, this.getOptions(options))
 
     @ReactMethod
-    fun group(groupId: String, traits: ReadableMap, context: ReadableMap) =
-        analytics.group(groupId, Traits() from traits, this.getOptions(traits))
+    fun group(groupId: String, traits: ReadableMap, options: ReadableMap, context: ReadableMap) =
+        analytics.group(groupId, Traits() from traits, this.getOptions(options))
 
     @ReactMethod
     fun alias(newId: String, context: ReadableMap) =

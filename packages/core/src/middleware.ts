@@ -1,4 +1,4 @@
-import { JsonMap } from './bridge'
+import { JsonMap, Options } from './bridge'
 import { assertNever } from './utils'
 import { NativeWrapper } from './wrapper'
 
@@ -17,6 +17,7 @@ export interface TrackPayload
 		{
 			event: string
 			properties: JsonMap
+			options: Options
 		}
 	> {}
 
@@ -35,6 +36,7 @@ export interface IdentifyPayload
 		{
 			user: string
 			traits: JsonMap
+			options: Options
 		}
 	> {}
 
@@ -44,6 +46,7 @@ export interface GroupPayload
 		{
 			groupId: string
 			traits: JsonMap
+			options: Options
 		}
 	> {}
 
@@ -100,11 +103,21 @@ export class MiddlewareChain {
 				)
 			case 'group':
 				return this.wrapper.run('group', group =>
-					group(payload.data.groupId, payload.data.traits, payload.context)
+					group(
+						payload.data.groupId,
+						payload.data.traits,
+						payload.data.options,
+						payload.context
+					)
 				)
 			case 'identify':
 				return this.wrapper.run('identify', identify =>
-					identify(payload.data.user, payload.data.traits, payload.context)
+					identify(
+						payload.data.user,
+						payload.data.traits,
+						payload.data.options,
+						payload.context
+					)
 				)
 			case 'screen':
 				return this.wrapper.run('screen', screen =>
@@ -112,7 +125,12 @@ export class MiddlewareChain {
 				)
 			case 'track':
 				return this.wrapper.run('track', track =>
-					track(payload.data.event, payload.data.properties, payload.context)
+					track(
+						payload.data.event,
+						payload.data.properties,
+						payload.data.options,
+						payload.context
+					)
 				)
 			default:
 				return assertNever(payload)

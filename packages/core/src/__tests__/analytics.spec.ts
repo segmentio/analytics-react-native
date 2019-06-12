@@ -62,15 +62,15 @@ it('waits for .setup()', async () => {
 })
 
 it('does .track()', () =>
-	testCall('track')('Added to cart', { productId: 'azertyuiop' }, ctx))
+	testCall('track')('Added to cart', { productId: 'azertyuiop' }, {}, ctx))
 
 it('does .screen()', () =>
 	testCall('screen')('Shopping cart', { from: 'Product page' }, ctx))
 
 it('does .identify()', () =>
-	testCall('identify')('sloth', { eats: 'leaves' }, ctx))
+	testCall('identify')('sloth', { eats: 'leaves' }, {}, ctx))
 
-it('does .group()', () => testCall('group')('bots', { humans: false }, ctx))
+it('does .group()', () => testCall('group')('bots', { humans: false }, {}, ctx))
 
 it('does .alias()', () => testCall('alias')('new alias', ctx))
 

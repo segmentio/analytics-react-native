@@ -1,4 +1,4 @@
-import Bridge, { JsonMap } from './bridge'
+import Bridge, { JsonMap, Options } from './bridge'
 import { configure } from './configuration'
 import { Middleware, MiddlewareChain } from './middleware'
 import { ErrorHandler, NativeWrapper } from './wrapper'
@@ -202,9 +202,10 @@ export module Analytics {
 		 * We recommend using human-readable names like `Played a Song` or `Updated Status`.
 		 * @param properties A dictionary of properties for the event.
 		 * If the event was 'Added to Shopping Cart', it might have properties like price, productType, etc.
+		 * @param options A dictionary of options, e.g. integrations (thigh analytics integration to forward the event to)
 		 */
-		public async track(event: string, properties: JsonMap = {}) {
-			await this.middlewares.run('track', { event, properties })
+		public async track(event: string, properties: JsonMap = {}, options: Options = {}) {
+			await this.middlewares.run('track', { event, properties, options })
 		}
 
 		/**
@@ -234,9 +235,10 @@ export module Analytics {
 		 * If you don't have a userId but want to record traits, you should pass nil.
 		 * For more information on how we generate the UUID and Apple's policies on IDs, see https://segment.io/libraries/ios#ids
 		 * @param traits A dictionary of traits you know about the user. Things like: email, name, plan, etc.
+		 * @param options A dictionary of options, e.g. integrations (thigh analytics integration to forward the event to)
 		 */
-		public async identify(user: string, traits: JsonMap = {}) {
-			await this.middlewares.run('identify', { user, traits })
+		public async identify(user: string, traits: JsonMap = {}, options: Options = {}) {
+			await this.middlewares.run('identify', { user, traits, options })
 		}
 
 		/**
@@ -246,9 +248,10 @@ export module Analytics {
 		 *
 		 * @param groupId A database ID for this group.
 		 * @param traits A dictionary of traits you know about the group. Things like: name, employees, etc.
+		 * @param options A dictionary of options, e.g. integrations (thigh analytics integration to forward the event to)
 		 */
-		public async group(groupId: string, traits: JsonMap = {}) {
-			await this.middlewares.run('group', { groupId, traits })
+		public async group(groupId: string, traits: JsonMap = {}, options: Options = {}) {
+			await this.middlewares.run('group', { groupId, traits, options })
 		}
 
 		/**
