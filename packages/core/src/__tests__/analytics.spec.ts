@@ -48,7 +48,7 @@ it('catches bridge errors', async () => {
 	expect(onError).toHaveBeenCalledWith(error)
 })
 
-it('waits for .setup()', async () => {
+it.only('waits for .setup()', async () => {
 	const client = new Analytics.Client()
 
 	client.track('test 1')
@@ -57,8 +57,8 @@ it('waits for .setup()', async () => {
 	expect(Bridge.track).not.toHaveBeenCalled()
 	await client.setup('key')
 
-	expect(Bridge.track).toHaveBeenNthCalledWith(1, 'test 1', {}, ctx)
-	expect(Bridge.track).toHaveBeenNthCalledWith(2, 'test 2', {}, ctx)
+	expect(Bridge.track).toHaveBeenNthCalledWith(1, 'test 1', {}, {}, ctx)
+	expect(Bridge.track).toHaveBeenNthCalledWith(2, 'test 2', {}, {}, ctx)
 })
 
 it('does .track()', () =>
