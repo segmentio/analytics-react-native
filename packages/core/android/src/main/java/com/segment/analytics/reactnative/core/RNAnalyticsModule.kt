@@ -29,10 +29,14 @@ import android.content.pm.PackageManager
 import com.facebook.react.bridge.*
 import com.segment.analytics.Analytics
 import com.segment.analytics.Properties
+import com.segment.analytics.Options
 import com.segment.analytics.Traits
 import com.segment.analytics.ValueMap
 import com.segment.analytics.internal.Utils.getSegmentSharedPreferences
 import java.util.concurrent.TimeUnit
+import com.facebook.react.bridge.ReadableMap
+
+
 
 class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaModule(context) {
     override fun getName() = "RNAnalytics"
@@ -42,7 +46,6 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
 
     companion object {
         private var singletonJsonConfig: String? = null
-        private var key: String? = null
         private var versionKey = "version"
         private var buildKey = "build"
     }
@@ -56,18 +59,32 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
         }
     }
 
+    private fun getOptions(properties: ReadableMap?): Options {
+        var options = Options()
+        var integrations = properties?.getMap("integrations")
+
+        if (integrations !== null) {
+            val iterator = integrations.keySetIterator()
+            while (iterator.hasNextKey()) {
+                val nextKey = iterator.nextKey()
+                options.setIntegration(iterator.nextKey(), integrations.getBoolean(nextKey))
+            }
+        }
+        return options;
+    }
+
     /**
      * Tracks application lifecycle events - Application Installed, Application Updated and Application Opened
      * This is built to exactly mirror the application lifecycle tracking in analytics-android
      */
-    private fun trackApplicationLifecycleEvents() {
+    private fun trackApplicationLifecycleEvents(writeKey: String?) {
         // Get the current version.
         var packageInfo = this.getPackageInfo()
         val currentVersion = packageInfo.versionName
         val currentBuild = packageInfo.versionCode
 
         // Get the previous recorded version.
-        val sharedPreferences = getSegmentSharedPreferences(reactApplicationContext, key)
+        val sharedPreferences = getSegmentSharedPreferences(reactApplicationContext, writeKey)
         val previousVersion = sharedPreferences.getString(versionKey, null)
         val previousBuild = sharedPreferences.getInt(buildKey, -1)
 
@@ -145,19 +162,17 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
             return promise.reject("E_SEGMENT_ERROR", e)
         }
 
-        singletonJsonConfig = json
-        key = writeKey
-
         if(options.getBoolean("trackAppLifecycleEvents")) {
-            this.trackApplicationLifecycleEvents()
+            this.trackApplicationLifecycleEvents(writeKey)
         }
 
+        singletonJsonConfig = json
         promise.resolve(null)
     }
 
     @ReactMethod
-    fun track(event: String, properties: ReadableMap, context: ReadableMap) = 
-        analytics.track(event, Properties() from properties)
+    fun track(event: String, properties: ReadableMap, context: ReadableMap) =
+        analytics.track(event, Properties() from properties, this.getOptions(properties))
 
     @ReactMethod
     fun screen(name: String, properties: ReadableMap, context: ReadableMap) =
@@ -165,11 +180,11 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
 
     @ReactMethod
     fun identify(userId: String, traits: ReadableMap, context: ReadableMap) =
-        analytics.identify(userId, Traits() from traits, null)
+        analytics.identify(userId, Traits() from traits, this.getOptions(traits))
 
     @ReactMethod
     fun group(groupId: String, traits: ReadableMap, context: ReadableMap) =
-        analytics.group(groupId, Traits() from traits)
+        analytics.group(groupId, Traits() from traits, this.getOptions(traits))
 
     @ReactMethod
     fun alias(newId: String, context: ReadableMap) =
