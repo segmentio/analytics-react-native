@@ -90,10 +90,16 @@ RCT_EXPORT_METHOD(
 
 #define withContext(context) @{@"context": context}
 
+- (NSDictionary*)withContextAndIntegrations :(NSDictionary*)context :(NSDictionary*)properties {
+    NSDictionary* integrations = [properties objectForKey:@"integrations"];
+    return @{ @"context": context, @"interations": integrations ?: @{}};
+}
+
+
 RCT_EXPORT_METHOD(track:(NSString*)name :(NSDictionary*)properties :(NSDictionary*)context) {
     [SEGAnalytics.sharedAnalytics track:name
                              properties:properties
-                                options:withContext(context)];
+                                options:[self withContextAndIntegrations :context :properties]];
 }
 
 RCT_EXPORT_METHOD(screen:(NSString*)name :(NSDictionary*)properties :(NSDictionary*)context) {
@@ -105,13 +111,13 @@ RCT_EXPORT_METHOD(screen:(NSString*)name :(NSDictionary*)properties :(NSDictiona
 RCT_EXPORT_METHOD(identify:(NSString*)userId :(NSDictionary*)traits :(NSDictionary*)context) {
     [SEGAnalytics.sharedAnalytics identify:userId
                                     traits:traits
-                                   options:withContext(context)];
+                                   options:[self withContextAndIntegrations :context :traits]];
 }
 
 RCT_EXPORT_METHOD(group:(NSString*)groupId :(NSDictionary*)traits :(NSDictionary*)context) {
     [SEGAnalytics.sharedAnalytics group:groupId
                                  traits:traits
-                                options:withContext(context)];
+                                options:[self withContextAndIntegrations :context :traits]];
 }
 
 RCT_EXPORT_METHOD(alias:(NSString*)newId :(NSDictionary*)context) {
