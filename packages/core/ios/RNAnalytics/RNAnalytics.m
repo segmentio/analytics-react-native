@@ -92,7 +92,7 @@ RCT_EXPORT_METHOD(
 
 - (NSDictionary*)withContextAndIntegrations :(NSDictionary*)context :(NSDictionary*)properties {
     NSDictionary* integrations = [properties objectForKey:@"integrations"];
-    return @{ @"context": context, @"interations": integrations ?: @{}};
+    return @{ @"context": context, @"integrations": integrations ?: @{}};
 }
 
 
