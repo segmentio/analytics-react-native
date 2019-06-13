@@ -48,7 +48,7 @@ it('catches bridge errors', async () => {
 	expect(onError).toHaveBeenCalledWith(error)
 })
 
-it.only('waits for .setup()', async () => {
+it('waits for .setup()', async () => {
 	const client = new Analytics.Client()
 
 	client.track('test 1')
