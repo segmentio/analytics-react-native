@@ -142,7 +142,7 @@ ___
 
 ▸ **getAnonymousId**(): `Promise`<`string`>
 
-*Defined in [analytics.ts:305](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L305)*
+*Defined in [analytics.ts:307](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L307)*
 
 Retrieve the anonymousId.
 

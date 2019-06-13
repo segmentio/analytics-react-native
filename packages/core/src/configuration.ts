@@ -10,7 +10,7 @@ const defaults = {
 		flushInterval
 	}),
 	ios: ({
-		trackAdvertising = false,
+		trackAdvertising = true,
 		trackDeepLinks = false
 	}: Partial<Configuration['ios']>) => ({
 		trackAdvertising,

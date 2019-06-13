@@ -51,8 +51,8 @@ export module Analytics {
 		ios?: {
 			/**
 			 * Whether the analytics client should track advertisting info.
-			 * 
-			 * Disabled by default.
+			 *
+			 * Enabled by default.
 			 */
 			trackAdvertising?: boolean
 			/**
