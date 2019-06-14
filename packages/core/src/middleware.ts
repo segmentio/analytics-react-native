@@ -1,4 +1,4 @@
-import { JsonMap, Integrations } from './bridge'
+import { Integrations, JsonMap } from './bridge'
 import { assertNever } from './utils'
 import { NativeWrapper } from './wrapper'
 
