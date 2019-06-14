@@ -26,10 +26,12 @@ export interface JsonMap {
 }
 export interface JsonList extends Array<JsonValue> {}
 
+export interface Integrations {
+	[key: string]: boolean | JsonMap
+}
+
 export interface Options {
-	integrations?: {
-		[key: string]: boolean
-	}
+	integrations?: Integrations
 }
 
 export interface Bridge {

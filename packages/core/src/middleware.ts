@@ -1,4 +1,4 @@
-import { JsonMap, Options } from './bridge'
+import { JsonMap, Integrations } from './bridge'
 import { assertNever } from './utils'
 import { NativeWrapper } from './wrapper'
 
@@ -17,7 +17,7 @@ export interface TrackPayload
 		{
 			event: string
 			properties: JsonMap
-			options: Options
+			integrations: Integrations
 		}
 	> {}
 
@@ -36,7 +36,7 @@ export interface IdentifyPayload
 		{
 			user: string
 			traits: JsonMap
-			options: Options
+			integrations: Integrations
 		}
 	> {}
 
@@ -46,7 +46,7 @@ export interface GroupPayload
 		{
 			groupId: string
 			traits: JsonMap
-			options: Options
+			integrations: Integrations
 		}
 	> {}
 
@@ -106,7 +106,7 @@ export class MiddlewareChain {
 					group(
 						payload.data.groupId,
 						payload.data.traits,
-						payload.data.options,
+						payload.data.integrations,
 						payload.context
 					)
 				)
@@ -115,7 +115,7 @@ export class MiddlewareChain {
 					identify(
 						payload.data.user,
 						payload.data.traits,
-						payload.data.options,
+						payload.data.integrations,
 						payload.context
 					)
 				)
@@ -128,7 +128,7 @@ export class MiddlewareChain {
 					track(
 						payload.data.event,
 						payload.data.properties,
-						payload.data.options,
+						payload.data.integrations,
 						payload.context
 					)
 				)

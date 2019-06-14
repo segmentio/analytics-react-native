@@ -205,7 +205,7 @@ export module Analytics {
 		 * @param options A dictionary of options, e.g. integrations (thigh analytics integration to forward the event to)
 		 */
 		public async track(event: string, properties: JsonMap = {}, options: Options = {}) {
-			await this.middlewares.run('track', { event, properties, options })
+			await this.middlewares.run('track', { event, properties, integrations: options.integrations || {} })
 		}
 
 		/**
@@ -238,7 +238,7 @@ export module Analytics {
 		 * @param options A dictionary of options, e.g. integrations (thigh analytics integration to forward the event to)
 		 */
 		public async identify(user: string, traits: JsonMap = {}, options: Options = {}) {
-			await this.middlewares.run('identify', { user, traits, options })
+			await this.middlewares.run('identify', { user, traits, integrations: options.integrations || {} })
 		}
 
 		/**
@@ -251,7 +251,7 @@ export module Analytics {
 		 * @param options A dictionary of options, e.g. integrations (thigh analytics integration to forward the event to)
 		 */
 		public async group(groupId: string, traits: JsonMap = {}, options: Options = {}) {
-			await this.middlewares.run('group', { groupId, traits, options })
+			await this.middlewares.run('group', { groupId, traits, integrations: options.integrations || {} })
 		}
 
 		/**

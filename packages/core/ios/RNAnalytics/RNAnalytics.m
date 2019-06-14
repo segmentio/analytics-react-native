@@ -90,16 +90,15 @@ RCT_EXPORT_METHOD(
 
 #define withContext(context) @{@"context": context}
 
-- (NSDictionary*)withContextAndIntegrations :(NSDictionary*)context :(NSDictionary*)properties {
-    NSDictionary* integrations = [properties objectForKey:@"integrations"];
+- (NSDictionary*)withContextAndIntegrations :(NSDictionary*)context :(NSDictionary*)integrations {
     return @{ @"context": context, @"integrations": integrations ?: @{}};
 }
 
 
-RCT_EXPORT_METHOD(track:(NSString*)name :(NSDictionary*)properties :(NSDictionary*)options :(NSDictionary*)context) {
+RCT_EXPORT_METHOD(track:(NSString*)name :(NSDictionary*)properties :(NSDictionary*)integrations :(NSDictionary*)context) {
     [SEGAnalytics.sharedAnalytics track:name
                              properties:properties
-                                options:[self withContextAndIntegrations :context :options]];
+                                options:[self withContextAndIntegrations :context :integrations]];
 }
 
 RCT_EXPORT_METHOD(screen:(NSString*)name :(NSDictionary*)properties :(NSDictionary*)context) {
@@ -108,16 +107,16 @@ RCT_EXPORT_METHOD(screen:(NSString*)name :(NSDictionary*)properties :(NSDictiona
                                  options:withContext(context)];
 }
 
-RCT_EXPORT_METHOD(identify:(NSString*)userId :(NSDictionary*)traits :(NSDictionary*)options :(NSDictionary*)context) {
+RCT_EXPORT_METHOD(identify:(NSString*)userId :(NSDictionary*)traits :(NSDictionary*)integrations :(NSDictionary*)context) {
     [SEGAnalytics.sharedAnalytics identify:userId
                                     traits:traits
-                                   options:[self withContextAndIntegrations :context :options]];
+                                   options:[self withContextAndIntegrations :context :integrations]];
 }
 
-RCT_EXPORT_METHOD(group:(NSString*)groupId :(NSDictionary*)traits :(NSDictionary*)options :(NSDictionary*)context) {
+RCT_EXPORT_METHOD(group:(NSString*)groupId :(NSDictionary*)traits :(NSDictionary*)integrations :(NSDictionary*)context) {
     [SEGAnalytics.sharedAnalytics group:groupId
                                  traits:traits
-                                options:[self withContextAndIntegrations :context :options]];
+                                options:[self withContextAndIntegrations :context :integrations]];
 }
 
 RCT_EXPORT_METHOD(alias:(NSString*)newId :(NSDictionary*)context) {

@@ -59,15 +59,24 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
         }
     }
 
-    private fun getOptions(properties: ReadableMap?): Options {
+    /**
+     * Builds Options with integrations
+     * The format for the integrations variable is { String: Boolean | Map }
+     */
+    private fun getOptions(integrations: ReadableMap?): Options {
         var options = Options()
-        var integrations = properties?.getMap("integrations")
 
         if (integrations !== null) {
             val iterator = integrations.keySetIterator()
             while (iterator.hasNextKey()) {
                 val nextKey = iterator.nextKey()
-                options.setIntegration(nextKey, integrations.getBoolean(nextKey))
+                when (integrations.getType(nextKey)) {
+                    ReadableType.Boolean -> options.setIntegration(nextKey, integrations.getBoolean(nextKey))
+                    ReadableType.Map -> {
+                        options.setIntegration(nextKey, true)
+                        options.setIntegrationOptions(nextKey, integrations.getMap(nextKey)?.toHashMap())
+                    }
+                }
             }
         }
         return options;
@@ -171,20 +180,20 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
     }
 
     @ReactMethod
-    fun track(event: String, properties: ReadableMap, options: ReadableMap, context: ReadableMap) =
-        analytics.track(event, Properties() from properties, this.getOptions(options))
+    fun track(event: String, properties: ReadableMap, integrations: ReadableMap, context: ReadableMap) =
+        analytics.track(event, Properties() from properties, this.getOptions(integrations))
 
     @ReactMethod
     fun screen(name: String, properties: ReadableMap, context: ReadableMap) =
         analytics.screen(name, Properties() from properties)
 
     @ReactMethod
-    fun identify(userId: String, traits: ReadableMap, options: ReadableMap, context: ReadableMap) =
-        analytics.identify(userId, Traits() from traits, this.getOptions(options))
+    fun identify(userId: String, traits: ReadableMap, integrations: ReadableMap, context: ReadableMap) =
+        analytics.identify(userId, Traits() from traits, this.getOptions(integrations))
 
     @ReactMethod
-    fun group(groupId: String, traits: ReadableMap, options: ReadableMap, context: ReadableMap) =
-        analytics.group(groupId, Traits() from traits, this.getOptions(options))
+    fun group(groupId: String, traits: ReadableMap, integrations: ReadableMap, context: ReadableMap) =
+        analytics.group(groupId, Traits() from traits, this.getOptions(integrations))
 
     @ReactMethod
     fun alias(newId: String, context: ReadableMap) =
