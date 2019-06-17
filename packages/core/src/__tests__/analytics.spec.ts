@@ -103,3 +103,31 @@ function testCall<K extends keyof typeof Bridge>(name: K) {
 		expect(Bridge[name]).toHaveBeenNthCalledWith(1, ...args)
 	}) as (typeof Bridge)[K]
 }
+
+it('enables setting integrations from the middleware', async () => {
+	const integrations = {
+		Mixpanel: { foo: 'bar' },
+		'Google Analytics': false
+	}
+
+	analytics.middleware(async ({ next, context, data, type }) => {
+		switch (type) {
+			case 'track':
+			case 'identify':
+			case 'group':
+				// @ts-ignore ts says integrations is incompatible when type='alias'
+				return next(context, { ...data, integrations })
+			default:
+				return next(context)
+		}
+	})
+
+	const trackSpy = jest.fn()
+	getBridgeStub('track').mockImplementationOnce(trackSpy)
+	analytics.track('test')
+	await nextTick()
+
+	expect(trackSpy).toBeCalledWith('test', {}, integrations, {
+		library: ctx.library
+	})
+})
