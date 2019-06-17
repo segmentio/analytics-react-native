@@ -106,8 +106,8 @@ function testCall<K extends keyof typeof Bridge>(name: K) {
 
 it('enables setting integrations from the middleware', async () => {
 	const integrations = {
-		Mixpanel: { foo: 'bar' },
-		'Google Analytics': false
+		'Google Analytics': false,
+		Mixpanel: { foo: 'bar' }
 	}
 
 	analytics.middleware(async ({ next, context, data, type }) => {
