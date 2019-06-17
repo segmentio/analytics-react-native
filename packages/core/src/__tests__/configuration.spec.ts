@@ -26,7 +26,7 @@ it('uses the default configuration', async () => {
 				flushInterval: undefined
 			},
 			ios: {
-				trackAdvertising: false,
+				trackAdvertising: true,
 				trackDeepLinks: false
 			}
 		})
