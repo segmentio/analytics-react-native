@@ -79,7 +79,7 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
                 }
             }
         }
-        return options;
+        return options
     }
 
     /**

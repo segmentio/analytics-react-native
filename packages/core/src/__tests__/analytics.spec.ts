@@ -111,7 +111,8 @@ it('enables setting integrations from the middleware', async () => {
 	}
 
 	analytics.middleware(async ({ next, context, data }) =>
-		next(context, { ...data, integrations, newId: '123' })
+		// @ts-ignore ts is expecting newId for some reasons
+		next(context, { ...data, integrations })
 	)
 
 	const trackSpy = jest.fn()
