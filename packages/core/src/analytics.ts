@@ -222,8 +222,8 @@ export module Analytics {
 		 * @param properties A dictionary of properties for the screen view event.
 		 * If the event was 'Added to Shopping Cart', it might have properties like price, productType, etc.
 		 */
-		public async screen(name: string, properties: JsonMap = {}) {
-			await this.middlewares.run('screen', { name, properties })
+		public async screen(name: string, properties: JsonMap = {}, options: Options = {}) {
+			await this.middlewares.run('screen', { name, properties, integrations: options.integrations || {} })
 		}
 
 		/**
@@ -263,8 +263,8 @@ export module Analytics {
 		 * @param newId The new ID you want to alias the existing ID to.
 		 * The existing ID will be either the previousId if you have called identify, or the anonymous ID.
 		 */
-		public async alias(newId: string) {
-			await this.middlewares.run('alias', { newId })
+		public async alias(newId: string, options: Options = {}) {
+			await this.middlewares.run('alias', { newId, integrations: options.integrations || {} })
 		}
 
 		/**

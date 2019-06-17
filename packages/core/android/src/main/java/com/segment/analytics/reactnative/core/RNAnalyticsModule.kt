@@ -184,8 +184,8 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
         analytics.track(event, Properties() from properties, this.getOptions(integrations))
 
     @ReactMethod
-    fun screen(name: String, properties: ReadableMap, context: ReadableMap) =
-        analytics.screen(name, Properties() from properties)
+    fun screen(name: String, properties: ReadableMap, integrations: ReadableMap, context: ReadableMap) =
+        analytics.screen(null, name, Properties() from properties, this.getOptions(integrations))
 
     @ReactMethod
     fun identify(userId: String, traits: ReadableMap, integrations: ReadableMap, context: ReadableMap) =
@@ -196,8 +196,8 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
         analytics.group(groupId, Traits() from traits, this.getOptions(integrations))
 
     @ReactMethod
-    fun alias(newId: String, context: ReadableMap) =
-        analytics.alias(newId)
+    fun alias(newId: String, context: ReadableMap, integrations: ReadableMap) =
+        analytics.alias(newId, this.getOptions(integrations))
 
     @ReactMethod
     fun reset() =

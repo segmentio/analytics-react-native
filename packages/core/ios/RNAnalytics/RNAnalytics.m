@@ -88,8 +88,6 @@ RCT_EXPORT_METHOD(
     resolver(nil);
 }
 
-#define withContext(context) @{@"context": context}
-
 - (NSDictionary*)withContextAndIntegrations :(NSDictionary*)context :(NSDictionary*)integrations {
     return @{ @"context": context, @"integrations": integrations ?: @{}};
 }
@@ -101,10 +99,10 @@ RCT_EXPORT_METHOD(track:(NSString*)name :(NSDictionary*)properties :(NSDictionar
                                 options:[self withContextAndIntegrations :context :integrations]];
 }
 
-RCT_EXPORT_METHOD(screen:(NSString*)name :(NSDictionary*)properties :(NSDictionary*)context) {
+RCT_EXPORT_METHOD(screen:(NSString*)name :(NSDictionary*)properties :(NSDictionary*)integrations :(NSDictionary*)context) {
     [SEGAnalytics.sharedAnalytics screen:name
                               properties:properties
-                                 options:withContext(context)];
+                                 options:[self withContextAndIntegrations :context :integrations]];
 }
 
 RCT_EXPORT_METHOD(identify:(NSString*)userId :(NSDictionary*)traits :(NSDictionary*)integrations :(NSDictionary*)context) {
@@ -119,12 +117,10 @@ RCT_EXPORT_METHOD(group:(NSString*)groupId :(NSDictionary*)traits :(NSDictionary
                                 options:[self withContextAndIntegrations :context :integrations]];
 }
 
-RCT_EXPORT_METHOD(alias:(NSString*)newId :(NSDictionary*)context) {
+RCT_EXPORT_METHOD(alias:(NSString*)newId :(NSDictionary*)integrations :(NSDictionary*)context) {
     [SEGAnalytics.sharedAnalytics alias:newId
-                                options:withContext(context)];
+                                options:[self withContextAndIntegrations :context :integrations]];
 }
-
-#undef withContext
 
 RCT_EXPORT_METHOD(reset) {
     [SEGAnalytics.sharedAnalytics reset];

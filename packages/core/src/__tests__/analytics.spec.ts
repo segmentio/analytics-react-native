@@ -65,14 +65,14 @@ it('does .track()', () =>
 	testCall('track')('Added to cart', { productId: 'azertyuiop' }, {}, ctx))
 
 it('does .screen()', () =>
-	testCall('screen')('Shopping cart', { from: 'Product page' }, ctx))
+	testCall('screen')('Shopping cart', { from: 'Product page' }, {}, ctx))
 
 it('does .identify()', () =>
 	testCall('identify')('sloth', { eats: 'leaves' }, {}, ctx))
 
 it('does .group()', () => testCall('group')('bots', { humans: false }, {}, ctx))
 
-it('does .alias()', () => testCall('alias')('new alias', ctx))
+it('does .alias()', () => testCall('alias')('new alias', {}, ctx))
 
 it('does .reset()', testCall('reset'))
 it('does .flush()', testCall('flush'))
@@ -110,17 +110,9 @@ it('enables setting integrations from the middleware', async () => {
 		Mixpanel: { foo: 'bar' }
 	}
 
-	analytics.middleware(async ({ next, context, data, type }) => {
-		switch (type) {
-			case 'track':
-			case 'identify':
-			case 'group':
-				// @ts-ignore ts says integrations is incompatible when type='alias'
-				return next(context, { ...data, integrations })
-			default:
-				return next(context)
-		}
-	})
+	analytics.middleware(async ({ next, context, data }) =>
+		next(context, { ...data, integrations, newId: '123' })
+	)
 
 	const trackSpy = jest.fn()
 	getBridgeStub('track').mockImplementationOnce(trackSpy)

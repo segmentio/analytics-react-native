@@ -48,14 +48,19 @@ export interface Bridge {
 		options: Options,
 		context: JsonMap
 	): Promise<void>
-	screen(name: string, properties: JsonMap, context: JsonMap): Promise<void>
+	screen(
+		name: string,
+		properties: JsonMap,
+		options: Options,
+		context: JsonMap
+	): Promise<void>
 	group(
 		groupId: string,
 		traits: JsonMap,
 		options: Options,
 		context: JsonMap
 	): Promise<void>
-	alias(alias: string, context: JsonMap): Promise<void>
+	alias(alias: string, options: Options, context: JsonMap): Promise<void>
 	reset(): Promise<void>
 	flush(): Promise<void>
 	enable(): Promise<void>

@@ -27,6 +27,7 @@ export interface ScreenPayload
 		{
 			name: string
 			properties: JsonMap
+			integrations: Integrations
 		}
 	> {}
 
@@ -55,6 +56,7 @@ export interface AliasPayload
 		'alias',
 		{
 			newId: string
+			integrations: Integrations
 		}
 	> {}
 
@@ -99,7 +101,7 @@ export class MiddlewareChain {
 		switch (payload.type) {
 			case 'alias':
 				return this.wrapper.run('alias', alias =>
-					alias(payload.data.newId, payload.context)
+					alias(payload.data.newId, payload.data.integrations, payload.context)
 				)
 			case 'group':
 				return this.wrapper.run('group', group =>
@@ -121,7 +123,12 @@ export class MiddlewareChain {
 				)
 			case 'screen':
 				return this.wrapper.run('screen', screen =>
-					screen(payload.data.name, payload.data.properties, payload.context)
+					screen(
+						payload.data.name,
+						payload.data.properties,
+						payload.data.integrations,
+						payload.context
+					)
 				)
 			case 'track':
 				return this.wrapper.run('track', track =>

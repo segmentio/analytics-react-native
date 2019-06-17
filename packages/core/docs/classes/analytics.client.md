@@ -53,7 +53,7 @@ ___
 
 ###  alias
 
-▸ **alias**(newId: *`string`*): `Promise`<`void`>
+▸ **alias**(newId: *`string`*, options?: *[Options]()*): `Promise`<`void`>
 
 *Defined in [analytics.ts:266](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L266)*
 
@@ -63,9 +63,10 @@ When you learn more about who the group is, you can record that information with
 
 **Parameters:**
 
-| Name | Type | Description |
-| ------ | ------ | ------ |
-| newId | `string` |  The new ID you want to alias the existing ID to. The existing ID will be either the previousId if you have called identify, or the anonymous ID. |
+| Name | Type | Default value | Description |
+| ------ | ------ | ------ | ------ |
+| newId | `string` | - |  The new ID you want to alias the existing ID to. The existing ID will be either the previousId if you have called identify, or the anonymous ID. |
+| `Default value` options | [Options]() |  {} |
 
 **Returns:** `Promise`<`void`>
 
@@ -252,7 +253,7 @@ ___
 
 ###  screen
 
-▸ **screen**(name: *`string`*, properties?: *[JsonMap]()*): `Promise`<`void`>
+▸ **screen**(name: *`string`*, properties?: *[JsonMap]()*, options?: *[Options]()*): `Promise`<`void`>
 
 *Defined in [analytics.ts:225](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L225)*
 
@@ -266,6 +267,7 @@ When a user views a screen in your app, you'll want to record that here. For som
 | ------ | ------ | ------ | ------ |
 | name | `string` | - |  The title of the screen being viewed. We recommend using human-readable names like 'Photo Feed' or 'Completed Purchase Screen'. |
 | `Default value` properties | [JsonMap]() |  {} |  A dictionary of properties for the screen view event. If the event was 'Added to Shopping Cart', it might have properties like price, productType, etc. |
+| `Default value` options | [Options]() |  {} |
 
 **Returns:** `Promise`<`void`>
 
