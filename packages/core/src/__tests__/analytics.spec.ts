@@ -57,22 +57,22 @@ it('waits for .setup()', async () => {
 	expect(Bridge.track).not.toHaveBeenCalled()
 	await client.setup('key')
 
-	expect(Bridge.track).toHaveBeenNthCalledWith(1, 'test 1', {}, ctx)
-	expect(Bridge.track).toHaveBeenNthCalledWith(2, 'test 2', {}, ctx)
+	expect(Bridge.track).toHaveBeenNthCalledWith(1, 'test 1', {}, {}, ctx)
+	expect(Bridge.track).toHaveBeenNthCalledWith(2, 'test 2', {}, {}, ctx)
 })
 
 it('does .track()', () =>
-	testCall('track')('Added to cart', { productId: 'azertyuiop' }, ctx))
+	testCall('track')('Added to cart', { productId: 'azertyuiop' }, {}, ctx))
 
 it('does .screen()', () =>
-	testCall('screen')('Shopping cart', { from: 'Product page' }, ctx))
+	testCall('screen')('Shopping cart', { from: 'Product page' }, {}, ctx))
 
 it('does .identify()', () =>
-	testCall('identify')('sloth', { eats: 'leaves' }, ctx))
+	testCall('identify')('sloth', { eats: 'leaves' }, {}, ctx))
 
-it('does .group()', () => testCall('group')('bots', { humans: false }, ctx))
+it('does .group()', () => testCall('group')('bots', { humans: false }, {}, ctx))
 
-it('does .alias()', () => testCall('alias')('new alias', ctx))
+it('does .alias()', () => testCall('alias')('new alias', {}, ctx))
 
 it('does .reset()', testCall('reset'))
 it('does .flush()', testCall('flush'))
@@ -103,3 +103,24 @@ function testCall<K extends keyof typeof Bridge>(name: K) {
 		expect(Bridge[name]).toHaveBeenNthCalledWith(1, ...args)
 	}) as (typeof Bridge)[K]
 }
+
+it('enables setting integrations from the middleware', async () => {
+	const integrations = {
+		'Google Analytics': false,
+		Mixpanel: { foo: 'bar' }
+	}
+
+	analytics.middleware(async ({ next, context, data }) =>
+		// @ts-ignore ts is expecting newId for some reasons
+		next(context, { ...data, integrations })
+	)
+
+	const trackSpy = jest.fn()
+	getBridgeStub('track').mockImplementationOnce(trackSpy)
+	analytics.track('test')
+	await nextTick()
+
+	expect(trackSpy).toBeCalledWith('test', {}, integrations, {
+		library: ctx.library
+	})
+})

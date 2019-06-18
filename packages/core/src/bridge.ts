@@ -26,13 +26,41 @@ export interface JsonMap {
 }
 export interface JsonList extends Array<JsonValue> {}
 
+export interface Integrations {
+	[key: string]: boolean | JsonMap
+}
+
+export interface Options {
+	integrations?: Integrations
+}
+
 export interface Bridge {
 	setup(configuration: Configuration): Promise<void>
-	track(event: string, properties: JsonMap, context: JsonMap): Promise<void>
-	identify(user: string, traits: JsonMap, context: JsonMap): Promise<void>
-	screen(name: string, properties: JsonMap, context: JsonMap): Promise<void>
-	group(groupId: string, traits: JsonMap, context: JsonMap): Promise<void>
-	alias(alias: string, context: JsonMap): Promise<void>
+	track(
+		event: string,
+		properties: JsonMap,
+		options: Options,
+		context: JsonMap
+	): Promise<void>
+	identify(
+		user: string,
+		traits: JsonMap,
+		options: Options,
+		context: JsonMap
+	): Promise<void>
+	screen(
+		name: string,
+		properties: JsonMap,
+		options: Options,
+		context: JsonMap
+	): Promise<void>
+	group(
+		groupId: string,
+		traits: JsonMap,
+		options: Options,
+		context: JsonMap
+	): Promise<void>
+	alias(alias: string, options: Options, context: JsonMap): Promise<void>
 	reset(): Promise<void>
 	flush(): Promise<void>
 	enable(): Promise<void>
