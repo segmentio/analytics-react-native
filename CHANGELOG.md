@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.0-beta.0"></a>
+
+# [1.1.0-beta.0](https://github.com/segmentio/analytics-react-native/compare/v1.0.1-beta.0...v1.1.0-beta.0) (2019-06-20)
+
+### Features
+
+- **integrations:** allow setting integration options ([13b663e](https://github.com/segmentio/analytics-react-native/commit/13b663e))
+- **ios:** set trackAdvertising=true by default on ios ([#82](https://github.com/segmentio/analytics-react-native/issues/82)) ([09e997b](https://github.com/segmentio/analytics-react-native/commit/09e997b))
+
 <a name="1.0.1"></a>
 
 ## [1.0.1](https://github.com/segmentio/analytics-react-native/compare/v1.0.0...v1.0.1) (2019-06-07)
