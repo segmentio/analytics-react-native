@@ -163,6 +163,10 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
             builder.logLevel(Analytics.LogLevel.VERBOSE)
         }
 
+        if(options.getBoolean("trackAppLifecycleEvents")) {
+            builder.trackApplicationLifecycleEvents()
+        }
+
         try {
             Analytics.setSingletonInstance(
                 RNAnalytics.buildWithIntegrations(builder)
