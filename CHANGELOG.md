@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.0-beta.1"></a>
+
+# [1.1.0-beta.1](https://github.com/segmentio/analytics-react-native/compare/v1.1.0-beta.0...v1.1.0-beta.1) (2019-07-25)
+
+### Bug Fixes
+
+- **core:** track lifecyle events before builder is set by the singleton ([#88](https://github.com/segmentio/analytics-react-native/pull/88))
+
+<a name="1.1.0-beta.0"></a>
+
 # [1.1.0-beta.0](https://github.com/segmentio/analytics-react-native/compare/v1.0.1-beta.0...v1.1.0-beta.0) (2019-06-20)
 
 ### Features
