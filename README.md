@@ -1,4 +1,4 @@
-ZQ# @segment/analytics-react-native
+# @segment/analytics-react-native
 
 The hassle-free way to add analytics to your React-Native app.
 
