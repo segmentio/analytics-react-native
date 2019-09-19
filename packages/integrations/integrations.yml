@@ -82,3 +82,16 @@
   android:
     maven:
       name: io.branch.segment.analytics.android.integrations:branch
+
+- name: CleverTap
+  # https://github.com/CleverTap/clevertap-segment-ios
+  ios:
+    pod:
+      name: Segment-CleverTap
+  # https://github.com/CleverTap/clevertap-segment-android
+  android:
+    factory:
+      class: CleverTapIntegration
+    maven:
+      name: com.clevertap.android:clevertap-segment-android
+      version: 1.+
