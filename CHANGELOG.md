@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.0-beta.2"></a>
+
+# [1.1.0-beta.2](https://github.com/segmentio/analytics-react-native/compare/v1.1.0-beta.0...v1.1.0-beta.2) (2019-09-23)
+
+### Bug Fixes
+
+- **core:** fix kotlin gradle version for integrations ([#109](https://github.com/segmentio/analytics-react-native/issues/109)) ([3f4e3cc](https://github.com/segmentio/analytics-react-native/commit/3f4e3cc))
+
+### Features
+
+- add CleverTap integration ([#102](https://github.com/segmentio/analytics-react-native/issues/102)) ([9511c98](https://github.com/segmentio/analytics-react-native/commit/9511c98))
+
 <a name="1.1.0-beta.1"></a>
 
 # [1.1.0-beta.1](https://github.com/segmentio/analytics-react-native/compare/v1.1.0-beta.0...v1.1.0-beta.1) (2019-07-25)
