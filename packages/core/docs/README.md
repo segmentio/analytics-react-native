@@ -24,7 +24,7 @@
 
 **Ƭ Integration**: *`function` \| `object`*
 
-*Defined in [analytics.ts:8](https://github.com/emadgit/analytics-react-native/blob/master/packages/core/src/analytics.ts#L8)*
+*Defined in [analytics.ts:8](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L8)*
 
 ___
 
