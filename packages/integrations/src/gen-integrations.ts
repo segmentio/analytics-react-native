@@ -69,9 +69,10 @@ async function prepareiOS({
 	const xcodeProject = 'ios/RNAnalyticsIntegration.xcodeproj'
 	const targetXcodeProject = `ios/${nativeModule}.xcodeproj`
 	const pod_name = `RNAnalyticsIntegration-${slug('-')}`
+	const framework_name = `Segment_${slug()}`
 	const {
 		pod: {
-			name: pod_dependency = `Segment_${slug()}`,
+			name: pod_dependency = `Segment-${slug()}`,
 			version: pod_version = undefined
 		} = {},
 		prefix = 'SEG'
@@ -79,7 +80,7 @@ async function prepareiOS({
 	const classSlug = `${prefix}${slug()}IntegrationFactory`
 	const {
 		className = classSlug,
-		framework = pod_dependency,
+		framework = framework_name,
 		header = classSlug
 	} = ios
 
