@@ -71,7 +71,7 @@ async function prepareiOS({
 	const pod_name = `RNAnalyticsIntegration-${slug('-')}`
 	const {
 		pod: {
-			name: pod_dependency = `Segment-${slug()}`,
+			name: pod_dependency = `Segment_${slug()}`,
 			version: pod_version = undefined
 		} = {},
 		prefix = 'SEG'
