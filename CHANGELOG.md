@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.0"></a>
+
+# [1.1.0](https://github.com/segmentio/analytics-react-native/compare/v1.1.0-beta.2...v1.1.0) (2019-10-23)
+
 <a name="1.1.0-beta.2"></a>
 
 # [1.1.0-beta.2](https://github.com/segmentio/analytics-react-native/compare/v1.1.0-beta.0...v1.1.0-beta.2) (2019-09-23)
