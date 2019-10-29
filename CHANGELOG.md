@@ -6,9 +6,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 # [1.1.0](https://github.com/segmentio/analytics-react-native/compare/v1.1.0-beta.2...v1.1.0) (2019-10-24)
 
-<a name="1.1.0"></a>
-
-# [1.1.0](https://github.com/segmentio/analytics-react-native/compare/v1.1.0-beta.2...v1.1.0) (2019-10-23)
+- promoted 1.1.0-beta.2 to release 1.1.0.
 
 <a name="1.1.0-beta.2"></a>
 
