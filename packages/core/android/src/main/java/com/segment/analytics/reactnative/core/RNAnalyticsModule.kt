@@ -171,6 +171,11 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
             Analytics.setSingletonInstance(
                 RNAnalytics.buildWithIntegrations(builder)
             )
+        } catch(e2: IllegalStateException) {
+            // pass if the error is due to calling setSingletonInstance multiple times
+
+            // if you created singleton in native code already,
+            // you need to promise.resolve for RN to properly operate
         } catch(e: Exception) {
             return promise.reject("E_SEGMENT_ERROR", e)
         }
