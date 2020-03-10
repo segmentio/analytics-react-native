@@ -192,7 +192,7 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
         analytics.screen(null, name, Properties() from properties, this.getOptions(integrations))
 
     @ReactMethod
-    fun identify(userId: String, traits: ReadableMap, integrations: ReadableMap, context: ReadableMap) =
+    fun identify(userId: String?, traits: ReadableMap, integrations: ReadableMap, context: ReadableMap) =
         analytics.identify(userId, Traits() from traits, this.getOptions(integrations))
 
     @ReactMethod
