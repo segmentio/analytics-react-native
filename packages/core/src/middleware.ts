@@ -1,4 +1,4 @@
-import { Integrations, Context, Options, JsonMap } from './bridge'
+import { Context, Integrations, JsonMap, Options } from './bridge'
 import { assertNever } from './utils'
 import { NativeWrapper } from './wrapper'
 
@@ -93,8 +93,8 @@ export class MiddlewareChain {
 		const payload: Payload = await this.exec(type, ctx, data)
 
 		const opts: Options = {
-			integrations: payload.data.integrations,
-			context: payload.context
+			context: payload.context,
+			integrations: payload.data.integrations
 		}
 
 		switch (payload.type) {
