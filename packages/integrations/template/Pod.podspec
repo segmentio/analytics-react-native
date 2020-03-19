@@ -25,4 +25,5 @@ Pod::Spec.new do |s|
   s.dependency          '{{{pod_dependency}}}'{{#pod_version}}, '~> {{{pod_version}}}'{{/pod_version}}
   s.dependency          'Analytics'
   s.dependency          'React'
+  s.dependency          'RNAnalytics'
 end
