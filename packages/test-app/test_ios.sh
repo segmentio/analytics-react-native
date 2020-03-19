@@ -22,5 +22,5 @@ pushd project/ios
     fi
 popd
 
-detox build --configuration ios-$cfg
-detox test --configuration ios-$cfg --loglevel trace
+yarn detox build --configuration ios-$cfg
+yarn detox test --configuration ios-$cfg --loglevel trace
