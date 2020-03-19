@@ -5233,10 +5233,10 @@ react-is@^16.8.1, react-is@^16.8.3, react-is@^16.8.4:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.8.6.tgz#5bbc1e2d29141c9fbdfed456343fe2bc430a6a16"
   integrity sha512-aUk3bHfZ2bRSVFFbbeVS4i+lNPZr3/WM5jT2J5omUVV1zzcs1nAaf3l51ctA5FFvCRbhrH0bdAsRRQddFJZPtA==
 
-react-native@0.59.9:
-  version "0.59.9"
-  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.59.9.tgz#c94ee4fa35121720c05235a2dd6cdd2784bf5177"
-  integrity sha512-/+8EgIZwFpYHyyJ7Zav7B6LHNrytwUQ+EKGT/QV7HSrgpf2Y5NZNeUYUHKiVKLYpBip1G32/LcAECQj37YRwGQ==
+react-native@0.59.2:
+  version "0.59.2"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.59.2.tgz#c2e2d9e185b04e54948f170841d97c24661a0fa9"
+  integrity sha512-gIygrCr42rGEQnfjcAZdCOqgjC0oZtTIp+mdbUW+yqHpNUU1PbYKzUkLlvSFGeN+IUcL8WTaC1JtJvghKhaLmA==
   dependencies:
     "@babel/runtime" "^7.0.0"
     "@react-native-community/cli" "^1.2.1"
