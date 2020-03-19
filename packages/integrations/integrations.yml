@@ -22,11 +22,15 @@
   ios:
     # Only compatible 3.0.x
     disabled: true
+  android:
+    disabled: true
 
 - name: Intercom
   ios:
     pod:
       version: 1.0.0-beta
+  android:
+    disabled: true
 
 - name: Tapstream
   ios:
