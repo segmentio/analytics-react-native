@@ -69,7 +69,7 @@ async function prepareiOS({
 	const xcodeProject = 'ios/RNAnalyticsIntegration.xcodeproj'
 	const targetXcodeProject = `ios/${nativeModule}.xcodeproj`
 	const pod_name = `RNAnalyticsIntegration-${slug('-')}`
-	const framework_name = `Segment_${slug()}`
+	const framework_name = `Segment-${slug()}`
 	const {
 		pod: {
 			name: pod_dependency = `Segment-${slug()}`,
