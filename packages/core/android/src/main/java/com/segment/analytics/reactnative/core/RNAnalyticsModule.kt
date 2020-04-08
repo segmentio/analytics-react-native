@@ -60,29 +60,6 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
     }
 
     /**
-     * Builds Options with integrations
-     * The format for the integrations variable is { String: Boolean | Map }
-     */
-    private fun getOptions(integrations: ReadableMap?): Options {
-        var options = Options()
-
-        if (integrations !== null) {
-            val iterator = integrations.keySetIterator()
-            while (iterator.hasNextKey()) {
-                val nextKey = iterator.nextKey()
-                when (integrations.getType(nextKey)) {
-                    ReadableType.Boolean -> options.setIntegration(nextKey, integrations.getBoolean(nextKey))
-                    ReadableType.Map -> {
-                        options.setIntegration(nextKey, true)
-                        options.setIntegrationOptions(nextKey, integrations.getMap(nextKey)?.toHashMap())
-                    }
-                }
-            }
-        }
-        return options
-    }
-
-    /**
      * Tracks application lifecycle events - Application Installed, Application Updated and Application Opened
      * This is built to exactly mirror the application lifecycle tracking in analytics-android
      */
@@ -154,8 +131,8 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
 
         if(options.hasKey("flushInterval")) {
             builder.flushInterval(
-                options.getInt("flushInterval").toLong(),
-                TimeUnit.MILLISECONDS
+                    options.getInt("flushInterval").toLong(),
+                    TimeUnit.MILLISECONDS
             )
         }
 
@@ -169,8 +146,13 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
 
         try {
             Analytics.setSingletonInstance(
-                RNAnalytics.buildWithIntegrations(builder)
+                    RNAnalytics.buildWithIntegrations(builder)
             )
+        } catch(e2: IllegalStateException) {
+            // pass if the error is due to calling setSingletonInstance multiple times
+
+            // if you created singleton in native code already,
+            // you need to promise.resolve for RN to properly operate
         } catch(e: Exception) {
             return promise.reject("E_SEGMENT_ERROR", e)
         }
@@ -184,48 +166,84 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
     }
 
     @ReactMethod
-    fun track(event: String, properties: ReadableMap, integrations: ReadableMap, context: ReadableMap) =
-        analytics.track(event, Properties() from properties, this.getOptions(integrations))
+    fun track(event: String, properties: ReadableMap?, integrations: ReadableMap?, context: ReadableMap?) =
+            analytics.track(
+                    event,
+                    Properties() from properties,
+                    optionsFrom(context, integrations)
+            )
 
     @ReactMethod
-    fun screen(name: String, properties: ReadableMap, integrations: ReadableMap, context: ReadableMap) =
-        analytics.screen(null, name, Properties() from properties, this.getOptions(integrations))
+    fun screen(name: String?, properties: ReadableMap?, integrations: ReadableMap?, context: ReadableMap?) =
+            analytics.screen(
+                    null,
+                    name,
+                    Properties() from properties,
+                    optionsFrom(context, integrations)
+            )
 
     @ReactMethod
-    fun identify(userId: String, traits: ReadableMap, integrations: ReadableMap, context: ReadableMap) =
-        analytics.identify(userId, Traits() from traits, this.getOptions(integrations))
+    fun identify(userId: String?, traits: ReadableMap?, integrations: ReadableMap?, context: ReadableMap?) =
+            analytics.identify(
+                    userId,
+                    Traits() from traits,
+                    optionsFrom(context, integrations)
+            )
 
     @ReactMethod
-    fun group(groupId: String, traits: ReadableMap, integrations: ReadableMap, context: ReadableMap) =
-        analytics.group(groupId, Traits() from traits, this.getOptions(integrations))
+    fun group(groupId: String, traits: ReadableMap?, integrations: ReadableMap, context: ReadableMap) =
+            analytics.group(
+                    groupId,
+                    Traits() from traits,
+                    optionsFrom(context, integrations)
+            )
 
     @ReactMethod
-    fun alias(newId: String, context: ReadableMap, integrations: ReadableMap) =
-        analytics.alias(newId, this.getOptions(integrations))
+    fun alias(newId: String, integrations: ReadableMap?, context: ReadableMap?) =
+            analytics.alias(
+                    newId,
+                    optionsFrom(context, integrations)
+            )
 
     @ReactMethod
     fun reset() =
-        analytics.reset()
+            analytics.reset()
 
     @ReactMethod()
     fun flush() =
-        analytics.flush()
+            analytics.flush()
 
     @ReactMethod
     fun enable() =
-        analytics.optOut(false)
+            analytics.optOut(false)
 
     @ReactMethod
     fun disable() =
-        analytics.optOut(true)
+            analytics.optOut(true)
 
     @ReactMethod
     fun getAnonymousId(promise: Promise) =
-        promise.resolve(analytics.getAnalyticsContext().traits().anonymousId())
+            promise.resolve(analytics.getAnalyticsContext().traits().anonymousId())
 }
 
-private infix fun<T: ValueMap> T.from(source: ReadableMap): T {
-    putAll(source.toHashMap())
+private fun optionsFrom(context: ReadableMap?, integrations: ReadableMap?): Options {
+    var options = Options()
+
+    context?.toHashMap()?.forEach { (key, value) ->
+        options.putContext(key, value)
+    }
+
+    integrations?.toHashMap()?.forEach { (key, value) ->
+        options.setIntegration(key, value.toString().toBoolean())
+    }
+
+    return options
+}
+
+private infix fun<T: ValueMap> T.from(source: ReadableMap?): T {
+    if (source != null) {
+        putAll(source.toHashMap())
+    }
 
     return this
 }

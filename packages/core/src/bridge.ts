@@ -30,8 +30,16 @@ export interface Integrations {
 	[key: string]: boolean | JsonMap
 }
 
+export interface Context extends JsonMap {
+	library: {
+		name: string
+		version: string
+	}
+}
+
 export interface Options {
 	integrations?: Integrations
+	context?: Context
 }
 
 export interface Bridge {
