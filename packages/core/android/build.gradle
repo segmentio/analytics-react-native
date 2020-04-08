@@ -6,8 +6,8 @@ def safeExtGet(prop, fallback) {
 }
 
 buildscript {
-    def defaultKotlinVersion = '1.3.21'
-    
+    ext.defaultKotlinVersion = '1.3.21'
+
     repositories {
         jcenter()
         maven { url 'https://maven.google.com' }
