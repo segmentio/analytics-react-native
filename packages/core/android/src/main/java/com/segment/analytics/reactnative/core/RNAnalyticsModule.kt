@@ -113,12 +113,11 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
             }
             else {
                 if (BuildConfig.DEBUG) {
-                    return pomise.resolve(this)
-                } 
+                    return promise.resolve(this)
+                }
                 else {
                     return promise.reject("E_SEGMENT_RECONFIGURED", "Segment Analytics Client was allocated multiple times, please check your environment.")
                 }
-                
             }
         }
 
