@@ -27,24 +27,29 @@ package com.segment.analytics.reactnative.core
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import com.facebook.react.bridge.*
-import com.segment.analytics.Analytics
-import com.segment.analytics.Properties
-import com.segment.analytics.Options
-import com.segment.analytics.Traits
-import com.segment.analytics.ValueMap
-import com.segment.analytics.internal.Utils.getSegmentSharedPreferences
+import com.segment.analytics.*
+import com.segment.analytics.integrations.Logger
+import com.segment.analytics.internal.Utils.*
+import java.io.BufferedWriter
+import java.io.IOException
+import java.io.OutputStreamWriter
+import java.io.Writer
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
-import com.facebook.react.bridge.ReadableMap
-
 
 
 class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaModule(context) {
     override fun getName() = "RNAnalytics"
+    private val TRACKED_ATTRIBUTION_KEY = "tracked_attribution"
+    var advertisingIdLatch: CountDownLatch = CountDownLatch(1)
+    var logger: Logger = Logger.with(Analytics.LogLevel.NONE)
+    var cartographer: Cartographer = Cartographer.Builder().lenient(true).prettyPrint(false).build()
 
     private val analytics
         get() = Analytics.with(reactApplicationContext)
 
     companion object {
+        private var client: Client? = null;
         private var singletonJsonConfig: String? = null
         private var versionKey = "version"
         private var buildKey = "build"
@@ -102,6 +107,42 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
         editor.apply()
     }
 
+    fun trackAttributionInformation(writeKey: String?) {
+        val trackedAttribution = BooleanPreference(
+                getSegmentSharedPreferences(reactApplicationContext, writeKey), TRACKED_ATTRIBUTION_KEY, false)
+        if (trackedAttribution.get()) {
+            return
+        }
+        waitForAdvertisingId()
+        var connection: Client.Connection? = null
+        try {
+            connection = client.attribution()
+            // Write the request body.
+            val writer: Writer = BufferedWriter(OutputStreamWriter(connection.os))
+            cartographer.toJson(analytics.analyticsContext, writer)
+            // Read the response body.
+            val map: Map<String, Any> = cartographer.fromJson(buffer(getInputStream(connection.connection)))
+            val properties = Properties(map)
+            track("Install Attributed", properties)
+            trackedAttribution.set(true)
+        } catch (e: IOException) {
+            logger.error(e, "Unable to track attribution information. Retrying on next launch.")
+        } finally {
+            closeQuietly(connection)
+        }
+    }
+
+    private fun waitForAdvertisingId() {
+        try {
+            advertisingIdLatch.await(15, TimeUnit.SECONDS)
+        } catch (e: InterruptedException) {
+            logger.error(e, "Thread interrupted while waiting for advertising ID.")
+        }
+        if (advertisingIdLatch.getCount() == 1L) {
+            logger.debug(
+                    "Advertising ID may not be collected because the API did not respond within 15 seconds.")
+        }
+    }
     @ReactMethod
     fun setup(options: ReadableMap, promise: Promise) {
         val json = options.getString("json")
@@ -163,8 +204,15 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
             return promise.reject("E_SEGMENT_ERROR", e)
         }
 
+        client = Client(writeKey, ConnectionFactory())
+        analytics.analyticsContext.attachAdvertisingId(reactApplicationContext, advertisingIdLatch, logger);
+
         if(options.getBoolean("trackAppLifecycleEvents")) {
             this.trackApplicationLifecycleEvents(writeKey)
+        }
+
+        if(options.getBoolean("trackAttributionData")) {
+            this.trackAttributionInformation(writeKey)
         }
 
         singletonJsonConfig = json
