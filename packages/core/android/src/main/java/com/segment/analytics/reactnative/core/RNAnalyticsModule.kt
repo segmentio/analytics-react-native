@@ -28,6 +28,7 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import com.facebook.react.bridge.*
 import com.segment.analytics.*
+import com.segment.analytics.core.BuildConfig
 import com.segment.analytics.integrations.Logger
 import com.segment.analytics.internal.Utils.*
 import java.io.BufferedWriter
@@ -35,21 +36,22 @@ import java.io.IOException
 import java.io.OutputStreamWriter
 import java.io.Writer
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 
 class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaModule(context) {
     override fun getName() = "RNAnalytics"
-    private val TRACKED_ATTRIBUTION_KEY = "tracked_attribution"
-    var advertisingIdLatch: CountDownLatch = CountDownLatch(1)
+    private val trackedAttributionKey = "tracked_attribution"
     var logger: Logger = Logger.with(Analytics.LogLevel.NONE)
+    private var advertisingIdLatch: CountDownLatch = CountDownLatch(1)
+    private var client: Client? = null
     var cartographer: Cartographer = Cartographer.Builder().lenient(true).prettyPrint(false).build()
 
     private val analytics
         get() = Analytics.with(reactApplicationContext)
 
     companion object {
-        private var client: Client? = null;
         private var singletonJsonConfig: String? = null
         private var versionKey = "version"
         private var buildKey = "build"
@@ -107,23 +109,42 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
         editor.apply()
     }
 
-    fun trackAttributionInformation(writeKey: String?) {
+    private fun waitForAdvertisingId() {
+        try {
+            advertisingIdLatch.await(15, TimeUnit.SECONDS)
+        } catch (e: InterruptedException) {
+            logger.error(e, "Thread interrupted while waiting for advertising ID.")
+        }
+        if (advertisingIdLatch.count === 1L) {
+            logger.debug(
+                    "Advertising ID may not be collected because the API did not respond within 15 seconds.")
+        }
+    }
+
+    /**
+     * Tracks attribution information events - Install Attributed
+     * This is built to exactly mirror the attribution tracking in analytics-android
+     */
+    private fun trackAttributionInformation(writeKey: String?) {
         val trackedAttribution = BooleanPreference(
-                getSegmentSharedPreferences(reactApplicationContext, writeKey), TRACKED_ATTRIBUTION_KEY, false)
+                getSegmentSharedPreferences(reactApplicationContext, writeKey), trackedAttributionKey, false)
         if (trackedAttribution.get()) {
             return
         }
+
         waitForAdvertisingId()
+
         var connection: Client.Connection? = null
+
         try {
-            connection = client.attribution()
+            connection = client?.attribution()
             // Write the request body.
-            val writer: Writer = BufferedWriter(OutputStreamWriter(connection.os))
+            var writer: Writer = BufferedWriter(OutputStreamWriter(connection?.os))
             cartographer.toJson(analytics.analyticsContext, writer)
             // Read the response body.
-            val map: Map<String, Any> = cartographer.fromJson(buffer(getInputStream(connection.connection)))
+            val map: Map<String, Any> = cartographer.fromJson(buffer(getInputStream(connection?.connection)))
             val properties = Properties(map)
-            track("Install Attributed", properties)
+            analytics.track("Install Attributed", properties)
             trackedAttribution.set(true)
         } catch (e: IOException) {
             logger.error(e, "Unable to track attribution information. Retrying on next launch.")
@@ -132,17 +153,6 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
         }
     }
 
-    private fun waitForAdvertisingId() {
-        try {
-            advertisingIdLatch.await(15, TimeUnit.SECONDS)
-        } catch (e: InterruptedException) {
-            logger.error(e, "Thread interrupted while waiting for advertising ID.")
-        }
-        if (advertisingIdLatch.getCount() == 1L) {
-            logger.debug(
-                    "Advertising ID may not be collected because the API did not respond within 15 seconds.")
-        }
-    }
     @ReactMethod
     fun setup(options: ReadableMap, promise: Promise) {
         val json = options.getString("json")
@@ -154,12 +164,12 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
             }
             else {
                 if (BuildConfig.DEBUG) {
-                    return pomise.resolve(this)
-                } 
+                    return promise.resolve(this)
+                }
                 else {
                     return promise.reject("E_SEGMENT_RECONFIGURED", "Segment Analytics Client was allocated multiple times, please check your environment.")
                 }
-                
+
             }
         }
 
@@ -204,16 +214,18 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
             return promise.reject("E_SEGMENT_ERROR", e)
         }
 
+
         client = Client(writeKey, ConnectionFactory())
-        analytics.analyticsContext.attachAdvertisingId(reactApplicationContext, advertisingIdLatch, logger);
 
         if(options.getBoolean("trackAppLifecycleEvents")) {
             this.trackApplicationLifecycleEvents(writeKey)
+
+            if(options.getBoolean("trackAttributionData")) {
+                Runnable { this.trackAttributionInformation(writeKey) }
+            }
         }
 
-        if(options.getBoolean("trackAttributionData")) {
-            this.trackAttributionInformation(writeKey)
-        }
+
 
         singletonJsonConfig = json
         promise.resolve(null)
@@ -277,7 +289,7 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
 
     @ReactMethod
     fun getAnonymousId(promise: Promise) =
-            promise.resolve(analytics.getAnalyticsContext().traits().anonymousId())
+            promise.resolve(analytics.analyticsContext.traits().anonymousId())
 }
 
 private fun optionsFrom(context: ReadableMap?, integrations: ReadableMap?): Options {
