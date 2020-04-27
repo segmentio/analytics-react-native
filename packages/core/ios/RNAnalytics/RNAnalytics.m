@@ -46,7 +46,11 @@ RCT_EXPORT_METHOD(
             return resolver(nil);
         }
         else {
-            return rejecter(@"E_SEGMENT_RECONFIGURED", @"Duplicate Analytics client", nil);
+            #if DEBUG
+                return resolver(self);
+            #else
+                return rejecter(@"E_SEGMENT_RECONFIGURED", @"Segment Analytics Client was allocated multiple times, please check your environment.", nil);
+            #endif
         }
     }
 
@@ -67,7 +71,7 @@ RCT_EXPORT_METHOD(
     @try {
         [SEGAnalytics setupWithConfiguration:config];
     }
-    @catch(NSException* error) {
+    @catch(NSError* error) {
         return rejecter(@"E_SEGMENT_ERROR", @"Unexpected native Analtyics error", error);
     }
     
@@ -85,7 +89,7 @@ RCT_EXPORT_METHOD(
     }
 
     singletonJsonConfig = json;
-    resolver(nil);
+    return resolver(nil);
 }
 
 - (NSDictionary*)withContextAndIntegrations :(NSDictionary*)context :(NSDictionary*)integrations {

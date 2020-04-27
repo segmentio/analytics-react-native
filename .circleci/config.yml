@@ -20,6 +20,12 @@ jobs:
       - checkout
       - *getDeps
       - run: yarn install --frozen-lockfile
+      - run:
+          name: Snyk
+          command: curl -sL https://raw.githubusercontent.com/segmentio/snyk_helpers/master/initialization/snyk.sh | sh
+          environment:
+            SNYK_FAIL_ON: upgradable
+            SNYK_SEVERITY_THRESHOLD: high
       - save_cache:
           key: yarn-cache-{{ checksum "yarn.lock" }}
           paths:
@@ -93,7 +99,7 @@ jobs:
   test-ios-vanilla:
     <<: *job
     macos:
-      xcode: "9.4.0"
+      xcode: '9.4.0'
     steps:
       - checkout
       # macOS VMs doesn't support Docker based caches
@@ -108,7 +114,7 @@ jobs:
   test-ios-cocoapods:
     <<: *job
     macos:
-      xcode: "9.4.0"
+      xcode: '9.4.0'
     steps:
       - checkout
       # macOS VMs doesn't support Docker based caches
@@ -141,6 +147,7 @@ workflows:
   build_test_and_publish:
     jobs:
       - install:
+          context: snyk
           filters:
             tags:
               only: /.*/
@@ -171,19 +178,19 @@ workflows:
               only: /.*/
       - test-android:
           requires:
-            -  build-test-app
+            - build-test-app
           filters:
             tags:
               only: /.*/
       - test-ios-vanilla:
           requires:
-            -  build-test-app
+            - build-test-app
           filters:
             tags:
               only: /.*/
       - test-ios-cocoapods:
           requires:
-            -  build-test-app
+            - build-test-app
           filters:
             tags:
               only: /.*/
