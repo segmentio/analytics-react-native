@@ -6,6 +6,7 @@ export default {
 	getAnonymousId: jest.fn(),
 	group: jest.fn(),
 	identify: jest.fn(),
+	putDeviceToken: jest.fn(),
 	reset: jest.fn(),
 	screen: jest.fn(),
 	setup: jest.fn(),

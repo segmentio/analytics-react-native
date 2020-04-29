@@ -150,4 +150,9 @@ RCT_EXPORT_METHOD(
   resolver(anonymousId);
 }
 
+RCT_EXPORT_METHOD(putDeviceToken:(NSString*)deviceToken)
+{
+    [SEGAnalytics.sharedAnalytics putDeviceToken:deviceToken];
+}
+
 @end

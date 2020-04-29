@@ -313,6 +313,13 @@ export module Analytics {
 			return Bridge.getAnonymousId()
 		}
 
+		/** Set a device token. */
+		public async putDeviceToken(deviceToken: string) {
+			await this.wrapper.wait()
+
+			Bridge.putDeviceToken(deviceToken)
+		}
+
 		private handleError(error: Error) {
 			const { handlers } = this
 

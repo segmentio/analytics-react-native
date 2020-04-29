@@ -234,6 +234,25 @@ analytics.middleware(async ({next, context}) =>
 **Returns:** `this`
 
 ___
+<a id="putdevicetoken"></a>
+
+###  putDeviceToken
+
+▸ **putDeviceToken**(deviceToken: *`string`*): `Promise`<`void`>
+
+*Defined in analytics.ts:317*
+
+Set a device token.
+
+**Parameters:**
+
+| Name | Type |
+| ------ | ------ |
+| deviceToken | `string` |
+
+**Returns:** `Promise`<`void`>
+
+___
 <a id="reset"></a>
 
 ###  reset

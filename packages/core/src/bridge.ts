@@ -74,6 +74,7 @@ export interface Bridge {
 	enable(): Promise<void>
 	disable(): Promise<void>
 	getAnonymousId(): Promise<string>
+	putDeviceToken(deviceToken: string): Promise<void>
 }
 
 const bridge: Bridge = NativeModules.RNAnalytics

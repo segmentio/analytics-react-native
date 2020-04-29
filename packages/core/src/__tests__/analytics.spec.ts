@@ -81,6 +81,8 @@ it('does .disable()', testCall('disable'))
 
 it('does .getAnonymousId()', testCall('getAnonymousId'))
 
+it('does .putDeviceToken()', () => testCall('putDeviceToken')('d34db33f'))
+
 it('logs uncaught bridge errors', async () => {
 	const error = {
 		message: 'test-error'
