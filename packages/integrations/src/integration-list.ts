@@ -13,6 +13,7 @@ export interface IntegrationDeclaration {
 		prefix?: string
 		className?: string
 		framework?: string
+		framework_alt?: string
 		header?: string
 	}
 	android: {

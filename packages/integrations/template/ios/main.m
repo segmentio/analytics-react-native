@@ -8,7 +8,11 @@
 
 #import <React/RCTBridgeModule.h>
 #import <RNAnalytics/RNAnalytics.h>
+#if defined(__has_include) && __has_include({{{factory_header_alt}}})
+#import {{{factory_header_alt}}}
+#else
 #import {{{factory_header}}}
+#endif
 
 @interface {{{integration_class_name}}}: NSObject<RCTBridgeModule>
 @end

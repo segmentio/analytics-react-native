@@ -70,6 +70,7 @@ async function prepareiOS({
 	const targetXcodeProject = `ios/${nativeModule}.xcodeproj`
 	const pod_name = `RNAnalyticsIntegration-${slug('-')}`
 	const framework_name = `Segment-${slug()}`
+	const alt_framework_name = `Segment_${slug()}`
 	const {
 		pod: {
 			name: pod_dependency = `Segment-${slug()}`,
@@ -81,6 +82,7 @@ async function prepareiOS({
 	const {
 		className = classSlug,
 		framework = framework_name,
+		framework_alt = alt_framework_name,
 		header = classSlug
 	} = ios
 
@@ -108,6 +110,7 @@ async function prepareiOS({
 		),
 		template('ios/main.m', {
 			integration_class_name: nativeModule,
+			factory_header_alt: `<${framework_alt}/${header}.h>`,
 			factory_header: `<${framework}/${header}.h>`,
 			factory_class_name: className
 		})
