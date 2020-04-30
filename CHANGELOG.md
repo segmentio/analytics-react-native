@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.1-beta.3"></a>
+
+## [1.1.1-beta.3](https://github.com/segmentio/analytics-react-native/compare/v1.1.1-beta.2...v1.1.1-beta.3) (2020-04-30)
+
+### Bug Fixes
+
+- **bridge:** fix duplicated analytics client improving errors ([#162](https://github.com/segmentio/analytics-react-native/issues/162)) ([28a981d](https://github.com/segmentio/analytics-react-native/commit/28a981d))
+- **bridge:** fix p(r)omise typo ([#168](https://github.com/segmentio/analytics-react-native/issues/168)) ([d9794db](https://github.com/segmentio/analytics-react-native/commit/d9794db))
+
 <a name="1.1.1-beta.2"></a>
 
 ## [1.1.1-beta.2](https://github.com/segmentio/analytics-react-native/compare/v1.1.1-beta.1...v1.1.1-beta.2) (2020-04-08)
