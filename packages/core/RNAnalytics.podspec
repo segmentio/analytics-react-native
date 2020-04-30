@@ -20,6 +20,6 @@ Pod::Spec.new do |s|
   s.source_files        = 'ios/**/*.{m,h}'
   s.static_framework    = true
 
-  s.dependency          'Analytics'
+  s.dependency          'Analytics', '~> 3.8'
   s.dependency          'React'
 end

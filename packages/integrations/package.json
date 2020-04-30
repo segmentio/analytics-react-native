@@ -7,8 +7,9 @@
     "ts": "ts-node -P tsconfig.json --files --pretty",
     "generate:integrations": "yarn ts src/gen-integrations",
     "generate:readme": "yarn ts src/gen-readme",
+    "applyPatches": "./applyPatches.sh",
     "generate": "run-p generate:*",
-    "build": "run-s clean generate",
+    "build": "run-s clean generate && run-s applyPatches",
     "deploy": "./deploy.sh"
   },
   "dependencies": {
