@@ -121,15 +121,15 @@ When an destination’s SDK is not packaged, but it is enabled via your dashboar
 
 #### Packaging Device-based destination SDKs
 
-By default, our `@segment/analytics-react-native` packages does not contain any device-based destinations.
+By default, our `@segment/analytics-react-native` package does not contain any device-based destinations.
 
 We recommend using device-based destinations on a need-to-use basis to reduce the size of your application, and avoid running into the dreaded 65k method limit on Android.
 
 If you would like to package device-based destinations, first search for the dependency you need using [the list below](#integrations).
-You'll need to run `react-native link` and add it in the `.using()` configuration method. Example using Google Analytics :
+You'll need to run `react-native link` and add it in the `.using()` configuration method. Example using Firebase :
 
 ```bash
-$ yarn add @segment/analytics-react-native-google-analytics
+$ yarn add @segment/analytics-react-native-firebase
 $ yarn react-native link
 ```
 
@@ -137,12 +137,16 @@ In your code :
 
 ```js
 import analytics from '@segment/analytics-react-native'
-import GoogleAnalytics from '@segment/analytics-react-native-google-analytics'
+import firebase from '@segment/analytics-react-native-firebase'
 
 await analytics.setup('writeKey', {
-  using: [GoogleAnalytics]
+  using: [firebase]
 })
 ```
+For IOS you will need to add the GoogleService-info.plist to your IOS folder. This file can be downloaded from your Firebase instance. Firebase takes up to 24 hours to show events. However, you can utilize the Firebase debug method to confirm your setup is sending data correctly. To do this add ```-FIRDebugEnabled``` in Xcode’s Scheme Settings. 
+
+In Xcode: 
+```Project -> Scheme -> Edit Scheme -> Arguments Passed On Launch```
 
 #### Integrations
 
