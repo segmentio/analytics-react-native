@@ -51,7 +51,7 @@ async function prepareAndroid({
 		...['Module', 'Package'].map(name =>
 			template(
 				`${root}/java/com/segment/analytics/reactnative/integration/${name}.kt`,
-				{ nativeModule, classpath, factoryClass, factoryImport },
+				{ nativeModule, classpath, factoryClass, factoryImport, slug },
 				`${root}/java/${classpath.replace(/\./g, '/')}/Integration${name}.kt`
 			)
 		)

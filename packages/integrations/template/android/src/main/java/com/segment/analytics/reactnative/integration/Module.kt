@@ -28,6 +28,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.segment.analytics.reactnative.core.RNAnalytics
+import android.util.Log
 import {{{factoryImport}}}
 
 class {{{nativeModule}}}Module(context: ReactApplicationContext): ReactContextBaseJavaModule(context) {
@@ -36,5 +37,9 @@ class {{{nativeModule}}}Module(context: ReactApplicationContext): ReactContextBa
     @ReactMethod
     fun setup() {
         RNAnalytics.addIntegration({{{factoryClass}}}.FACTORY)
+
+        RNAnalytics.addOnReadyCallback("{{{slug}}}", Analytics.Callback { instance ->
+            Log.v("{{{nativeModule}}}", "{{{slug}}} integration ready.")
+        })
     }
 }

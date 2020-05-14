@@ -166,6 +166,8 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
             this.trackApplicationLifecycleEvents(writeKey)
         }
 
+        RNAnalytics.setupCallbacks(analytics)
+
         singletonJsonConfig = json
         promise.resolve(null)
     }
