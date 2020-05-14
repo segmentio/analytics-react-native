@@ -8,7 +8,7 @@
 #
 # Patches that are applied below should have a comment explaining why the patch is necessary.
 # The patch should also be very manual and targeted.  Any files needed for the patch should also
-# mimic the `build` directory that gets generated.  This patch application script will be run 
+# mimic the `build` directory that gets generated.  This patch application script will be run
 # after the integration generation phase.
 #
 # Please discuss with @bsneed either in person or in github before adding patches.
@@ -24,3 +24,13 @@
 #    the iOS file, main.m.
 
 cp "./patches/@segment/analytics-react-native-appsflyer/ios/main.m" "./build/@segment/analytics-react-native-appsflyer/ios/main.m"
+
+### Adjust patch
+#
+# Q: Why?
+#
+# A: This is an adjust integration specific feature, and should not be replicated for
+# another integration. Because of this, we copy in a version with the appropriate code
+# applied to the Android file, IntegrationModule.kt
+
+cp "./patches/@segment/analytics-react-native-adjust/android/src/main/java/com/segment/analytics/reactnative/integration/adjust/IntegrationModule.kt" "./build/@segment/analytics-react-native-adjust/android/src/main/java/com/segment/analytics/reactnative/integration/adjust/IntegrationModule.kt"

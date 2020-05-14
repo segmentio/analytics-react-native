@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package {{{classpath}}}
+package com.segment.analytics.reactnative.integration.adjust
 
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
@@ -30,17 +30,19 @@ import com.facebook.react.bridge.ReactMethod
 import com.segment.analytics.reactnative.core.RNAnalytics
 import com.segment.analytics.Analytics
 import android.util.Log
-import {{{factoryImport}}}
+import com.segment.analytics.android.integrations.adjust.AdjustIntegration
 
-class {{{nativeModule}}}Module(context: ReactApplicationContext): ReactContextBaseJavaModule(context) {
-    override fun getName() = "{{{nativeModule}}}"
+class RNAnalyticsIntegration_AdjustModule(context: ReactApplicationContext): ReactContextBaseJavaModule(context) {
+    override fun getName() = "RNAnalyticsIntegration_Adjust"
 
     @ReactMethod
     fun setup() {
-        RNAnalytics.addIntegration({{{factoryClass}}}.FACTORY)
-
-        RNAnalytics.addOnReadyCallback("{{{slug}}}", Analytics.Callback { instance ->
-            Log.v("{{{nativeModule}}}", "{{{slug}}} integration ready.")
+        RNAnalytics.addIntegration(AdjustIntegration.FACTORY)
+        RNAnalytics.addOnReadyCallback("Adjust", Analytics.Callback { instance ->
+            Log.v("RNAnalyticsIntegration_Adjust", "Adjust integration ready.")
+            if (instance is com.adjust.sdk.AdjustInstance) {
+                instance.onResume()
+            }
         })
     }
 }
