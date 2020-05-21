@@ -8,6 +8,7 @@ export interface Configuration {
 	debug: boolean
 	flushAt: number
 	json: string
+	defaultProjectSettings: { [key: string]: any }
 
 	android: {
 		flushInterval?: number

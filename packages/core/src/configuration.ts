@@ -27,6 +27,7 @@ export const configure = async (
 		trackAppLifecycleEvents = false,
 		trackAttributionData = false,
 		using = [],
+		defaultProjectSettings = {},
 
 		ios = {},
 		android = {}
@@ -40,6 +41,7 @@ export const configure = async (
 
 	const config = {
 		debug,
+		defaultProjectSettings,
 		flushAt,
 		recordScreenViews,
 		trackAppLifecycleEvents,

@@ -12,6 +12,7 @@
 
 * [android](analytics.configuration.md#android)
 * [debug](analytics.configuration.md#debug)
+* [defaultProjectSettings](analytics.configuration.md#defaultprojectsettings)
 * [flushAt](analytics.configuration.md#flushat)
 * [ios](analytics.configuration.md#ios)
 * [recordScreenViews](analytics.configuration.md#recordscreenviews)
@@ -29,7 +30,7 @@
 
 **● android**: *`undefined` \| `object`*
 
-*Defined in [analytics.ts:69](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L69)*
+*Defined in [analytics.ts:77](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L77)*
 
 Android specific settings.
 
@@ -43,13 +44,24 @@ ___
 *Defined in [analytics.ts:38](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L38)*
 
 ___
+<a id="defaultprojectsettings"></a>
+
+### `<Optional>` defaultProjectSettings
+
+**● defaultProjectSettings**: *`undefined` \| `object`*
+
+*Defined in [analytics.ts:46](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L46)*
+
+Default project settings to use, if Segment.com cannot be reached. An example configuration can be found here, using your write key: [](https://cdn-settings.segment.com/v1/projects/YOUR_WRITE_KEY/settings)[https://cdn-settings.segment.com/v1/projects/YOUR\_WRITE\_KEY/settings](https://cdn-settings.segment.com/v1/projects/YOUR_WRITE_KEY/settings)
+
+___
 <a id="flushat"></a>
 
 ### `<Optional>` flushAt
 
 **● flushAt**: *`undefined` \| `number`*
 
-*Defined in [analytics.ts:46](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L46)*
+*Defined in [analytics.ts:54](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L54)*
 
 The number of queued events that the analytics client should flush at. Setting this to `1` will not queue any events and will use more battery.
 
@@ -62,7 +74,7 @@ ___
 
 **● ios**: *`undefined` \| `object`*
 
-*Defined in [analytics.ts:51](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L51)*
+*Defined in [analytics.ts:59](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L59)*
 
 iOS specific settings.
 

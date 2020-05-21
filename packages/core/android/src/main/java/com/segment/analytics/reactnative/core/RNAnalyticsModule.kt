@@ -166,6 +166,10 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
             this.trackApplicationLifecycleEvents(writeKey)
         }
 
+        if(options.hasKey("defaultProjectSettings")) {
+            builder.defaultProjectSettings(Utils.toValueMap(options.getMap("defaultProjectSettings")))
+        }
+
         RNAnalytics.setupCallbacks(analytics)
 
         singletonJsonConfig = json
