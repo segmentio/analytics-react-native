@@ -3,7 +3,7 @@
 //  RNAnalyticsIntegration
 //
 //  Created by fathy on 05/08/2018.
-//  Copyright © 2018 Segment.io, Inc. All rights reserved.
+//  Copyright © 2020 Segment.io, Inc. All rights reserved.
 //
 
 #import <React/RCTBridgeModule.h>
