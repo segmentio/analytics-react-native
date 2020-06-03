@@ -61,6 +61,7 @@ RCT_EXPORT_METHOD(
     config.trackAttributionData = [options[@"trackAttributionData"] boolValue];
     config.flushAt = [options[@"flushAt"] integerValue];
     config.enableAdvertisingTracking = [options[@"ios"][@"trackAdvertising"] boolValue];
+    config.defaultSettings = options[@"defaultProjectSettings"];
     
     for(id factory in RNAnalyticsIntegrations) {
         [config use:factory];
