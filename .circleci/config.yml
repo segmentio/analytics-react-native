@@ -123,7 +123,14 @@ jobs:
       - run: brew update-reset
       - run: brew tap wix/brew
       - run: brew install wix/brew/applesimutils
+
+      - restore_cache:
+          key: cocoapods-specs
       - run: yarn test-app test:ios:cocoapods
+      - save_cache:
+          key: cocoapods-specs
+          paths:
+            - ~/.cocoapods
   publish:
     <<: *nodeJob
     steps:
