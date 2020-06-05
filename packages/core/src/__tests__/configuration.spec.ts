@@ -15,6 +15,7 @@ it('uses the default configuration', async () => {
 	expect(await configure(writeKey, {})).toEqual(
 		withIntegrity({
 			debug: false,
+			defaultProjectSettings: {},
 			flushAt: 20,
 			recordScreenViews: false,
 			trackAppLifecycleEvents: false,
@@ -36,6 +37,13 @@ it('uses the default configuration', async () => {
 it('produces a valid configuration', async () => {
 	const config = await configure(writeKey, {
 		debug: true,
+		defaultProjectSettings: {
+			integrations: {
+				Adjust: {
+					appToken: '13213'
+				}
+			}
+		},
 		flushAt: 42,
 		recordScreenViews: true,
 		trackAppLifecycleEvents: true,
@@ -54,6 +62,13 @@ it('produces a valid configuration', async () => {
 	expect(config).toEqual(
 		withIntegrity({
 			debug: true,
+			defaultProjectSettings: {
+				integrations: {
+					Adjust: {
+						appToken: '13213'
+					}
+				}
+			},
 			flushAt: 42,
 			recordScreenViews: true,
 			trackAppLifecycleEvents: true,

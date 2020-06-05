@@ -13,20 +13,20 @@ export module Analytics {
 		 * view controller is added to a view hierarchy.
 		 * Because the iOS underlying implementation uses method swizzling,
 		 * we recommend initializing the analytics client as early as possible.
-		 * 
+		 *
 		 * Disabled by default.
 		 */
 		recordScreenViews?: boolean
 		/**
 		 * Whether the analytics client should automatically track application lifecycle events, such as
 		 * "Application Installed", "Application Updated" and "Application Opened".
-		 * 
+		 *
 		 * Disabled by default.
 		 */
 		trackAppLifecycleEvents?: boolean
 		/**
 		 * Whether the analytics client should automatically track attribution data from enabled providers using the mobile service.
-		 * 
+		 *
 		 * Disabled by default.
 		 */
 		trackAttributionData?: boolean
@@ -37,10 +37,18 @@ export module Analytics {
 		using?: Integration[]
 		debug?: boolean
 
+    /**
+     * Default project settings to use, if Segment.com cannot be reached. An example
+     * configuration can be found here, using your write key: <a
+     * href="https://cdn-settings.segment.com/v1/projects/YOUR_WRITE_KEY/settings">
+     * https://cdn-settings.segment.com/v1/projects/YOUR_WRITE_KEY/settings </a>
+     */
+    defaultProjectSettings?: { [key: string]: any }
+
 		/**
 		 * The number of queued events that the analytics client should flush at.
 		 * Setting this to `1` will not queue any events and will use more battery.
-		 * 
+		 *
 		 * `20` by default.
 		 */
 		flushAt?: number
@@ -58,7 +66,7 @@ export module Analytics {
 			/**
 			 * Whether the analytics client should automatically track deep links.
 			 * You'll still need to call the continueUserActivity and openURL methods on the native analytics client.
-			 * 
+			 *
 			 * Disabled by default.
 			 */
 			trackDeepLinks?: boolean
@@ -79,7 +87,7 @@ export module Analytics {
 			 * - `android.provider.Settings.Secure.ANDROID_ID`
 			 * - `android.os.Build.SERIAL`
 			 * - or Telephony Identifier retrieved via TelephonyManager as available
-			 * 
+			 *
 			 * Enabled by default.
 			 */
 			collectDeviceId?: boolean
@@ -116,26 +124,26 @@ export module Analytics {
 
 		/**
 		 * Append a new middleware to the middleware chain.
-		 * 
+		 *
 		 * Middlewares are a powerful mechanism that can augment the events collected by the SDK.
 		 * A middleware is a simple function that is invoked by the Segment SDK and can be used to monitor,
 		 * modify or reject events.
-		 * 
+		 *
 		 * Middlewares are invoked for all events, including automatically tracked events,
 		 * and external event sources like Adjust and Optimizely.
 		 * This offers you the ability the customize those messages to fit your use case even
 		 * if the event was sent outside your source code.
-		 * 
+		 *
 		 * The key thing to observe here is that the output produced by the first middleware feeds into the second.
 		 * This allows you to chain and compose independent middlewares!
-		 * 
+		 *
 		 * For example, you might want to record the device year class with your events.
 		 * Previously, you would have to do this everywhere you trigger an event with the Segment SDK.
 		 * With middlewares, you can do this in a single place :
-		 * 
+		 *
 		 * ```js
 		 * import DeviceYearClass from 'react-native-device-year-class'
-		 * 
+		 *
 		 * analytics.middleware(async ({next, context}) =>
 		 *   next({
 		 *     ...context,
@@ -143,8 +151,8 @@ export module Analytics {
 		 *   })
 		 * )
 		 * ```
-		 * 
-		 * @param middleware 
+		 *
+		 * @param middleware
 		 */
 		public middleware(middleware: Middleware) {
 			this.middlewares.add(middleware)
@@ -154,7 +162,7 @@ export module Analytics {
 
 		/**
 		 * Use the native configuration.
-		 * 
+		 *
 		 * You'll need to call this method when you configure Analytics's singleton
 		 * using the native API.
 		 */
@@ -181,7 +189,7 @@ export module Analytics {
 		 *   }
 		 * })
 		 * ```
-		 * 
+		 *
 		 * @param writeKey Your Segment.io write key
 		 * @param configuration An optional {@link Configuration} object.
 		 */
