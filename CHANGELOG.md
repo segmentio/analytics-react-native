@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.0-beta.0"></a>
+
+# [1.2.0-beta.0](https://github.com/segmentio/analytics-react-native/compare/v1.1.1-beta.5...v1.2.0-beta.0) (2020-06-05)
+
+### Bug Fixes
+
+- **ios:** bumped pod versions ([0167989](https://github.com/segmentio/analytics-react-native/commit/0167989))
+- **ios:** dont cache pod files for ci ([67d5c0e](https://github.com/segmentio/analytics-react-native/commit/67d5c0e))
+- **ios:** moved podspec to appropriate version ([c5c3f26](https://github.com/segmentio/analytics-react-native/commit/c5c3f26))
+- **ios:** pod install needs repo update flag ([b4dd3aa](https://github.com/segmentio/analytics-react-native/commit/b4dd3aa))
+
+### Features
+
+- **android:** add support for defaultProjectSettings ([69026f4](https://github.com/segmentio/analytics-react-native/commit/69026f4))
+- **ios:** added iOS support for project settings ([6020688](https://github.com/segmentio/analytics-react-native/commit/6020688))
+
 <a name="1.1.1-beta.5"></a>
 
 ## [1.1.1-beta.5](https://github.com/segmentio/analytics-react-native/compare/v1.1.1-beta.4...v1.1.1-beta.5) (2020-05-15)
