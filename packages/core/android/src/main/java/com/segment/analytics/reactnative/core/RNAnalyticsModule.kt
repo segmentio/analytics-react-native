@@ -245,7 +245,11 @@ private fun optionsFrom(context: ReadableMap?, integrations: ReadableMap?): Opti
     }
 
     integrations?.toHashMap()?.forEach { (key, value) ->
-        options.setIntegration(key, value.toString().toBoolean())
+        if (value is HashMap<*, *>) {
+            options.setIntegrationOptions(key, value.toMap() as Map<String, Object>)
+        } else {
+            options.setIntegration(key, value.toString().toBoolean())
+        }
     }
 
     return options
