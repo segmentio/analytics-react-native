@@ -54,6 +54,10 @@ If you are part of a new startup  (&lt;$5M raised, &lt;2 years since founding), 
 
 ## Prerequisite
 
+#### React-Native
+
+- Version 0.62 or greater.
+
 #### iOS
 
 - CocoaPods (**recommended**)
@@ -71,15 +75,17 @@ $ yarn react-native link
 
 See the [API docs](packages/core/docs/classes/analytics.client.md) for more details.
 
+Additional examples of common usage patterns and how-to's can found at [Analytics for React-Native](https://segment.com/docs/connections/sources/catalog/libraries/mobile/react-native/).
+
 <!-- prettier-ignore -->
 ```js
 import analytics from '@segment/analytics-react-native'
-import Mixpanel from '@segment/analytics-react-native-mixpanel'
-import GoogleAnalytics from '@segment/analytics-react-native-google-analytics'
+import mixpanel from '@segment/analytics-react-native-mixpanel'
+import firebase from '@segment/analytics-react-native-firebase'
 
 analytics
     .setup('writeKey', {
-        using: [Mixpanel, GoogleAnalytics],
+        using: [mixpanel, firebase],
         recordScreenViews: true,
         trackAppLifecycleEvents: true,
         trackAttributionData: true,
@@ -119,13 +125,13 @@ There are two ways to send data to your analytics services through this library:
 
 When an destination’s SDK is not packaged, but it is enabled via your dashboard, the request goes through the Segment REST API, and is routed to the service’s server-side API as [described here](https://segment.com/docs/integrations/#connection-modes).
 
-#### Packaging Device-based destination SDKs
+#### Packaging Device-mode Destination SDKs
 
 By default, our `@segment/analytics-react-native` package does not contain any device-based destinations.
 
 We recommend using device-based destinations on a need-to-use basis to reduce the size of your application, and avoid running into the dreaded 65k method limit on Android.
 
-If you would like to package device-based destinations, first search for the dependency you need using [the list below](#integrations).
+If you would like to package device-based destinations, first search for the dependency you need using [the list below](#supported-device-mode-destinations).
 You'll need to run `react-native link` and add it in the `.using()` configuration method. Example using Firebase :
 
 ```bash
@@ -143,14 +149,17 @@ await analytics.setup('writeKey', {
   using: [firebase]
 })
 ```
-For IOS you will need to add the GoogleService-info.plist to your IOS folder. This file can be downloaded from your Firebase instance. Firebase takes up to 24 hours to show events. However, you can utilize the Firebase debug method to confirm your setup is sending data correctly. To do this add ```-FIRDebugEnabled``` in Xcode’s Scheme Settings. 
 
-In Xcode: 
-```Project -> Scheme -> Edit Scheme -> Arguments Passed On Launch```
+For IOS you will need to add the GoogleService-info.plist to your IOS folder. This file can be downloaded from your Firebase instance. Firebase takes up to 24 hours to show events. However, you can utilize the Firebase debug method to confirm your setup is sending data correctly. To do this add `-FIRDebugEnabled` in Xcode’s Scheme Settings.
 
-#### Integrations
+In Xcode:
+`Project -> Scheme -> Edit Scheme -> Arguments Passed On Launch`
 
-> All integrations have the same version as `@segment/analytics-react-native`
+#### Supported Device-Mode Destinations
+
+> All destinations have the same version as `@segment/analytics-react-native`
+
+**Note**: Each device-mode destination has a different native setup procedure due to differences between the underlying SDK vendors. Please refer to the vendor documentation for configuring the native iOS and Android portions of a given destination. More information and links to vendor specific instructions and details can be found at [Connection Mode Comparisons](https://segment.com/docs/connections/destinations/cmodes-compare/).
 
 <!-- AUTOGEN:INTEGRATIONS:BEGIN -->
 
