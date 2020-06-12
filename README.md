@@ -20,7 +20,7 @@ Analytics helps you measure your users, product, and business. It unlocks insigh
 3. **Explore your data** by creating metrics (for example, new signups, retention cohorts, and revenue generation).
    - The best Segment companies use retention cohorts to measure product market fit. Netflix has 70% paid retention after 12 months, 30% after 7 years.
 
-[Segment](https://segment.com) collects analytics data and allows you to send it to more than 250 apps (such as Google Analytics, Mixpanel, Optimizely, Facebook Ads, Slack, Sentry) just by flipping a switch. You only need one Segment code snippet, and you can turn integrations on and off at will, with no additional code. [Sign up with Segment today](https://app.segment.com/signup).
+[Segment](https://segment.com) collects analytics data and allows you to send it to more than 250 apps (such as Google Analytics, Mixpanel, Optimizely, Facebook Ads, Slack, Sentry) just by flipping a switch. You only need one Segment code snippet, and you can turn destinations on and off from the Segment web UI, with no additional code. [Sign up with Segment today](https://app.segment.com/signup).
 
 ### Why?
 
@@ -117,16 +117,16 @@ There are two ways to send data to your analytics services through this library:
 
 #### Cloud-based Connection Modes
 
-When an destination’s SDK is not packaged, but it is enabled via your dashboard, the request goes through the Segment REST API, and is routed to the service’s server-side API as [described here](https://segment.com/docs/integrations/#connection-modes).
+When an destination’s SDK is not packaged, but it is enabled using the Segment web UI, the request goes through the Segment REST API, and is routed to the service’s server-side API as [described here](https://segment.com/docs/connections/destinations/#connection-modes).
 
 #### Packaging Device-based destination SDKs
 
 By default, our `@segment/analytics-react-native` package does not contain any device-based destinations.
 
-We recommend using device-based destinations on a need-to-use basis to reduce the size of your application, and avoid running into the dreaded 65k method limit on Android.
+We recommend only using device-based destinations on a need-to-use basis to reduce the size of your application, and to avoid running into the dreaded 65k method limit on Android.
 
-If you would like to package device-based destinations, first search for the dependency you need using [the list below](#integrations).
-You'll need to run `react-native link` and add it in the `.using()` configuration method. Example using Firebase :
+If you would like to package device-based destinations, first search for the dependency you need using [the list below](#destinations).
+Then run `react-native link` and add it in the `.using()` configuration method. Example using Firebase :
 
 ```bash
 $ yarn add @segment/analytics-react-native-firebase
@@ -143,14 +143,14 @@ await analytics.setup('writeKey', {
   using: [firebase]
 })
 ```
-For IOS you will need to add the GoogleService-info.plist to your IOS folder. This file can be downloaded from your Firebase instance. Firebase takes up to 24 hours to show events. However, you can utilize the Firebase debug method to confirm your setup is sending data correctly. To do this add ```-FIRDebugEnabled``` in Xcode’s Scheme Settings. 
+For IOS you must add the GoogleService-info.plist to your IOS folder. This file can be downloaded from your Firebase instance. Firebase takes up to 24 hours to show events. However, you can utilize the Firebase debug method to confirm your setup is sending data correctly. To do this add ```-FIRDebugEnabled``` in Xcode’s Scheme Settings.
 
-In Xcode: 
+In Xcode:
 ```Project -> Scheme -> Edit Scheme -> Arguments Passed On Launch```
 
-#### Integrations
+#### Destinations
 
-> All integrations have the same version as `@segment/analytics-react-native`
+> All destinations have the same version as `@segment/analytics-react-native`
 
 <!-- AUTOGEN:INTEGRATIONS:BEGIN -->
 
@@ -187,7 +187,7 @@ In Xcode:
 
 We **highly recommend** using Cocoapods.
 
-However, if you cannot use Cocoapods, you can manually install our dynamic framework allowing you to send data to Segment and on to enabled cloud-mode destinations. We do not support sending data to bundled, device-mode integrations outside of Cocoapods.
+However, if you cannot use Cocoapods, you can manually install our dynamic framework allowing you to send data to Segment and on to enabled cloud-mode destinations. We do not support sending data to bundled, device-mode destinations outside of Cocoapods.
 
 Here are the steps for installing manually:
 
@@ -209,7 +209,7 @@ If you're using Cocoapods, check that your `ios/Podfile` file contains the right
   ```ruby
   pod 'RNAnalytics', :path => '../node_modules/@segment/analytics-react-native'
   ```
-- `Failed to load [...] integration native module`, look for the integration native module, example with Google Analytics:
+- `Failed to load [...] integration native module`, look for the destination native module, example with Google Analytics:
   ```ruby
   pod 'RNAnalyticsIntegration-Google-Analytics', :path => '../node_modules/@segment/analytics-react-native-google-analytics'
   ```
@@ -239,7 +239,7 @@ Check that `android/app/src/main/.../MainApplication.java` contains a reference 
   }
   ```
 
-- `Failed to load [...] integration native module`, look for the integration native module, example with Google Analytics:
+- `Failed to load [...] integration native module`, look for the destination native module, example with Google Analytics:
 
   ```java
   import com.segment.analytics.reactnative.integration.google.analytics.RNAnalyticsIntegration_Google_AnalyticsPackage;
