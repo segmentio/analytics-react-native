@@ -159,7 +159,7 @@ In Xcode:
 
 > All destinations have the same version as `@segment/analytics-react-native`
 
-**Note**: Each device-mode destination has a different native setup procedure due to differences between the underlying SDK vendors. Please refer to the vendor documentation for configuring the native iOS and Android portions of a given destination. More information and links to vendor specific instructions and details can be found at [Connection Mode Comparisons](https://segment.com/docs/connections/destinations/cmodes-compare/).
+**Note**: Each device-mode destination has its own set up steps because of differences between the underlying SDK vendors. Check the vendor's documentation for instructions on how to configure the native iOS and Android parts of each destination. More information, and links to vendor specific instructions and details, can be found at [Connection Mode Comparisons](https://segment.com/docs/connections/destinations/cmodes-compare/).
 
 <!-- AUTOGEN:INTEGRATIONS:BEGIN -->
 
