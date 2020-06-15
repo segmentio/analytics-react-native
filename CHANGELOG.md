@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.0-beta.1"></a>
+
+# [1.2.0-beta.1](https://github.com/segmentio/analytics-react-native/compare/v1.1.1-beta.6...v1.2.0-beta.1) (2020-06-15)
+
+### Bug Fixes
+
+- **android:** parse android specific options correctly ([#187](https://github.com/segmentio/analytics-react-native/issues/187)) ([49e4815](https://github.com/segmentio/analytics-react-native/commit/49e4815))
+
+### Features
+
+- **android:** allow passing integration options ([#184](https://github.com/segmentio/analytics-react-native/issues/184)) ([6845c67](https://github.com/segmentio/analytics-react-native/commit/6845c67))
+
 <a name="1.1.1-beta.6"></a>
 
 ## [1.1.1-beta.6](https://github.com/segmentio/analytics-react-native/compare/v1.1.1-beta.5...v1.1.1-beta.6) (2020-06-05)
