@@ -134,11 +134,17 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
             builder.trackAttributionInformation()
         }
 
-        if(options.hasKey("flushInterval")) {
-            builder.flushInterval(
-                    options.getInt("flushInterval").toLong(),
-                    TimeUnit.MILLISECONDS
-            )
+        if(options.hasKey("android") && options.getType("android") == ReadableType.Map) {
+            val androidOptions = options.getMap("android")!!
+            if(androidOptions.hasKey("flushInterval")) {
+                builder.flushInterval(
+                        androidOptions.getInt("flushInterval").toLong(),
+                        TimeUnit.MILLISECONDS
+                )
+            }
+            if(androidOptions.hasKey("collectDeviceId")) {
+                builder.collectDeviceId(androidOptions.getBoolean("collectDeviceId"))
+            }
         }
 
         if(options.getBoolean("debug")) {
