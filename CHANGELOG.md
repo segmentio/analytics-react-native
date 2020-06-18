@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.1"></a>
+
+## [1.2.1](https://github.com/segmentio/analytics-react-native/compare/v1.2.0-beta.3...v1.2.1) (2020-06-18)
+
+### Bug Fixes
+
+- **config:** pass user-supplied context for analytics calls ([#188](https://github.com/segmentio/analytics-react-native/issues/188)) ([7429567](https://github.com/segmentio/analytics-react-native/commit/7429567))
+
 <a name="1.2.0-beta.3"></a>
 
 # [1.2.0-beta.3](https://github.com/segmentio/analytics-react-native/compare/v1.2.0-beta.1...v1.2.0-beta.3) (2020-06-16)
