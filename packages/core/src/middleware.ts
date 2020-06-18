@@ -81,9 +81,11 @@ export class MiddlewareChain {
 
 	public async run<T extends Payload['type'], P extends PayloadFromType<T>>(
 		type: T,
-		data: P['data']
+		data: P['data'],
+		context: JsonMap
 	) {
 		const ctx: Context = {
+			...context,
 			library: {
 				name: 'analytics-react-native',
 				version: require('../package.json').version
@@ -91,11 +93,6 @@ export class MiddlewareChain {
 		}
 
 		const payload: Payload = await this.exec(type, ctx, data)
-
-		const opts: Options = {
-			context: payload.context,
-			integrations: payload.data.integrations
-		}
 
 		switch (payload.type) {
 			case 'alias':
