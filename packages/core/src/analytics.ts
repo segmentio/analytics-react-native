@@ -213,7 +213,7 @@ export module Analytics {
 		 * @param options A dictionary of options, e.g. integrations (thigh analytics integration to forward the event to)
 		 */
 		public async track(event: string, properties: JsonMap = {}, options: Options = {}) {
-			await this.middlewares.run('track', { event, properties, integrations: options.integrations || {} })
+			await this.middlewares.run('track', { event, properties, integrations: options.integrations || {} }, options.context || {})
 		}
 
 		/**
@@ -231,7 +231,7 @@ export module Analytics {
 		 * If the event was 'Added to Shopping Cart', it might have properties like price, productType, etc.
 		 */
 		public async screen(name: string, properties: JsonMap = {}, options: Options = {}) {
-			await this.middlewares.run('screen', { name, properties, integrations: options.integrations || {} })
+			await this.middlewares.run('screen', { name, properties, integrations: options.integrations || {} }, options.context || {})
 		}
 
 		/**
@@ -246,7 +246,7 @@ export module Analytics {
 		 * @param options A dictionary of options, e.g. integrations (thigh analytics integration to forward the event to)
 		 */
 		public async identify(user: string, traits: JsonMap = {}, options: Options = {}) {
-			await this.middlewares.run('identify', { user, traits, integrations: options.integrations || {} })
+			await this.middlewares.run('identify', { user, traits, integrations: options.integrations || {} }, options.context || {})
 		}
 
 		/**
@@ -259,7 +259,7 @@ export module Analytics {
 		 * @param options A dictionary of options, e.g. integrations (thigh analytics integration to forward the event to)
 		 */
 		public async group(groupId: string, traits: JsonMap = {}, options: Options = {}) {
-			await this.middlewares.run('group', { groupId, traits, integrations: options.integrations || {} })
+			await this.middlewares.run('group', { groupId, traits, integrations: options.integrations || {} }, options.context || {})
 		}
 
 		/**
@@ -272,7 +272,7 @@ export module Analytics {
 		 * The existing ID will be either the previousId if you have called identify, or the anonymous ID.
 		 */
 		public async alias(newId: string, options: Options = {}) {
-			await this.middlewares.run('alias', { newId, integrations: options.integrations || {} })
+			await this.middlewares.run('alias', { newId, integrations: options.integrations || {} }, options.context || {})
 		}
 
 		/**
