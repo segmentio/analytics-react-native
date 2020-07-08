@@ -68,7 +68,7 @@ If you are part of a new startup  (&lt;$5M raised, &lt;2 years since founding), 
 
 ```bash
 $ yarn add @segment/analytics-react-native
-$ yarn react-native link
+$ cd ios && pod install && cd .. # CocoaPods on iOS needs this extra step
 ```
 
 ## Usage
