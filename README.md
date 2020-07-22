@@ -91,7 +91,7 @@ analytics
         trackAttributionData: true,
 
         android: {
-            flushInterval: 60,
+            flushInterval: 60000, // 60 seconds
             collectDeviceId: true
         },
         ios: {
