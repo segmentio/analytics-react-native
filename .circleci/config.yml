@@ -22,6 +22,7 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run:
           name: Snyk
+          context: snyk
           command: curl -sL https://raw.githubusercontent.com/segmentio/snyk_helpers/master/initialization/snyk.sh | sh
           environment:
             SNYK_FAIL_ON: upgradable
