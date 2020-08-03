@@ -28,6 +28,7 @@ export const configure = async (
 		trackAttributionData = false,
 		using = [],
 		defaultProjectSettings = {},
+		proxy = undefined,
 
 		ios = {},
 		android = {}
@@ -47,6 +48,7 @@ export const configure = async (
 		trackAppLifecycleEvents,
 		trackAttributionData,
 		writeKey,
+		proxy,
 
 		android: defaults.android(android),
 		ios: defaults.ios(ios)
