@@ -19,7 +19,7 @@ jobs:
     steps:
       - checkout
       - *getDeps
-      - run: yarn install --frozen-lockfile
+      - run: yarn install
       - run:
           name: Snyk
           context: snyk
