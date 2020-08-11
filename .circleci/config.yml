@@ -104,7 +104,7 @@ jobs:
     steps:
       - checkout
       # macOS VMs doesn't support Docker based caches
-      - run: yarn install --frozen-lockfile
+      - run: yarn install
       - *attach
       - run: brew update-reset
       - run: brew tap wix/brew
