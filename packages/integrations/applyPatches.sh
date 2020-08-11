@@ -34,3 +34,13 @@ cp "./patches/@segment/analytics-react-native-appsflyer/ios/main.m" "./build/@se
 # applied to the Android file, IntegrationModule.kt
 
 cp "./patches/@segment/analytics-react-native-adjust/android/src/main/java/com/segment/analytics/reactnative/integration/adjust/IntegrationModule.kt" "./build/@segment/analytics-react-native-adjust/android/src/main/java/com/segment/analytics/reactnative/integration/adjust/IntegrationModule.kt"
+
+### Facebook App Events patch
+#
+# Q: Why?
+#
+# A: RN 0.62 changes how imports end up getting spit out and opts for static lib pods, which
+#    Xcode then uses the directory name for rather than the module name, and thus it breaks. :(
+
+cp "./patches/@segment/analytics-react-native-facebook-app-events-ios/ios/main.m" "./build/@segment/analytics-react-native-facebook-app-events-ios/ios/main.m"
+
