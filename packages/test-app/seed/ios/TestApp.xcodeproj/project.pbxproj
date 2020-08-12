@@ -7,22 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
-		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
-		00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302C01ABCB91800DB3ED1 /* libRCTImage.a */; };
-		00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302DC1ABCB9D200DB3ED1 /* libRCTNetwork.a */; };
-		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
+		0035F4D3B41EFB85DE9A4C2D /* libPods-TestApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C0F25DB4708CE7B7266BD124 /* libPods-TestApp.a */; };
 		00E356F31AD99517003FC87E /* TestAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* TestAppTests.m */; };
-		11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
-		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
-		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
-		139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
+		0F23B8530AAD6928F12A67CB /* libPods-TestApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A340B6B324D0E82600260280 /* libPods-TestApp.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
-		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -36,8 +27,8 @@
 		2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* TestAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* TestAppTests.m */; };
 		2DF0FFEE2056DD460020B375 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
-		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
-		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
+		A3B1085D24E3097D00E6A48F /* Dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B1085C24E3097D00E6A48F /* Dummy.swift */; };
+		A3B1085E24E3097D00E6A48F /* Dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B1085C24E3097D00E6A48F /* Dummy.swift */; };
 		ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED297162215061F000B7C4FE /* JavaScriptCore.framework */; };
 		ED2971652150620600B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED2971642150620600B7C4FE /* JavaScriptCore.framework */; };
 /* End PBXBuildFile section */
@@ -344,7 +335,15 @@
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
+		A340B6B324D0E82600260280 /* libPods-TestApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libPods-TestApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A340B6B524D0E9B200260280 /* libReact-Core.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libReact-Core.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A3B1085A24E3097D00E6A48F /* TestApp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TestApp-Bridging-Header.h"; sourceTree = "<group>"; };
+		A3B1085B24E3097D00E6A48F /* TestApp-tvOS-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TestApp-tvOS-Bridging-Header.h"; sourceTree = "<group>"; };
+		A3B1085C24E3097D00E6A48F /* Dummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Dummy.swift; path = TestApp/Dummy.swift; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
+		B43187544B367CCE4131A3E9 /* Pods-TestApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestApp.debug.xcconfig"; path = "Target Support Files/Pods-TestApp/Pods-TestApp.debug.xcconfig"; sourceTree = "<group>"; };
+		C0F25DB4708CE7B7266BD124 /* libPods-TestApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TestApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CCCF3771954FBDE53A43A357 /* Pods-TestApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestApp.release.xcconfig"; path = "Target Support Files/Pods-TestApp/Pods-TestApp.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
@@ -354,7 +353,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -363,18 +361,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */,
-				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
-				11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */,
-				146834051AC3E58100842450 /* libReact.a in Frameworks */,
-				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
-				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
-				00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */,
-				133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */,
-				00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */,
-				139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */,
-				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
-				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
-				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
+				0035F4D3B41EFB85DE9A4C2D /* libPods-TestApp.a in Frameworks */,
+				0F23B8530AAD6928F12A67CB /* libPods-TestApp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -490,10 +478,13 @@
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
+				A3B1085C24E3097D00E6A48F /* Dummy.swift */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				A3B1085A24E3097D00E6A48F /* TestApp-Bridging-Header.h */,
+				A3B1085B24E3097D00E6A48F /* TestApp-tvOS-Bridging-Header.h */,
 			);
 			name = TestApp;
 			sourceTree = "<group>";
@@ -524,9 +515,12 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A340B6B524D0E9B200260280 /* libReact-Core.a */,
+				A340B6B324D0E82600260280 /* libPods-TestApp.a */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
+				C0F25DB4708CE7B7266BD124 /* libPods-TestApp.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -538,6 +532,15 @@
 				5E9157351DD0AC6500FF2AA8 /* libRCTAnimation.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		66D7E8EE3B8A69C30A54A234 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				B43187544B367CCE4131A3E9 /* Pods-TestApp.debug.xcconfig */,
+				CCCF3771954FBDE53A43A357 /* Pods-TestApp.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		78C398B11ACF4ADC00677621 /* Products */ = {
@@ -585,6 +588,7 @@
 				00E356EF1AD99517003FC87E /* TestAppTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
+				66D7E8EE3B8A69C30A54A234 /* Pods */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -636,10 +640,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "TestApp" */;
 			buildPhases = (
+				CE9B4B2FA6E62CCC48376376 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
+				3906CC4B520A0091FDE61F3F /* [CP] Embed Pods Frameworks */,
+				E05FF69950D7F4A9B126EE75 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -699,8 +706,12 @@
 						CreatedOnToolsVersion = 6.2;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
+					13B07F861A680F5B00A75B9A = {
+						LastSwiftMigration = 1160;
+					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
+						LastSwiftMigration = 1160;
 						ProvisioningStyle = Automatic;
 					};
 					2D02E48F1E0B4A5D006451C7 = {
@@ -715,6 +726,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -1090,7 +1102,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1105,6 +1117,480 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+		};
+		3906CC4B520A0091FDE61F3F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TestApp/Pods-TestApp-frameworks.sh",
+				"${PODS_ROOT}/ComScore/ComScore/dynamic/iOS/ComScore.framework",
+				"${PODS_ROOT}/Localytics/Localytics-iOS-5.8.0/Localytics.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ComScore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Localytics.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TestApp/Pods-TestApp-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CE9B4B2FA6E62CCC48376376 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-TestApp-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E05FF69950D7F4A9B126EE75 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TestApp/Pods-TestApp-resources.sh",
+				"${PODS_ROOT}/Amplitude/Sources/Amplitude/ComodoRsaDomainValidationCA.der",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/ABKContentCardsStoryboard.storyboard",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/ar.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/Base.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/cs.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/da.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/de.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/en.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/es-419.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/es-MX.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/es.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/et.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/fi.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/fil.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/fr.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/he.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/hi.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/id.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/images/appboy_cc_icon_pinned.png",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/images/appboy_cc_icon_pinned@2x.png",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/images/appboy_cc_icon_pinned@3x.png",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/images/appboy_cc_noimage_lrg.png",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/images/appboy_cc_noimage_lrg@2x.png",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/it.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/ja.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/km.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/ko.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/lo.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/ms.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/my.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/nb.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/nl.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/pl.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/pt-PT.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/pt.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/ru.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/sv.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/th.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/uk.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/vi.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/zh-Hans.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/zh-Hant.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/zh-HK.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/zh-TW.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/zh.lproj/AppboyContentCardsLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/ar.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/Base.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/cs.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/da.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/de.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/en.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/es-419.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/es-MX.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/es.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/et.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/fi.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/fil.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/fr.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/he.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/hi.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/id.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/it.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/ja.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/km.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/ko.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/lo.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/ms.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/my.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/nb.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/nl.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/pl.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/pt-PT.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/pt.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/ru.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/sv.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/th.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/uk.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/vi.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/zh-Hans.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/zh-Hant.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/zh-HK.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/zh-TW.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/zh.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyKit/Appboy.bundle",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKInAppMessage/Resources/ABKInAppMessageFullViewController.xib",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKInAppMessage/Resources/ABKInAppMessageModalViewController.xib",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKInAppMessage/Resources/ABKInAppMessageSlideupViewController.xib",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKInAppMessage/Resources/arrow.png",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKInAppMessage/Resources/arrow@2x.png",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKInAppMessage/Resources/arrow@3x.png",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKInAppMessage/Resources/com_appboy_inapp_close_icon.png",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKInAppMessage/Resources/com_appboy_inapp_close_icon@2x.png",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKInAppMessage/Resources/com_appboy_inapp_close_icon@3x.png",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKInAppMessage/Resources/FontAwesome.otf",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/ABKNewsFeedCardStoryboard.storyboard",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/ar.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/Base.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/cs.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/da.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/de.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/en.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/es-419.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/es-MX.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/es.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/et.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/fi.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/fil.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/fr.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/he.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/hi.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/id.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/images/Icons_Read.png",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/images/Icons_Read@2x.png",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/images/Icons_Unread.png",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/images/Icons_Unread@2x.png",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/images/img-noimage-lrg.png",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/images/img-noimage-lrg@2x.png",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/it.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/ja.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/km.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/ko.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/lo.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/ms.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/my.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/nb.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/nl.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/pl.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/pt-PT.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/pt.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/ru.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/sv.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/th.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/uk.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/vi.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/zh-Hans.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/zh-Hant.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/zh-HK.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/zh-TW.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/zh.lproj/AppboyFeedLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/ar.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/Base.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/cs.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/da.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/de.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/en.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/es-419.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/es-MX.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/es.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/et.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/fi.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/fil.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/fr.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/he.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/hi.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/id.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/it.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/ja.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/km.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/ko.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/lo.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/ms.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/my.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/nb.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/nl.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/pl.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/pt-PT.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/pt.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/ru.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/sv.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/th.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/uk.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/vi.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/zh-Hans.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/zh-Hant.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/zh-HK.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/zh-TW.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKNewsFeed/Resources/zh.lproj",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/DigiCertGlobalRootCA.crt",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/DigiCertSHA2SecureServerCA.crt",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTAVPlayerControlsViewController.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTCoverImageViewController~ipad.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTCoverImageViewController~ipadland.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTCoverImageViewController~iphoneland.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTCoverImageViewController~iphoneport.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTCoverViewController~ipad.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTCoverViewController~ipadland.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTCoverViewController~iphoneland.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTCoverViewController~iphoneport.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTFooterViewController~ipad.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTFooterViewController~ipadland.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTFooterViewController~iphoneland.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTFooterViewController~iphoneport.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTHalfInterstitialImageViewController~ipad.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTHalfInterstitialImageViewController~ipadland.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTHalfInterstitialImageViewController~iphoneland.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTHalfInterstitialImageViewController~iphoneport.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTHalfInterstitialViewController~ipad.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTHalfInterstitialViewController~ipadland.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTHalfInterstitialViewController~iphoneland.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTHalfInterstitialViewController~iphoneport.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTHeaderViewController~ipad.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTHeaderViewController~ipadland.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTHeaderViewController~iphoneland.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTHeaderViewController~iphoneport.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTInterstitialImageViewController~ipad.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTInterstitialImageViewController~ipadland.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTInterstitialImageViewController~iphoneland.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTInterstitialImageViewController~iphoneport.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTInterstitialViewController~ipad.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTInterstitialViewController~ipadland.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTInterstitialViewController~iphoneland.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/CTInterstitialViewController~iphoneport.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/images/ic_expand@1x.png",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/images/ic_expand@2x.png",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/images/ic_expand@3x.png",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/images/ic_pause@1x.png",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/images/ic_pause@2x.png",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/images/ic_pause@3x.png",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/images/ic_play@1x.png",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/images/ic_play@2x.png",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/images/ic_play@3x.png",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/images/ic_shrink@1x.png",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/images/ic_shrink@2x.png",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/images/ic_shrink@3x.png",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/images/ic_thumb.png",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/InApps/images/sound-wave-headphones.png",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/Inbox/cells/CTCarouselImageMessageCell~land.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/Inbox/cells/CTCarouselImageMessageCell~port.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/Inbox/cells/CTCarouselMessageCell~land.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/Inbox/cells/CTCarouselMessageCell~port.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/Inbox/cells/CTInboxIconMessageCell~land.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/Inbox/cells/CTInboxIconMessageCell~port.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/Inbox/cells/CTInboxSimpleMessageCell~land.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/Inbox/cells/CTInboxSimpleMessageCell~port.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/Inbox/controllers/CleverTapInboxViewController.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/Inbox/images/ct_default_landscape_image.png",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/Inbox/images/ct_default_portrait_image.png",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/Inbox/images/ct_default_video.png",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/Inbox/images/placeholder.png",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/Inbox/images/volume_off.png",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/Inbox/images/volume_on.png",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/Inbox/views/CTCarouselImageView.xib",
+				"${PODS_ROOT}/CleverTap-iOS-SDK/CleverTapSDK/Inbox/models/Inbox.xcdatamodeld",
+				"${PODS_CONFIGURATION_BUILD_DIR}/ComScore/SCORBundle.bundle",
+				"${PODS_ROOT}/FBSDKCoreKit/FacebookSDKStrings.bundle",
+				"${PODS_ROOT}/Intercom/Intercom/Intercom.framework/Versions/A/Resources/Intercom.bundle",
+				"${PODS_ROOT}/Intercom/Intercom/Intercom.framework/Versions/A/Resources/IntercomTranslations.bundle",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowLeft.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowLeft@2x.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowRight.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowRight@2x.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPCheckmark.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPCheckmark@2x.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPCloseButton.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPCloseButton@2x.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPCloseButton@3x.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPDismissKeyboard.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPDismissKeyboard@2x.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPLogo.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPLogo@2x.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/placeholder-image.png",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/MPTakeoverNotificationViewController~ipad.xib",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/MPTakeoverNotificationViewController~iphonelandscape.xib",
+				"${PODS_ROOT}/Mixpanel/Mixpanel/MPTakeoverNotificationViewController~iphoneportrait.xib",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ComodoRsaDomainValidationCA.der",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ABKContentCardsStoryboard.storyboardc",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AppboyContentCardsLocalizable.strings",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/appboy_cc_icon_pinned.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/appboy_cc_icon_pinned@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/appboy_cc_icon_pinned@3x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/appboy_cc_noimage_lrg.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/appboy_cc_noimage_lrg@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ar.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Base.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/cs.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/da.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/de.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/en.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/es-419.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/es-MX.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/es.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/et.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fi.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fil.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fr.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/he.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/hi.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/id.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/it.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ja.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/km.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ko.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/lo.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ms.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/my.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/nb.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/nl.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/pl.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/pt-PT.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/pt.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ru.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/sv.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/th.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/uk.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/vi.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/zh-Hans.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/zh-Hant.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/zh-HK.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/zh-TW.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/zh.lproj",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Appboy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ABKInAppMessageFullViewController.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ABKInAppMessageModalViewController.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ABKInAppMessageSlideupViewController.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/arrow.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/arrow@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/arrow@3x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/com_appboy_inapp_close_icon.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/com_appboy_inapp_close_icon@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/com_appboy_inapp_close_icon@3x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome.otf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ABKNewsFeedCardStoryboard.storyboardc",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AppboyFeedLocalizable.strings",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Icons_Read.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Icons_Read@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Icons_Unread.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Icons_Unread@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/img-noimage-lrg.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/img-noimage-lrg@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/DigiCertGlobalRootCA.crt",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/DigiCertSHA2SecureServerCA.crt",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTAVPlayerControlsViewController.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTCoverImageViewController~ipad.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTCoverImageViewController~ipadland.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTCoverImageViewController~iphoneland.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTCoverImageViewController~iphoneport.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTCoverViewController~ipad.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTCoverViewController~ipadland.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTCoverViewController~iphoneland.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTCoverViewController~iphoneport.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTFooterViewController~ipad.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTFooterViewController~ipadland.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTFooterViewController~iphoneland.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTFooterViewController~iphoneport.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTHalfInterstitialImageViewController~ipad.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTHalfInterstitialImageViewController~ipadland.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTHalfInterstitialImageViewController~iphoneland.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTHalfInterstitialImageViewController~iphoneport.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTHalfInterstitialViewController~ipad.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTHalfInterstitialViewController~ipadland.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTHalfInterstitialViewController~iphoneland.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTHalfInterstitialViewController~iphoneport.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTHeaderViewController~ipad.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTHeaderViewController~ipadland.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTHeaderViewController~iphoneland.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTHeaderViewController~iphoneport.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTInterstitialImageViewController~ipad.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTInterstitialImageViewController~ipadland.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTInterstitialImageViewController~iphoneland.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTInterstitialImageViewController~iphoneport.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTInterstitialViewController~ipad.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTInterstitialViewController~ipadland.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTInterstitialViewController~iphoneland.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTInterstitialViewController~iphoneport.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ic_expand@1x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ic_expand@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ic_expand@3x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ic_pause@1x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ic_pause@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ic_pause@3x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ic_play@1x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ic_play@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ic_play@3x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ic_shrink@1x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ic_shrink@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ic_shrink@3x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ic_thumb.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/sound-wave-headphones.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTCarouselImageMessageCell~land.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTCarouselImageMessageCell~port.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTCarouselMessageCell~land.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTCarouselMessageCell~port.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTInboxIconMessageCell~land.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTInboxIconMessageCell~port.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTInboxSimpleMessageCell~land.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTInboxSimpleMessageCell~port.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CleverTapInboxViewController.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ct_default_landscape_image.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ct_default_portrait_image.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ct_default_video.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/placeholder.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/volume_off.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/volume_on.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CTCarouselImageView.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Inbox.momd",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SCORBundle.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FacebookSDKStrings.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Intercom.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/IntercomTranslations.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPArrowLeft.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPArrowLeft@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPArrowRight.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPArrowRight@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPCheckmark.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPCheckmark@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPCloseButton.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPCloseButton@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPCloseButton@3x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPDismissKeyboard.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPDismissKeyboard@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPLogo.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPLogo@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/placeholder-image.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPTakeoverNotificationViewController~ipad.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPTakeoverNotificationViewController~iphonelandscape.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPTakeoverNotificationViewController~iphoneportrait.nib",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TestApp/Pods-TestApp-resources.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1122,6 +1608,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				A3B1085D24E3097D00E6A48F /* Dummy.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1131,6 +1618,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */,
+				A3B1085E24E3097D00E6A48F /* Dummy.swift in Sources */,
 				2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1174,10 +1662,30 @@
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/DoubleConversion\"",
+					"\"${PODS_ROOT}/Headers/Public/FBLazyVector\"",
+					"\"${PODS_ROOT}/Headers/Public/FBReactNativeSpec\"",
+					"\"${PODS_ROOT}/Headers/Public/RCTRequired\"",
+					"\"${PODS_ROOT}/Headers/Public/RCTTypeSafety\"",
+					"\"${PODS_ROOT}/Headers/Public/React-Core\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTText\"",
+					"\"${PODS_ROOT}/Headers/Public/React-cxxreact\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsi\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsiexecutor\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsinspector\"",
+					"\"${PODS_ROOT}/Headers/Public/ReactCommon\"",
+					"\"${PODS_ROOT}/Headers/Public/Yoga\"",
+					"\"${PODS_ROOT}/Headers/Public/glog\"",
+					"\"$(PODS_ROOT)/Headers/Private/React-Core\"",
 				);
 				INFOPLIST_FILE = TestAppTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -1186,6 +1694,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PODS_ROOT = "${SRCROOT}/Pods";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestApp.app/TestApp";
@@ -1195,8 +1704,28 @@
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/DoubleConversion\"",
+					"\"${PODS_ROOT}/Headers/Public/FBLazyVector\"",
+					"\"${PODS_ROOT}/Headers/Public/FBReactNativeSpec\"",
+					"\"${PODS_ROOT}/Headers/Public/RCTRequired\"",
+					"\"${PODS_ROOT}/Headers/Public/RCTTypeSafety\"",
+					"\"${PODS_ROOT}/Headers/Public/React-Core\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTText\"",
+					"\"${PODS_ROOT}/Headers/Public/React-cxxreact\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsi\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsiexecutor\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsinspector\"",
+					"\"${PODS_ROOT}/Headers/Public/ReactCommon\"",
+					"\"${PODS_ROOT}/Headers/Public/Yoga\"",
+					"\"${PODS_ROOT}/Headers/Public/glog\"",
+					"\"$(PODS_ROOT)/Headers/Private/React-Core\"",
+				);
 				INFOPLIST_FILE = TestAppTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1204,6 +1733,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PODS_ROOT = "${SRCROOT}/Pods";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestApp.app/TestApp";
@@ -1212,12 +1742,14 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B43187544B367CCE4131A3E9 /* Pods-TestApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				INFOPLIST_FILE = TestApp/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1225,17 +1757,22 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = TestApp;
+				SWIFT_OBJC_BRIDGING_HEADER = "TestApp-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CCCF3771954FBDE53A43A357 /* Pods-TestApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = TestApp/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1243,6 +1780,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = TestApp;
+				SWIFT_OBJC_BRIDGING_HEADER = "TestApp-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -1253,6 +1792,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1268,6 +1808,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.TestApp-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
+				SWIFT_OBJC_BRIDGING_HEADER = "TestApp-tvOS-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 			};
@@ -1279,6 +1822,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1294,6 +1838,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.TestApp-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
+				SWIFT_OBJC_BRIDGING_HEADER = "TestApp-tvOS-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 			};
@@ -1302,6 +1848,7 @@
 		2D02E4991E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -1327,6 +1874,7 @@
 		2D02E49A1E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -1395,7 +1943,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1441,7 +1989,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;

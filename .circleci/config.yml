@@ -10,7 +10,7 @@ defaults:
   nodeJob: &nodeJob
     <<: *job
     docker:
-      - image: circleci/node:8
+      - image: circleci/node:12.18
 
 version: 2
 jobs:

@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   s.source              = { :git => "https://github.com/segmentio/analytics-react-native.git", :tag => s.version.to_s }
   s.social_media_url    = 'https://twitter.com/segment'
 
-  s.platform            = :ios, "9.0"
+  s.platform            = :ios, "11.0"
   s.source_files        = 'ios/main.m'
   s.static_framework    = true
 
