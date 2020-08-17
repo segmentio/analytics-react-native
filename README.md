@@ -132,11 +132,11 @@ By default, our `@segment/analytics-react-native` package does not contain any d
 We recommend only using device-based destinations on a need-to-use basis to reduce the size of your application, and to avoid running into the dreaded 65k method limit on Android.
 
 If you would like to package device-based destinations, first search for the dependency you need using [the list below](#supported-device-mode-destinations).
-Then run `react-native link` and add it in the `.using()` configuration method. Example using Firebase :
+Then run `pod install` in your `ios/` folder and add it in the `.using()` configuration method. Example using Firebase :
 
 ```bash
 $ yarn add @segment/analytics-react-native-firebase
-$ yarn react-native link
+$ cd ios && pod install && cd ..
 ```
 
 In your code :
