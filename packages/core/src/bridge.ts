@@ -9,6 +9,12 @@ export interface Configuration {
 	flushAt: number
 	json: string
 	defaultProjectSettings: { [key: string]: any }
+	proxy?: {
+		scheme?: string
+		host?: string
+		port?: number
+		path?: string
+	}
 
 	android: {
 		flushInterval?: number

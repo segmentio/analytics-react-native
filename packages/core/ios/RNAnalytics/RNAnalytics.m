@@ -63,6 +63,33 @@ RCT_EXPORT_METHOD(
     config.enableAdvertisingTracking = [options[@"ios"][@"trackAdvertising"] boolValue];
     config.defaultSettings = options[@"defaultProjectSettings"];
     
+    if ([options valueForKey:@"proxy"]) {
+        NSDictionary *proxyOptions = (NSDictionary *)[options valueForKey:@"proxy"];
+        
+        config.requestFactory = ^(NSURL *url) {
+            NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
+  
+            if ([proxyOptions valueForKey:@"scheme"]) {
+                components.scheme = [proxyOptions[@"scheme"] stringValue];
+            }
+            
+            if ([proxyOptions valueForKey:@"host"]) {
+                components.host = [proxyOptions[@"host"] stringValue];
+            }
+            
+            if ([proxyOptions valueForKey:@"port"]) {
+                components.port = [NSNumber numberWithInt:[proxyOptions[@"port"] intValue]];
+            }
+            
+            if ([proxyOptions valueForKey:@"path"]) {
+                components.path = [[proxyOptions[@"path"] stringValue] stringByAppendingString:components.path];
+            }
+        
+            NSURL *transformedURL = components.URL;
+            return [NSMutableURLRequest requestWithURL:transformedURL];
+        };
+    }
+    
     for(id factory in RNAnalyticsIntegrations) {
         [config use:factory];
     }
