@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.3.0"></a>
+
+# [1.3.0](https://github.com/segmentio/analytics-react-native/compare/v1.2.1...v1.3.0) (2020-08-28)
+
+### Bug Fixes
+
+- **ci:** fixed ci issue ([c71a6cf](https://github.com/segmentio/analytics-react-native/commit/c71a6cf))
+- **docs:** updated readme to use 60 seconds vs 60 ms ([8cbf0b3](https://github.com/segmentio/analytics-react-native/commit/8cbf0b3))
+- **ios:** fixes for building for newer rn ([#206](https://github.com/segmentio/analytics-react-native/issues/206)) ([ecce14c](https://github.com/segmentio/analytics-react-native/commit/ecce14c))
+
+### Features
+
+- **core:** http proxying via setup configuration ([#202](https://github.com/segmentio/analytics-react-native/issues/202)) ([40a3f5a](https://github.com/segmentio/analytics-react-native/commit/40a3f5a))
+- **ios:** make idfa for ios external to analytics ([#210](https://github.com/segmentio/analytics-react-native/issues/210)) ([35f96a0](https://github.com/segmentio/analytics-react-native/commit/35f96a0))
+
 <a name="1.2.1"></a>
 
 ## [1.2.1](https://github.com/segmentio/analytics-react-native/compare/v1.2.0-beta.3...v1.2.1) (2020-06-18)
