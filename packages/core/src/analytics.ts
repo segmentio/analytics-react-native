@@ -169,7 +169,7 @@ export module Analytics {
          * Sets the IDFA value on iOS.  Customers are now responsible for collecting 
          * IDFA on their own.
          */
-        public setIDFA(idfa: String) {
+        public setIDFA(idfa: string) {
             Bridge.setIDFA(idfa)
         }
 

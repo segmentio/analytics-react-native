@@ -277,7 +277,7 @@ ___
 
 ###  setIDFA
 
-▸ **setIDFA**(idfa: *`String`*): `void`
+▸ **setIDFA**(idfa: *`string`*): `void`
 
 *Defined in analytics.ts:172*
 
@@ -287,7 +287,7 @@ Sets the IDFA value on iOS. Customers are now responsible for collecting IDFA on
 
 | Name | Type |
 | ------ | ------ |
-| idfa | `String` |
+| idfa | `string` |
 
 **Returns:** `void`
 
