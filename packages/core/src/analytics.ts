@@ -164,6 +164,14 @@ export module Analytics {
 
 			return this
 		}
+        
+        /**
+         * Sets the IDFA value on iOS.  Customers are now responsible for collecting 
+         * IDFA on their own.
+         */
+        public setIDFA(idfa: string) {
+            Bridge.setIDFA(idfa)
+        }
 
 		/**
 		 * Append a new middleware to the middleware chain.

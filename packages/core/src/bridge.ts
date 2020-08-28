@@ -81,6 +81,7 @@ export interface Bridge {
 	enable(): Promise<void>
 	disable(): Promise<void>
 	getAnonymousId(): Promise<string>
+	setIDFA(idfa: string): Promise<void>
 }
 
 const bridge: Bridge = NativeModules.RNAnalytics

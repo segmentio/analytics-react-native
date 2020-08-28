@@ -27,7 +27,7 @@ it('uses the default configuration', async () => {
 				flushInterval: undefined
 			},
 			ios: {
-				trackAdvertising: true,
+				trackAdvertising: false,
 				trackDeepLinks: false
 			}
 		})
@@ -54,7 +54,7 @@ it('produces a valid configuration', async () => {
 			flushInterval: 72
 		},
 		ios: {
-			trackAdvertising: true,
+			trackAdvertising: false,
 			trackDeepLinks: true
 		}
 	})
@@ -80,7 +80,7 @@ it('produces a valid configuration', async () => {
 				flushInterval: 72
 			},
 			ios: {
-				trackAdvertising: true,
+				trackAdvertising: false,
 				trackDeepLinks: true
 			}
 		})
