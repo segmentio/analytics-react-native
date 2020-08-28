@@ -1,0 +1,68 @@
+# Uncomment the next line to define a global platform for your project
+platform :ios, '11.0'
+
+target 'TestApp' do
+  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
+  # use_frameworks!
+
+  # Pods for TestApp
+  pod 'Analytics', '~> 4.0.4'
+  pod 'RNAnalytics', :path => "../node_modules/@segment/analytics-react-native"
+  
+  # Device Mode Integrations (iOS only of course)
+  pod 'RNAnalyticsIntegration-Adjust', :path => "../node_modules/@segment/analytics-react-native-adjust"
+  pod 'RNAnalyticsIntegration-Amplitude', :path => "../node_modules/@segment/analytics-react-native-amplitude"
+  pod 'RNAnalyticsIntegration-Appboy', :path => "../node_modules/@segment/analytics-react-native-appboy"
+  pod 'RNAnalyticsIntegration-AppsFlyer', :path => "../node_modules/@segment/analytics-react-native-appsflyer"
+  pod 'RNAnalyticsIntegration-Branch', :path => "../node_modules/@segment/analytics-react-native-branch"
+  pod 'RNAnalyticsIntegration-Bugsnag', :path => "../node_modules/@segment/analytics-react-native-bugsnag"
+  pod 'RNAnalyticsIntegration-CleverTap', :path => "../node_modules/@segment/analytics-react-native-clevertap"
+  pod 'RNAnalyticsIntegration-ComScore', :path => "../node_modules/@segment/analytics-react-native-comscore-ios"
+  pod 'RNAnalyticsIntegration-Countly', :path => "../node_modules/@segment/analytics-react-native-countly"
+  pod 'RNAnalyticsIntegration-Crittercism', :path => "../node_modules/@segment/analytics-react-native-crittercism"
+  pod 'RNAnalyticsIntegration-Facebook-App-Events', :path => "../node_modules/@segment/analytics-react-native-facebook-app-events-ios"
+  pod 'RNAnalyticsIntegration-Firebase', :path => "../node_modules/@segment/analytics-react-native-firebase"
+  pod 'RNAnalyticsIntegration-Flurry', :path => "../node_modules/@segment/analytics-react-native-flurry"
+  pod 'RNAnalyticsIntegration-Google-Analytics', :path => "../node_modules/@segment/analytics-react-native-google-analytics"
+  pod 'RNAnalyticsIntegration-Intercom', :path => "../node_modules/@segment/analytics-react-native-intercom"
+  pod 'RNAnalyticsIntegration-Localytics', :path => "../node_modules/@segment/analytics-react-native-localytics"
+  pod 'RNAnalyticsIntegration-Mixpanel', :path => "../node_modules/@segment/analytics-react-native-mixpanel"
+  pod 'RNAnalyticsIntegration-Taplytics', :path => "../node_modules/@segment/analytics-react-native-taplytics-ios"
+  
+  # Your 'node_modules' directory is probably in the root of your project,
+  # but if not, adjust the `:path` accordingly
+  
+  pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
+  pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
+  pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
+  pod 'RCTTypeSafety', :path => "../node_modules/react-native/Libraries/TypeSafety"
+  pod 'React', :path => '../node_modules/react-native/'
+  pod 'React-Core', :path => '../node_modules/react-native/'
+  pod 'React-CoreModules', :path => '../node_modules/react-native/React/CoreModules'
+  pod 'React-Core/DevSupport', :path => '../node_modules/react-native/'
+  pod 'React-RCTActionSheet', :path => '../node_modules/react-native/Libraries/ActionSheetIOS'
+  pod 'React-RCTAnimation', :path => '../node_modules/react-native/Libraries/NativeAnimation'
+  pod 'React-RCTBlob', :path => '../node_modules/react-native/Libraries/Blob'
+  pod 'React-RCTImage', :path => '../node_modules/react-native/Libraries/Image'
+  pod 'React-RCTLinking', :path => '../node_modules/react-native/Libraries/LinkingIOS'
+  pod 'React-RCTNetwork', :path => '../node_modules/react-native/Libraries/Network'
+  pod 'React-RCTSettings', :path => '../node_modules/react-native/Libraries/Settings'
+  pod 'React-RCTText', :path => '../node_modules/react-native/Libraries/Text'
+  pod 'React-RCTVibration', :path => '../node_modules/react-native/Libraries/Vibration'
+  pod 'React-Core/RCTWebSocket', :path => '../node_modules/react-native/'
+
+  pod 'React-cxxreact', :path => '../node_modules/react-native/ReactCommon/cxxreact'
+  pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi'
+  pod 'React-jsiexecutor', :path => '../node_modules/react-native/ReactCommon/jsiexecutor'
+  pod 'React-jsinspector', :path => '../node_modules/react-native/ReactCommon/jsinspector'
+  pod 'ReactCommon/callinvoker', :path => "../node_modules/react-native/ReactCommon"
+  pod 'ReactCommon/turbomodule/core', :path => "../node_modules/react-native/ReactCommon"
+  
+    # Explicitly include Yoga if you are using RN >= 0.42.0
+  pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
+
+  # Third party deps podspec link
+  pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
+  pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
+  pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+end

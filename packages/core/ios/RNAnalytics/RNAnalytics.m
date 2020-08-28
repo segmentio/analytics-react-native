@@ -12,6 +12,8 @@
 
 static NSMutableSet* RNAnalyticsIntegrations = nil;
 static NSLock* RNAnalyticsIntegrationsLock = nil;
+static NSString* RNAnalyticsAdvertisingId = nil;
+static BOOL RNAnalyaticsUseAdvertisingId = NO;
 
 @implementation RNAnalytics
 
@@ -60,8 +62,13 @@ RCT_EXPORT_METHOD(
     config.trackApplicationLifecycleEvents = [options[@"trackAppLifecycleEvents"] boolValue];
     config.trackAttributionData = [options[@"trackAttributionData"] boolValue];
     config.flushAt = [options[@"flushAt"] integerValue];
-    config.enableAdvertisingTracking = [options[@"ios"][@"trackAdvertising"] boolValue];
+    config.enableAdvertisingTracking = RNAnalyaticsUseAdvertisingId = [options[@"ios"][@"trackAdvertising"] boolValue];
     config.defaultSettings = options[@"defaultProjectSettings"];
+    
+    // set this block regardless.  the data will come in after the fact most likely.
+    config.adSupportBlock = ^NSString * _Nonnull{
+        return RNAnalyticsAdvertisingId;
+    };
     
     if ([options valueForKey:@"proxy"]) {
         NSDictionary *proxyOptions = (NSDictionary *)[options valueForKey:@"proxy"];
@@ -122,6 +129,10 @@ RCT_EXPORT_METHOD(
 
 - (NSDictionary*)withContextAndIntegrations :(NSDictionary*)context :(NSDictionary*)integrations {
     return @{ @"context": context, @"integrations": integrations ?: @{}};
+}
+
+RCT_EXPORT_METHOD(setIDFA:(NSString *)idfa) {
+    RNAnalyticsAdvertisingId = idfa;
 }
 
 
