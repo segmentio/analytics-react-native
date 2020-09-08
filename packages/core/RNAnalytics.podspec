@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.author              = { 'Segment' => 'friends@segment.com' }
   s.source              = { :git => 'https://github.com/segmentio/analytics-react-native.git', :tag => s.version.to_s }
 
-  s.platform            = :ios, '11.0'
+  s.platform            = :ios, '10.0'
   s.source_files        = 'ios/**/*.{m,h}'
   s.static_framework    = true
 
