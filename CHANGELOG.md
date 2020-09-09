@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.3.1"></a>
+
+## [1.3.1](https://github.com/segmentio/analytics-react-native/compare/v1.3.0...v1.3.1) (2020-09-09)
+
+### Bug Fixes
+
+- **android:** bump android dependency ([#214](https://github.com/segmentio/analytics-react-native/issues/214)) ([acd0f2f](https://github.com/segmentio/analytics-react-native/commit/acd0f2f))
+- **ios:** bump ios dependency ([#217](https://github.com/segmentio/analytics-react-native/issues/217)) ([4848bbd](https://github.com/segmentio/analytics-react-native/commit/4848bbd))
+
 <a name="1.3.0"></a>
 
 # [1.3.0](https://github.com/segmentio/analytics-react-native/compare/v1.2.1...v1.3.0) (2020-08-28)
