@@ -26,7 +26,7 @@ export interface Configuration {
 	}
 }
 
-export type JsonValue = boolean | number | string | null | JsonList | JsonMap
+export type JsonValue = boolean | number | string | null | undefined | JsonList | JsonMap
 export interface JsonMap {
 	[key: string]: JsonValue
 	[index: number]: JsonValue
