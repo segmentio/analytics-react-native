@@ -25,7 +25,6 @@ export const configure = async (
 		debug = false,
 		recordScreenViews = false,
 		trackAppLifecycleEvents = false,
-		trackAttributionData = false,
 		using = [],
 		defaultProjectSettings = {},
 		proxy,
@@ -47,7 +46,6 @@ export const configure = async (
 		proxy,
 		recordScreenViews,
 		trackAppLifecycleEvents,
-		trackAttributionData,
 		writeKey,
 
 		android: defaults.android(android),

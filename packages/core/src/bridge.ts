@@ -4,7 +4,6 @@ export interface Configuration {
 	writeKey: string
 	recordScreenViews: boolean
 	trackAppLifecycleEvents: boolean
-	trackAttributionData: boolean
 	debug: boolean
 	flushAt: number
 	json: string

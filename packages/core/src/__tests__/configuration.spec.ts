@@ -19,7 +19,6 @@ it('uses the default configuration', async () => {
 			flushAt: 20,
 			recordScreenViews: false,
 			trackAppLifecycleEvents: false,
-			trackAttributionData: false,
 			writeKey,
 
 			android: {
@@ -47,7 +46,6 @@ it('produces a valid configuration', async () => {
 		flushAt: 42,
 		recordScreenViews: true,
 		trackAppLifecycleEvents: true,
-		trackAttributionData: true,
 
 		android: {
 			collectDeviceId: false,
@@ -72,7 +70,6 @@ it('produces a valid configuration', async () => {
 			flushAt: 42,
 			recordScreenViews: true,
 			trackAppLifecycleEvents: true,
-			trackAttributionData: true,
 			writeKey,
 
 			android: {
@@ -80,7 +77,7 @@ it('produces a valid configuration', async () => {
 				flushInterval: 72
 			},
 			ios: {
-				trackAdvertising: false,
+				trackAdve4rtising: false,
 				trackDeepLinks: true
 			}
 		})

@@ -128,11 +128,6 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
             builder.recordScreenViews()
         }
 
-
-        if(options.getBoolean("trackAttributionData")) {
-            builder.trackAttributionInformation()
-        }
-
         if(options.hasKey("android") && options.getType("android") == ReadableType.Map) {
             val androidOptions = options.getMap("android")!!
             if(androidOptions.hasKey("flushInterval")) {
