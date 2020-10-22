@@ -77,7 +77,7 @@ it('produces a valid configuration', async () => {
 				flushInterval: 72
 			},
 			ios: {
-				trackAdve4rtising: false,
+				trackAdvertising: false,
 				trackDeepLinks: true
 			}
 		})
