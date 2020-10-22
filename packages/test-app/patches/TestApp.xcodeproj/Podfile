@@ -6,9 +6,9 @@ target 'TestApp' do
   # use_frameworks!
 
   # Pods for TestApp
-  pod 'Analytics', '~> 4.0.4'
+  pod 'Analytics', '~> 4.1'
   pod 'RNAnalytics', :path => "../node_modules/@segment/analytics-react-native"
-  
+
   # Device Mode Integrations (iOS only of course)
   pod 'RNAnalyticsIntegration-Adjust', :path => "../node_modules/@segment/analytics-react-native-adjust"
   pod 'RNAnalyticsIntegration-Amplitude', :path => "../node_modules/@segment/analytics-react-native-amplitude"
@@ -28,10 +28,10 @@ target 'TestApp' do
   pod 'RNAnalyticsIntegration-Localytics', :path => "../node_modules/@segment/analytics-react-native-localytics"
   pod 'RNAnalyticsIntegration-Mixpanel', :path => "../node_modules/@segment/analytics-react-native-mixpanel"
   pod 'RNAnalyticsIntegration-Taplytics', :path => "../node_modules/@segment/analytics-react-native-taplytics-ios"
-  
+
   # Your 'node_modules' directory is probably in the root of your project,
   # but if not, adjust the `:path` accordingly
-  
+
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
   pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
   pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
@@ -57,7 +57,7 @@ target 'TestApp' do
   pod 'React-jsinspector', :path => '../node_modules/react-native/ReactCommon/jsinspector'
   pod 'ReactCommon/callinvoker', :path => "../node_modules/react-native/ReactCommon"
   pod 'ReactCommon/turbomodule/core', :path => "../node_modules/react-native/ReactCommon"
-  
+
     # Explicitly include Yoga if you are using RN >= 0.42.0
   pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
 
