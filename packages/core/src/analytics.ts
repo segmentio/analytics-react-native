@@ -24,12 +24,11 @@ export module Analytics {
 		 * Disabled by default.
 		 */
 		trackAppLifecycleEvents?: boolean
-		/**
-		 * Whether the analytics client should automatically track attribution data from enabled providers using the mobile service.
-		 *
-		 * Disabled by default.
-		 */
-		trackAttributionData?: boolean
+
+    /**
+     * @deprecated The property should not be used
+     */
+    trackAttributionData?: boolean
 
 		/**
 		 * Register a set of integrations to be used with this Analytics instance.
@@ -59,28 +58,28 @@ export module Analytics {
 		 * See:
 		 *  iOS: https://segment.com/docs/connections/sources/catalog/libraries/mobile/ios/#proxy-http-calls
 		 *  android: https://segment.com/docs/connections/sources/catalog/libraries/mobile/android/#proxy-http-calls
-		 * 
+		 *
 		 * Ex. For a desired proxy through `http://localhost:64000/segment` the configuration would look like such
 		 * {
 		 * 	scheme: 'http',
 		 * 	host: 'localhost',
 		 * 	port: 64000,
-		 *  path: '/segment'	
+		 *  path: '/segment'
 		 * }
-		 * 
+		 *
 		 */
 		proxy?: {
 
 			/**
 			 * The proxy scheme, ex: http, https
-			 * 
+			 *
 			 * `https` by default.
 			 */
 			scheme?: string,
 
 			/**
 			 * The proxy host name, ex: api.segment.io, cdn.segment.io
-			 * 
+			 *
 			 * Note: When using localhost with an Android device or simulator use `adb reverse tcp:<port> tcp:<port>`
 			 */
 			host?: string,
@@ -164,9 +163,9 @@ export module Analytics {
 
 			return this
 		}
-        
+
         /**
-         * Sets the IDFA value on iOS.  Customers are now responsible for collecting 
+         * Sets the IDFA value on iOS.  Customers are now responsible for collecting
          * IDFA on their own.
          */
         public setIDFA(idfa: string) {

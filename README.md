@@ -88,7 +88,6 @@ analytics
         using: [mixpanel, firebase],
         recordScreenViews: true,
         trackAppLifecycleEvents: true,
-        trackAttributionData: true,
 
         android: {
             flushInterval: 60000, // 60 seconds
