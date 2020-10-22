@@ -25,6 +25,11 @@ export module Analytics {
 		 */
 		trackAppLifecycleEvents?: boolean
 
+    /**
+     * @deprecated The property should not be used
+     */
+    trackAttributionData?: boolean
+
 		/**
 		 * Register a set of integrations to be used with this Analytics instance.
 		 */

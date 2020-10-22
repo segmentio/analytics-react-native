@@ -18,6 +18,7 @@
 * [proxy](analytics.configuration.md#proxy)
 * [recordScreenViews](analytics.configuration.md#recordscreenviews)
 * [trackAppLifecycleEvents](analytics.configuration.md#trackapplifecycleevents)
+* [trackAttributionData](analytics.configuration.md#trackattributiondata)
 * [using](analytics.configuration.md#using)
 
 ---
@@ -30,7 +31,7 @@
 
 **● android**: *`undefined` \| `object`*
 
-*Defined in [analytics.ts:114](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L114)*
+*Defined in [analytics.ts:119](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L119)*
 
 Android specific settings.
 
@@ -41,7 +42,7 @@ ___
 
 **● debug**: *`undefined` \| `false` \| `true`*
 
-*Defined in [analytics.ts:32](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L32)*
+*Defined in [analytics.ts:37](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L37)*
 
 ___
 <a id="defaultprojectsettings"></a>
@@ -50,7 +51,7 @@ ___
 
 **● defaultProjectSettings**: *`undefined` \| `object`*
 
-*Defined in [analytics.ts:40](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L40)*
+*Defined in [analytics.ts:45](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L45)*
 
 Default project settings to use, if Segment.com cannot be reached. An example configuration can be found here, using your write key: [](https://cdn-settings.segment.com/v1/projects/YOUR_WRITE_KEY/settings)[https://cdn-settings.segment.com/v1/projects/YOUR\_WRITE\_KEY/settings](https://cdn-settings.segment.com/v1/projects/YOUR_WRITE_KEY/settings)
 
@@ -61,7 +62,7 @@ ___
 
 **● flushAt**: *`undefined` \| `number`*
 
-*Defined in [analytics.ts:48](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L48)*
+*Defined in [analytics.ts:53](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L53)*
 
 The number of queued events that the analytics client should flush at. Setting this to `1` will not queue any events and will use more battery.
 
@@ -74,7 +75,7 @@ ___
 
 **● ios**: *`undefined` \| `object`*
 
-*Defined in [analytics.ts:96](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L96)*
+*Defined in [analytics.ts:101](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L101)*
 
 iOS specific settings.
 
@@ -85,7 +86,7 @@ ___
 
 **● proxy**: *`undefined` \| `object`*
 
-*Defined in [analytics.ts:66](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L66)*
+*Defined in [analytics.ts:71](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L71)*
 
 Whether the analytics client should send all requests through your own hosted proxy rather than directly to Segment. See: iOS: [https://segment.com/docs/connections/sources/catalog/libraries/mobile/ios/#proxy-http-calls](https://segment.com/docs/connections/sources/catalog/libraries/mobile/ios/#proxy-http-calls) android: [https://segment.com/docs/connections/sources/catalog/libraries/mobile/android/#proxy-http-calls](https://segment.com/docs/connections/sources/catalog/libraries/mobile/android/#proxy-http-calls)
 
@@ -118,13 +119,24 @@ Whether the analytics client should automatically track application lifecycle ev
 Disabled by default.
 
 ___
+<a id="trackattributiondata"></a>
+
+### `<Optional>` trackAttributionData
+
+**● trackAttributionData**: *`undefined` \| `false` \| `true`*
+
+*Defined in [analytics.ts:31](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L31)*
+
+*__deprecated__*: The property should not be used
+
+___
 <a id="using"></a>
 
 ### `<Optional>` using
 
 **● using**: *[Integration](../#integration)[]*
 
-*Defined in [analytics.ts:31](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L31)*
+*Defined in [analytics.ts:36](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L36)*
 
 Register a set of integrations to be used with this Analytics instance.
 
