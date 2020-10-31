@@ -37,6 +37,9 @@
       name: Tapstream-Segment
 
 - name: Appboy
+  ios:
+    pod:
+      version: 3.5.0
   android:
     maven:
       repo: https://appboy.github.io/appboy-android-sdk/sdk
