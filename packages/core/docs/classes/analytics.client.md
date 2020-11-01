@@ -40,7 +40,7 @@
 
 **● ready**: *`false`* = false
 
-*Defined in [analytics.ts:146](https://github.com/dbilgin/analytics-react-native/blob/master/packages/core/src/analytics.ts#L146)*
+*Defined in [analytics.ts:146](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L146)*
 
 Whether the client is ready to send events to Segment.
 
@@ -56,7 +56,7 @@ ___
 
 ▸ **alias**(newId: *`string`*, options?: *[Options]()*): `Promise`<`void`>
 
-*Defined in [analytics.ts:324](https://github.com/dbilgin/analytics-react-native/blob/master/packages/core/src/analytics.ts#L324)*
+*Defined in [analytics.ts:324](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L324)*
 
 Merge two user identities, effectively connecting two sets of user data as one. This may not be supported by all integrations.
 
@@ -78,7 +78,7 @@ ___
 
 ▸ **catch**(handler: *[ErrorHandler]()*): `this`
 
-*Defined in [analytics.ts:161](https://github.com/dbilgin/analytics-react-native/blob/master/packages/core/src/analytics.ts#L161)*
+*Defined in [analytics.ts:161](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L161)*
 
 Catch React-Native bridge errors
 
@@ -99,7 +99,7 @@ ___
 
 ▸ **disable**(): `Promise`<`void`>
 
-*Defined in [analytics.ts:363](https://github.com/dbilgin/analytics-react-native/blob/master/packages/core/src/analytics.ts#L363)*
+*Defined in [analytics.ts:363](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L363)*
 
 Completely disable the sending of any analytics data.
 
@@ -114,7 +114,7 @@ ___
 
 ▸ **enable**(): `Promise`<`void`>
 
-*Defined in [analytics.ts:353](https://github.com/dbilgin/analytics-react-native/blob/master/packages/core/src/analytics.ts#L353)*
+*Defined in [analytics.ts:353](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L353)*
 
 Enable the sending of analytics data. Enabled by default.
 
@@ -129,7 +129,7 @@ ___
 
 ▸ **flush**(): `Promise`<`void`>
 
-*Defined in [analytics.ts:344](https://github.com/dbilgin/analytics-react-native/blob/master/packages/core/src/analytics.ts#L344)*
+*Defined in [analytics.ts:344](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L344)*
 
 Trigger an upload of all queued events.
 
@@ -144,7 +144,7 @@ ___
 
 ▸ **getAnonymousId**(): `Promise`<`string`>
 
-*Defined in [analytics.ts:368](https://github.com/dbilgin/analytics-react-native/blob/master/packages/core/src/analytics.ts#L368)*
+*Defined in [analytics.ts:368](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L368)*
 
 Retrieve the anonymousId.
 
@@ -157,7 +157,7 @@ ___
 
 ▸ **group**(groupId: *`string`*, traits?: *[JsonMap]()*, options?: *[Options]()*): `Promise`<`void`>
 
-*Defined in [analytics.ts:311](https://github.com/dbilgin/analytics-react-native/blob/master/packages/core/src/analytics.ts#L311)*
+*Defined in [analytics.ts:311](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L311)*
 
 Associate a user with a group, organization, company, project, or w/e _you_ call them.
 
@@ -180,7 +180,7 @@ ___
 
 ▸ **identify**(user: *`string`*, traits?: *[JsonMap]()*, options?: *[Options]()*): `Promise`<`void`>
 
-*Defined in [analytics.ts:298](https://github.com/dbilgin/analytics-react-native/blob/master/packages/core/src/analytics.ts#L298)*
+*Defined in [analytics.ts:298](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L298)*
 
 Associate a user with their unique ID and record traits about them.
 
@@ -203,7 +203,7 @@ ___
 
 ▸ **middleware**(middleware: *[Middleware]()*): `this`
 
-*Defined in [analytics.ts:207](https://github.com/dbilgin/analytics-react-native/blob/master/packages/core/src/analytics.ts#L207)*
+*Defined in [analytics.ts:207](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L207)*
 
 Append a new middleware to the middleware chain.
 
@@ -241,7 +241,7 @@ ___
 
 ▸ **reset**(): `Promise`<`void`>
 
-*Defined in [analytics.ts:334](https://github.com/dbilgin/analytics-react-native/blob/master/packages/core/src/analytics.ts#L334)*
+*Defined in [analytics.ts:334](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L334)*
 
 Reset any user state that is cached on the device.
 
@@ -256,7 +256,7 @@ ___
 
 ▸ **screen**(name: *`string`*, properties?: *[JsonMap]()*, options?: *[Options]()*): `Promise`<`void`>
 
-*Defined in [analytics.ts:283](https://github.com/dbilgin/analytics-react-native/blob/master/packages/core/src/analytics.ts#L283)*
+*Defined in [analytics.ts:283](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L283)*
 
 Record the screens or views your users see.
 
@@ -279,7 +279,7 @@ ___
 
 ▸ **setIDFA**(idfa: *`string`*): `void`
 
-*Defined in [analytics.ts:171](https://github.com/dbilgin/analytics-react-native/blob/master/packages/core/src/analytics.ts#L171)*
+*Defined in [analytics.ts:171](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L171)*
 
 Sets the IDFA value on iOS. Customers are now responsible for collecting IDFA on their own.
 
@@ -298,7 +298,7 @@ ___
 
 ▸ **setup**(writeKey: *`string`*, configuration?: *[Configuration](../interfaces/analytics.configuration.md)*): `Promise`<`void`>
 
-*Defined in [analytics.ts:246](https://github.com/dbilgin/analytics-react-native/blob/master/packages/core/src/analytics.ts#L246)*
+*Defined in [analytics.ts:246](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L246)*
 
 Setup the Analytics module. All calls made before are queued and only executed if the configuration was successful.
 
@@ -328,7 +328,7 @@ ___
 
 ▸ **track**(event: *`string`*, properties?: *[JsonMap]()*, options?: *[Options]()*): `Promise`<`void`>
 
-*Defined in [analytics.ts:265](https://github.com/dbilgin/analytics-react-native/blob/master/packages/core/src/analytics.ts#L265)*
+*Defined in [analytics.ts:265](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L265)*
 
 Record the actions your users perform.
 
@@ -351,7 +351,7 @@ ___
 
 ▸ **useNativeConfiguration**(): `this`
 
-*Defined in [analytics.ts:219](https://github.com/dbilgin/analytics-react-native/blob/master/packages/core/src/analytics.ts#L219)*
+*Defined in [analytics.ts:219](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L219)*
 
 Use the native configuration.
 
