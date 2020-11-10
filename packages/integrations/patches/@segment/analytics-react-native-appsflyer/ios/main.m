@@ -8,8 +8,8 @@
 
 #import <React/RCTBridgeModule.h>
 #import <RNAnalytics/RNAnalytics.h>
-#if defined(__has_include) && __has_include(<segment-appsflyer-ios/SEGAppsFlyerIntegrationFactory.h>)
-#import <segment-appsflyer-ios/SEGAppsFlyerIntegrationFactory.h>
+#if defined(__has_include) && __has_include(<segment_appsflyer_ios/SEGAppsFlyerIntegrationFactory.h>)
+#import <segment_appsflyer_ios/SEGAppsFlyerIntegrationFactory.h>
 #else
 #import <segment-appsflyer-ios/SEGAppsFlyerIntegrationFactory.h>
 #endif
