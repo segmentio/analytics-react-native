@@ -84,12 +84,8 @@ export class MiddlewareChain {
 		data: P['data'],
 		context: JsonMap
 	) {
-		const ctx: Context = {
-			...context,
-			library: {
-				name: 'analytics-react-native',
-				version: require('../package.json').version
-			}
+		const ctx = {
+			...context
 		}
 
 		const payload: Payload = await this.exec(type, ctx, data)
