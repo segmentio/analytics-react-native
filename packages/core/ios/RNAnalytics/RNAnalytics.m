@@ -76,11 +76,11 @@ RCT_EXPORT_METHOD(
             NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
 
             if ([proxyOptions valueForKey:@"scheme"]) {
-                components.scheme = [proxyOptions[@"scheme"] stringValue];
+                components.scheme = proxyOptions[@"scheme"];
             }
 
             if ([proxyOptions valueForKey:@"host"]) {
-                components.host = [proxyOptions[@"host"] stringValue];
+                components.host = proxyOptions[@"host"];
             }
 
             if ([proxyOptions valueForKey:@"port"]) {
@@ -88,7 +88,7 @@ RCT_EXPORT_METHOD(
             }
 
             if ([proxyOptions valueForKey:@"path"]) {
-                components.path = [[proxyOptions[@"path"] stringValue] stringByAppendingString:components.path];
+                components.path = [proxyOptions[@"path"] stringByAppendingString:components.path];
             }
 
             NSURL *transformedURL = components.URL;
