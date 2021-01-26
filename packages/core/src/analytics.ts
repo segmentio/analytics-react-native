@@ -133,8 +133,14 @@ export module Analytics {
 			 * Enabled by default.
 			 */
 			collectDeviceId?: boolean
-		}
-	}
+
+      /**
+       * Whether the analytics client should use the new lifecycle methods. This option is enabled by default.
+       * If the new lifecycle methods cause issue, you should disable this config option
+       */
+      experimentalUseNewLifecycleMethods?: boolean
+    }
+  }
 
 	export class Client {
 		/**
