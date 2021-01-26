@@ -39,7 +39,7 @@ repositories {
 }
 
 dependencies {
-    api 'com.segment.analytics.android:analytics:4.9.0'
+    api 'com.segment.analytics.android:analytics:4.9.1-beta'
 
     api 'com.facebook.react:react-native:+'
     api "org.jetbrains.kotlin:kotlin-stdlib:${rootProject.ext.has("kotlinVersion") ? rootProject.ext.get("kotlinVersion") : defaultKotlinVersion}"

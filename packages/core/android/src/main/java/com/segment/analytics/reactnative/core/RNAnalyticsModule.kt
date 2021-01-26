@@ -139,6 +139,9 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
             if(androidOptions.hasKey("collectDeviceId")) {
                 builder.collectDeviceId(androidOptions.getBoolean("collectDeviceId"))
             }
+            if(androidOptions.hasKey("experimentalUseNewLifecycleMethods")) {
+                builder.experimentalUseNewLifecycleMethods(androidOptions.getBoolean("experimentalUseNewLifecycleMethods"))
+            }
         }
 
         if(options.getBoolean("debug")) {
