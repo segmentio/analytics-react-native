@@ -72,5 +72,8 @@
     "react": "16.8.3",
     "react-native": "0.62.2",
     "rimraf": "^2.6.2"
+  },
+  "dependencies": {
+    "minimist": "^0.2.1"
   }
 }

@@ -20,7 +20,9 @@
       "eslint": "^7.1.0",
       "jest": "^26.0.1",
       "metro-react-native-babel-preset": "^0.59.0",
-      "react-test-renderer": "16.11.0"
+      "react-test-renderer": "16.11.0", 
+      "set-value": "2.0.1",
+      "js-yaml":"3.13.1"
   },
   "jest": {
     "preset": "react-native"
