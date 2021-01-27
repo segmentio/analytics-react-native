@@ -21,6 +21,6 @@ Pod::Spec.new do |s|
   s.static_framework    = true
 
   s.dependency          'Analytics', '~> 4.1'
-  s.dependency          'React'
+  s.dependency          'React-Core'
 end
 
