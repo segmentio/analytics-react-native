@@ -36,7 +36,8 @@ export interface IdentifyPayload
 		'identify',
 		{
 			user: string
-			traits: JsonMap
+			traits: JsonMap | null
+			options: JsonMap
 			integrations: Integrations
 		}
 	> {}
@@ -113,6 +114,7 @@ export class MiddlewareChain {
 					identify(
 						payload.data.user,
 						payload.data.traits,
+						payload.data.options,
 						payload.data.integrations,
 						payload.context
 					)

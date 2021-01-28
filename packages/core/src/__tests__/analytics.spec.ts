@@ -68,7 +68,7 @@ it('does .screen()', () =>
 	testCall('screen')('Shopping cart', { from: 'Product page' }, {}, ctx))
 
 it('does .identify()', () =>
-	testCall('identify')('sloth', { eats: 'leaves' }, {}, ctx))
+	testCall('identify')('sloth', { eats: 'leaves' }, {}, {}, ctx))
 
 it('does .group()', () => testCall('group')('bots', { humans: false }, {}, ctx))
 
