@@ -58,7 +58,7 @@ export interface Bridge {
 	): Promise<void>
 	identify(
 		user: string,
-		traits: JsonMap,
+		traits: JsonMap | null,
 		options: Options,
 		integrations: Integrations,
 		context: JsonMap
