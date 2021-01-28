@@ -228,12 +228,24 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
             )
 
     @ReactMethod
-    fun identify(userId: String?, traits: ReadableMap?, integrations: ReadableMap?, context: ReadableMap?) =
-            analytics.identify(
-                    userId,
-                    Traits() from traits,
-                    optionsFrom(context, integrations)
-            )
+    fun identify(userId: String?, traits: ReadableMap?, options: ReadableMap?, integrations: ReadableMap?, context: ReadableMap?) {
+
+        val mergedTraits = if (options?.hasKey("anonymousId") == true) {
+            val map = WritableNativeMap()
+            map.merge(traits)
+            map.putString("anonymousId", options.getString("anonymousId"))
+            map
+        } else {
+            traits
+        }
+
+        analytics.identify(
+                userId,
+                Traits() from mergedTraits,
+                optionsFrom(context, integrations)
+        )
+    }
+
 
     @ReactMethod
     fun group(groupId: String, traits: ReadableMap?, integrations: ReadableMap, context: ReadableMap) =
