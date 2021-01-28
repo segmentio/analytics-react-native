@@ -232,7 +232,7 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
 
         val mergedTraits = if (options?.hasKey("anonymousId") == true) {
             val map = WritableNativeMap()
-            map.merge(traits)
+            map.merge(traits ?: WritableNativeMap())
             map.putString("anonymousId", options.getString("anonymousId"))
             map
         } else {
