@@ -127,7 +127,10 @@ jobs:
 
       - restore_cache:
           key: cocoapods-specs
-      - run: yarn test-app test:ios:cocoapods
+      - run: 
+          name: Run Cocoapods Tests
+          no_output_timeout: 30m
+          command: yarn test-app test:ios:cocoapods
       - save_cache:
           key: cocoapods-specs
           paths:
