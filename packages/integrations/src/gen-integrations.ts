@@ -136,7 +136,11 @@ async function prepareJs({
 					main: 'index.js',
 					version: pkg.version,
 					license: pkg.license,
-					description: `${name} Integration for Segment's React-Native analytics library.`
+					description: `${name} Integration for Segment's React-Native analytics library.`,
+					repository: {
+						type: 'git',
+						url: 'https://github.com/segmentio/analytics-react-native.git'
+					}
 				},
 				null,
 				2
