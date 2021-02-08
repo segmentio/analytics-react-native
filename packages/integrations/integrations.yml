@@ -75,7 +75,7 @@
       class: AppsflyerIntegration
     maven:
       name: com.appsflyer:segment-android-integration
-      version: 1.+
+      version: 6.+
 
 - name: Branch
   # https://github.com/BranchMetrics/Segment-Branch-iOS
