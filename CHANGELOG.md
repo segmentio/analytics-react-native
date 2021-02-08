@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.4.0"></a>
+
+# [1.4.0](https://github.com/segmentio/analytics-react-native/compare/v1.3.2...v1.4.0) (2021-02-08)
+
+### Bug Fixes
+
+- **android:** fix crash when promise resolves in debug mode ([#267](https://github.com/segmentio/analytics-react-native/issues/267)) ([a0e21d9](https://github.com/segmentio/analytics-react-native/commit/a0e21d9))
+- **package:** missing repo info ([#268](https://github.com/segmentio/analytics-react-native/issues/268)) ([6a2a93b](https://github.com/segmentio/analytics-react-native/commit/6a2a93b))
+- change React dependency to React-Core ([#254](https://github.com/segmentio/analytics-react-native/issues/254)) ([c51e689](https://github.com/segmentio/analytics-react-native/commit/c51e689))
+- don't call stringValue of strings ([#253](https://github.com/segmentio/analytics-react-native/issues/253)) ([226a9e4](https://github.com/segmentio/analytics-react-native/commit/226a9e4))
+
+### Features
+
+- **android:** allow opt-out for new lifecycle methods ([#256](https://github.com/segmentio/analytics-react-native/issues/256)) ([8dbadad](https://github.com/segmentio/analytics-react-native/commit/8dbadad))
+
 <a name="1.3.2"></a>
 
 ## [1.3.2](https://github.com/segmentio/analytics-react-native/compare/v1.3.1...v1.3.2) (2020-10-23)
