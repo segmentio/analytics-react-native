@@ -301,7 +301,7 @@ export module Analytics {
 		 * @param traits A dictionary of traits you know about the user. Things like: email, name, plan, etc.
 		 * @param options A dictionary of options, e.g. integrations (thigh analytics integration to forward the event to)
 		 */
-		public async identify(user: string, traits: JsonMap = {}, options: Options = {}) {
+		public async identify(user: string | null, traits: JsonMap = {}, options: Options = {}) {
 			await this.middlewares.run('identify', { user, traits, options, integrations: options.integrations || {} }, options.context || {})
 		}
 
