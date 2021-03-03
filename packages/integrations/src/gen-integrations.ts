@@ -51,7 +51,7 @@ async function prepareAndroid({
 		...['Module', 'Package'].map(name =>
 			template(
 				`${root}/java/com/segment/analytics/reactnative/integration/${name}.kt`,
-				{ nativeModule, classpath, factoryClass, factoryImport },
+				{ nativeModule, classpath, factoryClass, factoryImport, slug },
 				`${root}/java/${classpath.replace(/\./g, '/')}/Integration${name}.kt`
 			)
 		)
@@ -69,6 +69,8 @@ async function prepareiOS({
 	const xcodeProject = 'ios/RNAnalyticsIntegration.xcodeproj'
 	const targetXcodeProject = `ios/${nativeModule}.xcodeproj`
 	const pod_name = `RNAnalyticsIntegration-${slug('-')}`
+	const framework_name = `Segment-${slug()}`
+	const alt_framework_name = `Segment_${slug()}`
 	const {
 		pod: {
 			name: pod_dependency = `Segment-${slug()}`,
@@ -79,7 +81,8 @@ async function prepareiOS({
 	const classSlug = `${prefix}${slug()}IntegrationFactory`
 	const {
 		className = classSlug,
-		framework = pod_dependency,
+		framework = framework_name,
+		framework_alt = alt_framework_name,
 		header = classSlug
 	} = ios
 
@@ -107,6 +110,7 @@ async function prepareiOS({
 		),
 		template('ios/main.m', {
 			integration_class_name: nativeModule,
+			factory_header_alt: `<${framework_alt}/${header}.h>`,
 			factory_header: `<${framework}/${header}.h>`,
 			factory_class_name: className
 		})
@@ -132,7 +136,11 @@ async function prepareJs({
 					main: 'index.js',
 					version: pkg.version,
 					license: pkg.license,
-					description: `${name} Integration for Segment's React-Native analytics library.`
+					description: `${name} Integration for Segment's React-Native analytics library.`,
+					repository: {
+						type: 'git',
+						url: 'https://github.com/segmentio/analytics-react-native.git'
+					}
 				},
 				null,
 				2

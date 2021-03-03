@@ -3,7 +3,7 @@
 //  RNAnalytics
 //
 //  Created by fathy on 05/08/2018.
-//  Copyright © 2018 Segment.io, Inc. All rights reserved.
+//  Copyright © 2020 Segment.io, Inc. All rights reserved.
 //
 
 #if __has_include("RCTBridgeModule.h")

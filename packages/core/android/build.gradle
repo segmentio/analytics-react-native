@@ -1,19 +1,21 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
+def safeExtGet(prop, fallback) {
+    return rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
 buildscript {
+    ext.defaultKotlinVersion = '1.4.0'
+
     repositories {
         jcenter()
         maven { url 'https://maven.google.com' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.4'
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.21'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.ext.has("kotlinVersion") ? rootProject.ext.get("kotlinVersion") : defaultKotlinVersion}"
     }
-}
-
-def safeExtGet(prop, fallback) {
-    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
 }
 
 android {
@@ -36,10 +38,9 @@ repositories {
     mavenCentral()
 }
 
-
 dependencies {
-    api 'com.segment.analytics.android:analytics:4.+'
+    api 'com.segment.analytics.android:analytics:4.9.1-beta'
 
     api 'com.facebook.react:react-native:+'
-    api 'org.jetbrains.kotlin:kotlin-stdlib:1.3.21'
+    api "org.jetbrains.kotlin:kotlin-stdlib:${rootProject.ext.has("kotlinVersion") ? rootProject.ext.get("kotlinVersion") : defaultKotlinVersion}"
 }

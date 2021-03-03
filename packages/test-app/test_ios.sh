@@ -8,7 +8,7 @@ pushd project/ios
     if [[ $COCOAPODS == "yes" ]]; then
         cp -r ../../patches/Podfile .
         yarn react-native link
-        pod install
+        pod install --repo-update
         cfg="cocoapods"
     else
         echo "import {Analytics} from '@segment/analytics-react-native'" > ../integrations.gen.ts

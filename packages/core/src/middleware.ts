@@ -1,4 +1,4 @@
-import { JsonMap } from './bridge'
+import { Context, Integrations, JsonMap, Options } from './bridge'
 import { assertNever } from './utils'
 import { NativeWrapper } from './wrapper'
 
@@ -17,6 +17,7 @@ export interface TrackPayload
 		{
 			event: string
 			properties: JsonMap
+			integrations: Integrations
 		}
 	> {}
 
@@ -26,6 +27,7 @@ export interface ScreenPayload
 		{
 			name: string
 			properties: JsonMap
+			integrations: Integrations
 		}
 	> {}
 
@@ -34,7 +36,9 @@ export interface IdentifyPayload
 		'identify',
 		{
 			user: string
-			traits: JsonMap
+			traits: JsonMap | null
+			options: JsonMap
+			integrations: Integrations
 		}
 	> {}
 
@@ -44,6 +48,7 @@ export interface GroupPayload
 		{
 			groupId: string
 			traits: JsonMap
+			integrations: Integrations
 		}
 	> {}
 
@@ -52,15 +57,9 @@ export interface AliasPayload
 		'alias',
 		{
 			newId: string
+			integrations: Integrations
 		}
 	> {}
-
-export interface Context extends JsonMap {
-	library: {
-		name: string
-		version: string
-	}
-}
 
 export type Payload =
 	| TrackPayload
@@ -83,36 +82,60 @@ export class MiddlewareChain {
 
 	public async run<T extends Payload['type'], P extends PayloadFromType<T>>(
 		type: T,
-		data: P['data']
+		data: P['data'],
+		context: JsonMap
 	) {
 		const ctx: Context = {
+			...context,
 			library: {
 				name: 'analytics-react-native',
 				version: require('../package.json').version
 			}
 		}
+
 		const payload: Payload = await this.exec(type, ctx, data)
 
 		switch (payload.type) {
 			case 'alias':
 				return this.wrapper.run('alias', alias =>
-					alias(payload.data.newId, payload.context)
+					alias(payload.data.newId, payload.data.integrations, payload.context)
 				)
 			case 'group':
 				return this.wrapper.run('group', group =>
-					group(payload.data.groupId, payload.data.traits, payload.context)
+					group(
+						payload.data.groupId,
+						payload.data.traits,
+						payload.data.integrations,
+						payload.context
+					)
 				)
 			case 'identify':
 				return this.wrapper.run('identify', identify =>
-					identify(payload.data.user, payload.data.traits, payload.context)
+					identify(
+						payload.data.user,
+						payload.data.traits,
+						payload.data.options,
+						payload.data.integrations,
+						payload.context
+					)
 				)
 			case 'screen':
 				return this.wrapper.run('screen', screen =>
-					screen(payload.data.name, payload.data.properties, payload.context)
+					screen(
+						payload.data.name,
+						payload.data.properties,
+						payload.data.integrations,
+						payload.context
+					)
 				)
 			case 'track':
 				return this.wrapper.run('track', track =>
-					track(payload.data.event, payload.data.properties, payload.context)
+					track(
+						payload.data.event,
+						payload.data.properties,
+						payload.data.integrations,
+						payload.context
+					)
 				)
 			default:
 				return assertNever(payload)

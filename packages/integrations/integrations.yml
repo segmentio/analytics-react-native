@@ -26,7 +26,7 @@
 - name: Intercom
   ios:
     pod:
-      version: 1.0.0-beta
+      version: 1.0.1-beta
 
 - name: Tapstream
   ios:
@@ -57,6 +57,9 @@
       repo: https://comscore.bintray.com/Analytics
 
 - name: Taplytics
+  ios:
+    pod:
+      version: 1.1.3
   android:
     # Maven resolution is broken
     disabled: true
@@ -72,7 +75,7 @@
       class: AppsflyerIntegration
     maven:
       name: com.appsflyer:segment-android-integration
-      version: 1.+
+      version: 6.+
 
 - name: Branch
   # https://github.com/BranchMetrics/Segment-Branch-iOS
@@ -82,3 +85,16 @@
   android:
     maven:
       name: io.branch.segment.analytics.android.integrations:branch
+
+- name: CleverTap
+  # https://github.com/CleverTap/clevertap-segment-ios
+  ios:
+    pod:
+      name: Segment-CleverTap
+  # https://github.com/CleverTap/clevertap-segment-android
+  android:
+    factory:
+      class: CleverTapIntegration
+    maven:
+      name: com.clevertap.android:clevertap-segment-android
+      version: 1.+

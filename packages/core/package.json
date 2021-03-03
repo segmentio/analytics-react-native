@@ -1,8 +1,12 @@
 {
   "name": "@segment/analytics-react-native",
-  "version": "0.1.0-beta.0",
+  "version": "1.4.1",
   "description": "The hassle-free way to add analytics to your React-Native app.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/segmentio/analytics-react-native.git"
+  },
   "main": "build/cjs/index.js",
   "module": "build/esm/index.js",
   "types": "build/esm/index.d.ts",
@@ -26,7 +30,8 @@
     "lint": "tslint -p .",
     "test": "jest",
     "deploy": "./deploy.sh",
-    "release": "standard-version --infile ../../CHANGELOG.md"
+    "release": "standard-version --infile ../../CHANGELOG.md",
+    "prepublish": "yarn build"
   },
   "devDependencies": {
     "@types/jest": "^23.3.1",

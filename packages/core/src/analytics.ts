@@ -1,4 +1,4 @@
-import Bridge, { JsonMap } from './bridge'
+import Bridge, { JsonMap, Options } from './bridge'
 import { configure } from './configuration'
 import { Middleware, MiddlewareChain } from './middleware'
 import { ErrorHandler, NativeWrapper } from './wrapper'
@@ -13,23 +13,22 @@ export module Analytics {
 		 * view controller is added to a view hierarchy.
 		 * Because the iOS underlying implementation uses method swizzling,
 		 * we recommend initializing the analytics client as early as possible.
-		 * 
+		 *
 		 * Disabled by default.
 		 */
 		recordScreenViews?: boolean
 		/**
 		 * Whether the analytics client should automatically track application lifecycle events, such as
 		 * "Application Installed", "Application Updated" and "Application Opened".
-		 * 
+		 *
 		 * Disabled by default.
 		 */
 		trackAppLifecycleEvents?: boolean
-		/**
-		 * Whether the analytics client should automatically track attribution data from enabled providers using the mobile service.
-		 * 
-		 * Disabled by default.
-		 */
-		trackAttributionData?: boolean
+
+    /**
+     * @deprecated The property should not be used
+     */
+    trackAttributionData?: boolean
 
 		/**
 		 * Register a set of integrations to be used with this Analytics instance.
@@ -37,13 +36,64 @@ export module Analytics {
 		using?: Integration[]
 		debug?: boolean
 
+    /**
+     * Default project settings to use, if Segment.com cannot be reached. An example
+     * configuration can be found here, using your write key: <a
+     * href="https://cdn-settings.segment.com/v1/projects/YOUR_WRITE_KEY/settings">
+     * https://cdn-settings.segment.com/v1/projects/YOUR_WRITE_KEY/settings </a>
+     */
+    defaultProjectSettings?: { [key: string]: any }
+
 		/**
 		 * The number of queued events that the analytics client should flush at.
 		 * Setting this to `1` will not queue any events and will use more battery.
-		 * 
+		 *
 		 * `20` by default.
 		 */
 		flushAt?: number
+
+		/**
+		 * Whether the analytics client should send all requests through your own hosted
+		 * proxy rather than directly to Segment.
+		 * See:
+		 *  iOS: https://segment.com/docs/connections/sources/catalog/libraries/mobile/ios/#proxy-http-calls
+		 *  android: https://segment.com/docs/connections/sources/catalog/libraries/mobile/android/#proxy-http-calls
+		 *
+		 * Ex. For a desired proxy through `http://localhost:64000/segment` the configuration would look like such
+		 * {
+		 * 	scheme: 'http',
+		 * 	host: 'localhost',
+		 * 	port: 64000,
+		 *  path: '/segment'
+		 * }
+		 *
+		 */
+		proxy?: {
+
+			/**
+			 * The proxy scheme, ex: http, https
+			 *
+			 * `https` by default.
+			 */
+			scheme?: string,
+
+			/**
+			 * The proxy host name, ex: api.segment.io, cdn.segment.io
+			 *
+			 * Note: When using localhost with an Android device or simulator use `adb reverse tcp:<port> tcp:<port>`
+			 */
+			host?: string,
+
+			/**
+			 * The proxy port number, ex: 80
+			 */
+			port?: number,
+
+			/**
+			 * The proxy path, ex: /path/to/proxy
+			 */
+			path?: string,
+		},
 
 		/**
 		 * iOS specific settings.
@@ -51,14 +101,14 @@ export module Analytics {
 		ios?: {
 			/**
 			 * Whether the analytics client should track advertisting info.
-			 * 
-			 * Disabled by default.
+			 *
+			 * Enabled by default.
 			 */
 			trackAdvertising?: boolean
 			/**
 			 * Whether the analytics client should automatically track deep links.
 			 * You'll still need to call the continueUserActivity and openURL methods on the native analytics client.
-			 * 
+			 *
 			 * Disabled by default.
 			 */
 			trackDeepLinks?: boolean
@@ -79,12 +129,18 @@ export module Analytics {
 			 * - `android.provider.Settings.Secure.ANDROID_ID`
 			 * - `android.os.Build.SERIAL`
 			 * - or Telephony Identifier retrieved via TelephonyManager as available
-			 * 
+			 *
 			 * Enabled by default.
 			 */
 			collectDeviceId?: boolean
-		}
-	}
+
+      /**
+       * Whether the analytics client should use the new lifecycle methods. This option is enabled by default.
+       * If the new lifecycle methods cause issue, you should disable this config option
+       */
+      experimentalUseNewLifecycleMethods?: boolean
+    }
+  }
 
 	export class Client {
 		/**
@@ -114,28 +170,36 @@ export module Analytics {
 			return this
 		}
 
+        /**
+         * Sets the IDFA value on iOS.  Customers are now responsible for collecting
+         * IDFA on their own.
+         */
+        public setIDFA(idfa: string) {
+            Bridge.setIDFA(idfa)
+        }
+
 		/**
 		 * Append a new middleware to the middleware chain.
-		 * 
+		 *
 		 * Middlewares are a powerful mechanism that can augment the events collected by the SDK.
 		 * A middleware is a simple function that is invoked by the Segment SDK and can be used to monitor,
 		 * modify or reject events.
-		 * 
+		 *
 		 * Middlewares are invoked for all events, including automatically tracked events,
 		 * and external event sources like Adjust and Optimizely.
 		 * This offers you the ability the customize those messages to fit your use case even
 		 * if the event was sent outside your source code.
-		 * 
+		 *
 		 * The key thing to observe here is that the output produced by the first middleware feeds into the second.
 		 * This allows you to chain and compose independent middlewares!
-		 * 
+		 *
 		 * For example, you might want to record the device year class with your events.
 		 * Previously, you would have to do this everywhere you trigger an event with the Segment SDK.
 		 * With middlewares, you can do this in a single place :
-		 * 
+		 *
 		 * ```js
 		 * import DeviceYearClass from 'react-native-device-year-class'
-		 * 
+		 *
 		 * analytics.middleware(async ({next, context}) =>
 		 *   next({
 		 *     ...context,
@@ -143,8 +207,8 @@ export module Analytics {
 		 *   })
 		 * )
 		 * ```
-		 * 
-		 * @param middleware 
+		 *
+		 * @param middleware
 		 */
 		public middleware(middleware: Middleware) {
 			this.middlewares.add(middleware)
@@ -154,7 +218,7 @@ export module Analytics {
 
 		/**
 		 * Use the native configuration.
-		 * 
+		 *
 		 * You'll need to call this method when you configure Analytics's singleton
 		 * using the native API.
 		 */
@@ -181,7 +245,7 @@ export module Analytics {
 		 *   }
 		 * })
 		 * ```
-		 * 
+		 *
 		 * @param writeKey Your Segment.io write key
 		 * @param configuration An optional {@link Configuration} object.
 		 */
@@ -202,9 +266,10 @@ export module Analytics {
 		 * We recommend using human-readable names like `Played a Song` or `Updated Status`.
 		 * @param properties A dictionary of properties for the event.
 		 * If the event was 'Added to Shopping Cart', it might have properties like price, productType, etc.
+		 * @param options A dictionary of options, e.g. integrations (thigh analytics integration to forward the event to)
 		 */
-		public async track(event: string, properties: JsonMap = {}) {
-			await this.middlewares.run('track', { event, properties })
+		public async track(event: string, properties: JsonMap = {}, options: Options = {}) {
+			await this.middlewares.run('track', { event, properties, integrations: options.integrations || {} }, options.context || {})
 		}
 
 		/**
@@ -221,8 +286,8 @@ export module Analytics {
 		 * @param properties A dictionary of properties for the screen view event.
 		 * If the event was 'Added to Shopping Cart', it might have properties like price, productType, etc.
 		 */
-		public async screen(name: string, properties: JsonMap = {}) {
-			await this.middlewares.run('screen', { name, properties })
+		public async screen(name: string, properties: JsonMap = {}, options: Options = {}) {
+			await this.middlewares.run('screen', { name, properties, integrations: options.integrations || {} }, options.context || {})
 		}
 
 		/**
@@ -234,9 +299,10 @@ export module Analytics {
 		 * If you don't have a userId but want to record traits, you should pass nil.
 		 * For more information on how we generate the UUID and Apple's policies on IDs, see https://segment.io/libraries/ios#ids
 		 * @param traits A dictionary of traits you know about the user. Things like: email, name, plan, etc.
+		 * @param options A dictionary of options, e.g. integrations (thigh analytics integration to forward the event to)
 		 */
-		public async identify(user: string | null, traits: JsonMap = {}) {
-			await this.middlewares.run('identify', { user, traits })
+		public async identify(user: string | null, traits: JsonMap = {}, options: Options = {}) {
+			await this.middlewares.run('identify', { user, traits, options, integrations: options.integrations || {} }, options.context || {})
 		}
 
 		/**
@@ -246,9 +312,10 @@ export module Analytics {
 		 *
 		 * @param groupId A database ID for this group.
 		 * @param traits A dictionary of traits you know about the group. Things like: name, employees, etc.
+		 * @param options A dictionary of options, e.g. integrations (thigh analytics integration to forward the event to)
 		 */
-		public async group(groupId: string, traits: JsonMap = {}) {
-			await this.middlewares.run('group', { groupId, traits })
+		public async group(groupId: string, traits: JsonMap = {}, options: Options = {}) {
+			await this.middlewares.run('group', { groupId, traits, integrations: options.integrations || {} }, options.context || {})
 		}
 
 		/**
@@ -260,8 +327,8 @@ export module Analytics {
 		 * @param newId The new ID you want to alias the existing ID to.
 		 * The existing ID will be either the previousId if you have called identify, or the anonymous ID.
 		 */
-		public async alias(newId: string) {
-			await this.middlewares.run('alias', { newId })
+		public async alias(newId: string, options: Options = {}) {
+			await this.middlewares.run('alias', { newId, integrations: options.integrations || {} }, options.context || {})
 		}
 
 		/**
