@@ -35,7 +35,7 @@ export interface IdentifyPayload
 	extends MiddlewarePayload<
 		'identify',
 		{
-			user: string
+			user: string | null
 			traits: JsonMap | null
 			options: JsonMap
 			integrations: Integrations
