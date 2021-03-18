@@ -4,9 +4,11 @@ import { Configuration } from './bridge'
 const defaults = {
 	android: ({
 		collectDeviceId = true,
+		experimentalUseNewLifecycleMethods = true,
 		flushInterval
 	}: Partial<Configuration['android']>) => ({
 		collectDeviceId,
+		experimentalUseNewLifecycleMethods,
 		flushInterval
 	}),
 	ios: ({

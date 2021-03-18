@@ -18,6 +18,7 @@ export interface Configuration {
 	android: {
 		flushInterval?: number
 		collectDeviceId: boolean
+		experimentalUseNewLifecycleMethods: boolean
 	}
 	ios: {
 		trackAdvertising: boolean
