@@ -21,8 +21,10 @@
 
 RCT_EXPORT_MODULE()
 
-RCT_EXPORT_METHOD(setup) {
+RCT_EXPORT_METHOD(setup: (RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject) {
     [RNAnalytics addIntegration:{{{factory_class_name}}}.instance];
+    resolve(nil);
 }
 
 @end
