@@ -106,6 +106,10 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
         val json = options.getString("json")
         val writeKey = options.getString("writeKey")
 
+        if (writeKey == null) {
+            return promise.reject("E_SEGMENT_RECONFIGURED", "writeKey cannot be null")
+        }
+
         if(singletonJsonConfig != null) {
             if(json == singletonJsonConfig) {
                 return promise.resolve(null)
@@ -183,6 +187,13 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
             })
         }
 
+        if(options.hasKey("defaultProjectSettings")) {
+            builder.defaultProjectSettings(Utils.toValueMap(options.getMap("defaultProjectSettings")))
+        }
+
+        // RN does not need this flag enabled
+        builder.experimentalUseNewLifecycleMethods(false)
+
         try {
             Analytics.setSingletonInstance(
                     RNAnalytics.buildWithIntegrations(builder)
@@ -194,14 +205,6 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
             // you need to promise.resolve for RN to properly operate
         } catch(e: Exception) {
             return promise.reject("E_SEGMENT_ERROR", e)
-        }
-
-        if(options.getBoolean("trackAppLifecycleEvents")) {
-            this.trackApplicationLifecycleEvents(writeKey)
-        }
-
-        if(options.hasKey("defaultProjectSettings")) {
-            builder.defaultProjectSettings(Utils.toValueMap(options.getMap("defaultProjectSettings")))
         }
 
         RNAnalytics.setupCallbacks(analytics)
