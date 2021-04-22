@@ -74,6 +74,8 @@
     "rimraf": "^2.6.2"
   },
   "dependencies": {
+    "jest": "26.6.2",
+    "jest-haste-map": "26.6.2",
     "minimist": "^0.2.1"
   }
 }
