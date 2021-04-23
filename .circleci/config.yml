@@ -100,7 +100,7 @@ jobs:
   test-ios-vanilla:
     <<: *job
     macos:
-      xcode: '11.5.0'
+      xcode: '12.4.0'
     steps:
       - checkout
       # macOS VMs doesn't support Docker based caches
@@ -115,7 +115,7 @@ jobs:
   test-ios-cocoapods:
     <<: *job
     macos:
-      xcode: '11.5.0'
+      xcode: '12.4.0'
     steps:
       - checkout
       # macOS VMs doesn't support Docker based caches
