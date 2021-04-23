@@ -17,7 +17,7 @@
     "detox:test": "detox test"
   },
   "devDependencies": {
-    "jest": "^24.5.0",
+    "jest": "^26.6.2",
     "react-native-cli": "^2.0.1"
   },
   "dependencies": {
