@@ -17,11 +17,11 @@
     "detox:test": "detox test"
   },
   "devDependencies": {
-    "jest": "^24.5.0",
+    "jest": "^26.6.3",
     "react-native-cli": "^2.0.1"
   },
   "dependencies": {
-    "detox": "^12.1.1",
+    "detox": "^18.12.0",
     "isomorphic-fetch": "^2.2.1"
   },
   "detox": {
