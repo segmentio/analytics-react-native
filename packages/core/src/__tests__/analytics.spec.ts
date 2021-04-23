@@ -8,14 +8,14 @@ jest.mock('../bridge')
 const nextTick = () => new Promise(resolve => setImmediate(resolve))
 const getBridgeStub = <K extends keyof typeof Bridge>(
 	name: K
-): jest.Mock<(typeof Bridge)[K]> => (Bridge as any)[name]
+): jest.Mock<typeof Bridge[K]> => (Bridge as any)[name]
 let analytics: Analytics.Client = null!
 let restoreConsole: RestoreConsole = null!
 
 const ctx = {
 	library: {
 		name: 'analytics-react-native',
-		version: require('../../package.json').version
+		version: '1.0'
 	}
 }
 
@@ -101,7 +101,7 @@ function testCall<K extends keyof typeof Bridge>(name: K) {
 		analytics.constructor.prototype[name].call(analytics, ...args)
 		await nextTick()
 		expect(Bridge[name]).toHaveBeenNthCalledWith(1, ...args)
-	}) as (typeof Bridge)[K]
+	}) as typeof Bridge[K]
 }
 
 it('enables setting integrations from the middleware', async () => {

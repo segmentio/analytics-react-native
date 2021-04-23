@@ -1,7 +1,7 @@
 const forceRequire = (): typeof import('../bridge') => {
 	jest.resetModules()
 
-	return require.requireActual('../bridge')
+	return jest.requireActual('../bridge')
 }
 
 it('should throw an error if the core native module is not linked', () => {
