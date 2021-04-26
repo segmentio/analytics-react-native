@@ -25,6 +25,7 @@
     "set-value": "2.0.1"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "react-native",
+     "moduleFileExtensions": "['ts', 'tsx', 'js', 'jsx', 'json', 'node']"
   }
 }
