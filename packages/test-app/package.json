@@ -29,8 +29,7 @@
     "detox": "^18.12.0",
     "isomorphic-fetch": "^2.2.1",
     "jest-circus": "26.5.2",
-    "jest-environment-node": "^26.6.2",
-    "mocha": "6.0"
+    "jest-environment-node": "^26.6.2"
   },
   "detox": {
     "test-runner": "jest",
