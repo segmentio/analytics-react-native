@@ -42,10 +42,6 @@
 
 *Defined in [analytics.ts:152](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L152)*
 
-Whether the client is ready to send events to Segment.
-
-This becomes `true` when `.setup()` succeeds. All calls will be queued until it becomes `true`.
-
 ___
 
 ## Methods
@@ -57,10 +53,6 @@ ___
 ▸ **alias**(newId: *`string`*, options?: *[Options]()*): `Promise`<`void`>
 
 *Defined in [analytics.ts:330](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L330)*
-
-Merge two user identities, effectively connecting two sets of user data as one. This may not be supported by all integrations.
-
-When you learn more about who the group is, you can record that information with group.
 
 **Parameters:**
 
@@ -80,10 +72,6 @@ ___
 
 *Defined in [analytics.ts:167](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L167)*
 
-Catch React-Native bridge errors
-
-These errors are emitted when calling the native counterpart. This only applies to methods with no return value (`Promise<void>`), methods like `getAnonymousId` do reject promises.
-
 **Parameters:**
 
 | Name | Type |
@@ -101,10 +89,6 @@ ___
 
 *Defined in [analytics.ts:369](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L369)*
 
-Completely disable the sending of any analytics data.
-
-If you have a way for users to actively or passively (sometimes based on location) opt-out of analytics data collection, you can use this method to turn off all data collection.
-
 **Returns:** `Promise`<`void`>
 
 ___
@@ -115,10 +99,6 @@ ___
 ▸ **enable**(): `Promise`<`void`>
 
 *Defined in [analytics.ts:359](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L359)*
-
-Enable the sending of analytics data. Enabled by default.
-
-Occasionally used in conjunction with disable user opt-out handling.
 
 **Returns:** `Promise`<`void`>
 
@@ -131,10 +111,6 @@ ___
 
 *Defined in [analytics.ts:350](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L350)*
 
-Trigger an upload of all queued events.
-
-This is useful when you want to force all messages queued on the device to be uploaded. Please note that not all integrations respond to this method.
-
 **Returns:** `Promise`<`void`>
 
 ___
@@ -146,8 +122,6 @@ ___
 
 *Defined in [analytics.ts:374](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L374)*
 
-Retrieve the anonymousId.
-
 **Returns:** `Promise`<`string`>
 
 ___
@@ -158,10 +132,6 @@ ___
 ▸ **group**(groupId: *`string`*, traits?: *[JsonMap]()*, options?: *[Options]()*): `Promise`<`void`>
 
 *Defined in [analytics.ts:317](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L317)*
-
-Associate a user with a group, organization, company, project, or w/e _you_ call them.
-
-When you learn more about who the group is, you can record that information with group.
 
 **Parameters:**
 
@@ -178,19 +148,15 @@ ___
 
 ###  identify
 
-▸ **identify**(user: *`string`*, traits?: *[JsonMap]()*, options?: *[Options]()*): `Promise`<`void`>
+▸ **identify**(user: *`string` \| `null`*, traits?: *[JsonMap]()*, options?: *[Options]()*): `Promise`<`void`>
 
 *Defined in [analytics.ts:304](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L304)*
-
-Associate a user with their unique ID and record traits about them.
-
-When you learn more about who your user is, you can record that information with identify.
 
 **Parameters:**
 
 | Name | Type | Default value | Description |
 | ------ | ------ | ------ | ------ |
-| user | `string` | - |  database ID (or email address) for this user. If you don't have a userId but want to record traits, you should pass nil. For more information on how we generate the UUID and Apple's policies on IDs, see [https://segment.io/libraries/ios#ids](https://segment.io/libraries/ios#ids) |
+| user | `string` \| `null` | - |  database ID (or email address) for this user. If you don't have a userId but want to record traits, you should pass nil. For more information on how we generate the UUID and Apple's policies on IDs, see [https://segment.io/libraries/ios#ids](https://segment.io/libraries/ios#ids) |
 | `Default value` traits | [JsonMap]() |  {} |  A dictionary of traits you know about the user. Things like: email, name, plan, etc. |
 | `Default value` options | [Options]() |  {} |  A dictionary of options, e.g. integrations (thigh analytics integration to forward the event to) |
 
@@ -204,27 +170,6 @@ ___
 ▸ **middleware**(middleware: *[Middleware]()*): `this`
 
 *Defined in [analytics.ts:213](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L213)*
-
-Append a new middleware to the middleware chain.
-
-Middlewares are a powerful mechanism that can augment the events collected by the SDK. A middleware is a simple function that is invoked by the Segment SDK and can be used to monitor, modify or reject events.
-
-Middlewares are invoked for all events, including automatically tracked events, and external event sources like Adjust and Optimizely. This offers you the ability the customize those messages to fit your use case even if the event was sent outside your source code.
-
-The key thing to observe here is that the output produced by the first middleware feeds into the second. This allows you to chain and compose independent middlewares!
-
-For example, you might want to record the device year class with your events. Previously, you would have to do this everywhere you trigger an event with the Segment SDK. With middlewares, you can do this in a single place :
-
-```js
-import DeviceYearClass from 'react-native-device-year-class'
-
-analytics.middleware(async ({next, context}) =>
-  next({
-    ...context,
-    device_year_class: await DeviceYearClass()
-  })
-)
-```
 
 **Parameters:**
 
@@ -243,10 +188,6 @@ ___
 
 *Defined in [analytics.ts:340](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L340)*
 
-Reset any user state that is cached on the device.
-
-This is useful when a user logs out and you want to clear the identity. It will clear any traits or userId's cached on the device.
-
 **Returns:** `Promise`<`void`>
 
 ___
@@ -257,10 +198,6 @@ ___
 ▸ **screen**(name: *`string`*, properties?: *[JsonMap]()*, options?: *[Options]()*): `Promise`<`void`>
 
 *Defined in [analytics.ts:289](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L289)*
-
-Record the screens or views your users see.
-
-When a user views a screen in your app, you'll want to record that here. For some tools like Google Analytics and Flurry, screen views are treated specially, and are different from "events" kind of like "page views" on the web. For services that don't treat "screen views" specially, we map "screen" straight to "track" with the same parameters. For example, Mixpanel doesn't treat "screen views" any differently. So a call to "screen" will be tracked as a normal event in Mixpanel, but get sent to Google Analytics and Flurry as a "screen".
 
 **Parameters:**
 
@@ -281,8 +218,6 @@ ___
 
 *Defined in [analytics.ts:177](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L177)*
 
-Sets the IDFA value on iOS. Customers are now responsible for collecting IDFA on their own.
-
 **Parameters:**
 
 | Name | Type |
@@ -299,18 +234,6 @@ ___
 ▸ **setup**(writeKey: *`string`*, configuration?: *[Configuration](../interfaces/analytics.configuration.md)*): `Promise`<`void`>
 
 *Defined in [analytics.ts:252](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L252)*
-
-Setup the Analytics module. All calls made before are queued and only executed if the configuration was successful.
-
-```js
-await analytics.setup('YOUR_WRITE_KEY', {
-  using: [Mixpanel, GoogleAnalytics],
-  trackAppLifecycleEvents: true,
-  ios: {
-    trackDeepLinks: true
-  }
-})
-```
 
 **Parameters:**
 
@@ -330,10 +253,6 @@ ___
 
 *Defined in [analytics.ts:271](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L271)*
 
-Record the actions your users perform.
-
-When a user performs an action in your app, you'll want to track that action for later analysis. Use the event name to say what the user did, and properties to specify any interesting details of the action.
-
 **Parameters:**
 
 | Name | Type | Default value | Description |
@@ -352,10 +271,6 @@ ___
 ▸ **useNativeConfiguration**(): `this`
 
 *Defined in [analytics.ts:225](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/analytics.ts#L225)*
-
-Use the native configuration.
-
-You'll need to call this method when you configure Analytics's singleton using the native API.
 
 **Returns:** `this`
 

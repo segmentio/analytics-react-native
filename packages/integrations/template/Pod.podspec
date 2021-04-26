@@ -11,19 +11,19 @@ Pod::Spec.new do |s|
 
                           This is the {{{name}}} integration for the React-Native library.
                           DESC
-   
+
   s.homepage            = "http://segment.com/"
   s.license             =  { :type => 'MIT' }
   s.author              = { "Segment" => "friends@segment.com" }
   s.source              = { :git => "https://github.com/segmentio/analytics-react-native.git", :tag => s.version.to_s }
   s.social_media_url    = 'https://twitter.com/segment'
 
-  s.platform            = :ios, "10.0"
+  s.platform            = :ios, "11.0"
   s.source_files        = 'ios/main.m'
   s.static_framework    = true
 
   s.dependency          '{{{pod_dependency}}}'{{#pod_version}}, '~> {{{pod_version}}}'{{/pod_version}}
   s.dependency          'Analytics'
-  s.dependency          'React'
+  s.dependency          'React-Core'
   s.dependency          'RNAnalytics'
 end

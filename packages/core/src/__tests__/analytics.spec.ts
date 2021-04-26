@@ -8,7 +8,7 @@ jest.mock('../bridge')
 const nextTick = () => new Promise(resolve => setImmediate(resolve))
 const getBridgeStub = <K extends keyof typeof Bridge>(
 	name: K
-): jest.Mock<(typeof Bridge)[K]> => (Bridge as any)[name]
+): jest.Mock<typeof Bridge[K]> => (Bridge as any)[name]
 let analytics: Analytics.Client = null!
 let restoreConsole: RestoreConsole = null!
 
@@ -74,12 +74,12 @@ it('does .group()', () => testCall('group')('bots', { humans: false }, {}, ctx))
 
 it('does .alias()', () => testCall('alias')('new alias', {}, ctx))
 
-it('does .reset()', testCall('reset'))
-it('does .flush()', testCall('flush'))
-it('does .enable()', testCall('enable'))
-it('does .disable()', testCall('disable'))
+it('does .reset()', testCallNoInput('reset'))
+it('does .flush()', testCallNoInput('flush'))
+it('does .enable()', testCallNoInput('enable'))
+it('does .disable()', testCallNoInput('disable'))
 
-it('does .getAnonymousId()', testCall('getAnonymousId'))
+it('does .getAnonymousId()', testCallNoInput('getAnonymousId'))
 
 it('logs uncaught bridge errors', async () => {
 	const error = {
@@ -96,12 +96,20 @@ it('logs uncaught bridge errors', async () => {
 	expect(console.error).toHaveBeenCalledWith('Uncaught Analytics error', error)
 })
 
-function testCall<K extends keyof typeof Bridge>(name: K) {
+function testCall<K extends keyof typeof Bridge>(reset: K) {
 	return (async (...args: any[]) => {
-		analytics.constructor.prototype[name].call(analytics, ...args)
+		analytics.constructor.prototype[reset].call(analytics, ...args)
 		await nextTick()
-		expect(Bridge[name]).toHaveBeenNthCalledWith(1, ...args)
-	}) as (typeof Bridge)[K]
+		expect(Bridge[reset]).toHaveBeenNthCalledWith(1, ...args)
+	}) as typeof Bridge[K]
+}
+
+function testCallNoInput<K extends keyof typeof Bridge>(reset: K) {
+	return (async () => {
+		analytics.constructor.prototype[reset].call(analytics)
+		await nextTick()
+		expect(Bridge[reset]).toHaveBeenNthCalledWith(1)
+	}) as typeof Bridge[K]
 }
 
 it('enables setting integrations from the middleware', async () => {

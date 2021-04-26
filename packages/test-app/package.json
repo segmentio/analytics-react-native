@@ -17,29 +17,35 @@
     "detox:test": "detox test"
   },
   "devDependencies": {
-    "jest": "^24.5.0",
+    "@babel/core": "^7.13.16",
+    "@babel/preset-env": "^7.13.15",
+    "@babel/preset-typescript": "^7.13.0",
+    "@types/jest": "^26.0.22",
+    "babel-jest": "^26.6.3",
+    "jest": "^26.6.3",
     "react-native-cli": "^2.0.1"
   },
   "dependencies": {
-    "detox": "^12.1.1",
-    "isomorphic-fetch": "^2.2.1"
+    "detox": "^18.12.0",
+    "isomorphic-fetch": "^2.2.1",
+    "jest-circus": "26.5.2",
+    "jest-environment-node": "^26.6.2"
   },
   "detox": {
     "test-runner": "jest",
-    "specs": "e2e",
     "runner-config": "e2e/config.json",
     "configurations": {
       "ios-vanilla": {
         "binaryPath": "project/ios/build/Build/Products/Release-iphonesimulator/TestApp.app",
-        "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project project/ios/TestApp.xcodeproj -scheme TestApp -configuration Release -sdk iphonesimulator -derivedDataPath project/ios/build -quiet -UseModernBuildSystem=NO",
+        "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project project/ios/TestApp.xcodeproj -scheme TestApp -configuration Release -sdk iphonesimulator -derivedDataPath project/ios/build",
         "type": "ios.simulator",
-        "name": "iPhone 8"
+        "name": "iPhone 11"
       },
       "ios-cocoapods": {
         "binaryPath": "project/ios/build/Build/Products/Release-iphonesimulator/TestApp.app",
-        "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace project/ios/TestApp.xcworkspace -scheme TestApp -configuration Release -sdk iphonesimulator -derivedDataPath project/ios/build -quiet -UseModernBuildSystem=NO",
+        "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace project/ios/TestApp.xcworkspace -scheme TestApp -configuration Release -sdk iphonesimulator -derivedDataPath project/ios/build",
         "type": "ios.simulator",
-        "name": "iPhone 8"
+        "name": "iPhone 11"
       },
       "android": {
         "binaryPath": "project/android/app/build/outputs/apk/debug/app-debug.apk",

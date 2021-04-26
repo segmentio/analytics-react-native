@@ -1,12 +1,20 @@
 {
-  "extends": "../../../tsconfig.json",
   "compilerOptions": {
-    "jsx": "react-native",
-    "allowSyntheticDefaultImports": true,
+    "target": "es2018",
+    "module": "commonjs",
+    "importHelpers": true,
+    "noEmit": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "moduleResolution": "node",
     "esModuleInterop": true,
-    "outDir": "build",
-    "lib": ["es2015"],
-    "typeRoots": ["node_modules/@types"]
-  },
-  "include": ["./App.tsx"]
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node", "jest", "detox"],
+    "jsx": "preserve"
+  }
 }

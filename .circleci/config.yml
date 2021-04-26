@@ -97,25 +97,10 @@ jobs:
       - *attach
       - run: yarn test-app test:android
 
-  test-ios-vanilla:
-    <<: *job
-    macos:
-      xcode: '11.5.0'
-    steps:
-      - checkout
-      # macOS VMs doesn't support Docker based caches
-      - run: yarn install --frozen-lockfile
-      - *attach
-      - run: brew update-reset
-      - run: brew tap wix/brew
-      - run: brew install wix/brew/applesimutils
-
-      - run: yarn test-app test:ios:vanilla
-
   test-ios-cocoapods:
     <<: *job
     macos:
-      xcode: '11.5.0'
+      xcode: '12.4.0'
     steps:
       - checkout
       # macOS VMs doesn't support Docker based caches
@@ -181,12 +166,6 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - test-ios-vanilla:
-          requires:
-            - build-test-app
-          filters:
-            tags:
-              only: /.*/
       - test-ios-cocoapods:
           requires:
             - build-test-app
@@ -204,7 +183,6 @@ workflows:
           requires:
             - build-test-app
             - test-android
-            - test-ios-vanilla
             - test-ios-cocoapods
             - test-core
             - lint

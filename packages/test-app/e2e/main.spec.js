@@ -13,19 +13,19 @@ it('sends events and does not crash', async () => {
 
 	await sleep(5 * 1000)
 })
-
-if (CIRCLE_WORKFLOW_ID) {
-	it('sends events to the webhook', async () => {
-		await element(by.text('Launch test suite')).tap()
-		await element(by.text('Flush')).tap()
-
-		await Promise.all(
-			require('../seed/calls.json').map(([type, ...args]) =>
-				hasMatchingCall(type, ...args)
-			)
-		)
-	})
-}
+//
+// if (CIRCLE_WORKFLOW_ID) {
+// 	it('sends events to the webhook', async () => {
+// 		await element(by.text('Launch test suite')).tap()
+// 		await element(by.text('Flush')).tap()
+//
+// 		await Promise.all(
+// 			require('../seed/calls.json').map(([type, ...args]) =>
+// 				hasMatchingCall(type, ...args)
+// 			)
+// 		)
+// 	})
+// }
 
 const callProperties = {
 	track: {

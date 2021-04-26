@@ -9,7 +9,7 @@ export class NativeWrapper<T extends NativeDelegate> {
 	constructor(
 		private readonly delegate: T,
 		private readonly handler: ErrorHandler,
-		private readonly queue: Array<() => void> = []
+		private readonly queue: (() => void)[] = []
 	) {}
 
 	/**
