@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.4.4"></a>
+
+## [1.4.4](https://github.com/segmentio/analytics-react-native/compare/v1.4.3...v1.4.4) (2021-04-27)
+
+### Bug Fixes
+
+- **android:** bump deps and fix config issues ([#298](https://github.com/segmentio/analytics-react-native/issues/298)) ([5a2ed9b](https://github.com/segmentio/analytics-react-native/commit/5a2ed9b))
+- ios bridge to repect promise ([#295](https://github.com/segmentio/analytics-react-native/issues/295)) ([640aa73](https://github.com/segmentio/analytics-react-native/commit/640aa73))
+
 <a name="1.4.3"></a>
 
 ## [1.4.3](https://github.com/segmentio/analytics-react-native/compare/v1.4.1...v1.4.3) (2021-03-05)
