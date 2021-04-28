@@ -59,7 +59,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
-    "@commitlint/cli": "^7.0.0",
+    "@commitlint/cli": "12.1.1",
     "@commitlint/config-conventional": "^7.0.1",
     "codecov": "^3.0.4",
     "commitizen": "^2.10.1",
@@ -74,6 +74,7 @@
     "rimraf": "^2.6.2"
   },
   "dependencies": {
+    "compare-func": "2.0",
     "minimist": "^0.2.1"
   }
 }
