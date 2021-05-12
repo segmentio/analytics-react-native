@@ -43,6 +43,9 @@
       name: com.appboy:appboy-segment-integration
 
 - name: Firebase
+  ios:
+    pod:
+      version: 2.7.2
   android:
     maven:
       repo: https://maven.google.com
