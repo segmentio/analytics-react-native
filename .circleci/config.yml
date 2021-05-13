@@ -113,7 +113,6 @@ jobs:
           name: Install dependencies
           command: |
             sudo gem install cocoapods
-            sudo gem install cocoapods-repo-update
       - run: yarn test-app test:ios:cocoapods
   publish:
     <<: *nodeJob
