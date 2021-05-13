@@ -1,0 +1,964 @@
+PODS:
+  - Adjust (4.29.2):
+    - Adjust/Core (= 4.29.2)
+  - Adjust/Core (4.29.2)
+  - Amplitude (8.3.0)
+  - Analytics (4.1.4)
+  - Appboy-iOS-SDK (4.0.2):
+    - Appboy-iOS-SDK/UI (= 4.0.2)
+  - Appboy-iOS-SDK/ContentCards (4.0.2):
+    - Appboy-iOS-SDK/Core
+    - SDWebImage (< 6, >= 5.8.2)
+  - Appboy-iOS-SDK/Core (4.0.2)
+  - Appboy-iOS-SDK/InAppMessage (4.0.2):
+    - Appboy-iOS-SDK/Core
+    - SDWebImage (< 6, >= 5.8.2)
+  - Appboy-iOS-SDK/NewsFeed (4.0.2):
+    - Appboy-iOS-SDK/Core
+    - SDWebImage (< 6, >= 5.8.2)
+  - Appboy-iOS-SDK/UI (4.0.2):
+    - Appboy-iOS-SDK/ContentCards
+    - Appboy-iOS-SDK/Core
+    - Appboy-iOS-SDK/InAppMessage
+    - Appboy-iOS-SDK/NewsFeed
+  - AppsFlyerFramework (6.2.6):
+    - AppsFlyerFramework/Main (= 6.2.6)
+  - AppsFlyerFramework/Main (6.2.6)
+  - boost-for-react-native (1.63.0)
+  - Branch (1.39.3)
+  - Bugsnag (5.23.5)
+  - CleverTap-iOS-SDK (3.9.3):
+    - SDWebImage (~> 5.1)
+  - CocoaAsyncSocket (7.6.5)
+  - ComScore (6.8.0):
+    - ComScore/Dynamic (= 6.8.0)
+  - ComScore/Dynamic (6.8.0)
+  - Countly (16.12)
+  - CrittercismSDK (5.9.5)
+  - DoubleConversion (1.1.6)
+  - FBLazyVector (0.64.1)
+  - FBReactNativeSpec (0.64.1):
+    - RCT-Folly (= 2020.01.13.00)
+    - RCTRequired (= 0.64.1)
+    - RCTTypeSafety (= 0.64.1)
+    - React-Core (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - ReactCommon/turbomodule/core (= 0.64.1)
+  - FBSDKCoreKit (9.3.0):
+    - FBSDKCoreKit/Basics (= 9.3.0)
+    - FBSDKCoreKit/Core (= 9.3.0)
+  - FBSDKCoreKit/Basics (9.3.0)
+  - FBSDKCoreKit/Core (9.3.0):
+    - FBSDKCoreKit/Basics
+  - Firebase (7.11.0):
+    - Firebase/Core (= 7.11.0)
+  - Firebase/Core (7.11.0):
+    - Firebase/CoreOnly
+    - FirebaseAnalytics (~> 7.11.0)
+  - Firebase/CoreOnly (7.11.0):
+    - FirebaseCore (= 7.11.0)
+  - FirebaseAnalytics (7.11.0):
+    - FirebaseAnalytics/AdIdSupport (= 7.11.0)
+    - FirebaseCore (~> 7.0)
+    - FirebaseInstallations (~> 7.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.0)
+    - GoogleUtilities/MethodSwizzler (~> 7.0)
+    - GoogleUtilities/Network (~> 7.0)
+    - "GoogleUtilities/NSData+zlib (~> 7.0)"
+    - nanopb (~> 2.30908.0)
+  - FirebaseAnalytics/AdIdSupport (7.11.0):
+    - FirebaseAnalytics/Base (= 7.11.0)
+    - FirebaseCore (~> 7.0)
+    - FirebaseInstallations (~> 7.0)
+    - GoogleAppMeasurement/AdIdSupport (= 7.11.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.0)
+    - GoogleUtilities/MethodSwizzler (~> 7.0)
+    - GoogleUtilities/Network (~> 7.0)
+    - "GoogleUtilities/NSData+zlib (~> 7.0)"
+    - nanopb (~> 2.30908.0)
+  - FirebaseAnalytics/Base (7.11.0):
+    - FirebaseCore (~> 7.0)
+    - FirebaseInstallations (~> 7.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.0)
+    - GoogleUtilities/MethodSwizzler (~> 7.0)
+    - GoogleUtilities/Network (~> 7.0)
+    - "GoogleUtilities/NSData+zlib (~> 7.0)"
+    - nanopb (~> 2.30908.0)
+  - FirebaseCore (7.11.0):
+    - FirebaseCoreDiagnostics (~> 7.4)
+    - GoogleUtilities/Environment (~> 7.0)
+    - GoogleUtilities/Logger (~> 7.0)
+  - FirebaseCoreDiagnostics (7.11.0):
+    - GoogleDataTransport (~> 8.4)
+    - GoogleUtilities/Environment (~> 7.0)
+    - GoogleUtilities/Logger (~> 7.0)
+    - nanopb (~> 2.30908.0)
+  - FirebaseInstallations (7.11.0):
+    - FirebaseCore (~> 7.0)
+    - GoogleUtilities/Environment (~> 7.0)
+    - GoogleUtilities/UserDefaults (~> 7.0)
+    - PromisesObjC (~> 1.2)
+  - Flipper (0.75.1):
+    - Flipper-Folly (~> 2.5)
+    - Flipper-RSocket (~> 1.3)
+  - Flipper-DoubleConversion (1.1.7)
+  - Flipper-Folly (2.5.3):
+    - boost-for-react-native
+    - Flipper-DoubleConversion
+    - Flipper-Glog
+    - libevent (~> 2.1.12)
+    - OpenSSL-Universal (= 1.1.180)
+  - Flipper-Glog (0.3.6)
+  - Flipper-PeerTalk (0.0.4)
+  - Flipper-RSocket (1.3.1):
+    - Flipper-Folly (~> 2.5)
+  - FlipperKit (0.75.1):
+    - FlipperKit/Core (= 0.75.1)
+  - FlipperKit/Core (0.75.1):
+    - Flipper (~> 0.75.1)
+    - FlipperKit/CppBridge
+    - FlipperKit/FBCxxFollyDynamicConvert
+    - FlipperKit/FBDefines
+    - FlipperKit/FKPortForwarding
+  - FlipperKit/CppBridge (0.75.1):
+    - Flipper (~> 0.75.1)
+  - FlipperKit/FBCxxFollyDynamicConvert (0.75.1):
+    - Flipper-Folly (~> 2.5)
+  - FlipperKit/FBDefines (0.75.1)
+  - FlipperKit/FKPortForwarding (0.75.1):
+    - CocoaAsyncSocket (~> 7.6)
+    - Flipper-PeerTalk (~> 0.0.4)
+  - FlipperKit/FlipperKitHighlightOverlay (0.75.1)
+  - FlipperKit/FlipperKitLayoutPlugin (0.75.1):
+    - FlipperKit/Core
+    - FlipperKit/FlipperKitHighlightOverlay
+    - FlipperKit/FlipperKitLayoutTextSearchable
+    - YogaKit (~> 1.18)
+  - FlipperKit/FlipperKitLayoutTextSearchable (0.75.1)
+  - FlipperKit/FlipperKitNetworkPlugin (0.75.1):
+    - FlipperKit/Core
+  - FlipperKit/FlipperKitReactPlugin (0.75.1):
+    - FlipperKit/Core
+  - FlipperKit/FlipperKitUserDefaultsPlugin (0.75.1):
+    - FlipperKit/Core
+  - FlipperKit/SKIOSNetworkPlugin (0.75.1):
+    - FlipperKit/Core
+    - FlipperKit/FlipperKitNetworkPlugin
+  - Flurry-iOS-SDK (10.2.0):
+    - Flurry-iOS-SDK/FlurrySDK (= 10.2.0)
+  - Flurry-iOS-SDK/FlurrySDK (10.2.0)
+  - glog (0.3.5)
+  - GoogleAnalytics (3.17.0)
+  - GoogleAppMeasurement/AdIdSupport (7.11.0):
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.0)
+    - GoogleUtilities/MethodSwizzler (~> 7.0)
+    - GoogleUtilities/Network (~> 7.0)
+    - "GoogleUtilities/NSData+zlib (~> 7.0)"
+    - nanopb (~> 2.30908.0)
+  - GoogleDataTransport (8.4.0):
+    - GoogleUtilities/Environment (~> 7.2)
+    - nanopb (~> 2.30908.0)
+    - PromisesObjC (~> 1.2)
+  - GoogleIDFASupport (3.14.0)
+  - GoogleUtilities/AppDelegateSwizzler (7.4.1):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Network
+  - GoogleUtilities/Environment (7.4.1):
+    - PromisesObjC (~> 1.2)
+  - GoogleUtilities/Logger (7.4.1):
+    - GoogleUtilities/Environment
+  - GoogleUtilities/MethodSwizzler (7.4.1):
+    - GoogleUtilities/Logger
+  - GoogleUtilities/Network (7.4.1):
+    - GoogleUtilities/Logger
+    - "GoogleUtilities/NSData+zlib"
+    - GoogleUtilities/Reachability
+  - "GoogleUtilities/NSData+zlib (7.4.1)"
+  - GoogleUtilities/Reachability (7.4.1):
+    - GoogleUtilities/Logger
+  - GoogleUtilities/UserDefaults (7.4.1):
+    - GoogleUtilities/Logger
+  - Intercom (9.3.6)
+  - libevent (2.1.12)
+  - Localytics (6.2.1.17)
+  - Mixpanel (3.7.1)
+  - nanopb (2.30908.0):
+    - nanopb/decode (= 2.30908.0)
+    - nanopb/encode (= 2.30908.0)
+  - nanopb/decode (2.30908.0)
+  - nanopb/encode (2.30908.0)
+  - OpenSSL-Universal (1.1.180)
+  - PromisesObjC (1.2.12)
+  - RCT-Folly (2020.01.13.00):
+    - boost-for-react-native
+    - DoubleConversion
+    - glog
+    - RCT-Folly/Default (= 2020.01.13.00)
+  - RCT-Folly/Default (2020.01.13.00):
+    - boost-for-react-native
+    - DoubleConversion
+    - glog
+  - RCTRequired (0.64.1)
+  - RCTTypeSafety (0.64.1):
+    - FBLazyVector (= 0.64.1)
+    - RCT-Folly (= 2020.01.13.00)
+    - RCTRequired (= 0.64.1)
+    - React-Core (= 0.64.1)
+  - React (0.64.1):
+    - React-Core (= 0.64.1)
+    - React-Core/DevSupport (= 0.64.1)
+    - React-Core/RCTWebSocket (= 0.64.1)
+    - React-RCTActionSheet (= 0.64.1)
+    - React-RCTAnimation (= 0.64.1)
+    - React-RCTBlob (= 0.64.1)
+    - React-RCTImage (= 0.64.1)
+    - React-RCTLinking (= 0.64.1)
+    - React-RCTNetwork (= 0.64.1)
+    - React-RCTSettings (= 0.64.1)
+    - React-RCTText (= 0.64.1)
+    - React-RCTVibration (= 0.64.1)
+  - React-callinvoker (0.64.1)
+  - React-Core (0.64.1):
+    - glog
+    - RCT-Folly (= 2020.01.13.00)
+    - React-Core/Default (= 0.64.1)
+    - React-cxxreact (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - React-jsiexecutor (= 0.64.1)
+    - React-perflogger (= 0.64.1)
+    - Yoga
+  - React-Core/CoreModulesHeaders (0.64.1):
+    - glog
+    - RCT-Folly (= 2020.01.13.00)
+    - React-Core/Default
+    - React-cxxreact (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - React-jsiexecutor (= 0.64.1)
+    - React-perflogger (= 0.64.1)
+    - Yoga
+  - React-Core/Default (0.64.1):
+    - glog
+    - RCT-Folly (= 2020.01.13.00)
+    - React-cxxreact (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - React-jsiexecutor (= 0.64.1)
+    - React-perflogger (= 0.64.1)
+    - Yoga
+  - React-Core/DevSupport (0.64.1):
+    - glog
+    - RCT-Folly (= 2020.01.13.00)
+    - React-Core/Default (= 0.64.1)
+    - React-Core/RCTWebSocket (= 0.64.1)
+    - React-cxxreact (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - React-jsiexecutor (= 0.64.1)
+    - React-jsinspector (= 0.64.1)
+    - React-perflogger (= 0.64.1)
+    - Yoga
+  - React-Core/RCTActionSheetHeaders (0.64.1):
+    - glog
+    - RCT-Folly (= 2020.01.13.00)
+    - React-Core/Default
+    - React-cxxreact (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - React-jsiexecutor (= 0.64.1)
+    - React-perflogger (= 0.64.1)
+    - Yoga
+  - React-Core/RCTAnimationHeaders (0.64.1):
+    - glog
+    - RCT-Folly (= 2020.01.13.00)
+    - React-Core/Default
+    - React-cxxreact (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - React-jsiexecutor (= 0.64.1)
+    - React-perflogger (= 0.64.1)
+    - Yoga
+  - React-Core/RCTBlobHeaders (0.64.1):
+    - glog
+    - RCT-Folly (= 2020.01.13.00)
+    - React-Core/Default
+    - React-cxxreact (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - React-jsiexecutor (= 0.64.1)
+    - React-perflogger (= 0.64.1)
+    - Yoga
+  - React-Core/RCTImageHeaders (0.64.1):
+    - glog
+    - RCT-Folly (= 2020.01.13.00)
+    - React-Core/Default
+    - React-cxxreact (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - React-jsiexecutor (= 0.64.1)
+    - React-perflogger (= 0.64.1)
+    - Yoga
+  - React-Core/RCTLinkingHeaders (0.64.1):
+    - glog
+    - RCT-Folly (= 2020.01.13.00)
+    - React-Core/Default
+    - React-cxxreact (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - React-jsiexecutor (= 0.64.1)
+    - React-perflogger (= 0.64.1)
+    - Yoga
+  - React-Core/RCTNetworkHeaders (0.64.1):
+    - glog
+    - RCT-Folly (= 2020.01.13.00)
+    - React-Core/Default
+    - React-cxxreact (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - React-jsiexecutor (= 0.64.1)
+    - React-perflogger (= 0.64.1)
+    - Yoga
+  - React-Core/RCTSettingsHeaders (0.64.1):
+    - glog
+    - RCT-Folly (= 2020.01.13.00)
+    - React-Core/Default
+    - React-cxxreact (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - React-jsiexecutor (= 0.64.1)
+    - React-perflogger (= 0.64.1)
+    - Yoga
+  - React-Core/RCTTextHeaders (0.64.1):
+    - glog
+    - RCT-Folly (= 2020.01.13.00)
+    - React-Core/Default
+    - React-cxxreact (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - React-jsiexecutor (= 0.64.1)
+    - React-perflogger (= 0.64.1)
+    - Yoga
+  - React-Core/RCTVibrationHeaders (0.64.1):
+    - glog
+    - RCT-Folly (= 2020.01.13.00)
+    - React-Core/Default
+    - React-cxxreact (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - React-jsiexecutor (= 0.64.1)
+    - React-perflogger (= 0.64.1)
+    - Yoga
+  - React-Core/RCTWebSocket (0.64.1):
+    - glog
+    - RCT-Folly (= 2020.01.13.00)
+    - React-Core/Default (= 0.64.1)
+    - React-cxxreact (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - React-jsiexecutor (= 0.64.1)
+    - React-perflogger (= 0.64.1)
+    - Yoga
+  - React-CoreModules (0.64.1):
+    - FBReactNativeSpec (= 0.64.1)
+    - RCT-Folly (= 2020.01.13.00)
+    - RCTTypeSafety (= 0.64.1)
+    - React-Core/CoreModulesHeaders (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - React-RCTImage (= 0.64.1)
+    - ReactCommon/turbomodule/core (= 0.64.1)
+  - React-cxxreact (0.64.1):
+    - boost-for-react-native (= 1.63.0)
+    - DoubleConversion
+    - glog
+    - RCT-Folly (= 2020.01.13.00)
+    - React-callinvoker (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - React-jsinspector (= 0.64.1)
+    - React-perflogger (= 0.64.1)
+    - React-runtimeexecutor (= 0.64.1)
+  - React-jsi (0.64.1):
+    - boost-for-react-native (= 1.63.0)
+    - DoubleConversion
+    - glog
+    - RCT-Folly (= 2020.01.13.00)
+    - React-jsi/Default (= 0.64.1)
+  - React-jsi/Default (0.64.1):
+    - boost-for-react-native (= 1.63.0)
+    - DoubleConversion
+    - glog
+    - RCT-Folly (= 2020.01.13.00)
+  - React-jsiexecutor (0.64.1):
+    - DoubleConversion
+    - glog
+    - RCT-Folly (= 2020.01.13.00)
+    - React-cxxreact (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - React-perflogger (= 0.64.1)
+  - React-jsinspector (0.64.1)
+  - React-perflogger (0.64.1)
+  - React-RCTActionSheet (0.64.1):
+    - React-Core/RCTActionSheetHeaders (= 0.64.1)
+  - React-RCTAnimation (0.64.1):
+    - FBReactNativeSpec (= 0.64.1)
+    - RCT-Folly (= 2020.01.13.00)
+    - RCTTypeSafety (= 0.64.1)
+    - React-Core/RCTAnimationHeaders (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - ReactCommon/turbomodule/core (= 0.64.1)
+  - React-RCTBlob (0.64.1):
+    - FBReactNativeSpec (= 0.64.1)
+    - RCT-Folly (= 2020.01.13.00)
+    - React-Core/RCTBlobHeaders (= 0.64.1)
+    - React-Core/RCTWebSocket (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - React-RCTNetwork (= 0.64.1)
+    - ReactCommon/turbomodule/core (= 0.64.1)
+  - React-RCTImage (0.64.1):
+    - FBReactNativeSpec (= 0.64.1)
+    - RCT-Folly (= 2020.01.13.00)
+    - RCTTypeSafety (= 0.64.1)
+    - React-Core/RCTImageHeaders (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - React-RCTNetwork (= 0.64.1)
+    - ReactCommon/turbomodule/core (= 0.64.1)
+  - React-RCTLinking (0.64.1):
+    - FBReactNativeSpec (= 0.64.1)
+    - React-Core/RCTLinkingHeaders (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - ReactCommon/turbomodule/core (= 0.64.1)
+  - React-RCTNetwork (0.64.1):
+    - FBReactNativeSpec (= 0.64.1)
+    - RCT-Folly (= 2020.01.13.00)
+    - RCTTypeSafety (= 0.64.1)
+    - React-Core/RCTNetworkHeaders (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - ReactCommon/turbomodule/core (= 0.64.1)
+  - React-RCTSettings (0.64.1):
+    - FBReactNativeSpec (= 0.64.1)
+    - RCT-Folly (= 2020.01.13.00)
+    - RCTTypeSafety (= 0.64.1)
+    - React-Core/RCTSettingsHeaders (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - ReactCommon/turbomodule/core (= 0.64.1)
+  - React-RCTText (0.64.1):
+    - React-Core/RCTTextHeaders (= 0.64.1)
+  - React-RCTVibration (0.64.1):
+    - FBReactNativeSpec (= 0.64.1)
+    - RCT-Folly (= 2020.01.13.00)
+    - React-Core/RCTVibrationHeaders (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - ReactCommon/turbomodule/core (= 0.64.1)
+  - React-runtimeexecutor (0.64.1):
+    - React-jsi (= 0.64.1)
+  - ReactCommon/turbomodule/core (0.64.1):
+    - DoubleConversion
+    - glog
+    - RCT-Folly (= 2020.01.13.00)
+    - React-callinvoker (= 0.64.1)
+    - React-Core (= 0.64.1)
+    - React-cxxreact (= 0.64.1)
+    - React-jsi (= 0.64.1)
+    - React-perflogger (= 0.64.1)
+  - RNAnalytics (1.4.4):
+    - Analytics
+    - React-Core
+  - RNAnalyticsIntegration-Adjust (1.4.4):
+    - Analytics
+    - React-Core
+    - RNAnalytics
+    - Segment-Adjust
+  - RNAnalyticsIntegration-Amplitude (1.4.4):
+    - Analytics
+    - React-Core
+    - RNAnalytics
+    - Segment-Amplitude
+  - RNAnalyticsIntegration-Appboy (1.4.4):
+    - Analytics
+    - React-Core
+    - RNAnalytics
+    - Segment-Appboy
+  - RNAnalyticsIntegration-AppsFlyer (1.4.4):
+    - Analytics
+    - React-Core
+    - RNAnalytics
+    - segment-appsflyer-ios
+  - RNAnalyticsIntegration-Branch (1.4.4):
+    - Analytics
+    - React-Core
+    - RNAnalytics
+    - Segment-Branch
+  - RNAnalyticsIntegration-Bugsnag (1.4.4):
+    - Analytics
+    - React-Core
+    - RNAnalytics
+    - Segment-Bugsnag
+  - RNAnalyticsIntegration-CleverTap (1.4.4):
+    - Analytics
+    - React-Core
+    - RNAnalytics
+    - Segment-CleverTap
+  - RNAnalyticsIntegration-ComScore (1.4.4):
+    - Analytics
+    - React-Core
+    - RNAnalytics
+    - Segment-ComScore
+  - RNAnalyticsIntegration-Countly (1.4.4):
+    - Analytics
+    - React-Core
+    - RNAnalytics
+    - Segment-Countly
+  - RNAnalyticsIntegration-Crittercism (1.4.4):
+    - Analytics
+    - React-Core
+    - RNAnalytics
+    - Segment-Crittercism
+  - RNAnalyticsIntegration-Facebook-App-Events (1.4.4):
+    - Analytics
+    - React-Core
+    - RNAnalytics
+    - Segment-Facebook-App-Events
+  - RNAnalyticsIntegration-Firebase (1.4.4):
+    - Analytics
+    - React-Core
+    - RNAnalytics
+    - Segment-Firebase (~> 2.7.2)
+  - RNAnalyticsIntegration-Flurry (1.4.4):
+    - Analytics
+    - React-Core
+    - RNAnalytics
+    - Segment-Flurry
+  - RNAnalyticsIntegration-Google-Analytics (1.4.4):
+    - Analytics
+    - React-Core
+    - RNAnalytics
+    - Segment-GoogleAnalytics
+  - RNAnalyticsIntegration-Intercom (1.4.4):
+    - Analytics
+    - React-Core
+    - RNAnalytics
+    - Segment-Intercom (~> 1.0.1-beta)
+  - RNAnalyticsIntegration-Localytics (1.4.4):
+    - Analytics
+    - React-Core
+    - RNAnalytics
+    - Segment-Localytics
+  - RNAnalyticsIntegration-Mixpanel (1.4.4):
+    - Analytics
+    - React-Core
+    - RNAnalytics
+    - Segment-Mixpanel
+  - RNAnalyticsIntegration-Taplytics (1.4.4):
+    - Analytics
+    - React-Core
+    - RNAnalytics
+    - Segment-Taplytics (~> 1.1.3)
+  - SDWebImage (5.11.1):
+    - SDWebImage/Core (= 5.11.1)
+  - SDWebImage/Core (5.11.1)
+  - Segment-Adjust (3.1.1):
+    - Adjust (~> 4.28)
+    - Analytics
+  - Segment-Amplitude (3.3.1):
+    - Amplitude (~> 8.0)
+    - Analytics
+  - Segment-Appboy (4.0.0):
+    - Analytics
+    - Segment-Appboy/Full-SDK (= 4.0.0)
+  - Segment-Appboy/Full-SDK (4.0.0):
+    - Analytics
+    - Appboy-iOS-SDK (~> 4.0.1)
+  - segment-appsflyer-ios (6.2.6):
+    - Analytics
+    - segment-appsflyer-ios/Main (= 6.2.6)
+  - segment-appsflyer-ios/Main (6.2.6):
+    - Analytics
+    - AppsFlyerFramework (~> 6.2.6)
+  - Segment-Branch (0.1.25):
+    - Analytics
+    - Branch (~> 1.39.0)
+  - Segment-Bugsnag (1.0.5):
+    - Analytics
+    - Bugsnag (~> 5.0)
+  - Segment-CleverTap (1.1.9):
+    - Analytics
+    - CleverTap-iOS-SDK (~> 3.9.3)
+  - Segment-ComScore (4.4.0):
+    - Analytics
+    - ComScore (~> 6.0)
+  - Segment-Countly (1.0.3):
+    - Analytics
+    - Countly (~> 16.02)
+  - Segment-Crittercism (1.1.2):
+    - Analytics
+    - CrittercismSDK (~> 5.6)
+  - Segment-Facebook-App-Events (2.1.1):
+    - Analytics
+    - FBSDKCoreKit (~> 9.2)
+ - Segment-Firebase (2.7.2):
+     - Analytics
+     - Firebase/Core (~> 7.7)
+     - FirebaseAnalytics (~> 7.7)
+     - Segment-Firebase/Core (= 2.7.2)
+   - Segment-Firebase/Core (2.7.2):
+     - Analytics
+     - Firebase/Core (~> 7.7)
+     - FirebaseAnalytics (~> 7.7)
+  - Segment-Flurry (2.0.3):
+    - Analytics
+    - Flurry-iOS-SDK (~> 10.2.0)
+  - Segment-GoogleAnalytics (1.3.3):
+    - Analytics
+    - Segment-GoogleAnalytics/GoogleIDFASupport (= 1.3.3)
+  - Segment-GoogleAnalytics/Core (1.3.3):
+    - Analytics
+    - GoogleAnalytics (~> 3.14)
+  - Segment-GoogleAnalytics/GoogleIDFASupport (1.3.3):
+    - Analytics
+    - GoogleIDFASupport (~> 3.14)
+    - Segment-GoogleAnalytics/Core
+  - Segment-Intercom (1.0.2):
+    - Analytics
+    - Intercom
+  - Segment-Localytics (1.5.3):
+    - Analytics
+    - Localytics
+  - Segment-Mixpanel (1.7.1):
+    - Analytics
+    - Mixpanel (~> 3.7.1)
+  - Segment-Taplytics (1.1.4):
+    - Analytics
+    - Taplytics (~> 2.15.5)
+  - Taplytics (2.15.8)
+  - Yoga (1.14.0)
+  - YogaKit (1.18.1):
+    - Yoga (~> 1.14)
+
+DEPENDENCIES:
+  - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
+  - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
+  - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
+  - Flipper (~> 0.75.1)
+  - Flipper-DoubleConversion (= 1.1.7)
+  - Flipper-Folly (~> 2.5.3)
+  - Flipper-Glog (= 0.3.6)
+  - Flipper-PeerTalk (~> 0.0.4)
+  - Flipper-RSocket (~> 1.3)
+  - FlipperKit (~> 0.75.1)
+  - FlipperKit/Core (~> 0.75.1)
+  - FlipperKit/CppBridge (~> 0.75.1)
+  - FlipperKit/FBCxxFollyDynamicConvert (~> 0.75.1)
+  - FlipperKit/FBDefines (~> 0.75.1)
+  - FlipperKit/FKPortForwarding (~> 0.75.1)
+  - FlipperKit/FlipperKitHighlightOverlay (~> 0.75.1)
+  - FlipperKit/FlipperKitLayoutPlugin (~> 0.75.1)
+  - FlipperKit/FlipperKitLayoutTextSearchable (~> 0.75.1)
+  - FlipperKit/FlipperKitNetworkPlugin (~> 0.75.1)
+  - FlipperKit/FlipperKitReactPlugin (~> 0.75.1)
+  - FlipperKit/FlipperKitUserDefaultsPlugin (~> 0.75.1)
+  - FlipperKit/SKIOSNetworkPlugin (~> 0.75.1)
+  - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
+  - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
+  - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
+  - React (from `../node_modules/react-native/`)
+  - React-callinvoker (from `../node_modules/react-native/ReactCommon/callinvoker`)
+  - React-Core (from `../node_modules/react-native/`)
+  - React-Core/DevSupport (from `../node_modules/react-native/`)
+  - React-Core/RCTWebSocket (from `../node_modules/react-native/`)
+  - React-CoreModules (from `../node_modules/react-native/React/CoreModules`)
+  - React-cxxreact (from `../node_modules/react-native/ReactCommon/cxxreact`)
+  - React-jsi (from `../node_modules/react-native/ReactCommon/jsi`)
+  - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
+  - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
+  - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
+  - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
+  - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
+  - React-RCTBlob (from `../node_modules/react-native/Libraries/Blob`)
+  - React-RCTImage (from `../node_modules/react-native/Libraries/Image`)
+  - React-RCTLinking (from `../node_modules/react-native/Libraries/LinkingIOS`)
+  - React-RCTNetwork (from `../node_modules/react-native/Libraries/Network`)
+  - React-RCTSettings (from `../node_modules/react-native/Libraries/Settings`)
+  - React-RCTText (from `../node_modules/react-native/Libraries/Text`)
+  - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
+  - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
+  - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - "RNAnalytics (from `../node_modules/@segment/analytics-react-native`)"
+  - "RNAnalyticsIntegration-Adjust (from `../node_modules/@segment/analytics-react-native-adjust`)"
+  - "RNAnalyticsIntegration-Amplitude (from `../node_modules/@segment/analytics-react-native-amplitude`)"
+  - "RNAnalyticsIntegration-Appboy (from `../node_modules/@segment/analytics-react-native-appboy`)"
+  - "RNAnalyticsIntegration-AppsFlyer (from `../node_modules/@segment/analytics-react-native-appsflyer`)"
+  - "RNAnalyticsIntegration-Branch (from `../node_modules/@segment/analytics-react-native-branch`)"
+  - "RNAnalyticsIntegration-Bugsnag (from `../node_modules/@segment/analytics-react-native-bugsnag`)"
+  - "RNAnalyticsIntegration-CleverTap (from `../node_modules/@segment/analytics-react-native-clevertap`)"
+  - "RNAnalyticsIntegration-ComScore (from `../node_modules/@segment/analytics-react-native-comscore-ios`)"
+  - "RNAnalyticsIntegration-Countly (from `../node_modules/@segment/analytics-react-native-countly`)"
+  - "RNAnalyticsIntegration-Crittercism (from `../node_modules/@segment/analytics-react-native-crittercism`)"
+  - "RNAnalyticsIntegration-Facebook-App-Events (from `../node_modules/@segment/analytics-react-native-facebook-app-events-ios`)"
+  - "RNAnalyticsIntegration-Firebase (from `../node_modules/@segment/analytics-react-native-firebase`)"
+  - "RNAnalyticsIntegration-Flurry (from `../node_modules/@segment/analytics-react-native-flurry`)"
+  - "RNAnalyticsIntegration-Google-Analytics (from `../node_modules/@segment/analytics-react-native-google-analytics`)"
+  - "RNAnalyticsIntegration-Intercom (from `../node_modules/@segment/analytics-react-native-intercom`)"
+  - "RNAnalyticsIntegration-Localytics (from `../node_modules/@segment/analytics-react-native-localytics`)"
+  - "RNAnalyticsIntegration-Mixpanel (from `../node_modules/@segment/analytics-react-native-mixpanel`)"
+  - "RNAnalyticsIntegration-Taplytics (from `../node_modules/@segment/analytics-react-native-taplytics-ios`)"
+  - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
+
+SPEC REPOS:
+  trunk:
+    - Adjust
+    - Amplitude
+    - Analytics
+    - Appboy-iOS-SDK
+    - AppsFlyerFramework
+    - boost-for-react-native
+    - Branch
+    - Bugsnag
+    - CleverTap-iOS-SDK
+    - CocoaAsyncSocket
+    - ComScore
+    - Countly
+    - CrittercismSDK
+    - FBSDKCoreKit
+    - Firebase
+    - FirebaseAnalytics
+    - FirebaseCore
+    - FirebaseCoreDiagnostics
+    - FirebaseInstallations
+    - Flipper
+    - Flipper-DoubleConversion
+    - Flipper-Folly
+    - Flipper-Glog
+    - Flipper-PeerTalk
+    - Flipper-RSocket
+    - FlipperKit
+    - Flurry-iOS-SDK
+    - GoogleAnalytics
+    - GoogleAppMeasurement
+    - GoogleDataTransport
+    - GoogleIDFASupport
+    - GoogleUtilities
+    - Intercom
+    - libevent
+    - Localytics
+    - Mixpanel
+    - nanopb
+    - OpenSSL-Universal
+    - PromisesObjC
+    - SDWebImage
+    - Segment-Adjust
+    - Segment-Amplitude
+    - Segment-Appboy
+    - segment-appsflyer-ios
+    - Segment-Branch
+    - Segment-Bugsnag
+    - Segment-CleverTap
+    - Segment-ComScore
+    - Segment-Countly
+    - Segment-Crittercism
+    - Segment-Facebook-App-Events
+    - Segment-Firebase
+    - Segment-Flurry
+    - Segment-GoogleAnalytics
+    - Segment-Intercom
+    - Segment-Localytics
+    - Segment-Mixpanel
+    - Segment-Taplytics
+    - Taplytics
+    - YogaKit
+
+EXTERNAL SOURCES:
+  DoubleConversion:
+    :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
+  FBLazyVector:
+    :path: "../node_modules/react-native/Libraries/FBLazyVector"
+  FBReactNativeSpec:
+    :path: "../node_modules/react-native/React/FBReactNativeSpec"
+  glog:
+    :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
+  RCT-Folly:
+    :podspec: "../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
+  RCTRequired:
+    :path: "../node_modules/react-native/Libraries/RCTRequired"
+  RCTTypeSafety:
+    :path: "../node_modules/react-native/Libraries/TypeSafety"
+  React:
+    :path: "../node_modules/react-native/"
+  React-callinvoker:
+    :path: "../node_modules/react-native/ReactCommon/callinvoker"
+  React-Core:
+    :path: "../node_modules/react-native/"
+  React-CoreModules:
+    :path: "../node_modules/react-native/React/CoreModules"
+  React-cxxreact:
+    :path: "../node_modules/react-native/ReactCommon/cxxreact"
+  React-jsi:
+    :path: "../node_modules/react-native/ReactCommon/jsi"
+  React-jsiexecutor:
+    :path: "../node_modules/react-native/ReactCommon/jsiexecutor"
+  React-jsinspector:
+    :path: "../node_modules/react-native/ReactCommon/jsinspector"
+  React-perflogger:
+    :path: "../node_modules/react-native/ReactCommon/reactperflogger"
+  React-RCTActionSheet:
+    :path: "../node_modules/react-native/Libraries/ActionSheetIOS"
+  React-RCTAnimation:
+    :path: "../node_modules/react-native/Libraries/NativeAnimation"
+  React-RCTBlob:
+    :path: "../node_modules/react-native/Libraries/Blob"
+  React-RCTImage:
+    :path: "../node_modules/react-native/Libraries/Image"
+  React-RCTLinking:
+    :path: "../node_modules/react-native/Libraries/LinkingIOS"
+  React-RCTNetwork:
+    :path: "../node_modules/react-native/Libraries/Network"
+  React-RCTSettings:
+    :path: "../node_modules/react-native/Libraries/Settings"
+  React-RCTText:
+    :path: "../node_modules/react-native/Libraries/Text"
+  React-RCTVibration:
+    :path: "../node_modules/react-native/Libraries/Vibration"
+  React-runtimeexecutor:
+    :path: "../node_modules/react-native/ReactCommon/runtimeexecutor"
+  ReactCommon:
+    :path: "../node_modules/react-native/ReactCommon"
+  RNAnalytics:
+    :path: "../node_modules/@segment/analytics-react-native"
+  RNAnalyticsIntegration-Adjust:
+    :path: "../node_modules/@segment/analytics-react-native-adjust"
+  RNAnalyticsIntegration-Amplitude:
+    :path: "../node_modules/@segment/analytics-react-native-amplitude"
+  RNAnalyticsIntegration-Appboy:
+    :path: "../node_modules/@segment/analytics-react-native-appboy"
+  RNAnalyticsIntegration-AppsFlyer:
+    :path: "../node_modules/@segment/analytics-react-native-appsflyer"
+  RNAnalyticsIntegration-Branch:
+    :path: "../node_modules/@segment/analytics-react-native-branch"
+  RNAnalyticsIntegration-Bugsnag:
+    :path: "../node_modules/@segment/analytics-react-native-bugsnag"
+  RNAnalyticsIntegration-CleverTap:
+    :path: "../node_modules/@segment/analytics-react-native-clevertap"
+  RNAnalyticsIntegration-ComScore:
+    :path: "../node_modules/@segment/analytics-react-native-comscore-ios"
+  RNAnalyticsIntegration-Countly:
+    :path: "../node_modules/@segment/analytics-react-native-countly"
+  RNAnalyticsIntegration-Crittercism:
+    :path: "../node_modules/@segment/analytics-react-native-crittercism"
+  RNAnalyticsIntegration-Facebook-App-Events:
+    :path: "../node_modules/@segment/analytics-react-native-facebook-app-events-ios"
+  RNAnalyticsIntegration-Firebase:
+    :path: "../node_modules/@segment/analytics-react-native-firebase"
+  RNAnalyticsIntegration-Flurry:
+    :path: "../node_modules/@segment/analytics-react-native-flurry"
+  RNAnalyticsIntegration-Google-Analytics:
+    :path: "../node_modules/@segment/analytics-react-native-google-analytics"
+  RNAnalyticsIntegration-Intercom:
+    :path: "../node_modules/@segment/analytics-react-native-intercom"
+  RNAnalyticsIntegration-Localytics:
+    :path: "../node_modules/@segment/analytics-react-native-localytics"
+  RNAnalyticsIntegration-Mixpanel:
+    :path: "../node_modules/@segment/analytics-react-native-mixpanel"
+  RNAnalyticsIntegration-Taplytics:
+    :path: "../node_modules/@segment/analytics-react-native-taplytics-ios"
+  Yoga:
+    :path: "../node_modules/react-native/ReactCommon/yoga"
+
+SPEC CHECKSUMS:
+  Adjust: 0b649decc070365365bec4e4b8d8bf6e49fe1746
+  Amplitude: 5627b4574e36d789a75c1656ba39b3278edf1ade
+  Analytics: 7bdc735c456434b4eaa2eacdcf122bb03d51ede7
+  Appboy-iOS-SDK: a423c382ef27ff998c8aa7b6ee81541c35687341
+  AppsFlyerFramework: 1ac92ce51999e77806b0ecf6ff7b72af8ee8bea4
+  boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
+  Branch: 13df8e1a6985745a03389146df1eeda723645a97
+  Bugsnag: 5c3f9d33e88c824a0038e1b14629045929182cbb
+  CleverTap-iOS-SDK: 38f386d9aed648de7ef3ca0e7e2c8531b4cf58e9
+  CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
+  ComScore: 99fb050116a57592efedd1bd666ed5aa58b0b4df
+  Countly: 517a5c221463b29854e214b2193620690b5edb1a
+  CrittercismSDK: bb409f2babf6959a5d7aacbb12be44994d9e0d86
+  DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
+  FBLazyVector: 7b423f9e248eae65987838148c36eec1dbfe0b53
+  FBReactNativeSpec: 26f4828411ed041e2dabb548454effb62a5c6be2
+  FBSDKCoreKit: 0d1ae58388a458b8222f72025804cdc84eb5d0c3
+  Firebase: c121feb35e4126c0b355e3313fa9b487d47319fd
+  FirebaseAnalytics: cd3bd84d722a24a8923918af8af8e5236f615d77
+  FirebaseCore: 907447d8917a4d3eb0cce2829c5a0ad21d90b432
+  FirebaseCoreDiagnostics: 68ad972f99206cef818230f3f3179d52ccfb7f8c
+  FirebaseInstallations: a58d4f72ec5861840b84df489f2668d970df558a
+  Flipper: d3da1aa199aad94455ae725e9f3aa43f3ec17021
+  Flipper-DoubleConversion: 38631e41ef4f9b12861c67d17cb5518d06badc41
+  Flipper-Folly: 755929a4f851b2fb2c347d533a23f191b008554c
+  Flipper-Glog: 1dfd6abf1e922806c52ceb8701a3599a79a200a6
+  Flipper-PeerTalk: 116d8f857dc6ef55c7a5a75ea3ceaafe878aadc9
+  Flipper-RSocket: 127954abe8b162fcaf68d2134d34dc2bd7076154
+  FlipperKit: 8a20b5c5fcf9436cac58551dc049867247f64b00
+  Flurry-iOS-SDK: ca3540dd9607a05a8a13a7dd36dfffdd5e0fd0ef
+  glog: 73c2498ac6884b13ede40eda8228cb1eee9d9d62
+  GoogleAnalytics: f42cc53a87a51fe94334821868d9c8481ff47a7b
+  GoogleAppMeasurement: fd19169c3034975cb934e865e5667bfdce59df7f
+  GoogleDataTransport: cd9db2180fcecd8da1b561aea31e3e56cf834aa7
+  GoogleIDFASupport: aaf8c10bd429abb1c15349d5252244f5eda8ead1
+  GoogleUtilities: f8a43108b38a68eebe8b3540e1f4f2d28843ce20
+  Intercom: d44bd4264f61a3e343cac46d7b88d4db0f860077
+  libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
+  Localytics: e16702979bb9c98dfd38a6a2cea74fc6721ded82
+  Mixpanel: 34eeb39481da527682a6a838fde78925e1e19097
+  nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
+  OpenSSL-Universal: 1aa4f6a6ee7256b83db99ec1ccdaa80d10f9af9b
+  PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
+  RCT-Folly: ec7a233ccc97cc556cf7237f0db1ff65b986f27c
+  RCTRequired: ec2ebc96b7bfba3ca5c32740f5a0c6a014a274d2
+  RCTTypeSafety: 22567f31e67c3e088c7ac23ea46ab6d4779c0ea5
+  React: a241e3dbb1e91d06332f1dbd2b3ab26e1a4c4b9d
+  React-callinvoker: da4d1c6141696a00163960906bc8a55b985e4ce4
+  React-Core: 46ba164c437d7dac607b470c83c8308b05799748
+  React-CoreModules: 217bd14904491c7b9940ff8b34a3fe08013c2f14
+  React-cxxreact: 0090588ae6660c4615d3629fdd5c768d0983add4
+  React-jsi: 5de8204706bd872b78ea646aee5d2561ca1214b6
+  React-jsiexecutor: 124e8f99992490d0d13e0649d950d3e1aae06fe9
+  React-jsinspector: 500a59626037be5b3b3d89c5151bc3baa9abf1a9
+  React-perflogger: aad6d4b4a267936b3667260d1f649b6f6069a675
+  React-RCTActionSheet: fc376be462c9c8d6ad82c0905442fd77f82a9d2a
+  React-RCTAnimation: ba0a1c3a2738be224a08092fa7f1b444ab77d309
+  React-RCTBlob: f758d4403fc5828a326dc69e27b41e1a92f34947
+  React-RCTImage: ce57088705f4a8d03f6594b066a59c29143ba73e
+  React-RCTLinking: 852a3a95c65fa63f657a4b4e2d3d83a815e00a7c
+  React-RCTNetwork: 9d7ccb8a08d522d71700b4fb677d9fa28cccd118
+  React-RCTSettings: d8aaf4389ff06114dee8c42ef5f0f2915946011e
+  React-RCTText: 809c12ed6b261796ba056c04fcd20d8b90bcc81d
+  React-RCTVibration: 4b99a7f5c6c0abbc5256410cc5425fb8531986e1
+  React-runtimeexecutor: ff951a0c241bfaefc4940a3f1f1a229e7cb32fa6
+  ReactCommon: bedc99ed4dae329c4fcf128d0c31b9115e5365ca
+  RNAnalytics: b00cb3e511c2c8a4682d70b2f92986f4ea1d0c76
+  RNAnalyticsIntegration-Adjust: 8c6c4112b5619a88d13b7ff2ce4f7d1b411fb757
+  RNAnalyticsIntegration-Amplitude: 7c30a7e9b30a440186252819142d0777239cbd28
+  RNAnalyticsIntegration-Appboy: 98dd5c65fbf570a9d63321efc9e2516dac5362bd
+  RNAnalyticsIntegration-AppsFlyer: bdacb5495913206f3194035861011b283c7b687b
+  RNAnalyticsIntegration-Branch: 67e30f8a7dddc6d6b310a535a856055dd03d8569
+  RNAnalyticsIntegration-Bugsnag: f1c20c6d9e889fde84737d34779a25d9abdbd97a
+  RNAnalyticsIntegration-CleverTap: df6ecefe4251df61172af8169e8c72b1acf389a5
+  RNAnalyticsIntegration-ComScore: 6b7311dcdccfe3c66168eea274ebdd8584859335
+  RNAnalyticsIntegration-Countly: 78c7609e7cb5ff82c469f6d18d244c7d965cd63b
+  RNAnalyticsIntegration-Crittercism: 4dc128c5715b4ae7ddaf7b249bc46b88d1f15923
+  RNAnalyticsIntegration-Facebook-App-Events: a4739ebcb1bba4b51747ac33925add18caf4cf8c
+  RNAnalyticsIntegration-Firebase: 97e6641fb9e3132301e89acdfe951c040a811f05
+  RNAnalyticsIntegration-Flurry: ec139dcb8c2b412c79ad365e6ae6bf509f3e8561
+  RNAnalyticsIntegration-Google-Analytics: 8335bd05f7e33864a2081fa83d2398c7ad33a416
+  RNAnalyticsIntegration-Intercom: 6d0212e1d15a8684cd944d1a603685ebfc8f8fff
+  RNAnalyticsIntegration-Localytics: 36a8ad4f863d1b2621b077315c9acc3418a04988
+  RNAnalyticsIntegration-Mixpanel: 200086f1e2c602a67f3bc543b7c765a5ff6be6ee
+  RNAnalyticsIntegration-Taplytics: efb0c9636749389acba73d6ecb9971ad76632820
+  SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
+  Segment-Adjust: 5c45cd11f3ed647967c54e93c267f8e8c987f849
+  Segment-Amplitude: 00d7c0f80398966afa5aef254d939bbbd607c46e
+  Segment-Appboy: d5677f8224ece29fbdcfed09bbc8bfff4fd6055a
+  segment-appsflyer-ios: 8b8c835f4d81c5c91215500b18ec1dffbb63b112
+  Segment-Branch: 5d2f1247d321cf670c2bc3207857c88efb67d778
+  Segment-Bugsnag: 935e7b365f8d72850a2a03032d7f143b8ccb2190
+  Segment-CleverTap: a0e74aee844bcf859cbbf30dfe3d2ae25d67d9cc
+  Segment-ComScore: 34fbad88a7d215671294988d60eb834089428147
+  Segment-Countly: 940e0238e5a6ff7fa36d2c12653204606c82f89e
+  Segment-Crittercism: 8799d5495c96e3869998da05f3e0e497e34237a0
+  Segment-Facebook-App-Events: 719f01364bcad401ee5f5a71bfad28dbabfad15d
+  Segment-Firebase: a411a172b900656b7fb0b528b96ea0a35014ceb2
+  Segment-Flurry: b8f778fada89567b9e9e6a9010c59de02ef272bd
+  Segment-GoogleAnalytics: 945eb2548773b816235e97fa42a580b7bcd6ce39
+  Segment-Intercom: 8dd32f465076ae88aef3780becc254a472ed1000
+  Segment-Localytics: 0205d4ae8fdedcf457b134a754ce680f0b41692a
+  Segment-Mixpanel: 4a76afa1e2f77f09c0e9eed0671baeeae47fcebb
+  Segment-Taplytics: c58f006ec5d2c105adf212401d85bdd1e9ed1963
+  Taplytics: ff5a5fb99967b1b3a3348b7d3a3d3fa39c1cff2d
+  Yoga: a7de31c64fe738607e7a3803e3f591a4b1df7393
+  YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
+
+PODFILE CHECKSUM: 3eeffd9a4f0c750db284a4d280ed27851b115261
+
+COCOAPODS: 1.10.1

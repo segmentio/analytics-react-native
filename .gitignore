@@ -16,3 +16,4 @@ packages/test-app/project
 .classpath
 .project
 .settings/
+.idea
