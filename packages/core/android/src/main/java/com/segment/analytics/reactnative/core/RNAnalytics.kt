@@ -31,10 +31,6 @@ object RNAnalytics {
     private val integrations = mutableSetOf<Integration.Factory>()
     private val onReadyCallbacks = mutableMapOf<String, Analytics.Callback<Any?>>()
 
-    fun setIDFA(idfa: String) {
-        // do nothing; iOS only.
-    }
-    
     fun addIntegration(integration: Integration.Factory) {
         integrations.add(integration)
     }
