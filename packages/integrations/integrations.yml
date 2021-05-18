@@ -72,7 +72,8 @@
 - name: Firebase
   ios:
     pod:
-      version: 2.7.4
+      name: Segment-Firebase
+      version: 2.7.6
   android:
     maven:
       repo: https://maven.google.com
