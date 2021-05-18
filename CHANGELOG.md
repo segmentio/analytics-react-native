@@ -1,6 +1,12 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [1.4.5](https://github.com/segmentio/analytics-react-native/compare/v1.4.4...v1.4.5) (2021-05-18)
+
+### Bug Fixes
+
+- pin segment-firebase pod and add podfile.lock for ci config ([#316](https://github.com/segmentio/analytics-react-native/issues/316)) ([5c4a9de](https://github.com/segmentio/analytics-react-native/commit/5c4a9dedb36828c36572c2aa0fe0c025d8ef0200))
 
 <a name="1.4.4"></a>
 
