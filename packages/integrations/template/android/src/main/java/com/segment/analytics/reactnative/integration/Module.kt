@@ -40,7 +40,7 @@ class {{{nativeModule}}}Module(context: ReactApplicationContext): ReactContextBa
         RNAnalytics.addIntegration({{{factoryClass}}}.FACTORY)
 
         RNAnalytics.addOnReadyCallback("{{{slug}}}", Analytics.Callback { instance ->
-            Log.v("Native Module", "{{{slug}}} integration ready.")
+            Log.v("RNAnalyticsIntegration", "{{{slug}}} integration ready.")
         })
     }
 }
