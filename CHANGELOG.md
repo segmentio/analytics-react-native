@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.7](https://github.com/segmentio/analytics-react-native/compare/v1.4.6...v1.4.7) (2021-05-24)
+
+### Bug Fixes
+
+- change logging variable to constant string resolves error on 0.64.1 ([#325](https://github.com/segmentio/analytics-react-native/issues/325)) ([044f5dc](https://github.com/segmentio/analytics-react-native/commit/044f5dc96e156071dd0d3374704fd1a97b47974e))
+
 ### [1.4.6](https://github.com/segmentio/analytics-react-native/compare/v1.4.5...v1.4.6) (2021-05-18)
 
 ### [1.4.5](https://github.com/segmentio/analytics-react-native/compare/v1.4.4...v1.4.5) (2021-05-18)
