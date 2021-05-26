@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.8](https://github.com/segmentio/analytics-react-native/compare/v1.4.7...v1.4.8) (2021-05-26)
+
+### Bug Fixes
+
+- re-add logic for tracking lifecycle events ([#328](https://github.com/segmentio/analytics-react-native/issues/328)) ([92194f3](https://github.com/segmentio/analytics-react-native/commit/92194f388d35c1afc495c161b7b20b883c98a3dd))
+
 ### [1.4.7](https://github.com/segmentio/analytics-react-native/compare/v1.4.6...v1.4.7) (2021-05-24)
 
 ### Bug Fixes
