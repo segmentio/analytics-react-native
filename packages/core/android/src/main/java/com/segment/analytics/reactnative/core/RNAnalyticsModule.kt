@@ -207,6 +207,12 @@ class RNAnalyticsModule(context: ReactApplicationContext): ReactContextBaseJavaM
             return promise.reject("E_SEGMENT_ERROR", e)
         }
 
+        // This is invoking the logic used to track lifecycle events when a RN app goes through a cold-boot
+        // This logic should not be deleted
+        if (options.getBoolean("trackAppLifecycleEvents")) {
+            this.trackApplicationLifecycleEvents(writeKey)
+        }
+
         RNAnalytics.setupCallbacks(analytics)
 
         singletonJsonConfig = json
