@@ -12,6 +12,8 @@
 #import <Segment_FacebookAppEvents/SEGFacebookAppEventsIntegrationFactory.h>
 #elif defined(__has_include) && __has_include(<Segment-Facebook-App-Events/SEGFacebookAppEventsIntegrationFactory.h>)
 #import <Segment-Facebook-App-Events/SEGFacebookAppEventsIntegrationFactory.h>
+#elif defined(__has_include) && __has_include(<Segment_Facebook_App_Events/SEGFacebookAppEventsIntegrationFactory.h>)
+#import <Segment_Facebook_App_Events/SEGFacebookAppEventsIntegrationFactory.h>
 #else
 #import <Segment-FacebookAppEvents/SEGFacebookAppEventsIntegrationFactory.h>
 #endif
