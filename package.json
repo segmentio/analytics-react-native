@@ -59,8 +59,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
-    "@commitlint/cli": "12.1.1",
-    "@commitlint/config-conventional": "^7.0.1",
+    "@commitlint/cli": "12.1.4",
+    "@commitlint/config-conventional": "^12.1.4",
     "codecov": "^3.0.4",
     "commitizen": "4.2.4",
     "commitlint-circle": "^1.0.0",
