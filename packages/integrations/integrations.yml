@@ -1,7 +1,7 @@
 - name: Mixpanel
   ios:
     pod:
-      version: 1.7.1
+      version: 1.7.2
 
 - name: Adjust
   ios:
@@ -32,7 +32,7 @@
   ios:
     pod:
       name: Segment-Facebook-App-Events
-      version: 2.1.1
+      version: 2.1.2
   android:
     # Doesn't exist
     disabled: true

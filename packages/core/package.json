@@ -39,7 +39,7 @@
     "babel-jest": "^26.6.3",
     "jest": "^26.6.3",
     "jest-mock-console": "^0.4.0",
-    "standard-version": "^9.2.0",
+    "standard-version": "^9.3.0",
     "ts-jest": "^26.5.5",
     "ts-node": "^9.1.1",
     "tslint": "^6.1.3",
