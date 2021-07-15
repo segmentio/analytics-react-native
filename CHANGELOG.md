@@ -2,9 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/segmentio/analytics-react-native/compare/v1.4.9...v1.5.0) (2021-07-15)
+
 ### [1.4.9](https://github.com/segmentio/analytics-react-native/compare/v1.4.8...v1.4.9) (2021-06-21)
 
-- bump Mixpanel and Facebook IOS integrations to resolve build issues. 
+- bump Mixpanel and Facebook IOS integrations to resolve build issues.
 
 ### [1.4.8](https://github.com/segmentio/analytics-react-native/compare/v1.4.7...v1.4.8) (2021-05-26)
 
