@@ -100,7 +100,7 @@ jobs:
   test-ios-cocoapods:
     <<: *job
     macos:
-      xcode: '12.4.0'
+      xcode: '13.0.0'
     steps:
       - checkout
       # macOS VMs doesn't support Docker based caches
