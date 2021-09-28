@@ -17,7 +17,7 @@ pushd project/ios
         cp -r ../../patches/TestApp.xcodeproj .
         yarn remove $(cd ../../../integrations/build && echo @segment/*)
         yarn react-native link
-        yarn add @segment/analytics-ios@github:segmentio/analytics-ios#4.1.0
+        yarn add @segment/analytics-ios@github:segmentio/analytics-ios#4.1.5
         cfg="vanilla"
     fi
 popd
