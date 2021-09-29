@@ -108,7 +108,7 @@ jobs:
       - *attach
       - run: brew update-reset
       - run: brew tap wix/brew
-      - run: brew install wix/brew/applesimutils
+      - run: brew install applesimutils
       - run:
           name: Install dependencies
           command: |
