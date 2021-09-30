@@ -40,7 +40,8 @@
 - name: Localytics
   ios:
     pod:
-      version: 1.5.3
+      name: Segment-Localytics
+      version: 1.5.1
   android:
     maven:
       repo: https://maven.localytics.com/public
