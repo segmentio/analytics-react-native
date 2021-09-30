@@ -37,15 +37,6 @@
     # Doesn't exist
     disabled: true
 
-- name: Localytics
-  ios:
-    pod:
-      name: Segment-Localytics
-      version: 1.5.1
-  android:
-    maven:
-      repo: https://maven.localytics.com/public
-
 - name: Quantcast
   ios:
     # Only compatible 3.0.x
