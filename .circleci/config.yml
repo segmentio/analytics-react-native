@@ -107,13 +107,11 @@ jobs:
       - run: yarn install --frozen-lockfile
       - *attach
       - run: brew update-reset
-      - run: brew tap wix/brew
       - run: brew install applesimutils
       - run:
           name: Install dependencies
           command: |
-            sudo gem install cocoapods
-            sudo gem install cocoapods-repo-update
+            npx pod-install
       - run: yarn test-app test:ios:cocoapods
   publish:
     <<: *nodeJob
