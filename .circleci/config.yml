@@ -107,6 +107,7 @@ jobs:
       - run: yarn install --frozen-lockfile
       - *attach
       - run: brew update-reset
+      - run: brew tap wix/brew
       - run: brew install applesimutils
       - run:
           name: Install dependencies
