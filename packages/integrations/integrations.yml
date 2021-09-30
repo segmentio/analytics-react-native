@@ -37,6 +37,14 @@
     # Doesn't exist
     disabled: true
 
+- name: Localytics
+  ios:
+    pod:
+      version: 1.5.3
+  android:
+    maven:
+      repo: https://maven.localytics.com/public
+
 - name: Quantcast
   ios:
     # Only compatible 3.0.x
