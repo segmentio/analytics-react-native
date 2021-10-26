@@ -1,391 +1,413 @@
-import Bridge, { JsonMap, Options } from './bridge'
-import { configure } from './configuration'
-import { Middleware, MiddlewareChain } from './middleware'
-import { ErrorHandler, NativeWrapper } from './wrapper'
+import { AppState, AppStateStatus } from 'react-native';
+import type {
+  Config,
+  JsonMap,
+  GroupTraits,
+  UserTraits,
+  SegmentEvent,
+  Store,
+  SegmentAPISettings,
+} from './types';
+import type { Logger } from './logger';
+import type { Unsubscribe } from '@reduxjs/toolkit';
+import type { Persistor } from 'redux-persist';
+import track from './methods/track';
+import screen from './methods/screen';
+import identify from './methods/identify';
+import flush from './methods/flush';
+import group from './methods/group';
+import alias from './methods/alias';
+import checkInstalledVersion from './internal/checkInstalledVersion';
+import handleAppStateChange from './internal/handleAppStateChange';
+import flushRetry from './internal/flushRetry';
+import getSettings from './internal/getSettings';
+import trackDeepLinks from './internal/trackDeepLinks';
+import { Timeline } from './timeline';
+import { SegmentDestination } from './plugins/SegmentDestination';
+import { InjectContext } from './plugins/Context';
+import type { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
+import type { actions as ReduxActions } from './store';
+import { applyRawEventData } from './events';
 
-// prettier-ignore
-export module Analytics {
-	export type Integration = (() => PromiseLike<void>) | { disabled: true }
+export class SegmentClient {
+  // the config parameters for the client - a merge of user provided and default options
+  config: Config;
 
-	export interface Configuration {
-		/**
-		 * Whether the analytics client should automatically make a screen call when a
-		 * view controller is added to a view hierarchy.
-		 * Because the iOS underlying implementation uses method swizzling,
-		 * we recommend initializing the analytics client as early as possible.
-		 *
-		 * Disabled by default.
-		 */
-		recordScreenViews?: boolean
-		/**
-		 * Whether the analytics client should automatically track application lifecycle events, such as
-		 * "Application Installed", "Application Updated" and "Application Opened".
-		 *
-		 * Disabled by default.
-		 */
-		trackAppLifecycleEvents?: boolean
+  // redux store
+  store: Store;
 
-    /**
-     * @deprecated The property should not be used
-     */
-    trackAttributionData?: boolean
+  // redux actions
+  actions: typeof ReduxActions;
 
-		/**
-		 * Register a set of integrations to be used with this Analytics instance.
-		 */
-		using?: Integration[]
-		debug?: boolean
+  // persistor for the redux store
+  persistor: Persistor;
 
-    /**
-     * Default project settings to use, if Segment.com cannot be reached. An example
-     * configuration can be found here, using your write key: <a
-     * href="https://cdn-settings.segment.com/v1/projects/YOUR_WRITE_KEY/settings">
-     * https://cdn-settings.segment.com/v1/projects/YOUR_WRITE_KEY/settings </a>
-     */
-    defaultProjectSettings?: { [key: string]: any }
+  // how many seconds has elapsed since the last time events were sent
+  secondsElapsed: number = 0;
 
-		/**
-		 * The number of queued events that the analytics client should flush at.
-		 * Setting this to `1` will not queue any events and will use more battery.
-		 *
-		 * `20` by default.
-		 */
-		flushAt?: number
+  // current app state
+  appState: AppStateStatus | 'unknown' = 'unknown';
 
-		/**
-		 * Whether the analytics client should send all requests through your own hosted
-		 * proxy rather than directly to Segment.
-		 * See:
-		 *  iOS: https://segment.com/docs/connections/sources/catalog/libraries/mobile/ios/#proxy-http-calls
-		 *  android: https://segment.com/docs/connections/sources/catalog/libraries/mobile/android/#proxy-http-calls
-		 *
-		 * Ex. For a desired proxy through `http://localhost:64000/segment` the configuration would look like such
-		 * {
-		 * 	scheme: 'http',
-		 * 	host: 'localhost',
-		 * 	port: 64000,
-		 *  path: '/segment'
-		 * }
-		 *
-		 */
-		proxy?: {
+  // subscription for propagating changes to appState
+  appStateSubscription: any;
 
-			/**
-			 * The proxy scheme, ex: http, https
-			 *
-			 * `https` by default.
-			 */
-			scheme?: string,
+  // logger
+  logger: Logger;
 
-			/**
-			 * The proxy host name, ex: api.segment.io, cdn.segment.io
-			 *
-			 * Note: When using localhost with an Android device or simulator use `adb reverse tcp:<port> tcp:<port>`
-			 */
-			host?: string,
+  // timeout for refreshing the failed events queue
+  refreshTimeout: NodeJS.Timeout | null = null;
 
-			/**
-			 * The proxy port number, ex: 80
-			 */
-			port?: number,
+  // internal time to know when to flush, ticks every second
+  interval: NodeJS.Timeout | null = null;
 
-			/**
-			 * The proxy path, ex: /path/to/proxy
-			 */
-			path?: string,
-		},
+  // unsubscribe for the redux store
+  unsubscribe: Unsubscribe | null = null;
 
-		/**
-		 * iOS specific settings.
-		 */
-		ios?: {
-			/**
-			 * Whether the analytics client should track advertisting info.
-			 *
-			 * Enabled by default.
-			 */
-			trackAdvertising?: boolean
-			/**
-			 * Whether the analytics client should automatically track deep links.
-			 * You'll still need to call the continueUserActivity and openURL methods on the native analytics client.
-			 *
-			 * Disabled by default.
-			 */
-			trackDeepLinks?: boolean
-		}
-		/**
-		 * Android specific settings.
-		 */
-		android?: {
-			/**
-			 * Set the interval in milliseconds at which the client should flush events. The client will automatically flush
-			 * events to Segment every {@link flushInterval} duration, regardless of {@link flushAt}.
-			 */
-			flushInterval?: number
+  // whether the user has called cleanup
+  destroyed: boolean = false;
 
-			/**
-			 * Whether the analytics client should client the device identifier.
-			 * The device identifier is obtained using :
-			 * - `android.provider.Settings.Secure.ANDROID_ID`
-			 * - `android.os.Build.SERIAL`
-			 * - or Telephony Identifier retrieved via TelephonyManager as available
-			 *
-			 * Enabled by default.
-			 */
-			collectDeviceId?: boolean
+  timeline: Timeline;
 
-      /**
-       * Whether the analytics client should use the new lifecycle methods. This option is enabled by default.
-       * If the new lifecycle methods cause issue, you should disable this config option
-       */
-      experimentalUseNewLifecycleMethods?: boolean
+  // mechanism to prevent adding plugins before we are fully initalised
+  private isReady = false;
+  private pluginsToAdd: Plugin[] = [];
+
+  get platformPlugins() {
+    const plugins: PlatformPlugin[] = [];
+
+    // add context plugin as well as it's platform specific internally.
+    // this must come first.
+    plugins.push(new InjectContext());
+
+    // setup lifecycle if desired
+    if (this.config.trackAppLifecycleEvents) {
+      // todo: more plugins!
+    }
+
+    return plugins;
+  }
+
+  settings() {
+    let settings: SegmentAPISettings | undefined;
+    const { system } = this.store.getState();
+    if (system.settings) {
+      settings = system.settings;
+    }
+    return settings;
+  }
+
+  constructor({
+    config,
+    logger,
+    store,
+    actions,
+    persistor,
+  }: {
+    config: Config;
+    logger: Logger;
+    store: any;
+    persistor: Persistor;
+    actions: any;
+  }) {
+    this.logger = logger;
+    this.config = config;
+    this.store = store;
+    this.actions = actions;
+    this.persistor = persistor;
+    this.timeline = new Timeline();
+
+    // Get everything running
+    this.platformStartup();
+  }
+
+  platformStartup() {
+    // add segment destination plugin unless
+    // asked not to via configuration.
+    if (this.config.autoAddSegmentDestination) {
+      const segmentDestination = new SegmentDestination();
+      this.add({ plugin: segmentDestination });
+    }
+
+    // Setup platform specific plugins
+    this.platformPlugins.forEach((plugin) => this.add({ plugin: plugin }));
+  }
+
+  configure() {
+    this.store.dispatch(
+      this.actions.system.init({ configuration: this.config })
+    );
+  }
+
+  async getSettings() {
+    await getSettings.bind(this)();
+  }
+
+  /**
+   * There is no garbage collection in JS, which means that any listeners, timeouts and subscriptions
+   * would run until the application closes
+   *
+   * This method exists in case the user for some reason needs to recreate the class instance during runtime.
+   * In this case, they should run client.cleanup() to destroy the listeners in the old client before creating a new one.
+   *
+   * There is a Stage 3 EMCAScript proposal to add a user-defined finalizer, which we could potentially switch to if
+   * it gets approved: https://github.com/tc39/proposal-weakrefs#finalizers
+   */
+  cleanup() {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
+
+    if (this.refreshTimeout) {
+      clearTimeout(this.refreshTimeout);
+    }
+
+    this.appStateSubscription?.remove();
+
+    this.destroyed = true;
+  }
+
+  async bootstrapStore() {
+    return new Promise<void>((resolve) => {
+      if (this.persistor.getState().bootstrapped) {
+        resolve();
+      } else {
+        this.persistor.subscribe(() => {
+          const { bootstrapped } = this.persistor.getState();
+          if (bootstrapped) {
+            resolve();
+          }
+        });
+      }
+    });
+  }
+
+  setupInterval() {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+    this.interval = setInterval(() => this.tick(), 1000) as any;
+  }
+
+  setupStoreSubscribe() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
+    this.unsubscribe = this.store.subscribe(() => this.onUpdateStore());
+  }
+
+  setupLifecycleEvents() {
+    this.appStateSubscription?.remove();
+
+    this.appStateSubscription = AppState.addEventListener(
+      'change',
+      (nextAppState) => {
+        this.handleAppStateChange(nextAppState);
+      }
+    );
+  }
+
+  /**
+     Applies the supplied closure to the currently loaded set of plugins.
+     NOTE: This does not apply to plugins contained within DestinationPlugins.
+
+     - Parameter closure: A closure that takes an plugin to be operated on as a parameter.
+
+  */
+  apply(closure: (plugin: Plugin) => void) {
+    this.timeline.apply(closure);
+  }
+
+  /**
+     Adds a new plugin to the currently loaded set.
+
+     - Parameter plugin: The plugin to be added.
+     - Returns: Returns the name of the supplied plugin.
+
+  */
+  add({ plugin }: { plugin: Plugin }) {
+    // plugins can either be added immediately or
+    // can be cached and added later during the next state update
+    // this is to avoid adding plugins before network requests made as part of setup have resolved
+    if (!this.isReady) {
+      this.pluginsToAdd.push(plugin);
+    } else {
+      this.addPlugin(plugin);
+      const isIntegration = this.isNonSegmentDestinationPlugin(plugin);
+      if (isIntegration) {
+        // need to maintain the list of integrations to inject into payload
+        this.store.dispatch(
+          this.actions.system.addIntegrations([
+            { key: (plugin as DestinationPlugin).key },
+          ])
+        );
+      }
     }
   }
 
-	export class Client {
-		/**
-		 * Whether the client is ready to send events to Segment.
-		 *
-		 * This becomes `true` when `.setup()` succeeds.
-		 * All calls will be queued until it becomes `true`.
-		 */
-		public readonly ready = false
+  private addPlugin(plugin: Plugin) {
+    plugin.configure(this);
+    this.timeline.add(plugin);
+  }
 
-		private readonly wrapper = new NativeWrapper(this, err =>
-			this.handleError(err)
-		)
-		private readonly handlers: ErrorHandler[] = []
-		private readonly middlewares = new MiddlewareChain(this.wrapper)
+  private isNonSegmentDestinationPlugin(plugin: Plugin) {
+    const isSegmentDestination =
+      Object.getPrototypeOf(plugin).constructor.name === 'SegmentDestination';
+    if (!isSegmentDestination) {
+      const destPlugin = plugin as DestinationPlugin;
+      if (destPlugin.key) {
+        return true;
+      }
+    }
+    return false;
+  }
 
-		/**
-		 * Catch React-Native bridge errors
-		 *
-		 * These errors are emitted when calling the native counterpart.
-		 * This only applies to methods with no return value (`Promise<void>`),
-		 * methods like `getAnonymousId` do reject promises.
-		 */
-		public catch(handler: ErrorHandler) {
-			this.handlers.push(handler)
+  /**
+     Removes and unloads plugins with a matching name from the system.
 
-			return this
-		}
+     - Parameter pluginName: An plugin name.
+  */
+  remove({ plugin }: { plugin: Plugin }) {
+    this.timeline.remove(plugin);
+    const isIntegration = this.isNonSegmentDestinationPlugin(plugin);
+    if (isIntegration) {
+      this.store.dispatch(
+        this.actions.system.removeIntegration({
+          key: (plugin as DestinationPlugin).key,
+        })
+      );
+    }
+  }
 
-        /**
-         * Sets the IDFA value on iOS.  Customers are now responsible for collecting
-         * IDFA on their own.
-         */
-        public setIDFA(idfa: string) {
-            Bridge.setIDFA(idfa)
-        }
+  process(incomingEvent: SegmentEvent) {
+    const event = applyRawEventData(incomingEvent, this.store);
+    this.timeline.process(event);
+  }
 
-		/**
-		 * Append a new middleware to the middleware chain.
-		 *
-		 * Middlewares are a powerful mechanism that can augment the events collected by the SDK.
-		 * A middleware is a simple function that is invoked by the Segment SDK and can be used to monitor,
-		 * modify or reject events.
-		 *
-		 * Middlewares are invoked for all events, including automatically tracked events,
-		 * and external event sources like Adjust and Optimizely.
-		 * This offers you the ability the customize those messages to fit your use case even
-		 * if the event was sent outside your source code.
-		 *
-		 * The key thing to observe here is that the output produced by the first middleware feeds into the second.
-		 * This allows you to chain and compose independent middlewares!
-		 *
-		 * For example, you might want to record the device year class with your events.
-		 * Previously, you would have to do this everywhere you trigger an event with the Segment SDK.
-		 * With middlewares, you can do this in a single place :
-		 *
-		 * ```js
-		 * import DeviceYearClass from 'react-native-device-year-class'
-		 *
-		 * analytics.middleware(async ({next, context}) =>
-		 *   next({
-		 *     ...context,
-		 *     device_year_class: await DeviceYearClass()
-		 *   })
-		 * )
-		 * ```
-		 *
-		 * @param middleware
-		 */
-		public middleware(middleware: Middleware) {
-			this.middlewares.add(middleware)
+  async trackDeepLinks() {
+    await trackDeepLinks.bind(this)();
+  }
 
-			return this
-		}
+  onUpdateStore() {
+    const { main } = this.store.getState();
 
-		/**
-		 * Use the native configuration.
-		 *
-		 * You'll need to call this method when you configure Analytics's singleton
-		 * using the native API.
-		 */
-		public useNativeConfiguration() {
-			if(this.ready) {
-				throw new Error('Analytics has already been configured')
-			}
+    if (this.pluginsToAdd.length > 0) {
+      // start by adding the plugins
+      this.pluginsToAdd.forEach((plugin) => {
+        this.addPlugin(plugin);
+      });
 
-			this.wrapper.ready()
+      // filter to see if we need to register any
+      const destPlugins = this.pluginsToAdd.filter(
+        this.isNonSegmentDestinationPlugin
+      );
 
-			return this
-		}
+      // now that they're all added, clear the cache
+      // this prevents this block running for every update
+      this.pluginsToAdd = [];
 
-		/**
-		 * Setup the Analytics module. All calls made before are queued
-		 * and only executed if the configuration was successful.
-		 *
-		 * ```js
-		 * await analytics.setup('YOUR_WRITE_KEY', {
-		 *   using: [Mixpanel, GoogleAnalytics],
-		 *   trackAppLifecycleEvents: true,
-		 *   ios: {
-		 *     trackDeepLinks: true
-		 *   }
-		 * })
-		 * ```
-		 *
-		 * @param writeKey Your Segment.io write key
-		 * @param configuration An optional {@link Configuration} object.
-		 */
-		public async setup(writeKey: string, configuration: Configuration = {}) {
-			await Bridge.setup(
-				await configure(writeKey, configuration)
-			)
-			this.wrapper.ready()
-		}
+      // if we do have destPlugins, bulk-register them with the system
+      // this isn't done as part of addPlugin to avoid dispatching an update as part of an update
+      // which can lead to an infinite loop
+      // this is safe to fire & forget here as we've cleared pluginsToAdd
+      if (destPlugins.length > 0) {
+        this.store.dispatch(
+          this.actions.system.addIntegrations(
+            (destPlugins as DestinationPlugin[]).map(({ key }) => ({ key }))
+          )
+        );
+      }
 
-		/**
-		 * Record the actions your users perform.
-		 *
-		 * When a user performs an action in your app, you'll want to track that action for later analysis.
-		 * Use the event name to say what the user did, and properties to specify any interesting details of the action.
-		 *
-		 * @param event The name of the event you're tracking.
-		 * We recommend using human-readable names like `Played a Song` or `Updated Status`.
-		 * @param properties A dictionary of properties for the event.
-		 * If the event was 'Added to Shopping Cart', it might have properties like price, productType, etc.
-		 * @param options A dictionary of options, e.g. integrations (thigh analytics integration to forward the event to)
-		 */
-		public async track(event: string, properties: JsonMap = {}, options: Options = {}) {
-			await this.middlewares.run('track', { event, properties, integrations: options.integrations || {} }, options.context || {})
-		}
+      // finally set the flag which means plugins will be added + registered immediately in future
+      this.isReady = true;
+    }
 
-		/**
-		 * Record the screens or views your users see.
-		 *
-		 * When a user views a screen in your app, you'll want to record that here.
-		 * For some tools like Google Analytics and Flurry, screen views are treated specially, and are different
-		 * from "events" kind of like "page views" on the web. For services that don't treat "screen views" specially,
-		 * we map "screen" straight to "track" with the same parameters. For example, Mixpanel doesn't treat "screen views" any differently.
-		 * So a call to "screen" will be tracked as a normal event in Mixpanel, but get sent to Google Analytics and Flurry as a "screen".
-		 *
-		 * @param name The title of the screen being viewed.
-		 * We recommend using human-readable names like 'Photo Feed' or 'Completed Purchase Screen'.
-		 * @param properties A dictionary of properties for the screen view event.
-		 * If the event was 'Added to Shopping Cart', it might have properties like price, productType, etc.
-		 */
-		public async screen(name: string, properties: JsonMap = {}, options: Options = {}) {
-			await this.middlewares.run('screen', { name, properties, integrations: options.integrations || {} }, options.context || {})
-		}
+    const numEvents = main.events.length;
+    if (numEvents >= this.config.flushAt!) {
+      this.flush();
+    }
 
-		/**
-		 * Associate a user with their unique ID and record traits about them.
-		 *
-		 * When you learn more about who your user is, you can record that information with identify.
-		 *
-		 * @param user database ID (or email address) for this user.
-		 * If you don't have a userId but want to record traits, you should pass nil.
-		 * For more information on how we generate the UUID and Apple's policies on IDs, see https://segment.io/libraries/ios#ids
-		 * @param traits A dictionary of traits you know about the user. Things like: email, name, plan, etc.
-		 * @param options A dictionary of options, e.g. integrations (thigh analytics integration to forward the event to)
-		 */
-		public async identify(user: string | null, traits: JsonMap = {}, options: Options = {}) {
-			await this.middlewares.run('identify', { user, traits, options, integrations: options.integrations || {} }, options.context || {})
-		}
+    const numEventsToRetry = main.eventsToRetry.length;
+    if (numEventsToRetry && this.refreshTimeout === null) {
+      const retryIntervalMs = this.config.retryInterval! * 1000;
+      this.refreshTimeout = setTimeout(
+        () => this.flushRetry(),
+        retryIntervalMs
+      ) as any;
+    }
+  }
 
-		/**
-		 * Associate a user with a group, organization, company, project, or w/e *you* call them.
-		 *
-		 * When you learn more about who the group is, you can record that information with group.
-		 *
-		 * @param groupId A database ID for this group.
-		 * @param traits A dictionary of traits you know about the group. Things like: name, employees, etc.
-		 * @param options A dictionary of options, e.g. integrations (thigh analytics integration to forward the event to)
-		 */
-		public async group(groupId: string, traits: JsonMap = {}, options: Options = {}) {
-			await this.middlewares.run('group', { groupId, traits, integrations: options.integrations || {} }, options.context || {})
-		}
+  async flushRetry() {
+    await flushRetry.bind(this)();
+  }
 
-		/**
-		 * Merge two user identities, effectively connecting two sets of user data as one.
-		 * This may not be supported by all integrations.
-		 *
-		 * When you learn more about who the group is, you can record that information with group.
-		 *
-		 * @param newId The new ID you want to alias the existing ID to.
-		 * The existing ID will be either the previousId if you have called identify, or the anonymous ID.
-		 */
-		public async alias(newId: string, options: Options = {}) {
-			await this.middlewares.run('alias', { newId, integrations: options.integrations || {} }, options.context || {})
-		}
+  private tick() {
+    if (this.secondsElapsed + 1 >= this.config.flushInterval!) {
+      this.flush();
+    } else {
+      this.secondsElapsed += 1;
+    }
+  }
 
-		/**
-		 * Reset any user state that is cached on the device.
-		 *
-		 * This is useful when a user logs out and you want to clear the identity.
-		 * It will clear any traits or userId's cached on the device.
-		 */
-		public async reset() {
-			await this.wrapper.run('reset', reset => reset())
-		}
+  async flush() {
+    await flush.bind(this)();
+  }
 
-		/**
-		 * Trigger an upload of all queued events.
-		 *
-		 * This is useful when you want to force all messages queued on the device to be uploaded.
-		 * Please note that not all integrations respond to this method.
-		 */
-		public async flush() {
-			await this.wrapper.run('flush', flush => flush())
-		}
+  screen(name: string, options?: JsonMap) {
+    screen.bind(this)({ name, options });
+  }
 
-		/**
-		 * Enable the sending of analytics data. Enabled by default.
-		 *
-		 * Occasionally used in conjunction with disable user opt-out handling.
-		 */
-		public async enable() {
-			await this.wrapper.run('enable', enable => enable())
-		}
+  track(eventName: string, options?: JsonMap) {
+    track.bind(this)({ eventName, options });
+  }
 
-		/**
-		 * Completely disable the sending of any analytics data.
-		 *
-		 * If you have a way for users to actively or passively (sometimes based on location) opt-out of
-		 * analytics data collection, you can use this method to turn off all data collection.
-		 */
-		public async disable() {
-			await this.wrapper.run('disable', disable => disable())
-		}
+  identify(userId: string, userTraits?: UserTraits) {
+    identify.bind(this)({ userId, userTraits });
+  }
 
-		/** Retrieve the anonymousId. */
-		public async getAnonymousId(): Promise<string> {
-			await this.wrapper.wait()
+  group(groupId: string, groupTraits?: GroupTraits) {
+    group.bind(this)({ groupId, groupTraits });
+  }
 
-			return Bridge.getAnonymousId()
-		}
+  alias(newUserId: string) {
+    alias.bind(this)({ newUserId });
+  }
 
-		private handleError(error: Error) {
-			const { handlers } = this
+  /**
+   * Called once when the client is first created
+   *
+   * Detect and save the the currently installed application version
+   * Send application lifecycle events if trackAppLifecycleEvents is enabled
+   *
+   * Exactly one of these events will be sent, depending on the current and previous version:s
+   * Application Installed - no information on the previous version, so it's a fresh install
+   * Application Updated - the previous detected version is different from the current version
+   * Application Opened - the previously detected version is same as the current version
+   */
+  async checkInstalledVersion() {
+    await checkInstalledVersion.bind(this)();
+  }
 
-			if (!handlers.length) {
-				console.error('Uncaught Analytics error', error)
-				throw error
-			} else {
-				handlers.forEach(handler => handler(error))
-			}
-		}
-	}
+  /**
+   * AppState event listener. Called whenever the app state changes.
+   *
+   * Send application lifecycle events if trackAppLifecycleEvents is enabled.
+   *
+   * Application Opened - only when the app state changes from 'inactive' or 'background' to 'active'
+   *   The initial event from 'unknown' to 'active' is handled on launch in checkInstalledVersion
+   * Application Backgrounded - when the app state changes from 'inactive' or 'background' to 'active
+   *
+   * @param nextAppState 'active', 'inactive', 'background' or 'unknown'
+   */
+  handleAppStateChange(nextAppState: AppStateStatus) {
+    handleAppStateChange.bind(this)({ nextAppState });
+  }
+
+  reset() {
+    this.store.dispatch(this.actions.userInfo.reset());
+    this.logger.info('Client has been reset');
+  }
 }

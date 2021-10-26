@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`mapTransform maps keys to new values 1`] = `
+Object {
+  "muchNewerKey": "123",
+  "nestedObject": Object {
+    "muchNewerKey": "123",
+    "nestedObject": Object {
+      "muchNewerKey": "123",
+    },
+  },
+  "newArray": Array [
+    Object {
+      "doNotTransform": "nope",
+      "muchNewerKey": "123",
+    },
+  ],
+  "newId": 1,
+}
+`;

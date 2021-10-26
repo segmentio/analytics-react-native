@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "169668264691",
+    "firebase_url": "https://segment-rn-analytics-tes-758c9.firebaseio.com",
+    "project_id": "segment-rn-analytics-tes-758c9",
+    "storage_bucket": "segment-rn-analytics-tes-758c9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:169668264691:android:3c64b2cb29f7ff3516ed86",
+        "android_client_info": {
+          "package_name": "com.example.segmentanalyticsreactnative"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "169668264691-rv2engndk74jatm8t6v56bqi8dmavd16.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBo2zvlurBAZvKFyFFMf45Nd2FuBGjLn1A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "169668264691-rv2engndk74jatm8t6v56bqi8dmavd16.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "169668264691-98m0t8lofv1nja1ki1hvi8j0heb5hesa.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.AnalyticsReactNativeExample"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

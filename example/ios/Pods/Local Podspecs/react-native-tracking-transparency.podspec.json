@@ -1,0 +1,21 @@
+{
+  "name": "react-native-tracking-transparency",
+  "version": "0.1.1",
+  "summary": "A React Native Library for interacting with the tracking API from iOS 14.",
+  "homepage": "https://github.com/mrousavy/react-native-tracking-transparency#readme",
+  "license": "MIT",
+  "authors": "Marc Rousavy <marcrousavy@hotmail.com> (https://github.com/mrousavy)",
+  "platforms": {
+    "ios": "9.0"
+  },
+  "source": {
+    "git": "https://github.com/mrousavy/react-native-tracking-transparency.git",
+    "tag": "0.1.1"
+  },
+  "source_files": "ios/**/*.{h,m,mm}",
+  "dependencies": {
+    "React": [
+
+    ]
+  }
+}
