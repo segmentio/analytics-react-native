@@ -486,6 +486,21 @@ segmentClient.add({ plugin: new Logger() });
 ```
 
 As it overrides the `execute()` method, this `Logger` will call `console.log` for every event going through the Timeline.
+  
+### Example Plugins 
+  
+Refer to the following table for example Plugins you can use and alter to meet your tracking needs:
+  
+| Plugin      | Package     |
+| ----------- | ----------- |
+| Adjust      | `@segment/analytics-react-native-plugin-adjust`      |
+| Amplitude Sessions      | `@segment/analytics-react-native-plugin-amplitude-session`      |
+| AppsFlyer    | `@segment/analytics-react-native-plugin-appsflyer`      |
+| Braze      | `@segment/analytics-react-native-plugin-braze`      |
+| Consent Manager     | `@segment/analytics-react-native-plugin-adjust`      |
+| Firebase      | `@segment/analytics-react-native-plugin-consent-firebase`      |
+| IDFA     | `@segment/analytics-react-native-plugin-idfa`      
+  
 
 ## Contributing
 
