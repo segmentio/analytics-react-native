@@ -370,9 +370,9 @@ PODS:
     - React-Core
   - RNGestureHandler (1.10.3):
     - React-Core
-  - segment-analytics-react-native (2.0.0-pilot):
+  - segment-analytics-react-native (2.0.0-pilot.1):
     - React-Core
-  - segment-analytics-react-native-plugin-idfa (0.1.0-pilot):
+  - segment-analytics-react-native-plugin-idfa (0.1.0-pilot.1):
     - React-Core
   - Yoga (1.14.0)
 
