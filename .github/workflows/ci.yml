@@ -6,7 +6,14 @@ on:
     branches: [ master ]
   workflow_dispatch:
 jobs:
+  cancel_previous:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: styfle/cancel-workflow-action@0.9.1
+      with:
+        workflow_id: ${{ github.event.workflow.id }}
   build-and-test:
+    needs: cancel_previous
     runs-on: 'ubuntu-latest'
     steps: 
       - uses: actions/checkout@v2
@@ -29,26 +36,43 @@ jobs:
         run: yarn build:plugins 
 
   run-e2e-ios:
+    needs: cancel_previous
     runs-on: 'macos-11'
     steps: 
       - uses: actions/checkout@v2
+
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
           cache: 'yarn'
+
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: 12.5.1
+
+      - name: Cocoapods cache
+        uses: actions/cache@v2
+        with:
+          path: ./example/ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
       - name: Install applesimutils
         run:  |
           HOMEBREW_NO_AUTO_UPDATE=1 brew tap wix/brew >/dev/null
           HOMEBREW_NO_AUTO_UPDATE=1 brew install applesimutils >/dev/null
       - run: yarn install
-      - run: yarn bootstrap
+
+      - name: Bootstrap
+        run: yarn bootstrap
+
       - name: Run Server (with mocks)
         run: yarn example start:e2e &
+
       - name: Detox - Build
         run: yarn example e2e:build:ios
+
       - name: Detox - Test
         run: |
           yarn example detox clean-framework-cache
@@ -56,6 +80,7 @@ jobs:
           yarn example e2e:test:ios
 
   run-e2e-android:
+    needs: cancel_previous
     runs-on: 'macos-11' # This is important, linux cannot run the emulator graphically for e2e tests
     strategy:
       matrix:
@@ -103,7 +128,8 @@ jobs:
           node-version: '14'
           cache: 'yarn'
 
-      - run: yarn example && yarn # No need to run bootstrap here since we don't need cocoapods
+      - name: Bootstrap
+        run: yarn example && yarn # No need to run bootstrap here since we don't need cocoapods
       - name: Run Server (with mocks)
         run: yarn example start:e2e &
       - name: Detox - Build
