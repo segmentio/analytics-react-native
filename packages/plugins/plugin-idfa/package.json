@@ -1,6 +1,6 @@
 {
   "name": "@segment/analytics-react-native-plugin-idfa",
-  "version": "0.1.0",
+  "version": "0.1.0-pilot",
   "description": "The hassle-free way to add Segment analytics to your React-Native app.",
   "main": "lib/commonjs/index",
   "scripts": {
@@ -33,20 +33,19 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/segmentio/analytics-react-native-next.git",
+    "url": "https://github.com/segmentio/analytics-react-native.git",
     "directory": "packages/core"
   },
   "author": "Segment <hello@segment.com> (https://segment.com/)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/segmentio/analytics-react-native-next/issues"
+    "url": "https://github.com/segmentio/analytics-react-native/issues"
   },
-  "homepage": "https://github.com/segmentio/analytics-react-native-next#readme",
+  "homepage": "https://github.com/segmentio/analytics-react-native#readme",
   "peerDependencies": {
     "@segment/analytics-react-native": "*"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "typescript": "^4.1.3"
   },

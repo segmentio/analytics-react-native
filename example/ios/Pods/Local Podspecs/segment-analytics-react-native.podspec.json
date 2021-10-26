@@ -1,6 +1,6 @@
 {
   "name": "segment-analytics-react-native",
-  "version": "2.0.0",
+  "version": "2.0.0-pilot",
   "summary": "The hassle-free way to add Segment analytics to your React-Native app.",
   "homepage": "https://github.com/segmentio/analytics-react-native-next#readme",
   "license": "MIT",
@@ -10,7 +10,7 @@
   },
   "source": {
     "git": "https://github.com/segmentio/analytics-react-native-next.git",
-    "tag": "2.0.0"
+    "tag": "2.0.0-pilot"
   },
   "source_files": "ios/**/*.{h,m,mm,swift}",
   "dependencies": {

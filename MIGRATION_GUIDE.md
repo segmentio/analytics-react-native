@@ -1,6 +1,6 @@
 # Migrating to 2.0
 
-Analytics-React-Native 2.0 is in public pilot and currently supports [these destinations](https://github.com/segmentio/analytics-react-native-next/tree/master/packages/plugins) with Segment actively adding more to the list. Segment’s [First-Access and Beta terms](https://segment.com/legal/first-access-beta-preview/) govern this library.
+Analytics-React-Native 2.0 is in public pilot and currently supports [these destinations](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins) with Segment actively adding more to the list. Segment’s [First-Access and Beta terms](https://segment.com/legal/first-access-beta-preview/) govern this library.
 If you’re using  `analytics-react-native 1.5.1`  or older, follow these steps to migrate to the `analytics-react-native 2.0`. You can continue to use your React Native source write key for the migration to view historical events.
 
 1. Update existing package
@@ -19,7 +19,7 @@ npx pod-install
 
 ### Client Configuration
 
-You will have to remove your current configuration and replace it with the `createClient` method. For more information, reference [Setting up the client.](https://github.com/segmentio/analytics-react-native-next#setting-up-the-client)
+You will have to remove your current configuration and replace it with the `createClient` method. For more information, reference [Setting up the client.](https://github.com/segmentio/analytics-react-native#setting-up-the-client)
 
 **Example client configuration for `analytics-react-native 1.5.1`**
 

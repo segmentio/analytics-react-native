@@ -498,5 +498,5 @@ Before contributing, please also see our [code of conduct](CODE_OF_CONDUCT.md).
 
 MIT
 
-[circleci-image]: https://circleci.com/gh/segmentio/analytics-react-native-next.svg?style=shield&circle-token=c08ac0da003f36b2a8901be421a6998124e1d352
-[circleci-url]: https://app.circleci.com/pipelines/github/segmentio/analytics-react-native-next
+[circleci-image]: https://circleci.com/gh/segmentio/analytics-react-native.svg?style=shield&circle-token=c08ac0da003f36b2a8901be421a6998124e1d352
+[circleci-url]: https://app.circleci.com/pipelines/github/segmentio/analytics-react-native
