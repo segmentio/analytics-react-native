@@ -1,6 +1,0 @@
-semi: false
-singleQuote: true
-overrides:
-  - files: '*.{ts,js}'
-    options:
-      useTabs: true
