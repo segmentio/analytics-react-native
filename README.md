@@ -27,6 +27,7 @@ NOTE: This project is currently in development and is covered by Segment's [Firs
 - [Automatic screen tracking](#automatic-screen-tracking)
   - [React Navigation](#react-navigation)
   - [React Native Navigation](#react-native-navigation)
+- [Plugin Architecture](#plugin-types)
 - [Contributing](#contributing)
 - [Code of Conduct](#code-of-conduct)
 - [License](#license)
@@ -484,7 +485,7 @@ import { Logger } from './logger';
 segmentClient.add({ plugin: new Logger() });
 ```
 
-As it override the `execute()` method, this `Logger` will call `console.log` for every event going through the Timeline.
+As it overrides the `execute()` method, this `Logger` will call `console.log` for every event going through the Timeline.
 
 ## Contributing
 
