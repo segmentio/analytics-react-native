@@ -1,9 +1,11 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig",
   "compilerOptions": {
-    "outDir": "build",
-    "lib": ["es5", "es2015.promise", "dom"],
-    "esModuleInterop": true
+    "outDir": "lib/typescript"
   },
-  "include": ["src/**/*.ts"]
+  "include": [
+    "src/**/*",
+    "package.json",
+    "types.d.ts"
+  ]
 }

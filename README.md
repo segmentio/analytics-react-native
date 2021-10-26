@@ -1,264 +1,502 @@
-# @segment/analytics-react-native
+# @segment/analytics-react-native [![circleci][circleci-image]][circleci-url]
 
-The hassle-free way to add analytics to your React-Native app.
+The hassle-free way to add Segment analytics to your React-Native app.
 
-[![CircleCI](https://circleci.com/gh/segmentio/analytics-react-native.svg?style=svg)](https://circleci.com/gh/segmentio/analytics-react-native) [![codecov](https://codecov.io/gh/segmentio/analytics-react-native/branch/develop/graph/badge.svg)](https://codecov.io/gh/segmentio/analytics-react-native) [![npm](https://img.shields.io/npm/v/@segment/analytics-react-native.svg)](https://www.npmjs.com/package/@segment/analytics-react-native)
+NOTE: This project is currently in development and is covered by Segment's [First Access & Beta Preview Terms](https://segment.com/legal/first-access-beta-preview/). We encourage you to try out this new library. Please provide feedback via Github issues/PRs, and feel free to submit pull requests. Customers should not use this library for production applications during our development and Pilot phases.
 
-<div align="center">
-  <img src="https://user-images.githubusercontent.com/16131737/53616046-c141ed80-3b95-11e9-8966-78d4062a44da.png"/>
-  <p><b><i>You can't fix what you can't measure</i></b></p>
-</div>
+## Table of Contents
 
-Analytics helps you measure your users, product, and business. It unlocks insights into your app's funnel, core business metrics, and whether you have product-market fit.
-
-## How to get started
-
-1. **Collect analytics data** from your app(s).
-   - The top 200 Segment companies collect data from 5+ source types (web, mobile, server, CRM, etc.).
-2. **Send the data to analytics tools** (for example, Google Analytics, Amplitude, Mixpanel).
-   - Over 250+ Segment companies send data to eight categories of destinations such as analytics tools, warehouses, email marketing and remarketing systems, session recording, and more.
-3. **Explore your data** by creating metrics (for example, new signups, retention cohorts, and revenue generation).
-   - The best Segment companies use retention cohorts to measure product market fit. Netflix has 70% paid retention after 12 months, 30% after 7 years.
-
-[Segment](https://segment.com) collects analytics data and allows you to send it to more than 250 apps (such as Google Analytics, Mixpanel, Optimizely, Facebook Ads, Slack, Sentry) just by flipping a switch. You only need one Segment code snippet, and you can turn destinations on and off from the Segment web UI, with no additional code. [Sign up with Segment today](https://app.segment.com/signup).
-
-### Why?
-
-1. **Power all your analytics apps with the same data**. Instead of writing code to integrate all of your tools individually, send data to Segment, once.
-
-2. **Install tracking for the last time**. We're the last integration you'll ever need to write. You only need to instrument Segment once. Reduce all of your tracking code and advertising tags into a single set of API calls.
-
-3. **Send data from anywhere**. Send Segment data from any device, and we'll transform and send it on to any tool.
-
-4. **Query your data in SQL**. Slice, dice, and analyze your data in detail with Segment SQL. We'll transform and load your customer behavioral data directly from your apps into Amazon Redshift, Google BigQuery, or Postgres. Save weeks of engineering time by not having to invent your own data warehouse and ETL pipeline.
-
-   For example, you can capture data on any app:
-
-   ```js
-   analytics.track('Order Completed', { price: 99.84 })
-   ```
-
-   Then, query the resulting data in SQL:
-
-   ```sql
-   select * from app.order_completed
-   order by price desc
-   ```
-
-### 🚀 Startup Program
-
-<div align="center">
-  <a href="https://segment.com/startups"><img src="https://user-images.githubusercontent.com/16131737/53128952-08d3d400-351b-11e9-9730-7da35adda781.png" /></a>
-</div>
-If you are part of a new startup  (&lt;$5M raised, &lt;2 years since founding), we just launched a new startup program for you. You can get a Segment Team plan  (up to <b>$25,000 value</b> in Segment credits) for free up to 2 years — <a href="https://segment.com/startups/">apply here</a>!
-
-## Prerequisite
-
-#### React-Native
-
-- Version 0.62 or greater.
-
-#### iOS
-
-- CocoaPods (**recommended**)
-  - Don't have CocoaPods setup? Follow [these instructions](https://facebook.github.io/react-native/docs/integration-with-existing-apps#configuring-cocoapods-dependencies).
-- or [manually install `Analytics`](#ios-support-without-cocoapods)
+- [Installation](#installation)
+  - [Permissions](#permissions)
+- [Migration](#migrating)
+- [Usage](#usage)
+  - [Setting up the client](#setting-up-the-client)
+  - [Client options](#client-options)
+  - [Usage with hooks](#usage-with-hooks)
+  - [useAnalytics](#useanalytics)
+  - [Usage without hooks](#usage-without-hooks)
+- [Client methods](#client-methods)
+  - [Track](#track)
+  - [Screen](#screen)
+  - [Identify](#identify)
+  - [Group](#group)
+  - [Alias](#alias)
+  - [Reset](#reset)
+  - [Flush](#flush)
+  - [Advanced Cleanup](#advanced-cleanup)
+- [Automatic screen tracking](#automatic-screen-tracking)
+  - [React Navigation](#react-navigation)
+  - [React Native Navigation](#react-native-navigation)
+- [Contributing](#contributing)
+- [Code of Conduct](#code-of-conduct)
+- [License](#license)
 
 ## Installation
 
-```bash
-$ yarn add @segment/analytics-react-native
-$ cd ios && pod install && cd .. # CocoaPods on iOS needs this extra step
+Install `@segment/analytics-react-native` and [`react-native-async-storage/async-storage`](https://github.com/react-native-async-storage/async-storage): 
+
+```sh
+yarn add @segment/analytics-react-native @react-native-async-storage/async-storage
+# or
+npm install --save @segment/analytics-react-native @react-native-async-storage/async-storage
 ```
+
+For iOS, install native modules with:
+
+```sh
+npx pod-install
+```
+⚠️ For Android, you will have to add some extra permissions to your `AndroidManifest.xml`.
+
+🚀 `@segment/analytics-react-native 2.0` is compatible with Expo's [Custom Dev Client](https://docs.expo.dev/clients/getting-started/) and [EAS builds](https://docs.expo.dev/build/introduction/) without any additional configuration. Destination Plugins that require native modules may require custom [Expo Config Plugins](https://docs.expo.dev/guides/config-plugins/).
+
+### Permissions
+
+<details>
+
+<summary>Android</summary>
+In your app's `AndroidManifest.xml` add the below line between the `<manifest>` tags.
+
+```xml
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+```
+
+</details>
+
+## Migrating
+See the [Migration Guide](MIGRATION_GUIDE.md) for a detailed walkthrough of the changes you will need to make when upgrading to `analytics-react-native 2.0`
 
 ## Usage
 
-See the [API docs](packages/core/docs/classes/analytics.client.md) for more details.
+### Setting up the client
 
-Additional examples of common usage patterns and how-to's can found at [Analytics for React-Native](https://segment.com/docs/connections/sources/catalog/libraries/mobile/react-native/).
-
-<!-- prettier-ignore -->
-```js
-import analytics from '@segment/analytics-react-native'
-import mixpanel from '@segment/analytics-react-native-mixpanel'
-import firebase from '@segment/analytics-react-native-firebase'
-
-analytics
-    .setup('writeKey', {
-        using: [mixpanel, firebase],
-        recordScreenViews: true,
-        trackAppLifecycleEvents: true,
-
-        android: {
-            flushInterval: 60000, // 60 seconds
-            collectDeviceId: true
-        },
-        ios: {
-            trackAdvertising: true,
-            trackDeepLinks: true
-        }
-    })
-    .then(() =>
-        console.log('Analytics is ready')
-    )
-    .catch(err =>
-        console.error('Something went wrong', err)
-    )
-
-analytics.track('Pizza Eaten')
-analytics.screen('Home')
-```
-
-### Sending data to destinations
-
-<!-- Based on https://segment.com/docs/sources/mobile/android/#sending-data-to-destinations -->
-
-There are two ways to send data to your analytics services through this library:
-
-1.  [Through the Segment servers](#cloud-based-connection-modes)
-2.  [Directly from the device using bundled SDK’s](#packaging-device-mode-destination-sdks)
-
-**Note**: Refer to the specific destination’s docs to see if your tool must be bundled in the app or sent server-side.
-
-#### Cloud-based Connection Modes
-
-When an destination’s SDK is not packaged, but it is enabled using the Segment web UI, the request goes through the Segment REST API, and is routed to the service’s server-side API as [described here](https://segment.com/docs/connections/destinations/#connection-modes).
-
-#### Packaging Device-mode Destination SDKs
-
-By default, our `@segment/analytics-react-native` package does not contain any device-based destinations.
-
-We recommend only using device-based destinations on a need-to-use basis to reduce the size of your application, and to avoid running into the dreaded 65k method limit on Android.
-
-If you would like to package device-based destinations, first search for the dependency you need using [the list below](#supported-device-mode-destinations).
-Then run `pod install` in your `ios/` folder and add it in the `.using()` configuration method. Example using Firebase :
-
-```bash
-$ yarn add @segment/analytics-react-native-firebase
-$ cd ios && pod install && cd ..
-```
-
-In your code :
+The package exposes a method called `createClient` which we can use to create the Segment Analytics client. This
+central client manages all our tracking events.
 
 ```js
-import analytics from '@segment/analytics-react-native'
-import firebase from '@segment/analytics-react-native-firebase'
+import { createClient } from '@segment/analytics-react-native';
 
-await analytics.setup('writeKey', {
-  using: [firebase]
-})
+const segmentClient = createClient({
+  writeKey: 'SEGMENT_API_KEY'
+});
 ```
 
-For IOS you must add the GoogleService-info.plist to your iOS folder. This file can be downloaded from your Firebase instance. Firebase takes up to 24 hours to show events. However, you can utilize the Firebase debug method to confirm your setup is sending data correctly. To do this add `-FIRDebugEnabled` in Xcode’s Scheme Settings.
+You must pass at least the `writeKey`. Additional configuration options are listed below:
+  
+### Client Options
 
-In Xcode:
-`Project -> Scheme -> Edit Scheme -> Arguments Passed On Launch`
+| Name                       | Default   | Description                                                                                                                          |
+| -------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `writeKey` **(REQUIRED)**  | ''        | Your Segment API key.                                                                                                                |
+| `debug`                    | true\*    | When set to false, it will not generate any logs.                                                                                    |
+| `flushAt`                  | 20        | How many events to accumulate before sending events to the backend.                                                                  |
+| `flushInterval`            | 30        | In seconds, how often to send events to the backend.                                                                                 |
+| `retryInterval`            | 60        | In seconds, how often to to retry sending events the request failed (e.g. in case of a network failure).                             |
+| `maxBatchSize`             | 1000      | How many events to send to the API at once                                                                                           |
+| `maxEventsToRetry`         | 1000      | How many events to keep around for to retry sending if the initial request failed                                                    |
+| `trackAppLifecycleEvents`  | false     | Enable automatic tracking for [app lifecycle events](https://segment.com/docs/connections/spec/mobile/#lifecycle-events): application installed, opened, updated, backgrounded) |
+| `trackDeepLinks`           | false     | Enable automatic tracking for when the user opens the app via a deep link                                                            |
+| `defaultSettings`          | undefined | Settings that will be used if the request to get the settings from Segment fails                                                     |
+| `autoAddSegmentDestination`| true      | Set to false to skip adding the SegmentDestination plugin                                                                            |
 
-#### Supported Device-Mode Destinations
+\* The default value of `debug` will be false in production.
 
-> All destinations have the same version as `@segment/analytics-react-native`
+### Usage with hooks
 
-**Note**: Each device-mode destination has a different native setup procedure due to differences between the underlying SDK vendors. Please refer to the vendor documentation for configuring the native iOS and Android portions of a given destination. More information and links to vendor specific instructions and details can be found at [Connection Mode Comparisons](https://segment.com/docs/connections/destinations/cmodes-compare/).
+In order to use the `useAnalytics` hook within the application, we will additionally need to wrap the application in
+an AnalyticsProvider. This uses the [Context API](https://reactjs.org/docs/context.html) and will allow
+access to the analytics client anywhere in the application
 
-<!-- AUTOGEN:INTEGRATIONS:BEGIN -->
+```js
+import {
+  createClient,
+  AnalyticsProvider,
+} from '@segment/analytics-react-native';
 
-| Name                                                                                                         | iOS                | Android            | npm package                                               |
-| ------------------------------------------------------------------------------------------------------------ | ------------------ | ------------------ | --------------------------------------------------------- |
-| [Adjust](https://www.npmjs.com/package/@segment/analytics-react-native-adjust)                               | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-adjust`                  |
-| [Amplitude](https://www.npmjs.com/package/@segment/analytics-react-native-amplitude)                         | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-amplitude`               |
-| [Appboy](https://www.npmjs.com/package/@segment/analytics-react-native-appboy)                               | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-appboy`                  |
-| [AppsFlyer](https://www.npmjs.com/package/@segment/analytics-react-native-appsflyer)                         | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-appsflyer`               |
-| [Branch](https://www.npmjs.com/package/@segment/analytics-react-native-branch)                               | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-branch`                  |
-| [Bugsnag](https://www.npmjs.com/package/@segment/analytics-react-native-bugsnag)                             | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-bugsnag`                 |
-| [CleverTap](https://www.npmjs.com/package/@segment/analytics-react-native-clevertap)                         | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-clevertap`               |
-| [ComScore](https://www.npmjs.com/package/@segment/analytics-react-native-comscore-ios)                       | :white_check_mark: | :x:                | `@segment/analytics-react-native-comscore-ios`            |
-| [Countly](https://www.npmjs.com/package/@segment/analytics-react-native-countly)                             | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-countly`                 |
-| [Crittercism](https://www.npmjs.com/package/@segment/analytics-react-native-crittercism)                     | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-crittercism`             |
-| [Facebook App Events](https://www.npmjs.com/package/@segment/analytics-react-native-facebook-app-events-ios) | :white_check_mark: | :x:                | `@segment/analytics-react-native-facebook-app-events-ios` |
-| [Firebase](https://www.npmjs.com/package/@segment/analytics-react-native-firebase)                           | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-firebase`                |
-| [Flurry](https://www.npmjs.com/package/@segment/analytics-react-native-flurry)                               | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-flurry`                  |
-| [Intercom](https://www.npmjs.com/package/@segment/analytics-react-native-intercom)                           | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-intercom`                |
-| [Localytics](https://www.npmjs.com/package/@segment/analytics-react-native-localytics)                       | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-localytics`              |
-| [Mixpanel](https://www.npmjs.com/package/@segment/analytics-react-native-mixpanel)                           | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-mixpanel`                |
-| [Quantcast](https://www.npmjs.com/package/@segment/analytics-react-native-quantcast-android)                 | :x:                | :white_check_mark: | `@segment/analytics-react-native-quantcast-android`       |
-| [Taplytics](https://www.npmjs.com/package/@segment/analytics-react-native-taplytics-ios)                     | :white_check_mark: | :x:                | `@segment/analytics-react-native-taplytics-ios`           |
-| [Tapstream](https://www.npmjs.com/package/@segment/analytics-react-native-tapstream-android)                 | :x:                | :white_check_mark: | `@segment/analytics-react-native-tapstream-android`       |
+const segmentClient = createClient({
+  writeKey: 'SEGMENT_API_KEY'
+});
 
-<!-- AUTOGEN:INTEGRATIONS:END -->
+const App = () => (
+  <AnalyticsProvider client={segmentClient}>
+    <Content />
+  </AnalyticsProvider>
+);
+```
 
-## Troubleshooting
+### useAnalytics()
 
-### iOS support without CocoaPods
+The client methods will be exposed via the `useAnalytics()` hook:
 
-<!-- Based on https://segment.com/docs/sources/mobile/ios/#dynamic-framework-for-manual-installation -->
+```js
+import React from 'react';
+import { Text, TouchableOpacity } from 'react-native';
+import { useAnalytics } from '@segment/analytics-react-native';
 
-We **highly recommend** using Cocoapods.
+const Button = () => {
+  const { track } = useAnalytics();
+  return (
+    <TouchableOpacity
+      style={styles.button}
+      onPress={() => {
+        track('Awesome event');
+      }}
+    >
+      <Text style={styles.text}>Press me!</Text>
+    </TouchableOpacity>
+  );
+};
+```
 
-However, if you cannot use Cocoapods, you can manually install our dynamic framework allowing you to send data to Segment and on to enabled cloud-mode destinations. We do not support sending data to bundled, device-mode destinations outside of Cocoapods.
+### Usage without hooks
 
-Here are the steps for installing manually:
+The tracking events can also be used without hooks by calling the methods directly on the client:
 
-1. Add `analytics-ios` as a npm dependency: `yarn add @segment/analytics-ios@github:segmentio/analytics-ios#3.6.10`
-2. In the `General` tab for your project, search for `Embedded Binaries` and add the `Analytics.framework`
-   ![Embed Analytics.framework](https://segment.com/docs/sources/mobile/react-native/images/embed-analytics-framework.png)
+```js
+import {
+  createClient,
+  AnalyticsProvider,
+} from '@segment/analytics-react-native';
 
-Please note, if you are choosing to not use a dependency manager, you must keep files up-to-date with regularly scheduled, manual updates.
+// create the client once when he app loads
+const segmentClient = createClient({
+  writeKey: 'SEGMENT_API_KEY'
+});
 
-### "Failed to load [...] native module"
+// track an event using the client instance
+segmentClient.track('Awesome event');
+```
 
-If you're getting a `Failed to load [...] native module` error, it means that some native code hasn't been injected to your native project.
+## Client methods
 
-#### iOS
+### Track
 
-If you're using Cocoapods, check that your `ios/Podfile` file contains the right pods :
+The [track](https://segment.com/docs/connections/spec/track/) method is how you record any actions your users perform, along with any properties that describe the action.
 
-- `Failed to load Analytics native module`, look for the core native module:
-  ```ruby
-  pod 'RNAnalytics', :path => '../node_modules/@segment/analytics-react-native'
-  ```
-- `Failed to load [...] integration native module`, look for the destination native module, example with Google Analytics:
-  ```ruby
-  pod 'RNAnalyticsIntegration-Google-Analytics', :path => '../node_modules/@segment/analytics-react-native-google-analytics'
-  ```
+Method signature:
 
-Also check that your `Podfile` is synchronized with your workspace, run `pod install` in your `ios` folder.
+```js
+track: (event: string, properties?: JsonMap) => void;
+```
 
-If you're not using Cocoapods please check that you followed the [iOS support without CocoaPods](#ios-support-without-cocoapods) instructions carefully.
+Example usage:
 
-#### Android
+```js
+const { track } = useAnalytics();
 
-Check that `android/app/src/main/.../MainApplication.java` contains a reference to the native module:
+track('View Product', {
+  productId: 123,
+  productName: 'Striped trousers',
+});
+```
 
-- `Failed to load Analytics native module`, look for the core native module:
+### Screen
 
-  ```java
-  import com.segment.analytics.reactnative.core.RNAnalyticsPackage;
+The [screen](https://segment.com/docs/connections/spec/screen/) call lets you record whenever a user sees a screen in your mobile app, along with any properties about the screen.
 
-  // ...
+Method signature:
 
-  @Override
-  protected List<ReactPackage> getPackages() {
-      return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-          // ...
-          new RNAnalyticsPackage()
-      );
+```js
+screen: (name: string, properties?: JsonMap) => void;
+```
+
+Example usage:
+
+```js
+const { screen } = useAnalytics();
+
+screen('ScreenName', {
+  productSlug: 'example-product-123',
+});
+```
+
+For setting up automatic screen tracking, see the [instructions below](#automatic-screen-tracking).
+
+### Identify
+
+The [identify](https://segment.com/docs/connections/spec/identify/) call lets you tie a user to their actions and record traits about them. This includes a unique user ID and any optional traits you know about them like their email, name, etc. The traits option can include any information you might want to tie to the user, but when using any of the [reserved user traits](https://segment.com/docs/connections/spec/identify/#traits), you should make sure to only use them for their intended meaning.
+
+Method signature:
+
+```js
+identify: (userId: string, userTraits?: JsonMap) => void;
+```
+
+Example usage:
+
+```js
+const { identify } = useAnalytics();
+
+identify('user-123', {
+  username: 'MisterWhiskers',
+  email: 'hello@test.com',
+  plan: 'premium',
+});
+```
+
+### Group
+
+The [group](https://segment.com/docs/connections/spec/group/) API call is how you associate an individual user with a group—be it a company, organization, account, project, team or whatever other crazy name you came up with for the same concept! This includes a unique group ID and any optional group traits you know about them like the company name industry, number of employees, etc. The traits option can include any information you might want to tie to the group, but when using any of the [reserved group traits](https://segment.com/docs/connections/spec/group/#traits), you should make sure to only use them for their intended meaning.
+
+Method signature:
+
+```js
+group: (groupId: string, groupTraits?: JsonMap) => void;
+```
+
+Example usage:
+
+```js
+const { group } = useAnalytics();
+
+group('some-company', {
+  name: 'Segment',
+});
+```
+
+### Alias
+
+The [alias](https://segment.com/docs/connections/spec/alias/) method is used to merge two user identities, effectively connecting two sets of user data as one. This is an advanced method, but it is required to manage user identities successfully in some of our destinations.
+
+Method signature:
+
+```js
+alias: (newUserId: string) => void;
+```
+
+Example usage:
+
+```js
+const { alias } = useAnalytics();
+
+alias('user-123');
+```
+
+### Reset
+
+The reset method clears the internal state of the library for the current user and group. This is useful for apps where users can log in and out with different identities over time.
+
+Note: Each time you call reset, a new AnonymousId is generated automatically.
+
+Method signature:
+
+```js
+reset: () => void;
+```
+
+Example usage:
+
+```js
+const { reset } = useAnalytics();
+
+reset();
+```
+
+### Flush
+
+By default, the analytics will be sent to the API after 30 seconds or when 20 items have accumulated, whatever happens sooner, and whenever the app resumes if the user has closed the app with some events unsent. These values can be modified by the `flushAt` and `flushInterval` config options. You can also trigger a flush event manually.
+
+Method signature:
+
+```js
+flush: () => Promise<void>;
+```
+
+Example usage:
+
+```js
+const { flush } = useAnalytics();
+
+flush();
+```
+
+### (Advanced) Cleanup
+
+You probably don't need this!
+
+In case you need to reinitialize the client, that is, you've called `createClient` more than once for the same client in your application lifecycle, use this method _on the old client_ to clear any subscriptions and timers first.
+
+```js
+let client = createClient({
+  writeKey: 'KEY'
+});
+
+client.cleanup();
+
+client = createClient({
+  writeKey: 'KEY'
+});
+```
+
+If you don't do this, the old client instance would still exist and retain the timers, making all your events fire twice.
+
+Ideally, you shouldn't need this though, and the Segment client should be initialized only once in the application lifecycle.
+
+## Automatic screen tracking
+
+Sending a `screen()` event with each navigation action will get tiresome quick, so you'll probably want to track navigation globally. The implementation will be different depending on which library you use for navigation. The two main navigation libraries for React Native are [React Navigation](https://reactnavigation.org/) and [React Native Navigation](https://wix.github.io/react-native-navigation).
+
+### React Navigation
+
+Our [example app](./example) is set up with screen tracking using React Navigation, so you can use it as a guide.
+
+Essentially what we'll do is find the root level navigation container and call `screen()` whenever user has navigated to a new screen.
+
+Find the file where you've used the `NavigationContainer` - the main top level container for React Navigation. In this component, create a new state variable to store the current route name:
+
+```js
+const [routeName, setRouteName] = useState('Unknown');
+```
+
+Now, outside of the component, create a utility function for determining the name of the selected route:
+
+```js
+const getActiveRouteName = (
+  state: NavigationState | PartialState<NavigationState> | undefined
+): string => {
+  if (!state || typeof state.index !== 'number') {
+    return 'Unknown';
   }
-  ```
 
-- `Failed to load [...] integration native module`, look for the destination native module, example with Google Analytics:
+  const route = state.routes[state.index];
 
-  ```java
-  import com.segment.analytics.reactnative.integration.google.analytics.RNAnalyticsIntegration_Google_AnalyticsPackage;
-
-  // ...
-
-  @Override
-  protected List<ReactPackage> getPackages() {
-      return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-          // ...
-          new RNAnalyticsIntegration_Google_AnalyticsPackage()
-      );
+  if (route.state) {
+    return getActiveRouteName(route.state);
   }
-  ```
+
+  return route.name;
+};
+```
+
+Finally, pass a function in the `onStateChange` prop of your `NavigationContainer` that checks for the active route name and calls `client.screen()` if the route has changes. You can pass in any additional screen parameters as the second argument for screen call as needed.
+
+```js
+<NavigationContainer
+  onStateChange={(state) => {
+    const newRouteName = getActiveRouteName(state);
+
+    if (routeName !== newRouteName) {
+      segmentClient.screen(newRouteName);
+      setRouteName(newRouteName);
+    }
+  }}
+>
+```
+
+### React Native Navigation
+
+In order to setup automatic screen tracking while using [React Native Navigation](https://wix.github.io/react-native-navigation/docs/before-you-start/), you will have to use an [event listener](https://wix.github.io/react-native-navigation/api/events#componentdidappear). That can be done at the point where you are setting up the root of your application (ie. `Navigation.setRoot`). There your will need access to your `SegmentClient`.
+
+```js
+// Register the event listener for *registerComponentDidAppearListener*
+Navigation.events().registerComponentDidAppearListener(({ componentName }) => {
+  segmentClient.screen(componentName);
+});
+```
+
+## Plugins + Timeline architecture
+
+You have complete control over how the events are processed before being uploaded to the Segment API.
+
+In order to customise what happens after an event is created, you can create and place various Plugins along the processing pipeline that an event goes through. This pipeline is referred to as a Timeline.
+
+### Plugin Types
+
+| Plugin Type  | Description                                                                                             |
+|--------------|---------------------------------------------------------------------------------------------------------|
+| before       | Executed before event processing begins.                                                                |
+| enrichment   | Executed as the first level of event processing.                                                        |
+| destination  | Executed as events begin to pass off to destinations.                                                   |
+| after        | Executed after all event processing is completed.  This can be used to perform cleanup operations, etc. |
+| utility      | Executed only when called manually, such as Logging.                                                    |
+
+Plugins can have their own native code (such as the iOS-only `IdfaPlugin`) or wrap an underlying library (such as `FirebasePlugin` which uses `react-native-firebase` under the hood)
+
+### Destination Plugins
+
+Segment is included as a `DestinationPlugin` out of the box. You can add as many other DestinationPlugins as you like, and upload events and data to them in addition to Segment.
+
+Or if you prefer, you can pass `autoAddSegmentDestination = false` in the options when setting up your client. This prevents the SegmentDestination plugin from being added automatically for you.
+
+### Adding Plugins
+
+You can add a plugin at any time through the `segmentClient.add()` method.
+
+```js
+import { createClient } from '@segment/analytics-react-native';
+
+import { AmplitudeSessionPlugin } from '@segment/analytics-react-native-plugin-amplitude';
+import { FirebasePlugin } from '@segment/analytics-react-native-plugin-firebase';
+import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
+
+const segmentClient = createClient({
+  writeKey: 'SEGMENT_KEY'
+});
+
+segmentClient.add({ plugin: new AmplitudeSessionPlugin() });
+segmentClient.add({ plugin: new FirebasePlugin() });
+segmentClient.add({ plugin: new IdfaPlugin() });
+```
+
+### Writing your own Plugins
+
+Plugins are implemented as ES6 Classes. To get started, familiarise yourself with the available classes in `/packages/core/src/plugin.ts`.
+
+The available plugin classes are:-
+
+- `Plugin`
+- `EventPlugin`
+- `DestinationPlugin`
+- `UtilityPlugin`
+- `PlatformPlugin`
+
+Any plugins must be an extension of one of these classes.
+
+You can them customise the functionality by overriding different methods on the base class. For example, here is a simple `Logger` plugin:
+
+```js
+// logger.js
+
+import {
+  Plugin,
+  PluginType,
+  SegmentEvent,
+} from '@segment/analytics-react-native';
+
+export class Logger extends Plugin {
+
+  // Note that `type` is set as a class property
+  // If you do not set a type your plugin will be a `utility` plugin (see Plugin Types above)
+  type = PluginType.before;
+
+  execute(event: SegmentEvent) {
+    console.log(event);
+    return event;
+  }
+}
+```
+
+```js
+// app.js
+
+import { Logger } from './logger';
+
+segmentClient.add({ plugin: new Logger() });
+```
+
+As it override the `execute()` method, this `Logger` will call `console.log` for every event going through the Timeline.
+
+## Contributing
+
+See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
+
+## Code of Conduct
+
+Before contributing, please also see our [code of conduct](CODE_OF_CONDUCT.md).
+
+## License
+
+MIT
+
+[circleci-image]: https://circleci.com/gh/segmentio/analytics-react-native-next.svg?style=shield&circle-token=c08ac0da003f36b2a8901be421a6998124e1d352
+[circleci-url]: https://app.circleci.com/pipelines/github/segmentio/analytics-react-native-next

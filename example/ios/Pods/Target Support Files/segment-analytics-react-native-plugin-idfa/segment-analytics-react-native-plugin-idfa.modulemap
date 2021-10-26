@@ -1,0 +1,6 @@
+module segment_analytics_react_native_plugin_idfa {
+  umbrella header "segment-analytics-react-native-plugin-idfa-umbrella.h"
+
+  export *
+  module * { export * }
+}
