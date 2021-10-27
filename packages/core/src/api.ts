@@ -1,5 +1,5 @@
 import type { Config, SegmentEvent } from './types';
-import base64 from 'react-native-base64';
+import { Base64 } from 'js-base64';
 import { batchApi } from './constants';
 
 export const sendEvents = async ({
@@ -30,7 +30,7 @@ export const sendEvents = async ({
       integrations: events[0].integrations,
     }),
     headers: {
-      'Authorization': `Basic ${base64.encode(`${config.writeKey}:`)}`,
+      'Authorization': `Basic ${Base64.encode(`${config.writeKey}:`)}`,
       'Content-Type': 'application/json',
     },
   });

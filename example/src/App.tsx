@@ -17,7 +17,7 @@ import Modal from './Modal';
 import { useState } from 'react';
 import { Logger } from './plugins/Logger';
 // @ts-ignore
-import { FirebasePlugin } from '@segment/analytics-react-native-plugin-firebase';
+// import { FirebasePlugin } from '@segment/analytics-react-native-plugin-firebase';
 // @ts-ignore
 import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
 // @ts-ignore
@@ -30,7 +30,8 @@ const segmentClient = createClient({
 
 const LoggerPlugin = new Logger();
 segmentClient.add({ plugin: LoggerPlugin });
-segmentClient.add({ plugin: new FirebasePlugin() });
+// If you want to test the Firebase plugin make sure to add your own API_KEY in example/ios/GoogleService-Info.plist
+// segmentClient.add({ plugin: new FirebasePlugin() });
 segmentClient.add({ plugin: new IdfaPlugin() });
 segmentClient.add({ plugin: new AmplitudeSessionPlugin() });
 

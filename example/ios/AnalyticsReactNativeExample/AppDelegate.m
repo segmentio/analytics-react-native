@@ -11,7 +11,6 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import "RNBootSplash.h"
-#import <Firebase.h>
 @import AdSupport;
 
 @implementation AppDelegate
@@ -31,10 +30,6 @@
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   [RNBootSplash initWithStoryboard:@"LaunchScreen" rootView:rootView];
-  
-  if ([FIRApp defaultApp] == nil) {
-    [FIRApp configure];
-  }
   
   return YES;
 }

@@ -1,8 +1,8 @@
 {
   "name": "segment-analytics-react-native-plugin-idfa",
-  "version": "0.1.0-pilot",
+  "version": "0.1.0-pilot.1",
   "summary": "The hassle-free way to add Segment analytics to your React-Native app.",
-  "homepage": "https://github.com/segmentio/analytics-react-native-next#readme",
+  "homepage": "https://github.com/segmentio/analytics-react-native#readme",
   "license": "MIT",
   "authors": "Segment <hello@segment.com> (https://segment.com/)",
   "platforms": {
@@ -10,7 +10,7 @@
   },
   "source": {
     "git": "https://github.com/jpdriver/@segment/analytics-react-native-plugin-idfa.git",
-    "tag": "0.1.0-pilot"
+    "tag": "0.1.0-pilot.1"
   },
   "source_files": "ios/**/*.{h,m,mm,swift}",
   "dependencies": {
