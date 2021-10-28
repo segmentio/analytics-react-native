@@ -45,9 +45,6 @@
   "peerDependencies": {
     "@segment/analytics-react-native": "*"
   },
-  "dependencies": {
-    "@amplitude/react-native": "^2.4.0"
-  },
   "devDependencies": {
     "typescript": "^4.1.3"
   },
