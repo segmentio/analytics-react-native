@@ -13,5 +13,6 @@ module.exports = {
     '@release-it/conventional-changelog': {
       preset: 'angular',
     },
+    "release-it-yarn-workspaces": true
   },
 };
