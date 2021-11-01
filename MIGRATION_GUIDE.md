@@ -6,7 +6,7 @@ If you’re using  `analytics-react-native 1.5.1`  or older, follow these steps 
 1. Update existing package
 
 ```sh
-yarn update @segment/analytics-react-native@2.0
+yarn upgrade @segment/analytics-react-native@2.0
 ```
 2. Add/Update pods
 ```sh
