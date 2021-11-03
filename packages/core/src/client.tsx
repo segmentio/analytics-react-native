@@ -1,22 +1,12 @@
 import React, { createContext, useContext } from 'react';
+import { PersistGate } from 'redux-persist/integration/react';
+
+import { defaultConfig } from './constants';
 import type { Config, ClientMethods } from './types';
 import { createLogger } from './logger';
 import { initializeStore } from './store';
-import { PersistGate } from 'redux-persist/integration/react';
 import { SegmentClient } from './analytics';
 import { actions } from './store';
-
-export const defaultConfig: Config = {
-  writeKey: '',
-  flushAt: 20,
-  flushInterval: 30,
-  retryInterval: 60,
-  maxBatchSize: 1000,
-  maxEventsToRetry: 1000,
-  trackDeepLinks: false,
-  trackAppLifecycleEvents: false,
-  autoAddSegmentDestination: true,
-};
 
 const doClientSetup = async (client: SegmentClient) => {
   // make sure the persisted store is fetched

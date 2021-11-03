@@ -1,7 +1,3 @@
-import type { initializeStore } from './store';
-
-export type Store = ReturnType<typeof initializeStore>['store'];
-
 export type JsonValue =
   | boolean
   | number

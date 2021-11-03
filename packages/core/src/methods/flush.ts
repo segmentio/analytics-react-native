@@ -9,7 +9,7 @@ export default async function flush(this: SegmentClientContext) {
   this.secondsElapsed = 0;
   const state = this.store.getState();
 
-  if (state.main.events.length) {
+  if (state.main.events.length > 0) {
     getPluginsWithFlush(this.timeline).forEach((plugin) => plugin.flush());
   }
 }
