@@ -1,3 +1,18 @@
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+
+import { actions, getStoreWatcher, initializeStore, Store } from '../store';
+import {
+  default as mainSlice,
+  initialState as mainInitialState,
+} from '../store/main';
+import {
+  default as systemSlice,
+  initialState as systemInitialState,
+} from '../store/system';
+import {
+  default as userInfo,
+  initialState as userInfoInitialState,
+} from '../store/userInfo';
 import {
   Context,
   EventType,
@@ -5,10 +20,6 @@ import {
   ScreenEventType,
   TrackEventType,
 } from '../types';
-import { initializeStore, actions } from '../store';
-import { initialState as mainInitialState } from '../store/main';
-import { initialState as systemInitialState } from '../store/system';
-import { initialState as userInfoInitialState } from '../store/userInfo';
 
 const initialState = {
   main: mainInitialState,
@@ -404,6 +415,49 @@ describe('#initializeStore', () => {
         ...initialState.main,
         eventsToRetry: [event2],
       });
+    });
+  });
+
+  describe('getStoreWatcher', () => {
+    const event = {
+      userId: 'user-123',
+      anonymousId: 'eWpqvL-EHSHLWoiwagN-T',
+      type: EventType.IdentifyEvent,
+      integrations: {},
+      timestamp: '2000-01-01T00:00:00.000Z',
+      traits: {
+        foo: 'bar',
+      },
+      messageId: 'iDMkR2-I7c2_LCsPPlvwH',
+    } as IdentifyEventType;
+
+    const rootReducer = combineReducers({
+      main: mainSlice.reducer,
+      system: systemSlice.reducer,
+      userInfo: userInfo.reducer,
+    });
+    let mockStore = configureStore({ reducer: rootReducer }) as Store;
+
+    beforeEach(() => {
+      jest.useFakeTimers();
+      // Reset the Redux store to a clean state
+      mockStore = configureStore({ reducer: rootReducer }) as Store;
+    });
+
+    it('subscribes to changes in the selected objects', () => {
+      const subscription = jest.fn();
+      const watcher = getStoreWatcher(mockStore);
+      watcher((state) => state.main.events, subscription);
+      mockStore.dispatch(mainSlice.actions.addEvent({ event }));
+      expect(subscription).toHaveBeenCalledTimes(1);
+    });
+
+    it('no trigger for changes in non-selected objects', () => {
+      const subscription = jest.fn();
+      const watcher = getStoreWatcher(mockStore);
+      watcher((state) => state.main.eventsToRetry, subscription);
+      mockStore.dispatch(mainSlice.actions.addEvent({ event }));
+      expect(subscription).toHaveBeenCalledTimes(0);
     });
   });
 });
