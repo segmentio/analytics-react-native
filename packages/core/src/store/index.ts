@@ -42,3 +42,9 @@ export const initializeStore = (segmentKey: string) => {
 
   return { store, persistor };
 };
+
+export type Store = ReturnType<typeof initializeStore>['store'];
+export type RootState = ReturnType<typeof rootReducer>;
+
+export * from './selectors';
+export * from './watcher';

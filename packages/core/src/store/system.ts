@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { defaultConfig } from '../constants';
 import type { SegmentAPISettings, Config, Integrations } from '../types';
-import { defaultConfig } from '../client';
 
 type SystemState = {
   configuration: Config;
