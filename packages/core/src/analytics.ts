@@ -1,33 +1,39 @@
-import { AppState, AppStateStatus } from 'react-native';
-import type {
-  Config,
-  JsonMap,
-  GroupTraits,
-  UserTraits,
-  SegmentEvent,
-  Store,
-  SegmentAPISettings,
-} from './types';
-import type { Logger } from './logger';
 import type { Unsubscribe } from '@reduxjs/toolkit';
+import { AppState, AppStateStatus } from 'react-native';
 import type { Persistor } from 'redux-persist';
-import track from './methods/track';
-import screen from './methods/screen';
-import identify from './methods/identify';
-import flush from './methods/flush';
-import group from './methods/group';
-import alias from './methods/alias';
+
+import { applyRawEventData } from './events';
 import checkInstalledVersion from './internal/checkInstalledVersion';
-import handleAppStateChange from './internal/handleAppStateChange';
 import flushRetry from './internal/flushRetry';
 import getSettings from './internal/getSettings';
+import handleAppStateChange from './internal/handleAppStateChange';
 import trackDeepLinks from './internal/trackDeepLinks';
-import { Timeline } from './timeline';
-import { SegmentDestination } from './plugins/SegmentDestination';
-import { InjectContext } from './plugins/Context';
+import type { Logger } from './logger';
+import alias from './methods/alias';
+import flush from './methods/flush';
+import group from './methods/group';
+import identify from './methods/identify';
+import screen from './methods/screen';
+import track from './methods/track';
 import type { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
-import type { actions as ReduxActions } from './store';
-import { applyRawEventData } from './events';
+import { InjectContext } from './plugins/Context';
+import { SegmentDestination } from './plugins/SegmentDestination';
+import {
+  actions as ReduxActions,
+  getEvents,
+  getEventsToRetry,
+  getStoreWatcher,
+  Store,
+} from './store';
+import { Timeline } from './timeline';
+import type {
+  Config,
+  GroupTraits,
+  JsonMap,
+  SegmentAPISettings,
+  SegmentEvent,
+  UserTraits,
+} from './types';
 
 export class SegmentClient {
   // the config parameters for the client - a merge of user provided and default options
@@ -55,18 +61,31 @@ export class SegmentClient {
   logger: Logger;
 
   // timeout for refreshing the failed events queue
-  refreshTimeout: NodeJS.Timeout | null = null;
+  refreshTimeout: ReturnType<typeof setTimeout> | null = null;
 
   // internal time to know when to flush, ticks every second
-  interval: NodeJS.Timeout | null = null;
+  interval: ReturnType<typeof setTimeout> | null = null;
 
-  // unsubscribe for the redux store
-  unsubscribe: Unsubscribe | null = null;
+  // unsubscribe watchers for the redux store
+  watchers: Unsubscribe[] = [];
 
   // whether the user has called cleanup
   destroyed: boolean = false;
 
+  // has a pending upload to respond
+  isPendingUpload: boolean = false;
+
+  // has a pending upload of the events to retry upload
+  isPendingRetryUpload: boolean = false;
+
+  isAddingPlugins: boolean = false;
+
   timeline: Timeline;
+
+  /**
+   * Watches changes to redux store
+   */
+  watch: ReturnType<typeof getStoreWatcher>;
 
   // mechanism to prevent adding plugins before we are fully initalised
   private isReady = false;
@@ -116,6 +135,8 @@ export class SegmentClient {
     this.persistor = persistor;
     this.timeline = new Timeline();
 
+    this.watch = getStoreWatcher(this.store);
+
     // Get everything running
     this.platformStartup();
   }
@@ -143,6 +164,21 @@ export class SegmentClient {
   }
 
   /**
+   * Clears all subscriptions to the redux store
+   */
+  private unsubscribeWatchers() {
+    if (this.watchers.length > 0) {
+      for (const unsubscribe of this.watchers) {
+        try {
+          unsubscribe();
+        } catch (e) {
+          this.logger.error(e);
+        }
+      }
+    }
+  }
+
+  /**
    * There is no garbage collection in JS, which means that any listeners, timeouts and subscriptions
    * would run until the application closes
    *
@@ -157,9 +193,7 @@ export class SegmentClient {
       clearInterval(this.interval);
     }
 
-    if (this.unsubscribe) {
-      this.unsubscribe();
-    }
+    this.unsubscribeWatchers();
 
     if (this.refreshTimeout) {
       clearTimeout(this.refreshTimeout);
@@ -193,10 +227,24 @@ export class SegmentClient {
   }
 
   setupStoreSubscribe() {
-    if (this.unsubscribe) {
-      this.unsubscribe();
-    }
-    this.unsubscribe = this.store.subscribe(() => this.onUpdateStore());
+    this.unsubscribeWatchers();
+    this.watchers.push(this.store.subscribe(() => this.onUpdateStore()));
+
+    this.watchers.push(
+      this.watch(getEvents, (events: SegmentEvent[]) => {
+        if (events.length >= this.config.flushAt!) {
+          this.flush();
+        }
+      })
+    );
+
+    this.watchers.push(
+      this.watch(getEventsToRetry, (events: SegmentEvent[]) => {
+        if (events.length >= 0) {
+          this.flushRetry();
+        }
+      })
+    );
   }
 
   setupLifecycleEvents() {
@@ -292,56 +340,56 @@ export class SegmentClient {
   }
 
   onUpdateStore() {
-    const { main } = this.store.getState();
+    if (this.pluginsToAdd.length > 0 && !this.isAddingPlugins) {
+      this.isAddingPlugins = true;
+      try {
+        // start by adding the plugins
+        this.pluginsToAdd.forEach((plugin) => {
+          this.addPlugin(plugin);
+        });
 
-    if (this.pluginsToAdd.length > 0) {
-      // start by adding the plugins
-      this.pluginsToAdd.forEach((plugin) => {
-        this.addPlugin(plugin);
-      });
-
-      // filter to see if we need to register any
-      const destPlugins = this.pluginsToAdd.filter(
-        this.isNonSegmentDestinationPlugin
-      );
-
-      // now that they're all added, clear the cache
-      // this prevents this block running for every update
-      this.pluginsToAdd = [];
-
-      // if we do have destPlugins, bulk-register them with the system
-      // this isn't done as part of addPlugin to avoid dispatching an update as part of an update
-      // which can lead to an infinite loop
-      // this is safe to fire & forget here as we've cleared pluginsToAdd
-      if (destPlugins.length > 0) {
-        this.store.dispatch(
-          this.actions.system.addIntegrations(
-            (destPlugins as DestinationPlugin[]).map(({ key }) => ({ key }))
-          )
+        // filter to see if we need to register any
+        const destPlugins = this.pluginsToAdd.filter(
+          this.isNonSegmentDestinationPlugin
         );
+
+        // now that they're all added, clear the cache
+        // this prevents this block running for every update
+        this.pluginsToAdd = [];
+
+        // if we do have destPlugins, bulk-register them with the system
+        // this isn't done as part of addPlugin to avoid dispatching an update as part of an update
+        // which can lead to an infinite loop
+        // this is safe to fire & forget here as we've cleared pluginsToAdd
+        if (destPlugins.length > 0) {
+          this.store.dispatch(
+            this.actions.system.addIntegrations(
+              (destPlugins as DestinationPlugin[]).map(({ key }) => ({ key }))
+            )
+          );
+        }
+
+        // finally set the flag which means plugins will be added + registered immediately in future
+        this.isReady = true;
+      } finally {
+        this.isAddingPlugins = false;
       }
-
-      // finally set the flag which means plugins will be added + registered immediately in future
-      this.isReady = true;
-    }
-
-    const numEvents = main.events.length;
-    if (numEvents >= this.config.flushAt!) {
-      this.flush();
-    }
-
-    const numEventsToRetry = main.eventsToRetry.length;
-    if (numEventsToRetry && this.refreshTimeout === null) {
-      const retryIntervalMs = this.config.retryInterval! * 1000;
-      this.refreshTimeout = setTimeout(
-        () => this.flushRetry(),
-        retryIntervalMs
-      ) as any;
     }
   }
 
   async flushRetry() {
-    await flushRetry.bind(this)();
+    if (this.refreshTimeout === null) {
+      const retryIntervalMs = this.config.retryInterval! * 1000;
+      this.refreshTimeout = setTimeout(() => {
+        (async () => {
+          if (!this.isPendingRetryUpload) {
+            this.isPendingRetryUpload = true;
+            await flushRetry.bind(this)();
+            this.isPendingRetryUpload = false;
+          }
+        })();
+      }, retryIntervalMs);
+    }
   }
 
   private tick() {
@@ -353,7 +401,14 @@ export class SegmentClient {
   }
 
   async flush() {
-    await flush.bind(this)();
+    if (!this.isPendingUpload) {
+      this.isPendingUpload = true;
+      try {
+        await flush.bind(this)();
+      } finally {
+        this.isPendingUpload = false;
+      }
+    }
   }
 
   screen(name: string, options?: JsonMap) {

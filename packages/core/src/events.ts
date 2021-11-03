@@ -1,5 +1,6 @@
 import { getUUID } from './uuid';
 
+import type { Store } from './store';
 import {
   GroupEventType,
   GroupTraits,
@@ -11,7 +12,6 @@ import {
   AliasEventType,
   EventType,
   SegmentEvent,
-  Store,
 } from './types';
 
 export const createTrackEvent = ({

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { SegmentEvent, Context, Config, PartialContext } from '../types';
+import type { Config, Context, PartialContext, SegmentEvent } from '../types';
 
 type MainState = {
   events: SegmentEvent[];
