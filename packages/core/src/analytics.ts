@@ -384,8 +384,11 @@ export class SegmentClient {
         (async () => {
           if (!this.isPendingRetryUpload) {
             this.isPendingRetryUpload = true;
-            await flushRetry.bind(this)();
-            this.isPendingRetryUpload = false;
+            try {
+              await flushRetry.bind(this)();
+            } finally {
+              this.isPendingRetryUpload = false;
+            }
           }
         })();
       }, retryIntervalMs);
