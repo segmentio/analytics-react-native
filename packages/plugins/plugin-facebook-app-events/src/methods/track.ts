@@ -49,24 +49,18 @@ const sanitizeName = (name: string) => {
   return sanitizedName.substring(0, MAX_CHARACTERS_EVENT_NAME);
 };
 
-const fbParams = (
+const sanitizeEvent = (
   event: Record<string, any>
 ): { [key: string]: string | number } => {
   let products = event.properties.products ?? [];
-  const productCount =
-    (event.properties.fb_num_items || products.length) ?? undefined;
-  let params = {};
+  const productCount = (event.properties.fb_num_items || products.length) ?? 0;
+  let params: { [key: string]: string | number } = {};
 
-  Object.keys(
-    event.properties.forEach((property: string) => {
-      if (property in mapEventNames) {
-        params = {
-          ...params,
-          [property]: event.properties[property],
-        };
-      }
-    })
-  );
+  Object.keys(event.properties).forEach((property: string) => {
+    if (property in Object.values(mapEventProps)) {
+      params = params[property] = event.properties[property];
+    }
+  });
 
   return {
     ...params,
@@ -80,7 +74,7 @@ export default async (event: TrackEventType) => {
   const safeEvent = mappedPropNames(event);
   let convertedName = safeEvent.event as string;
   let safeName = sanitizeName(convertedName);
-  let safeProps = fbParams(safeEvent);
+  let safeProps = sanitizeEvent(safeEvent);
   const currency = (safeProps.fb_currency as string | undefined) ?? 'USD';
 
   if (safeProps._valueToSum !== undefined) {

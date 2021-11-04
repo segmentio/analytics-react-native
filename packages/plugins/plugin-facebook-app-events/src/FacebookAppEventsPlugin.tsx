@@ -28,6 +28,7 @@ export class FacebookAppEventsPlugin extends DestinationPlugin {
     //default facebook data processing options
     Settings.setDataProcessingOptions([], 0, 0);
   }
+
   track(event: TrackEventType) {
     track(event);
     return event;
