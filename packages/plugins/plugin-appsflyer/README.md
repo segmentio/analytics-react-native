@@ -9,13 +9,13 @@ You can provide [additional options](https://github.com/AppsFlyerSDK/appsflyer-r
 
 import { createClient } from '@segment/analytics-react-native';
 
-import { FacebookAppEventsPlugin } from '@segment/analytics-react-native-plugin-appsflyer';
+import { AppsflyerPlugin } from '@segment/analytics-react-native-plugin-appsflyer';
 
 const segmentClient = createClient({
   writeKey: 'SEGMENT_KEY'
 });
 
-const plugin = new FacebookAppEventsPlugin({
+const plugin = new AppsflyerPlugin({
   devKey: 'K2***********99',
   isDebug: false,
   appId: '41*****44',

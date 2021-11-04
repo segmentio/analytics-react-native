@@ -28,6 +28,8 @@ const mapEventProps: { [key: string]: string } = {
   quantity: 'fb_num_items',
 } as any;
 
+const MAX_CHARACTERS_EVENT_NAME = 40;
+
 const transformMap: { [key: string]: (value: any) => any } = {
   event: (value: string) => {
     if (value in mapEventNames) {
@@ -42,23 +44,22 @@ const mappedPropNames = generateMapTransform(mapEventProps, transformMap);
 const sanitizeName = (name: string) => {
   //Facebook expects '_' instead of '.'
   // and only accepts 40 characters in Event Names
-  let re = /\./gi;
-  let sanitizedName = name.replace(re, '_');
-  return sanitizedName.substring(0, 40);
+
+  let sanitizedName = name.replace('.', '_');
+  return sanitizedName.substring(0, MAX_CHARACTERS_EVENT_NAME);
 };
 
 const fbParams = (
   event: Record<string, any>
 ): { [key: string]: string | number } => {
-  let productCount = 0;
-  let products = event.properties.products || [];
+  let products = event.properties.products ?? [];
+  const productCount =
+    (event.properties.fb_num_items || products.length) ?? undefined;
   let params = {};
 
   Object.keys(
     event.properties.forEach((property: string) => {
-      if (property === 'fb_num_items') {
-        productCount = event.properties.fb_num_items;
-      } else if (property in mapEventNames) {
+      if (property in mapEventNames) {
         params = {
           ...params,
           [property]: event.properties[property],
@@ -66,13 +67,6 @@ const fbParams = (
       }
     })
   );
-
-  if (products.length) {
-    products.forEach((product: any) => {
-      productCount++;
-      return product;
-    });
-  }
 
   return {
     ...params,
@@ -87,11 +81,9 @@ export default async (event: TrackEventType) => {
   let convertedName = safeEvent.event as string;
   let safeName = sanitizeName(convertedName);
   let safeProps = fbParams(safeEvent);
-  let currency = 'USD';
-  if (Object.values(safeProps).includes('fb_currency')) {
-    currency = safeProps.fb_currency as string;
-  }
-  if (Object.values(safeProps).includes('_valueToSum')) {
+  const currency = (safeProps.fb_currency as string | undefined) ?? 'USD';
+
+  if (safeProps._valueToSum !== undefined) {
     let purchasePrice = safeProps.price as number;
 
     AppEventsLogger.logPurchase(purchasePrice, currency, safeProps);
