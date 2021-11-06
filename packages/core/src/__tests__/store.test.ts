@@ -27,7 +27,7 @@ const initialState = {
   userInfo: userInfoInitialState,
 };
 
-jest.mock('@react-native-community/async-storage', () => ({
+jest.mock('@react-native-async-storage/async-storage', () => ({
   getItem: jest.fn(),
   setItem: jest.fn(),
 }));
