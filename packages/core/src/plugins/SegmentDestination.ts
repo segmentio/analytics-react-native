@@ -1,16 +1,11 @@
 import { DestinationPlugin } from '../plugin';
 import {
+  IntegrationSettings,
   PluginType,
+  SegmentAPIIntegrations,
   SegmentAPISettings,
   SegmentEvent,
   UpdateType,
-} from '../types';
-import type {
-  AliasEventType,
-  GroupEventType,
-  IdentifyEventType,
-  ScreenEventType,
-  TrackEventType,
 } from '../types';
 import { chunk } from '../util';
 import { sendEvents } from '../api';
@@ -26,29 +21,32 @@ export class SegmentDestination extends DestinationPlugin {
     // see flush() below
   }
 
-  identify(event: IdentifyEventType) {
-    this.queueEvent(event);
-    return event;
-  }
+  execute(event: SegmentEvent): SegmentEvent {
+    const pluginSettings = this.analytics?.getSettings();
+    const plugins = this.analytics?.getPlugins(PluginType.destination);
 
-  track(event: TrackEventType) {
-    this.queueEvent(event);
-    return event;
-  }
+    // Disable all destinations that have a device mode plugin
+    const deviceModePlugins =
+      plugins?.map((plugin) => (plugin as DestinationPlugin).key) ?? [];
+    const cloudSettings: SegmentAPIIntegrations = {
+      ...pluginSettings?.integrations,
+    };
+    for (const key of deviceModePlugins) {
+      if (key in cloudSettings) {
+        cloudSettings[key] = false;
+      }
+    }
 
-  screen(event: ScreenEventType) {
-    this.queueEvent(event);
-    return event;
-  }
-
-  alias(event: AliasEventType) {
-    this.queueEvent(event);
-    return event;
-  }
-
-  group(event: GroupEventType) {
-    this.queueEvent(event);
-    return event;
+    // User/event defined integrations override the cloud/device mode merge
+    const mergedEvent = {
+      ...event,
+      integrations: {
+        ...cloudSettings,
+        ...event?.integrations,
+      },
+    };
+    this.queueEvent(mergedEvent);
+    return mergedEvent;
   }
 
   queueEvent(event: SegmentEvent) {

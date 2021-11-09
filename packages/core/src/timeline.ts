@@ -25,7 +25,7 @@ export class Timeline {
     } else {
       this.plugins[type] = [plugin];
     }
-    const settings = plugin.analytics?.settings();
+    const settings = plugin.analytics?.getSettings();
     if (settings) {
       plugin.update(settings, UpdateType.initial);
     }

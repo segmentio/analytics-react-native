@@ -1,7 +1,7 @@
 import {
   Context,
   EventType,
-  Integrations,
+  SegmentAPIIntegrations,
   TrackEventType,
   UserTraits,
 } from '../types';
@@ -43,7 +43,7 @@ describe('#sendEvents', () => {
     // Context and Integration exist on SegmentEvents but are transmitted separately to avoid duplication
     const additionalEventProperties: {
       context: Context;
-      integrations: Integrations;
+      integrations: SegmentAPIIntegrations;
     } = {
       context: await context.getContext({ name: 'Hello' }),
       integrations: {
@@ -66,13 +66,7 @@ describe('#sendEvents', () => {
     expect(fetch).toHaveBeenCalledWith('https://api.segment.io/v1/batch', {
       method: 'POST',
       body: JSON.stringify({
-        batch: [
-          { ...serializedEventProperties, sentAt: '2001-01-01T00:00:00.000Z' },
-        ],
-        context: { appName: 'Segment Example', traits: { name: 'Hello' } },
-        integrations: {
-          Firebase: false,
-        },
+        batch: [{ ...event, sentAt: '2001-01-01T00:00:00.000Z' }],
       }),
       headers: {
         'Authorization': 'Basic U0VHTUVOVF9LRVk6',

@@ -13,7 +13,7 @@ const doClientSetup = async (client: SegmentClient) => {
   await client.bootstrapStore();
 
   // get destination settings
-  await client.getSettings();
+  await client.fetchSettings();
 
   // flush any stored events
   client.flush();

@@ -1,10 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { defaultConfig } from '../constants';
-import type { SegmentAPISettings, Config, Integrations } from '../types';
+import type { SegmentAPISettings, Config, IntegrationSettings } from '../types';
 
 type SystemState = {
   configuration: Config;
-  integrations?: Integrations;
   settings?: SegmentAPISettings;
 };
 
@@ -23,23 +22,34 @@ export default createSlice({
       state,
       action: PayloadAction<{ settings: SegmentAPISettings }>
     ) => {
-      state.settings = action.payload.settings;
+      return {
+        ...state,
+        settings: {
+          ...state.settings,
+          ...action.payload.settings,
+        },
+      };
     },
-    addIntegrations: (state, action: PayloadAction<{ key: string }[]>) => {
-      // we need to set any destination plugins to false in the
-      // integrations payload.  this prevents them from being sent
-      // by segment.com once an event reaches segment.
-      if (!state.integrations) {
-        state.integrations = {};
-      }
-      action.payload.forEach(({ key }) => {
-        state.integrations![key] = false;
-      });
-    },
-    removeIntegration: (state, action: PayloadAction<{ key: string }>) => {
-      if (state.integrations) {
-        delete state.integrations[action.payload.key];
-      }
+    addDestination: (
+      state,
+      action: PayloadAction<{
+        destination: {
+          key: string;
+          settings: IntegrationSettings;
+        };
+      }>
+    ) => {
+      return {
+        ...state,
+        settings: {
+          ...state.settings,
+          integrations: {
+            ...state.settings?.integrations,
+            [action.payload.destination.key]:
+              action.payload.destination.settings,
+          },
+        },
+      };
     },
   },
 });
