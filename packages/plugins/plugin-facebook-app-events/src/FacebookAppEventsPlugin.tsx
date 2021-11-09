@@ -60,16 +60,14 @@ export class FacebookAppEventsPlugin extends DestinationPlugin {
     Settings.setDataProcessingOptions([], 0, 0);
   }
 
-  // @ts-ignore
-  //implicit return
   update(settings: SegmentAPISettings, _: UpdateType) {
-    if (isFBPluginSettings(settings.integrations['Facebook App Events'])) {
-      this.trackScreens =
-        settings.integrations['Facebook App Events'].trackScreenEvent;
-    } else {
-      return false;
+    const fbSettings = settings.integrations[this.key];
+
+    if (isFBPluginSettings(fbSettings)) {
+      this.trackScreens = fbSettings.trackScreenEvent;
     }
   }
+
   track(event: TrackEventType) {
     track(event);
     return event;
