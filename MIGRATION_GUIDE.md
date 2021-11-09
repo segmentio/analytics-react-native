@@ -81,7 +81,7 @@ package.json
 "dependencies": {
   ...
  "nanoid": "^3.1.30",
- "@react-native-community/async-storage": "^1.12.1",
+ "@react-native-async-storage/async-storage": "^1.15.11",
  "@segment/analytics-react-native": "2.0.0"
 }
 ```

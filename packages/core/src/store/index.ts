@@ -4,7 +4,7 @@ import {
   getDefaultMiddleware,
 } from '@reduxjs/toolkit';
 import { persistStore, persistReducer, PERSIST } from 'redux-persist';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import mainSlice from './main';
 import systemSlice from './system';
 import userInfo from './userInfo';
