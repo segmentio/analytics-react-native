@@ -24,6 +24,7 @@ export class Plugin {
     this.analytics = analytics;
   }
 
+  // @ts-ignore
   update(settings: SegmentAPISettings, type: UpdateType) {
     // do nothing by default, user can override.
   }

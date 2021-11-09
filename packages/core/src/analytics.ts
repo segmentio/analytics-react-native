@@ -328,18 +328,6 @@ export class SegmentClient {
     this.timeline.add(plugin);
   }
 
-  private isNonSegmentDestinationPlugin(plugin: Plugin) {
-    const isSegmentDestination =
-      Object.getPrototypeOf(plugin).constructor.name === 'SegmentDestination';
-    if (!isSegmentDestination) {
-      const destPlugin = plugin as DestinationPlugin;
-      if (destPlugin.key) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   /**
      Removes and unloads plugins with a matching name from the system.
 
