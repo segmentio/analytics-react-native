@@ -18,26 +18,31 @@ import { useState } from 'react';
 import { Logger } from './plugins/Logger';
 // @ts-ignore
 // import { FirebasePlugin } from '@segment/analytics-react-native-plugin-firebase';
+
+// @ts-ignore
+// import { FacebookAppEventsPlugin } from '@segment/analytics-react-native-plugin-facebook-app-events';
+
 // @ts-ignore
 import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
 // @ts-ignore
 import { AmplitudeSessionPlugin } from '@segment/analytics-react-native-plugin-amplitude-session';
-// @ts-ignore
-import { FacebookAppEventsPlugin } from '@segment/analytics-react-native-plugin-facebook-app-events';
 
 const segmentClient = createClient({
-  writeKey: 'BRoigAmFuQv7x5YhIWlvHJeKzqT6Yn5g',
+  writeKey: 'WRITE KEY',
   trackAppLifecycleEvents: true,
 });
 
 const LoggerPlugin = new Logger();
 segmentClient.add({ plugin: LoggerPlugin });
 
-// If you want to test the Firebase plugin make sure to add your own API_KEY in example/ios/GoogleService-Info.plist
+// To test the Firebase plugin make sure to add your own API_KEY in example/ios/GoogleService-Info.plist
 // segmentClient.add({ plugin: new FirebasePlugin() });
+
+// To test the Facebook App Events plugin make sure to add your Facebook App Id to Info.plist
+// segmentClient.add({ plugin: new FacebookAppEventsPlugin() });
+
 segmentClient.add({ plugin: new IdfaPlugin() });
 segmentClient.add({ plugin: new AmplitudeSessionPlugin() });
-segmentClient.add({ plugin: new FacebookAppEventsPlugin() });
 
 const MainStack = createStackNavigator();
 const RootStack = createStackNavigator();

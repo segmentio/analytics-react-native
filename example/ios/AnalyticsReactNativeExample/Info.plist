@@ -34,10 +34,6 @@
 			</array>
 		</dict>
 	</array>
-	<key>FacebookAppID</key>
-  <string>1200964977061699</string>
-  <key>FacebookDisplayName</key>
-  <string>segtest</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>

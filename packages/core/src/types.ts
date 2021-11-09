@@ -243,12 +243,18 @@ export type SegmentAdjustSettings = {
   delayTime?: number;
 };
 
+export type IntegrationSettings =
+  // Strongly typed known integration settings
+  | SegmentAPIIntegration
+  | SegmentAmplitudeIntegration
+  | SegmentAdjustSettings
+  // Support any kind of configuration in the future
+  | Record<string, any>
+  // enable/disable the integration at cloud level
+  | boolean;
+
 export type SegmentAPIIntegrations = {
-  [key: string]:
-    | SegmentAPIIntegration
-    | SegmentAmplitudeIntegration
-    | SegmentAdjustSettings
-    | false;
+  [key: string]: IntegrationSettings;
 };
 
 export type SegmentAPISettings = {
