@@ -1,6 +1,5 @@
 import { DestinationPlugin } from '../plugin';
 import {
-  IntegrationSettings,
   PluginType,
   SegmentAPIIntegrations,
   SegmentAPISettings,
