@@ -26,10 +26,11 @@ import {
   Store,
 } from './store';
 import { Timeline } from './timeline';
-import type {
+import {
   Config,
   GroupTraits,
   JsonMap,
+  PluginType,
   SegmentAPISettings,
   SegmentEvent,
   UserTraits,
@@ -106,13 +107,34 @@ export class SegmentClient {
     return plugins;
   }
 
-  settings() {
-    let settings: SegmentAPISettings | undefined;
+  /**
+   * Retrieves a copy of the settings
+   * @returns Configuration object for all plugins
+   */
+  getSettings() {
     const { system } = this.store.getState();
-    if (system.settings) {
-      settings = system.settings;
+    return { integrations: { ...system.settings?.integrations } };
+  }
+
+  /**
+   * Returns the plugins currently loaded in the timeline
+   * @param ofType Type of plugins, defaults to all
+   * @returns List of Plugin objects
+   */
+  getPlugins(ofType?: PluginType): readonly Plugin[] {
+    const plugins = { ...this.timeline.plugins };
+    if (ofType !== undefined) {
+      return [...(plugins[ofType] ?? [])];
     }
-    return settings;
+    return (
+      [
+        ...this.getPlugins(PluginType.before),
+        ...this.getPlugins(PluginType.enrichment),
+        ...this.getPlugins(PluginType.utility),
+        ...this.getPlugins(PluginType.destination),
+        ...this.getPlugins(PluginType.after),
+      ] ?? []
+    );
   }
 
   constructor({
@@ -159,7 +181,7 @@ export class SegmentClient {
     );
   }
 
-  async getSettings() {
+  async fetchSettings() {
     await getSettings.bind(this)();
   }
 
@@ -270,47 +292,40 @@ export class SegmentClient {
   }
 
   /**
-     Adds a new plugin to the currently loaded set.
-
-     - Parameter plugin: The plugin to be added.
-     - Returns: Returns the name of the supplied plugin.
-
-  */
-  add({ plugin }: { plugin: Plugin }) {
+   * Adds a new plugin to the currently loaded set.
+   * @param {{ plugin: Plugin, settings?: SegmentAPISettings }} Plugin to be added. Settings are optional if you want to force a configuration instead of the Segment Cloud received one
+   */
+  add({
+    plugin,
+    settings,
+  }: {
+    plugin: Plugin;
+    settings?: Plugin extends DestinationPlugin ? SegmentAPISettings : never;
+  }) {
     // plugins can either be added immediately or
     // can be cached and added later during the next state update
     // this is to avoid adding plugins before network requests made as part of setup have resolved
+    if (settings !== undefined && plugin.type === PluginType.destination) {
+      this.store.dispatch(
+        this.actions.system.addDestination({
+          destination: {
+            key: (plugin as DestinationPlugin).key,
+            settings,
+          },
+        })
+      );
+    }
+
     if (!this.isReady) {
       this.pluginsToAdd.push(plugin);
     } else {
       this.addPlugin(plugin);
-      const isIntegration = this.isNonSegmentDestinationPlugin(plugin);
-      if (isIntegration) {
-        // need to maintain the list of integrations to inject into payload
-        this.store.dispatch(
-          this.actions.system.addIntegrations([
-            { key: (plugin as DestinationPlugin).key },
-          ])
-        );
-      }
     }
   }
 
   private addPlugin(plugin: Plugin) {
     plugin.configure(this);
     this.timeline.add(plugin);
-  }
-
-  private isNonSegmentDestinationPlugin(plugin: Plugin) {
-    const isSegmentDestination =
-      Object.getPrototypeOf(plugin).constructor.name === 'SegmentDestination';
-    if (!isSegmentDestination) {
-      const destPlugin = plugin as DestinationPlugin;
-      if (destPlugin.key) {
-        return true;
-      }
-    }
-    return false;
   }
 
   /**
@@ -320,14 +335,6 @@ export class SegmentClient {
   */
   remove({ plugin }: { plugin: Plugin }) {
     this.timeline.remove(plugin);
-    const isIntegration = this.isNonSegmentDestinationPlugin(plugin);
-    if (isIntegration) {
-      this.store.dispatch(
-        this.actions.system.removeIntegration({
-          key: (plugin as DestinationPlugin).key,
-        })
-      );
-    }
   }
 
   process(incomingEvent: SegmentEvent) {
@@ -348,26 +355,9 @@ export class SegmentClient {
           this.addPlugin(plugin);
         });
 
-        // filter to see if we need to register any
-        const destPlugins = this.pluginsToAdd.filter(
-          this.isNonSegmentDestinationPlugin
-        );
-
         // now that they're all added, clear the cache
         // this prevents this block running for every update
         this.pluginsToAdd = [];
-
-        // if we do have destPlugins, bulk-register them with the system
-        // this isn't done as part of addPlugin to avoid dispatching an update as part of an update
-        // which can lead to an infinite loop
-        // this is safe to fire & forget here as we've cleared pluginsToAdd
-        if (destPlugins.length > 0) {
-          this.store.dispatch(
-            this.actions.system.addIntegrations(
-              (destPlugins as DestinationPlugin[]).map(({ key }) => ({ key }))
-            )
-          );
-        }
 
         // finally set the flag which means plugins will be added + registered immediately in future
         this.isReady = true;

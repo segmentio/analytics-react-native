@@ -138,17 +138,6 @@ export class DestinationPlugin extends EventPlugin {
   */
   remove(plugin: Plugin) {
     this.timeline.remove(plugin);
-    const isSegmentDestination =
-      Object.getPrototypeOf(plugin).constructor.name === 'SegmentDestination';
-    if (!isSegmentDestination) {
-      const destPlugin = plugin as DestinationPlugin;
-      if (destPlugin.key) {
-        const { store, actions } = this.analytics!;
-        store.dispatch(
-          actions.system.addIntegrations([{ key: destPlugin.key }])
-        );
-      }
-    }
   }
 
   // find(pluginType: PluginType) {

@@ -142,7 +142,7 @@ describe('#mainTest', () => {
     expect(mockServerListener).toHaveBeenCalledTimes(1);
 
     const request = mockServerListener.mock.calls[0][0];
-    const context = request.context;
+    const context = request.batch[0].context;
 
     expect(request.batch).toHaveLength(1);
     expect(context.app.name).toBe('Analytics');

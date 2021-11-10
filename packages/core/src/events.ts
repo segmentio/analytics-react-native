@@ -79,14 +79,14 @@ const isAliasEvent = (event: SegmentEvent): event is AliasEventType =>
   event.type === EventType.AliasEvent;
 
 export const applyRawEventData = (event: SegmentEvent, store: Store) => {
-  const { system, userInfo } = store.getState();
+  const { userInfo } = store.getState();
 
   return {
     ...event,
     anonymousId: userInfo.anonymousId,
     messageId: getUUID(),
     timestamp: new Date().toISOString(),
-    integrations: system.integrations,
+    integrations: event.integrations ?? {},
     userId: isAliasEvent(event) ? event.userId : userInfo.userId,
   };
 };

@@ -19,48 +19,44 @@ export type SegmentEvent =
   | GroupEventType
   | AliasEventType;
 
-export type Integrations = {
-  [key: string]: false | SegmentAmplitudeIntegration;
-};
-
-type BaseEventType = {
+interface BaseEventType {
   anonymousId?: string;
   messageId?: string;
   userId?: string;
   timestamp?: string;
 
   context?: PartialContext;
-  integrations?: Integrations;
-};
+  integrations?: SegmentAPIIntegrations;
+}
 
-export type TrackEventType = BaseEventType & {
+export interface TrackEventType extends BaseEventType {
   type: EventType.TrackEvent;
   event: string;
   properties?: JsonMap;
-};
+}
 
-export type ScreenEventType = BaseEventType & {
+export interface ScreenEventType extends BaseEventType {
   type: EventType.ScreenEvent;
   name: string;
   properties: JsonMap;
-};
+}
 
-export type IdentifyEventType = BaseEventType & {
+export interface IdentifyEventType extends BaseEventType {
   type: EventType.IdentifyEvent;
   traits: UserTraits;
-};
+}
 
-export type GroupEventType = BaseEventType & {
+export interface GroupEventType extends BaseEventType {
   type: EventType.GroupEvent;
   groupId: string;
   traits: GroupTraits;
-};
+}
 
-export type AliasEventType = BaseEventType & {
+export interface AliasEventType extends BaseEventType {
   type: EventType.AliasEvent;
   userId?: string;
   previousId: string;
-};
+}
 
 export type UserTraits = JsonMap & {
   address?: {
@@ -243,12 +239,18 @@ export type SegmentAdjustSettings = {
   delayTime?: number;
 };
 
+export type IntegrationSettings =
+  // Strongly typed known integration settings
+  | SegmentAPIIntegration
+  | SegmentAmplitudeIntegration
+  | SegmentAdjustSettings
+  // Support any kind of configuration in the future
+  | Record<string, any>
+  // enable/disable the integration at cloud level
+  | boolean;
+
 export type SegmentAPIIntegrations = {
-  [key: string]:
-    | SegmentAPIIntegration
-    | SegmentAmplitudeIntegration
-    | SegmentAdjustSettings
-    | false;
+  [key: string]: IntegrationSettings;
 };
 
 export type SegmentAPISettings = {
