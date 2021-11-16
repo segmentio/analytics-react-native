@@ -1,5 +1,8 @@
-import type { TrackEventType } from '@segment/analytics-react-native';
-import { generateMapTransform } from '@segment/analytics-react-native';
+import {
+  TrackEventType,
+  generateMapTransform,
+} from '@segment/analytics-react-native';
+
 import { AppEventsLogger } from 'react-native-fbsdk-next';
 import { mapEventProps, transformMap } from './parameterMapping';
 
@@ -20,22 +23,23 @@ const sanitizeEvent = (
   let products = event.properties.products ?? [];
   const productCount = (event.properties.fb_num_items || products.length) ?? 0;
   let params: { [key: string]: string | number } = {};
+  let logTime = event.timestamp ?? undefined;
 
   Object.keys(event.properties).forEach((property: string) => {
-    if (property in Object.values(mapEventProps)) {
-      params = params[property] = event.properties[property];
+    if (Object.values(mapEventProps).some((fbProp) => fbProp === property)) {
+      params[property] = event.properties[property];
     }
   });
 
   return {
     ...params,
     fb_num_items: productCount,
-    _logTime: event.timestamp,
+    _logTime: logTime,
     _appVersion: event.context.app.version,
   };
 };
 
-export default async (event: TrackEventType) => {
+export default (event: TrackEventType) => {
   const safeEvent = mappedPropNames(event);
   let convertedName = safeEvent.event as string;
   let safeName = sanitizeName(convertedName);
@@ -43,7 +47,7 @@ export default async (event: TrackEventType) => {
   const currency = (safeProps.fb_currency as string | undefined) ?? 'USD';
 
   if (safeProps._valueToSum !== undefined) {
-    let purchasePrice = safeProps.price as number;
+    let purchasePrice = safeProps._valueToSum as number;
 
     AppEventsLogger.logPurchase(purchasePrice, currency, safeProps);
   } else {
