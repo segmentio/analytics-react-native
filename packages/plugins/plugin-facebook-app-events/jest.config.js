@@ -4,4 +4,3 @@ module.exports = {
   testPathIgnorePatterns: ['<rootDir>/src/__tests__/__helpers__/'],
   modulePathIgnorePatterns: ['/lib/'],
 };
-
