@@ -7,7 +7,7 @@ const MAX_CHARACTERS_EVENT_NAME = 40 - PREFIX.length - SUFFIX.length;
 
 const sanitizeName = (name: string) => {
   let trimmedName = name.substring(0, MAX_CHARACTERS_EVENT_NAME);
-  return `${PREFIX}${trimmedName}${SUFFIX}`;
+  return `${PREFIX} ${trimmedName} ${SUFFIX}`;
 };
 
 const sanitizeEvent = (
