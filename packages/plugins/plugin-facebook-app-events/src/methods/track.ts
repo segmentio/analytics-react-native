@@ -40,7 +40,7 @@ const sanitizeEvent = (
 };
 
 export default (event: TrackEventType) => {
-  const safeEvent = mappedPropNames(event as TrackEventType);
+  const safeEvent = mappedPropNames(event as Record<string, any>);
   let convertedName = safeEvent.event as string;
   let safeName = sanitizeName(convertedName);
   let safeProps = sanitizeEvent(safeEvent);
