@@ -5,7 +5,7 @@
     "packages/plugins/*"
   ],
   "scripts": {
-    "test": "(yarn --cwd packages/core test) && (./exec_plugins.sh yarn test --passWithNoTests)",
+    "test": "jest",
     "typescript": "tsc --noEmit --composite false",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "release": "release-it",
