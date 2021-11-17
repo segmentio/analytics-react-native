@@ -9,6 +9,10 @@ jest.mock('react-native-fbsdk-next', () => ({
   },
 }));
 
+// jest.mock('../../../../core/src/context', () => ({
+//   getContext: jest.fn().mockResolvedValue({}),
+// }));
+
 describe('#track', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -76,109 +80,4 @@ describe('#track', () => {
       expected
     );
   });
-
-  //
-  //   it('logs an order completed event in the correct currency', () => {
-  //     const payload = {
-  //       type: 'track',
-  //       event: 'Order Completed',
-  //       properties: {
-  //         currency: 'JPY',
-  //         foo: 'bar',
-  //       },
-  //     };
-  //
-  //     track(payload as TrackEventType);
-  //
-  //     expect(logPurchase).toHaveBeenCalledWith('Order Completed', '0', 'JPY', 1, {
-  //       foo: 'bar',
-  //     });
-  //   });
-  //
-  //   it('logs an order completed event with revenue', () => {
-  //     const payload = {
-  //       type: 'track',
-  //       event: 'Order Completed',
-  //       properties: {
-  //         revenue: 399.99,
-  //         foo: 'bar',
-  //       },
-  //     };
-  //
-  //     track(payload as TrackEventType);
-  //
-  //     expect(logPurchase).toHaveBeenCalledWith(
-  //       'Order Completed',
-  //       '399.99',
-  //       'USD',
-  //       1,
-  //       {
-  //         foo: 'bar',
-  //       }
-  //     );
-  //   });
-  //
-  //   it('logs an order completed event with revenue as string', () => {
-  //     const payload = {
-  //       type: 'track',
-  //       event: 'Order Completed',
-  //       properties: {
-  //         revenue: '399.99',
-  //         foo: 'bar',
-  //       },
-  //     };
-  //
-  //     track(payload as TrackEventType);
-  //
-  //     expect(logPurchase).toHaveBeenCalledWith(
-  //       'Order Completed',
-  //       '399.99',
-  //       'USD',
-  //       1,
-  //       {
-  //         foo: 'bar',
-  //       }
-  //     );
-  //   });
-  //
-  //   it('logs an order completed event with revenue as 0', () => {
-  //     const payload = {
-  //       type: 'track',
-  //       event: 'Order Completed',
-  //       properties: {
-  //         revenue: {},
-  //         foo: 'bar',
-  //       },
-  //     };
-  //
-  //     track(payload as TrackEventType);
-  //
-  //     expect(logPurchase).toHaveBeenCalledWith('Order Completed', '0', 'USD', 1, {
-  //       foo: 'bar',
-  //     });
-  //   });
-  //
-  //   it('logs an order completed event with products', () => {
-  //     const payload = {
-  //       type: 'track',
-  //       event: 'Order Completed',
-  //       properties: {
-  //         revenue: '399.99',
-  //         products: [
-  //           {
-  //             productId: '123',
-  //             price: '399.99',
-  //             quantity: 4,
-  //           },
-  //         ],
-  //         foo: 'bar',
-  //       },
-  //     };
-  //
-  //     track(payload as TrackEventType);
-  //
-  //     expect(logPurchase).toHaveBeenCalledWith('123', '399.99', 'USD', 4, {
-  //       foo: 'bar',
-  //     });
-  //   });
 });
