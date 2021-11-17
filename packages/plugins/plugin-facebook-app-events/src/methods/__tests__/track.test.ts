@@ -9,10 +9,6 @@ jest.mock('react-native-fbsdk-next', () => ({
   },
 }));
 
-// jest.mock('../../../../core/src/context', () => ({
-//   getContext: jest.fn().mockResolvedValue({}),
-// }));
-
 describe('#track', () => {
   beforeEach(() => {
     jest.clearAllMocks();
