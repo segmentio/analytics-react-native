@@ -25,10 +25,7 @@ export class IdfaPlugin extends Plugin {
   getTrackingStatus() {
     getTrackingAuthorizationStatus().then((idfa: IdfaData) => {
       // update our context (in Redux) with the idfa data
-      const { store, actions } = this.analytics!;
-      store.dispatch(
-        actions.main.updateContext({ context: { device: { ...idfa } } })
-      );
+      this.analytics?.updateContext({ device: { ...idfa } });
     });
   }
 }

@@ -1,13 +1,17 @@
 import { getMockLogger } from '../__helpers__/mockLogger';
-import getSettings from '../../internal/getSettings';
-import type { SegmentClientContext } from '../../client';
+import { SegmentClient } from '../../analytics';
+import { mockPersistor } from '../__helpers__/mockPersistor';
 
 describe('internal #getSettings', () => {
   const updateSettings = jest.fn();
+  const defaultIntegrationSettings = {
+    integrations: {},
+  };
 
-  const clientContext = {
+  const defaultConfig = {
     config: {
       writeKey: '123-456',
+      defaultSettings: defaultIntegrationSettings,
     },
     store: {
       dispatch: () => {},
@@ -19,14 +23,17 @@ describe('internal #getSettings', () => {
       },
     } as any,
     logger: getMockLogger(),
-  } as SegmentClientContext;
+    persistor: mockPersistor,
+  };
+  let client = new SegmentClient(defaultConfig);
 
   beforeEach(() => {
     updateSettings.mockReset();
+    client = new SegmentClient(defaultConfig);
 
-    jest.spyOn(clientContext.logger, 'error');
-    jest.spyOn(clientContext.logger, 'info');
-    jest.spyOn(clientContext.logger, 'warn');
+    jest.spyOn(client.logger, 'error');
+    jest.spyOn(client.logger, 'info');
+    jest.spyOn(client.logger, 'warn');
   });
 
   it('fetches the settings succesfully ', async () => {
@@ -35,15 +42,15 @@ describe('internal #getSettings', () => {
       json: () => mockJSONResponse,
     });
     // @ts-ignore
-    fetch = jest.fn(() => Promise.resolve(mockResponse));
+    global.fetch = jest.fn(() => Promise.resolve(mockResponse));
 
-    await getSettings.bind(clientContext)();
+    await client.fetchSettings();
 
     expect(fetch).toHaveBeenCalledWith(
       'https://cdn-settings.segment.com/v1/projects/123-456/settings'
     );
 
-    expect(clientContext.logger.info).toHaveBeenCalledWith(
+    expect(client.logger.info).toHaveBeenCalledWith(
       'Received settings from Segment succesfully.'
     );
     expect(updateSettings).toHaveBeenCalledWith({ settings: mockJSONResponse });
@@ -51,39 +58,35 @@ describe('internal #getSettings', () => {
 
   it('fails to the settings succesfully and uses the default if specified', async () => {
     // @ts-ignore
-    fetch = jest.fn(() => Promise.reject());
+    global.fetch = jest.fn(() => Promise.reject());
 
-    const defaultSettings = { integrations: {} };
-
-    const caseClientContext = {
-      ...clientContext,
-      config: {
-        writeKey: clientContext.config.writeKey,
-        defaultSettings,
-      },
-    } as SegmentClientContext;
-
-    await getSettings.bind(caseClientContext)();
+    await client.fetchSettings();
 
     expect(fetch).toHaveBeenCalledWith(
       'https://cdn-settings.segment.com/v1/projects/123-456/settings'
     );
-    expect(clientContext.logger.warn).toHaveBeenCalledWith(
+    expect(client.logger.warn).toHaveBeenCalledWith(
       'Could not receive settings from Segment. Will use the default settings.'
     );
-    expect(updateSettings).toHaveBeenCalledWith({ settings: defaultSettings });
+    expect(updateSettings).toHaveBeenCalledWith({
+      settings: defaultIntegrationSettings,
+    });
   });
 
   it('fails to the settings succesfully and has no default settings', async () => {
     // @ts-ignore
-    fetch = jest.fn(() => Promise.reject());
+    global.fetch = jest.fn(() => Promise.reject());
+    client = new SegmentClient({
+      ...defaultConfig,
+      config: { ...defaultConfig.config, defaultSettings: undefined },
+    });
 
-    await getSettings.bind(clientContext)();
+    await client.fetchSettings();
 
     expect(fetch).toHaveBeenCalledWith(
       'https://cdn-settings.segment.com/v1/projects/123-456/settings'
     );
-    expect(clientContext.logger.warn).toHaveBeenCalledWith(
+    expect(client.logger.warn).toHaveBeenCalledWith(
       'Could not receive settings from Segment. Device mode destinations will be ignored unless you specify default settings in the client config.'
     );
     expect(updateSettings).not.toHaveBeenCalled();

@@ -1,11 +1,13 @@
 import track from '../track';
+import type { TrackEventType } from '@segment/analytics-react-native';
+import { Adjust } from 'react-native-adjust';
 import {
-  addSessionPartnerParameter,
   addCallbackParameter,
   setRevenue,
   setTransactionId,
 } from '../__mocks__/react-native-adjust';
-import type { TrackEventType } from '@segment/analytics-react-native';
+
+jest.mock('react-native-adjust');
 
 describe('#track', () => {
   beforeEach(() => {
@@ -26,7 +28,7 @@ describe('#track', () => {
 
     track(event as TrackEventType, settings);
 
-    expect(addSessionPartnerParameter).toHaveBeenCalledWith(
+    expect(Adjust.addSessionPartnerParameter).toHaveBeenCalledWith(
       'anonymous_id',
       'anon'
     );
@@ -52,7 +54,7 @@ describe('#track', () => {
 
     track(event as TrackEventType, settings);
 
-    expect(addSessionPartnerParameter).toHaveBeenCalledWith(
+    expect(Adjust.addSessionPartnerParameter).toHaveBeenCalledWith(
       'anonymous_id',
       'anon'
     );
@@ -83,7 +85,7 @@ describe('#track', () => {
 
     track(event as TrackEventType, settings);
 
-    expect(addSessionPartnerParameter).toHaveBeenCalledWith(
+    expect(Adjust.addSessionPartnerParameter).toHaveBeenCalledWith(
       'anonymous_id',
       'anon'
     );
@@ -112,7 +114,7 @@ describe('#track', () => {
 
     track(event as TrackEventType, settings);
 
-    expect(addSessionPartnerParameter).toHaveBeenCalledWith(
+    expect(Adjust.addSessionPartnerParameter).toHaveBeenCalledWith(
       'anonymous_id',
       'anon'
     );

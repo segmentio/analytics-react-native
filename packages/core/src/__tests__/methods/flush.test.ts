@@ -1,10 +1,32 @@
-import type { SegmentClientContext } from '../../client';
-import flush from '../../methods/flush';
+import { SegmentClient } from '../../analytics';
 import { getMockLogger } from '../__helpers__/mockLogger';
 // import * as api from '../../api';
 import { PluginType, SegmentEvent } from '../../types';
 import { getMockTimeline } from '../__helpers__/mockTimeline';
 import type { DestinationPlugin } from '../../plugin';
+import { mockPersistor } from '../__helpers__/mockPersistor';
+
+const defaultClientSettings = {
+  logger: getMockLogger(),
+  store: {
+    dispatch: jest.fn() as jest.MockedFunction<any>,
+    getState: () => ({
+      main: {
+        events: [
+          { messageId: 'message-1' },
+          { messageId: 'message-2' },
+          { messageId: 'message-3' },
+          { messageId: 'message-4' },
+        ] as SegmentEvent[],
+      },
+    }),
+  },
+  config: {
+    writeKey: 'mock-write-key',
+  },
+  persistor: mockPersistor,
+  actions: {},
+};
 
 describe('methods #flush', () => {
   afterEach(() => {
@@ -12,40 +34,22 @@ describe('methods #flush', () => {
   });
 
   it('does not send any events when the client is destroyed', async () => {
-    const clientContext = {
-      destroyed: true,
-      secondsElapsed: 10,
-      logger: getMockLogger(),
-      store: {
-        dispatch: jest.fn() as jest.MockedFunction<any>,
-        getState: () => ({
-          main: {
-            events: [
-              { messageId: 'message-1' },
-              { messageId: 'message-2' },
-              { messageId: 'message-3' },
-              { messageId: 'message-4' },
-            ] as SegmentEvent[],
-          },
-        }),
-      },
-      timeline: getMockTimeline(),
-    } as SegmentClientContext;
+    const client = new SegmentClient(defaultClientSettings);
 
-    await flush.bind(clientContext)();
+    // @ts-ignore
+    client.timeline = getMockTimeline();
+    client.cleanup();
 
-    const mockDestinationPlugin = (
-      clientContext.timeline.plugins[
-        PluginType.destination
-      ] as DestinationPlugin[]
-    )[0];
+    await client.flush();
+
+    const destinations = client.getPlugins(PluginType.destination);
+    const mockDestinationPlugin = destinations[0] as DestinationPlugin;
     expect(mockDestinationPlugin.flush).not.toHaveBeenCalled();
   });
 
   it('sets secondsElapsed to 0 ', async () => {
-    const clientContext = {
-      secondsElapsed: 10,
-      logger: getMockLogger(),
+    const client = new SegmentClient({
+      ...defaultClientSettings,
       store: {
         dispatch: jest.fn() as jest.MockedFunction<any>,
         getState: () => ({
@@ -54,18 +58,21 @@ describe('methods #flush', () => {
           },
         }),
       },
-      timeline: getMockTimeline(),
-    } as SegmentClientContext;
+    });
 
-    await flush.bind(clientContext)();
+    // @ts-ignore
+    client.timeline = getMockTimeline();
+    // @ts-ignore
+    client.secondsElapsed = 10;
 
-    expect(clientContext.secondsElapsed).toBe(0);
+    await client.flush();
+    // @ts-ignore
+    expect(client.secondsElapsed).toBe(0);
   });
 
   it('does not dispatch any actions when there are no events to be sent', async () => {
-    const clientContext = {
-      secondsElapsed: 10,
-      logger: getMockLogger(),
+    const client = new SegmentClient({
+      ...defaultClientSettings,
       store: {
         dispatch: jest.fn() as jest.MockedFunction<any>,
         getState: () => ({
@@ -74,16 +81,15 @@ describe('methods #flush', () => {
           },
         }),
       },
-      timeline: getMockTimeline(),
-    } as SegmentClientContext;
+    });
 
-    await flush.bind(clientContext)();
+    // @ts-ignore
+    client.timeline = getMockTimeline();
 
-    const mockDestinationPlugin = (
-      clientContext.timeline.plugins[
-        PluginType.destination
-      ] as DestinationPlugin[]
-    )[0];
+    await client.flush();
+
+    const destinations = client.getPlugins(PluginType.destination);
+    const mockDestinationPlugin = destinations[0] as DestinationPlugin;
     expect(mockDestinationPlugin.flush).not.toHaveBeenCalled();
   });
 
@@ -106,13 +112,9 @@ describe('methods #flush', () => {
         settings: {},
       },
     };
-    const clientContext = {
-      config: {
-        writeKey: 'segment-key',
-        maxBatchSize: 10,
-      },
-      secondsElapsed: 10,
-      logger: getMockLogger(),
+
+    const client = new SegmentClient({
+      ...defaultClientSettings,
       store: {
         dispatch: jest.fn() as jest.MockedFunction<any>,
         getState: () => state,
@@ -122,19 +124,16 @@ describe('methods #flush', () => {
           deleteEventsByMessageId: jest.fn() as jest.MockedFunction<any>,
         },
       },
-      timeline: getMockTimeline(),
-    } as SegmentClientContext;
+    });
+    // @ts-ignore
+    client.timeline = getMockTimeline();
 
-    const mockDestinationPlugin = (
-      clientContext.timeline.plugins[
-        PluginType.destination
-      ] as DestinationPlugin[]
-    )[0];
-    const pluginFlushSpy = jest.spyOn(mockDestinationPlugin, 'flush');
+    const destinations = client.getPlugins(PluginType.destination);
+    const mockDestinationPlugin = destinations[0] as DestinationPlugin;
 
-    await flush.bind(clientContext)();
+    await client.flush();
 
-    expect(pluginFlushSpy).toHaveBeenCalledTimes(1);
+    expect(mockDestinationPlugin.flush).toHaveBeenCalledTimes(1);
   });
 
   // it('chunks the events correctly', async () => {

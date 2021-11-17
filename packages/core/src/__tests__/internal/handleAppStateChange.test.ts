@@ -1,11 +1,42 @@
-import type { SegmentClientContext } from '../../client';
-import handleAppStateChange from '../../internal/handleAppStateChange';
+import { SegmentClient } from '../../analytics';
 import { EventType } from '../../types';
 import { getMockLogger } from '../__helpers__/mockLogger';
+import { mockPersistor } from '../__helpers__/mockPersistor';
 
 jest.mock('../../uuid', () => ({
   getUUID: () => 'mocked-uuid',
 }));
+
+const defaultClientConfig = {
+  config: {
+    writeKey: '',
+    trackAppLifecycleEvents: false,
+  },
+  logger: getMockLogger(),
+  store: {
+    dispatch: jest.fn() as jest.MockedFunction<any>,
+    getState: () => ({
+      userInfo: {
+        anonymousId: 'my-id',
+        userId: 'user-id',
+      },
+      main: {
+        context: {
+          app: {
+            build: '1',
+            version: '1.2',
+          },
+        },
+      },
+    }),
+  },
+  actions: {
+    main: {
+      addEvent: jest.fn() as jest.MockedFunction<any>,
+    },
+  },
+  persistor: mockPersistor,
+};
 
 describe('SegmentClient #handleAppStateChange', () => {
   afterEach(() => {
@@ -19,65 +50,31 @@ describe('SegmentClient #handleAppStateChange', () => {
   });
 
   it('does not send events when trackAppLifecycleEvents is not enabled', () => {
-    const clientContext = {
-      appState: 'active',
-      config: {
-        trackAppLifecycleEvents: false,
-      },
-      logger: getMockLogger(),
-      store: {
-        dispatch: jest.fn() as jest.MockedFunction<any>,
-        getState: () => ({
-          userInfo: {
-            anonymousId: 'my-id',
-            userId: 'user-id',
-          },
-        }),
-      },
-      actions: {
-        main: {
-          addEvent: jest.fn() as jest.MockedFunction<any>,
-        },
-      },
-    } as SegmentClientContext;
+    let segmentClient = new SegmentClient(defaultClientConfig);
+    segmentClient.handleAppStateChange('background');
 
-    handleAppStateChange.bind(clientContext)({ nextAppState: 'background' });
-
-    expect(clientContext.store.dispatch).not.toHaveBeenCalled();
-    expect(clientContext.appState).toBe('background');
+    // @ts-ignore
+    expect(segmentClient.store.dispatch).not.toHaveBeenCalled();
+    // @ts-ignore
+    expect(segmentClient.appState).toBe('background');
   });
 
   it('sends an event when inactive => active', () => {
-    const clientContext = {
-      appState: 'inactive',
+    let client = new SegmentClient({
+      ...defaultClientConfig,
       config: {
+        writeKey: '',
         trackAppLifecycleEvents: true,
       },
-      logger: getMockLogger(),
-      store: {
-        dispatch: jest.fn() as jest.MockedFunction<any>,
-        getState: () => ({
-          userInfo: {
-            anonymousId: 'my-id',
-            userId: 'user-id',
-          },
-          main: {
-            context: { app: { build: '1', version: '1.2' } },
-          },
-        }),
-      },
-      actions: {
-        main: {
-          addEvent: jest.fn() as jest.MockedFunction<any>,
-        },
-      },
-      process: jest.fn() as jest.MockedFunction<any>,
-    } as SegmentClientContext;
+    });
+    // @ts-ignore
+    client.appState = 'inactive';
 
-    handleAppStateChange.bind(clientContext)({ nextAppState: 'active' });
+    const clientProcess = jest.spyOn(client, 'process');
+    client.handleAppStateChange('active');
 
-    expect(clientContext.process).toHaveBeenCalledTimes(1);
-    expect(clientContext.process).toHaveBeenCalledWith({
+    expect(clientProcess).toHaveBeenCalledTimes(1);
+    expect(clientProcess).toHaveBeenCalledWith({
       event: 'Application Opened',
       properties: {
         from_background: true,
@@ -86,40 +83,26 @@ describe('SegmentClient #handleAppStateChange', () => {
       },
       type: EventType.TrackEvent,
     });
-    expect(clientContext.appState).toBe('active');
+    // @ts-ignore
+    expect(client.appState).toBe('active');
   });
 
   it('sends an event when background => active', () => {
-    const clientContext = {
-      appState: 'background',
+    let client = new SegmentClient({
+      ...defaultClientConfig,
       config: {
+        writeKey: '',
         trackAppLifecycleEvents: true,
       },
-      logger: getMockLogger(),
-      store: {
-        dispatch: jest.fn() as jest.MockedFunction<any>,
-        getState: () => ({
-          userInfo: {
-            anonymousId: 'my-id',
-            userId: 'user-id',
-          },
-          main: {
-            context: { app: { build: '1', version: '1.2' } },
-          },
-        }),
-      },
-      actions: {
-        main: {
-          addEvent: jest.fn() as jest.MockedFunction<any>,
-        },
-      },
-      process: jest.fn() as jest.MockedFunction<any>,
-    } as SegmentClientContext;
+    });
+    // @ts-ignore
+    client.appState = 'background';
 
-    handleAppStateChange.bind(clientContext)({ nextAppState: 'active' });
+    const clientProcess = jest.spyOn(client, 'process');
+    client.handleAppStateChange('active');
 
-    expect(clientContext.process).toHaveBeenCalledTimes(1);
-    expect(clientContext.process).toHaveBeenCalledWith({
+    expect(clientProcess).toHaveBeenCalledTimes(1);
+    expect(clientProcess).toHaveBeenCalledWith({
       event: 'Application Opened',
       properties: {
         from_background: true,
@@ -128,181 +111,117 @@ describe('SegmentClient #handleAppStateChange', () => {
       },
       type: EventType.TrackEvent,
     });
-    expect(clientContext.appState).toBe('active');
+    // @ts-ignore
+    expect(client.appState).toBe('active');
   });
 
   it('sends an event when active => inactive', () => {
-    const clientContext = {
-      appState: 'active',
+    let client = new SegmentClient({
+      ...defaultClientConfig,
       config: {
+        writeKey: '',
         trackAppLifecycleEvents: true,
       },
-      logger: getMockLogger(),
-      store: {
-        dispatch: jest.fn() as jest.MockedFunction<any>,
-        getState: () => ({
-          userInfo: {
-            anonymousId: 'my-id',
-            userId: 'user-id',
-          },
-          main: {
-            context: { app: { build: '1', version: '1.2' } },
-          },
-        }),
-      },
-      actions: {
-        main: {
-          addEvent: jest.fn() as jest.MockedFunction<any>,
-        },
-      },
-      process: jest.fn() as jest.MockedFunction<any>,
-    } as SegmentClientContext;
+    });
+    // @ts-ignore
+    client.appState = 'active';
 
-    handleAppStateChange.bind(clientContext)({ nextAppState: 'inactive' });
+    const clientProcess = jest.spyOn(client, 'process');
 
-    expect(clientContext.process).toHaveBeenCalledTimes(1);
-    expect(clientContext.process).toHaveBeenCalledWith({
+    client.handleAppStateChange('inactive');
+
+    expect(clientProcess).toHaveBeenCalledTimes(1);
+    expect(clientProcess).toHaveBeenCalledWith({
       event: 'Application Backgrounded',
       type: EventType.TrackEvent,
       properties: {},
     });
-    expect(clientContext.appState).toBe('inactive');
+    // @ts-ignore
+    expect(client.appState).toBe('inactive');
   });
 
   it('sends an event when active => background', () => {
-    const clientContext = {
-      appState: 'active',
+    let client = new SegmentClient({
+      ...defaultClientConfig,
       config: {
+        writeKey: '',
         trackAppLifecycleEvents: true,
       },
-      logger: getMockLogger(),
-      store: {
-        dispatch: jest.fn() as jest.MockedFunction<any>,
-        getState: () => ({
-          userInfo: {
-            anonymousId: 'my-id',
-            userId: 'user-id',
-          },
-          main: {
-            context: { app: { build: '1', version: '1.2' } },
-          },
-        }),
-      },
-      actions: {
-        main: {
-          addEvent: jest.fn() as jest.MockedFunction<any>,
-        },
-      },
-      process: jest.fn() as jest.MockedFunction<any>,
-    } as SegmentClientContext;
+    });
+    // @ts-ignore
+    client.appState = 'active';
 
-    handleAppStateChange.bind(clientContext)({ nextAppState: 'background' });
+    const clientProcess = jest.spyOn(client, 'process');
 
-    expect(clientContext.process).toHaveBeenCalledTimes(1);
-    expect(clientContext.process).toHaveBeenCalledWith({
+    client.handleAppStateChange('background');
+
+    expect(clientProcess).toHaveBeenCalledTimes(1);
+    expect(clientProcess).toHaveBeenCalledWith({
       event: 'Application Backgrounded',
       type: EventType.TrackEvent,
       properties: {},
     });
-    expect(clientContext.appState).toBe('background');
+    // @ts-ignore
+    expect(client.appState).toBe('background');
   });
 
   it('does not send an event when unknown => active', () => {
-    const clientContext = {
-      appState: 'unknown',
+    let client = new SegmentClient({
+      ...defaultClientConfig,
       config: {
+        writeKey: '',
         trackAppLifecycleEvents: true,
       },
-      logger: getMockLogger(),
-      store: {
-        dispatch: jest.fn() as jest.MockedFunction<any>,
-        getState: () => ({
-          userInfo: {
-            anonymousId: 'my-id',
-            userId: 'user-id',
-          },
-          main: {
-            context: { app: { build: '1', version: '1.2' } },
-          },
-        }),
-      },
-      actions: {
-        main: {
-          addEvent: jest.fn() as jest.MockedFunction<any>,
-        },
-      },
-      process: jest.fn() as jest.MockedFunction<any>,
-    } as SegmentClientContext;
+    });
+    // @ts-ignore
+    client.appState = 'unknown';
 
-    handleAppStateChange.bind(clientContext)({ nextAppState: 'active' });
+    const clientProcess = jest.spyOn(client, 'process');
 
-    expect(clientContext.process).not.toHaveBeenCalled();
-    expect(clientContext.appState).toBe('active');
+    client.handleAppStateChange('active');
+
+    expect(clientProcess).not.toHaveBeenCalled();
+    // @ts-ignore
+    expect(client.appState).toBe('active');
   });
 
   it('does not send an event when unknown => background', () => {
-    const clientContext = {
-      appState: 'unknown',
+    let client = new SegmentClient({
+      ...defaultClientConfig,
       config: {
+        writeKey: '',
         trackAppLifecycleEvents: true,
       },
-      logger: getMockLogger(),
-      store: {
-        dispatch: jest.fn() as jest.MockedFunction<any>,
-        getState: () => ({
-          userInfo: {
-            anonymousId: 'my-id',
-            userId: 'user-id',
-          },
-          main: {
-            context: { app: { build: '1', version: '1.2' } },
-          },
-        }),
-      },
-      actions: {
-        main: {
-          addEvent: jest.fn() as jest.MockedFunction<any>,
-        },
-      },
-      process: jest.fn() as jest.MockedFunction<any>,
-    } as SegmentClientContext;
+    });
+    // @ts-ignore
+    client.appState = 'unknown';
 
-    handleAppStateChange.bind(clientContext)({ nextAppState: 'background' });
+    const clientProcess = jest.spyOn(client, 'process');
 
-    expect(clientContext.process).not.toHaveBeenCalled();
-    expect(clientContext.appState).toBe('background');
+    client.handleAppStateChange('background');
+
+    expect(clientProcess).not.toHaveBeenCalled();
+    // @ts-ignore
+    expect(client.appState).toBe('background');
   });
 
   it('does not send an event when unknown => inactive', () => {
-    const clientContext = {
-      appState: 'unknown',
+    let client = new SegmentClient({
+      ...defaultClientConfig,
       config: {
+        writeKey: '',
         trackAppLifecycleEvents: true,
       },
-      logger: getMockLogger(),
-      store: {
-        dispatch: jest.fn() as jest.MockedFunction<any>,
-        getState: () => ({
-          userInfo: {
-            anonymousId: 'my-id',
-            userId: 'user-id',
-          },
-          main: {
-            context: { app: { build: '1', version: '1.2' } },
-          },
-        }),
-      },
-      actions: {
-        main: {
-          addEvent: jest.fn() as jest.MockedFunction<any>,
-        },
-      },
-      process: jest.fn() as jest.MockedFunction<any>,
-    } as SegmentClientContext;
+    });
+    // @ts-ignore
+    client.appState = 'unknown';
 
-    handleAppStateChange.bind(clientContext)({ nextAppState: 'inactive' });
+    const clientProcess = jest.spyOn(client, 'process');
 
-    expect(clientContext.process).not.toHaveBeenCalled();
-    expect(clientContext.appState).toBe('inactive');
+    client.handleAppStateChange('inactive');
+
+    expect(clientProcess).not.toHaveBeenCalled();
+    // @ts-ignore
+    expect(client.appState).toBe('inactive');
   });
 });

@@ -1,37 +1,42 @@
-import type { SegmentClientContext } from '../../client';
-import group from '../../methods/group';
+import { SegmentClient } from '../../analytics';
 import { getMockLogger } from '../__helpers__/mockLogger';
+import { mockPersistor } from '../__helpers__/mockPersistor';
 
 jest.mock('../../uuid', () => ({
   getUUID: () => 'mocked-uuid',
 }));
 
+const defaultClientSettings = {
+  logger: getMockLogger(),
+  store: {
+    dispatch: jest.fn() as jest.MockedFunction<any>,
+    getState: () => ({
+      userInfo: {
+        userId: 'current-user-id',
+        anonymousId: 'very-anonymous',
+      },
+    }),
+  },
+  config: {
+    writeKey: 'mock-write-key',
+  },
+  persistor: mockPersistor,
+  actions: {},
+};
+
 describe('methods #group', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     jest
       .spyOn(Date.prototype, 'toISOString')
       .mockReturnValueOnce('2010-01-01T00:00:00.000Z');
   });
 
   it('adds the alias event correctly', () => {
-    const clientContext = {
-      logger: getMockLogger(),
-      process: jest.fn() as jest.MockedFunction<any>,
-      store: {
-        dispatch: jest.fn() as jest.MockedFunction<any>,
-        getState: () => ({
-          userInfo: {
-            userId: 'current-user-id',
-            anonymousId: 'very-anonymous',
-          },
-        }),
-      },
-    } as SegmentClientContext;
+    const client = new SegmentClient(defaultClientSettings);
+    jest.spyOn(client, 'process');
 
-    group.bind(clientContext)({
-      groupId: 'new-group-id',
-      groupTraits: { name: 'Best Group Ever' },
-    });
+    client.group('new-group-id', { name: 'Best Group Ever' });
 
     const expectedEvent = {
       groupId: 'new-group-id',
@@ -41,11 +46,11 @@ describe('methods #group', () => {
       },
     };
 
-    expect(clientContext.process).toHaveBeenCalledTimes(1);
-    expect(clientContext.process).toHaveBeenCalledWith(expectedEvent);
+    expect(client.process).toHaveBeenCalledTimes(1);
+    expect(client.process).toHaveBeenCalledWith(expectedEvent);
 
-    expect(clientContext.logger.info).toHaveBeenCalledTimes(1);
-    expect(clientContext.logger.info).toHaveBeenCalledWith(
+    expect(client.logger.info).toHaveBeenCalledTimes(1);
+    expect(client.logger.info).toHaveBeenCalledWith(
       'GROUP event saved',
       expectedEvent
     );

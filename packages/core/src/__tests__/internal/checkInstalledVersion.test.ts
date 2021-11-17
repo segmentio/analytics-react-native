@@ -1,8 +1,8 @@
-import type { SegmentClientContext } from '../../client';
-import checkInstalledVersion from '../../internal/checkInstalledVersion';
+import { SegmentClient } from '../../analytics';
 import { getMockLogger } from '../__helpers__/mockLogger';
 import { Context, EventType } from '../../types';
 import * as context from '../../context';
+import { mockPersistor } from '../__helpers__/mockPersistor';
 
 jest.mock('../../uuid', () => ({
   getUUID: () => 'mocked-uuid',
@@ -19,85 +19,72 @@ const currentContext = {
   },
 } as Context;
 
+const defaultClientConfig = {
+  config: {
+    writeKey: 'mock-write-key',
+    trackAppLifecycleEvents: false,
+  },
+  logger: getMockLogger(),
+  store: {
+    dispatch: jest.fn() as jest.MockedFunction<any>,
+    getState: () => ({
+      main: {
+        context: currentContext,
+      },
+      userInfo: {
+        anonymousId: 'very-anonymous',
+      },
+    }),
+  },
+  persistor: mockPersistor,
+  actions: {
+    main: {
+      updateContext: jest.fn() as jest.MockedFunction<any>,
+    },
+  },
+};
+
 describe('internal #checkInstalledVersion', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   it('updates the context with the new value', async () => {
-    const clientContext = {
-      config: {
-        trackAppLifecycleEvents: false,
-      },
-      logger: getMockLogger(),
-      store: {
-        dispatch: jest.fn() as jest.MockedFunction<any>,
-        getState: () => ({
-          main: {
-            context: currentContext,
-          },
-          userInfo: {
-            anonymousId: 'very-anonymous',
-          },
-        }),
-      },
-      actions: {
-        main: {
-          updateContext: jest.fn() as jest.MockedFunction<any>,
-        },
-      },
-    } as SegmentClientContext;
+    const client = new SegmentClient(defaultClientConfig);
     jest.spyOn(context, 'getContext').mockResolvedValueOnce(currentContext);
 
-    await checkInstalledVersion.bind(clientContext)();
+    await client.checkInstalledVersion();
 
-    expect(clientContext.store.dispatch).toHaveBeenCalledTimes(1);
-    expect(clientContext.actions.main.updateContext).toHaveBeenCalledTimes(1);
-    expect(clientContext.actions.main.updateContext).toHaveBeenCalledWith({
+    // @ts-ignore
+    expect(client.store.dispatch).toHaveBeenCalledTimes(1);
+    // @ts-ignore
+    expect(client.actions.main.updateContext).toHaveBeenCalledTimes(1);
+    // @ts-ignore
+    expect(client.actions.main.updateContext).toHaveBeenCalledWith({
       context: currentContext,
     });
   });
 
   it('does not send any events when trackAppLifecycleEvents is false', async () => {
-    const clientContext = {
-      config: {
-        trackAppLifecycleEvents: false,
-      },
-      logger: getMockLogger(),
-      store: {
-        dispatch: jest.fn() as jest.MockedFunction<any>,
-        getState: () => ({
-          main: {
-            context: currentContext,
-          },
-          userInfo: {
-            anonymousId: 'very-anonymous',
-          },
-        }),
-      },
-      actions: {
-        main: {
-          updateContext: jest.fn() as jest.MockedFunction<any>,
-        },
-      },
-      process: jest.fn() as jest.MockedFunction<any>,
-    } as SegmentClientContext;
+    const client = new SegmentClient(defaultClientConfig);
 
     jest.spyOn(context, 'getContext').mockResolvedValueOnce(currentContext);
+    const processSpy = jest.spyOn(client, 'process');
 
-    await checkInstalledVersion.bind(clientContext)();
+    await client.checkInstalledVersion();
 
-    expect(clientContext.process).not.toHaveBeenCalled();
+    expect(processSpy).not.toHaveBeenCalled();
   });
 
   it('calls the application installed and opened events when there is no previous context', async () => {
-    const clientContext = {
+    const client = new SegmentClient({
+      ...defaultClientConfig,
       config: {
+        writeKey: 'mock-write-key',
         trackAppLifecycleEvents: true,
       },
-      logger: getMockLogger(),
       store: {
-        dispatch: jest.fn() as jest.MockedFunction<any>,
+        ...defaultClientConfig.store,
         getState: () => ({
           main: {
             context: undefined,
@@ -107,18 +94,15 @@ describe('internal #checkInstalledVersion', () => {
           },
         }),
       },
-      actions: {
-        main: {
-          updateContext: jest.fn() as jest.MockedFunction<any>,
-        },
-      },
-      process: jest.fn() as jest.MockedFunction<any>,
-    } as SegmentClientContext;
-    jest.spyOn(context, 'getContext').mockResolvedValueOnce(currentContext);
-    await checkInstalledVersion.bind(clientContext)();
+    });
 
-    expect(clientContext.process).toHaveBeenCalledTimes(2);
-    expect(clientContext.process).toHaveBeenCalledWith({
+    jest.spyOn(context, 'getContext').mockResolvedValueOnce(currentContext);
+    const processSpy = jest.spyOn(client, 'process');
+
+    await client.checkInstalledVersion();
+
+    expect(processSpy).toHaveBeenCalledTimes(2);
+    expect(processSpy).toHaveBeenCalledWith({
       event: 'Application Installed',
       properties: {
         build: '1',
@@ -126,7 +110,7 @@ describe('internal #checkInstalledVersion', () => {
       },
       type: EventType.TrackEvent,
     });
-    expect(clientContext.process).toHaveBeenCalledWith({
+    expect(processSpy).toHaveBeenCalledWith({
       event: 'Application Opened',
       properties: {
         build: '1',
@@ -144,13 +128,14 @@ describe('internal #checkInstalledVersion', () => {
         build: '2',
       },
     };
-    const clientContext = {
+    const client = new SegmentClient({
+      ...defaultClientConfig,
       config: {
+        writeKey: 'mock-write-key',
         trackAppLifecycleEvents: true,
       },
-      logger: getMockLogger(),
       store: {
-        dispatch: jest.fn() as jest.MockedFunction<any>,
+        ...defaultClientConfig.store,
         getState: () => ({
           main: {
             context: savedContext,
@@ -160,19 +145,15 @@ describe('internal #checkInstalledVersion', () => {
           },
         }),
       },
-      actions: {
-        main: {
-          updateContext: jest.fn() as jest.MockedFunction<any>,
-        },
-      },
-      process: jest.fn() as jest.MockedFunction<any>,
-    } as SegmentClientContext;
+    });
 
     jest.spyOn(context, 'getContext').mockResolvedValueOnce(currentContext);
-    await checkInstalledVersion.bind(clientContext)();
+    const processSpy = jest.spyOn(client, 'process');
 
-    expect(clientContext.process).toHaveBeenCalledTimes(2);
-    expect(clientContext.process).toHaveBeenCalledWith({
+    await client.checkInstalledVersion();
+
+    expect(processSpy).toHaveBeenCalledTimes(2);
+    expect(processSpy).toHaveBeenCalledWith({
       event: 'Application Updated',
       properties: {
         build: '1',
@@ -183,7 +164,7 @@ describe('internal #checkInstalledVersion', () => {
       type: EventType.TrackEvent,
     });
 
-    expect(clientContext.process).toHaveBeenCalledWith({
+    expect(processSpy).toHaveBeenCalledWith({
       event: 'Application Opened',
       properties: {
         build: '1',
@@ -195,36 +176,21 @@ describe('internal #checkInstalledVersion', () => {
   });
 
   it('only sends the app opened event when the versions match', async () => {
-    const clientContext = {
+    const client = new SegmentClient({
+      ...defaultClientConfig,
       config: {
+        writeKey: 'mock-write-key',
         trackAppLifecycleEvents: true,
       },
-      logger: getMockLogger(),
-      store: {
-        dispatch: jest.fn() as jest.MockedFunction<any>,
-        getState: () => ({
-          main: {
-            context: currentContext,
-          },
-          userInfo: {
-            anonymousId: 'very-anonymous',
-          },
-        }),
-      },
-      actions: {
-        main: {
-          updateContext: jest.fn() as jest.MockedFunction<any>,
-        },
-      },
-      process: jest.fn() as jest.MockedFunction<any>,
-    } as SegmentClientContext;
+    });
 
     jest.spyOn(context, 'getContext').mockResolvedValueOnce(currentContext);
+    const processSpy = jest.spyOn(client, 'process');
 
-    await checkInstalledVersion.bind(clientContext)();
+    await client.checkInstalledVersion();
 
-    expect(clientContext.process).toHaveBeenCalledTimes(1);
-    expect(clientContext.process).toHaveBeenCalledWith({
+    expect(processSpy).toHaveBeenCalledTimes(1);
+    expect(processSpy).toHaveBeenCalledWith({
       event: 'Application Opened',
       properties: {
         from_background: false,

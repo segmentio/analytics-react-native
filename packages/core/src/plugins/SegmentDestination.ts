@@ -44,46 +44,33 @@ export class SegmentDestination extends DestinationPlugin {
         ...event?.integrations,
       },
     };
-    this.queueEvent(mergedEvent);
+    this.analytics?.queueEvent(mergedEvent);
     return mergedEvent;
   }
 
-  queueEvent(event: SegmentEvent) {
-    const { store, actions } = this.analytics!;
-    store.dispatch(
-      actions.main.addEvent({ event: event as unknown as SegmentEvent })
-    );
-  }
-
   async flush() {
-    const { store, actions } = this.analytics!;
-    const state = store.getState();
-
-    const chunkedEvents = chunk(state.main.events, 1000);
+    const events = this.analytics?.getEvents() ?? [];
+    const chunkedEvents = chunk(events, 1000);
 
     let sentEvents: any[] = [];
     let numFailedEvents = 0;
 
     await Promise.all(
-      chunkedEvents.map(async (events) => {
+      chunkedEvents.map(async (chunk) => {
         try {
           await sendEvents({
-            config: state.system.configuration!,
-            events,
+            config: this.analytics?.getConfig()!,
+            events: chunk,
           });
-          sentEvents = sentEvents.concat(events);
+          sentEvents = sentEvents.concat(chunk);
         } catch (e) {
           console.warn(e);
-          numFailedEvents += events.length;
+          numFailedEvents += chunk.length;
         } finally {
           const messageIds = sentEvents.map(
             (evt: SegmentEvent) => evt.messageId as string
           );
-          store.dispatch(
-            actions.main.deleteEventsByMessageId({
-              ids: messageIds,
-            })
-          );
+          this.analytics?.removeEvents(messageIds);
         }
       })
     );
