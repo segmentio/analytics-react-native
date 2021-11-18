@@ -1,5 +1,5 @@
 {
-  "name": "@segment/analytics-react-native-plugin-appsflyer",
+  "name": "@segment/analytics-react-native-plugin-facebook-app-events",
   "version": "0.1.0-pilot.1",
   "description": "The hassle-free way to add Segment analytics to your React-Native app.",
   "main": "lib/commonjs/index",
@@ -46,7 +46,7 @@
     "@segment/analytics-react-native": "*"
   },
   "dependencies": {
-    "react-native-appsflyer": "^6.3.50"
+    "react-native-fbsdk-next": "^4.6.0"
   },
   "devDependencies": {
     "babel-plugin-module-resolver": "^4.1.0",
