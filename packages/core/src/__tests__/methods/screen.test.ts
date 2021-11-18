@@ -1,10 +1,33 @@
-import type { SegmentClientContext } from '../../client';
-import screen from '../../methods/screen';
+import { SegmentClient } from '../../analytics';
 import { getMockLogger } from '../__helpers__/mockLogger';
+import { mockPersistor } from '../__helpers__/mockPersistor';
 
 jest.mock('../../uuid', () => ({
   getUUID: () => 'mocked-uuid',
 }));
+
+const defaultClientConfig = {
+  config: {
+    writeKey: 'mock-write-key',
+  },
+  logger: getMockLogger(),
+  store: {
+    dispatch: jest.fn() as jest.MockedFunction<any>,
+    getState: () => ({
+      userInfo: {
+        userId: 'current-user-id',
+        anonymousId: 'very-anonymous',
+      },
+    }),
+  },
+  persistor: mockPersistor,
+  actions: {
+    userInfo: {
+      setUserId: ({ userId }: { userId: string }) =>
+        `action with ${userId}` as jest.MockedFunction<any>,
+    },
+  },
+};
 
 describe('methods #screen', () => {
   beforeEach(() => {
@@ -14,21 +37,10 @@ describe('methods #screen', () => {
   });
 
   it('adds the screen event correctly', () => {
-    const clientContext = {
-      logger: getMockLogger(),
-      process: jest.fn() as jest.MockedFunction<any>,
-      store: {
-        dispatch: jest.fn() as jest.MockedFunction<any>,
-        getState: () => ({
-          userInfo: {
-            userId: 'current-user-id',
-            anonymousId: 'very-anonymous',
-          },
-        }),
-      },
-    } as SegmentClientContext;
+    const client = new SegmentClient(defaultClientConfig);
+    jest.spyOn(client, 'process');
 
-    screen.bind(clientContext)({ name: 'Home Screen', options: { id: 1 } });
+    client.screen('Home Screen', { id: 1 });
 
     const expectedEvent = {
       name: 'Home Screen',
@@ -38,11 +50,11 @@ describe('methods #screen', () => {
       type: 'screen',
     };
 
-    expect(clientContext.process).toHaveBeenCalledTimes(1);
-    expect(clientContext.process).toHaveBeenCalledWith(expectedEvent);
+    expect(client.process).toHaveBeenCalledTimes(1);
+    expect(client.process).toHaveBeenCalledWith(expectedEvent);
 
-    expect(clientContext.logger.info).toHaveBeenCalledTimes(1);
-    expect(clientContext.logger.info).toHaveBeenCalledWith(
+    expect(client.logger.info).toHaveBeenCalledTimes(1);
+    expect(client.logger.info).toHaveBeenCalledWith(
       'SCREEN event saved',
       expectedEvent
     );

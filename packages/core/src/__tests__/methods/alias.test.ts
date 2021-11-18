@@ -1,40 +1,47 @@
-import type { SegmentClientContext } from '../../client';
-import alias from '../../methods/alias';
+import { SegmentClient } from '../../analytics';
 import { getMockLogger } from '../__helpers__/mockLogger';
+import { mockPersistor } from '../__helpers__/mockPersistor';
 
 jest.mock('../../uuid', () => ({
   getUUID: () => 'mocked-uuid',
 }));
+
+const defaultClientConfig = {
+  config: {
+    writeKey: 'mock-write-key',
+  },
+  logger: getMockLogger(),
+  store: {
+    dispatch: jest.fn() as jest.MockedFunction<any>,
+    getState: () => ({
+      userInfo: {
+        userId: 'current-user-id',
+        anonymousId: 'very-anonymous',
+      },
+    }),
+  },
+  persistor: mockPersistor,
+  actions: {
+    userInfo: {
+      setUserId: ({ userId }: { userId: string }) =>
+        `action with ${userId}` as jest.MockedFunction<any>,
+    },
+  },
+};
 
 describe('methods #alias', () => {
   beforeEach(() => {
     jest
       .spyOn(Date.prototype, 'toISOString')
       .mockReturnValueOnce('2010-01-01T00:00:00.000Z');
+    jest.clearAllMocks();
   });
 
   it('adds the alias event correctly', () => {
-    const clientContext = {
-      logger: getMockLogger(),
-      process: jest.fn() as jest.MockedFunction<any>,
-      store: {
-        dispatch: jest.fn() as jest.MockedFunction<any>,
-        getState: () => ({
-          userInfo: {
-            userId: 'current-user-id',
-            anonymousId: 'very-anonymous',
-          },
-        }),
-      },
-      actions: {
-        userInfo: {
-          setUserId: ({ userId }: { userId: string }) =>
-            `action with ${userId}` as jest.MockedFunction<any>,
-        },
-      },
-    } as SegmentClientContext;
+    const client = new SegmentClient(defaultClientConfig);
+    jest.spyOn(client, 'process');
 
-    alias.bind(clientContext)({ newUserId: 'new-user-id' });
+    client.alias('new-user-id');
 
     const expectedEvent = {
       previousId: 'current-user-id',
@@ -42,22 +49,22 @@ describe('methods #alias', () => {
       userId: 'new-user-id',
     };
 
-    expect(clientContext.process).toHaveBeenCalledTimes(1);
-    expect(clientContext.process).toHaveBeenCalledWith(expectedEvent);
+    expect(client.process).toHaveBeenCalledTimes(1);
+    expect(client.process).toHaveBeenCalledWith(expectedEvent);
 
-    expect(clientContext.store.dispatch).not.toHaveBeenCalled();
+    // @ts-ignore
+    expect(client.store.dispatch).not.toHaveBeenCalled();
 
-    expect(clientContext.logger.info).toHaveBeenCalledTimes(1);
-    expect(clientContext.logger.info).toHaveBeenCalledWith(
+    expect(client.logger.info).toHaveBeenCalledTimes(1);
+    expect(client.logger.info).toHaveBeenCalledWith(
       'ALIAS event saved',
       expectedEvent
     );
   });
 
   it('uses anonymousId in event if no userId in store', () => {
-    const clientContext = {
-      logger: getMockLogger(),
-      process: jest.fn() as jest.MockedFunction<any>,
+    const client = new SegmentClient({
+      ...defaultClientConfig,
       store: {
         dispatch: jest.fn() as jest.MockedFunction<any>,
         getState: () => ({
@@ -66,15 +73,10 @@ describe('methods #alias', () => {
           },
         }),
       },
-      actions: {
-        userInfo: {
-          setUserId: ({ userId }: { userId: string }) =>
-            `action with ${userId}` as jest.MockedFunction<any>,
-        },
-      },
-    } as SegmentClientContext;
+    });
+    jest.spyOn(client, 'process');
 
-    alias.bind(clientContext)({ newUserId: 'new-user-id' });
+    client.alias('new-user-id');
 
     const expectedEvent = {
       previousId: 'very-anonymous',
@@ -82,13 +84,14 @@ describe('methods #alias', () => {
       userId: 'new-user-id',
     };
 
-    expect(clientContext.process).toHaveBeenCalledTimes(1);
-    expect(clientContext.process).toHaveBeenCalledWith(expectedEvent);
+    expect(client.process).toHaveBeenCalledTimes(1);
+    expect(client.process).toHaveBeenCalledWith(expectedEvent);
 
-    expect(clientContext.store.dispatch).not.toHaveBeenCalled();
+    // @ts-ignore
+    expect(client.store.dispatch).not.toHaveBeenCalled();
 
-    expect(clientContext.logger.info).toHaveBeenCalledTimes(1);
-    expect(clientContext.logger.info).toHaveBeenCalledWith(
+    expect(client.logger.info).toHaveBeenCalledTimes(1);
+    expect(client.logger.info).toHaveBeenCalledWith(
       'ALIAS event saved',
       expectedEvent
     );

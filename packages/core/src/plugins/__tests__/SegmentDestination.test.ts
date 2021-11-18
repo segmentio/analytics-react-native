@@ -7,6 +7,7 @@ jest.mock('../../analytics', () => ({
     return {
       getSettings: jest.fn(),
       getPlugins: jest.fn(),
+      queueEvent: jest.fn(),
       store: {
         dispatch: jest.fn(),
       },

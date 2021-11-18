@@ -1,20 +1,18 @@
 import type { Unsubscribe } from '@reduxjs/toolkit';
-import { AppState, AppStateStatus } from 'react-native';
+import { AppState, AppStateStatus, Linking } from 'react-native';
 import type { Persistor } from 'redux-persist';
+import { sendEvents } from './api';
+import { getContext } from './context';
 
-import { applyRawEventData } from './events';
-import checkInstalledVersion from './internal/checkInstalledVersion';
-import flushRetry from './internal/flushRetry';
-import getSettings from './internal/getSettings';
-import handleAppStateChange from './internal/handleAppStateChange';
-import trackDeepLinks from './internal/trackDeepLinks';
+import {
+  applyRawEventData,
+  createAliasEvent,
+  createGroupEvent,
+  createIdentifyEvent,
+  createScreenEvent,
+  createTrackEvent,
+} from './events';
 import type { Logger } from './logger';
-import alias from './methods/alias';
-import flush from './methods/flush';
-import group from './methods/group';
-import identify from './methods/identify';
-import screen from './methods/screen';
-import track from './methods/track';
 import type { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
 import { InjectContext } from './plugins/Context';
 import { SegmentDestination } from './plugins/SegmentDestination';
@@ -28,6 +26,8 @@ import {
 import { Timeline } from './timeline';
 import {
   Config,
+  Context,
+  DeepPartial,
   GroupTraits,
   JsonMap,
   PluginType,
@@ -35,53 +35,54 @@ import {
   SegmentEvent,
   UserTraits,
 } from './types';
+import { chunk, getPluginsWithFlush } from './util';
 
 export class SegmentClient {
   // the config parameters for the client - a merge of user provided and default options
-  config: Config;
+  private config: Config;
 
   // redux store
-  store: Store;
+  private store: Store;
 
   // redux actions
-  actions: typeof ReduxActions;
+  private actions: typeof ReduxActions;
 
   // persistor for the redux store
-  persistor: Persistor;
+  private persistor: Persistor;
 
   // how many seconds has elapsed since the last time events were sent
-  secondsElapsed: number = 0;
+  private secondsElapsed: number = 0;
 
   // current app state
-  appState: AppStateStatus | 'unknown' = 'unknown';
+  private appState: AppStateStatus | 'unknown' = 'unknown';
 
   // subscription for propagating changes to appState
-  appStateSubscription: any;
+  private appStateSubscription: any;
 
   // logger
-  logger: Logger;
+  public logger: Logger;
 
   // timeout for refreshing the failed events queue
-  refreshTimeout: ReturnType<typeof setTimeout> | null = null;
+  private refreshTimeout: ReturnType<typeof setTimeout> | null = null;
 
   // internal time to know when to flush, ticks every second
-  interval: ReturnType<typeof setTimeout> | null = null;
+  private interval: ReturnType<typeof setTimeout> | null = null;
 
   // unsubscribe watchers for the redux store
-  watchers: Unsubscribe[] = [];
+  private watchers: Unsubscribe[] = [];
 
   // whether the user has called cleanup
-  destroyed: boolean = false;
+  private destroyed: boolean = false;
 
   // has a pending upload to respond
-  isPendingUpload: boolean = false;
+  private isPendingUpload: boolean = false;
 
   // has a pending upload of the events to retry upload
-  isPendingRetryUpload: boolean = false;
+  private isPendingRetryUpload: boolean = false;
 
-  isAddingPlugins: boolean = false;
+  private isAddingPlugins: boolean = false;
 
-  timeline: Timeline;
+  private timeline: Timeline;
 
   /**
    * Watches changes to redux store
@@ -137,6 +138,34 @@ export class SegmentClient {
     );
   }
 
+  getContext() {
+    return { ...this.store.getState().main.context };
+  }
+
+  updateContext(context: DeepPartial<Context>) {
+    this.store.dispatch(this.actions.main.updateContext({ context }));
+  }
+
+  getConfig() {
+    return { ...this.config };
+  }
+
+  getUserInfo() {
+    return { ...this.store.getState().userInfo };
+  }
+
+  getEvents() {
+    return [...getEvents(this.store.getState())];
+  }
+
+  getEventsToRetry() {
+    return [...getEventsToRetry(this.store.getState())];
+  }
+
+  getPersistor() {
+    return this.persistor;
+  }
+
   constructor({
     config,
     logger,
@@ -182,7 +211,31 @@ export class SegmentClient {
   }
 
   async fetchSettings() {
-    await getSettings.bind(this)();
+    const settingsEndpoint = `https://cdn-settings.segment.com/v1/projects/${this.config.writeKey}/settings`;
+
+    try {
+      const res = await fetch(settingsEndpoint);
+      const resJson = await res.json();
+      this.logger.info(`Received settings from Segment succesfully.`);
+      this.store.dispatch(
+        this.actions.system.updateSettings({ settings: resJson })
+      );
+    } catch {
+      this.logger.warn(
+        `Could not receive settings from Segment. ${
+          this.config.defaultSettings
+            ? 'Will use the default settings.'
+            : 'Device mode destinations will be ignored unless you specify default settings in the client config.'
+        }`
+      );
+      if (this.config.defaultSettings) {
+        this.store.dispatch(
+          this.actions.system.updateSettings({
+            settings: this.config.defaultSettings,
+          })
+        );
+      }
+    }
   }
 
   /**
@@ -242,7 +295,7 @@ export class SegmentClient {
   }
 
   setupInterval() {
-    if (this.interval) {
+    if (this.interval !== null && this.interval !== undefined) {
       clearInterval(this.interval);
     }
     this.interval = setInterval(() => this.tick(), 1000) as any;
@@ -343,7 +396,18 @@ export class SegmentClient {
   }
 
   async trackDeepLinks() {
-    await trackDeepLinks.bind(this)();
+    const url = await Linking.getInitialURL();
+
+    if (url && this.getConfig().trackDeepLinks) {
+      const event = createTrackEvent({
+        event: 'Deep Link Opened',
+        properties: {
+          url,
+        },
+      });
+      this.process(event);
+      this.logger.info('TRACK (Deep Link Opened) event saved', event);
+    }
   }
 
   onUpdateStore() {
@@ -375,7 +439,66 @@ export class SegmentClient {
           if (!this.isPendingRetryUpload) {
             this.isPendingRetryUpload = true;
             try {
-              await flushRetry.bind(this)();
+              if (this.destroyed) {
+                return;
+              }
+
+              const state = this.store.getState();
+              const { eventsToRetry } = state.main;
+
+              if (!eventsToRetry.length) {
+                this.refreshTimeout = null;
+                return;
+              }
+
+              const chunkedEvents = chunk(
+                eventsToRetry,
+                this.config.maxBatchSize!
+              );
+
+              let numFailedEvents = 0;
+              let numSentEvents = 0;
+
+              await Promise.all(
+                chunkedEvents.map(async (events) => {
+                  try {
+                    await sendEvents({
+                      config: this.config,
+                      events,
+                    });
+                    const messageIds = events.map(
+                      (evt: SegmentEvent) => evt.messageId
+                    );
+                    this.store.dispatch(
+                      this.actions.main.deleteEventsToRetryByMessageId({
+                        ids: messageIds,
+                      })
+                    );
+                    numSentEvents += events.length;
+                  } catch (e) {
+                    numFailedEvents += events.length;
+                  }
+                })
+              );
+
+              if (numFailedEvents) {
+                this.logger.error(
+                  `Failed to send ${numFailedEvents} events. Retrying in ${this
+                    .config.retryInterval!} seconds (via retry)`
+                );
+                this.refreshTimeout = setTimeout(
+                  () => this.flushRetry(), // TODO: Fix this and add test
+                  retryIntervalMs
+                ) as any;
+              } else {
+                this.refreshTimeout = null;
+              }
+
+              if (numSentEvents) {
+                this.logger.warn(
+                  `Sent ${eventsToRetry.length} events (via retry)`
+                );
+              }
             } finally {
               this.isPendingRetryUpload = false;
             }
@@ -397,7 +520,18 @@ export class SegmentClient {
     if (!this.isPendingUpload) {
       this.isPendingUpload = true;
       try {
-        await flush.bind(this)();
+        if (this.destroyed) {
+          return;
+        }
+
+        this.secondsElapsed = 0;
+        const state = this.store.getState();
+
+        if (state.main.events.length > 0) {
+          getPluginsWithFlush(this.timeline).forEach((plugin) =>
+            plugin.flush()
+          );
+        }
       } finally {
         this.isPendingUpload = false;
       }
@@ -405,23 +539,81 @@ export class SegmentClient {
   }
 
   screen(name: string, options?: JsonMap) {
-    screen.bind(this)({ name, options });
+    const event = createScreenEvent({
+      name,
+      properties: options,
+    });
+
+    this.process(event);
+    this.logger.info('SCREEN event saved', event);
   }
 
   track(eventName: string, options?: JsonMap) {
-    track.bind(this)({ eventName, options });
+    const event = createTrackEvent({
+      event: eventName,
+      properties: options,
+    });
+
+    this.process(event);
+    this.logger.info('TRACK event saved', event);
   }
 
   identify(userId: string, userTraits?: UserTraits) {
-    identify.bind(this)({ userId, userTraits });
+    const { traits: currentUserTraits } = this.store.getState().userInfo;
+
+    const event = createIdentifyEvent({
+      userTraits: {
+        ...currentUserTraits,
+        ...(userTraits || {}),
+      },
+    });
+
+    this.store.dispatch(this.actions.userInfo.setUserId({ userId }));
+
+    if (userTraits) {
+      this.store.dispatch(
+        this.actions.userInfo.setTraits({ traits: userTraits })
+      );
+    }
+
+    this.process(event);
+    this.logger.info('IDENTIFY event saved', event);
   }
 
   group(groupId: string, groupTraits?: GroupTraits) {
-    group.bind(this)({ groupId, groupTraits });
+    const event = createGroupEvent({
+      groupId,
+      groupTraits,
+    });
+
+    this.process(event);
+    this.logger.info('GROUP event saved', event);
   }
 
   alias(newUserId: string) {
-    alias.bind(this)({ newUserId });
+    const { anonymousId, userId } = this.getUserInfo();
+    const event = createAliasEvent({
+      anonymousId,
+      userId,
+      newUserId,
+    });
+
+    this.process(event);
+    this.logger.info('ALIAS event saved', event);
+  }
+
+  queueEvent(event: SegmentEvent) {
+    this.store.dispatch(
+      this.actions.main.addEvent({ event: event as unknown as SegmentEvent })
+    );
+  }
+
+  removeEvents(eventIds: string[]) {
+    this.store.dispatch(
+      this.actions.main.deleteEventsByMessageId({
+        ids: eventIds,
+      })
+    );
   }
 
   /**
@@ -436,7 +628,49 @@ export class SegmentClient {
    * Application Opened - the previously detected version is same as the current version
    */
   async checkInstalledVersion() {
-    await checkInstalledVersion.bind(this)();
+    const context = await getContext(undefined);
+    const previousContext = this.store.getState().main.context;
+
+    this.store.dispatch(this.actions.main.updateContext({ context }));
+
+    if (!this.config.trackAppLifecycleEvents) {
+      return;
+    }
+
+    if (previousContext?.app === undefined) {
+      const event = createTrackEvent({
+        event: 'Application Installed',
+        properties: {
+          version: context.app.version,
+          build: context.app.build,
+        },
+      });
+      this.process(event);
+      this.logger.info('TRACK (Application Installed) event saved', event);
+    } else if (context.app.version !== previousContext.app.version) {
+      const event = createTrackEvent({
+        event: 'Application Updated',
+        properties: {
+          version: context.app.version,
+          build: context.app.build,
+          previous_version: previousContext.app.version,
+          previous_build: previousContext.app.build,
+        },
+      });
+      this.process(event);
+      this.logger.info('TRACK (Application Updated) event saved', event);
+    }
+
+    const event = createTrackEvent({
+      event: 'Application Opened',
+      properties: {
+        from_background: false,
+        version: context.app.version,
+        build: context.app.build,
+      },
+    });
+    this.process(event);
+    this.logger.info('TRACK (Application Opened) event saved', event);
   }
 
   /**
@@ -451,7 +685,35 @@ export class SegmentClient {
    * @param nextAppState 'active', 'inactive', 'background' or 'unknown'
    */
   handleAppStateChange(nextAppState: AppStateStatus) {
-    handleAppStateChange.bind(this)({ nextAppState });
+    if (this.config.trackAppLifecycleEvents) {
+      if (
+        ['inactive', 'background'].includes(this.appState) &&
+        nextAppState === 'active'
+      ) {
+        const { context } = this.store.getState().main;
+        const event = createTrackEvent({
+          event: 'Application Opened',
+          properties: {
+            from_background: true,
+            version: context?.app?.version,
+            build: context?.app?.build,
+          },
+        });
+        this.process(event);
+        this.logger.info('TRACK (Application Opened) event saved', event);
+      } else if (
+        this.appState === 'active' &&
+        ['inactive', 'background'].includes(nextAppState)
+      ) {
+        const event = createTrackEvent({
+          event: 'Application Backgrounded',
+        });
+        this.process(event);
+        this.logger.info('TRACK (Application Backgrounded) event saved', event);
+      }
+    }
+
+    this.appState = nextAppState;
   }
 
   reset() {

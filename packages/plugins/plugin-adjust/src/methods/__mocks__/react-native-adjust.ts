@@ -10,8 +10,8 @@ export const addCallbackParameter = jest.fn();
 export const setRevenue = jest.fn();
 export const setTransactionId = jest.fn();
 
-export const AdjustEvent = () => ({
-  addCallbackParameter,
-  setRevenue,
-  setTransactionId,
-});
+export class AdjustEvent {
+  addCallbackParameter = addCallbackParameter;
+  setRevenue = setRevenue;
+  setTransactionId = setTransactionId;
+}

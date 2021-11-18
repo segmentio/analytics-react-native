@@ -3,17 +3,7 @@ import type { AppStateStatus } from 'react-native';
 import * as ReactNative from 'react-native';
 import { EventType, IdentifyEventType } from '..';
 import { SegmentClient } from '../analytics';
-import * as checkInstalledVersion from '../internal/checkInstalledVersion';
-import * as flushRetry from '../internal/flushRetry';
-import * as handleAppStateChange from '../internal/handleAppStateChange';
-import * as trackDeepLinks from '../internal/trackDeepLinks';
 import { Logger } from '../logger';
-import * as alias from '../methods/alias';
-import * as flush from '../methods/flush';
-import * as group from '../methods/group';
-import * as identify from '../methods/identify';
-import * as screen from '../methods/screen';
-import * as track from '../methods/track';
 import { actions, Store } from '../store';
 import mainSlice from '../store/main';
 import systemSlice from '../store/system';
@@ -69,11 +59,20 @@ describe('SegmentClient initialise', () => {
     it('creates the client with default values', () => {
       const segmentClient = new SegmentClient(clientArgs);
 
+      expect(segmentClient.getConfig()).toEqual(clientArgs.config);
+      // Legacy checks,
+      // TODO: Remove these as they test private
+      // @ts-ignore
       expect(segmentClient.config).toStrictEqual(clientArgs.config);
+      // @ts-ignore
       expect(segmentClient.store).toStrictEqual(clientArgs.store);
+      // @ts-ignore
       expect(segmentClient.actions).toStrictEqual(clientArgs.actions);
+      // @ts-ignore
       expect(segmentClient.persistor).toStrictEqual(clientArgs.persistor);
+      // @ts-ignore
       expect(segmentClient.secondsElapsed).toStrictEqual(0);
+      // @ts-ignore
       expect(segmentClient.appState).toStrictEqual('unknown');
     });
   });
@@ -81,8 +80,8 @@ describe('SegmentClient initialise', () => {
   describe('internal setup methods', () => {
     describe('#setupInterval', () => {
       beforeEach(() => {
-        jest.spyOn(global, 'setInterval');
-        jest.useFakeTimers();
+        // Using the legacy timers of jest to track calls
+        jest.useFakeTimers('legacy');
       });
 
       afterEach(() => {
@@ -92,6 +91,7 @@ describe('SegmentClient initialise', () => {
       it('resets the interval and creates a new one when initialised', () => {
         const segmentClient = new SegmentClient(clientArgs);
 
+        // @ts-ignore
         expect(segmentClient.interval).toBe(null);
 
         // @ts-ignore value is irrelevant
@@ -99,12 +99,14 @@ describe('SegmentClient initialise', () => {
 
         segmentClient.setupInterval();
 
+        // TODO: Jest recommends not to test for checking interval as they are an implementation detail but test the side effect, refactor these in the future
         expect(clearInterval).toHaveBeenCalledTimes(1);
         expect(clearInterval).toHaveBeenCalledWith('TEST');
         expect(setInterval).toHaveBeenLastCalledWith(
           expect.any(Function),
           1000
         );
+        // @ts-ignore
         expect(segmentClient.interval).not.toBe('TEST');
       });
     });
@@ -130,9 +132,8 @@ describe('SegmentClient initialise', () => {
             updateCallback = callback;
           });
 
-        jest.spyOn(SegmentClient.prototype, 'handleAppStateChange');
-
         const segmentClient = new SegmentClient(clientArgs);
+        jest.spyOn(segmentClient, 'handleAppStateChange');
         segmentClient.setupLifecycleEvents();
 
         expect(addSpy).toHaveBeenCalledTimes(1);
@@ -155,160 +156,29 @@ describe('SegmentClient initialise', () => {
         // @ts-ignore actual value is irrelevant
         segmentClient.interval = 'INTERVAL';
         const unsubscribe = jest.fn();
+        // @ts-ignore
         segmentClient.watchers = [unsubscribe];
         // @ts-ignore actual value is irrelevant
         segmentClient.refreshTimeout = 'TIMEOUT';
+        // @ts-ignore
         segmentClient.appStateSubscription = {
           remove: jest.fn(),
         };
 
         segmentClient.cleanup();
+        // @ts-ignore
         expect(segmentClient.destroyed).toBe(true);
         expect(clearInterval).toHaveBeenCalledTimes(1);
         expect(clearInterval).toHaveBeenCalledWith('INTERVAL');
         expect(unsubscribe).toHaveBeenCalledTimes(1);
         expect(clearTimeout).toHaveBeenCalledTimes(1);
         expect(clearTimeout).toHaveBeenCalledWith('TIMEOUT');
+        // @ts-ignore
         expect(segmentClient.appStateSubscription.remove).toHaveBeenCalledTimes(
           1
         );
       });
     });
-
-    describe('#trackDeepLinks', () => {
-      it('calls the trackDeepLinks method', () => {
-        const trackDeepLinksSpy = jest
-          .spyOn(trackDeepLinks, 'default')
-          .mockResolvedValue();
-        const client = new SegmentClient(clientArgs);
-
-        client.trackDeepLinks();
-
-        expect(trackDeepLinksSpy).toHaveBeenCalledTimes(1);
-      });
-    });
-  });
-});
-
-describe('SegmentClient #screen', () => {
-  const clientArgs = {
-    config: {
-      writeKey: 'SEGMENT_KEY',
-    },
-    logger: getMockLogger(),
-    persistor: { subscribe: jest.fn() } as any,
-    store: getMockStore(),
-    actions: {},
-  };
-
-  it('calls the screen method', () => {
-    const screenSpy = jest.spyOn(screen, 'default').mockReturnValue();
-    const client = new SegmentClient(clientArgs);
-
-    client.screen('Home Screen', { id: 1 });
-
-    expect(screenSpy).toHaveBeenCalledTimes(1);
-    expect(screenSpy).toHaveBeenCalledWith({
-      name: 'Home Screen',
-      options: { id: 1 },
-    });
-  });
-});
-
-describe('SegmentClient #track', () => {
-  const clientArgs = {
-    config: {
-      writeKey: 'SEGMENT_KEY',
-    },
-    logger: getMockLogger(),
-    persistor: { subscribe: jest.fn() } as any,
-    store: getMockStore(),
-    actions: {},
-  };
-
-  it('calls the screen method', () => {
-    const trackSpy = jest.spyOn(track, 'default').mockReturnValue();
-    const client = new SegmentClient(clientArgs);
-
-    client.track('Some Event', { id: 1 });
-
-    expect(trackSpy).toHaveBeenCalledTimes(1);
-    expect(trackSpy).toHaveBeenCalledWith({
-      eventName: 'Some Event',
-      options: { id: 1 },
-    });
-  });
-});
-
-describe('SegmentClient #identify', () => {
-  const clientArgs = {
-    config: {
-      writeKey: 'SEGMENT_KEY',
-    },
-    logger: getMockLogger(),
-    persistor: { subscribe: jest.fn() } as any,
-    store: getMockStore(),
-    actions: {},
-  };
-
-  it('calls the identify method', () => {
-    const identifySpy = jest.spyOn(identify, 'default').mockReturnValue();
-    const client = new SegmentClient(clientArgs);
-
-    client.identify('user-id', { name: 'Mary' });
-
-    expect(identifySpy).toHaveBeenCalledTimes(1);
-    expect(identifySpy).toHaveBeenCalledWith({
-      userId: 'user-id',
-      userTraits: { name: 'Mary' },
-    });
-  });
-});
-
-describe('SegmentClient #group', () => {
-  const clientArgs = {
-    config: {
-      writeKey: 'SEGMENT_KEY',
-    },
-    logger: getMockLogger(),
-    persistor: { subscribe: jest.fn() } as any,
-    store: getMockStore(),
-    actions: {},
-  };
-
-  it('calls the group method', () => {
-    const groupSpy = jest.spyOn(group, 'default').mockReturnValue();
-    const client = new SegmentClient(clientArgs);
-
-    client.group('new-group-id', { name: 'Best Group Ever' });
-
-    expect(groupSpy).toHaveBeenCalledTimes(1);
-    expect(groupSpy).toHaveBeenCalledWith({
-      groupId: 'new-group-id',
-      groupTraits: { name: 'Best Group Ever' },
-    });
-  });
-});
-
-describe('SegmentClient #alias', () => {
-  const clientArgs = {
-    config: {
-      writeKey: 'SEGMENT_KEY',
-    },
-    logger: getMockLogger(),
-    persistor: { subscribe: jest.fn() } as any,
-    store: getMockStore(),
-    actions: {},
-  };
-
-  it('calls the alias method', () => {
-    const aliasSpy = jest.spyOn(alias, 'default').mockReturnValue();
-    const client = new SegmentClient(clientArgs);
-
-    client.alias('new-user-id');
-
-    expect(aliasSpy).toHaveBeenCalledTimes(1);
-    expect(aliasSpy).toHaveBeenCalledWith({ newUserId: 'new-user-id' });
   });
 });
 
@@ -338,6 +208,7 @@ describe('SegmentClient #reset', () => {
 
     client.reset();
 
+    // @ts-ignore
     expect(client.store.dispatch).toHaveBeenCalledWith(
       clientArgs.actions.userInfo.reset()
     );
@@ -440,7 +311,10 @@ describe('SegmentClient #onUpdateStore', () => {
   });
 
   it('does not flush the retry queue when the refreshTimeout is not null', () => {
+    const setTimeoutSpy = jest.spyOn(global, 'setTimeout');
+
     const client = setupClient(2);
+    // @ts-ignore
     client.refreshTimeout = jest.fn() as any;
 
     mockStore.dispatch(
@@ -450,94 +324,6 @@ describe('SegmentClient #onUpdateStore', () => {
       })
     );
 
-    expect(setTimeout).not.toHaveBeenCalled();
-  });
-});
-
-describe('SegmentClient #handleAppStateChange', () => {
-  const clientArgs = {
-    config: {
-      writeKey: 'SEGMENT_KEY',
-    },
-    logger: getMockLogger(),
-    persistor: { subscribe: jest.fn() } as any,
-    store: getMockStore(),
-    actions: {},
-  };
-
-  it('calls the handleAppStateChange method', () => {
-    const handleAppStateChangeSpy = jest.spyOn(handleAppStateChange, 'default');
-    const client = new SegmentClient(clientArgs);
-
-    client.handleAppStateChange('active');
-
-    expect(handleAppStateChangeSpy).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe('SegmentClient #checkInstalledVersion', () => {
-  const clientArgs = {
-    config: {
-      writeKey: 'SEGMENT_KEY',
-    },
-    logger: getMockLogger(),
-    persistor: { subscribe: jest.fn() } as any,
-    store: getMockStore(),
-    actions: {},
-  };
-
-  it('calls the checkInstalledVersion method', async () => {
-    const checkInstalledVersionSpy = jest
-      .spyOn(checkInstalledVersion, 'default')
-      .mockResolvedValue();
-    const client = new SegmentClient(clientArgs);
-
-    await client.checkInstalledVersion();
-
-    expect(checkInstalledVersionSpy).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe('SegmentClient #flush', () => {
-  const clientArgs = {
-    config: {
-      writeKey: 'SEGMENT_KEY',
-    },
-    logger: getMockLogger(),
-    persistor: { subscribe: jest.fn() } as any,
-    store: getMockStore(),
-    actions: {},
-  };
-
-  it('calls the flush method', async () => {
-    const flushSpy = jest.spyOn(flush, 'default').mockResolvedValue();
-    const client = new SegmentClient(clientArgs);
-
-    await client.flush();
-
-    expect(flushSpy).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe('SegmentClient #flushRetry', () => {
-  const clientArgs = {
-    config: {
-      writeKey: 'SEGMENT_KEY',
-    },
-    logger: getMockLogger(),
-    persistor: { subscribe: jest.fn() } as any,
-    store: getMockStore(),
-    actions: {},
-  };
-
-  it('calls the screen method', async () => {
-    const flushRetrySpy = jest.spyOn(flushRetry, 'default').mockResolvedValue();
-    const client = new SegmentClient(clientArgs);
-    client.setupStoreSubscribe();
-
-    await client.flushRetry();
-    jest.runAllTimers();
-
-    expect(flushRetrySpy).toHaveBeenCalledTimes(1);
+    expect(setTimeoutSpy).not.toHaveBeenCalled();
   });
 });

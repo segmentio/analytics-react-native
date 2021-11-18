@@ -5,11 +5,12 @@ export class InjectContext extends PlatformPlugin {
   type = PluginType.before;
 
   execute(event: SegmentEvent) {
-    const state = this.analytics!.store.getState();
-    const context = state.main.context;
     return {
       ...event,
-      context,
+      context: {
+        ...event.context,
+        ...this.analytics!.getContext(),
+      },
     };
   }
 }

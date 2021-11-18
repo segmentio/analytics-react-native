@@ -75,7 +75,7 @@ export const AnalyticsProvider = ({
 
   return (
     <Context.Provider value={client}>
-      <PersistGate loading={null} persistor={client.persistor}>
+      <PersistGate loading={null} persistor={client.getPersistor()}>
         {children}
       </PersistGate>
     </Context.Provider>
@@ -103,5 +103,3 @@ export const useAnalytics = (): ClientMethods => {
     reset: () => client.reset(),
   };
 };
-
-export type SegmentClientContext = typeof SegmentClient.prototype;

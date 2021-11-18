@@ -29,7 +29,7 @@ describe('#sendEvents', () => {
   it('sends an event', async () => {
     const mockResponse = Promise.resolve('MANOS');
     // @ts-ignore
-    fetch = jest.fn(() => Promise.resolve(mockResponse));
+    global.fetch = jest.fn(() => Promise.resolve(mockResponse));
 
     const serializedEventProperties: TrackEventType = {
       anonymousId: '3534a492-e975-4efa-a18b-3c70c562fec2',
