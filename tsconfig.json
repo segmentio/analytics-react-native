@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@segment/analytics-react-native": ["./packages/core/src/index"],
+      "@segment/analytics-react-native": ["packages/core/src/index"]
     },
     "composite": true,
     "allowUnreachableCode": false,

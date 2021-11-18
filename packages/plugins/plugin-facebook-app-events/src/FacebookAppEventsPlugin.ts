@@ -33,7 +33,7 @@ export class FacebookAppEventsPlugin extends DestinationPlugin {
   async configure(analytics: SegmentClient) {
     this.analytics = analytics;
     let adTrackingEnabled =
-      this.analytics?.store.getState().main.context?.device?.adTrackingEnabled;
+      this.analytics?.getContext().device?.adTrackingEnabled;
 
     this.analytics.watch(
       (state): boolean =>
