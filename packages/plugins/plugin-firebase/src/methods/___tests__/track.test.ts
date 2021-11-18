@@ -1,4 +1,4 @@
-import { EventType, TrackEventType } from '@segment/analytics-react-native/src';
+import { EventType, TrackEventType } from '@segment/analytics-react-native';
 import track from '../track';
 
 const mockLogEvent = jest.fn();

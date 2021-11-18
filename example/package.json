@@ -26,7 +26,8 @@
     "react-native-bootsplash": "^3.2.4",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-safe-area-context": "^3.3.0",
-    "react-native-tracking-transparency": "^0.1.1"
+    "react-native-tracking-transparency": "^0.1.1",
+    "react-native-fbsdk-next": "^4.6.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
