@@ -422,7 +422,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
-## boost-for-react-native
+## boost
 
 Boost Software License - Version 1.0 - August 17th, 2003
 

@@ -522,7 +522,7 @@ DEALINGS IN THE SOFTWARE.
 			<key>License</key>
 			<string>Boost Software License</string>
 			<key>Title</key>
-			<string>boost-for-react-native</string>
+			<string>boost</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 		</dict>

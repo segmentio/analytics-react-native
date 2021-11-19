@@ -29,11 +29,12 @@ jobs:
       - name: Lint
         run: yarn lint
       - name: Build
-        run: yarn core prepare
-      - name: Test
-        run: yarn test --coverage
+        run: yarn core build
       - name: Build Plugins
         run: yarn build:plugins 
+      - name: Test
+        run: yarn test --coverage
+      
 
   run-e2e-ios:
     needs: cancel_previous
@@ -71,13 +72,13 @@ jobs:
         run: yarn example start:e2e &
 
       - name: Detox - Build
-        run: yarn example e2e:build:ios
+        run: yarn example build:ios
 
       - name: Detox - Test
         run: |
           yarn example detox clean-framework-cache
           yarn example detox build-framework-cache
-          yarn example e2e:test:ios
+          yarn example test:ios
 
   run-e2e-android:
     needs: cancel_previous
@@ -133,7 +134,7 @@ jobs:
       - name: Run Server (with mocks)
         run: yarn example start:e2e &
       - name: Detox - Build
-        run: yarn example e2e:build:android
+        run: yarn example build:android
 
       - name: Detox - Test
         uses: reactivecircus/android-emulator-runner@v2
@@ -145,7 +146,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: yarn example e2e:test:android
+          script: yarn example test:android
 
       
 

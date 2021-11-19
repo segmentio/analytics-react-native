@@ -4,7 +4,7 @@
   "description": "The hassle-free way to add Segment analytics to your React-Native app.",
   "main": "lib/commonjs/index",
   "scripts": {
-    "prepare": "bob build",
+    "build": "bob build",
     "test": "jest",
     "typescript": "tsc --noEmit"
   },
@@ -50,8 +50,9 @@
     "@react-native-firebase/app": "^12.7.4"
   },
   "devDependencies": {
+    "@types/jest": "^27.0.3",
     "ts-jest": "^27.0.7",
-    "typescript": "^4.1.3"
+    "typescript": "^4.4.4"
   },
   "react-native-builder-bob": {
     "source": "src",

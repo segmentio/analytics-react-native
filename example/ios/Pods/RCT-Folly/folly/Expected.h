@@ -499,16 +499,18 @@ inline T&& operator,(T&& t, Unit) noexcept {
 
 struct ExpectedHelper {
   template <class Error, class T>
-  static constexpr Expected<T, Error> return_(T t) {
-    return folly::makeExpected<Error>(t);
+  static constexpr Expected<typename std::decay<T>::type, Error> return_(
+      T&& t) {
+    return folly::makeExpected<Error>(static_cast<T&&>(t));
   }
+
   template <
       class Error,
       class T,
       class U FOLLY_REQUIRES_TRAILING(
           expected_detail::IsConvertible<U&&, Error>::value)>
-  static constexpr Expected<T, Error> return_(Expected<T, U> t) {
-    return t;
+  static constexpr Expected<T, Error> return_(Expected<T, U>&& t) {
+    return Expected<T, Error>(static_cast<Expected<T, U>&&>(t));
   }
 
   template <class This>
@@ -1103,8 +1105,8 @@ class Expected final : expected_detail::ExpectedStorage<Value, Error> {
    * then
    */
   template <class... Fns FOLLY_REQUIRES_TRAILING(sizeof...(Fns) >= 1)>
-  auto then(Fns&&... fns) const& -> decltype(
-      expected_detail::ExpectedHelper::then_(
+  auto then(Fns&&... fns)
+      const& -> decltype(expected_detail::ExpectedHelper::then_(
           std::declval<const Base&>(), std::declval<Fns>()...)) {
     if (this->uninitializedByException()) {
       throw_exception<BadExpectedAccess>();
@@ -1137,8 +1139,8 @@ class Expected final : expected_detail::ExpectedStorage<Value, Error> {
    * thenOrThrow
    */
   template <class Yes, class No = MakeBadExpectedAccess>
-  auto thenOrThrow(Yes&& yes, No&& no = No{}) const& -> decltype(
-      std::declval<Yes>()(std::declval<const Value&>())) {
+  auto thenOrThrow(Yes&& yes, No&& no = No{})
+      const& -> decltype(std::declval<Yes>()(std::declval<const Value&>())) {
     using Ret = decltype(std::declval<Yes>()(std::declval<const Value&>()));
     if (this->uninitializedByException()) {
       throw_exception<BadExpectedAccess>();
@@ -1148,8 +1150,8 @@ class Expected final : expected_detail::ExpectedStorage<Value, Error> {
   }
 
   template <class Yes, class No = MakeBadExpectedAccess>
-  auto thenOrThrow(Yes&& yes, No&& no = No{}) & -> decltype(
-      std::declval<Yes>()(std::declval<Value&>())) {
+  auto thenOrThrow(Yes&& yes, No&& no = No{}) & -> decltype(std::declval<Yes>()(
+      std::declval<Value&>())) {
     using Ret = decltype(std::declval<Yes>()(std::declval<Value&>()));
     if (this->uninitializedByException()) {
       throw_exception<BadExpectedAccess>();
@@ -1159,8 +1161,10 @@ class Expected final : expected_detail::ExpectedStorage<Value, Error> {
   }
 
   template <class Yes, class No = MakeBadExpectedAccess>
-  auto thenOrThrow(Yes&& yes, No&& no = No{}) && -> decltype(
-      std::declval<Yes>()(std::declval<Value&&>())) {
+  auto thenOrThrow(
+      Yes&& yes,
+      No&& no =
+          No{}) && -> decltype(std::declval<Yes>()(std::declval<Value&&>())) {
     using Ret = decltype(std::declval<Yes>()(std::declval<Value&&>()));
     if (this->uninitializedByException()) {
       throw_exception<BadExpectedAccess>();
