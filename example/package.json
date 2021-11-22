@@ -15,7 +15,9 @@
     "start:e2e": "RN_SRC_EXT=e2e.mock.ts,e2e.mock.js yarn start",
     "android:deeplink": "adb shell am start -a android.intent.action.VIEW -d \"segmentreactnative://hello\" com.example.segmentanalyticsreactnative",
     "ios:deeplink": "xcrun simctl openurl booted segmentreactnative://hello",
-    "android:emulator": "./android/device_setup.sh"
+    "android:emulator": "./android/device_setup.sh",
+    "clean": "rimraf node_modules & yarn clean:ios",
+    "clean:ios": "rimraf ios/build ios/Pods"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.15.7",
@@ -28,8 +30,7 @@
     "react-native-fbsdk-next": "^4.6.0",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-safe-area-context": "^3.3.0",
-    "react-native-tracking-transparency": "^0.1.1",
-    "react-native-fbsdk-next": "^4.6.0"
+    "react-native-tracking-transparency": "^0.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -50,6 +51,7 @@
     "pod-install": "^0.1.28",
     "react-native-codegen": "^0.0.7",
     "react-test-renderer": "17.0.2",
+    "rimraf": "^3.0.2",
     "ts-jest": "^27.0.7",
     "typescript": "^4.5.2"
   }

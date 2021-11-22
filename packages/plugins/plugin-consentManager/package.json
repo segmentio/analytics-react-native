@@ -6,7 +6,8 @@
   "scripts": {
     "build": "bob build",
     "test": "jest",
-    "typescript": "tsc --noEmit"
+    "typescript": "tsc --noEmit",
+    "clean": "rimraf lib node_modules"
   },
   "keywords": [
     "segment",
@@ -47,6 +48,7 @@
   },
   "devDependencies": {
     "@types/jest": "^27.0.3",
+    "rimraf": "^3.0.2",
     "typescript": "^4.4.4"
   },
   "react-native-builder-bob": {

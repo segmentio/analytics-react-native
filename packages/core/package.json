@@ -6,7 +6,8 @@
   "scripts": {
     "build": "bob build",
     "test": "jest",
-    "typescript": "tsc --noEmit"
+    "typescript": "tsc --noEmit",
+    "clean": "rimraf lib node_modules"
   },
   "keywords": [
     "segment",
@@ -51,28 +52,29 @@
     "@reduxjs/toolkit": "^1.6.2",
     "js-base64": "^3.7.2",
     "nanoid": "^3.1.25",
+    "react": "17.0.2",
     "react-native": "0.66.3",
     "redux": "^4.1.2",
-    "redux-persist": "^6.0.0",
-    "react": "17.0.2"
+    "redux-persist": "^6.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
     "@react-native-community/eslint-config": "^2.0.0",
     "@release-it/conventional-changelog": "^2.0.0",
-    "@types/js-base64": "^3.3.1",
     "@types/jest": "^27.0.3",
+    "@types/js-base64": "^3.3.1",
     "@types/react": "^17.0.35",
     "@types/react-native": "0.66.5",
     "@types/uuid": "^8.3.3",
     "babel-jest": "^27.3.1",
     "eslint": "^8.2.0",
     "jest": "^27.3.1",
-    "react-native-builder-bob": "^0.18.2",
     "metro-react-native-babel-preset": "^0.66.2",
-    "typescript": "^4.4.4",
-    "ts-jest": "^27.0.7"
+    "react-native-builder-bob": "^0.18.2",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^27.0.7",
+    "typescript": "^4.4.4"
   },
   "react-native-builder-bob": {
     "source": "src",
