@@ -72,6 +72,7 @@ jobs:
     strategy:
       matrix:
         api-level: [21]
+        profile: ['pixel_xl']
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v2
@@ -95,17 +96,17 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-${{ matrix.api-level }}
+          key: avd-${{ matrix.api-level }}-${{matrix.profile}}
 
       - name: create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
-          profile: pixel_xl
+          profile: ${{matrix.profile}}
           name: Pixel_API_21_AOSP
           target: default
-          force-avd-creation: false
+          force-avd-creation: true
           emulator-options: -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: false
           script: echo "Generated AVD snapshot for caching."
