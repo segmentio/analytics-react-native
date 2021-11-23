@@ -79,4 +79,17 @@ describe('methods #identify', () => {
       userId: 'new-user-id',
     });
   });
+  it('does not update user id when user id is undefined', () => {
+    const client = new SegmentClient(defaultClientSettings);
+    jest.spyOn(client, 'process');
+
+    client.identify(undefined, { name: 'Mary' });
+
+    // @ts-ignore
+    expect(client.store.dispatch).toHaveBeenCalledTimes(1);
+    // @ts-ignore
+    expect(client.actions.userInfo.setUserId).not.toHaveBeenCalled();
+    // @ts-ignore
+    expect(client.actions.userInfo.setTraits).toHaveBeenCalledTimes(1);
+  });
 });
