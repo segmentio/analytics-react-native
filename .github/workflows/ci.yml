@@ -127,7 +127,7 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
-          profile: pixel_xl
+          profile: ${{matrix.profile}}
           avd-name: Pixel_API_21_AOSP
           target: default
           force-avd-creation: false
