@@ -29,9 +29,7 @@ jobs:
       - name: Lint
         run: yarn lint
       - name: Build
-        run: yarn core build
-      - name: Build Plugins
-        run: yarn build:plugins 
+        run: yarn build
       - name: Test
         run: yarn test --coverage
       

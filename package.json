@@ -5,16 +5,15 @@
     "packages/plugins/*"
   ],
   "scripts": {
-    "test": "jest",
-    "typescript": "tsc --noEmit --composite false",
-    "lint": "eslint \"**/*.{js,ts,tsx}\"",
-    "release": "release-it",
+    "bootstrap": "yarn workspaces run && yarn example install && yarn example pods",
+    "core": "yarn workspace @segment/analytics-react-native",
     "example": "yarn --cwd example",
-    "bootstrap": "yarn example && yarn && yarn example pods",
-    "core": "yarn --cwd packages/core",
-    "build": "yarn core build && yarn build:plugins",
-    "build:core": "yarn core build",
-    "build:plugins": "./exec_plugins.sh yarn build"
+    "build": "yarn workspaces run build",
+    "clean": "yarn workspaces run clean",
+    "typescript": "tsc --noEmit --composite false",
+    "test": "jest",
+    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "release": "release-it"
   },
   "jest": {
     "projects": [
