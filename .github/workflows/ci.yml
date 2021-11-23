@@ -46,14 +46,6 @@ jobs:
         with:
           xcode-version: 12.5.1
 
-      - name: Cocoapods cache
-        uses: actions/cache@v2
-        with:
-          path: ./example/ios/Pods
-          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pods-
-
       - name: Install applesimutils
         run:  |
           HOMEBREW_NO_AUTO_UPDATE=1 brew tap wix/brew >/dev/null
