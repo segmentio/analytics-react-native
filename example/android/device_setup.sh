@@ -14,7 +14,7 @@ then
   $sdkmanager "system-images;android-21;default;x86_64"
   
   echo "${green}=> Creating Pixel_API_21_AOSP emulator${reset}"
-  $avdmanager create avd -n Pixel_API_21_AOSP -d pixel --package "system-images;android-21;default;x86_64" 
+  $avdmanager create avd -n Pixel_API_21_AOSP -d pixel_xl --package "system-images;android-21;default;x86_64" 
 fi
 
 echo "${green}📱  Pixel_API_21_AOSP emulator ready!${reset}"
