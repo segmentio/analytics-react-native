@@ -5,7 +5,7 @@
     "packages/plugins/*"
   ],
   "scripts": {
-    "bootstrap": "yarn workspaces run && yarn example install && yarn example pods",
+    "bootstrap": "yarn install && yarn example install && yarn example pods",
     "core": "yarn workspace @segment/analytics-react-native",
     "example": "yarn --cwd example",
     "build": "yarn workspaces run build",

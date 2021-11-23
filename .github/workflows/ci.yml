@@ -23,9 +23,6 @@ jobs:
           cache: 'yarn'
       - name: Install
         run: yarn install --frozen-lockfile
-      - name: Install (Example)
-        run: yarn install --frozen-lockfile
-        working-directory: example
       - name: Lint
         run: yarn lint
       - name: Build
@@ -61,7 +58,6 @@ jobs:
         run:  |
           HOMEBREW_NO_AUTO_UPDATE=1 brew tap wix/brew >/dev/null
           HOMEBREW_NO_AUTO_UPDATE=1 brew install applesimutils >/dev/null
-      - run: yarn install
 
       - name: Bootstrap
         run: yarn bootstrap
@@ -128,7 +124,7 @@ jobs:
           cache: 'yarn'
 
       - name: Bootstrap
-        run: yarn example && yarn # No need to run bootstrap here since we don't need cocoapods
+        run: yarn install && yarn example install # No need to run bootstrap here since we don't need cocoapods
       - name: Run Server (with mocks)
         run: yarn example start:e2e &
       - name: Detox - Build
