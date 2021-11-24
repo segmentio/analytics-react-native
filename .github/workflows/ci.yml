@@ -131,7 +131,7 @@ jobs:
           avd-name: Pixel_API_21_AOSP
           target: default
           force-avd-creation: true
-          emulator-options: -no-snapshot-save -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-options: -no-window -no-snapshot-save -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: yarn example test:android
 
