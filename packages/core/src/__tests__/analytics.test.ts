@@ -130,6 +130,7 @@ describe('SegmentClient initialise', () => {
           .spyOn(ReactNative.AppState, 'addEventListener')
           .mockImplementation((_action, callback) => {
             updateCallback = callback;
+            return { remove: jest.fn() };
           });
 
         const segmentClient = new SegmentClient(clientArgs);
