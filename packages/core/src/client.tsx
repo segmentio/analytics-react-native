@@ -6,34 +6,7 @@ import type { Config, ClientMethods } from './types';
 import { createLogger } from './logger';
 import { initializeStore } from './store';
 import { SegmentClient } from './analytics';
-import { actions } from './store';
-
-const doClientSetup = async (client: SegmentClient) => {
-  // make sure the persisted store is fetched
-  await client.bootstrapStore();
-
-  // get destination settings
-  await client.fetchSettings();
-
-  // flush any stored events
-  client.flush();
-  client.flushRetry();
-
-  client.configure();
-
-  // set up the timer/subscription for knowing when to flush events
-  client.setupInterval();
-  client.setupStoreSubscribe();
-
-  // set up tracking for lifecycle events
-  client.setupLifecycleEvents();
-
-  // check if the app was opened from a deep link
-  await client.trackDeepLinks();
-
-  // save the current installed version
-  await client.checkInstalledVersion();
-};
+import { ReduxStorage } from './storage';
 
 export const createClient = (config: Config) => {
   const logger = createLogger();
@@ -47,15 +20,18 @@ export const createClient = (config: Config) => {
   const clientConfig = { ...defaultConfig, ...config };
   const { store, persistor } = initializeStore(config.writeKey);
 
+  const segmentStore = new ReduxStorage(store, persistor, {
+    maxEventsToRetry: clientConfig.maxEventsToRetry,
+  });
+
   const client = new SegmentClient({
     config: clientConfig,
     logger,
-    store,
-    actions,
+    store: segmentStore,
     persistor,
   });
 
-  doClientSetup(client);
+  client.init();
 
   return client;
 };

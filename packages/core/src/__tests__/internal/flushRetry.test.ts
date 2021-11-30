@@ -3,6 +3,7 @@ import { getMockLogger } from '../__helpers__/mockLogger';
 import * as api from '../../api';
 import type { SegmentEvent } from '../../types';
 import { mockPersistor } from '../__helpers__/mockPersistor';
+import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
 
 const defaultClientConfig = {
   config: {
@@ -10,18 +11,12 @@ const defaultClientConfig = {
     maxBatchSize: 10,
   },
   logger: getMockLogger(),
-  store: {
-    dispatch: jest.fn() as jest.MockedFunction<any>,
-    getState: () => ({
-      main: {
-        events: [] as SegmentEvent[],
-        eventsToRetry: [
-          { messageId: 'message-1' },
-          { messageId: 'message-2' },
-        ] as SegmentEvent[],
-      },
-    }),
-  },
+  store: new MockSegmentStore({
+    eventsToRetry: [
+      { messageId: 'message-1' },
+      { messageId: 'message-2' },
+    ] as SegmentEvent[],
+  }),
   persistor: mockPersistor,
   actions: {},
 };
@@ -50,15 +45,9 @@ describe('internal #flushRetry', () => {
   it('does not send any events when there are no eventsToRetry in the state ', async () => {
     const client = new SegmentClient({
       ...defaultClientConfig,
-      store: {
-        dispatch: jest.fn() as jest.MockedFunction<any>,
-        getState: () => ({
-          main: {
-            events: [] as SegmentEvent[],
-            eventsToRetry: [] as SegmentEvent[],
-          },
-        }),
-      },
+      store: new MockSegmentStore({
+        eventsToRetry: [],
+      }),
     });
 
     const sendEventsSpy = jest.spyOn(api, 'sendEvents').mockResolvedValue();

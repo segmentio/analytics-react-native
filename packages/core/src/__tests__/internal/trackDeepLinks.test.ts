@@ -3,54 +3,45 @@ import { getMockLogger } from '../__helpers__/mockLogger';
 import * as ReactNative from 'react-native';
 import { EventType } from '../../types';
 import { mockPersistor } from '../__helpers__/mockPersistor';
+import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
 
-jest.mock('../../uuid', () => ({
-  getUUID: () => 'mocked-uuid',
-}));
-
-const defaultClientConfig = {
-  config: {
-    writeKey: 'mock-write-key',
-    trackDeepLinks: true,
-  },
-  logger: getMockLogger(),
-  store: {
-    dispatch: jest.fn() as jest.MockedFunction<any>,
-    getState: () => ({
-      main: {
-        context: {
-          app: {
-            version: '1.0',
-            build: '1',
-          },
-        },
-      },
-      userInfo: {
-        userId: 'user-1',
-        anonymousId: 'secret-user-1',
-      },
-    }),
-  },
-  persistor: mockPersistor,
-  actions: {},
-};
+jest
+  .spyOn(Date.prototype, 'toISOString')
+  .mockReturnValue('2000-01-01T00:00:00.000Z');
 
 describe('#trackDeepLinks', () => {
+  const store = new MockSegmentStore({
+    context: {
+      app: {
+        name: 'test',
+        version: '1.0',
+        build: '1',
+      },
+    },
+  });
+  const clientArgs = {
+    config: {
+      writeKey: 'mock-write-key',
+      trackDeepLinks: true,
+    },
+    logger: getMockLogger(),
+    persistor: mockPersistor,
+    store: store,
+  };
+
   beforeEach(() => {
-    jest
-      .spyOn(Date.prototype, 'toISOString')
-      .mockReturnValueOnce('2000-01-01T00:00:00.000Z');
+    store.reset();
   });
 
   it('sends a track event when trackDeepLinks is enabled and the app was opened from a link', async () => {
-    const client = new SegmentClient(defaultClientConfig);
+    const client = new SegmentClient(clientArgs);
     jest.spyOn(client, 'process');
 
     jest
       .spyOn(ReactNative.Linking, 'getInitialURL')
       .mockResolvedValueOnce('myapp://open');
 
-    await client.trackDeepLinks();
+    await client.init();
 
     expect(client.process).toHaveBeenCalledTimes(1);
     expect(client.process).toHaveBeenCalledWith({
@@ -64,7 +55,7 @@ describe('#trackDeepLinks', () => {
 
   it('does not send a track event when trackDeepLinks is not enabled', async () => {
     const client = new SegmentClient({
-      ...defaultClientConfig,
+      ...clientArgs,
       config: {
         writeKey: 'mock-write-key',
         trackDeepLinks: false,
@@ -76,26 +67,20 @@ describe('#trackDeepLinks', () => {
       .spyOn(ReactNative.Linking, 'getInitialURL')
       .mockResolvedValueOnce('myapp://open');
 
-    await client.trackDeepLinks();
+    await client.init();
 
     expect(client.process).not.toHaveBeenCalled();
   });
 
   it('does not send a track event when trackDeepLinks is enabled, but the app was not opened via deep link', async () => {
-    const client = new SegmentClient({
-      ...defaultClientConfig,
-      config: {
-        writeKey: 'mock-write-key',
-        trackDeepLinks: true,
-      },
-    });
+    const client = new SegmentClient(clientArgs);
     jest.spyOn(client, 'process');
 
     jest
       .spyOn(ReactNative.Linking, 'getInitialURL')
       .mockResolvedValueOnce(null);
 
-    await client.trackDeepLinks();
+    await client.init();
 
     expect(client.process).not.toHaveBeenCalled();
   });

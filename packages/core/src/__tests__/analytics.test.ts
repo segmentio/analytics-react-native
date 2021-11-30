@@ -1,54 +1,27 @@
-import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import type { AppStateStatus } from 'react-native';
-import * as ReactNative from 'react-native';
+import { AppState } from 'react-native';
 import { EventType, IdentifyEventType } from '..';
 import { SegmentClient } from '../analytics';
-import { Logger } from '../logger';
-import { actions, Store } from '../store';
-import mainSlice from '../store/main';
-import systemSlice from '../store/system';
-import userInfo from '../store/userInfo';
-import { getMockStore } from './__helpers__/mockStore';
+import { getMockReduxStorage } from './__helpers__/getTestClient';
+import { getMockLogger } from './__helpers__/mockLogger';
+import { mockPersistor } from './__helpers__/mockPersistor';
+import { MockSegmentStore } from './__helpers__/mockSegmentStore';
 
-jest.mock('redux-persist', () => {
-  const real = jest.requireActual('redux-persist');
-  return {
-    ...real,
-    persistStore: jest.fn().mockImplementation((newStore) => newStore),
-    persistReducer: jest.fn().mockImplementation((_, reducers) => reducers),
-  };
-});
+jest.mock('react-native');
+jest.mock('../uuid');
 
-jest.mock('../uuid', () => ({
-  getUUID: () => 'mocked-uuid',
-}));
-
-const getMockLogger = () => {
-  const logger = new Logger();
-  logger.disable();
-  logger.info = jest.fn();
-  logger.warn = jest.fn();
-  logger.error = jest.fn();
-  return logger;
-};
-
-describe('SegmentClient initialise', () => {
+describe('SegmentClient', () => {
+  const ReduxStorage = getMockReduxStorage();
   const clientArgs = {
     config: {
       writeKey: 'SEGMENT_KEY',
       flushAt: 10,
       retryInterval: 40,
+      trackAppLifecycleEvents: true,
     },
     logger: getMockLogger(),
-    persistor: { subscribe: jest.fn() } as any,
-    store: getMockStore(),
-    actions: {
-      addEvent: jest.fn(),
-      setUserId: jest.fn(),
-      addUserTraits: jest.fn(),
-      reset: jest.fn(),
-      updateContext: jest.fn(),
-    },
+    persistor: mockPersistor,
+    store: ReduxStorage,
   };
 
   beforeEach(() => {
@@ -56,177 +29,124 @@ describe('SegmentClient initialise', () => {
   });
 
   describe('when initializing a new client', () => {
-    it('creates the client with default values', () => {
+    it('creates the client with default values', async () => {
+      const segmentClient = new SegmentClient(clientArgs);
+      expect(segmentClient.getConfig()).toEqual(clientArgs.config);
+    });
+  });
+
+  describe('#setupInterval', () => {
+    beforeEach(() => {
+      // Using the legacy timers of jest to track calls
+      jest.useFakeTimers('legacy');
+    });
+
+    afterEach(() => {
+      jest.clearAllTimers();
+    });
+
+    it('resets the interval and creates a new one when initialised', async () => {
+      const segmentClient = new SegmentClient({
+        ...clientArgs,
+        config: { ...clientArgs.config, flushInterval: 10 },
+      });
+      await segmentClient.init();
+
+      const flush = jest.spyOn(segmentClient, 'flush');
+      // An interval should be set to check each second
+      expect(setInterval).toHaveBeenLastCalledWith(expect.any(Function), 1000);
+
+      // Wait 10 secs for the flush interval to happen
+      jest.advanceTimersByTime(10 * 1000);
+
+      // Flush should have been called at flushInterval
+      expect(flush).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('#setupLifecycleEvents', () => {
+    it('subscribes to the app state update events', async () => {
+      let updateCallback = (_val: AppStateStatus) => {};
+
+      const addSpy = jest
+        .spyOn(AppState, 'addEventListener')
+        .mockImplementation((_action, callback) => {
+          updateCallback = callback;
+          return { remove: jest.fn() };
+        });
+
       const segmentClient = new SegmentClient(clientArgs);
 
-      expect(segmentClient.getConfig()).toEqual(clientArgs.config);
-      // Legacy checks,
-      // TODO: Remove these as they test private
       // @ts-ignore
-      expect(segmentClient.config).toStrictEqual(clientArgs.config);
+      jest.spyOn(segmentClient, 'handleAppStateChange');
+      await segmentClient.init();
+
+      expect(addSpy).toHaveBeenCalledTimes(1);
+      expect(addSpy).toHaveBeenCalledWith('change', expect.any(Function));
+
       // @ts-ignore
-      expect(segmentClient.store).toStrictEqual(clientArgs.store);
+      expect(segmentClient.handleAppStateChange).not.toHaveBeenCalled();
+
+      updateCallback('active');
+
       // @ts-ignore
-      expect(segmentClient.actions).toStrictEqual(clientArgs.actions);
+      expect(segmentClient.handleAppStateChange).toHaveBeenCalledTimes(1);
       // @ts-ignore
-      expect(segmentClient.persistor).toStrictEqual(clientArgs.persistor);
-      // @ts-ignore
-      expect(segmentClient.secondsElapsed).toStrictEqual(0);
-      // @ts-ignore
-      expect(segmentClient.appState).toStrictEqual('unknown');
+      expect(segmentClient.handleAppStateChange).toHaveBeenCalledWith('active');
     });
   });
 
-  describe('internal setup methods', () => {
-    describe('#setupInterval', () => {
-      beforeEach(() => {
-        // Using the legacy timers of jest to track calls
-        jest.useFakeTimers('legacy');
-      });
+  describe('#cleanup', () => {
+    it('clears all subscriptions and timers', async () => {
+      const segmentClient = new SegmentClient(clientArgs);
+      await segmentClient.init();
 
-      afterEach(() => {
-        jest.clearAllTimers();
-      });
-
-      it('resets the interval and creates a new one when initialised', () => {
-        const segmentClient = new SegmentClient(clientArgs);
-
+      jest.spyOn(
         // @ts-ignore
-        expect(segmentClient.interval).toBe(null);
+        segmentClient.appStateSubscription,
+        'remove'
+      );
 
-        // @ts-ignore value is irrelevant
-        segmentClient.interval = 'TEST';
-
-        segmentClient.setupInterval();
-
-        // TODO: Jest recommends not to test for checking interval as they are an implementation detail but test the side effect, refactor these in the future
-        expect(clearInterval).toHaveBeenCalledTimes(1);
-        expect(clearInterval).toHaveBeenCalledWith('TEST');
-        expect(setInterval).toHaveBeenLastCalledWith(
-          expect.any(Function),
-          1000
-        );
-        // @ts-ignore
-        expect(segmentClient.interval).not.toBe('TEST');
-      });
-    });
-
-    describe('#setupStoreSubscribe', () => {
-      it('subscribes to the redux store', () => {
-        const segmentClient = new SegmentClient(clientArgs);
-
-        segmentClient.setupStoreSubscribe();
-
-        // Each watcher generates a subscription so we just check that it has subscribed at least once
-        expect(clientArgs.store.subscribe).toHaveBeenCalled();
-      });
-    });
-
-    describe('#setupLifecycleEvents', () => {
-      it('subscribes to the app state update events', () => {
-        let updateCallback = (_val: AppStateStatus) => {};
-
-        const addSpy = jest
-          .spyOn(ReactNative.AppState, 'addEventListener')
-          .mockImplementation((_action, callback) => {
-            updateCallback = callback;
-            return { remove: jest.fn() };
-          });
-
-        const segmentClient = new SegmentClient(clientArgs);
-        jest.spyOn(segmentClient, 'handleAppStateChange');
-        segmentClient.setupLifecycleEvents();
-
-        expect(addSpy).toHaveBeenCalledTimes(1);
-        expect(addSpy).toHaveBeenCalledWith('change', expect.any(Function));
-
-        expect(segmentClient.handleAppStateChange).not.toHaveBeenCalled();
-
-        updateCallback('active');
-
-        expect(segmentClient.handleAppStateChange).toHaveBeenCalledTimes(1);
-        expect(segmentClient.handleAppStateChange).toHaveBeenCalledWith(
-          'active'
-        );
-      });
-    });
-
-    describe('#cleanup', () => {
-      it('clears all subscriptions and timers', () => {
-        const segmentClient = new SegmentClient(clientArgs);
-        // @ts-ignore actual value is irrelevant
-        segmentClient.interval = 'INTERVAL';
-        const unsubscribe = jest.fn();
-        // @ts-ignore
-        segmentClient.watchers = [unsubscribe];
-        // @ts-ignore actual value is irrelevant
-        segmentClient.refreshTimeout = 'TIMEOUT';
-        // @ts-ignore
-        segmentClient.appStateSubscription = {
-          remove: jest.fn(),
-        };
-
-        segmentClient.cleanup();
-        // @ts-ignore
-        expect(segmentClient.destroyed).toBe(true);
-        expect(clearInterval).toHaveBeenCalledTimes(1);
-        expect(clearInterval).toHaveBeenCalledWith('INTERVAL');
-        expect(unsubscribe).toHaveBeenCalledTimes(1);
-        expect(clearTimeout).toHaveBeenCalledTimes(1);
-        expect(clearTimeout).toHaveBeenCalledWith('TIMEOUT');
-        // @ts-ignore
-        expect(segmentClient.appStateSubscription.remove).toHaveBeenCalledTimes(
-          1
-        );
-      });
+      segmentClient.cleanup();
+      // @ts-ignore
+      expect(segmentClient.destroyed).toBe(true);
+      expect(clearInterval).toHaveBeenCalledTimes(1);
+      expect(clearTimeout).toHaveBeenCalledTimes(1);
+      // @ts-ignore
+      expect(segmentClient.appStateSubscription.remove).toHaveBeenCalledTimes(
+        1
+      );
     });
   });
-});
 
-describe('SegmentClient #reset', () => {
-  const clientArgs = {
-    config: {
-      writeKey: 'SEGMENT_KEY',
-      flushAt: 10,
-      retryInterval: 40,
-    },
-    logger: getMockLogger(),
-    persistor: { subscribe: jest.fn() } as any,
-    store: getMockStore(),
-    actions: {
-      userInfo: {
-        reset: jest.fn(),
-      },
-    },
-  };
+  describe('#reset', () => {
+    it('resets user data, identity, traits', () => {
+      const client = new SegmentClient(clientArgs);
+      const setUserInfo = jest.spyOn(ReduxStorage.userInfo, 'set');
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
+      client.reset();
 
-  it('resets user data, identity, traits', () => {
-    const client = new SegmentClient(clientArgs);
-
-    client.reset();
-
-    // @ts-ignore
-    expect(client.store.dispatch).toHaveBeenCalledWith(
-      clientArgs.actions.userInfo.reset()
-    );
+      expect(setUserInfo).toHaveBeenCalledWith({
+        anonymousId: 'mocked-uuid',
+        userId: undefined,
+        traits: undefined,
+      });
+    });
   });
 });
 
 describe('SegmentClient #onUpdateStore', () => {
+  const store = new MockSegmentStore();
   const clientArgs = {
     config: {
       writeKey: 'SEGMENT_KEY',
       flushAt: 10,
       retryInterval: 40,
+      trackAppLifecycleEvents: true,
     },
     logger: getMockLogger(),
-    persistor: { subscribe: jest.fn() } as any,
-    store: getMockStore(),
-    actions: {},
+    persistor: mockPersistor,
+    store: store,
   };
 
   const sampleEvent: IdentifyEventType = {
@@ -241,17 +161,9 @@ describe('SegmentClient #onUpdateStore', () => {
     messageId: 'iDMkR2-I7c2_LCsPPlvwH',
   };
 
-  const rootReducer = combineReducers({
-    main: mainSlice.reducer,
-    system: systemSlice.reducer,
-    userInfo: userInfo.reducer,
-  });
-  let mockStore = configureStore({ reducer: rootReducer }) as Store;
-
   beforeEach(() => {
     jest.useFakeTimers();
-    // Reset the Redux store to a clean state
-    mockStore = configureStore({ reducer: rootReducer }) as Store;
+    store.reset();
   });
 
   afterEach(() => {
@@ -262,69 +174,57 @@ describe('SegmentClient #onUpdateStore', () => {
   /**
    * Creates a client wired up with store subscriptions and flush mocks for testing automatic flushes
    */
-  const setupClient = (flushAt: number): SegmentClient => {
+  const setupClient = async (flushAt: number): Promise<SegmentClient> => {
     const args = {
       ...clientArgs,
       config: {
         ...clientArgs.config,
         flushAt,
+        retryInterval: 1,
       },
-      store: mockStore,
-      actions: actions,
     };
     const client = new SegmentClient(args);
+    await client.init();
     // It is important to setup the flush spy before setting up the subscriptions so that it tracks the calls in the closure
     jest.spyOn(client, 'flush').mockResolvedValueOnce();
     jest.spyOn(client, 'flushRetry').mockResolvedValueOnce();
-    client.setupStoreSubscribe();
     return client;
   };
 
-  it('calls flush when there are unsent events', () => {
-    const client = setupClient(1);
-    mockStore.dispatch(mainSlice.actions.addEvent({ event: sampleEvent }));
+  it('calls flush when there are unsent events', async () => {
+    const client = await setupClient(1);
+    store.events.add(sampleEvent);
     expect(client.flush).toHaveBeenCalledTimes(1);
   });
 
-  it('does not flush when number of events does not exceed the flush threshold', () => {
-    const client = setupClient(2);
-    mockStore.dispatch(mainSlice.actions.addEvent({ event: sampleEvent }));
+  it('does not flush when number of events does not exceed the flush threshold', async () => {
+    const client = await setupClient(5);
+    store.events.add(sampleEvent);
     expect(client.flush).not.toHaveBeenCalled();
   });
 
-  it('does not call flush when there are no events to send', () => {
-    const client = setupClient(1);
+  it('does not call flush when there are no events to send', async () => {
+    const client = await setupClient(1);
     expect(client.flush).not.toHaveBeenCalled();
     expect(client.flushRetry).not.toHaveBeenCalled();
   });
 
-  it('flushes retry queue when it is non-empty', () => {
-    const client = setupClient(2);
-
-    mockStore.dispatch(
-      mainSlice.actions.addEventsToRetry({
-        events: [sampleEvent],
-        config: { ...clientArgs.config },
-      })
-    );
-
+  it('flushes retry queue when it is non-empty', async () => {
+    const client = await setupClient(2);
+    store.eventsToRetry.add([sampleEvent]);
     expect(client.flushRetry).toHaveBeenCalledTimes(1);
   });
 
-  it('does not flush the retry queue when the refreshTimeout is not null', () => {
-    const setTimeoutSpy = jest.spyOn(global, 'setTimeout');
-
-    const client = setupClient(2);
-    // @ts-ignore
-    client.refreshTimeout = jest.fn() as any;
-
-    mockStore.dispatch(
-      mainSlice.actions.addEventsToRetry({
-        events: [sampleEvent],
-        config: { ...clientArgs.config },
-      })
-    );
-
+  it('does not flush the retry queue when the refreshTimeout is not null', async () => {
+    // Mock the timeout to prevent it from releasing the lock
+    const setTimeoutSpy = jest
+      .spyOn(global, 'setTimeout')
+      .mockImplementationOnce(jest.fn());
+    await setupClient(2);
+    store.eventsToRetry.add([sampleEvent]);
+    jest.advanceTimersByTime(10);
+    jest.resetAllMocks();
+    store.eventsToRetry.add([sampleEvent]);
     expect(setTimeoutSpy).not.toHaveBeenCalled();
   });
 });

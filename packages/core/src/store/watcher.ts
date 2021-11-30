@@ -1,4 +1,4 @@
-import type { Store } from '.';
+type Unsubscribe = () => void;
 
 /**
  * Creates a watcher that subscribes to the store and tracks
@@ -6,7 +6,10 @@ import type { Store } from '.';
  * @param store Store to subscribe to
  * @returns a function to subscribe actions for
  */
-export const getStoreWatcher = (store: Store) => {
+export const getStoreWatcher = (store: {
+  getState: () => any;
+  subscribe: (callback: () => any) => Unsubscribe;
+}) => {
   return <T>(
     selector: (state: ReturnType<typeof store.getState>) => T,
     onChange: (value: T) => void

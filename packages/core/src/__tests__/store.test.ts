@@ -147,33 +147,6 @@ describe('#initializeStore', () => {
       });
     });
 
-    it('merges new user traits with existing ones', () => {
-      const { store } = initializeStore('test-key');
-      store.dispatch(
-        actions.userInfo.setTraits({
-          traits: {
-            firstName: 'Kitty',
-          },
-        })
-      );
-
-      store.dispatch(
-        actions.userInfo.setTraits({
-          traits: {
-            lastName: 'Cat',
-          },
-        })
-      );
-
-      expect(store.getState().userInfo).toEqual({
-        ...initialState.userInfo,
-        traits: {
-          firstName: 'Kitty',
-          lastName: 'Cat',
-        },
-      });
-    });
-
     it('overwrites existing user traits with new ones', () => {
       const { store } = initializeStore('test-key');
       store.dispatch(
@@ -298,9 +271,6 @@ describe('#initializeStore', () => {
       store.dispatch(
         actions.main.addEventsToRetry({
           events: [event],
-          config: {
-            writeKey: '123-456',
-          },
         })
       );
       expect(store.getState().main).toEqual({
@@ -332,10 +302,7 @@ describe('#initializeStore', () => {
       store.dispatch(
         actions.main.addEventsToRetry({
           events: [event1, event2],
-          config: {
-            writeKey: '123-456',
-            maxEventsToRetry: 3,
-          },
+          maxEvents: 3,
         })
       );
 
@@ -352,10 +319,7 @@ describe('#initializeStore', () => {
       store.dispatch(
         actions.main.addEventsToRetry({
           events: [event3, event4],
-          config: {
-            writeKey: '123-456',
-            maxEventsToRetry: 3,
-          },
+          maxEvents: 3,
         })
       );
 
@@ -394,9 +358,6 @@ describe('#initializeStore', () => {
       store.dispatch(
         actions.main.addEventsToRetry({
           events: [event1, event2],
-          config: {
-            writeKey: '123-456',
-          },
         })
       );
 

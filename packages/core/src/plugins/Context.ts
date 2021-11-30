@@ -9,7 +9,7 @@ export class InjectContext extends PlatformPlugin {
       ...event,
       context: {
         ...event.context,
-        ...this.analytics!.getContext(),
+        ...this.analytics!.context.get(),
       },
     };
   }

@@ -1,23 +1,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { defaultConfig } from '../constants';
-import type { SegmentAPISettings, Config, IntegrationSettings } from '../types';
+import type { SegmentAPISettings, IntegrationSettings } from '../types';
 
-type SystemState = {
-  configuration: Config;
+export type SystemState = {
   settings?: SegmentAPISettings;
 };
 
-export const initialState: SystemState = {
-  configuration: defaultConfig,
-};
+export const initialState: SystemState = {};
 
 export default createSlice({
   name: 'system',
   initialState,
   reducers: {
-    init: (state, action: PayloadAction<{ configuration: Config }>) => {
-      state.configuration = action.payload.configuration;
-    },
     updateSettings: (
       state,
       action: PayloadAction<{ settings: SegmentAPISettings }>

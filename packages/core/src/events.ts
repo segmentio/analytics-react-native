@@ -1,6 +1,5 @@
 import { getUUID } from './uuid';
 
-import type { Store } from './store';
 import {
   GroupEventType,
   GroupTraits,
@@ -13,6 +12,7 @@ import {
   EventType,
   SegmentEvent,
 } from './types';
+import type { UserInfoState } from './store/userInfo';
 
 export const createTrackEvent = ({
   event,
@@ -78,9 +78,10 @@ export const createAliasEvent = ({
 const isAliasEvent = (event: SegmentEvent): event is AliasEventType =>
   event.type === EventType.AliasEvent;
 
-export const applyRawEventData = (event: SegmentEvent, store: Store) => {
-  const { userInfo } = store.getState();
-
+export const applyRawEventData = (
+  event: SegmentEvent,
+  userInfo: UserInfoState
+) => {
   return {
     ...event,
     anonymousId: userInfo.anonymousId,

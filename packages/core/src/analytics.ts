@@ -16,13 +16,8 @@ import type { Logger } from './logger';
 import type { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
 import { InjectContext } from './plugins/Context';
 import { SegmentDestination } from './plugins/SegmentDestination';
-import {
-  actions as ReduxActions,
-  getEvents,
-  getEventsToRetry,
-  getStoreWatcher,
-  Store,
-} from './store';
+import type { Settable, Storage, Watchable } from './storage';
+import type { UserInfoState } from './store/userInfo';
 import { Timeline } from './timeline';
 import {
   Config,
@@ -31,21 +26,20 @@ import {
   GroupTraits,
   JsonMap,
   PluginType,
+  SegmentAPIIntegrations,
   SegmentAPISettings,
   SegmentEvent,
   UserTraits,
 } from './types';
 import { chunk, getPluginsWithFlush } from './util';
+import { getUUID } from './uuid';
 
 export class SegmentClient {
   // the config parameters for the client - a merge of user provided and default options
   private config: Config;
 
-  // redux store
-  private store: Store;
-
-  // redux actions
-  private actions: typeof ReduxActions;
+  // Storage
+  private store: Storage;
 
   // persistor for the redux store
   private persistor: Persistor;
@@ -66,7 +60,10 @@ export class SegmentClient {
   private refreshTimeout: ReturnType<typeof setTimeout> | null = null;
 
   // internal time to know when to flush, ticks every second
-  private interval: ReturnType<typeof setTimeout> | null = null;
+  private flushInterval: ReturnType<typeof setInterval> | null = null;
+
+  // Watcher for isReady updates to the storage
+  private readinessWatcher?: Unsubscribe = undefined;
 
   // unsubscribe watchers for the redux store
   private watchers: Unsubscribe[] = [];
@@ -84,14 +81,11 @@ export class SegmentClient {
 
   private timeline: Timeline;
 
-  /**
-   * Watches changes to redux store
-   */
-  watch: ReturnType<typeof getStoreWatcher>;
-
   // mechanism to prevent adding plugins before we are fully initalised
-  private isReady = false;
+  private isStorageReady = false;
   private pluginsToAdd: Plugin[] = [];
+
+  private isInitialized = false;
 
   get platformPlugins() {
     const plugins: PlatformPlugin[] = [];
@@ -108,14 +102,37 @@ export class SegmentClient {
     return plugins;
   }
 
+  // Watchables
   /**
-   * Retrieves a copy of the settings
-   * @returns Configuration object for all plugins
+   * Access or subscribe to client context
    */
-  getSettings() {
-    const { system } = this.store.getState();
-    return { integrations: { ...system.settings?.integrations } };
-  }
+  readonly context: Watchable<DeepPartial<Context> | undefined> &
+    Settable<DeepPartial<Context>>;
+
+  /**
+   * Access or subscribe to adTrackingEnabled (also accesible from context)
+   */
+  readonly adTrackingEnabled: Watchable<boolean>;
+
+  /**
+   * Access or subscribe to integration settings
+   */
+  readonly settings: Watchable<SegmentAPIIntegrations | undefined>;
+
+  /**
+   * Access or suscribe to the events in the timeline
+   */
+  readonly events: Watchable<SegmentEvent[]>;
+
+  /**
+   * Access or subscribe to the failed events in the last flush
+   */
+  readonly eventsToRetry: Watchable<SegmentEvent[]>;
+
+  /**
+   * Access or subscribe to user info (anonymousId, userId, traits)
+   */
+  readonly userInfo: Watchable<UserInfoState>;
 
   /**
    * Returns the plugins currently loaded in the timeline
@@ -138,28 +155,11 @@ export class SegmentClient {
     );
   }
 
-  getContext() {
-    return { ...this.store.getState().main.context };
-  }
-
-  updateContext(context: DeepPartial<Context>) {
-    this.store.dispatch(this.actions.main.updateContext({ context }));
-  }
-
+  /**
+   * Retrieves a copy of the current client configuration
+   */
   getConfig() {
     return { ...this.config };
-  }
-
-  getUserInfo() {
-    return { ...this.store.getState().userInfo };
-  }
-
-  getEvents() {
-    return [...getEvents(this.store.getState())];
-  }
-
-  getEventsToRetry() {
-    return [...getEventsToRetry(this.store.getState())];
   }
 
   getPersistor() {
@@ -170,29 +170,19 @@ export class SegmentClient {
     config,
     logger,
     store,
-    actions,
     persistor,
   }: {
     config: Config;
     logger: Logger;
     store: any;
     persistor: Persistor;
-    actions: any;
   }) {
     this.logger = logger;
     this.config = config;
     this.store = store;
-    this.actions = actions;
     this.persistor = persistor;
     this.timeline = new Timeline();
 
-    this.watch = getStoreWatcher(this.store);
-
-    // Get everything running
-    this.platformStartup();
-  }
-
-  platformStartup() {
     // add segment destination plugin unless
     // asked not to via configuration.
     if (this.config.autoAddSegmentDestination) {
@@ -202,12 +192,80 @@ export class SegmentClient {
 
     // Setup platform specific plugins
     this.platformPlugins.forEach((plugin) => this.add({ plugin: plugin }));
+
+    // Initialize the watchables
+    this.context = {
+      get: this.store.context.get,
+      set: this.store.context.set,
+      onChange: this.store.context.onChange,
+    };
+
+    this.adTrackingEnabled = {
+      get: () => this.store.context.get()?.device?.adTrackingEnabled ?? false,
+      onChange: (callback: (value: boolean) => void) =>
+        this.store.context.onChange((context?: DeepPartial<Context>) => {
+          callback(context?.device?.adTrackingEnabled ?? false);
+        }),
+    };
+
+    this.settings = {
+      get: this.store.settings.get,
+      onChange: this.store.settings.onChange,
+    };
+
+    this.userInfo = {
+      get: this.store.userInfo.get,
+      onChange: this.store.userInfo.onChange,
+    };
+
+    this.events = {
+      get: this.store.events.get,
+      onChange: this.store.events.onChange,
+    };
+
+    this.eventsToRetry = {
+      get: this.store.eventsToRetry.get,
+      onChange: this.store.eventsToRetry.onChange,
+    };
   }
 
-  configure() {
-    this.store.dispatch(
-      this.actions.system.init({ configuration: this.config })
-    );
+  /**
+   * Initializes the client plugins, settings and subscribers.
+   * Can only be called once.
+   */
+  async init() {
+    if (this.isInitialized) {
+      this.logger.warn('SegmentClient already initialized');
+      return;
+    }
+
+    // Plugin interval check
+    if (this.store.isReady.get()) {
+      this.onStorageReady(true);
+    } else {
+      this.store.isReady.onChange((value) => this.onStorageReady(value));
+    }
+
+    await this.fetchSettings();
+
+    // flush any stored events
+    this.flush();
+    this.flushRetry();
+
+    // set up the timer/subscription for knowing when to flush events
+    this.setupInterval();
+    this.setupStorageSubscribers();
+
+    // set up tracking for lifecycle events
+    this.setupLifecycleEvents();
+
+    // check if the app was opened from a deep link
+    await this.trackDeepLinks();
+
+    // save the current installed version
+    await this.checkInstalledVersion();
+
+    this.isInitialized = true;
   }
 
   async fetchSettings() {
@@ -217,9 +275,7 @@ export class SegmentClient {
       const res = await fetch(settingsEndpoint);
       const resJson = await res.json();
       this.logger.info(`Received settings from Segment succesfully.`);
-      this.store.dispatch(
-        this.actions.system.updateSettings({ settings: resJson })
-      );
+      this.store.settings.set(resJson);
     } catch {
       this.logger.warn(
         `Could not receive settings from Segment. ${
@@ -229,11 +285,7 @@ export class SegmentClient {
         }`
       );
       if (this.config.defaultSettings) {
-        this.store.dispatch(
-          this.actions.system.updateSettings({
-            settings: this.config.defaultSettings,
-          })
-        );
+        this.store.settings.set(this.config.defaultSettings);
       }
     }
   }
@@ -241,7 +293,7 @@ export class SegmentClient {
   /**
    * Clears all subscriptions to the redux store
    */
-  private unsubscribeWatchers() {
+  private unsubscribeStorageWatchers() {
     if (this.watchers.length > 0) {
       for (const unsubscribe of this.watchers) {
         try {
@@ -264,11 +316,12 @@ export class SegmentClient {
    * it gets approved: https://github.com/tc39/proposal-weakrefs#finalizers
    */
   cleanup() {
-    if (this.interval) {
-      clearInterval(this.interval);
+    if (this.flushInterval) {
+      clearInterval(this.flushInterval);
     }
 
-    this.unsubscribeWatchers();
+    this.unsubscribeReadinessWatcher();
+    this.unsubscribeStorageWatchers();
 
     if (this.refreshTimeout) {
       clearTimeout(this.refreshTimeout);
@@ -277,36 +330,21 @@ export class SegmentClient {
     this.appStateSubscription?.remove();
 
     this.destroyed = true;
+    this.isInitialized = false;
   }
 
-  async bootstrapStore() {
-    return new Promise<void>((resolve) => {
-      if (this.persistor.getState().bootstrapped) {
-        resolve();
-      } else {
-        this.persistor.subscribe(() => {
-          const { bootstrapped } = this.persistor.getState();
-          if (bootstrapped) {
-            resolve();
-          }
-        });
-      }
-    });
-  }
-
-  setupInterval() {
-    if (this.interval !== null && this.interval !== undefined) {
-      clearInterval(this.interval);
+  private setupInterval() {
+    if (this.flushInterval !== null && this.flushInterval !== undefined) {
+      clearInterval(this.flushInterval);
     }
-    this.interval = setInterval(() => this.tick(), 1000) as any;
+    this.flushInterval = setInterval(() => this.tick(), 1000) as any;
   }
 
-  setupStoreSubscribe() {
-    this.unsubscribeWatchers();
-    this.watchers.push(this.store.subscribe(() => this.onUpdateStore()));
+  private setupStorageSubscribers() {
+    this.unsubscribeStorageWatchers();
 
     this.watchers.push(
-      this.watch(getEvents, (events: SegmentEvent[]) => {
+      this.store.events.onChange((events: SegmentEvent[]) => {
         if (events.length >= this.config.flushAt!) {
           this.flush();
         }
@@ -314,7 +352,7 @@ export class SegmentClient {
     );
 
     this.watchers.push(
-      this.watch(getEventsToRetry, (events: SegmentEvent[]) => {
+      this.store.eventsToRetry.onChange((events: SegmentEvent[]) => {
         if (events.length >= 0) {
           this.flushRetry();
         }
@@ -322,7 +360,7 @@ export class SegmentClient {
     );
   }
 
-  setupLifecycleEvents() {
+  private setupLifecycleEvents() {
     this.appStateSubscription?.remove();
 
     this.appStateSubscription = AppState.addEventListener(
@@ -359,17 +397,10 @@ export class SegmentClient {
     // can be cached and added later during the next state update
     // this is to avoid adding plugins before network requests made as part of setup have resolved
     if (settings !== undefined && plugin.type === PluginType.destination) {
-      this.store.dispatch(
-        this.actions.system.addDestination({
-          destination: {
-            key: (plugin as DestinationPlugin).key,
-            settings,
-          },
-        })
-      );
+      this.store.settings.add((plugin as DestinationPlugin).key, settings);
     }
 
-    if (!this.isReady) {
+    if (!this.isStorageReady) {
       this.pluginsToAdd.push(plugin);
     } else {
       this.addPlugin(plugin);
@@ -391,11 +422,11 @@ export class SegmentClient {
   }
 
   process(incomingEvent: SegmentEvent) {
-    const event = applyRawEventData(incomingEvent, this.store);
+    const event = applyRawEventData(incomingEvent, this.store.userInfo.get());
     this.timeline.process(event);
   }
 
-  async trackDeepLinks() {
+  private async trackDeepLinks() {
     const url = await Linking.getInitialURL();
 
     if (url && this.getConfig().trackDeepLinks) {
@@ -410,8 +441,12 @@ export class SegmentClient {
     }
   }
 
-  onUpdateStore() {
-    if (this.pluginsToAdd.length > 0 && !this.isAddingPlugins) {
+  private unsubscribeReadinessWatcher() {
+    this.readinessWatcher?.();
+  }
+
+  private onStorageReady(isReady: boolean) {
+    if (isReady && this.pluginsToAdd.length > 0 && !this.isAddingPlugins) {
       this.isAddingPlugins = true;
       try {
         // start by adding the plugins
@@ -424,7 +459,8 @@ export class SegmentClient {
         this.pluginsToAdd = [];
 
         // finally set the flag which means plugins will be added + registered immediately in future
-        this.isReady = true;
+        this.isStorageReady = true;
+        this.unsubscribeReadinessWatcher();
       } finally {
         this.isAddingPlugins = false;
       }
@@ -434,7 +470,7 @@ export class SegmentClient {
   async flushRetry() {
     if (this.refreshTimeout === null) {
       const retryIntervalMs = this.config.retryInterval! * 1000;
-      this.refreshTimeout = setTimeout(() => {
+      const flushRetries = () => {
         (async () => {
           if (!this.isPendingRetryUpload) {
             this.isPendingRetryUpload = true;
@@ -443,9 +479,7 @@ export class SegmentClient {
                 return;
               }
 
-              const state = this.store.getState();
-              const { eventsToRetry } = state.main;
-
+              const eventsToRetry = this.store.eventsToRetry.get();
               if (!eventsToRetry.length) {
                 this.refreshTimeout = null;
                 return;
@@ -466,14 +500,7 @@ export class SegmentClient {
                       config: this.config,
                       events,
                     });
-                    const messageIds = events.map(
-                      (evt: SegmentEvent) => evt.messageId
-                    );
-                    this.store.dispatch(
-                      this.actions.main.deleteEventsToRetryByMessageId({
-                        ids: messageIds,
-                      })
-                    );
+                    this.store.eventsToRetry.remove(events);
                     numSentEvents += events.length;
                   } catch (e) {
                     numFailedEvents += events.length;
@@ -487,7 +514,7 @@ export class SegmentClient {
                     .config.retryInterval!} seconds (via retry)`
                 );
                 this.refreshTimeout = setTimeout(
-                  () => this.flushRetry(), // TODO: Fix this and add test
+                  flushRetries,
                   retryIntervalMs
                 ) as any;
               } else {
@@ -504,7 +531,8 @@ export class SegmentClient {
             }
           }
         })();
-      }, retryIntervalMs);
+      };
+      this.refreshTimeout = setTimeout(flushRetries, retryIntervalMs);
     }
   }
 
@@ -525,9 +553,9 @@ export class SegmentClient {
         }
 
         this.secondsElapsed = 0;
-        const state = this.store.getState();
+        const events = this.store.events.get();
 
-        if (state.main.events.length > 0) {
+        if (events.length > 0) {
           getPluginsWithFlush(this.timeline).forEach((plugin) =>
             plugin.flush()
           );
@@ -559,22 +587,23 @@ export class SegmentClient {
   }
 
   identify(userId: string, userTraits?: UserTraits) {
-    const { traits: currentUserTraits } = this.store.getState().userInfo;
+    const userInfo = this.store.userInfo.get();
+    const { traits: currentUserTraits } = userInfo;
+
+    const mergedTraits = {
+      ...currentUserTraits,
+      ...userTraits,
+    };
 
     const event = createIdentifyEvent({
-      userTraits: {
-        ...currentUserTraits,
-        ...(userTraits || {}),
-      },
+      userTraits: mergedTraits,
     });
 
-    this.store.dispatch(this.actions.userInfo.setUserId({ userId }));
-
-    if (userTraits) {
-      this.store.dispatch(
-        this.actions.userInfo.setTraits({ traits: userTraits })
-      );
-    }
+    this.store.userInfo.set({
+      ...userInfo,
+      userId: userId,
+      traits: mergedTraits,
+    });
 
     this.process(event);
     this.logger.info('IDENTIFY event saved', event);
@@ -591,11 +620,16 @@ export class SegmentClient {
   }
 
   alias(newUserId: string) {
-    const { anonymousId, userId } = this.getUserInfo();
+    const { anonymousId, userId } = this.userInfo.get();
     const event = createAliasEvent({
       anonymousId,
       userId,
       newUserId,
+    });
+
+    this.store.userInfo.set({
+      ...this.store.userInfo.get(),
+      userId: newUserId,
     });
 
     this.process(event);
@@ -603,17 +637,11 @@ export class SegmentClient {
   }
 
   queueEvent(event: SegmentEvent) {
-    this.store.dispatch(
-      this.actions.main.addEvent({ event: event as unknown as SegmentEvent })
-    );
+    this.store.events.add(event);
   }
 
-  removeEvents(eventIds: string[]) {
-    this.store.dispatch(
-      this.actions.main.deleteEventsByMessageId({
-        ids: eventIds,
-      })
-    );
+  removeEvents(event: SegmentEvent | SegmentEvent[]) {
+    this.store.events.remove(event);
   }
 
   /**
@@ -627,11 +655,11 @@ export class SegmentClient {
    * Application Updated - the previous detected version is different from the current version
    * Application Opened - the previously detected version is same as the current version
    */
-  async checkInstalledVersion() {
+  private async checkInstalledVersion() {
     const context = await getContext(undefined);
-    const previousContext = this.store.getState().main.context;
+    const previousContext = this.store.context.get();
 
-    this.store.dispatch(this.actions.main.updateContext({ context }));
+    this.store.context.set(context);
 
     if (!this.config.trackAppLifecycleEvents) {
       return;
@@ -684,13 +712,13 @@ export class SegmentClient {
    *
    * @param nextAppState 'active', 'inactive', 'background' or 'unknown'
    */
-  handleAppStateChange(nextAppState: AppStateStatus) {
+  private handleAppStateChange(nextAppState: AppStateStatus) {
     if (this.config.trackAppLifecycleEvents) {
       if (
         ['inactive', 'background'].includes(this.appState) &&
         nextAppState === 'active'
       ) {
-        const { context } = this.store.getState().main;
+        const context = this.store.context.get();
         const event = createTrackEvent({
           event: 'Application Opened',
           properties: {
@@ -717,7 +745,11 @@ export class SegmentClient {
   }
 
   reset() {
-    this.store.dispatch(this.actions.userInfo.reset());
+    this.store.userInfo.set({
+      anonymousId: getUUID(),
+      userId: undefined,
+      traits: undefined,
+    });
     this.logger.info('Client has been reset');
   }
 }
