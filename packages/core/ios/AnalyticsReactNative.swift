@@ -18,7 +18,7 @@ class AnalyticsReactNative: NSObject {
         }
         return displayName as! String
     }
-    
+
     func getDeviceModel() -> String {
         var systemInfo = utsname()
         uname(&systemInfo)
@@ -28,14 +28,14 @@ class AnalyticsReactNative: NSObject {
             return identifier + String(UnicodeScalar(UInt8(value)))
         }
     }
-    
+
     func getDeviceId() -> String {
         guard let deviceId = UIDevice.current.identifierForVendor else {
             return "UNKNOWN_ID"
         }
         return deviceId.uuidString
     }
-    
+
     func getNetworkType() -> ConnectionType {
         guard let reachability = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, "google.com") else {
             return ConnectionType.unknown
@@ -72,6 +72,9 @@ class AnalyticsReactNative: NSObject {
         return ConnectionType.unknown
     }
 
+    @objc(getReferrer:resolver:rejecter:)
+    func getReferrer()
+
     @objc(getContextInfo:resolver:rejecter:)
     func getContextInfo(config: NSDictionary, resolver resolve:RCTPromiseResolveBlock, rejecter reject:RCTPromiseRejectBlock) -> Void {
         let infoDictionary = Bundle.main.infoDictionary!
@@ -106,11 +109,11 @@ class AnalyticsReactNative: NSObject {
             "deviceType": deviceType,
             "manufacturer": "Apple",
             "model": getDeviceModel(),
- 
+
             "locale": locale,
             "networkType": "\(connectionType)",
             "timezone": timezone,
-            
+
             "osName": osName,
             "osVersion": osVersion,
 

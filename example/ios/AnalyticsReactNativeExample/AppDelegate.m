@@ -11,6 +11,7 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import "RNBootSplash.h"
+#import <React/RCTLinkingManager.h>
 @import AdSupport;
 
 @implementation AppDelegate
@@ -43,6 +44,13 @@
 #endif
 }
 
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+{
+  return [RCTLinkingManager application:application openURL:url
+                      sourceApplication:sourceApplication annotation:annotation];
+}
+
 @end
 
 @implementation IDFA
@@ -60,5 +68,17 @@ RCT_EXPORT_METHOD(getIDFA:(RCTPromiseResolveBlock)resolve
   NSUUID *IDFA = [[ASIdentifierManager sharedManager] advertisingIdentifier];
   resolve([IDFA UUIDString]);
 }
+
+@end
+
+@implementation getReferrer
+
+RCT_EXPORT_MODULE()
+
+- (dispatch_queue_t)methodQueue
+{
+    return dispatch_get_main_queue();
+}
+
 
 @end

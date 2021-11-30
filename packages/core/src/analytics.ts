@@ -398,6 +398,38 @@ export class SegmentClient {
   async trackDeepLinks() {
     const url = await Linking.getInitialURL();
 
+    Linking.addEventListener('url', (e) => {
+      console.log('URL', e.url);
+
+      if (this.config.trackDeepLinks === true) {
+        const trackEvent = createTrackEvent({
+          event: 'Deep Link Opened',
+          properties: {
+            url,
+          },
+        });
+        this.process(trackEvent);
+        if (
+          this.config.trackAppLifecycleEvents === true &&
+          this.appState !== 'active'
+        ) {
+          const context = this.getContext();
+
+          const event = createTrackEvent({
+            event: 'Application Opened',
+            properties: {
+              from_background: true,
+              version: context?.app?.version,
+              build: context?.app?.build,
+              referring_application: e.url,
+            },
+          });
+
+          this.process(event);
+        }
+      }
+    });
+
     if (url && this.getConfig().trackDeepLinks) {
       const event = createTrackEvent({
         event: 'Deep Link Opened',
@@ -631,6 +663,11 @@ export class SegmentClient {
     const context = await getContext(undefined);
     const previousContext = this.store.getState().main.context;
 
+    const referringURL = await Linking.getInitialURL().then((url) => {
+      this.logger.info('Referring url', url);
+      return url;
+    });
+
     this.store.dispatch(this.actions.main.updateContext({ context }));
 
     if (!this.config.trackAppLifecycleEvents) {
@@ -667,6 +704,7 @@ export class SegmentClient {
         from_background: false,
         version: context.app.version,
         build: context.app.build,
+        referring_url: referringURL,
       },
     });
     this.process(event);
@@ -687,6 +725,7 @@ export class SegmentClient {
   handleAppStateChange(nextAppState: AppStateStatus) {
     if (this.config.trackAppLifecycleEvents) {
       if (
+        this.config.trackDeepLinks !== true &&
         ['inactive', 'background'].includes(this.appState) &&
         nextAppState === 'active'
       ) {
