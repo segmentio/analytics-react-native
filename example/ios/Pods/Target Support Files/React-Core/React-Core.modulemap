@@ -1,4 +1,4 @@
-module React {
+framework module React {
   umbrella header "React-Core-umbrella.h"
 
   export *

@@ -1,0 +1,58 @@
+{
+  "name": "@segment/analytics-react-native-plugin-deep-linking",
+  "version": "0.1.0-pilot",
+  "description": "deeplinking plugin for analytics react native",
+  "main": "lib/commonjs/index",
+  "module": "lib/module/index",
+  "types": "lib/typescript/index.d.ts",
+  "source": "src/index",
+  "files": [
+    "src",
+    "lib",
+    "android",
+    "ios",
+    "cpp",
+    "segment-analytics-react-native-plugin-deep-linking.podspec",
+    "!lib/typescript/example",
+    "!android/build",
+    "!ios/build",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__"
+  ],
+  "homepage": "https://github.com/segmentio/analytics-react-native#readme",
+  "scripts": {
+      "prepare": "bob build",
+      "test": "jest",
+      "typescript": "tsc --noEmit"
+  },
+  "keywords": [
+    "react-native",
+    "ios",
+    "android"
+  ],
+  "repository": "https://www.segment.com",
+  "author": "alanjcharles <acharles@twilio.com> (https://www,segment.com)",
+  "license": "MIT",
+  "devDependencies": {
+      "ts-jest": "^27.0.7",
+      "typescript": "^4.1.3"
+  },
+  "peerDependencies": {
+    "@segment/analytics-react-native": "*",
+    "react": "*",
+    "react-native": "*"
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      "typescript"
+    ]
+  },
+  "engines": {
+    "node": ">=12"
+  }
+}

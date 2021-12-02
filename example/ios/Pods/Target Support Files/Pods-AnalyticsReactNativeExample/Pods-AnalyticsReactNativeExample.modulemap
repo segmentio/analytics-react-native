@@ -1,4 +1,4 @@
-module Pods_AnalyticsReactNativeExample {
+framework module Pods_AnalyticsReactNativeExample {
   umbrella header "Pods-AnalyticsReactNativeExample-umbrella.h"
 
   export *

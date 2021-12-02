@@ -13,7 +13,7 @@ platform :ios, '11.0'
 
 target 'AnalyticsReactNativeExample' do
   config = use_native_modules!
-
+  use_frameworks!
   use_react_native!(
     :path => config[:reactNativePath],
     # to enable hermes on iOS, change `false` to `true` and then install pods
@@ -24,4 +24,6 @@ target 'AnalyticsReactNativeExample' do
     pod 'segment-analytics-react-native', :path => '../../packages/core'
     # Pods for Plugins
     pod 'segment-analytics-react-native-plugin-idfa', :path => '../../packages/plugins/plugin-idfa'
+    pod 'segment-analytics-react-native-plugin-deep-linking', :path => '../../packages/plugins/plugin-deepLinking'
+
 end

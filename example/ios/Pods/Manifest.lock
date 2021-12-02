@@ -312,6 +312,8 @@ PODS:
     - React-Core
   - segment-analytics-react-native (2.0.0-pilot.1):
     - React-Core
+  - segment-analytics-react-native-plugin-deep-linking (0.1.0-pilot):
+    - React-Core
   - segment-analytics-react-native-plugin-idfa (0.1.0-pilot.1):
     - React-Core
   - Yoga (1.14.0)
@@ -354,6 +356,7 @@ DEPENDENCIES:
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - segment-analytics-react-native (from `../../packages/core`)
+  - segment-analytics-react-native-plugin-deep-linking (from `../../packages/plugins/plugin-deepLinking`)
   - segment-analytics-react-native-plugin-idfa (from `../../packages/plugins/plugin-idfa`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -436,6 +439,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   segment-analytics-react-native:
     :path: "../../packages/core"
+  segment-analytics-react-native-plugin-deep-linking:
+    :path: "../../packages/plugins/plugin-deepLinking"
   segment-analytics-react-native-plugin-idfa:
     :path: "../../packages/plugins/plugin-idfa"
   Yoga:
@@ -482,9 +487,10 @@ SPEC CHECKSUMS:
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   segment-analytics-react-native: b2fdd858d2c385b634ed3d70d51aac2871f7b352
+  segment-analytics-react-native-plugin-deep-linking: 6cdfdeb54709eb35df30fe57a163ce5146c97413
   segment-analytics-react-native-plugin-idfa: 686d0edac1e673ab8a07d3a5e882498a85ac0e74
   Yoga: aa0cb45287ebe1004c02a13f279c55a95f1572f4
 
-PODFILE CHECKSUM: 8d1eaee20538fc35ee39f816ae22cc6ddcc0ed37
+PODFILE CHECKSUM: 22aa3605eaf6462f312a31570736097580d2226c
 
 COCOAPODS: 1.11.2

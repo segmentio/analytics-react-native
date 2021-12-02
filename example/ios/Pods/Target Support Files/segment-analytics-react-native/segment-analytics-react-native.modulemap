@@ -1,4 +1,4 @@
-module segment_analytics_react_native {
+framework module segment_analytics_react_native {
   umbrella header "segment-analytics-react-native-umbrella.h"
 
   export *

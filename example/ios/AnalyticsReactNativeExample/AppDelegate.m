@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+
 #import "AppDelegate.h"
 
 #import <React/RCTBridge.h>
@@ -12,6 +13,8 @@
 #import <React/RCTRootView.h>
 #import "RNBootSplash.h"
 #import <React/RCTLinkingManager.h>
+//#import <AnalyticsReactNativePluginDeepLinking/AnalyticsReactNativePluginDeepLinking.h>
+@import segment_analytics_react_native_plugin_deep_linking;
 @import AdSupport;
 
 @implementation AppDelegate
@@ -47,38 +50,38 @@
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-  return [RCTLinkingManager application:application openURL:url
-                      sourceApplication:sourceApplication annotation:annotation];
+  return[ AnalyticsReactNativePluginDeepLinking getReferrer referring_application: sourceApplication url: url ]
 }
 
 @end
 
-@implementation IDFA
-
-RCT_EXPORT_MODULE()
-
-- (dispatch_queue_t)methodQueue
-{
-    return dispatch_get_main_queue();
-}
-
-RCT_EXPORT_METHOD(getIDFA:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
-{
-  NSUUID *IDFA = [[ASIdentifierManager sharedManager] advertisingIdentifier];
-  resolve([IDFA UUIDString]);
-}
-
-@end
-
-@implementation getReferrer
-
-RCT_EXPORT_MODULE()
-
-- (dispatch_queue_t)methodQueue
-{
-    return dispatch_get_main_queue();
-}
-
-
-@end
+//
+//@implementation IDFA
+//
+//RCT_EXPORT_MODULE()
+//
+//- (dispatch_queue_t)methodQueue
+//{
+//    return dispatch_get_main_queue();
+//}
+//
+//RCT_EXPORT_METHOD(getIDFA:(RCTPromiseResolveBlock)resolve
+//                  rejecter:(RCTPromiseRejectBlock)reject)
+//{
+//  NSUUID *IDFA = [[ASIdentifierManager sharedManager] advertisingIdentifier];
+//  resolve([IDFA UUIDString]);
+//}
+//
+//@end
+//
+//@implementation getReferrer
+//
+//RCT_EXPORT_MODULE()
+//
+//- (dispatch_queue_t)methodQueue
+//{
+//    return dispatch_get_main_queue();
+//}
+//
+//
+//@end

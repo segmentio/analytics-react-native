@@ -1,1 +1,0 @@
-../../../Target Support Files/segment-analytics-react-native/segment-analytics-react-native-umbrella.h
