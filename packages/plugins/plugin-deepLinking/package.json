@@ -22,9 +22,9 @@
   ],
   "homepage": "https://github.com/segmentio/analytics-react-native#readme",
   "scripts": {
-      "prepare": "bob build",
-      "test": "jest",
-      "typescript": "tsc --noEmit"
+    "build": "bob build",
+    "test": "jest",
+    "typescript": "tsc --noEmit"
   },
   "keywords": [
     "react-native",
@@ -35,13 +35,13 @@
   "author": "alanjcharles <acharles@twilio.com> (https://www,segment.com)",
   "license": "MIT",
   "devDependencies": {
-      "ts-jest": "^27.0.7",
-      "typescript": "^4.1.3"
+    "ts-jest": "^27.0.7",
+    "typescript": "^4.1.3",
+    "react": "17.0.2",
+    "react-native": "0.66.3"
   },
   "peerDependencies": {
-    "@segment/analytics-react-native": "*",
-    "react": "*",
-    "react-native": "*"
+    "@segment/analytics-react-native": "*"
   },
   "react-native-builder-bob": {
     "source": "src",

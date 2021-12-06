@@ -29,8 +29,8 @@
     "simulator": {
       "type": "ios.simulator",
       "device": {
-        "name": "iPhone 11",
-        "os": "iOS 14.5"
+        "name": "iPhone 12",
+        "os": "iOS 15.0"
       }
     },
     "emulator": {

@@ -24,7 +24,6 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libAnalyticsReactNativePluginDeepLinking.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libAnalyticsReactNativePluginDeepLinking.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		82CAC9CB27583DAB00F272C5 /* EventEmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventEmitter.swift; sourceTree = "<group>"; };
 		B3E7B5891CC2AC0600A0062D /* AnalyticsReactNativePluginDeepLinking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnalyticsReactNativePluginDeepLinking.m; sourceTree = "<group>"; };
 		F4FF95D5245B92E700C19C63 /* AnalyticsReactNativePluginDeepLinking-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AnalyticsReactNativePluginDeepLinking-Bridging-Header.h"; sourceTree = "<group>"; };
 		F4FF95D6245B92E800C19C63 /* AnalyticsReactNativePluginDeepLinking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsReactNativePluginDeepLinking.swift; sourceTree = "<group>"; };
@@ -53,7 +52,6 @@
 			isa = PBXGroup;
 			children = (
 				F4FF95D6245B92E800C19C63 /* AnalyticsReactNativePluginDeepLinking.swift */,
-				82CAC9CB27583DAB00F272C5 /* EventEmitter.swift */,
 				B3E7B5891CC2AC0600A0062D /* AnalyticsReactNativePluginDeepLinking.m */,
 				F4FF95D5245B92E700C19C63 /* AnalyticsReactNativePluginDeepLinking-Bridging-Header.h */,
 				134814211AA4EA7D00B7C361 /* Products */,
@@ -227,6 +225,7 @@
 					"$(SRCROOT)/../../react-native/React/**",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = AnalyticsReactNativePluginDeepLinking;
 				SKIP_INSTALL = YES;

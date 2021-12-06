@@ -72,9 +72,6 @@ class AnalyticsReactNative: NSObject {
         return ConnectionType.unknown
     }
 
-    @objc(getReferrer:resolver:rejecter:)
-    func getReferrer()
-
     @objc(getContextInfo:resolver:rejecter:)
     func getContextInfo(config: NSDictionary, resolver resolve:RCTPromiseResolveBlock, rejecter reject:RCTPromiseRejectBlock) -> Void {
         let infoDictionary = Bundle.main.infoDictionary!

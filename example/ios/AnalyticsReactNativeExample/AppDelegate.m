@@ -50,7 +50,7 @@
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-  return[ AnalyticsReactNativePluginDeepLinking getReferrer referring_application: sourceApplication url: url ]
+  return [AnalyticsReactNativePluginDeepLinking setReferrerWithReferringApplication:sourceApplication url:url];
 }
 
 @end

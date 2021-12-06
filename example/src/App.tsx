@@ -28,7 +28,7 @@ import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
 import { AmplitudeSessionPlugin } from '@segment/analytics-react-native-plugin-amplitude-session';
 
 //@ts-ignore
-import { DeepLinkPlugin } from '@segment/analytics-react-native-plugin-deep-links'
+import { DeepLinkPlugin } from '@segment/analytics-react-native-plugin-deep-links';
 
 const segmentClient = createClient({
   writeKey: 'BRoigAmFuQv7x5YhIWlvHJeKzqT6Yn5g',
@@ -48,7 +48,7 @@ segmentClient.add({ plugin: LoggerPlugin });
 
 segmentClient.add({ plugin: new IdfaPlugin() });
 segmentClient.add({ plugin: new AmplitudeSessionPlugin() });
-segmentClient.add({plugin:new DeepLinkPlugin()});
+segmentClient.add({ plugin: new DeepLinkPlugin() });
 
 const MainStack = createStackNavigator();
 const RootStack = createStackNavigator();

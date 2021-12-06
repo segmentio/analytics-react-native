@@ -6,16 +6,17 @@ const LINKING_ERROR =
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo managed workflow\n';
 
-const AnalyticsReactNativePluginDeepLinking = NativeModules.AnalyticsReactNativePluginDeepLinking
-  ? NativeModules.AnalyticsReactNativePluginDeepLinking
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
+const AnalyticsReactNativePluginDeepLinking =
+  NativeModules.AnalyticsReactNativePluginDeepLinking
+    ? NativeModules.AnalyticsReactNativePluginDeepLinking
+    : new Proxy(
+        {},
+        {
+          get() {
+            throw new Error(LINKING_ERROR);
+          },
+        }
+      );
 
 export function multiply(a: number, b: number): Promise<number> {
   return AnalyticsReactNativePluginDeepLinking.multiply(a, b);
