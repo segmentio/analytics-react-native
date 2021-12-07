@@ -24,14 +24,20 @@ describe('SegmentClient', () => {
     store: ReduxStorage,
   };
 
+  let client: SegmentClient;
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
+  afterEach(() => {
+    client.cleanup();
+  });
+
   describe('when initializing a new client', () => {
     it('creates the client with default values', async () => {
-      const segmentClient = new SegmentClient(clientArgs);
-      expect(segmentClient.getConfig()).toEqual(clientArgs.config);
+      client = new SegmentClient(clientArgs);
+      expect(client.getConfig()).toEqual(clientArgs.config);
     });
   });
 
@@ -46,13 +52,13 @@ describe('SegmentClient', () => {
     });
 
     it('resets the interval and creates a new one when initialised', async () => {
-      const segmentClient = new SegmentClient({
+      client = new SegmentClient({
         ...clientArgs,
         config: { ...clientArgs.config, flushInterval: 10 },
       });
-      await segmentClient.init();
+      await client.init();
 
-      const flush = jest.spyOn(segmentClient, 'flush');
+      const flush = jest.spyOn(client, 'flush');
       // An interval should be set to check each second
       expect(setInterval).toHaveBeenLastCalledWith(expect.any(Function), 1000);
 
@@ -75,24 +81,24 @@ describe('SegmentClient', () => {
           return { remove: jest.fn() };
         });
 
-      const segmentClient = new SegmentClient(clientArgs);
+      client = new SegmentClient(clientArgs);
 
       // @ts-ignore
-      jest.spyOn(segmentClient, 'handleAppStateChange');
-      await segmentClient.init();
+      jest.spyOn(client, 'handleAppStateChange');
+      await client.init();
 
       expect(addSpy).toHaveBeenCalledTimes(1);
       expect(addSpy).toHaveBeenCalledWith('change', expect.any(Function));
 
       // @ts-ignore
-      expect(segmentClient.handleAppStateChange).not.toHaveBeenCalled();
+      expect(client.handleAppStateChange).not.toHaveBeenCalled();
 
       updateCallback('active');
 
       // @ts-ignore
-      expect(segmentClient.handleAppStateChange).toHaveBeenCalledTimes(1);
+      expect(client.handleAppStateChange).toHaveBeenCalledTimes(1);
       // @ts-ignore
-      expect(segmentClient.handleAppStateChange).toHaveBeenCalledWith('active');
+      expect(client.handleAppStateChange).toHaveBeenCalledWith('active');
     });
   });
 
@@ -121,7 +127,7 @@ describe('SegmentClient', () => {
 
   describe('#reset', () => {
     it('resets user data, identity, traits', () => {
-      const client = new SegmentClient(clientArgs);
+      client = new SegmentClient(clientArgs);
       const setUserInfo = jest.spyOn(ReduxStorage.userInfo, 'set');
 
       client.reset();
@@ -148,6 +154,7 @@ describe('SegmentClient #onUpdateStore', () => {
     persistor: mockPersistor,
     store: store,
   };
+  let client: SegmentClient;
 
   const sampleEvent: IdentifyEventType = {
     userId: 'user-123',
@@ -169,6 +176,7 @@ describe('SegmentClient #onUpdateStore', () => {
   afterEach(() => {
     jest.clearAllTimers();
     jest.clearAllMocks();
+    client.cleanup();
   });
 
   /**
@@ -183,34 +191,34 @@ describe('SegmentClient #onUpdateStore', () => {
         retryInterval: 1,
       },
     };
-    const client = new SegmentClient(args);
-    await client.init();
+    const segmentClient = new SegmentClient(args);
+    await segmentClient.init();
     // It is important to setup the flush spy before setting up the subscriptions so that it tracks the calls in the closure
-    jest.spyOn(client, 'flush').mockResolvedValueOnce();
-    jest.spyOn(client, 'flushRetry').mockResolvedValueOnce();
-    return client;
+    jest.spyOn(segmentClient, 'flush').mockResolvedValueOnce();
+    jest.spyOn(segmentClient, 'flushRetry').mockResolvedValueOnce();
+    return segmentClient;
   };
 
   it('calls flush when there are unsent events', async () => {
-    const client = await setupClient(1);
+    client = await setupClient(1);
     store.events.add(sampleEvent);
     expect(client.flush).toHaveBeenCalledTimes(1);
   });
 
   it('does not flush when number of events does not exceed the flush threshold', async () => {
-    const client = await setupClient(5);
+    client = await setupClient(5);
     store.events.add(sampleEvent);
     expect(client.flush).not.toHaveBeenCalled();
   });
 
   it('does not call flush when there are no events to send', async () => {
-    const client = await setupClient(1);
+    client = await setupClient(1);
     expect(client.flush).not.toHaveBeenCalled();
     expect(client.flushRetry).not.toHaveBeenCalled();
   });
 
   it('flushes retry queue when it is non-empty', async () => {
-    const client = await setupClient(2);
+    client = await setupClient(2);
     store.eventsToRetry.add([sampleEvent]);
     expect(client.flushRetry).toHaveBeenCalledTimes(1);
   });
@@ -220,7 +228,7 @@ describe('SegmentClient #onUpdateStore', () => {
     const setTimeoutSpy = jest
       .spyOn(global, 'setTimeout')
       .mockImplementationOnce(jest.fn());
-    await setupClient(2);
+    client = await setupClient(2);
     store.eventsToRetry.add([sampleEvent]);
     jest.advanceTimersByTime(10);
     jest.resetAllMocks();

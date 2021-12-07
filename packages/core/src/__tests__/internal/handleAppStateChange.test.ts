@@ -26,8 +26,11 @@ describe('SegmentClient #handleAppStateChange', () => {
     store: store,
   };
 
+  let client: SegmentClient;
+
   afterEach(() => {
     jest.clearAllMocks();
+    client.cleanup();
   });
 
   beforeEach(() => {
@@ -35,12 +38,12 @@ describe('SegmentClient #handleAppStateChange', () => {
   });
 
   const setupTest = async (
-    client: SegmentClient,
+    segmentClient: SegmentClient,
     from: AppStateStatus,
     to: AppStateStatus
   ) => {
     // @ts-ignore
-    client.appState = from;
+    segmentClient.appState = from;
 
     let appStateChangeListener: ((state: AppStateStatus) => void) | undefined;
     AppState.addEventListener = jest
@@ -51,8 +54,8 @@ describe('SegmentClient #handleAppStateChange', () => {
         }
       );
 
-    await client.init();
-    const clientProcess = jest.spyOn(client, 'process');
+    await segmentClient.init();
+    const clientProcess = jest.spyOn(segmentClient, 'process');
 
     expect(appStateChangeListener).toBeDefined();
 
@@ -61,7 +64,7 @@ describe('SegmentClient #handleAppStateChange', () => {
   };
 
   it('does not send events when trackAppLifecycleEvents is not enabled', async () => {
-    let client = new SegmentClient({
+    client = new SegmentClient({
       ...clientArgs,
       config: {
         writeKey: 'mock-write-key',
@@ -77,7 +80,7 @@ describe('SegmentClient #handleAppStateChange', () => {
   });
 
   it('sends an event when inactive => active', async () => {
-    let client = new SegmentClient(clientArgs);
+    client = new SegmentClient(clientArgs);
     const processSpy = await setupTest(client, 'inactive', 'active');
 
     expect(processSpy).toHaveBeenCalledTimes(1);
@@ -95,7 +98,7 @@ describe('SegmentClient #handleAppStateChange', () => {
   });
 
   it('sends an event when background => active', async () => {
-    let client = new SegmentClient(clientArgs);
+    client = new SegmentClient(clientArgs);
     const processSpy = await setupTest(client, 'background', 'active');
 
     expect(processSpy).toHaveBeenCalledTimes(1);
@@ -113,7 +116,7 @@ describe('SegmentClient #handleAppStateChange', () => {
   });
 
   it('sends an event when active => inactive', async () => {
-    let client = new SegmentClient(clientArgs);
+    client = new SegmentClient(clientArgs);
     const processSpy = await setupTest(client, 'active', 'inactive');
 
     expect(processSpy).toHaveBeenCalledTimes(1);
@@ -127,7 +130,7 @@ describe('SegmentClient #handleAppStateChange', () => {
   });
 
   it('sends an event when active => background', async () => {
-    let client = new SegmentClient(clientArgs);
+    client = new SegmentClient(clientArgs);
     const processSpy = await setupTest(client, 'active', 'background');
 
     expect(processSpy).toHaveBeenCalledTimes(1);
@@ -141,7 +144,7 @@ describe('SegmentClient #handleAppStateChange', () => {
   });
 
   it('does not send an event when unknown => active', async () => {
-    let client = new SegmentClient(clientArgs);
+    client = new SegmentClient(clientArgs);
     const processSpy = await setupTest(client, 'unknown', 'active');
 
     expect(processSpy).not.toHaveBeenCalled();
@@ -150,7 +153,7 @@ describe('SegmentClient #handleAppStateChange', () => {
   });
 
   it('does not send an event when unknown => background', async () => {
-    let client = new SegmentClient(clientArgs);
+    client = new SegmentClient(clientArgs);
     const processSpy = await setupTest(client, 'unknown', 'background');
 
     expect(processSpy).not.toHaveBeenCalled();
@@ -159,7 +162,7 @@ describe('SegmentClient #handleAppStateChange', () => {
   });
 
   it('does not send an event when unknown => inactive', async () => {
-    let client = new SegmentClient(clientArgs);
+    client = new SegmentClient(clientArgs);
     const processSpy = await setupTest(client, 'unknown', 'inactive');
 
     expect(processSpy).not.toHaveBeenCalled();

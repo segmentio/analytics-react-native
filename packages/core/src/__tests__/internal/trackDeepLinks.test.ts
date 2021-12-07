@@ -28,13 +28,18 @@ describe('#trackDeepLinks', () => {
     persistor: mockPersistor,
     store: store,
   };
+  let client: SegmentClient;
 
   beforeEach(() => {
     store.reset();
   });
 
+  afterEach(() => {
+    client.cleanup();
+  });
+
   it('sends a track event when trackDeepLinks is enabled and the app was opened from a link', async () => {
-    const client = new SegmentClient(clientArgs);
+    client = new SegmentClient(clientArgs);
     jest.spyOn(client, 'process');
 
     jest
@@ -54,7 +59,7 @@ describe('#trackDeepLinks', () => {
   });
 
   it('does not send a track event when trackDeepLinks is not enabled', async () => {
-    const client = new SegmentClient({
+    client = new SegmentClient({
       ...clientArgs,
       config: {
         writeKey: 'mock-write-key',
@@ -70,10 +75,12 @@ describe('#trackDeepLinks', () => {
     await client.init();
 
     expect(client.process).not.toHaveBeenCalled();
+
+    client.cleanup();
   });
 
   it('does not send a track event when trackDeepLinks is enabled, but the app was not opened via deep link', async () => {
-    const client = new SegmentClient(clientArgs);
+    client = new SegmentClient(clientArgs);
     jest.spyOn(client, 'process');
 
     jest
@@ -83,5 +90,7 @@ describe('#trackDeepLinks', () => {
     await client.init();
 
     expect(client.process).not.toHaveBeenCalled();
+
+    client.cleanup();
   });
 });

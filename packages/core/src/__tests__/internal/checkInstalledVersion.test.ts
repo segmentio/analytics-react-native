@@ -27,6 +27,7 @@ describe('internal #checkInstalledVersion', () => {
     persistor: mockPersistor,
     store: store,
   };
+  let client: SegmentClient;
 
   beforeEach(() => {
     store.reset();
@@ -34,17 +35,18 @@ describe('internal #checkInstalledVersion', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+    client.cleanup();
   });
 
   it('updates the context with the new value', async () => {
-    const client = new SegmentClient(clientArgs);
+    client = new SegmentClient(clientArgs);
     jest.spyOn(context, 'getContext').mockResolvedValueOnce(currentContext);
     await client.init();
     expect(store.context.get()).toEqual(currentContext);
   });
 
   it('does not send any events when trackAppLifecycleEvents is false', async () => {
-    const client = new SegmentClient(clientArgs);
+    client = new SegmentClient(clientArgs);
 
     jest.spyOn(context, 'getContext').mockResolvedValueOnce(currentContext);
     const processSpy = jest.spyOn(client, 'process');
@@ -55,7 +57,7 @@ describe('internal #checkInstalledVersion', () => {
   });
 
   it('calls the application installed and opened events when there is no previous context', async () => {
-    const client = new SegmentClient({
+    client = new SegmentClient({
       ...clientArgs,
       config: {
         ...clientArgs.config,
@@ -89,7 +91,7 @@ describe('internal #checkInstalledVersion', () => {
   });
 
   it('calls the application updated and opened events when the previous version is different from current', async () => {
-    const client = new SegmentClient({
+    client = new SegmentClient({
       ...clientArgs,
       config: {
         ...clientArgs.config,
@@ -134,7 +136,7 @@ describe('internal #checkInstalledVersion', () => {
   });
 
   it('only sends the app opened event when the versions match', async () => {
-    const client = new SegmentClient({
+    client = new SegmentClient({
       ...clientArgs,
       config: {
         ...clientArgs.config,
