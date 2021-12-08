@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { Config, Context, PartialContext, SegmentEvent } from '../types';
+import type { Context, PartialContext, SegmentEvent } from '../types';
 
-type MainState = {
+export type MainState = {
   events: SegmentEvent[];
   eventsToRetry: SegmentEvent[];
   context?: PartialContext;
@@ -20,10 +20,14 @@ export default createSlice({
     addEvent: (
       state,
       action: PayloadAction<{
-        event: SegmentEvent;
+        event: SegmentEvent | SegmentEvent[];
       }>
     ) => {
-      state.events.push(action.payload.event);
+      if (Array.isArray(action.payload.event)) {
+        state.events.push(...action.payload.event);
+      } else {
+        state.events.push(action.payload.event);
+      }
     },
     deleteEventsByMessageId: (
       state,
@@ -39,13 +43,13 @@ export default createSlice({
       state,
       action: PayloadAction<{
         events: SegmentEvent[];
-        config: Config;
+        maxEvents?: number;
       }>
     ) => {
       state.eventsToRetry = [
         ...state.eventsToRetry,
         ...action.payload.events,
-      ].slice(-action.payload.config.maxEventsToRetry!);
+      ].slice(-(action.payload.maxEvents ?? 0));
     },
     deleteEventsToRetryByMessageId: (
       state,

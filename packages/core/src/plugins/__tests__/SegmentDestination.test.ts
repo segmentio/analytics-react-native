@@ -1,34 +1,32 @@
-import { EventType, TrackEventType } from '../../types';
+import { EventType, SegmentEvent, TrackEventType } from '../../types';
 import { SegmentDestination } from '../SegmentDestination';
 import { SegmentClient } from '../../analytics';
-
-jest.mock('../../analytics', () => ({
-  SegmentClient: jest.fn().mockImplementation(() => {
-    return {
-      getSettings: jest.fn(),
-      getPlugins: jest.fn(),
-      queueEvent: jest.fn(),
-      store: {
-        dispatch: jest.fn(),
-      },
-      actions: {
-        main: {
-          addEvent: jest.fn(),
-        },
-      },
-    };
-  }),
-}));
+import { MockSegmentStore } from '../../__tests__/__helpers__/mockSegmentStore';
+import { getMockLogger } from '../../__tests__/__helpers__/mockLogger';
+import { mockPersistor } from '../../__tests__/__helpers__/mockPersistor';
+import * as api from '../../api';
 
 describe('SegmentDestination', () => {
+  const store = new MockSegmentStore();
+  const clientArgs = {
+    logger: getMockLogger(),
+    persistor: mockPersistor,
+    config: {
+      writeKey: '123-456',
+      maxBatchSize: 2,
+    },
+    store,
+  };
+
   beforeEach(() => {
-    (SegmentClient as jest.Mock).mockClear();
+    store.reset();
+    jest.clearAllMocks();
   });
 
   it('executes', () => {
     const plugin = new SegmentDestination();
     // @ts-ignore
-    plugin.analytics = new SegmentClient();
+    plugin.analytics = new SegmentClient(clientArgs);
     const event: TrackEventType = {
       anonymousId: '3534a492-e975-4efa-a18b-3c70c562fec2',
       event: 'Awesome event',
@@ -47,14 +45,15 @@ describe('SegmentDestination', () => {
 
   it('disables device mode plugins to prevent dups', () => {
     const plugin = new SegmentDestination();
-    // @ts-ignore
-    plugin.analytics = new SegmentClient();
-    plugin.analytics.getSettings = jest.fn().mockReturnValue({
-      integrations: {
-        firebase: {
-          someConfig: 'someValue',
+    plugin.analytics = new SegmentClient({
+      ...clientArgs,
+      store: new MockSegmentStore({
+        settings: {
+          firebase: {
+            someConfig: 'someValue',
+          },
         },
-      },
+      }),
     });
 
     plugin.analytics.getPlugins = jest.fn().mockReturnValue([
@@ -89,13 +88,15 @@ describe('SegmentDestination', () => {
   it('lets plugins/events override destination settings', () => {
     const plugin = new SegmentDestination();
     // @ts-ignore
-    plugin.analytics = new SegmentClient();
-    plugin.analytics.getSettings = jest.fn().mockReturnValue({
-      integrations: {
-        firebase: {
-          someConfig: 'someValue',
+    plugin.analytics = new SegmentClient({
+      ...clientArgs,
+      store: new MockSegmentStore({
+        settings: {
+          firebase: {
+            someConfig: 'someValue',
+          },
         },
-      },
+      }),
     });
 
     plugin.analytics.getPlugins = jest.fn().mockReturnValue([
@@ -120,5 +121,47 @@ describe('SegmentDestination', () => {
 
     const result = plugin.execute(event);
     expect(result).toEqual(event);
+  });
+
+  it('chunks the events correctly', async () => {
+    const plugin = new SegmentDestination();
+
+    const events = [
+      { messageId: 'message-1' },
+      { messageId: 'message-2' },
+      { messageId: 'message-3' },
+      { messageId: 'message-4' },
+    ] as SegmentEvent[];
+
+    plugin.analytics = new SegmentClient({
+      ...clientArgs,
+      store: new MockSegmentStore({
+        events,
+      }),
+    });
+
+    const sendEventsSpy = jest.spyOn(api, 'sendEvents').mockResolvedValue();
+
+    await plugin.flush();
+
+    expect(sendEventsSpy).toHaveBeenCalledTimes(2);
+    expect(sendEventsSpy).toHaveBeenCalledWith({
+      config: {
+        maxBatchSize: 2,
+        writeKey: '123-456',
+      },
+      events: events.slice(0, 2).map((e) => ({
+        ...e,
+      })),
+    });
+    expect(sendEventsSpy).toHaveBeenCalledWith({
+      config: {
+        maxBatchSize: 2,
+        writeKey: '123-456',
+      },
+      events: events.slice(2, 4).map((e) => ({
+        ...e,
+      })),
+    });
   });
 });

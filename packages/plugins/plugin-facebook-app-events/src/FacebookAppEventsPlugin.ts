@@ -32,16 +32,11 @@ export class FacebookAppEventsPlugin extends DestinationPlugin {
 
   async configure(analytics: SegmentClient) {
     this.analytics = analytics;
-    let adTrackingEnabled =
-      this.analytics?.getContext().device?.adTrackingEnabled;
+    let adTrackingEnabled = this.analytics?.adTrackingEnabled.get();
 
-    this.analytics.watch(
-      (state): boolean =>
-        state.main.context?.device?.adTrackingEnabled ?? false,
-      (value) => {
-        Settings.setAdvertiserTrackingEnabled(value);
-      }
-    );
+    this.analytics.adTrackingEnabled.onChange((value) => {
+      Settings.setAdvertiserTrackingEnabled(value);
+    });
 
     //you will likely need consent first
     //this example assumes consentManager plugin is used

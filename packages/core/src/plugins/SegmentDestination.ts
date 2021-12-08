@@ -9,6 +9,8 @@ import {
 import { chunk } from '../util';
 import { sendEvents } from '../api';
 
+const MAX_EVENTS_PER_BATCH = 100;
+
 export class SegmentDestination extends DestinationPlugin {
   type = PluginType.destination;
 
@@ -21,14 +23,14 @@ export class SegmentDestination extends DestinationPlugin {
   }
 
   execute(event: SegmentEvent): SegmentEvent {
-    const pluginSettings = this.analytics?.getSettings();
+    const pluginSettings = this.analytics?.settings.get();
     const plugins = this.analytics?.getPlugins(PluginType.destination);
 
     // Disable all destinations that have a device mode plugin
     const deviceModePlugins =
       plugins?.map((plugin) => (plugin as DestinationPlugin).key) ?? [];
     const cloudSettings: SegmentAPIIntegrations = {
-      ...pluginSettings?.integrations,
+      ...pluginSettings,
     };
     for (const key of deviceModePlugins) {
       if (key in cloudSettings) {
@@ -49,28 +51,28 @@ export class SegmentDestination extends DestinationPlugin {
   }
 
   async flush() {
-    const events = this.analytics?.getEvents() ?? [];
-    const chunkedEvents = chunk(events, 1000);
+    const events = this.analytics?.events.get() ?? [];
+    const chunkedEvents: SegmentEvent[][] = chunk(
+      events,
+      this.analytics?.getConfig().maxBatchSize ?? MAX_EVENTS_PER_BATCH
+    );
 
     let sentEvents: any[] = [];
     let numFailedEvents = 0;
 
     await Promise.all(
-      chunkedEvents.map(async (chunk) => {
+      chunkedEvents.map(async (batch: SegmentEvent[]) => {
         try {
           await sendEvents({
             config: this.analytics?.getConfig()!,
-            events: chunk,
+            events: batch,
           });
-          sentEvents = sentEvents.concat(chunk);
+          sentEvents = sentEvents.concat(batch);
         } catch (e) {
           console.warn(e);
-          numFailedEvents += chunk.length;
+          numFailedEvents += batch.length;
         } finally {
-          const messageIds = sentEvents.map(
-            (evt: SegmentEvent) => evt.messageId as string
-          );
-          this.analytics?.removeEvents(messageIds);
+          this.analytics?.removeEvents(sentEvents);
         }
       })
     );

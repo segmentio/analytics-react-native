@@ -1,43 +1,38 @@
 import { getMockLogger } from '../__helpers__/mockLogger';
 import { SegmentClient } from '../../analytics';
 import { mockPersistor } from '../__helpers__/mockPersistor';
+import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
 
 describe('internal #getSettings', () => {
-  const updateSettings = jest.fn();
   const defaultIntegrationSettings = {
     integrations: {},
   };
+  const store = new MockSegmentStore();
 
-  const defaultConfig = {
+  const clientArgs = {
     config: {
       writeKey: '123-456',
       defaultSettings: defaultIntegrationSettings,
     },
-    store: {
-      dispatch: () => {},
-      getState: () => ({}),
-    } as any,
-    actions: {
-      system: {
-        updateSettings,
-      },
-    } as any,
     logger: getMockLogger(),
     persistor: mockPersistor,
+    store: store,
   };
-  let client = new SegmentClient(defaultConfig);
+
+  const client = new SegmentClient(clientArgs);
+
+  const setSettingsSpy = jest.spyOn(store.settings, 'set');
 
   beforeEach(() => {
-    updateSettings.mockReset();
-    client = new SegmentClient(defaultConfig);
+    store.reset();
+  });
 
-    jest.spyOn(client.logger, 'error');
-    jest.spyOn(client.logger, 'info');
-    jest.spyOn(client.logger, 'warn');
+  afterEach(() => {
+    jest.resetAllMocks();
   });
 
   it('fetches the settings succesfully ', async () => {
-    const mockJSONResponse = () => ({ foo: 'bar' });
+    const mockJSONResponse = { foo: 'bar' };
     const mockResponse = Promise.resolve({
       json: () => mockJSONResponse,
     });
@@ -50,10 +45,11 @@ describe('internal #getSettings', () => {
       'https://cdn-settings.segment.com/v1/projects/123-456/settings'
     );
 
-    expect(client.logger.info).toHaveBeenCalledWith(
-      'Received settings from Segment succesfully.'
-    );
-    expect(updateSettings).toHaveBeenCalledWith({ settings: mockJSONResponse });
+    expect(setSettingsSpy).toHaveBeenCalledWith(mockJSONResponse);
+    expect(store.settings.get()).toEqual(mockJSONResponse);
+    expect(client.settings.get()).toEqual({
+      ...mockJSONResponse,
+    });
   });
 
   it('fails to the settings succesfully and uses the default if specified', async () => {
@@ -65,30 +61,29 @@ describe('internal #getSettings', () => {
     expect(fetch).toHaveBeenCalledWith(
       'https://cdn-settings.segment.com/v1/projects/123-456/settings'
     );
-    expect(client.logger.warn).toHaveBeenCalledWith(
-      'Could not receive settings from Segment. Will use the default settings.'
+
+    expect(setSettingsSpy).toHaveBeenCalledWith(defaultIntegrationSettings);
+    expect(store.settings.get()).toEqual(
+      defaultIntegrationSettings.integrations
     );
-    expect(updateSettings).toHaveBeenCalledWith({
-      settings: defaultIntegrationSettings,
-    });
+    expect(client.settings.get()).toEqual(
+      defaultIntegrationSettings.integrations
+    );
   });
 
   it('fails to the settings succesfully and has no default settings', async () => {
     // @ts-ignore
     global.fetch = jest.fn(() => Promise.reject());
-    client = new SegmentClient({
-      ...defaultConfig,
-      config: { ...defaultConfig.config, defaultSettings: undefined },
+    const anotherClient = new SegmentClient({
+      ...clientArgs,
+      config: { ...clientArgs.config, defaultSettings: undefined },
     });
 
-    await client.fetchSettings();
+    await anotherClient.fetchSettings();
 
     expect(fetch).toHaveBeenCalledWith(
       'https://cdn-settings.segment.com/v1/projects/123-456/settings'
     );
-    expect(client.logger.warn).toHaveBeenCalledWith(
-      'Could not receive settings from Segment. Device mode destinations will be ignored unless you specify default settings in the client config.'
-    );
-    expect(updateSettings).not.toHaveBeenCalled();
+    expect(setSettingsSpy).not.toHaveBeenCalled();
   });
 });

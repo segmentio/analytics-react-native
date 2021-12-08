@@ -25,9 +25,9 @@ export class Timeline {
     } else {
       this.plugins[type] = [plugin];
     }
-    const settings = plugin.analytics?.getSettings();
+    const settings = plugin.analytics?.settings.get();
     if (settings) {
-      plugin.update(settings, UpdateType.initial);
+      plugin.update({ integrations: settings }, UpdateType.initial);
     }
   }
 
@@ -52,7 +52,7 @@ export class Timeline {
       event: incomingEvent,
     });
 
-    if (incomingEvent === undefined) {
+    if (beforeResult === undefined) {
       return;
     }
     // .enrichment here is akin to source middleware in the old analytics-ios.
