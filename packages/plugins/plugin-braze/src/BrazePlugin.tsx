@@ -13,7 +13,20 @@ export class BrazePlugin extends DestinationPlugin {
   key = 'Braze';
 
   identify(event: IdentifyEventType) {
-    identify(event);
+    const currentUserInfo = this.analytics?.userInfo.get();
+
+    if(currentUserInfo?.userId !== event.userId ||
+      currentUserInfo?.anonymousId !== event.anonymousId ||
+      currentUserInfo?.traits !== event.traits
+      ){
+      identify(event);
+    } else {
+      let integrations = event.integrations; 
+      
+      if(integrations !== undefined) {
+        integrations[this.key] = false;
+      }
+    }
     return event;
   }
 
