@@ -82,7 +82,7 @@ export class AmplitudeSessionPlugin extends EventPlugin {
       returnEvent.integrations = {
         ...integrations,
         [this.key]: {
-          session_id: this.sessionId * 1000,
+          session_id: this.sessionId,
         },
       };
     }
