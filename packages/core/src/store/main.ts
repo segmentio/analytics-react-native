@@ -3,13 +3,11 @@ import type { Context, PartialContext, SegmentEvent } from '../types';
 
 export type MainState = {
   events: SegmentEvent[];
-  eventsToRetry: SegmentEvent[];
   context?: PartialContext;
 };
 
 export const initialState: MainState = {
   events: [],
-  eventsToRetry: [],
   context: undefined,
 };
 
@@ -36,28 +34,6 @@ export default createSlice({
       }>
     ) => {
       state.events = state.events.filter(
-        (evt) => !action.payload.ids.includes(evt.messageId!)
-      );
-    },
-    addEventsToRetry: (
-      state,
-      action: PayloadAction<{
-        events: SegmentEvent[];
-        maxEvents?: number;
-      }>
-    ) => {
-      state.eventsToRetry = [
-        ...state.eventsToRetry,
-        ...action.payload.events,
-      ].slice(-(action.payload.maxEvents ?? 0));
-    },
-    deleteEventsToRetryByMessageId: (
-      state,
-      action: PayloadAction<{
-        ids: string[];
-      }>
-    ) => {
-      state.eventsToRetry = state.eventsToRetry.filter(
         (evt) => !action.payload.ids.includes(evt.messageId!)
       );
     },

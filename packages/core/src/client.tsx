@@ -20,9 +20,7 @@ export const createClient = (config: Config) => {
   const clientConfig = { ...defaultConfig, ...config };
   const { store, persistor } = initializeStore(config.writeKey);
 
-  const segmentStore = new ReduxStorage(store, persistor, {
-    maxEventsToRetry: clientConfig.maxEventsToRetry,
-  });
+  const segmentStore = new ReduxStorage(store, persistor);
 
   const client = new SegmentClient({
     config: clientConfig,

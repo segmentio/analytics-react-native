@@ -6,7 +6,6 @@ const defaultReduxState = {
   },
   main: {
     events: [],
-    eventsToRetry: [],
   },
   system: {
     settings: {},

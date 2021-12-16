@@ -61,8 +61,6 @@ export interface Storage {
   readonly events: Watchable<SegmentEvent[]> &
     Queue<SegmentEvent | SegmentEvent[]>;
 
-  readonly eventsToRetry: Watchable<SegmentEvent[]> & Queue<SegmentEvent[]>;
-
   readonly userInfo: Watchable<UserInfoState> & Settable<UserInfoState>;
 }
 
@@ -72,8 +70,6 @@ export interface WatchableStorage {
   readonly settings: Watchable<SegmentAPIIntegrations | undefined>;
 
   readonly events: Watchable<SegmentEvent[]>;
-
-  readonly eventsToRetry: Watchable<SegmentEvent[]>;
 
   readonly userInfo: Watchable<UserInfoState>;
 }

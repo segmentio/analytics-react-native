@@ -11,7 +11,6 @@ import type {
 type Data = {
   isReady: boolean;
   events: SegmentEvent[];
-  eventsToRetry: SegmentEvent[];
   context?: DeepPartial<Context>;
   settings: SegmentAPIIntegrations;
   userInfo: UserInfoState;
@@ -20,7 +19,6 @@ type Data = {
 const INITIAL_VALUES: Data = {
   isReady: true,
   events: [],
-  eventsToRetry: [],
   context: undefined,
   settings: {},
   userInfo: {
@@ -70,7 +68,6 @@ export class MockSegmentStore implements Storage {
     context: this.createCallbackManager<DeepPartial<Context> | undefined>(),
     settings: this.createCallbackManager<SegmentAPIIntegrations>(),
     events: this.createCallbackManager<SegmentEvent[]>(),
-    eventsToRetry: this.createCallbackManager<SegmentEvent[]>(),
     userInfo: this.createCallbackManager<UserInfoState>(),
   };
 
@@ -125,23 +122,6 @@ export class MockSegmentStore implements Storage {
         (callback) => !setToRemove.has(callback)
       );
       this.callbacks.events.run(this.data.events);
-    },
-  };
-
-  readonly eventsToRetry = {
-    get: () => this.data.eventsToRetry,
-    onChange: (callback: (value: SegmentEvent[]) => void) =>
-      this.callbacks.eventsToRetry.register(callback),
-    add: (events: SegmentEvent[]) => {
-      this.data.eventsToRetry.push(...events);
-      this.callbacks.eventsToRetry.run(this.data.eventsToRetry);
-    },
-    remove: (events: SegmentEvent[]) => {
-      const setToRemove = new Set(events);
-      this.data.eventsToRetry = this.data.eventsToRetry.filter(
-        (callback) => !setToRemove.has(callback)
-      );
-      this.callbacks.eventsToRetry.run(this.data.eventsToRetry);
     },
   };
 

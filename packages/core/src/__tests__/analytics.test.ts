@@ -117,7 +117,6 @@ describe('SegmentClient', () => {
       // @ts-ignore
       expect(segmentClient.destroyed).toBe(true);
       expect(clearInterval).toHaveBeenCalledTimes(1);
-      expect(clearTimeout).toHaveBeenCalledTimes(1);
       // @ts-ignore
       expect(segmentClient.appStateSubscription.remove).toHaveBeenCalledTimes(
         1
@@ -195,7 +194,6 @@ describe('SegmentClient #onUpdateStore', () => {
     await segmentClient.init();
     // It is important to setup the flush spy before setting up the subscriptions so that it tracks the calls in the closure
     jest.spyOn(segmentClient, 'flush').mockResolvedValueOnce();
-    jest.spyOn(segmentClient, 'flushRetry').mockResolvedValueOnce();
     return segmentClient;
   };
 
@@ -209,30 +207,5 @@ describe('SegmentClient #onUpdateStore', () => {
     client = await setupClient(5);
     store.events.add(sampleEvent);
     expect(client.flush).not.toHaveBeenCalled();
-  });
-
-  it('does not call flush when there are no events to send', async () => {
-    client = await setupClient(1);
-    expect(client.flush).not.toHaveBeenCalled();
-    expect(client.flushRetry).not.toHaveBeenCalled();
-  });
-
-  it('flushes retry queue when it is non-empty', async () => {
-    client = await setupClient(2);
-    store.eventsToRetry.add([sampleEvent]);
-    expect(client.flushRetry).toHaveBeenCalledTimes(1);
-  });
-
-  it('does not flush the retry queue when the refreshTimeout is not null', async () => {
-    // Mock the timeout to prevent it from releasing the lock
-    const setTimeoutSpy = jest
-      .spyOn(global, 'setTimeout')
-      .mockImplementationOnce(jest.fn());
-    client = await setupClient(2);
-    store.eventsToRetry.add([sampleEvent]);
-    jest.advanceTimersByTime(10);
-    jest.resetAllMocks();
-    store.eventsToRetry.add([sampleEvent]);
-    expect(setTimeoutSpy).not.toHaveBeenCalled();
   });
 });

@@ -49,7 +49,6 @@ export const getMockReduxStorage = (
         },
         main: {
           events: [],
-          eventsToRetry: [],
           context: {
             app: {
               build: '1',

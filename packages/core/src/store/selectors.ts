@@ -5,8 +5,3 @@ export const getEvents = createSelector(
   (state: RootState) => state.main.events,
   (events) => events
 );
-
-export const getEventsToRetry = createSelector(
-  (state: RootState) => state.main.eventsToRetry,
-  (events) => events
-);
