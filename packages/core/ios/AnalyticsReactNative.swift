@@ -84,9 +84,11 @@ class AnalyticsReactNative: NSObject {
         let deviceType = UIDevice.current.userInterfaceIdiom == .phone ? "phone" : "tablet"
 
         let connectionType: ConnectionType = getNetworkType()
-        let languageCode = NSLocale.current.languageCode
-        let regionCode = NSLocale.current.regionCode
-        let locale = "\(languageCode!)-\(regionCode!)"
+        var locale = ""
+        if let languageCode = NSLocale.current.languageCode,
+            let regionCode = NSLocale.current.regionCode {
+                locale = "\(languageCode)-\(regionCode)"
+            }
         let timezone = TimeZone.current.identifier
 
         let osName = UIDevice.current.systemName

@@ -13,7 +13,23 @@ export class BrazePlugin extends DestinationPlugin {
   key = 'Braze';
 
   identify(event: IdentifyEventType) {
-    identify(event);
+    const currentUserInfo = this.analytics?.userInfo.get();
+
+    //check to see if anything has changed.
+    //if it hasn't changed don't send event
+    if (
+      currentUserInfo?.userId === event.userId &&
+      currentUserInfo?.anonymousId === event.anonymousId &&
+      currentUserInfo?.traits === event.traits
+    ) {
+      let integrations = event.integrations;
+
+      if (integrations !== undefined) {
+        integrations[this.key] = false;
+      }
+    } else {
+      identify(event);
+    }
     return event;
   }
 
