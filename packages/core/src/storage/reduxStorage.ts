@@ -22,20 +22,11 @@ export class ReduxStorage implements Storage {
    */
   private watchPersistor: ReturnType<typeof getStoreWatcher>;
 
-  private maxEventsToRetry?: number;
-
-  constructor(
-    store: Store,
-    persistor: Persistor,
-    config?: {
-      maxEventsToRetry?: number;
-    }
-  ) {
+  constructor(store: Store, persistor: Persistor) {
     this.redux = store;
     this.persistor = persistor;
     this.watchStore = getStoreWatcher(this.redux);
     this.watchPersistor = getStoreWatcher(this.persistor);
-    this.maxEventsToRetry = config?.maxEventsToRetry;
   }
 
   readonly isReady = {
@@ -86,29 +77,6 @@ export class ReduxStorage implements Storage {
           ids: eventsToRemove
             .filter((e) => e.messageId !== undefined)
             .map((e) => e.messageId!),
-        })
-      );
-    },
-  };
-
-  readonly eventsToRetry = {
-    get: () => this.redux.getState().main.eventsToRetry,
-    onChange: (callback: (value: SegmentEvent[]) => void) =>
-      this.watchStore((state) => state.main.eventsToRetry, callback),
-    add: (events: SegmentEvent[]) => {
-      this.redux.dispatch(
-        actions.main.addEventsToRetry({
-          events,
-          maxEvents: this.maxEventsToRetry,
-        })
-      );
-    },
-    remove: (events: SegmentEvent[]) => {
-      this.redux.dispatch(
-        actions.main.deleteEventsToRetryByMessageId({
-          ids: events
-            .filter((event) => event.messageId !== undefined)
-            .map((event) => event.messageId!),
         })
       );
     },

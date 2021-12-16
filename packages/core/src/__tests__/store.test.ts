@@ -18,7 +18,6 @@ import {
   EventType,
   IdentifyEventType,
   ScreenEventType,
-  TrackEventType,
 } from '../types';
 
 const initialState = {
@@ -254,131 +253,6 @@ describe('#initializeStore', () => {
     });
   });
 
-  describe('ACTION: addEventsToRetry', () => {
-    it('adds the event correctly', () => {
-      const { store } = initializeStore('test-key');
-      const event = {
-        userId: 'user-123',
-        anonymousId: 'eWpqvL-EHSHLWoiwagN-T',
-        type: EventType.IdentifyEvent,
-        integrations: {},
-        timestamp: '2000-01-01T00:00:00.000Z',
-        traits: {
-          foo: 'bar',
-        },
-        messageId: 'iDMkR2-I7c2_LCsPPlvwH',
-      } as IdentifyEventType;
-      store.dispatch(
-        actions.main.addEventsToRetry({
-          events: [event],
-        })
-      );
-      expect(store.getState().main).toEqual({
-        ...initialState.main,
-        eventsToRetry: [event],
-      });
-    });
-
-    it('removes old events correctly', () => {
-      const { store } = initializeStore('test-key');
-      const event1 = {
-        anonymousId: 'very-anonymous',
-        event: 'First Event',
-        integrations: {},
-        messageId: 'mocked-uuid',
-        properties: {
-          id: 1,
-        },
-        timestamp: '2010-01-01T00:00:00.000Z',
-        type: EventType.TrackEvent,
-        userId: 'current-user-id',
-      } as TrackEventType;
-
-      const event2 = {
-        ...event1,
-        event: 'Second Event',
-      } as TrackEventType;
-
-      store.dispatch(
-        actions.main.addEventsToRetry({
-          events: [event1, event2],
-          maxEvents: 3,
-        })
-      );
-
-      const event3 = {
-        ...event1,
-        event: 'Third Event',
-      } as TrackEventType;
-
-      const event4 = {
-        ...event1,
-        event: 'Fourth Event',
-      } as TrackEventType;
-
-      store.dispatch(
-        actions.main.addEventsToRetry({
-          events: [event3, event4],
-          maxEvents: 3,
-        })
-      );
-
-      expect(store.getState().main).toEqual({
-        ...initialState.main,
-        eventsToRetry: [event2, event3, event4],
-      });
-    });
-  });
-
-  describe('ACTION: deleteEventsToRetryByMessageId', () => {
-    it('deletes the correct event', () => {
-      const { store } = initializeStore('test-key');
-      const event1 = {
-        userId: 'user-123',
-        anonymousId: 'eWpqvL-EHSHLWoiwagN-T',
-        type: EventType.IdentifyEvent,
-        integrations: {},
-        timestamp: '2000-01-01T00:00:00.000Z',
-        traits: {
-          foo: 'bar',
-        },
-        messageId: 'iDMkR2-I7c2_LCsPPlvwH',
-      } as IdentifyEventType;
-
-      const event2 = {
-        anonymousId: 'eWpqvL-EHSHLWoiwagN-T',
-        type: 'screen',
-        name: 'AwesomeScreen',
-        properties: {},
-        integrations: {},
-        timestamp: '2000-01-01T00:00:00.000Z',
-        messageId: 'something-else',
-      } as ScreenEventType;
-
-      store.dispatch(
-        actions.main.addEventsToRetry({
-          events: [event1, event2],
-        })
-      );
-
-      expect(store.getState().main).toEqual({
-        ...initialState.main,
-        eventsToRetry: [event1, event2],
-      });
-
-      store.dispatch(
-        actions.main.deleteEventsToRetryByMessageId({
-          ids: ['iDMkR2-I7c2_LCsPPlvwH'],
-        })
-      );
-
-      expect(store.getState().main).toEqual({
-        ...initialState.main,
-        eventsToRetry: [event2],
-      });
-    });
-  });
-
   describe('getStoreWatcher', () => {
     const event = {
       userId: 'user-123',
@@ -411,14 +285,6 @@ describe('#initializeStore', () => {
       watcher((state) => state.main.events, subscription);
       mockStore.dispatch(mainSlice.actions.addEvent({ event }));
       expect(subscription).toHaveBeenCalledTimes(1);
-    });
-
-    it('no trigger for changes in non-selected objects', () => {
-      const subscription = jest.fn();
-      const watcher = getStoreWatcher(mockStore);
-      watcher((state) => state.main.eventsToRetry, subscription);
-      mockStore.dispatch(mainSlice.actions.addEvent({ event }));
-      expect(subscription).toHaveBeenCalledTimes(0);
     });
   });
 });

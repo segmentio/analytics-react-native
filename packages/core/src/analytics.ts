@@ -1,7 +1,6 @@
 import type { Unsubscribe } from '@reduxjs/toolkit';
 import { AppState, AppStateStatus, Linking } from 'react-native';
 import type { Persistor } from 'redux-persist';
-import { sendEvents } from './api';
 import { getContext } from './context';
 
 import {
@@ -31,7 +30,7 @@ import {
   SegmentEvent,
   UserTraits,
 } from './types';
-import { chunk, getPluginsWithFlush } from './util';
+import { getPluginsWithFlush } from './util';
 import { getUUID } from './uuid';
 
 export class SegmentClient {
@@ -56,9 +55,6 @@ export class SegmentClient {
   // logger
   public logger: Logger;
 
-  // timeout for refreshing the failed events queue
-  private refreshTimeout: ReturnType<typeof setTimeout> | null = null;
-
   // internal time to know when to flush, ticks every second
   private flushInterval: ReturnType<typeof setInterval> | null = null;
 
@@ -73,9 +69,6 @@ export class SegmentClient {
 
   // has a pending upload to respond
   private isPendingUpload: boolean = false;
-
-  // has a pending upload of the events to retry upload
-  private isPendingRetryUpload: boolean = false;
 
   private isAddingPlugins: boolean = false;
 
@@ -123,11 +116,6 @@ export class SegmentClient {
    * Access or suscribe to the events in the timeline
    */
   readonly events: Watchable<SegmentEvent[]>;
-
-  /**
-   * Access or subscribe to the failed events in the last flush
-   */
-  readonly eventsToRetry: Watchable<SegmentEvent[]>;
 
   /**
    * Access or subscribe to user info (anonymousId, userId, traits)
@@ -222,11 +210,6 @@ export class SegmentClient {
       get: this.store.events.get,
       onChange: this.store.events.onChange,
     };
-
-    this.eventsToRetry = {
-      get: this.store.eventsToRetry.get,
-      onChange: this.store.eventsToRetry.onChange,
-    };
   }
 
   /**
@@ -250,7 +233,6 @@ export class SegmentClient {
 
     // flush any stored events
     this.flush();
-    this.flushRetry();
 
     // set up the timer/subscription for knowing when to flush events
     this.setupInterval();
@@ -323,10 +305,6 @@ export class SegmentClient {
     this.unsubscribeReadinessWatcher();
     this.unsubscribeStorageWatchers();
 
-    if (this.refreshTimeout) {
-      clearTimeout(this.refreshTimeout);
-    }
-
     this.appStateSubscription?.remove();
 
     this.destroyed = true;
@@ -347,14 +325,6 @@ export class SegmentClient {
       this.store.events.onChange((events: SegmentEvent[]) => {
         if (events.length >= this.config.flushAt!) {
           this.flush();
-        }
-      })
-    );
-
-    this.watchers.push(
-      this.store.eventsToRetry.onChange((events: SegmentEvent[]) => {
-        if (events.length >= 0) {
-          this.flushRetry();
         }
       })
     );
@@ -464,75 +434,6 @@ export class SegmentClient {
       } finally {
         this.isAddingPlugins = false;
       }
-    }
-  }
-
-  async flushRetry() {
-    if (this.refreshTimeout === null) {
-      const retryIntervalMs = this.config.retryInterval! * 1000;
-      const flushRetries = () => {
-        (async () => {
-          if (!this.isPendingRetryUpload) {
-            this.isPendingRetryUpload = true;
-            try {
-              if (this.destroyed) {
-                return;
-              }
-
-              const eventsToRetry = this.store.eventsToRetry.get();
-              if (!eventsToRetry.length) {
-                this.refreshTimeout = null;
-                return;
-              }
-
-              const chunkedEvents = chunk(
-                eventsToRetry,
-                this.config.maxBatchSize!
-              );
-
-              let numFailedEvents = 0;
-              let numSentEvents = 0;
-
-              await Promise.all(
-                chunkedEvents.map(async (events) => {
-                  try {
-                    await sendEvents({
-                      config: this.config,
-                      events,
-                    });
-                    this.store.eventsToRetry.remove(events);
-                    numSentEvents += events.length;
-                  } catch (e) {
-                    numFailedEvents += events.length;
-                  }
-                })
-              );
-
-              if (numFailedEvents) {
-                this.logger.error(
-                  `Failed to send ${numFailedEvents} events. Retrying in ${this
-                    .config.retryInterval!} seconds (via retry)`
-                );
-                this.refreshTimeout = setTimeout(
-                  flushRetries,
-                  retryIntervalMs
-                ) as any;
-              } else {
-                this.refreshTimeout = null;
-              }
-
-              if (numSentEvents) {
-                this.logger.warn(
-                  `Sent ${eventsToRetry.length} events (via retry)`
-                );
-              }
-            } finally {
-              this.isPendingRetryUpload = false;
-            }
-          }
-        })();
-      };
-      this.refreshTimeout = setTimeout(flushRetries, retryIntervalMs);
     }
   }
 
