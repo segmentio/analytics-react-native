@@ -81,8 +81,6 @@ class AnalyticsReactNative: NSObject {
         let bundleId = Bundle.main.bundleIdentifier ?? ""
         let buildNumber = infoDictionary["CFBundleVersion"] as? String ?? ""
 
-        let deviceType = UIDevice.current.userInterfaceIdiom == .phone ? "phone" : "tablet"
-
         let connectionType: ConnectionType = getNetworkType()
         var locale = ""
         if let languageCode = NSLocale.current.languageCode,
@@ -105,7 +103,7 @@ class AnalyticsReactNative: NSObject {
 
             "deviceId": getDeviceId(),
             "deviceName": UIDevice.current.model,
-            "deviceType": deviceType,
+            "deviceType": "ios",
             "manufacturer": "Apple",
             "model": getDeviceModel(),
  
