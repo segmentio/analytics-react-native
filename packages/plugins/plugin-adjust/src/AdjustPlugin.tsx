@@ -18,14 +18,11 @@ export class AdjustPlugin extends DestinationPlugin {
 
   private settings: SegmentAdjustSettings | null = null;
 
-  update(settings: SegmentAPISettings, type: UpdateType) {
-    if (type === UpdateType.initial) {
-      return;
-    }
-
+  update(settings: SegmentAPISettings, _: UpdateType) {
     const adjustSettings = settings.integrations[
       this.key
     ] as SegmentAdjustSettings;
+
     if (!adjustSettings) {
       return;
     }
