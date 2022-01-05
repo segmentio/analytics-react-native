@@ -33,5 +33,7 @@ export default (event: TrackEventType, settings: SegmentAdjustSettings) => {
         adjEvent.setTransactionId(orderId);
       }
     }
+
+    Adjust.trackEvent(adjEvent);
   }
 };

@@ -123,4 +123,26 @@ describe('#track', () => {
 
     expect(setTransactionId).toHaveBeenCalledWith(1);
   });
+
+  it('calls trackEvent correctly', () => {
+    const event = {
+      type: 'track',
+      event: 'Some event',
+      anonymousId: 'anon',
+      properties: {
+        orderId: 1,
+      },
+    };
+
+    const settings = {
+      appToken: '',
+      customEvents: {
+        'Some event': 'token',
+      },
+    };
+
+    track(event as TrackEventType, settings);
+
+    expect(Adjust.trackEvent).toHaveBeenCalled();
+  });
 });

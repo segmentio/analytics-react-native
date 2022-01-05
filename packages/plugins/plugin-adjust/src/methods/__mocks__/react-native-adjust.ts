@@ -1,9 +1,11 @@
 export const resetSessionPartnerParameters = jest.fn();
 export const addSessionPartnerParameter = jest.fn();
+export const trackEvent = jest.fn();
 
 export const Adjust = {
   resetSessionPartnerParameters,
   addSessionPartnerParameter,
+  trackEvent,
 };
 
 export const addCallbackParameter = jest.fn();
