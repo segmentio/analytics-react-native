@@ -11,6 +11,11 @@ enum ConnectionType: String {
 
 @objc(AnalyticsReactNative)
 class AnalyticsReactNative: NSObject {
+    
+    @objc
+    static func requiresMainQueueSetup() -> Bool {
+      return true
+    }
 
     func getAppName() -> String {
         guard let displayName = Bundle.main.infoDictionary!["CFBundleDisplayName"] else {

@@ -4,7 +4,13 @@ import AppTrackingTransparency
 @objc(AnalyticsReactNativePluginIdfa)
 class AnalyticsReactNativePluginIdfa: RCTEventEmitter {
     
+    @objc
+    override static func requiresMainQueueSetup() -> Bool {
+       return true
+     }
+    
     @available(iOS 14, *)
+
     @objc
     func getTrackingAuthorizationStatus(
         _ resolve: RCTPromiseResolveBlock,
