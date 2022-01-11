@@ -76,7 +76,7 @@ class AnalyticsReactNativeModule(reactContext: ReactApplicationContext) : ReactC
     }
 
     @ReactMethod
-    fun getContextInfo(collectDeviceId: Boolean, promise: Promise) {
+    fun getContextInfo(config: ReadableMap, promise: Promise) {
       val appName: String = reactApplicationContext.applicationInfo.loadLabel(reactApplicationContext.packageManager).toString()
       val appVersion: String = pInfo.versionName
       val buildNumber = getBuildNumber()
@@ -98,7 +98,7 @@ class AnalyticsReactNativeModule(reactContext: ReactApplicationContext) : ReactC
       contextInfo.putString("appVersion", appVersion)
       contextInfo.putString("buildNumber", buildNumber)
       contextInfo.putString("bundleId", bundleId)
-      contextInfo.putString("deviceId", getUniqueId(collectDeviceId))
+      contextInfo.putString("deviceId", getUniqueId(config.hasKey("collectDeviceId") && config.getBoolean("collectDeviceId")))
       contextInfo.putString("deviceName", Build.DEVICE)
       contextInfo.putString("deviceType", "android")
       contextInfo.putString("manufacturer", Build.MANUFACTURER)

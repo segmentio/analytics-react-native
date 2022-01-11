@@ -13,7 +13,7 @@ interface GetContextConfig {
 }
 export const getContext = async (
   userTraits: UserTraits = {},
-  { collectDeviceId = false }: GetContextConfig = {}
+  config: GetContextConfig = {}
 ): Promise<Context> => {
   const { AnalyticsReactNative } = NativeModules;
 
@@ -35,9 +35,7 @@ export const getContext = async (
     deviceId,
     deviceType,
     screenDensity,
-  }: NativeContextInfo = await AnalyticsReactNative.getContextInfo(
-    collectDeviceId
-  );
+  }: NativeContextInfo = await AnalyticsReactNative.getContextInfo(config);
 
   const device: ContextDevice = {
     id: deviceId,
