@@ -28,8 +28,9 @@ import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
 import { AmplitudeSessionPlugin } from '@segment/analytics-react-native-plugin-amplitude-session';
 
 const segmentClient = createClient({
-  writeKey: 'WRITE KEY',
+  writeKey: 'Write Key',
   trackAppLifecycleEvents: true,
+  collectDeviceId: true,
 });
 
 const LoggerPlugin = new Logger();

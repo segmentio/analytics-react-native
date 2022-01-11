@@ -123,6 +123,7 @@ export type Config = {
   maxEventsToRetry?: number;
   defaultSettings?: SegmentAPISettings;
   autoAddSegmentDestination?: boolean;
+  collectDeviceId?: boolean;
 };
 
 export type ClientMethods = {

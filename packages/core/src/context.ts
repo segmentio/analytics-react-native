@@ -8,8 +8,12 @@ import type {
   UserTraits,
 } from './types';
 
+interface GetContextConfig {
+  collectDeviceId?: boolean;
+}
 export const getContext = async (
-  userTraits: UserTraits = {}
+  userTraits: UserTraits = {},
+  { collectDeviceId = false }: GetContextConfig = {}
 ): Promise<Context> => {
   const { AnalyticsReactNative } = NativeModules;
 
@@ -31,7 +35,9 @@ export const getContext = async (
     deviceId,
     deviceType,
     screenDensity,
-  }: NativeContextInfo = await AnalyticsReactNative.getContextInfo({});
+  }: NativeContextInfo = await AnalyticsReactNative.getContextInfo(
+    collectDeviceId
+  );
 
   const device: ContextDevice = {
     id: deviceId,
