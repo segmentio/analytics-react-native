@@ -502,7 +502,7 @@ export class SegmentClient {
 
     this.store.userInfo.set({
       ...userInfo,
-      userId: userId,
+      ...(userId !== undefined ? { userId } : {}),
       traits: mergedTraits,
     });
 
