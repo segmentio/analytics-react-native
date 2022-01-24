@@ -48,8 +48,5 @@
   },
   "engines": {
     "node": ">=12"
-  },
-  "dependencies": {
-    "nanoid": "3.2.0"
   }
 }
