@@ -43,10 +43,13 @@
     "husky": "^4.2.5",
     "jest": "^27.3.1",
     "prettier": "^2.3.2",
-    "release-it": "^14.2.2",
+    "release-it": "14.12.4",
     "release-it-yarn-workspaces": "^2.0.1"
   },
   "engines": {
     "node": ">=12"
+  },
+  "dependencies": {
+    "nanoid": "3.2.0"
   }
 }
