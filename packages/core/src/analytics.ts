@@ -557,7 +557,8 @@ export class SegmentClient {
    * Application Opened - the previously detected version is same as the current version
    */
   private async checkInstalledVersion() {
-    const context = await getContext(undefined);
+    const context = await getContext(undefined, this.config);
+
     const previousContext = this.store.context.get();
 
     this.store.context.set(context);
