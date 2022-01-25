@@ -284,7 +284,7 @@ PODS:
     - React-Core
   - RNCMaskedView (0.1.11):
     - React
-  - RNGestureHandler (1.10.3):
+  - RNGestureHandler (2.2.0):
     - React-Core
   - segment-analytics-react-native (2.0.0-pilot.1):
     - React-Core
@@ -452,7 +452,7 @@ SPEC CHECKSUMS:
   RNBootSplash: 4844706cbb56a3270556c9b94e59dedadccd47e4
   RNCAsyncStorage: 7102fe8985f889579a3ae148d957bbb3f308122b
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
-  RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
+  RNGestureHandler: bf572f552ea324acd5b5464b8d30755b2d8c1de6
   segment-analytics-react-native: b2fdd858d2c385b634ed3d70d51aac2871f7b352
   segment-analytics-react-native-plugin-idfa: 686d0edac1e673ab8a07d3a5e882498a85ac0e74
   Yoga: 32a18c0e845e185f4a2a66ec76e1fd1f958f22fa
