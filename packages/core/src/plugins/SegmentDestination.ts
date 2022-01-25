@@ -78,7 +78,9 @@ export class SegmentDestination extends DestinationPlugin {
     );
 
     if (sentEvents.length) {
-      console.warn(`Sent ${sentEvents.length} events`);
+      if (this.analytics?.getConfig().debug) {
+        console.info(`Sent ${sentEvents.length} events`);
+      }
     }
 
     if (numFailedEvents) {
