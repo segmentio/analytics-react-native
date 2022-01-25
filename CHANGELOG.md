@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.1](https://github.com/segmentio/analytics-react-native/compare/v1.5.0...v1.5.1) (2022-01-25)
+
+### Bug Fixes
+
+- ci brew applesimutils ([#354](https://github.com/segmentio/analytics-react-native/issues/354)) ([976b921](https://github.com/segmentio/analytics-react-native/commit/976b9210c5009cd608bf84a4e14b63836b30a90c))
+- update analytics-android dep to resolve jcenter shutdown ([f0fcf13](https://github.com/segmentio/analytics-react-native/commit/f0fcf13bc2ed33eeddcb5aa7a48eca98fbfe69aa))
+
 ## [1.5.0](https://github.com/segmentio/analytics-react-native/compare/v1.4.9...v1.5.0) (2021-07-15)
 
 - bump Amplitude deployment target to address build error
