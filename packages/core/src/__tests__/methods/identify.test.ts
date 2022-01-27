@@ -80,7 +80,7 @@ describe('methods #identify', () => {
     });
   });
   it('does not update user id when user id is undefined', () => {
-    const client = new SegmentClient(defaultClientSettings);
+    const client = new SegmentClient(clientArgs);
     jest.spyOn(client, 'process');
 
     client.identify(undefined, { name: 'Mary' });
