@@ -2,7 +2,6 @@ import { SegmentClient } from '../../analytics';
 import { getMockLogger } from '../__helpers__/mockLogger';
 import * as ReactNative from 'react-native';
 import { EventType } from '../../types';
-import { mockPersistor } from '../__helpers__/mockPersistor';
 import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
 
 jest
@@ -25,7 +24,6 @@ describe('#trackDeepLinks', () => {
       trackDeepLinks: true,
     },
     logger: getMockLogger(),
-    persistor: mockPersistor,
     store: store,
   };
   let client: SegmentClient;

@@ -2,16 +2,14 @@ import type { AppStateStatus } from 'react-native';
 import { AppState } from 'react-native';
 import { EventType, IdentifyEventType } from '..';
 import { SegmentClient } from '../analytics';
-import { getMockReduxStorage } from './__helpers__/getTestClient';
 import { getMockLogger } from './__helpers__/mockLogger';
-import { mockPersistor } from './__helpers__/mockPersistor';
 import { MockSegmentStore } from './__helpers__/mockSegmentStore';
 
 jest.mock('react-native');
 jest.mock('../uuid');
 
 describe('SegmentClient', () => {
-  const ReduxStorage = getMockReduxStorage();
+  const store = new MockSegmentStore();
   const clientArgs = {
     config: {
       writeKey: 'SEGMENT_KEY',
@@ -20,8 +18,7 @@ describe('SegmentClient', () => {
       trackAppLifecycleEvents: true,
     },
     logger: getMockLogger(),
-    persistor: mockPersistor,
-    store: ReduxStorage,
+    store: store,
   };
 
   let client: SegmentClient;
@@ -127,7 +124,7 @@ describe('SegmentClient', () => {
   describe('#reset', () => {
     it('resets user data, identity, traits', () => {
       client = new SegmentClient(clientArgs);
-      const setUserInfo = jest.spyOn(ReduxStorage.userInfo, 'set');
+      const setUserInfo = jest.spyOn(store.userInfo, 'set');
 
       client.reset();
 
@@ -140,7 +137,7 @@ describe('SegmentClient', () => {
   });
 });
 
-describe('SegmentClient #onUpdateStore', () => {
+describe.only('SegmentClient onUpdateStore', () => {
   const store = new MockSegmentStore();
   const clientArgs = {
     config: {
@@ -150,9 +147,9 @@ describe('SegmentClient #onUpdateStore', () => {
       trackAppLifecycleEvents: true,
     },
     logger: getMockLogger(),
-    persistor: mockPersistor,
     store: store,
   };
+
   let client: SegmentClient;
 
   const sampleEvent: IdentifyEventType = {
@@ -168,13 +165,11 @@ describe('SegmentClient #onUpdateStore', () => {
   };
 
   beforeEach(() => {
-    jest.useFakeTimers();
+    jest.clearAllMocks();
     store.reset();
   });
 
   afterEach(() => {
-    jest.clearAllTimers();
-    jest.clearAllMocks();
     client.cleanup();
   });
 

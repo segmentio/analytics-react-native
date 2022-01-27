@@ -1,12 +1,12 @@
-import type { Unsubscribe } from '@reduxjs/toolkit';
+import type { Unsubscribe } from '@segment/sovran-react-native';
 import type { SegmentEvent } from '..';
 import type {
   Context,
   DeepPartial,
   IntegrationSettings,
   SegmentAPIIntegrations,
+  UserInfoState,
 } from '../types';
-import type { UserInfoState } from '../store/userInfo';
 
 /**
  * Implements a value that can be subscribed for changes

@@ -1,7 +1,6 @@
 import { SegmentClient } from '../../analytics';
 import { getMockLogger } from '../__helpers__/mockLogger';
 import * as context from '../../context';
-import { mockPersistor } from '../__helpers__/mockPersistor';
 import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
 import { Context, EventType } from '../../types';
 
@@ -24,7 +23,6 @@ describe('internal #checkInstalledVersion', () => {
       trackAppLifecycleEvents: false,
     },
     logger: getMockLogger(),
-    persistor: mockPersistor,
     store: store,
   };
   let client: SegmentClient;

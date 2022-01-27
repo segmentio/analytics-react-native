@@ -1779,6 +1779,13 @@
     "@babel/runtime" "^7.7.2"
     regenerator-runtime "^0.13.3"
 
+"@react-native-async-storage/async-storage@^1.15.15":
+  version "1.15.17"
+  resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-1.15.17.tgz#0dae263a52e476ffce871086f1fef5b8e44708eb"
+  integrity sha512-NQCFs47aFEch9kya/bqwdpvSdZaVRtzU7YB02L8VrmLSLpKgQH/1VwzFUBPcc1/JI1s3GU4yOLVrEbwxq+Fqcw==
+  dependencies:
+    merge-options "^3.0.4"
+
 "@react-native-async-storage/async-storage@^1.15.7":
   version "1.15.7"
   resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-1.15.7.tgz#736ac5cfe211b081e70389e80c237398d1451f08"
@@ -1975,6 +1982,14 @@
     "@react-navigation/elements" "^1.1.0"
     color "^3.1.3"
     warn-once "^0.1.0"
+
+"@segment/sovran-react-native@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@segment/sovran-react-native/-/sovran-react-native-0.1.0.tgz#7190ecb33c9151133930a5c631fcea4cf786cd0f"
+  integrity sha512-i6Kr+Lk2t2dsYlgpvyiEMwnouLwWzirnwh6fcOKp1uSyIj9NTrT06FW9gOinXxs2UJwvBNqTfMwUAr0cUfhSDg==
+  dependencies:
+    "@react-native-async-storage/async-storage" "^1.15.15"
+    deepmerge "^4.2.2"
 
 "@sinonjs/commons@^1.7.0":
   version "1.8.3"

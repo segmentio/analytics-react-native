@@ -1,6 +1,5 @@
-import type { Unsubscribe } from '@reduxjs/toolkit';
 import { AppState, AppStateStatus, Linking } from 'react-native';
-import type { Persistor } from 'redux-persist';
+import type { Unsubscribe } from '@segment/sovran-react-native';
 import { getContext } from './context';
 
 import {
@@ -16,7 +15,6 @@ import type { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
 import { InjectContext } from './plugins/Context';
 import { SegmentDestination } from './plugins/SegmentDestination';
 import type { Settable, Storage, Watchable } from './storage';
-import type { UserInfoState } from './store/userInfo';
 import { Timeline } from './timeline';
 import {
   Config,
@@ -28,6 +26,7 @@ import {
   SegmentAPIIntegrations,
   SegmentAPISettings,
   SegmentEvent,
+  UserInfoState,
   UserTraits,
 } from './types';
 import { getPluginsWithFlush } from './util';
@@ -39,9 +38,6 @@ export class SegmentClient {
 
   // Storage
   private store: Storage;
-
-  // persistor for the redux store
-  private persistor: Persistor;
 
   // how many seconds has elapsed since the last time events were sent
   private secondsElapsed: number = 0;
@@ -61,7 +57,7 @@ export class SegmentClient {
   // Watcher for isReady updates to the storage
   private readinessWatcher?: Unsubscribe = undefined;
 
-  // unsubscribe watchers for the redux store
+  // unsubscribe watchers for the store
   private watchers: Unsubscribe[] = [];
 
   // whether the user has called cleanup
@@ -150,25 +146,18 @@ export class SegmentClient {
     return { ...this.config };
   }
 
-  getPersistor() {
-    return this.persistor;
-  }
-
   constructor({
     config,
     logger,
     store,
-    persistor,
   }: {
     config: Config;
     logger: Logger;
     store: any;
-    persistor: Persistor;
   }) {
     this.logger = logger;
     this.config = config;
     this.store = store;
-    this.persistor = persistor;
     this.timeline = new Timeline();
 
     // add segment destination plugin unless
@@ -228,7 +217,6 @@ export class SegmentClient {
     } else {
       this.store.isReady.onChange((value) => this.onStorageReady(value));
     }
-
     await this.fetchSettings();
 
     // flush any stored events
@@ -273,7 +261,7 @@ export class SegmentClient {
   }
 
   /**
-   * Clears all subscriptions to the redux store
+   * Clears all subscriptions to the store
    */
   private unsubscribeStorageWatchers() {
     if (this.watchers.length > 0) {

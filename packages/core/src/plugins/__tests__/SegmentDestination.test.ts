@@ -3,14 +3,12 @@ import { SegmentDestination } from '../SegmentDestination';
 import { SegmentClient } from '../../analytics';
 import { MockSegmentStore } from '../../__tests__/__helpers__/mockSegmentStore';
 import { getMockLogger } from '../../__tests__/__helpers__/mockLogger';
-import { mockPersistor } from '../../__tests__/__helpers__/mockPersistor';
 import * as api from '../../api';
 
 describe('SegmentDestination', () => {
   const store = new MockSegmentStore();
   const clientArgs = {
     logger: getMockLogger(),
-    persistor: mockPersistor,
     config: {
       writeKey: '123-456',
       maxBatchSize: 2,

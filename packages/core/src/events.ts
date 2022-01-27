@@ -11,8 +11,8 @@ import {
   AliasEventType,
   EventType,
   SegmentEvent,
+  UserInfoState,
 } from './types';
-import type { UserInfoState } from './store/userInfo';
 
 export const createTrackEvent = ({
   event,
