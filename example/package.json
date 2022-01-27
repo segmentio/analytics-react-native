@@ -24,7 +24,7 @@
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/stack": "^6.0.7",
-    "@segment/sovran-react-native": "^0.1.0",
+    "@segment/sovran-react-native": "^0.2.0",
     "react": "17.0.2",
     "react-native": "0.63.4",
     "react-native-bootsplash": "^3.2.4",

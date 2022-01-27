@@ -32,84 +32,100 @@ const INITIAL_VALUES: Data = {
 
 export class SovranStorage implements Storage {
   private storeId: string;
-  private contextStore: Store<DeepPartial<Context>>;
-  private settingsStore: Store<SegmentAPIIntegrations>;
-  private eventsStore: Store<SegmentEvent[]>;
-  private userInfoStore: Store<UserInfoState>;
+  private contextStore: Store<{ context: DeepPartial<Context> }>;
+  private settingsStore: Store<{ settings: SegmentAPIIntegrations }>;
+  private eventsStore: Store<{ events: SegmentEvent[] }>;
+  private userInfoStore: Store<{ userInfo: UserInfoState }>;
 
   constructor(storeId: string) {
     this.storeId = storeId;
-    this.contextStore = createStore(INITIAL_VALUES.context, {
-      persist: { storeId: `${this.storeId}-context` },
-    });
-    this.settingsStore = createStore(INITIAL_VALUES.settings, {
-      persist: { storeId: `${this.storeId}-settings` },
-    });
-    this.eventsStore = createStore(INITIAL_VALUES.events, {
-      persist: { storeId: `${this.storeId}-events` },
-    });
-    this.userInfoStore = createStore(INITIAL_VALUES.userInfo, {
-      persist: { storeId: `${this.storeId}-userInfo` },
-    });
+    this.contextStore = createStore(
+      { context: INITIAL_VALUES.context },
+      {
+        persist: { storeId: `${this.storeId}-context` },
+      }
+    );
+    this.settingsStore = createStore(
+      { settings: INITIAL_VALUES.settings },
+      {
+        persist: { storeId: `${this.storeId}-settings` },
+      }
+    );
+    this.eventsStore = createStore(
+      { events: INITIAL_VALUES.events },
+      {
+        persist: { storeId: `${this.storeId}-events` },
+      }
+    );
+    this.userInfoStore = createStore(
+      { userInfo: INITIAL_VALUES.userInfo },
+      {
+        persist: { storeId: `${this.storeId}-userInfo` },
+      }
+    );
   }
 
   readonly isReady = {
     get: () => true,
     onChange: (_callback: (value: boolean) => void) => {
-      // Not doing anything cause we don't yet have a way to persist
+      // No need to do anything since storage is always ready
       return () => {};
     },
   };
 
   readonly context = {
-    get: () => this.contextStore.getState(),
+    get: () => this.contextStore.getState().context,
     onChange: (callback: (value?: DeepPartial<Context>) => void) =>
-      this.contextStore.subscribe(callback),
+      this.contextStore.subscribe((store) => callback(store.context)),
     set: (value: DeepPartial<Context>) => {
       this.contextStore.dispatch((state) => {
-        return { ...state, ...value };
+        return { context: { ...state.context, ...value } };
       });
     },
   };
   readonly settings = {
-    get: () => this.settingsStore.getState(),
+    get: () => this.settingsStore.getState().settings,
     onChange: (
       callback: (value?: SegmentAPIIntegrations | undefined) => void
-    ) => this.settingsStore.subscribe(callback),
+    ) => this.settingsStore.subscribe((store) => callback(store.settings)),
     set: (value: SegmentAPIIntegrations) => {
       this.settingsStore.dispatch((state) => {
-        return { ...state, ...value };
+        return { settings: { ...state.settings, ...value } };
       });
     },
     add: (key: string, value: IntegrationSettings) => {
-      this.settingsStore.dispatch((state) => ({ ...state, [key]: value }));
+      this.settingsStore.dispatch((state) => ({
+        settings: { ...state.settings, [key]: value },
+      }));
     },
   };
   readonly events = {
-    get: () => this.eventsStore.getState(),
+    get: () => this.eventsStore.getState().events,
     onChange: (callback: (value: SegmentEvent[]) => void) =>
-      this.eventsStore.subscribe(callback),
+      this.eventsStore.subscribe((store) => callback(store.events)),
     add: (event: SegmentEvent | SegmentEvent[]) => {
       const eventsToAdd = Array.isArray(event) ? event : [event];
-      this.eventsStore.dispatch((state) => [...state, ...eventsToAdd]);
+      this.eventsStore.dispatch((state) => ({
+        events: [...state.events, ...eventsToAdd],
+      }));
     },
     remove: (event: SegmentEvent | SegmentEvent[]) => {
       this.eventsStore.dispatch((state) => {
         const eventsToRemove = Array.isArray(event) ? event : [event];
         const setToRemove = new Set(eventsToRemove);
-        const newState = state.filter((event) => !setToRemove.has(event));
-        return newState;
+        const filteredEvents = state.events.filter((e) => !setToRemove.has(e));
+        return { events: filteredEvents };
       });
     },
   };
   readonly userInfo = {
-    get: () => this.userInfoStore.getState(),
+    get: () => this.userInfoStore.getState().userInfo,
     onChange: (callback: (value: UserInfoState) => void) =>
-      this.userInfoStore.subscribe(callback),
+      this.userInfoStore.subscribe((store) => callback(store.userInfo)),
     set: (value: UserInfoState) => {
-      this.userInfoStore.dispatch((state) => {
-        return { ...state, ...value };
-      });
+      this.userInfoStore.dispatch((state) => ({
+        userInfo: { ...state.userInfo, ...value },
+      }));
     },
   };
 }

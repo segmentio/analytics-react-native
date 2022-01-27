@@ -45,6 +45,7 @@ describe('methods #identify', () => {
         name: 'Mary',
         age: 30,
       },
+      userId: 'new-user-id',
       type: 'identify',
     };
 
@@ -66,6 +67,7 @@ describe('methods #identify', () => {
 
     const expectedEvent = {
       traits: initialUserInfo.traits,
+      userId: 'new-user-id',
       type: 'identify',
     };
 

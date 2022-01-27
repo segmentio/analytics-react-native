@@ -485,6 +485,7 @@ export class SegmentClient {
     };
 
     const event = createIdentifyEvent({
+      userId,
       userTraits: mergedTraits,
     });
 

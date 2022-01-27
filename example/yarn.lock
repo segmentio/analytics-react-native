@@ -1983,10 +1983,10 @@
     color "^3.1.3"
     warn-once "^0.1.0"
 
-"@segment/sovran-react-native@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@segment/sovran-react-native/-/sovran-react-native-0.1.0.tgz#7190ecb33c9151133930a5c631fcea4cf786cd0f"
-  integrity sha512-i6Kr+Lk2t2dsYlgpvyiEMwnouLwWzirnwh6fcOKp1uSyIj9NTrT06FW9gOinXxs2UJwvBNqTfMwUAr0cUfhSDg==
+"@segment/sovran-react-native@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@segment/sovran-react-native/-/sovran-react-native-0.2.0.tgz#59b62246dae1c15b8c699dc463c103792e9855b5"
+  integrity sha512-/SVu7vuv+uUk6IpeIa8dHHZHYcngsv9+gbsA0RKn7Y0N9HbJrkJnkRkSNVihPehOWkJ+8h0mBKZof/jYnS6OlA==
   dependencies:
     "@react-native-async-storage/async-storage" "^1.15.15"
     deepmerge "^4.2.2"

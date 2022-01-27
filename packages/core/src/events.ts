@@ -39,12 +39,15 @@ export const createScreenEvent = ({
 });
 
 export const createIdentifyEvent = ({
+  userId,
   userTraits = {},
 }: {
+  userId?: string;
   userTraits?: UserTraits;
 }): IdentifyEventType => {
   return {
     type: EventType.IdentifyEvent,
+    userId: userId,
     traits: userTraits,
   };
 };
@@ -77,6 +80,8 @@ export const createAliasEvent = ({
 
 const isAliasEvent = (event: SegmentEvent): event is AliasEventType =>
   event.type === EventType.AliasEvent;
+const isIdentifyEvent = (event: SegmentEvent): event is AliasEventType =>
+  event.type === EventType.IdentifyEvent;
 
 export const applyRawEventData = (
   event: SegmentEvent,
@@ -88,6 +93,9 @@ export const applyRawEventData = (
     messageId: getUUID(),
     timestamp: new Date().toISOString(),
     integrations: event.integrations ?? {},
-    userId: isAliasEvent(event) ? event.userId : userInfo.userId,
+    userId:
+      isAliasEvent(event) || isIdentifyEvent(event)
+        ? event.userId
+        : userInfo.userId,
   };
 };
