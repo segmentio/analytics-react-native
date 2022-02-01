@@ -1,11 +1,11 @@
 import type { Storage } from '../../storage';
-import type { UserInfoState } from '../../store/userInfo';
 import type {
   Context,
   DeepPartial,
   IntegrationSettings,
   SegmentAPIIntegrations,
   SegmentEvent,
+  UserInfoState,
 } from '../../types';
 
 type Data = {

@@ -1,12 +1,10 @@
 import React, { createContext, useContext } from 'react';
-import { PersistGate } from 'redux-persist/integration/react';
 
 import { defaultConfig } from './constants';
 import type { Config, ClientMethods } from './types';
 import { createLogger } from './logger';
-import { initializeStore } from './store';
 import { SegmentClient } from './analytics';
-import { ReduxStorage } from './storage';
+import { SovranStorage } from './storage';
 
 export const createClient = (config: Config) => {
   const logger = createLogger();
@@ -18,15 +16,13 @@ export const createClient = (config: Config) => {
     }
   }
   const clientConfig = { ...defaultConfig, ...config };
-  const { store, persistor } = initializeStore(config.writeKey);
 
-  const segmentStore = new ReduxStorage(store, persistor);
+  const segmentStore = new SovranStorage(config.writeKey);
 
   const client = new SegmentClient({
     config: clientConfig,
     logger,
     store: segmentStore,
-    persistor,
   });
 
   client.init();
@@ -47,13 +43,7 @@ export const AnalyticsProvider = ({
     return null;
   }
 
-  return (
-    <Context.Provider value={client}>
-      <PersistGate loading={null} persistor={client.getPersistor()}>
-        {children}
-      </PersistGate>
-    </Context.Provider>
-  );
+  return <Context.Provider value={client}>{children}</Context.Provider>;
 };
 
 export const useAnalytics = (): ClientMethods => {

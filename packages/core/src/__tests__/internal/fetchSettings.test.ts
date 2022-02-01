@@ -1,6 +1,5 @@
 import { getMockLogger } from '../__helpers__/mockLogger';
 import { SegmentClient } from '../../analytics';
-import { mockPersistor } from '../__helpers__/mockPersistor';
 import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
 
 describe('internal #getSettings', () => {
@@ -15,7 +14,6 @@ describe('internal #getSettings', () => {
       defaultSettings: defaultIntegrationSettings,
     },
     logger: getMockLogger(),
-    persistor: mockPersistor,
     store: store,
   };
 

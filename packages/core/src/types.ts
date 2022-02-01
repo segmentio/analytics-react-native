@@ -283,3 +283,9 @@ export enum EventType {
   'GroupEvent' = 'group',
   'AliasEvent' = 'alias',
 }
+
+export type UserInfoState = {
+  anonymousId: string;
+  userId?: string;
+  traits?: UserTraits;
+};

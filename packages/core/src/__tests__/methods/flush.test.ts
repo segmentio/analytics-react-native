@@ -3,7 +3,6 @@ import { getMockLogger } from '../__helpers__/mockLogger';
 import { PluginType, SegmentEvent } from '../../types';
 import { getMockTimeline } from '../__helpers__/mockTimeline';
 import type { DestinationPlugin } from '../../plugin';
-import { mockPersistor } from '../__helpers__/mockPersistor';
 import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
 
 jest.mock('react-native');
@@ -24,7 +23,6 @@ describe('methods #flush', () => {
       writeKey: '123-456',
     },
     logger: getMockLogger(),
-    persistor: mockPersistor,
     store: store,
   };
 

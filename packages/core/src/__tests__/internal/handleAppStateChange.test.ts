@@ -2,7 +2,6 @@ import { AppState, AppStateStatus } from 'react-native';
 import { SegmentClient } from '../../analytics';
 import { EventType } from '../../types';
 import { getMockLogger } from '../__helpers__/mockLogger';
-import { mockPersistor } from '../__helpers__/mockPersistor';
 import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
 
 jest.mock('../../uuid');
@@ -22,7 +21,6 @@ describe('SegmentClient #handleAppStateChange', () => {
       trackAppLifecycleEvents: true,
     },
     logger: getMockLogger(),
-    persistor: mockPersistor,
     store: store,
   };
 
