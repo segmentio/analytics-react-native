@@ -40,7 +40,8 @@ describe('#getContext', () => {
     },
     library: {
       name: '@segment/analytics-react-native',
-      version: '2.0.0-pilot.1',
+      // TODO: Mock this value
+      version: '2.1.0-beta',
     },
     locale: 'en_US',
     network: {
