@@ -2705,10 +2705,10 @@
     conventional-recommended-bump "^6.1.0"
     prepend-file "^2.0.0"
 
-"@segment/sovran-react-native@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@segment/sovran-react-native/-/sovran-react-native-0.2.0.tgz#59b62246dae1c15b8c699dc463c103792e9855b5"
-  integrity sha512-/SVu7vuv+uUk6IpeIa8dHHZHYcngsv9+gbsA0RKn7Y0N9HbJrkJnkRkSNVihPehOWkJ+8h0mBKZof/jYnS6OlA==
+"@segment/sovran-react-native@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@segment/sovran-react-native/-/sovran-react-native-0.2.1.tgz#3bb612f1d53c54edf3fb6dd2baa321f4b9df8e46"
+  integrity sha512-60uFgZHuH78uYW2Tuin1qughOVF+GFxFfzcMInWrNB9TD1Qnge1bMYMqFFRkM7NZTY6ET7n3SsMdwehLN1M0rQ==
   dependencies:
     "@react-native-async-storage/async-storage" "^1.15.15"
     deepmerge "^4.2.2"
