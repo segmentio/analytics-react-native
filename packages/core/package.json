@@ -43,10 +43,7 @@
     "url": "https://github.com/segmentio/analytics-react-native/issues"
   },
   "homepage": "https://github.com/segmentio/analytics-react-native#readme",
-  "peerDependencies": {
-    "react": "*",
-    "react-native": "*"
-  },
+
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.15.17",
     "@segment/sovran-react-native": "^0.2.1",
