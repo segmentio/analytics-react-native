@@ -23,7 +23,7 @@ import { Logger } from './plugins/Logger';
 // import { FacebookAppEventsPlugin } from '@segment/analytics-react-native-plugin-facebook-app-events';
 
 // @ts-ignore
-import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
+// import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
 // @ts-ignore
 import { AmplitudeSessionPlugin } from '@segment/analytics-react-native-plugin-amplitude-session';
 
@@ -31,6 +31,7 @@ const segmentClient = createClient({
   writeKey: 'WRITE KEY',
   trackAppLifecycleEvents: true,
   collectDeviceId: true,
+  debug: true,
 });
 
 const LoggerPlugin = new Logger();
@@ -42,7 +43,7 @@ segmentClient.add({ plugin: LoggerPlugin });
 // To test the Facebook App Events plugin make sure to add your Facebook App Id to Info.plist
 // segmentClient.add({ plugin: new FacebookAppEventsPlugin() });
 
-segmentClient.add({ plugin: new IdfaPlugin() });
+// segmentClient.add({ plugin: new IdfaPlugin() });
 segmentClient.add({ plugin: new AmplitudeSessionPlugin() });
 
 const MainStack = createStackNavigator();
