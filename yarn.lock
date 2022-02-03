@@ -2705,13 +2705,15 @@
     conventional-recommended-bump "^6.1.0"
     prepend-file "^2.0.0"
 
-"@segment/sovran-react-native@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@segment/sovran-react-native/-/sovran-react-native-0.2.1.tgz#3bb612f1d53c54edf3fb6dd2baa321f4b9df8e46"
-  integrity sha512-60uFgZHuH78uYW2Tuin1qughOVF+GFxFfzcMInWrNB9TD1Qnge1bMYMqFFRkM7NZTY6ET7n3SsMdwehLN1M0rQ==
+"@segment/sovran-react-native@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@segment/sovran-react-native/-/sovran-react-native-0.2.2.tgz#6250b98f6eb5e355f0c752fa80abc3021107ff7a"
+  integrity sha512-3JhYTiXsCpt/2ETRvXP0mg3XO/xLkSGH9g8Ydl5mjoLlJLsWaaL/R5EFt6gENx20fnn4/95yTG5wmDndO5dtFQ==
   dependencies:
     "@react-native-async-storage/async-storage" "^1.15.15"
     deepmerge "^4.2.2"
+    react "^17.0.2"
+    react-native "^0.66.0"
 
 "@sideway/address@^4.1.0":
   version "4.1.2"
@@ -9086,10 +9088,10 @@ react-native-fbsdk-next@^4.6.0:
   resolved "https://registry.yarnpkg.com/react-native-fbsdk-next/-/react-native-fbsdk-next-4.6.0.tgz#0e70aa6d64e99762e6b22b1344eebae3f7fbfcb5"
   integrity sha512-FPYLUFSWf7V4i084jKpSt8tc1DLkuBm38eYdq4RwpGcojxXIciQ8qQi9DRLNAxqNZHd0G/P6edSVEGsrjtvV7w==
 
-react-native@0.66.3:
-  version "0.66.3"
-  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.66.3.tgz#25c7c4c7d81867326b3eb7a36f0fe6a61fa4104e"
-  integrity sha512-B/dQpuvta9YvF5MihDWefoGlTvxzUHK5X5RjdrXHAu/ihTehJXxEA+m6z/tufp1ZUMDjU+tMZK6gnehzCuYfzw==
+react-native@^0.66.0, react-native@^0.66.3:
+  version "0.66.4"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.66.4.tgz#bf89a5fb18bd23046d889fb4de4ea2822a4d7805"
+  integrity sha512-9vx5dlSfQlKbbDtr8+xMon6qsmSu7jvjdXWZpEKh3XVKpUidbbODv7048gwVKX8YAel1egeR7hN8vzSeI6ssTw==
   dependencies:
     "@jest/create-cache-key-function" "^27.0.1"
     "@react-native-community/cli" "^6.0.0"
@@ -9128,7 +9130,7 @@ react-refresh@^0.4.0:
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.4.3.tgz#966f1750c191672e76e16c2efa569150cc73ab53"
   integrity sha512-Hwln1VNuGl/6bVwnd0Xdn1e84gT/8T9aYNL+HAKDArLCS7LWjwr7StE30IEYbIkx0Vi3vs+coQxe+SQDbGbbpA==
 
-react@17.0.2:
+react@^17.0.2:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react/-/react-17.0.2.tgz#d0b5cc516d29eb3eee383f75b62864cfb6800037"
   integrity sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==
