@@ -32,8 +32,7 @@
     "precommit": "lint-staged",
     "commitmsg": "commitlint -E GIT_PARAMS",
     "lint-staged:ts": "run-p docs:core && git add packages/core/docs",
-    "lint-staged:integrations": "yarn integrations generate:readme && git add README.md",
-    "post-install": " cd packages/core && npm install"
+    "lint-staged:integrations": "yarn integrations generate:readme && git add README.md"
   },
   "commitlint": {
     "extends": [
