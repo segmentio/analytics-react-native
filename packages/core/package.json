@@ -1,11 +1,11 @@
 {
-  "name": "@segment/analytics-react-native",
+  "name": "@uswitch/analytics-react-native",
   "version": "1.5.1",
   "description": "The hassle-free way to add analytics to your React-Native app.",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/segmentio/analytics-react-native.git"
+    "url": "https://github.com/uswitch/analytics-react-native.git"
   },
   "main": "build/cjs/index.js",
   "module": "build/esm/index.js",

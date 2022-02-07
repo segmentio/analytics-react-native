@@ -57,7 +57,7 @@ export default integrations
 			ios,
 			android,
 			npm: {
-				package: `@segment/analytics-react-native-${slug(
+				package: `@uswitch/analytics-react-native-${slug(
 					'-'
 				).toLowerCase()}${suffix}`
 			}

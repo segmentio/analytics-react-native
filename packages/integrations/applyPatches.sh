@@ -23,7 +23,7 @@
 #    expects. Because of this, we copy in a version with the appropriate header path applied to
 #    the iOS file, main.m.
 
-cp "./patches/@segment/analytics-react-native-appsflyer/ios/main.m" "./build/@segment/analytics-react-native-appsflyer/ios/main.m"
+cp "./patches/@uswitch/analytics-react-native-appsflyer/ios/main.m" "./build/@uswitch/analytics-react-native-appsflyer/ios/main.m"
 
 ### Adjust patch
 #
@@ -33,7 +33,7 @@ cp "./patches/@segment/analytics-react-native-appsflyer/ios/main.m" "./build/@se
 # another integration. Because of this, we copy in a version with the appropriate code
 # applied to the Android file, IntegrationModule.kt
 
-cp "./patches/@segment/analytics-react-native-adjust/android/src/main/java/com/segment/analytics/reactnative/integration/adjust/IntegrationModule.kt" "./build/@segment/analytics-react-native-adjust/android/src/main/java/com/segment/analytics/reactnative/integration/adjust/IntegrationModule.kt"
+cp "./patches/@uswitch/analytics-react-native-adjust/android/src/main/java/com/segment/analytics/reactnative/integration/adjust/IntegrationModule.kt" "./build/@uswitch/analytics-react-native-adjust/android/src/main/java/com/segment/analytics/reactnative/integration/adjust/IntegrationModule.kt"
 
 ### Facebook App Events patch
 #
@@ -42,5 +42,5 @@ cp "./patches/@segment/analytics-react-native-adjust/android/src/main/java/com/s
 # A: RN 0.62 changes how imports end up getting spit out and opts for static lib pods, which
 #    Xcode then uses the directory name for rather than the module name, and thus it breaks. :(
 
-cp "./patches/@segment/analytics-react-native-facebook-app-events-ios/ios/main.m" "./build/@segment/analytics-react-native-facebook-app-events-ios/ios/main.m"
+cp "./patches/@uswitch/analytics-react-native-facebook-app-events-ios/ios/main.m" "./build/@uswitch/analytics-react-native-facebook-app-events-ios/ios/main.m"
 

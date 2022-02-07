@@ -3,7 +3,7 @@
 set -ex
 args="$@"
 
-for module in build/@segment/*; do
+for module in build/@uswitch/*; do
     pushd $module
         npm publish $args
     popd

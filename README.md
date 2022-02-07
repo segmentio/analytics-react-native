@@ -164,25 +164,25 @@ In Xcode:
 
 | Name                                                                                                         | iOS                | Android            | npm package                                               |
 | ------------------------------------------------------------------------------------------------------------ | ------------------ | ------------------ | --------------------------------------------------------- |
-| [Adjust](https://www.npmjs.com/package/@segment/analytics-react-native-adjust)                               | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-adjust`                  |
-| [Amplitude](https://www.npmjs.com/package/@segment/analytics-react-native-amplitude)                         | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-amplitude`               |
-| [Appboy](https://www.npmjs.com/package/@segment/analytics-react-native-appboy)                               | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-appboy`                  |
-| [AppsFlyer](https://www.npmjs.com/package/@segment/analytics-react-native-appsflyer)                         | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-appsflyer`               |
-| [Branch](https://www.npmjs.com/package/@segment/analytics-react-native-branch)                               | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-branch`                  |
-| [Bugsnag](https://www.npmjs.com/package/@segment/analytics-react-native-bugsnag)                             | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-bugsnag`                 |
-| [CleverTap](https://www.npmjs.com/package/@segment/analytics-react-native-clevertap)                         | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-clevertap`               |
-| [ComScore](https://www.npmjs.com/package/@segment/analytics-react-native-comscore-ios)                       | :white_check_mark: | :x:                | `@segment/analytics-react-native-comscore-ios`            |
-| [Countly](https://www.npmjs.com/package/@segment/analytics-react-native-countly)                             | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-countly`                 |
-| [Crittercism](https://www.npmjs.com/package/@segment/analytics-react-native-crittercism)                     | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-crittercism`             |
-| [Facebook App Events](https://www.npmjs.com/package/@segment/analytics-react-native-facebook-app-events-ios) | :white_check_mark: | :x:                | `@segment/analytics-react-native-facebook-app-events-ios` |
-| [Firebase](https://www.npmjs.com/package/@segment/analytics-react-native-firebase)                           | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-firebase`                |
-| [Flurry](https://www.npmjs.com/package/@segment/analytics-react-native-flurry)                               | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-flurry`                  |
-| [Intercom](https://www.npmjs.com/package/@segment/analytics-react-native-intercom)                           | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-intercom`                |
-| [Localytics](https://www.npmjs.com/package/@segment/analytics-react-native-localytics)                       | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-localytics`              |
-| [Mixpanel](https://www.npmjs.com/package/@segment/analytics-react-native-mixpanel)                           | :white_check_mark: | :white_check_mark: | `@segment/analytics-react-native-mixpanel`                |
-| [Quantcast](https://www.npmjs.com/package/@segment/analytics-react-native-quantcast-android)                 | :x:                | :white_check_mark: | `@segment/analytics-react-native-quantcast-android`       |
-| [Taplytics](https://www.npmjs.com/package/@segment/analytics-react-native-taplytics-ios)                     | :white_check_mark: | :x:                | `@segment/analytics-react-native-taplytics-ios`           |
-| [Tapstream](https://www.npmjs.com/package/@segment/analytics-react-native-tapstream-android)                 | :x:                | :white_check_mark: | `@segment/analytics-react-native-tapstream-android`       |
+| [Adjust](https://www.npmjs.com/package/@uswitch/analytics-react-native-adjust)                               | :white_check_mark: | :white_check_mark: | `@uswitch/analytics-react-native-adjust`                  |
+| [Amplitude](https://www.npmjs.com/package/@uswitch/analytics-react-native-amplitude)                         | :white_check_mark: | :white_check_mark: | `@uswitch/analytics-react-native-amplitude`               |
+| [Appboy](https://www.npmjs.com/package/@uswitch/analytics-react-native-appboy)                               | :white_check_mark: | :white_check_mark: | `@uswitch/analytics-react-native-appboy`                  |
+| [AppsFlyer](https://www.npmjs.com/package/@uswitch/analytics-react-native-appsflyer)                         | :white_check_mark: | :white_check_mark: | `@uswitch/analytics-react-native-appsflyer`               |
+| [Branch](https://www.npmjs.com/package/@uswitch/analytics-react-native-branch)                               | :white_check_mark: | :white_check_mark: | `@uswitch/analytics-react-native-branch`                  |
+| [Bugsnag](https://www.npmjs.com/package/@uswitch/analytics-react-native-bugsnag)                             | :white_check_mark: | :white_check_mark: | `@uswitch/analytics-react-native-bugsnag`                 |
+| [CleverTap](https://www.npmjs.com/package/@uswitch/analytics-react-native-clevertap)                         | :white_check_mark: | :white_check_mark: | `@uswitch/analytics-react-native-clevertap`               |
+| [ComScore](https://www.npmjs.com/package/@uswitch/analytics-react-native-comscore-ios)                       | :white_check_mark: | :x:                | `@uswitch/analytics-react-native-comscore-ios`            |
+| [Countly](https://www.npmjs.com/package/@uswitch/analytics-react-native-countly)                             | :white_check_mark: | :white_check_mark: | `@uswitch/analytics-react-native-countly`                 |
+| [Crittercism](https://www.npmjs.com/package/@uswitch/analytics-react-native-crittercism)                     | :white_check_mark: | :white_check_mark: | `@uswitch/analytics-react-native-crittercism`             |
+| [Facebook App Events](https://www.npmjs.com/package/@uswitch/analytics-react-native-facebook-app-events-ios) | :white_check_mark: | :x:                | `@uswitch/analytics-react-native-facebook-app-events-ios` |
+| [Firebase](https://www.npmjs.com/package/@uswitch/analytics-react-native-firebase)                           | :white_check_mark: | :white_check_mark: | `@uswitch/analytics-react-native-firebase`                |
+| [Flurry](https://www.npmjs.com/package/@uswitch/analytics-react-native-flurry)                               | :white_check_mark: | :white_check_mark: | `@uswitch/analytics-react-native-flurry`                  |
+| [Intercom](https://www.npmjs.com/package/@uswitch/analytics-react-native-intercom)                           | :white_check_mark: | :white_check_mark: | `@uswitch/analytics-react-native-intercom`                |
+| [Localytics](https://www.npmjs.com/package/@uswitch/analytics-react-native-localytics)                       | :white_check_mark: | :white_check_mark: | `@uswitch/analytics-react-native-localytics`              |
+| [Mixpanel](https://www.npmjs.com/package/@uswitch/analytics-react-native-mixpanel)                           | :white_check_mark: | :white_check_mark: | `@uswitch/analytics-react-native-mixpanel`                |
+| [Quantcast](https://www.npmjs.com/package/@uswitch/analytics-react-native-quantcast-android)                 | :x:                | :white_check_mark: | `@uswitch/analytics-react-native-quantcast-android`       |
+| [Taplytics](https://www.npmjs.com/package/@uswitch/analytics-react-native-taplytics-ios)                     | :white_check_mark: | :x:                | `@uswitch/analytics-react-native-taplytics-ios`           |
+| [Tapstream](https://www.npmjs.com/package/@uswitch/analytics-react-native-tapstream-android)                 | :x:                | :white_check_mark: | `@uswitch/analytics-react-native-tapstream-android`       |
 
 <!-- AUTOGEN:INTEGRATIONS:END -->
 

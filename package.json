@@ -13,13 +13,11 @@
     ]
   },
   "scripts": {
-    "core": "yarn workspace @segment/analytics-react-native",
+    "core": "yarn workspace @uswitch/analytics-react-native",
     "integrations": "yarn workspace @local/integrations",
-    "test-app": "yarn workspace @local/test-app",
     "build:core": "yarn core build",
     "build:integrations": "yarn integrations build",
-    "build:test-app": "yarn test-app build",
-    "build": "run-s build:{core,integrations,test-app}",
+    "build": "run-s build:{core,integrations}",
     "test:core": "yarn core test",
     "test": "run-p test:*",
     "lint:prettier": "prettier $(git ls-files '**/*.ts' '**/*.js' '**/*.json' '**/*.md') --list-different",
