@@ -1,4 +1,4 @@
-import { AppState, AppStateStatus, Linking } from 'react-native';
+import { AppState, AppStateStatus } from 'react-native';
 import type { Unsubscribe } from '@segment/sovran-react-native';
 import { getContext } from './context';
 
@@ -14,7 +14,7 @@ import type { Logger } from './logger';
 import type { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
 import { InjectContext } from './plugins/Context';
 import { SegmentDestination } from './plugins/SegmentDestination';
-import type { Settable, Storage, Watchable } from './storage';
+import type { DeepLinkData, Settable, Storage, Watchable } from './storage';
 import { Timeline } from './timeline';
 import {
   Config,
@@ -115,6 +115,8 @@ export class SegmentClient {
    */
   readonly userInfo: Watchable<UserInfoState>;
 
+  readonly deepLinkData: Watchable<DeepLinkData>;
+
   /**
    * Returns the plugins currently loaded in the timeline
    * @param ofType Type of plugins, defaults to all
@@ -200,6 +202,10 @@ export class SegmentClient {
 
     // Setup platform specific plugins
     this.platformPlugins.forEach((plugin) => this.add({ plugin: plugin }));
+    this.deepLinkData = {
+      get: this.store.deepLinkData.get,
+      onChange: this.store.deepLinkData.onChange,
+    };
   }
 
   /**
@@ -384,15 +390,25 @@ export class SegmentClient {
   }
 
   private async trackDeepLinks() {
-    const url = await Linking.getInitialURL();
+    if (this.getConfig().trackDeepLinks === true) {
+      const deepLinkProperties = this.store.deepLinkData.get();
+      this.trackDeepLinkEvent(deepLinkProperties);
 
-    if (url && this.getConfig().trackDeepLinks) {
+      this.store.deepLinkData.onChange((data) => {
+        this.trackDeepLinkEvent(data);
+      });
+    }
+  }
+
+  private trackDeepLinkEvent(deepLinkProperties: DeepLinkData) {
+    if (deepLinkProperties.url !== '') {
       const event = createTrackEvent({
         event: 'Deep Link Opened',
         properties: {
-          url,
+          ...deepLinkProperties,
         },
       });
+
       this.process(event);
       this.logger.info('TRACK (Deep Link Opened) event saved', event);
     }

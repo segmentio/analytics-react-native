@@ -2,6 +2,7 @@ import CoreTelephony
 import SystemConfiguration
 import UIKit
 import AdSupport
+import sovran_react_native
 
 enum ConnectionType: String {
     case wifi = "wifi"
@@ -10,7 +11,7 @@ enum ConnectionType: String {
 }
 
 @objc(AnalyticsReactNative)
-class AnalyticsReactNative: NSObject {
+public class AnalyticsReactNative: NSObject {
     
     @objc
     static func requiresMainQueueSetup() -> Bool {
@@ -123,6 +124,13 @@ class AnalyticsReactNative: NSObject {
             "screenHeight": screenHeight
         ]
         resolve(context)
+    }
+    
+    @objc(trackDeepLink:withOptions:)
+    public static func trackDeepLink(url: NSURL, options: Dictionary<UIApplication.OpenURLOptionsKey, Any>) -> Void {
+        let urlString = url.absoluteString
+        let referringApp = options[.sourceApplication] as? String ?? ""
+        Sovran.dispatch(action: "add-deepLink-data", payload: [ "referring_application": referringApp, "url":urlString])
     }
 
 }

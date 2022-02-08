@@ -33,13 +33,15 @@ import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
 import { AmplitudeSessionPlugin } from '@segment/analytics-react-native-plugin-amplitude-session';
 
 const segmentClient = createClient({
-  writeKey: 'WRITE KEY',
+  writeKey: 'WRITE_KEY',
   trackAppLifecycleEvents: true,
   collectDeviceId: true,
   debug: true,
+  trackDeepLinks: true,
 });
 
 const LoggerPlugin = new Logger();
+
 segmentClient.add({ plugin: LoggerPlugin });
 
 // To see an example Consent Manager uncomment the following
@@ -105,6 +107,12 @@ const App = () => {
   React.useEffect(() => {
     RNBootSplash.hide();
   }, []);
+
+  // React.useEffect(() => {
+  //   testSovran.subscribe((store) => {
+  //     console.warn(store.message);
+  //   });
+  // });
 
   const [routeName, setRouteName] = useState('Unknown');
 

@@ -12,6 +12,8 @@
 #import <React/RCTRootView.h>
 #import "RNBootSplash.h"
 @import AdSupport;
+@import React;
+@import segment_analytics_react_native;
 
 @implementation AppDelegate
 
@@ -30,7 +32,14 @@
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   [RNBootSplash initWithStoryboard:@"LaunchScreen" rootView:rootView];
+  return YES;
+}
+
+- (BOOL)application:(UIApplication *)application
+            openURL: (NSURL *)url
+            options:(nonnull NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
   
+  [AnalyticsReactNative trackDeepLink:url withOptions:options];  
   return YES;
 }
 

@@ -62,14 +62,10 @@ export interface Storage {
     Queue<SegmentEvent | SegmentEvent[]>;
 
   readonly userInfo: Watchable<UserInfoState> & Settable<UserInfoState>;
+
+  readonly deepLinkData: Watchable<DeepLinkData>;
 }
-
-export interface WatchableStorage {
-  readonly context: Watchable<DeepPartial<Context> | undefined>;
-
-  readonly settings: Watchable<SegmentAPIIntegrations | undefined>;
-
-  readonly events: Watchable<SegmentEvent[]>;
-
-  readonly userInfo: Watchable<UserInfoState>;
+export interface DeepLinkData {
+  referring_application: string;
+  url: string;
 }
