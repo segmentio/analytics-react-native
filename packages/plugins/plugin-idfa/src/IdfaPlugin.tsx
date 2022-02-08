@@ -23,9 +23,13 @@ export class IdfaPlugin extends Plugin {
   }
 
   getTrackingStatus() {
-    getTrackingAuthorizationStatus().then((idfa: IdfaData) => {
-      // update our context with the idfa data
-      this.analytics?.context.set({ device: { ...idfa } });
-    });
+    getTrackingAuthorizationStatus()
+      .then((idfa: IdfaData) => {
+        // update our context with the idfa data
+        this.analytics?.context.set({ device: { ...idfa } });
+      })
+      .catch((err: any) => {
+        console.warn(err);
+      });
   }
 }
