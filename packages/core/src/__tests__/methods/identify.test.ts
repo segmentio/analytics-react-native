@@ -84,10 +84,10 @@ describe('methods #identify', () => {
     const client = new SegmentClient(clientArgs);
     jest.spyOn(client, 'process');
 
-    client.identify();
+    client.identify(undefined, { name: 'Mary' });
 
     const expectedEvent = {
-      traits: initialUserInfo.traits,
+      traits: { name: 'Mary', age: 30 },
       userId: undefined,
       type: 'identify',
     };
@@ -96,6 +96,10 @@ describe('methods #identify', () => {
     expect(client.process).toHaveBeenCalledWith(expectedEvent);
     expect(client.userInfo.get()).toEqual({
       ...initialUserInfo,
+      traits: {
+        age: 30,
+        name: 'Mary',
+      },
     });
   });
 });
