@@ -79,4 +79,27 @@ describe('methods #identify', () => {
       userId: 'new-user-id',
     });
   });
+
+  it('does not update userId when userId is undefined', () => {
+    const client = new SegmentClient(clientArgs);
+    jest.spyOn(client, 'process');
+
+    client.identify(undefined, { name: 'Mary' });
+
+    const expectedEvent = {
+      traits: { name: 'Mary', age: 30 },
+      userId: undefined,
+      type: 'identify',
+    };
+
+    expect(client.process).toHaveBeenCalledTimes(1);
+    expect(client.process).toHaveBeenCalledWith(expectedEvent);
+    expect(client.userInfo.get()).toEqual({
+      ...initialUserInfo,
+      traits: {
+        age: 30,
+        name: 'Mary',
+      },
+    });
+  });
 });

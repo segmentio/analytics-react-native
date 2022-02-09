@@ -475,7 +475,7 @@ export class SegmentClient {
     this.logger.info('TRACK event saved', event);
   }
 
-  identify(userId: string, userTraits?: UserTraits) {
+  identify(userId?: string, userTraits?: UserTraits) {
     const userInfo = this.store.userInfo.get();
     const { traits: currentUserTraits } = userInfo;
 
@@ -491,7 +491,7 @@ export class SegmentClient {
 
     this.store.userInfo.set({
       ...userInfo,
-      userId: userId,
+      ...(userId !== undefined ? { userId } : {}),
       traits: mergedTraits,
     });
 
