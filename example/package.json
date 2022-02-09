@@ -16,7 +16,7 @@
     "android:deeplink": "adb shell am start -a android.intent.action.VIEW -d \"segmentreactnative://hello\" com.example.segmentanalyticsreactnative",
     "ios:deeplink": "xcrun simctl openurl booted segmentreactnative://hello",
     "android:emulator": "./android/device_setup.sh",
-    "clean": "rimraf node_modules & yarn clean:ios",
+    "clean": "yarn clean:ios && rimraf node_modules",
     "clean:ios": "rimraf ios/build ios/Pods"
   },
   "dependencies": {
@@ -24,7 +24,7 @@
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/stack": "^6.0.7",
-    "@segment/sovran-react-native": "^0.2.0",
+    "@segment/sovran-react-native": "^0.2.3",
     "react": "17.0.2",
     "react-native": "0.67.0",
     "react-native-bootsplash": "^3.2.4",
