@@ -1,6 +1,8 @@
 import { NativeModules } from 'react-native';
 import type { Context, NativeContextInfo, UserTraits } from '../types';
 
+import packageJson from '../../package.json';
+
 import { getContext } from '../context';
 
 describe('#getContext', () => {
@@ -39,9 +41,8 @@ describe('#getContext', () => {
       type: 'phone',
     },
     library: {
-      name: '@segment/analytics-react-native',
-      // TODO: Mock this value
-      version: '2.1.0-beta',
+      name: packageJson.name,
+      version: packageJson.version,
     },
     locale: 'en_US',
     network: {

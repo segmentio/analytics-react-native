@@ -1,13 +1,14 @@
 {
   "name": "@segment/analytics-react-native",
-  "version": "2.1.0-beta",
+  "version": "2.1.2-beta",
   "description": "The hassle-free way to add Segment analytics to your React-Native app.",
   "main": "lib/commonjs/index",
   "scripts": {
     "build": "bob build",
     "test": "jest",
     "typescript": "tsc --noEmit",
-    "clean": "rimraf lib node_modules"
+    "clean": "rimraf lib node_modules",
+    "release": "release-it"
   },
   "keywords": [
     "segment",
@@ -70,6 +71,7 @@
     "react": "^17.0.2",
     "react-native": "^0.67.2",
     "react-native-builder-bob": "^0.18.2",
+    "release-it": "14.12.4",
     "rimraf": "^3.0.2",
     "ts-jest": "^27.0.7",
     "typescript": "^4.4.4"
