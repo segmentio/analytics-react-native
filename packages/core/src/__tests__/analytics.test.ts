@@ -137,7 +137,7 @@ describe('SegmentClient', () => {
   });
 });
 
-describe.only('SegmentClient onUpdateStore', () => {
+describe('SegmentClient onUpdateStore', () => {
   const store = new MockSegmentStore();
   const clientArgs = {
     config: {
