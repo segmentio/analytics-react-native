@@ -7,6 +7,7 @@ import type {
   Context,
   UserInfoState,
 } from '..';
+import { getUUID } from '../uuid';
 import type { Storage } from './types';
 
 type Data = {
@@ -24,7 +25,7 @@ const INITIAL_VALUES: Data = {
   context: {},
   settings: {},
   userInfo: {
-    anonymousId: 'anonymousId',
+    anonymousId: getUUID(),
     userId: undefined,
     traits: undefined,
   },
