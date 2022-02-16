@@ -17,7 +17,7 @@ import Modal from './Modal';
 import { useState } from 'react';
 import { Logger } from './plugins/Logger';
 
-//To see and example Consent Manager uncomment the following
+//To see an example Consent Manager uncomment the following
 //@ts-ignore
 // import { ConsentManager } from './plugins/ConsentManager';
 
