@@ -209,7 +209,7 @@ PODS:
   - React-jsinspector (0.67.0)
   - React-logger (0.67.0):
     - glog
-  - react-native-safe-area-context (3.3.0):
+  - react-native-safe-area-context (3.4.0):
     - React-Core
   - react-native-tracking-transparency (0.1.1):
     - React
@@ -278,15 +278,15 @@ PODS:
     - React-jsi (= 0.67.0)
     - React-logger (= 0.67.0)
     - React-perflogger (= 0.67.0)
-  - RNBootSplash (3.2.4):
+  - RNBootSplash (3.2.7):
     - React-Core
-  - RNCAsyncStorage (1.15.7):
+  - RNCAsyncStorage (1.16.1):
     - React-Core
   - RNCMaskedView (0.1.11):
     - React
   - RNGestureHandler (2.2.0):
     - React-Core
-  - segment-analytics-react-native (2.1.0-beta):
+  - segment-analytics-react-native (2.1.2-beta):
     - React-Core
   - segment-analytics-react-native-plugin-idfa (0.2.0-beta):
     - React-Core
@@ -440,7 +440,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 3001f865cfd2c66c1298f427be47b8797ae5843b
   React-jsinspector: c9d1ddf4b1efbcf90323e3581ccff200cf4de346
   React-logger: 5d42caeaf0c31a9b29efb33e10e7f7031f958bfd
-  react-native-safe-area-context: 61c8c484a3a9e7d1fda19f7b1794b35bbfd2262a
+  react-native-safe-area-context: f4f7cc09d81ae2d39dfd13e764d718969af07080
   react-native-tracking-transparency: b2029ff756f1128b1f2c7c7c7f3003bc3c950f9f
   React-perflogger: 9454d63e7027e0830fa3e527628558160684f5dd
   React-RCTActionSheet: 240d798e2f5bd1ba2e85503a00fd390f560e6827
@@ -454,11 +454,11 @@ SPEC CHECKSUMS:
   React-RCTVibration: 7d7eb0db1f7f914945a606e0e91bb535099a07db
   React-runtimeexecutor: 4512c9287cc72ba30bb1d5e01e6bde7a69f2d22b
   ReactCommon: af6dd2c8c0de935841fa809caf41b2093bb9075c
-  RNBootSplash: 4844706cbb56a3270556c9b94e59dedadccd47e4
-  RNCAsyncStorage: 7102fe8985f889579a3ae148d957bbb3f308122b
+  RNBootSplash: f31eba8f6d496e2029859e06e5582cac4607256d
+  RNCAsyncStorage: b49b4e38a1548d03b74b30e558a1d18465b94be7
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNGestureHandler: bf572f552ea324acd5b5464b8d30755b2d8c1de6
-  segment-analytics-react-native: cdb28934216c4840474587d47120ae594af6a17d
+  segment-analytics-react-native: 76fa77e887ea38d063e01ec8877eaaf39745790d
   segment-analytics-react-native-plugin-idfa: 2dc6e38506a5b034db4a4cf16db48643b2f356a2
   sovran-react-native: 814ebda5c04a60a4f9eea1b203b95f2f64bca291
   Yoga: 3f5bfc54ce164fcd5b5d7f9f4232182d6298dd56
