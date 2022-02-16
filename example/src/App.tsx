@@ -16,6 +16,11 @@ import SecondPage from './SecondPage';
 import Modal from './Modal';
 import { useState } from 'react';
 import { Logger } from './plugins/Logger';
+
+//To see and example Consent Manager uncomment the following
+//@ts-ignore
+// import { ConsentManager } from './plugins/ConsentManager';
+
 // @ts-ignore
 // import { FirebasePlugin } from '@segment/analytics-react-native-plugin-firebase';
 
@@ -36,6 +41,10 @@ const segmentClient = createClient({
 
 const LoggerPlugin = new Logger();
 segmentClient.add({ plugin: LoggerPlugin });
+
+// To see an example Consent Manager uncomment the following
+// const ConsentManagerPlugin = new ConsentManager();
+// segmentClient.add({ plugin: ConsentManagerPlugin });
 
 // To test the Firebase plugin make sure to add your own API_KEY in example/ios/GoogleService-Info.plist
 // segmentClient.add({ plugin: new FirebasePlugin() });

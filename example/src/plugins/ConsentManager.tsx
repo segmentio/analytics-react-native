@@ -8,7 +8,7 @@ import type { SegmentClient } from '@segment/analytics-react-native/src/analytic
 
 import { Alert } from 'react-native';
 
-export class ConsentManagerPlugin extends Plugin {
+export class ConsentManager extends Plugin {
   type = PluginType.before;
   key = 'Consent Manager';
 
