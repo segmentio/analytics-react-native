@@ -10,6 +10,7 @@ NOTE: This project is currently in development and is covered by Segment's [Firs
 
 - [Installation](#installation)
   - [Permissions](#permissions)
+  - [Expo](#expo-installation)
 - [Migration](#migrating)
 - [Usage](#usage)
   - [Setting up the client](#setting-up-the-client)
