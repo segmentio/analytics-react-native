@@ -51,7 +51,17 @@ npx pod-install
 ```
 ⚠️ For Android, you will have to add some extra permissions to your `AndroidManifest.xml`.
 
+### Expo Installation
+
 🚀 `@segment/analytics-react-native 2.0` is compatible with Expo's [Custom Dev Client](https://docs.expo.dev/clients/getting-started/) and [EAS builds](https://docs.expo.dev/build/introduction/) without any additional configuration. Destination Plugins that require native modules may require custom [Expo Config Plugins](https://docs.expo.dev/guides/config-plugins/).
+
+Follow the installation steps listed above for standard React Native builds
+
+Install [`@segment/sovran-react-native`](https://github.com/segmentio/sovran-react-native)
+
+```sh
+yarn add @segment/sovran-react-native
+```
 
 ### Permissions
 
