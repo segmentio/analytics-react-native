@@ -83,7 +83,7 @@
 - name: ComScore
   ios:
     pod:
-      version: 4.4.0
+      version: 4.4.2
   # https://github.com/segment-integrations/analytics-android-integration-comscore
   android:
     disabled: true
