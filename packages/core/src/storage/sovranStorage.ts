@@ -61,10 +61,30 @@ export class SovranStorage implements Storage {
     this.userInfoStore = createStore(
       { userInfo: INITIAL_VALUES.userInfo },
       {
-        persist: { storeId: `${this.storeId}-userInfo` },
+        persist: {
+          storeId: `${this.storeId}-userInfo`,
+        },
       }
     );
+
+    this.fixAnonymousId();
   }
+
+  /**
+   * This is a fix for users that have started the app with the anonymousId set to 'anonymousId' bug
+   */
+  private fixAnonymousId = () => {
+    const fixUnsubscribe = this.userInfoStore.subscribe((store) => {
+      if (store.userInfo.anonymousId === 'anonymousId') {
+        this.userInfoStore.dispatch((state) => {
+          return {
+            userInfo: { ...state.userInfo, anonymousId: getUUID() },
+          };
+        });
+      }
+      fixUnsubscribe();
+    });
+  };
 
   readonly isReady = {
     get: () => true,
@@ -119,6 +139,7 @@ export class SovranStorage implements Storage {
       });
     },
   };
+
   readonly userInfo = {
     get: () => this.userInfoStore.getState().userInfo,
     onChange: (callback: (value: UserInfoState) => void) =>
