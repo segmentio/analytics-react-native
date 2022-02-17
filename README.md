@@ -439,7 +439,7 @@ You can add a plugin at any time through the `segmentClient.add()` method.
 ```js
 import { createClient } from '@segment/analytics-react-native';
 
-import { AmplitudeSessionPlugin } from '@segment/analytics-react-native-plugin-amplitude';
+import { AmplitudeSessionPlugin } from '@segment/analytics-react-native-plugin-amplitude-session';
 import { FirebasePlugin } from '@segment/analytics-react-native-plugin-firebase';
 import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
 
