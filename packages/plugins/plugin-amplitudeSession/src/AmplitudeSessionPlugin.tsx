@@ -78,7 +78,6 @@ export class AmplitudeSessionPlugin extends EventPlugin {
   private insertSession = (event: SegmentEvent) => {
     const returnEvent = event;
     const integrations = event.integrations;
-    console.log('amplitude', integrations);
     returnEvent.integrations = {
       ...integrations,
       [this.key]: {
