@@ -29,12 +29,12 @@ export class SegmentDestination extends DestinationPlugin {
     // Disable all destinations that have a device mode plugin
     const deviceModePlugins =
       plugins?.map((plugin) => (plugin as DestinationPlugin).key) ?? [];
-    const cloudSettings: SegmentAPIIntegrations = {
-      ...pluginSettings,
-    };
-    for (const key of deviceModePlugins) {
-      if (key in cloudSettings) {
-        cloudSettings[key] = false;
+    const disabledCloudIntegrations: SegmentAPIIntegrations = {};
+    if (pluginSettings !== undefined) {
+      for (const key of deviceModePlugins) {
+        if (key in pluginSettings) {
+          disabledCloudIntegrations[key] = false;
+        }
       }
     }
 
@@ -42,7 +42,7 @@ export class SegmentDestination extends DestinationPlugin {
     const mergedEvent = {
       ...event,
       integrations: {
-        ...cloudSettings,
+        ...disabledCloudIntegrations,
         ...event?.integrations,
       },
     };

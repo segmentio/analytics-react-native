@@ -26,9 +26,21 @@ export class Timeline {
       this.plugins[type] = [plugin];
     }
     const settings = plugin.analytics?.settings.get();
-    if (settings) {
+    let hasInitialSettings = false;
+    if (settings !== undefined) {
       plugin.update({ integrations: settings }, UpdateType.initial);
+      hasInitialSettings = true;
     }
+
+    plugin.analytics?.settings.onChange((newSettings) => {
+      if (newSettings !== undefined) {
+        plugin.update(
+          { integrations: newSettings },
+          hasInitialSettings ? UpdateType.refresh : UpdateType.initial
+        );
+        hasInitialSettings = true;
+      }
+    });
   }
 
   remove(plugin: Plugin) {

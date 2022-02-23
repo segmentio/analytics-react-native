@@ -239,8 +239,9 @@ export class SegmentClient {
     try {
       const res = await fetch(settingsEndpoint);
       const resJson = await res.json();
+      const integrations = resJson.integrations;
       this.logger.info(`Received settings from Segment succesfully.`);
-      this.store.settings.set(resJson);
+      this.store.settings.set(integrations);
     } catch {
       this.logger.warn(
         `Could not receive settings from Segment. ${

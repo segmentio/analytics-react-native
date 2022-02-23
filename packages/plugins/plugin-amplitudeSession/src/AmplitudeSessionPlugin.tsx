@@ -78,14 +78,12 @@ export class AmplitudeSessionPlugin extends EventPlugin {
   private insertSession = (event: SegmentEvent) => {
     const returnEvent = event;
     const integrations = event.integrations;
-    if (integrations) {
-      returnEvent.integrations = {
-        ...integrations,
-        [this.key]: {
-          session_id: this.sessionId,
-        },
-      };
-    }
+    returnEvent.integrations = {
+      ...integrations,
+      [this.key]: {
+        session_id: this.sessionId,
+      },
+    };
     return returnEvent;
   };
 
