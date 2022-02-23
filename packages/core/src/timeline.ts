@@ -26,22 +26,21 @@ export class Timeline {
       this.plugins[type] = [plugin];
     }
     const settings = plugin.analytics?.settings.get();
+    let hasInitialSettings = false;
     if (settings !== undefined) {
       plugin.update({ integrations: settings }, UpdateType.initial);
-    } else {
-      plugin.analytics?.settings.onChange((newSettings) => {
-        if (newSettings !== undefined) {
-          plugin.update({ integrations: newSettings }, UpdateType.initial);
-        }
-      });
+      hasInitialSettings = true;
     }
 
     plugin.analytics?.settings.onChange((newSettings) => {
       if (newSettings !== undefined) {
-        plugin.update({ integrations: newSettings }, UpdateType.refresh);
+        plugin.update(
+          { integrations: newSettings },
+          hasInitialSettings ? UpdateType.refresh : UpdateType.initial
+        );
+        hasInitialSettings = true;
       }
     });
-    console.log('ADD PLUGIN', plugin);
   }
 
   remove(plugin: Plugin) {
