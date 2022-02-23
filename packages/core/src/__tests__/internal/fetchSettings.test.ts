@@ -30,7 +30,7 @@ describe('internal #getSettings', () => {
   });
 
   it('fetches the settings succesfully ', async () => {
-    const mockJSONResponse = { foo: 'bar' };
+    const mockJSONResponse = { integrations: { foo: 'bar' } };
     const mockResponse = Promise.resolve({
       json: () => mockJSONResponse,
     });
@@ -43,10 +43,10 @@ describe('internal #getSettings', () => {
       'https://cdn-settings.segment.com/v1/projects/123-456/settings'
     );
 
-    expect(setSettingsSpy).toHaveBeenCalledWith(mockJSONResponse);
-    expect(store.settings.get()).toEqual(mockJSONResponse);
+    expect(setSettingsSpy).toHaveBeenCalledWith(mockJSONResponse.integrations);
+    expect(store.settings.get()).toEqual(mockJSONResponse.integrations);
     expect(client.settings.get()).toEqual({
-      ...mockJSONResponse,
+      ...mockJSONResponse.integrations,
     });
   });
 
