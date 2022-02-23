@@ -54,9 +54,6 @@ export class SegmentClient {
   // internal time to know when to flush, ticks every second
   private flushInterval: ReturnType<typeof setInterval> | null = null;
 
-  // Watcher for isReady updates to the storage
-  private readinessWatcher?: Unsubscribe = undefined;
-
   // unsubscribe watchers for the store
   private watchers: Unsubscribe[] = [];
 
@@ -70,8 +67,8 @@ export class SegmentClient {
 
   private timeline: Timeline;
 
-  // mechanism to prevent adding plugins before we are fully initalised
-  private isStorageReady = false;
+  private pendingEvents: SegmentEvent[] = [];
+
   private pluginsToAdd: Plugin[] = [];
 
   private isInitialized = false;
@@ -167,9 +164,6 @@ export class SegmentClient {
       this.add({ plugin: segmentDestination });
     }
 
-    // Setup platform specific plugins
-    this.platformPlugins.forEach((plugin) => this.add({ plugin: plugin }));
-
     // Initialize the watchables
     this.context = {
       get: this.store.context.get,
@@ -199,6 +193,20 @@ export class SegmentClient {
       get: this.store.events.get,
       onChange: this.store.events.onChange,
     };
+
+    // Watch for isReady so that we can handle any pending events
+    // Delays events processing in the timeline until the store is ready to prevent missing data injected from the plugins
+    this.store.isReady.onChange((isReady) => {
+      if (isReady) {
+        for (const e of this.pendingEvents) {
+          this.timeline.process(e);
+        }
+        this.pendingEvents = [];
+      }
+    });
+
+    // Setup platform specific plugins
+    this.platformPlugins.forEach((plugin) => this.add({ plugin: plugin }));
   }
 
   /**
@@ -290,7 +298,6 @@ export class SegmentClient {
       clearInterval(this.flushInterval);
     }
 
-    this.unsubscribeReadinessWatcher();
     this.unsubscribeStorageWatchers();
 
     this.appStateSubscription?.remove();
@@ -358,7 +365,7 @@ export class SegmentClient {
       this.store.settings.add((plugin as DestinationPlugin).key, settings);
     }
 
-    if (!this.isStorageReady) {
+    if (!this.store.isReady.get()) {
       this.pluginsToAdd.push(plugin);
     } else {
       this.addPlugin(plugin);
@@ -381,7 +388,11 @@ export class SegmentClient {
 
   process(incomingEvent: SegmentEvent) {
     const event = applyRawEventData(incomingEvent, this.store.userInfo.get());
-    this.timeline.process(event);
+    if (this.store.isReady.get() === true) {
+      this.timeline.process(event);
+    } else {
+      this.pendingEvents.push(event);
+    }
   }
 
   private async trackDeepLinks() {
@@ -399,10 +410,6 @@ export class SegmentClient {
     }
   }
 
-  private unsubscribeReadinessWatcher() {
-    this.readinessWatcher?.();
-  }
-
   private onStorageReady(isReady: boolean) {
     if (isReady && this.pluginsToAdd.length > 0 && !this.isAddingPlugins) {
       this.isAddingPlugins = true;
@@ -415,10 +422,6 @@ export class SegmentClient {
         // now that they're all added, clear the cache
         // this prevents this block running for every update
         this.pluginsToAdd = [];
-
-        // finally set the flag which means plugins will be added + registered immediately in future
-        this.isStorageReady = true;
-        this.unsubscribeReadinessWatcher();
       } finally {
         this.isAddingPlugins = false;
       }

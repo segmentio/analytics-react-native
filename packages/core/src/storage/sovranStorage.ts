@@ -31,8 +31,13 @@ const INITIAL_VALUES: Data = {
   },
 };
 
+interface ReadinessStore {
+  hasLoadedContext: boolean;
+}
+
 export class SovranStorage implements Storage {
   private storeId: string;
+  private readinessStore: Store<ReadinessStore>;
   private contextStore: Store<{ context: DeepPartial<Context> }>;
   private settingsStore: Store<{ settings: SegmentAPIIntegrations }>;
   private eventsStore: Store<{ events: SegmentEvent[] }>;
@@ -40,6 +45,9 @@ export class SovranStorage implements Storage {
 
   constructor(storeId: string) {
     this.storeId = storeId;
+    this.readinessStore = createStore<ReadinessStore>({
+      hasLoadedContext: false,
+    });
     this.contextStore = createStore(
       { context: INITIAL_VALUES.context },
       {
@@ -68,6 +76,17 @@ export class SovranStorage implements Storage {
     );
 
     this.fixAnonymousId();
+
+    // Wait for context to be loaded
+    const unsubscribeContext = this.contextStore.subscribe((store) => {
+      if (store.context !== INITIAL_VALUES.context) {
+        this.readinessStore.dispatch((state) => ({
+          ...state,
+          hasLoadedContext: true,
+        }));
+        unsubscribeContext();
+      }
+    });
   }
 
   /**
@@ -86,11 +105,18 @@ export class SovranStorage implements Storage {
     });
   };
 
+  // Check for all things that need to be ready before sending events through the timeline
   readonly isReady = {
-    get: () => true,
-    onChange: (_callback: (value: boolean) => void) => {
-      // No need to do anything since storage is always ready
-      return () => {};
+    get: () => {
+      const ready = this.readinessStore.getState();
+      return ready.hasLoadedContext;
+    },
+    onChange: (callback: (value: boolean) => void) => {
+      return this.readinessStore.subscribe((store) => {
+        if (store.hasLoadedContext) {
+          callback(true);
+        }
+      });
     },
   };
 
