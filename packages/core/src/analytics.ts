@@ -196,14 +196,7 @@ export class SegmentClient {
 
     // Watch for isReady so that we can handle any pending events
     // Delays events processing in the timeline until the store is ready to prevent missing data injected from the plugins
-    this.store.isReady.onChange((isReady) => {
-      if (isReady) {
-        for (const e of this.pendingEvents) {
-          this.timeline.process(e);
-        }
-        this.pendingEvents = [];
-      }
-    });
+    this.store.isReady.onChange((value) => this.onStorageReady(value));
 
     // Setup platform specific plugins
     this.platformPlugins.forEach((plugin) => this.add({ plugin: plugin }));
@@ -219,12 +212,6 @@ export class SegmentClient {
       return;
     }
 
-    // Plugin interval check
-    if (this.store.isReady.get()) {
-      this.onStorageReady(true);
-    } else {
-      this.store.isReady.onChange((value) => this.onStorageReady(value));
-    }
     await this.fetchSettings();
 
     // flush any stored events
@@ -410,21 +397,34 @@ export class SegmentClient {
     }
   }
 
+  /**
+   * Executes when the state store is initialized.
+   * @param isReady
+   */
   private onStorageReady(isReady: boolean) {
-    if (isReady && this.pluginsToAdd.length > 0 && !this.isAddingPlugins) {
-      this.isAddingPlugins = true;
-      try {
-        // start by adding the plugins
-        this.pluginsToAdd.forEach((plugin) => {
-          this.addPlugin(plugin);
-        });
+    if (isReady) {
+      // Add all plugins awaiting store
+      if (this.pluginsToAdd.length > 0 && !this.isAddingPlugins) {
+        this.isAddingPlugins = true;
+        try {
+          // start by adding the plugins
+          this.pluginsToAdd.forEach((plugin) => {
+            this.addPlugin(plugin);
+          });
 
-        // now that they're all added, clear the cache
-        // this prevents this block running for every update
-        this.pluginsToAdd = [];
-      } finally {
-        this.isAddingPlugins = false;
+          // now that they're all added, clear the cache
+          // this prevents this block running for every update
+          this.pluginsToAdd = [];
+        } finally {
+          this.isAddingPlugins = false;
+        }
       }
+
+      // Send all events in the queue
+      for (const e of this.pendingEvents) {
+        this.timeline.process(e);
+      }
+      this.pendingEvents = [];
     }
   }
 
