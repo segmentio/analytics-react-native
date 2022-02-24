@@ -57,7 +57,7 @@ export class SegmentDestination extends DestinationPlugin {
       this.analytics?.getConfig().maxBatchSize ?? MAX_EVENTS_PER_BATCH
     );
 
-    let sentEvents: any[] = [];
+    let sentEvents: SegmentEvent[] = [];
     let numFailedEvents = 0;
 
     await Promise.all(

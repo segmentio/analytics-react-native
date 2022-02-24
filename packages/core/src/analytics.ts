@@ -39,9 +39,6 @@ export class SegmentClient {
   // Storage
   private store: Storage;
 
-  // how many seconds has elapsed since the last time events were sent
-  private secondsElapsed: number = 0;
-
   // current app state
   private appState: AppStateStatus | 'unknown' = 'unknown';
 
@@ -221,7 +218,7 @@ export class SegmentClient {
     await this.fetchSettings();
 
     // flush any stored events
-    this.flush();
+    this.flush(false);
 
     // set up the timer/subscription for knowing when to flush events
     this.setupInterval();
@@ -304,7 +301,10 @@ export class SegmentClient {
     if (this.flushInterval !== null && this.flushInterval !== undefined) {
       clearInterval(this.flushInterval);
     }
-    this.flushInterval = setInterval(() => this.tick(), 1000) as any;
+
+    this.flushInterval = setTimeout(() => {
+      this.flush();
+    }, this.config.flushInterval! * 1000);
   }
 
   private setupStorageSubscribers() {
@@ -445,23 +445,19 @@ export class SegmentClient {
     }
   }
 
-  private tick() {
-    if (this.secondsElapsed + 1 >= this.config.flushInterval!) {
-      this.flush();
-    } else {
-      this.secondsElapsed += 1;
+  async flush(debounceInterval: boolean = true) {
+    if (this.destroyed) {
+      return;
     }
-  }
 
-  async flush() {
+    if (debounceInterval) {
+      // Reset interval
+      this.setupInterval();
+    }
+
     if (!this.isPendingUpload) {
       this.isPendingUpload = true;
       try {
-        if (this.destroyed) {
-          return;
-        }
-
-        this.secondsElapsed = 0;
         const events = this.store.events.get();
 
         if (events.length > 0) {

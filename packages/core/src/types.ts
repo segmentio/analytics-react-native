@@ -117,10 +117,8 @@ export type Config = {
   flushAt?: number;
   flushInterval?: number;
   trackAppLifecycleEvents?: boolean;
-  retryInterval?: number;
   maxBatchSize?: number;
   trackDeepLinks?: boolean;
-  maxEventsToRetry?: number;
   defaultSettings?: SegmentAPISettings;
   autoAddSegmentDestination?: boolean;
   collectDeviceId?: boolean;
