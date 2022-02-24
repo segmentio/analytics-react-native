@@ -8,6 +8,7 @@
 #import <React/RCTBridgeDelegate.h>
 #import <UIKit/UIKit.h>
 #import <React/RCTBridgeModule.h>
+@import segment_analytics_react_native;
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate, RCTBridgeDelegate>
 

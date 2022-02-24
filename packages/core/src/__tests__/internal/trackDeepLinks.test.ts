@@ -22,42 +22,63 @@ describe('#trackDeepLinks', () => {
     config: {
       writeKey: 'mock-write-key',
       trackDeepLinks: true,
+      trackAppLifecycleEvents: false,
     },
     logger: getMockLogger(),
     store: store,
   };
-  let client: SegmentClient;
 
-  beforeEach(() => {
+  beforeEach(() => {});
+
+  afterEach(() => {
+    jest.restoreAllMocks();
     store.reset();
   });
 
-  afterEach(() => {
-    client.cleanup();
-  });
-
   it('sends a track event when trackDeepLinks is enabled and the app was opened from a link', async () => {
-    client = new SegmentClient(clientArgs);
+    const deepLinkData = {
+      url: 'myapp://open',
+      referring_application: 'Safari',
+    };
+    jest.spyOn(store.deepLinkData, 'get').mockReturnValue(deepLinkData);
+    const client = new SegmentClient(clientArgs);
     jest.spyOn(client, 'process');
-
-    jest
-      .spyOn(ReactNative.Linking, 'getInitialURL')
-      .mockResolvedValueOnce('myapp://open');
 
     await client.init();
 
     expect(client.process).toHaveBeenCalledTimes(1);
     expect(client.process).toHaveBeenCalledWith({
       event: 'Deep Link Opened',
-      properties: {
-        url: 'myapp://open',
-      },
+      properties: deepLinkData,
       type: EventType.TrackEvent,
     });
+    client.cleanup();
+  });
+
+  it('sends a track event when trackDeepLinks is enabled and the app was launched from a link from background', async () => {
+    const deepLinkData = {
+      url: 'myapp://open',
+      referring_application: 'Safari',
+    };
+
+    const client = new SegmentClient(clientArgs);
+    jest.spyOn(client, 'process');
+
+    await client.init();
+    store.deepLinkData.set(deepLinkData);
+    await new Promise(process.nextTick);
+
+    expect(client.process).toHaveBeenCalledTimes(1);
+    expect(client.process).toHaveBeenCalledWith({
+      event: 'Deep Link Opened',
+      properties: deepLinkData,
+      type: EventType.TrackEvent,
+    });
+    client.cleanup();
   });
 
   it('does not send a track event when trackDeepLinks is not enabled', async () => {
-    client = new SegmentClient({
+    const client = new SegmentClient({
       ...clientArgs,
       config: {
         writeKey: 'mock-write-key',
@@ -78,12 +99,8 @@ describe('#trackDeepLinks', () => {
   });
 
   it('does not send a track event when trackDeepLinks is enabled, but the app was not opened via deep link', async () => {
-    client = new SegmentClient(clientArgs);
+    const client = new SegmentClient(clientArgs);
     jest.spyOn(client, 'process');
-
-    jest
-      .spyOn(ReactNative.Linking, 'getInitialURL')
-      .mockResolvedValueOnce(null);
 
     await client.init();
 

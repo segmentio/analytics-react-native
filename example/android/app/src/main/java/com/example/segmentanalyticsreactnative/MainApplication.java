@@ -10,34 +10,32 @@ import com.facebook.react.ReactInstanceManager;
 import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-
 import com.segmentanalyticsreactnative.AnalyticsReactNativePackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
-  private final ReactNativeHost mReactNativeHost =
-      new ReactNativeHost(this) {
-        @Override
-        public boolean getUseDeveloperSupport() {
-          return BuildConfig.DEBUG;
-        }
+  private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+    @Override
+    public boolean getUseDeveloperSupport() {
+      return BuildConfig.DEBUG;
+    }
 
-        @Override
-        protected List<ReactPackage> getPackages() {
-          @SuppressWarnings("UnnecessaryLocalVariable")
-          List<ReactPackage> packages = new PackageList(this).getPackages();
-          // Packages that cannot be autolinked yet can be added manually here, for AnalyticsReactNativeExample:
-          // packages.add(new MyReactNativePackage());
-          packages.add(new AnalyticsReactNativePackage());
+    @Override
+    protected List<ReactPackage> getPackages() {
+      @SuppressWarnings("UnnecessaryLocalVariable")
+      List<ReactPackage> packages = new PackageList(this).getPackages();
+      // Packages that cannot be autolinked yet can be added manually here, for
+      // AnalyticsReactNativeExample:
+      // packages.add(new MyReactNativePackage());
+      packages.add(new AnalyticsReactNativePackage());
+      return packages;
+    }
 
-          return packages;
-        }
-
-        @Override
-        protected String getJSMainModuleName() {
-          return "index";
-        }
-      };
+    @Override
+    protected String getJSMainModuleName() {
+      return "index";
+    }
+  };
 
   @Override
   public ReactNativeHost getReactNativeHost() {
@@ -48,7 +46,9 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
-    initializeFlipper(this, getReactNativeHost().getReactInstanceManager()); // Remove this line if you don't want Flipper enabled
+    initializeFlipper(this, getReactNativeHost().getReactInstanceManager()); //// Remove this line if you don't want
+                                                                             //// Flipper enabled
+
   }
 
   /**
@@ -60,9 +60,9 @@ public class MainApplication extends Application implements ReactApplication {
     if (BuildConfig.DEBUG) {
       try {
         /*
-         We use reflection here to pick up the class that initializes Flipper,
-        since Flipper library is not available in release mode
-        */
+         * We use reflection here to pick up the class that initializes Flipper,
+         * since Flipper library is not available in release mode
+         */
         Class<?> aClass = Class.forName("com.segmentanalyticsreactnativeExample.ReactNativeFlipper");
         aClass
             .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)

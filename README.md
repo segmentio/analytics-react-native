@@ -8,32 +8,40 @@ NOTE: This project is currently in development and is covered by Segment's [Firs
 
 ## Table of Contents
 
-- [Installation](#installation)
-  - [Permissions](#permissions)
-  - [Expo](#expo-installation)
-- [Migration](#migrating)
-- [Usage](#usage)
-  - [Setting up the client](#setting-up-the-client)
-  - [Client options](#client-options)
-  - [Usage with hooks](#usage-with-hooks)
-  - [useAnalytics](#useanalytics)
-  - [Usage without hooks](#usage-without-hooks)
-- [Client methods](#client-methods)
-  - [Track](#track)
-  - [Screen](#screen)
-  - [Identify](#identify)
-  - [Group](#group)
-  - [Alias](#alias)
-  - [Reset](#reset)
-  - [Flush](#flush)
-  - [Advanced Cleanup](#advanced-cleanup)
-- [Automatic screen tracking](#automatic-screen-tracking)
-  - [React Navigation](#react-navigation)
-  - [React Native Navigation](#react-native-navigation)
-- [Plugin Architecture](#plugin-types)
-- [Contributing](#contributing)
-- [Code of Conduct](#code-of-conduct)
-- [License](#license)
+- [@segment/analytics-react-native ![circleci](#segmentanalytics-react-native-circlecicircleci-url)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+    - [Expo Installation](#expo-installation)
+    - [Permissions](#permissions)
+  - [Migrating](#migrating)
+  - [Usage](#usage)
+    - [Setting up the client](#setting-up-the-client)
+    - [Client Options](#client-options)
+    - [iOS Deep Link Tracking Setup](#ios-deep-link-tracking-setup)
+    - [Usage with hooks](#usage-with-hooks)
+    - [useAnalytics()](#useanalytics)
+    - [Usage without hooks](#usage-without-hooks)
+  - [Client methods](#client-methods)
+    - [Track](#track)
+    - [Screen](#screen)
+    - [Identify](#identify)
+    - [Group](#group)
+    - [Alias](#alias)
+    - [Reset](#reset)
+    - [Flush](#flush)
+    - [(Advanced) Cleanup](#advanced-cleanup)
+  - [Automatic screen tracking](#automatic-screen-tracking)
+    - [React Navigation](#react-navigation)
+    - [React Native Navigation](#react-native-navigation)
+  - [Plugins + Timeline architecture](#plugins--timeline-architecture)
+    - [Plugin Types](#plugin-types)
+    - [Destination Plugins](#destination-plugins)
+    - [Adding Plugins](#adding-plugins)
+    - [Writing your own Plugins](#writing-your-own-plugins)
+    - [Example Plugins](#example-plugins)
+  - [Contributing](#contributing)
+  - [Code of Conduct](#code-of-conduct)
+  - [License](#license)
 
 ## Installation
 
@@ -109,12 +117,26 @@ You must pass at least the `writeKey`. Additional configuration options are list
 | `maxBatchSize`             | 1000      | How many events to send to the API at once                                                                                           |
 | `maxEventsToRetry`         | 1000      | How many events to keep around for to retry sending if the initial request failed                                                    |
 | `trackAppLifecycleEvents`  | false     | Enable automatic tracking for [app lifecycle events](https://segment.com/docs/connections/spec/mobile/#lifecycle-events): application installed, opened, updated, backgrounded) |
-| `trackDeepLinks`           | false     | Enable automatic tracking for when the user opens the app via a deep link                                                            |
+| `trackDeepLinks`           | false     | Enable automatic tracking for when the user opens the app via a deep link (Note: Requires additional setup on iOS, [see instructions](#ios-deep-link-tracking-setup))                                                            |
 | `defaultSettings`          | undefined | Settings that will be used if the request to get the settings from Segment fails                                                     |
 | `autoAddSegmentDestination`| true      | Set to false to skip adding the SegmentDestination plugin                                                                            |
 
 \* The default value of `debug` will be false in production.
 
+### iOS Deep Link Tracking Setup
+*Note: This is only required for iOS if you are using the `trackDeepLinks` option. Android does not require any additional setup*
+
+To track deep links in iOS you must add the following to your `AppDelegate.m` file:
+
+```objc
+- (BOOL)application:(UIApplication *)application
+            openURL: (NSURL *)url
+            options:(nonnull NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
+  
+  [AnalyticsReactNative trackDeepLink:url withOptions:options];  
+  return YES;
+}
+```
 ### Usage with hooks
 
 In order to use the `useAnalytics` hook within the application, we will additionally need to wrap the application in

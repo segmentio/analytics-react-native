@@ -1,4 +1,4 @@
-import type { Storage } from '../../storage';
+import type { DeepLinkData, Storage } from '../../storage';
 import type {
   Context,
   DeepPartial,
@@ -14,6 +14,7 @@ type Data = {
   context?: DeepPartial<Context>;
   settings: SegmentAPIIntegrations;
   userInfo: UserInfoState;
+  deepLinkData: DeepLinkData;
 };
 
 const INITIAL_VALUES: Data = {
@@ -25,6 +26,10 @@ const INITIAL_VALUES: Data = {
     anonymousId: 'anonymousId',
     userId: undefined,
     traits: undefined,
+  },
+  deepLinkData: {
+    referring_application: '',
+    url: '',
   },
 };
 
@@ -38,7 +43,9 @@ export class MockSegmentStore implements Storage {
 
   constructor(initialData?: Partial<Data>) {
     this.data = { ...INITIAL_VALUES, ...initialData };
-    this.initialData = { ...INITIAL_VALUES, ...initialData };
+    this.initialData = JSON.parse(
+      JSON.stringify({ ...INITIAL_VALUES, ...initialData })
+    );
   }
 
   // Callbacks
@@ -69,6 +76,7 @@ export class MockSegmentStore implements Storage {
     settings: this.createCallbackManager<SegmentAPIIntegrations>(),
     events: this.createCallbackManager<SegmentEvent[]>(),
     userInfo: this.createCallbackManager<UserInfoState>(),
+    deepLinkData: this.createCallbackManager<DeepLinkData>(),
   };
 
   readonly isReady = {
@@ -133,5 +141,17 @@ export class MockSegmentStore implements Storage {
       this.data.userInfo = value;
       this.callbacks.userInfo.run(value);
     },
+  };
+
+  readonly deepLinkData = {
+    get: () => {
+      return this.data.deepLinkData;
+    },
+    set: (value: DeepLinkData) => {
+      this.data.deepLinkData = value;
+      this.callbacks.deepLinkData.run(value);
+    },
+    onChange: (callback: (value: DeepLinkData) => void) =>
+      this.callbacks.deepLinkData.register(callback),
   };
 }

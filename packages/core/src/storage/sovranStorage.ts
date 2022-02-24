@@ -1,4 +1,8 @@
-import { createStore, Store } from '@segment/sovran-react-native';
+import {
+  createStore,
+  registerBridgeStore,
+  Store,
+} from '@segment/sovran-react-native';
 import type {
   SegmentAPIIntegrations,
   IntegrationSettings,
@@ -8,7 +12,7 @@ import type {
   UserInfoState,
 } from '..';
 import { getUUID } from '../uuid';
-import type { Storage } from './types';
+import type { Storage, DeepLinkData } from './types';
 
 type Data = {
   isReady: boolean;
@@ -35,6 +39,37 @@ interface ReadinessStore {
   hasLoadedContext: boolean;
 }
 
+/**
+ * Global store for deeplink information
+ * A single instance is needed for all SovranStorage objects since only one deeplink data exists at a time
+ * No need to persist this information
+ */
+const deepLinkStore = createStore<DeepLinkData>({
+  referring_application: '',
+  url: '',
+});
+
+/**
+ * Action to set the referring app and link url
+ * @param deepLinkData referring app and link url
+ */
+const addDeepLinkData = (deepLinkData: DeepLinkData) => () => {
+  return {
+    referring_application: deepLinkData.referring_application,
+    url: deepLinkData.url,
+  };
+};
+
+/**
+ * Registers the deeplink store to listen to native events
+ */
+registerBridgeStore({
+  store: deepLinkStore,
+  actions: {
+    'add-deepLink-data': addDeepLinkData,
+  },
+});
+
 export class SovranStorage implements Storage {
   private storeId: string;
   private readinessStore: Store<ReadinessStore>;
@@ -42,6 +77,7 @@ export class SovranStorage implements Storage {
   private settingsStore: Store<{ settings: SegmentAPIIntegrations }>;
   private eventsStore: Store<{ events: SegmentEvent[] }>;
   private userInfoStore: Store<{ userInfo: UserInfoState }>;
+  private deepLinkStore: Store<DeepLinkData> = deepLinkStore;
 
   constructor(storeId: string) {
     this.storeId = storeId;
@@ -175,5 +211,11 @@ export class SovranStorage implements Storage {
         userInfo: { ...state.userInfo, ...value },
       }));
     },
+  };
+
+  readonly deepLinkData = {
+    get: () => this.deepLinkStore.getState(),
+    onChange: (callback: (value: DeepLinkData) => void) =>
+      this.deepLinkStore.subscribe(callback),
   };
 }
