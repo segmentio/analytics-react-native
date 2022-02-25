@@ -45,7 +45,7 @@ jobs:
 
     - name: Set Environment Variables
       env: 
-        IS_PUSH: ${{ github.event_name }} == 'push'
+        IS_PUSH: ${{ github.event_name  == 'push' }}
       run: |
         if ${IS_PUSH}; then
           echo "VERSION=patch" >> $GITHUB_ENV
