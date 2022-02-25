@@ -1,42 +1,44 @@
 name: Publish
 
 on:
-  # push:
-  #   tags:
-  #     - 'v*'
-  workflow_call:
-    inputs:
-      workspace:
-        description: 'Workspace to publish e.g. @segment/analytics-react-native'
-        required: false
-        type: string
-        default: '@segment/analytics-react-native'
-    secrets:
-      NPM_TOKEN:
-        required: true
+  push:
+    tags:
+      - 'v*'
+    paths:
+      - 'packages/core/**'
+  # workflow_dispatch:
+  #   inputs:
+  #     workspace:
+  #       description: 'Workspace to publish e.g. @segment/analytics-react-native'
+  #       required: false
+  #       type: string
+  #       default: '@segment/analytics-react-native'
+  #   secrets:
+  #     NPM_TOKEN:
+  #       required: true
 
 jobs:
-  # publish:
-  #   name: Publish to npm
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
 
-  #     - uses: actions/setup-node@v2
-  #       with:
-  #         node-version: '14'
-  #         cache: 'npm'
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
 
-  #     - name: Config and Build
-  #       run: |
-  #         npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
-  #         yarn install --frozen-lockfile
-  #         yarn build
-  #       env:
-  #         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Config and Build
+        run: |
+          npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
+          yarn install --frozen-lockfile
+          yarn build --frozen-lockfile
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  #     - name: Publish
-  #       run: yarn workspace ${{github.event.inputs.workspace}} publish --access restricted --tag test
+      - name: Publish
+        run: npm publish --tag beta --dry-run
         
   create-github-release:
     if: github.event.inputs.workspace == '@segment/analytics-react-native'
@@ -45,28 +47,14 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     needs: publish
-    steps:
-      - name: Get Previous tag
-        if: github.event_name == 'workflow_call'
-        id: previoustag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
-      
-      - name: Set Version Tag (by previous tag)
-        if: github.event_name == 'workflow_call' && startsWith('v', steps.previoustag.outputs.tag)
-        run: |
-          echo "VERSION_TAG=${{ steps.previoustag.outputs.tag }}" >> $GITHUB_ENV
-
-      - name: Set Version Tag (by push tag)
-        if: github.event_name != 'workflow_call' && startsWith('v', github.ref)
-        run: |
-          echo "VERSION_TAG=${{ github.ref }}" >> $GITHUB_ENV
-        
+    steps:        
       - name: Create Release Notes
         uses: actions/github-script@v4.0.2
+
         with:
           script: |
             await github.request(`POST /repos/${{ github.repository }}/releases`, {
-              tag_name: "${{ env.VERSION_TAG }}",
+              tag_name: "${{ github.ref }}",
               generate_release_notes: true,
               draft: true
             });

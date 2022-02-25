@@ -2,6 +2,7 @@ name: CD
 
 permissions:
   contents: write
+  pull-requests: write
 
 # Only works right now through manual requests
 on:
@@ -46,6 +47,9 @@ jobs:
     - name: Install packages
       run: yarn install --frozen-lockfile
 
+    - name: Build
+      run: yarn build
+
     - name: Set Environment Variables
       env: 
         IS_PUSH: ${{ github.event_name  == 'push' }}
@@ -60,27 +64,12 @@ jobs:
           echo "Setting user input params: VERSION=${{github.event.inputs.version}}, WORKSPACE=${{github.event.inputs.workspace}}"
         fi
     
+    
+    - name: Create Pull Request to Merge to 
+      uses: peter-evans/create-pull-request@v3
+      with:
+        commit-message: 'chore: release ${{env.WORKSPACE}} ${{env.VERSION}}'
+        delete-branch: true
 
-    - name: Bump Version (no tag)
-      if: github.event.inputs.workspace != '@segment/analytics-react-native'
-      run: yarn workspace ${{ env.WORKSPACE }} version --${{ env.VERSION }} --no-git-tag-version
-
-    - name: Bump Version (tag)
-      if: github.event.inputs.workspace == '@segment/analytics-react-native'
-      run: yarn workspace ${{ env.WORKSPACE }} version --${{ env.VERSION }}
-
-    - name: Push latest version
-      run: git push origin cdActions --follow-tags
-
-    outputs:
-      workspace: ${{ env.WORKSPACE }}
-      version: ${{ env.VERSION }}
-  
-  publish:
-    name: Publish to NPM
-    needs: bump-version
-    uses: ./.github/workflows/publish.yml
-    with:
-      workspace: ${{ needs.bump-version.outputs.workspace }}
-    secrets:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    # - name: Push latest version
+    #   run: git push origin cdActions --follow-tags
