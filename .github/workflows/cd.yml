@@ -5,6 +5,7 @@ permissions:
 
 # Only works right now through manual requests
 on:
+  push:
   workflow_dispatch:
     inputs:
       version:
