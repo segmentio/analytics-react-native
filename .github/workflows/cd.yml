@@ -23,7 +23,7 @@ on:
         description: 'Workspace to release'
         required: false
         type: string
-        default: core
+        default: '@segment/analytics-react-native'
 
 jobs:
   bump-version:
@@ -49,8 +49,8 @@ jobs:
       run: |
         if ${IS_PUSH}; then
           echo "VERSION=patch" >> $GITHUB_ENV
-          echo "WORKSPACE=core" >> $GITHUB_ENV
-          echo "Set the default input params: VERSION=patch, WORKSPACE=core"
+          echo "WORKSPACE='@segment/analytics-react-native'" >> $GITHUB_ENV
+          echo "Set the default input params: VERSION=patch, WORKSPACE='@segment/analytics-react-native'"
         else
           echo "VERSION=${{github.event.inputs.version}}" >> $GITHUB_ENV
           echo "WORKSPACE=${{github.event.inputs.workspace}}" >> $GITHUB_ENV
