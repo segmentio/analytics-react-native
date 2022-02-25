@@ -1,4 +1,4 @@
-name: CD
+name: Bump Version
 
 permissions:
   contents: write
@@ -65,16 +65,12 @@ jobs:
         fi
     
 
-    - name: Bump Version (no tag)
-      if: github.event.inputs.workspace != '@segment/analytics-react-native'
+    - name: Bump Version
       run: yarn workspace ${{ env.WORKSPACE }} version --${{ env.VERSION }} --no-git-tag-version
-
-    - name: Bump Version (tag)
-      if: github.event.inputs.workspace == '@segment/analytics-react-native'
-      run: yarn workspace ${{ env.WORKSPACE }} version --${{ env.VERSION }}
     
-    - name: Create Pull Request to Merge to 
+    - name: Create Pull Request
       uses: peter-evans/create-pull-request@v3
       with:
         commit-message: 'chore: release ${{env.WORKSPACE}} ${{env.VERSION}}'
+        title: 'chore: release ${{env.WORKSPACE}} ${{env.VERSION}}'
         delete-branch: true
