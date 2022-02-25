@@ -38,6 +38,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish
+        working-directory: packages/core
         run: npm publish --tag beta --dry-run
         
   create-github-release:

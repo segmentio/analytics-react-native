@@ -64,6 +64,14 @@ jobs:
           echo "Setting user input params: VERSION=${{github.event.inputs.version}}, WORKSPACE=${{github.event.inputs.workspace}}"
         fi
     
+
+    - name: Bump Version (no tag)
+      if: github.event.inputs.workspace != '@segment/analytics-react-native'
+      run: yarn workspace ${{ env.WORKSPACE }} version --${{ env.VERSION }} --no-git-tag-version
+
+    - name: Bump Version (tag)
+      if: github.event.inputs.workspace == '@segment/analytics-react-native'
+      run: yarn workspace ${{ env.WORKSPACE }} version --${{ env.VERSION }}
     
     - name: Create Pull Request to Merge to 
       uses: peter-evans/create-pull-request@v3
