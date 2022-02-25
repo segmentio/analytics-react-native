@@ -10,8 +10,9 @@ on:
     inputs:
       version:
         description: 'Semver type of new version (major / minor / patch)'
-        required: true
+        required: false
         type: choice
+        default: patch
         options: 
         - patch
         - minor
