@@ -35,7 +35,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish
-        run: yarn workspace ${{github.event.inputs.workspace}} publish --access restricted --tag beta
+        run: yarn workspace ${{github.event.inputs.workspace}} publish --access restricted --tag test
         
   create-github-release:
     if: github.event.inputs.workspace == 'core'
