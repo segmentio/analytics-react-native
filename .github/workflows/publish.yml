@@ -36,6 +36,7 @@ jobs:
 
       - name: Publish
         run: yarn workspace ${{github.event.inputs.workspace}} publish --access restricted --tag beta
+        
   create-github-release:
     if: github.event.inputs.workspace == 'core'
     name: Create GitHub Release
