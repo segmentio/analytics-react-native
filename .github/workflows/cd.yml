@@ -6,6 +6,8 @@ permissions:
 # Only works right now through manual requests
 on:
   push:
+    branches:
+      - 'cdActions'
   workflow_dispatch:
     inputs:
       version:
@@ -41,22 +43,37 @@ jobs:
     - name: Install packages
       run: yarn install --frozen-lockfile
 
+    - name: Set Environment Variables
+      env: 
+        IS_PUSH: ${{ github.event_name }} == 'push'
+      run: |
+        if ${IS_PUSH}; then
+          echo "VERSION=patch" >> $GITHUB_ENV
+          echo "WORKSPACE=core" >> $GITHUB_ENV
+          echo "Set the default input params: VERSION=patch, WORKSPACE=core"
+        else
+          echo "VERSION=${{github.event.inputs.version}}" >> $GITHUB_ENV
+          echo "WORKSPACE=${{github.event.inputs.workspace}}" >> $GITHUB_ENV
+          echo "Setting user input params: VERSION=${{github.event.inputs.version}}, WORKSPACE=${{github.event.inputs.workspace}}"
+        fi
+    
+
     - name: Bump Version (no tag)
       if: github.event.inputs.workspace != 'core'
-      run: yarn workspace ${{ github.event.inputs.workspace }} version --${{ github.event.inputs.version }} --no-git-tag-version
+      run: yarn workspace ${{ env.WORKSPACE }} version --${{ env.VERSION }} --no-git-tag-version
 
     - name: Bump Version (tag)
       if: github.event.inputs.workspace == 'core'
-      run: yarn workspace ${{ github.event.inputs.workspace }} version --${{ github.event.inputs.version }}
+      run: yarn workspace ${{ env.WORKSPACE }} version --${{ env.VERSION }}
 
     - name: Push latest version
       run: echo 'git push origin master --follow-tags'
   
-  publish:
-    name: Publish to NPM
-    needs: bump-version
-    uses: ./.github/workflows/publish.yml
-    with:
-      workspace: ${{github.event.inputs.workspace}}
-    secrets:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  # publish:
+  #   name: Publish to NPM
+  #   needs: bump-version
+  #   uses: ./.github/workflows/publish.yml
+  #   with:
+  #     workspace: ${{ env.WORKSPACE }}
+  #   secrets:
+  #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

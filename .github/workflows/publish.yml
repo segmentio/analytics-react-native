@@ -46,17 +46,17 @@ jobs:
     needs: publish
     steps:
       - name: Get Previous tag
-        if: github.ref == 'master'
+        if: github.event_name == 'workflow_call'
         id: previoustag
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
       
       - name: Set Version Tag (by previous tag)
-        if: github.ref == 'master' && startsWith('v', steps.previoustag.outputs.tag)
+        if: github.event_name == 'workflow_call' && startsWith('v', steps.previoustag.outputs.tag)
         run: |
           echo "versionTag=${{ steps.previoustag.outputs.tag }}" >> $GITHUB_ENV
 
       - name: Set Version Tag (by push tag)
-        if: startsWith('v', github.ref)
+        if: github.event_name != 'workflow_call' && startsWith('v', github.ref)
         run: |
           echo "versionTag=${{ github.ref }}" >> $GITHUB_ENV
         
