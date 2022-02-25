@@ -1,44 +1,45 @@
 name: Publish
 
 on:
-  push:
-    tags:
-      - 'v*'
+  # push:
+  #   tags:
+  #     - 'v*'
   workflow_call:
     inputs:
       workspace:
-        description: 'Workspace to publish'
+        description: 'Workspace to publish e.g. @segment/analytics-react-native'
         required: false
         type: string
-        default: core
+        default: '@segment/analytics-react-native'
     secrets:
       NPM_TOKEN:
         required: true
 
 jobs:
-  publish:
-    name: Publish to npm
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+  # publish:
+  #   name: Publish to npm
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
 
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-          cache: 'npm'
+  #     - uses: actions/setup-node@v2
+  #       with:
+  #         node-version: '14'
+  #         cache: 'npm'
 
-      - name: Config and Build
-        run: |
-          npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
-          yarn install --frozen-lockfile
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  #     - name: Config and Build
+  #       run: |
+  #         npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
+  #         yarn install --frozen-lockfile
+  #         yarn build
+  #       env:
+  #         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish
-        run: yarn workspace ${{github.event.inputs.workspace}} publish --access restricted --tag test
+  #     - name: Publish
+  #       run: yarn workspace ${{github.event.inputs.workspace}} publish --access restricted --tag test
         
   create-github-release:
-    if: github.event.inputs.workspace == 'core'
+    if: github.event.inputs.workspace == '@segment/analytics-react-native'
     name: Create GitHub Release
     permissions:
       contents: write
@@ -53,19 +54,19 @@ jobs:
       - name: Set Version Tag (by previous tag)
         if: github.event_name == 'workflow_call' && startsWith('v', steps.previoustag.outputs.tag)
         run: |
-          echo "versionTag=${{ steps.previoustag.outputs.tag }}" >> $GITHUB_ENV
+          echo "VERSION_TAG=${{ steps.previoustag.outputs.tag }}" >> $GITHUB_ENV
 
       - name: Set Version Tag (by push tag)
         if: github.event_name != 'workflow_call' && startsWith('v', github.ref)
         run: |
-          echo "versionTag=${{ github.ref }}" >> $GITHUB_ENV
+          echo "VERSION_TAG=${{ github.ref }}" >> $GITHUB_ENV
         
       - name: Create Release Notes
         uses: actions/github-script@v4.0.2
         with:
           script: |
             await github.request(`POST /repos/${{ github.repository }}/releases`, {
-              tag_name: "${{ env.versionTag }}",
+              tag_name: "${{ env.VERSION_TAG }}",
               generate_release_notes: true,
               draft: true
             });

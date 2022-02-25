@@ -9,6 +9,9 @@ on:
     branches:
       - 'cdActions'
   workflow_dispatch:
+    branches: 
+      - 'cdActions'
+      - 'master'
     inputs:
       version:
         description: 'Semver type of new version (major / minor / patch)'
@@ -20,7 +23,7 @@ on:
         - minor
         - major
       workspace:
-        description: 'Workspace to release'
+        description: 'Workspace to release. e.g. @segment/analytics-react-native'
         required: false
         type: string
         default: '@segment/analytics-react-native'
@@ -67,13 +70,13 @@ jobs:
       run: yarn workspace ${{ env.WORKSPACE }} version --${{ env.VERSION }}
 
     - name: Push latest version
-      run: echo 'git push origin master --follow-tags'
+      run: git push origin cdActions --follow-tags
   
-  # publish:
-  #   name: Publish to NPM
-  #   needs: bump-version
-  #   uses: ./.github/workflows/publish.yml
-  #   with:
-  #     workspace: ${{ env.WORKSPACE }}
-  #   secrets:
-  #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  publish:
+    name: Publish to NPM
+    needs: bump-version
+    uses: ./.github/workflows/publish.yml
+    with:
+      workspace: ${{ env.WORKSPACE }}
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
