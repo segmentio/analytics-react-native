@@ -56,6 +56,6 @@ jobs:
     needs: bump-version
     uses: ./.github/workflows/publish.yml
     with:
-      workspace: ${{workspace}}
+      workspace: ${{github.event.inputs.workspace}}
     secrets:
-      envPAT: ${{ secrets.envPAT }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

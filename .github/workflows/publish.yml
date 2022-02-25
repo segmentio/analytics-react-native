@@ -6,7 +6,7 @@ on:
       - 'v*'
   workflow_call:
     inputs:
-      workspaces:
+      workspace:
         description: 'Workspace to publish'
         required: false
         type: string
