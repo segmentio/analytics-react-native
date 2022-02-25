@@ -70,6 +70,3 @@ jobs:
       with:
         commit-message: 'chore: release ${{env.WORKSPACE}} ${{env.VERSION}}'
         delete-branch: true
-
-    # - name: Push latest version
-    #   run: git push origin cdActions --follow-tags
