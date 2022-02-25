@@ -62,21 +62,25 @@ jobs:
     
 
     - name: Bump Version (no tag)
-      if: github.event.inputs.workspace != 'core'
+      if: github.event.inputs.workspace != '@segment/analytics-react-native'
       run: yarn workspace ${{ env.WORKSPACE }} version --${{ env.VERSION }} --no-git-tag-version
 
     - name: Bump Version (tag)
-      if: github.event.inputs.workspace == 'core'
+      if: github.event.inputs.workspace == '@segment/analytics-react-native'
       run: yarn workspace ${{ env.WORKSPACE }} version --${{ env.VERSION }}
 
     - name: Push latest version
       run: git push origin cdActions --follow-tags
+
+    outputs:
+      workspace: ${{ env.WORKSPACE }}
+      version: ${{ env.VERSION }}
   
   publish:
     name: Publish to NPM
     needs: bump-version
     uses: ./.github/workflows/publish.yml
     with:
-      workspace: ${{ env.WORKSPACE }}
+      workspace: ${{ needs.bump-version.outputs.workspace }}
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
