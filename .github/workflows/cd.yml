@@ -1,0 +1,60 @@
+name: CD
+
+permissions:
+  contents: write
+
+# Only works right now through manual requests
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Semver type of new version (major / minor / patch)'
+        required: true
+        type: choice
+        options: 
+        - patch
+        - minor
+        - major
+      workspace:
+        description: 'Workspace to release'
+        required: false
+        type: string
+        default: core
+
+jobs:
+  bump-version:
+    name: Bump Version
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out source
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+        cache: 'yarn'
+
+    - name: Install packages
+      run: yarn install --frozen-lockfile
+
+    - name: Bump Version (no tag)
+      if: github.event.inputs.workspace != 'core'
+      run: yarn workspace ${{ github.event.inputs.workspace }} version --${{ github.event.inputs.version }} --no-git-tag-version
+
+    - name: Bump Version (tag)
+      if: github.event.inputs.workspace == 'core'
+      run: yarn workspace ${{ github.event.inputs.workspace }} version --${{ github.event.inputs.version }}
+
+    - name: Push latest version
+      run: echo 'git push origin master --follow-tags'
+  
+  publish:
+    name: Publish to NPM
+    needs: bump-version
+    uses: ./.github/workflows/publish.yml
+    with:
+      workspace: ${{workspace}}
+    secrets:
+      envPAT: ${{ secrets.envPAT }}

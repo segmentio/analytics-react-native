@@ -1,0 +1,55 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_call:
+    inputs:
+      workspaces:
+        description: 'Workspace to publish'
+        required: false
+        type: string
+        default: core
+    secrets:
+      NPM_TOKEN:
+        required: true
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
+
+      - name: Config and Build
+        run: |
+          npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
+          yarn install --frozen-lockfile
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish
+        run: yarn workspace ${{github.event.inputs.workspace}} publish --access restricted --tag beta
+  create-github-release:
+    if: github.event.inputs.workspace == 'core'
+    name: Create GitHub Release
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    needs: publish
+    steps:
+      - name: Create Release Notes
+        uses: actions/github-script@v4.0.2
+        with:
+          script: |
+            await github.request(`POST /repos/${{ github.repository }}/releases`, {
+              tag_name: "${{ github.ref }}",
+              generate_release_notes: true,
+              draft: true
+            });
