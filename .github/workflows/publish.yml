@@ -44,7 +44,7 @@ jobs:
         run: npm publish --tag beta --dry-run
         
   create-github-release:
-    if: github.event.inputs.workspace == '@segment/analytics-react-native' || github.ref == '@segment/analytics-react-native'
+    if: github.event.inputs.workspace == '' || github.event.inputs.workspace == '@segment/analytics-react-native'
     name: Create GitHub Release
     permissions:
       contents: write
