@@ -113,9 +113,7 @@ You must pass at least the `writeKey`. Additional configuration options are list
 | `debug`                    | true\*    | When set to false, it will not generate any logs.                                                                                    |
 | `flushAt`                  | 20        | How many events to accumulate before sending events to the backend.                                                                  |
 | `flushInterval`            | 30        | In seconds, how often to send events to the backend.                                                                                 |
-| `retryInterval`            | 60        | In seconds, how often to to retry sending events the request failed (e.g. in case of a network failure).                             |
 | `maxBatchSize`             | 1000      | How many events to send to the API at once                                                                                           |
-| `maxEventsToRetry`         | 1000      | How many events to keep around for to retry sending if the initial request failed                                                    |
 | `trackAppLifecycleEvents`  | false     | Enable automatic tracking for [app lifecycle events](https://segment.com/docs/connections/spec/mobile/#lifecycle-events): application installed, opened, updated, backgrounded) |
 | `trackDeepLinks`           | false     | Enable automatic tracking for when the user opens the app via a deep link (Note: Requires additional setup on iOS, [see instructions](#ios-deep-link-tracking-setup))                                                            |
 | `defaultSettings`          | undefined | Settings that will be used if the request to get the settings from Segment fails                                                     |

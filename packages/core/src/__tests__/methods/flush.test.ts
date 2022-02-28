@@ -25,6 +25,9 @@ describe('methods #flush', () => {
     logger: getMockLogger(),
     store: store,
   };
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
 
   afterEach(() => {
     store.reset();
