@@ -41,19 +41,24 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Set Working Directory
+        if: github.event.inputs.workspace != ''
         env: 
+          IS_PUSH: ${{ github.event_name  == 'push' }}
           IS_PLUGIN: ${{ startsWith(github.event.inputs.workspace, 'plugin-') }}
         run: |
           if ${IS_PLUGIN}; then
             echo "DIR=packages/plugins/${{github.event.inputs.workspace}}" >> $GITHUB_ENV
           else
-            echo "DIR=packages/${{github.event.inputs.workspace}}" >> $GITHUB_ENV
+            if ${IS_PUSH}; then
+              echo "DIR=packages/core" >> $GITHUB_ENV
+            else
+              echo "DIR=packages/${{github.event.inputs.workspace}}" >> $GITHUB_ENV
           fi
           echo "Setting working directory to: WORKSPACE=$DIR"
 
       - name: Publish
         working-directory: ${{env.DIR}}
-        run: npm publish --tag beta --dry-run
+        run: npm publish --tag beta
         
   create-github-release:
     if: github.event.inputs.workspace == '' || github.event.inputs.workspace == 'core'
