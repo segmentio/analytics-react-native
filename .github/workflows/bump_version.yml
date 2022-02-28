@@ -6,12 +6,8 @@ permissions:
 
 # Only works right now through manual requests
 on:
-  push:
-    branches:
-      - 'cdActions'
   workflow_dispatch:
     branches: 
-      - 'cdActions'
       - 'master'
     inputs:
       version:
@@ -24,10 +20,10 @@ on:
         - minor
         - major
       workspace:
-        description: 'Workspace to release. e.g. @segment/analytics-react-native'
+        description: 'Workspace to publish e.g. core, plugin-idfa'
         required: false
         type: string
-        default: '@segment/analytics-react-native'
+        default: 'core'
 
 jobs:
   bump-version:
@@ -50,27 +46,24 @@ jobs:
     - name: Build
       run: yarn build
 
-    - name: Set Environment Variables
+    - name: Set Working Directory
       env: 
-        IS_PUSH: ${{ github.event_name  == 'push' }}
+        IS_PLUGIN: ${{ startsWith(github.event.inputs.workspace, 'plugin-') }}
       run: |
-        if ${IS_PUSH}; then
-          echo "VERSION=patch" >> $GITHUB_ENV
-          echo "WORKSPACE='@segment/analytics-react-native'" >> $GITHUB_ENV
-          echo "Set the default input params: VERSION=patch, WORKSPACE='@segment/analytics-react-native'"
+        if ${IS_PLUGIN}; then
+          echo "DIR=packages/plugins/${{github.event.inputs.workspace}}" >> $GITHUB_ENV
         else
-          echo "VERSION=${{github.event.inputs.version}}" >> $GITHUB_ENV
-          echo "WORKSPACE=${{github.event.inputs.workspace}}" >> $GITHUB_ENV
-          echo "Setting user input params: VERSION=${{github.event.inputs.version}}, WORKSPACE=${{github.event.inputs.workspace}}"
+          echo "DIR=packages/${{github.event.inputs.workspace}}" >> $GITHUB_ENV
         fi
-    
+        echo "Setting working directory to: WORKSPACE=$DIR"
 
     - name: Bump Version
-      run: yarn workspace ${{ env.WORKSPACE }} version --${{ env.VERSION }} --no-git-tag-version
+      working-directory: ${{env.DIR}}
+      run: yarn version --${{ github.event.inputs.version }} --no-git-tag-version
     
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v3
       with:
-        commit-message: 'chore: release ${{env.WORKSPACE}} ${{env.VERSION}}'
-        title: 'chore: release ${{env.WORKSPACE}} ${{env.VERSION}}'
+        commit-message: 'chore: release ${{env.DIR}} ${{github.event.inputs.version}}'
+        title: 'chore: release ${{env.DIR}} ${{github.event.inputs.version}}'
         delete-branch: true
