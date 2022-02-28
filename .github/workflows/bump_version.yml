@@ -1,0 +1,76 @@
+name: Bump Version
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# Only works right now through manual requests
+on:
+  push:
+    branches:
+      - 'cdActions'
+  workflow_dispatch:
+    branches: 
+      - 'cdActions'
+      - 'master'
+    inputs:
+      version:
+        description: 'Semver type of new version (major / minor / patch)'
+        required: false
+        type: choice
+        default: patch
+        options: 
+        - patch
+        - minor
+        - major
+      workspace:
+        description: 'Workspace to release. e.g. @segment/analytics-react-native'
+        required: false
+        type: string
+        default: '@segment/analytics-react-native'
+
+jobs:
+  bump-version:
+    name: Bump Version
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out source
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+        cache: 'yarn'
+
+    - name: Install packages
+      run: yarn install --frozen-lockfile
+
+    - name: Build
+      run: yarn build
+
+    - name: Set Environment Variables
+      env: 
+        IS_PUSH: ${{ github.event_name  == 'push' }}
+      run: |
+        if ${IS_PUSH}; then
+          echo "VERSION=patch" >> $GITHUB_ENV
+          echo "WORKSPACE='@segment/analytics-react-native'" >> $GITHUB_ENV
+          echo "Set the default input params: VERSION=patch, WORKSPACE='@segment/analytics-react-native'"
+        else
+          echo "VERSION=${{github.event.inputs.version}}" >> $GITHUB_ENV
+          echo "WORKSPACE=${{github.event.inputs.workspace}}" >> $GITHUB_ENV
+          echo "Setting user input params: VERSION=${{github.event.inputs.version}}, WORKSPACE=${{github.event.inputs.workspace}}"
+        fi
+    
+
+    - name: Bump Version
+      run: yarn workspace ${{ env.WORKSPACE }} version --${{ env.VERSION }} --no-git-tag-version
+    
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v3
+      with:
+        commit-message: 'chore: release ${{env.WORKSPACE}} ${{env.VERSION}}'
+        title: 'chore: release ${{env.WORKSPACE}} ${{env.VERSION}}'
+        delete-branch: true
