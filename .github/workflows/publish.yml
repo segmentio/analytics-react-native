@@ -2,8 +2,6 @@ name: Publish
 
 on:
   push:
-    branches:
-      - 'master'
     tags:
       - 'v*'
     paths:
@@ -41,7 +39,6 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Set Working Directory
-        if: github.event.inputs.workspace != ''
         env: 
           IS_PUSH: ${{ github.event_name  == 'push' }}
           IS_PLUGIN: ${{ startsWith(github.event.inputs.workspace, 'plugin-') }}
