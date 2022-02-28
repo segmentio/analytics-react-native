@@ -3,21 +3,22 @@ name: Publish
 on:
   push:
     branches:
-      - 'cdActions'
+      - 'master'
     tags:
       - 'v*'
     paths:
+    # Only supporting core for now
       - 'packages/core/**'
-  # workflow_dispatch:
-  #   inputs:
-  #     workspace:
-  #       description: 'Workspace to publish e.g. @segment/analytics-react-native'
-  #       required: false
-  #       type: string
-  #       default: '@segment/analytics-react-native'
-  #   secrets:
-  #     NPM_TOKEN:
-  #       required: true
+  workflow_dispatch:
+    inputs:
+      workspace:
+        description: 'Workspace to publish e.g. core, plugin-idfa'
+        required: false
+        type: string
+        default: 'core'
+    secrets:
+      NPM_TOKEN:
+        required: true
 
 jobs:
   publish:
@@ -39,12 +40,23 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Set Working Directory
+        env: 
+          IS_PLUGIN: ${{ startsWith(github.event.inputs.workspace, 'plugin-') }}
+        run: |
+          if ${IS_PLUGIN}; then
+            echo "DIR=packages/plugins/${{github.event.inputs.workspace}}" >> $GITHUB_ENV
+          else
+            echo "DIR=packages/${{github.event.inputs.workspace}}" >> $GITHUB_ENV
+          fi
+          echo "Setting working directory to: WORKSPACE=$DIR"
+
       - name: Publish
-        working-directory: packages/core
+        working-directory: ${{env.DIR}}
         run: npm publish --tag beta --dry-run
         
   create-github-release:
-    if: github.event.inputs.workspace == '' || github.event.inputs.workspace == '@segment/analytics-react-native'
+    if: github.event.inputs.workspace == '' || github.event.inputs.workspace == 'core'
     name: Create GitHub Release
     permissions:
       contents: write
