@@ -286,12 +286,12 @@ PODS:
     - React
   - RNGestureHandler (2.2.0):
     - React-Core
-  - segment-analytics-react-native (2.1.6-beta):
+  - segment-analytics-react-native (2.1.7):
     - React-Core
     - sovran-react-native
   - segment-analytics-react-native-plugin-idfa (0.2.0-beta):
     - React-Core
-  - sovran-react-native (0.2.4):
+  - sovran-react-native (0.2.6):
     - React-Core
   - Yoga (1.14.0)
 
@@ -459,9 +459,9 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: b49b4e38a1548d03b74b30e558a1d18465b94be7
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNGestureHandler: bf572f552ea324acd5b5464b8d30755b2d8c1de6
-  segment-analytics-react-native: 1651b31be11bee997e39ff7ababd296f00f7492a
+  segment-analytics-react-native: 2b5164b186d151f85b3da0d784fe9cbc20a939e6
   segment-analytics-react-native-plugin-idfa: 2dc6e38506a5b034db4a4cf16db48643b2f356a2
-  sovran-react-native: 1b68d70aaa2d96489e0338eaf3a4cbf92688c793
+  sovran-react-native: ef02f663b489ac5e63ea7b80cd8426bf82992263
   Yoga: 3f5bfc54ce164fcd5b5d7f9f4232182d6298dd56
 
 PODFILE CHECKSUM: 0c7eb82d495ca56953c50916b7b49e7512632eb6
