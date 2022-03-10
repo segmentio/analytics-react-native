@@ -651,7 +651,7 @@ export class SegmentClient {
     this.appState = nextAppState;
   }
 
-  reset(resetAnonymousId: Boolean = true) {
+  reset(resetAnonymousId: boolean = true) {
     const anonymousId =
       resetAnonymousId === true
         ? getUUID()

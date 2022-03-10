@@ -136,7 +136,7 @@ describe('SegmentClient', () => {
       client = new SegmentClient(clientArgs);
       const setUserInfo = jest.spyOn(store.userInfo, 'set');
 
-      client.reset(true);
+      client.reset();
 
       expect(setUserInfo).toHaveBeenCalledWith({
         anonymousId: 'mocked-uuid',
