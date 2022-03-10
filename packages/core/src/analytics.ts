@@ -651,12 +651,18 @@ export class SegmentClient {
     this.appState = nextAppState;
   }
 
-  reset() {
+  reset(resetAnonymousId: Boolean = true) {
+    const anonymousId =
+      resetAnonymousId === true
+        ? getUUID()
+        : this.store.userInfo.get().anonymousId;
+
     this.store.userInfo.set({
-      anonymousId: getUUID(),
+      anonymousId,
       userId: undefined,
       traits: undefined,
     });
+
     this.logger.info('Client has been reset');
   }
 }
