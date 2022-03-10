@@ -11,7 +11,6 @@ NOTE: This project is currently in development and is covered by Segment's [Firs
 - [@segment/analytics-react-native ![circleci](#segmentanalytics-react-native-circlecicircleci-url)
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
-    - [Expo Installation](#expo-installation)
     - [Permissions](#permissions)
   - [Migrating](#migrating)
   - [Usage](#usage)
@@ -45,12 +44,12 @@ NOTE: This project is currently in development and is covered by Segment's [Firs
 
 ## Installation
 
-Install `@segment/analytics-react-native` and [`react-native-async-storage/async-storage`](https://github.com/react-native-async-storage/async-storage): 
+Install `@segment/analytics-react-native`,  [`@segment/sovran-react-native`](https://github.com/segmentio/sovran-react-native) and [`react-native-async-storage/async-storage`](https://github.com/react-native-async-storage/async-storage): 
 
 ```sh
-yarn add @segment/analytics-react-native @react-native-async-storage/async-storage
+yarn add @segment/analytics-react-native @segment/sovran-react-native @react-native-async-storage/async-storage 
 # or
-npm install --save @segment/analytics-react-native @react-native-async-storage/async-storage
+npm install --save @segment/analytics-react-native @segment/sovran-react-native @react-native-async-storage/async-storage
 ```
 
 For iOS, install native modules with:
@@ -60,18 +59,11 @@ npx pod-install
 ```
 ⚠️ For Android, you will have to add some extra permissions to your `AndroidManifest.xml`.
 
-### Expo Installation
+### Expo 
 
 🚀 `@segment/analytics-react-native 2.0` is compatible with Expo's [Custom Dev Client](https://docs.expo.dev/clients/getting-started/) and [EAS builds](https://docs.expo.dev/build/introduction/) without any additional configuration. Destination Plugins that require native modules may require custom [Expo Config Plugins](https://docs.expo.dev/guides/config-plugins/).
 
-Follow the installation steps listed above for standard React Native builds
-
-Install [`@segment/sovran-react-native`](https://github.com/segmentio/sovran-react-native)
-
-```sh
-yarn add @segment/sovran-react-native
-```
-
+⚠️ `@segment/analytics-react-native 2.0` is not compatible with Expo's managed workflow. 
 ### Permissions
 
 <details>
