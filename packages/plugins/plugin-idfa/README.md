@@ -2,14 +2,69 @@
 
 `Plugin` which retrieves IDFA data (iOS only). IDFA data will then be included in `event` payloads under `event.context.device`
 
-Please ensure you include the native code in your project:
+**This plugin only works on iOS. Android calls will result in no-op.**
 
-```sh
+## Installation
+
+Using NPM:
+```bash
+npm install --save @segment/analytics-react-native-plugin-idfa
+```
+
+Using Yarn:
+```bash
 yarn add @segment/analytics-react-native-plugin-idfa
-# or
-# npm install @segment/analytics-react-native-plugin-idfa
-
-npx pod-install
 ```
 
 You also need to ensure you have a description for `NSUserTrackingUsageDescription` in your `Info.plist`, or your app will crash. Have a look at the /example app in the root of this repo.
+
+## Usage
+
+Follow the [instructions for adding plugins](https://github.com/segmentio/analytics-react-native#adding-plugins) on the main Analytics client:
+
+In your code where you initialize the analytics client call the `.add(plugin)` method with an `IdfaPlugin` instance:
+
+```ts
+import { createClient } from '@segment/analytics-react-native';
+
+import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
+
+const segmentClient = createClient({
+  writeKey: 'SEGMENT_KEY'
+});
+
+segmentClient.add({ plugin: new IdfaPlugin() });
+```
+
+## Support
+
+Please use Github issues, Pull Requests, or feel free to reach out to our [support team](https://segment.com/help/).
+
+## Integrating with Segment
+
+Interested in integrating your service with us? Check out our [Partners page](https://segment.com/partners/) for more details.
+
+## License
+```
+MIT License
+
+Copyright (c) 2021 Segment
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
