@@ -1,53 +1,31 @@
 import { DestinationPlugin } from '../plugin';
-import {
-  PluginType,
-  SegmentAPIIntegrations,
-  SegmentAPISettings,
-  SegmentEvent,
-  UpdateType,
-} from '../types';
+import { PluginType, SegmentEvent } from '../types';
 import { chunk } from '../util';
 import { sendEvents } from '../api';
+import type { SegmentClient } from '../analytics';
+import { DestinationMetadataEnrichment } from './DestinationMetadataEnrichment';
 
 const MAX_EVENTS_PER_BATCH = 100;
+export const SEGMENT_DESTINATION_KEY = 'Segment.io';
 
 export class SegmentDestination extends DestinationPlugin {
   type = PluginType.destination;
 
-  key = 'Segment.io';
+  key = SEGMENT_DESTINATION_KEY;
 
-  update(_: SegmentAPISettings, __: UpdateType) {
-    // this is where analytics-swift initalizes the HTTP client
-    // no need to do this for React Native where we just use the fetch polyfill directly
-    // see flush() below
+  configure(analytics: SegmentClient): void {
+    super.configure(analytics);
+
+    // Enrich events with the Destination metadata
+    this.add(new DestinationMetadataEnrichment());
   }
 
-  execute(event: SegmentEvent): SegmentEvent {
-    const pluginSettings = this.analytics?.settings.get();
-    const plugins = this.analytics?.getPlugins(PluginType.destination);
-
-    // Disable all destinations that have a device mode plugin
-    const deviceModePlugins =
-      plugins?.map((plugin) => (plugin as DestinationPlugin).key) ?? [];
-    const disabledCloudIntegrations: SegmentAPIIntegrations = {};
-    if (pluginSettings !== undefined) {
-      for (const key of deviceModePlugins) {
-        if (key in pluginSettings) {
-          disabledCloudIntegrations[key] = false;
-        }
-      }
+  execute(event: SegmentEvent): SegmentEvent | undefined {
+    const enrichedEvent = super.execute(event);
+    if (enrichedEvent !== undefined) {
+      this.analytics?.queueEvent(enrichedEvent);
     }
-
-    // User/event defined integrations override the cloud/device mode merge
-    const mergedEvent = {
-      ...event,
-      integrations: {
-        ...disabledCloudIntegrations,
-        ...event?.integrations,
-      },
-    };
-    this.analytics?.queueEvent(mergedEvent);
-    return mergedEvent;
+    return enrichedEvent;
   }
 
   async flush() {

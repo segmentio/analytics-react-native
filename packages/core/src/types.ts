@@ -27,6 +27,7 @@ interface BaseEventType {
 
   context?: PartialContext;
   integrations?: SegmentAPIIntegrations;
+  _metadata?: DestinationMetadata;
 }
 
 export interface TrackEventType extends BaseEventType {
@@ -254,6 +255,12 @@ export type SegmentAPIIntegrations = {
 
 export type SegmentAPISettings = {
   integrations: SegmentAPIIntegrations;
+};
+
+export type DestinationMetadata = {
+  bundled: string[];
+  unbundled: string[];
+  bundledIds: string[];
 };
 
 export enum PluginType {
