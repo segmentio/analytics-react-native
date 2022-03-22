@@ -1,12 +1,12 @@
 # Migrating to 2.0
 
-Analytics-React-Native 2.0 is in public pilot and currently supports [these destinations](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins) with Segment actively adding more to the list. Segment’s [First-Access and Beta terms](https://segment.com/legal/first-access-beta-preview/) govern this library.
+Analytics-React-Native 2.0 currently supports [these destinations](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins) with Segment actively adding more to the list. 
 If you’re using  `analytics-react-native 1.5.1`  or older, follow these steps to migrate to the `analytics-react-native 2.0`. You can continue to use your React Native source write key for the migration to view historical events.
 
 1. Update existing package
 
 ```sh
-yarn upgrade @segment/analytics-react-native@2.0
+yarn upgrade @segment/analytics-react-native
 ```
 2. Add/Update pods
 ```sh
