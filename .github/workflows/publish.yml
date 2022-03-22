@@ -54,7 +54,7 @@ jobs:
 
       - name: Publish
         working-directory: ${{env.DIR}}
-        run: npm publish --tag beta
+        run: npm publish
         
   create-github-release:
     if: github.event.inputs.workspace == '' || github.event.inputs.workspace == 'core'
