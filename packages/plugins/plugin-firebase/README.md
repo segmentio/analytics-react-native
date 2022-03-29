@@ -4,15 +4,21 @@
 
 ## Installation
 
+You need to install the `@segment/analytics-react-native-plugin-firebase` and its dependencies: `@react-native-firebase/app` and `@react-native-firebase/analytics`
+
 Using NPM:
 ```bash
-npm install --save @segment/analytics-react-native-plugin-firebase
+npm install --save @segment/analytics-react-native-plugin-firebase @react-native-firebase/app @react-native-firebase/analytics
 ```
 
 Using Yarn:
 ```bash
-yarn add @segment/analytics-react-native-plugin-firebase
+yarn add @segment/analytics-react-native-plugin-firebase @react-native-firebase/app @react-native-firebase/analytics
 ```
+
+Run `pod install` after the installation to autolink the Firebase SDK.
+
+See [React Native Firebase](https://rnfirebase.io) and [React Native Firebase Analytics](https://rnfirebase.io/analytics/usage) for more details of Firebase packages.
 
 ## Usage
 

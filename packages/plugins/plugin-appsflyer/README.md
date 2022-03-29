@@ -4,16 +4,21 @@
 
 ## Installation
 
+You need to install the `@segment/analytics-react-native-plugin-appsflyer` and the `react-native-appsflyer` dependency.
+
 Using NPM:
 ```bash
-npm install --save @segment/analytics-react-native-plugin-appsflyer
+npm install --save @segment/analytics-react-native-plugin-appsflyer react-native-appsflyer
 ```
 
 Using Yarn:
 ```bash
-yarn add @segment/analytics-react-native-plugin-appsflyer
+yarn add @segment/analytics-react-native-plugin-appsflyer react-native-appsflyer
 ```
 
+Run `pod install` after the installation to autolink the AppsFlyer SDK.
+
+See [AppsFlyer React Native Plugin](https://github.com/AppsFlyerSDK/appsflyer-react-native-plugin) for more details of this dependency.
 ## Usage
 
 Follow the [instructions for adding plugins](https://github.com/segmentio/analytics-react-native#adding-plugins) on the main Analytics client:
