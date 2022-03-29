@@ -1,7 +1,7 @@
-import { AppState, AppStateStatus } from 'react-native';
 import type { Unsubscribe } from '@segment/sovran-react-native';
+import deepmerge from 'deepmerge';
+import { AppState, AppStateStatus } from 'react-native';
 import { getContext } from './context';
-
 import {
   applyRawEventData,
   createAliasEvent,
@@ -566,7 +566,8 @@ export class SegmentClient {
 
     const previousContext = this.store.context.get();
 
-    this.store.context.set(context);
+    // Only overwrite the previous context values to preserve any values that are added by enrichment plugins like IDFA
+    this.store.context.set(deepmerge(previousContext ?? {}, context));
 
     if (!this.config.trackAppLifecycleEvents) {
       return;
