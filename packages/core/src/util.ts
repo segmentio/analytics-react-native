@@ -38,3 +38,18 @@ export const getPluginsWithFlush = (timeline: Timeline) => {
 
   return eventPlugins;
 };
+
+export const getPluginsWithReset = (timeline: Timeline) => {
+  if (!timeline) {
+    return [];
+  }
+
+  const allPlugins = getAllPlugins(timeline);
+
+  // checking for the existence of .reset()
+  const eventPlugins = allPlugins?.filter(
+    (f) => (f as EventPlugin).reset
+  ) as EventPlugin[];
+
+  return eventPlugins;
+};

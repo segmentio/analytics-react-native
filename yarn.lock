@@ -6747,6 +6747,11 @@ locate-path@^6.0.0:
   dependencies:
     p-locate "^5.0.0"
 
+lodash.clonedeep@*:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
+  integrity sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8=
+
 lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
@@ -9393,6 +9398,13 @@ table@^6.0.9:
     slice-ansi "^4.0.0"
     string-width "^4.2.3"
     strip-ansi "^6.0.1"
+
+taplytics-react-native@^3.0.0-rc.6:
+  version "3.0.0-rc.6"
+  resolved "https://registry.yarnpkg.com/taplytics-react-native/-/taplytics-react-native-3.0.0-rc.6.tgz#de8b1a2e77f2e841545a4a12e80603dfe4ca7e38"
+  integrity sha512-PtB7JrmpY2CdXv8q+lAMNYqaOms05fqbRbc1TCZsIWQmMTyg0GFCJoj50odip9J18jG0YS6Zh7jB0Wd7r3SxoA==
+  dependencies:
+    lodash.clonedeep "*"
 
 temp-dir@^1.0.0:
   version "1.0.0"

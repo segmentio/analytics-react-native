@@ -1,0 +1,70 @@
+{
+  "name": "@segment/analytics-react-native-plugin-taplytics",
+  "version": "0.2.1",
+  "description": "The hassle-free way to add Segment analytics to your React-Native app.",
+  "main": "lib/commonjs/index",
+  "scripts": {
+    "build": "bob build",
+    "test": "jest",
+    "typescript": "tsc --noEmit",
+    "clean": "rimraf lib node_modules"
+  },
+  "keywords": [
+    "segment",
+    "react-native",
+    "ios",
+    "android"
+  ],
+  "module": "lib/module/index",
+  "types": "lib/typescript/src/index.d.ts",
+  "react-native": "src/index",
+  "source": "src/index",
+  "files": [
+    "src",
+    "lib",
+    "android",
+    "ios",
+    "cpp",
+    "segment-analytics-react-native.podspec",
+    "package.json",
+    "!src/**/*.e2e.mock.js",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/segmentio/analytics-react-native.git",
+    "directory": "packages/core"
+  },
+  "author": "Segment <hello@segment.com> (https://segment.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/segmentio/analytics-react-native/issues"
+  },
+  "homepage": "https://github.com/segmentio/analytics-react-native#readme",
+  "peerDependencies": {
+    "@segment/analytics-react-native": "*"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.0.3",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^27.0.7",
+    "typescript": "^4.4.4"
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      "typescript"
+    ]
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "dependencies": {
+    "taplytics-react-native": "^3.0.0-rc.6"
+  }
+}

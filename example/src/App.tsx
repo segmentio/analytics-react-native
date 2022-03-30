@@ -28,6 +28,9 @@ import { Logger } from './plugins/Logger';
 // import { FacebookAppEventsPlugin } from '@segment/analytics-react-native-plugin-facebook-app-events';
 
 // @ts-ignore
+// import { TaplyticsPlugin } from '@segment/analytics-react-native-plugin-taplytics';
+
+// @ts-ignore
 import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
 // @ts-ignore
 import { AmplitudeSessionPlugin } from '@segment/analytics-react-native-plugin-amplitude-session';
@@ -53,6 +56,9 @@ segmentClient.add({ plugin: LoggerPlugin });
 
 // To test the Facebook App Events plugin make sure to add your Facebook App Id to Info.plist
 // segmentClient.add({ plugin: new FacebookAppEventsPlugin() });
+
+// To test the Taplytics plugin make sure to follow the instructions to setup taplytics-react-native
+// segmentClient.add({ plugin: new TaplyticsPlugin() });
 
 segmentClient.add({ plugin: new IdfaPlugin() });
 segmentClient.add({ plugin: new AmplitudeSessionPlugin() });
