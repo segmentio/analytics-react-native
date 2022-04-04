@@ -3,6 +3,7 @@ import { getMockLogger } from '../__helpers__/mockLogger';
 import * as context from '../../context';
 import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
 import { Context, EventType } from '../../types';
+import deepmerge from 'deepmerge';
 
 jest
   .spyOn(Date.prototype, 'toISOString')
@@ -160,5 +161,48 @@ describe('internal #checkInstalledVersion', () => {
       },
       type: EventType.TrackEvent,
     });
+  });
+
+  it('merges context and preserves context injected by plugins during configure', async () => {
+    const injectedContextByPlugins = {
+      device: {
+        adTrackingEnabled: true,
+        advertisingId: 'mock-advertising-id',
+      },
+    };
+
+    const store = new MockSegmentStore({
+      context: {
+        ...currentContext,
+        ...injectedContextByPlugins,
+      },
+    });
+
+    client = new SegmentClient({
+      ...clientArgs,
+      store,
+    });
+
+    const newContext = {
+      ...currentContext, // Just adding the full object to prevent TS complaining about missing properties
+      app: {
+        version: '1.5',
+        build: '2',
+        name: 'Test',
+        namespace: 'Test',
+      },
+      device: {
+        manufacturer: 'Apple',
+        model: 'iPhone',
+        name: 'iPhone',
+        type: 'iOS',
+      },
+    };
+    jest.spyOn(context, 'getContext').mockResolvedValueOnce(newContext);
+    await client.init();
+
+    expect(store.context.get()).toEqual(
+      deepmerge(newContext, injectedContextByPlugins)
+    );
   });
 });
