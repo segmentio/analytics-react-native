@@ -29,7 +29,7 @@ import {
   UserInfoState,
   UserTraits,
 } from './types';
-import { getPluginsWithFlush } from './util';
+import { getPluginsWithFlush, getPluginsWithReset } from './util';
 import { getUUID } from './uuid';
 
 export class SegmentClient {
@@ -662,6 +662,8 @@ export class SegmentClient {
       userId: undefined,
       traits: undefined,
     });
+
+    getPluginsWithReset(this.timeline).forEach((plugin) => plugin.reset());
 
     this.logger.info('Client has been reset');
   }
