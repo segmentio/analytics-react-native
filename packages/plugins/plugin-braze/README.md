@@ -4,15 +4,21 @@
 
 ## Installation
 
+You need to install the `@segment/analytics-react-native-plugin-braze` and the `react-native-appboy-sdk` dependency.
+
 Using NPM:
 ```bash
-npm install --save @segment/analytics-react-native-plugin-braze
+npm install --save @segment/analytics-react-native-plugin-braze react-native-appboy-sdk
 ```
 
 Using Yarn:
 ```bash
-yarn add @segment/analytics-react-native-plugin-braze
+yarn add @segment/analytics-react-native-plugin-braze react-native-appboy-sdk
 ```
+
+Run `pod install` after the installation to autolink the Braze SDK.
+
+See [Braze React SDK](https://github.com/Appboy/appboy-react-sdk) for more details of this dependency.
 
 ## Usage
 

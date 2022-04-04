@@ -4,16 +4,21 @@
 
 ## Installation
 
+You need to install the `@segment/analytics-react-native-plugin-facebook-app-events` and the `react-native-fbsdk-next` dependency.
+
 Using NPM:
 ```bash
-npm install --save @segment/analytics-react-native-plugin-facebook-app-events
+npm install --save @segment/analytics-react-native-plugin-facebook-app-events react-native-fbsdk-next
 ```
 
 Using Yarn:
 ```bash
-yarn add @segment/analytics-react-native-plugin-facebook-app-events
+yarn add @segment/analytics-react-native-plugin-facebook-app-events react-native-fbsdk-next
 ```
 
+Run `pod install` after the installation to autolink the Facebook SDK.
+
+See [React Native FBSDK Next](https://github.com/thebergamo/react-native-fbsdk-next) for more details of this dependency.
 ## Usage
 
 Follow the [instructions for adding plugins](https://github.com/segmentio/analytics-react-native#adding-plugins) on the main Analytics client:

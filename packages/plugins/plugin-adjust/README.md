@@ -5,16 +5,21 @@
 
 ## Installation
 
+You need to install the `@segment/analytics-react-native-plugin-adjust` and the `react-native-adjust` dependency.
+
 Using NPM:
 ```bash
-npm install --save @segment/analytics-react-native-plugin-adjust
+npm install --save @segment/analytics-react-native-plugin-adjust react-native-adjust
 ```
 
 Using Yarn:
 ```bash
-yarn add @segment/analytics-react-native-plugin-adjust
+yarn add @segment/analytics-react-native-plugin-adjust react-native-adjust
 ```
 
+Run `pod install` after the installation to autolink the Adjust SDK.
+
+See [React Native SDK of Adjust](https://github.com/adjust/react_native_sdk) for more details of this dependency.
 ## Usage
 
 Follow the [instructions for adding plugins](https://github.com/segmentio/analytics-react-native#adding-plugins) on the main Analytics client:
