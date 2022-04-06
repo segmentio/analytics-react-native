@@ -1,6 +1,7 @@
 import type { Unsubscribe } from '@segment/sovran-react-native';
 import deepmerge from 'deepmerge';
 import { AppState, AppStateStatus } from 'react-native';
+import { settingsCDN } from './constants';
 import { getContext } from './context';
 import {
   applyRawEventData,
@@ -237,7 +238,7 @@ export class SegmentClient {
   }
 
   async fetchSettings() {
-    const settingsEndpoint = `https://cdn-settings.segment.com/v1/projects/${this.config.writeKey}/settings`;
+    const settingsEndpoint = `${settingsCDN}/${this.config.writeKey}/settings`;
 
     try {
       const res = await fetch(settingsEndpoint);
