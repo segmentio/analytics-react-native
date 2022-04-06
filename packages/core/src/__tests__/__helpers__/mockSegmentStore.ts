@@ -1,3 +1,4 @@
+import { SEGMENT_DESTINATION_KEY } from '../../plugins/SegmentDestination';
 import type { DeepLinkData, Storage } from '../../storage';
 import type {
   Context,
@@ -21,7 +22,9 @@ const INITIAL_VALUES: Data = {
   isReady: true,
   events: [],
   context: undefined,
-  settings: {},
+  settings: {
+    [SEGMENT_DESTINATION_KEY]: {},
+  },
   userInfo: {
     anonymousId: 'anonymousId',
     userId: undefined,

@@ -53,6 +53,7 @@ describe('SegmentDestination', () => {
           firebase: {
             someConfig: 'someValue',
           },
+          [SEGMENT_DESTINATION_KEY]: {},
         },
       }),
     });
@@ -140,6 +141,7 @@ describe('SegmentDestination', () => {
           firebase: {
             someConfig: 'someValue',
           },
+          [SEGMENT_DESTINATION_KEY]: {},
         },
       }),
     });
@@ -208,5 +210,34 @@ describe('SegmentDestination', () => {
         ...e,
       })),
     });
+  });
+
+  it('lets plugins/events disable destinations individually', () => {
+    const plugin = new SegmentDestination();
+    // @ts-ignore
+    plugin.analytics = new SegmentClient({
+      ...clientArgs,
+      store: new MockSegmentStore({
+        settings: {
+          [SEGMENT_DESTINATION_KEY]: {},
+        },
+      }),
+    });
+
+    const event: TrackEventType = {
+      anonymousId: '3534a492-e975-4efa-a18b-3c70c562fec2',
+      event: 'Awesome event',
+      type: EventType.TrackEvent,
+      properties: {},
+      timestamp: '2000-01-01T00:00:00.000Z',
+      messageId: '1d1744bf-5beb-41ac-ad7a-943eac33babc',
+      context: { app: { name: 'TestApp' } },
+      integrations: {
+        [SEGMENT_DESTINATION_KEY]: false,
+      },
+    };
+
+    const result = plugin.execute(event);
+    expect(result).toEqual(undefined);
   });
 });

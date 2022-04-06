@@ -100,6 +100,19 @@ export class DestinationPlugin extends EventPlugin {
 
   timeline = new Timeline();
 
+  private hasSettings() {
+    return this.analytics?.settings.get()?.[this.key] !== undefined;
+  }
+
+  private isEnabled(event: SegmentEvent): boolean {
+    let customerDisabled = false;
+    if (event.integrations?.[this.key] === false) {
+      customerDisabled = true;
+    }
+
+    return this.hasSettings() && !customerDisabled;
+  }
+
   /**
      Adds a new plugin to the currently loaded set.
 
@@ -141,6 +154,10 @@ export class DestinationPlugin extends EventPlugin {
   }
 
   execute(event: SegmentEvent): SegmentEvent | undefined {
+    if (!this.isEnabled(event)) {
+      return undefined;
+    }
+
     // Apply before and enrichment plugins
     const beforeResult = this.timeline.applyPlugins({
       type: PluginType.before,

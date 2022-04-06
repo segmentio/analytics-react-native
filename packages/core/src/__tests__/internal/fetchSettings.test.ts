@@ -1,10 +1,14 @@
 import { getMockLogger } from '../__helpers__/mockLogger';
 import { SegmentClient } from '../../analytics';
 import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
+import { SEGMENT_DESTINATION_KEY } from '../../plugins/SegmentDestination';
 
 describe('internal #getSettings', () => {
   const defaultIntegrationSettings = {
-    integrations: {},
+    integrations: {
+      // This one is injected by the mock
+      [SEGMENT_DESTINATION_KEY]: {},
+    },
   };
   const store = new MockSegmentStore();
 
