@@ -1,4 +1,4 @@
-export const mockIntegrationSettings = {
+export const sampleIntegrationSettings = {
   integrations: {
     Mixpanel: {
       token: '1234',

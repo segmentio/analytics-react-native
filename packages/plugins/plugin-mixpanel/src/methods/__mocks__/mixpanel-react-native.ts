@@ -21,8 +21,8 @@ export class Mixpanel {
   optInTracking = jest.fn();
   optOutTracking = jest.fn();
   identify = identifyMock;
-  alias = jest.fn();
-  track = jest.fn();
+  alias = aliasMock;
+  track = trackMock;
   getPeople = () => new People();
   trackWithGroups = trackWithGroupsMock;
   setGroup = setGroupMock;

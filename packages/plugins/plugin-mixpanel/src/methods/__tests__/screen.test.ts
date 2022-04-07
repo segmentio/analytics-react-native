@@ -3,11 +3,9 @@ import type {
   SegmentMixpanelSettings,
   ScreenEventType,
 } from '@segment/analytics-react-native';
-import { mockIntegrationSettings } from '../__mocks__/mockIntegrationSettings';
+import { sampleIntegrationSettings } from '../__mocks__/__helpers__/constants';
 import { Mixpanel } from '../__mocks__/mixpanel-react-native';
 import mixpanelTack from '../mixpanelTrack';
-// //@ts-ignore
-// // import * as MixpanelPlugin from '@segment/analytics-react-native-plugin-mixpanel';
 
 jest.mock('../mixpanelTrack.ts');
 
@@ -26,7 +24,7 @@ describe('#screen', () => {
       name: 'Home',
     } as ScreenEventType;
     const settings: SegmentMixpanelSettings =
-      mockIntegrationSettings.integrations.Mixpanel;
+      sampleIntegrationSettings.integrations.Mixpanel;
     const mixpanel = new Mixpanel('1234');
     settings.consolidatedPageCalls = true;
 
@@ -45,13 +43,13 @@ describe('#screen', () => {
       name: 'Home',
     } as ScreenEventType;
     const settings: SegmentMixpanelSettings =
-      mockIntegrationSettings.integrations.Mixpanel;
+      sampleIntegrationSettings.integrations.Mixpanel;
     const mixpanel = new Mixpanel('1234');
     settings.consolidatedPageCalls = false;
 
     screen(payload, mixpanel, settings);
 
-    expect(mixpanelTack).toBeCalledTimes(0);
+    expect(mixpanelTack).not.toHaveBeenCalled();
   });
 
   it('tracks all screens', () => {
@@ -64,7 +62,7 @@ describe('#screen', () => {
       name: 'Home',
     } as ScreenEventType;
     const settings: SegmentMixpanelSettings =
-      mockIntegrationSettings.integrations.Mixpanel;
+      sampleIntegrationSettings.integrations.Mixpanel;
     const mixpanel = new Mixpanel('1234');
     settings.trackAllPages = true;
 
@@ -83,13 +81,13 @@ describe('#screen', () => {
       name: 'Home',
     } as ScreenEventType;
     const settings: SegmentMixpanelSettings =
-      mockIntegrationSettings.integrations.Mixpanel;
+      sampleIntegrationSettings.integrations.Mixpanel;
     const mixpanel = new Mixpanel('1234');
     settings.trackAllPages = false;
 
     screen(payload, mixpanel, settings);
 
-    expect(mixpanelTack).toBeCalledTimes(0);
+    expect(mixpanelTack).not.toHaveBeenCalled();
   });
 
   it('tracks named pages', () => {
@@ -102,7 +100,7 @@ describe('#screen', () => {
       name: 'Home',
     } as ScreenEventType;
     const settings: SegmentMixpanelSettings =
-      mockIntegrationSettings.integrations.Mixpanel;
+      sampleIntegrationSettings.integrations.Mixpanel;
     const mixpanel = new Mixpanel('1234');
     settings.trackNamedPages = true;
 
@@ -121,13 +119,13 @@ describe('#screen', () => {
       name: 'Home',
     } as ScreenEventType;
     const settings: SegmentMixpanelSettings =
-      mockIntegrationSettings.integrations.Mixpanel;
+      sampleIntegrationSettings.integrations.Mixpanel;
     const mixpanel = new Mixpanel('1234');
     settings.trackNamedPages = false;
 
     screen(payload, mixpanel, settings);
 
-    expect(mixpanelTack).toBeCalledTimes(0);
+    expect(mixpanelTack).not.toHaveBeenCalled();
   });
 
   it('tracks categorized pages', () => {
@@ -141,7 +139,7 @@ describe('#screen', () => {
       name: 'Home',
     } as ScreenEventType;
     const settings: SegmentMixpanelSettings =
-      mockIntegrationSettings.integrations.Mixpanel;
+      sampleIntegrationSettings.integrations.Mixpanel;
     const mixpanel = new Mixpanel('1234');
     settings.trackCategorizedPages = true;
 
@@ -161,12 +159,12 @@ describe('#screen', () => {
       name: 'Home',
     } as ScreenEventType;
     const settings: SegmentMixpanelSettings =
-      mockIntegrationSettings.integrations.Mixpanel;
+      sampleIntegrationSettings.integrations.Mixpanel;
     const mixpanel = new Mixpanel('1234');
     settings.trackCategorizedPages = false;
 
     screen(payload, mixpanel, settings);
 
-    expect(mixpanelTack).toBeCalledTimes(0);
+    expect(mixpanelTack).not.toHaveBeenCalled();
   });
 });

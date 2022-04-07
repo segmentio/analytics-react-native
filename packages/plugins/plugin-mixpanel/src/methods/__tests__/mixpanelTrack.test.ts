@@ -3,7 +3,7 @@ import type {
   SegmentMixpanelSettings,
   JsonMap,
 } from '@segment/analytics-react-native';
-import { mockIntegrationSettings } from '../__mocks__/mockIntegrationSettings';
+import { sampleIntegrationSettings } from '../__mocks__/__helpers__/constants';
 import { Mixpanel } from '../__mocks__/mixpanel-react-native';
 
 describe('#mixpanelTrack', () => {
@@ -19,7 +19,7 @@ describe('#mixpanelTrack', () => {
     } as JsonMap;
     const eventName = 'Test Event';
     const settings: SegmentMixpanelSettings =
-      mockIntegrationSettings.integrations.Mixpanel;
+      sampleIntegrationSettings.integrations.Mixpanel;
     const mixpanel = new Mixpanel('1234');
 
     mixpanelTrack(eventName, properties, settings, mixpanel);
@@ -38,13 +38,13 @@ describe('#mixpanelTrack', () => {
     } as JsonMap;
     const eventName = 'Test Event';
     const settings: SegmentMixpanelSettings =
-      mockIntegrationSettings.integrations.Mixpanel;
+      sampleIntegrationSettings.integrations.Mixpanel;
     const mixpanel = new Mixpanel('1234');
-    const result = jest.spyOn(mixpanel, 'getPeople');
+    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
     mixpanelTrack(eventName, properties, settings, mixpanel);
 
-    expect(result).toBeCalled();
+    expect(getPeopleSpy).toBeCalled();
   });
 
   it('returns if people setting is false', () => {
@@ -55,15 +55,15 @@ describe('#mixpanelTrack', () => {
     } as JsonMap;
     const eventName = 'Test Event';
     const settings: SegmentMixpanelSettings =
-      mockIntegrationSettings.integrations.Mixpanel;
+      sampleIntegrationSettings.integrations.Mixpanel;
     const mixpanel = new Mixpanel('1234');
-    const result = jest.spyOn(mixpanel, 'getPeople');
+    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
     settings.people = false;
 
     mixpanelTrack(eventName, properties, settings, mixpanel);
 
-    expect(result).toBeCalledTimes(0);
+    expect(getPeopleSpy).not.toHaveBeenCalled();
   });
 
   it('sets the increment value if present', () => {
@@ -76,15 +76,15 @@ describe('#mixpanelTrack', () => {
     } as JsonMap;
     const eventName = 'Test Event';
     const settings: SegmentMixpanelSettings =
-      mockIntegrationSettings.integrations.Mixpanel;
+      sampleIntegrationSettings.integrations.Mixpanel;
     const mixpanel = new Mixpanel('1234');
-    const result = jest.spyOn(mixpanel, 'getPeople');
+    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
     settings.people = true;
     settings.propIncrements = ['prop1', 'prop2'];
 
     mixpanelTrack(eventName, properties, settings, mixpanel);
 
-    expect(result).toBeCalledTimes(1);
+    expect(getPeopleSpy).toBeCalledTimes(1);
   });
 
   it('does not set the increment value if it is not a number', () => {
@@ -97,14 +97,14 @@ describe('#mixpanelTrack', () => {
     } as JsonMap;
     const eventName = 'Test Event';
     const settings: SegmentMixpanelSettings =
-      mockIntegrationSettings.integrations.Mixpanel;
+      sampleIntegrationSettings.integrations.Mixpanel;
     const mixpanel = new Mixpanel('1234');
-    const result = jest.spyOn(mixpanel, 'getPeople');
+    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
     settings.propIncrements = ['prop1', 'prop2'];
 
     mixpanelTrack(eventName, properties, settings, mixpanel);
 
-    expect(result).toBeCalledTimes(0);
+    expect(getPeopleSpy).not.toHaveBeenCalled();
   });
 
   it('sets event increment values', () => {
@@ -117,15 +117,15 @@ describe('#mixpanelTrack', () => {
     } as JsonMap;
     const eventName = 'Test Event';
     const settings: SegmentMixpanelSettings =
-      mockIntegrationSettings.integrations.Mixpanel;
+      sampleIntegrationSettings.integrations.Mixpanel;
     const mixpanel = new Mixpanel('1234');
-    const result = jest.spyOn(mixpanel, 'getPeople');
+    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
     settings.propIncrements = [];
     settings.eventIncrements = ['Test Event'];
 
     mixpanelTrack(eventName, properties, settings, mixpanel);
 
-    expect(result).toBeCalledTimes(2);
+    expect(getPeopleSpy).toBeCalledTimes(2);
   });
 
   it('does not set event increment values if event name is undefined', () => {
@@ -138,14 +138,14 @@ describe('#mixpanelTrack', () => {
     } as JsonMap;
     const eventName = 'Test Event';
     const settings: SegmentMixpanelSettings =
-      mockIntegrationSettings.integrations.Mixpanel;
+      sampleIntegrationSettings.integrations.Mixpanel;
     const mixpanel = new Mixpanel('1234');
-    const result = jest.spyOn(mixpanel, 'getPeople');
+    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
     settings.eventIncrements = ['Real Event'];
 
     mixpanelTrack(eventName, properties, settings, mixpanel);
 
-    expect(result).toBeCalledTimes(0);
+    expect(getPeopleSpy).not.toHaveBeenCalled();
   });
 
   it('sets revenue', () => {
@@ -159,14 +159,14 @@ describe('#mixpanelTrack', () => {
     } as JsonMap;
     const eventName = 'Test Event';
     const settings: SegmentMixpanelSettings =
-      mockIntegrationSettings.integrations.Mixpanel;
+      sampleIntegrationSettings.integrations.Mixpanel;
     const mixpanel = new Mixpanel('1234');
-    const result = jest.spyOn(mixpanel, 'getPeople');
+    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
     settings.eventIncrements = [];
 
     mixpanelTrack(eventName, properties, settings, mixpanel);
 
-    expect(result).toBeCalled();
+    expect(getPeopleSpy).toBeCalled();
   });
 
   it('does not set revenue', () => {
@@ -179,12 +179,12 @@ describe('#mixpanelTrack', () => {
     } as JsonMap;
     const eventName = 'Test Event';
     const settings: SegmentMixpanelSettings =
-      mockIntegrationSettings.integrations.Mixpanel;
+      sampleIntegrationSettings.integrations.Mixpanel;
     const mixpanel = new Mixpanel('1234');
-    const result = jest.spyOn(mixpanel, 'getPeople');
+    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
     mixpanelTrack(eventName, properties, settings, mixpanel);
 
-    expect(result).toBeCalledTimes(0);
+    expect(getPeopleSpy).not.toHaveBeenCalled();
   });
 });
