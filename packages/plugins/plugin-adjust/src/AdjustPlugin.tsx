@@ -6,6 +6,7 @@ import {
   SegmentAdjustSettings,
   SegmentAPISettings,
   UpdateType,
+  EventType,
 } from '@segment/analytics-react-native';
 import { Adjust, AdjustConfig } from 'react-native-adjust';
 import identify from './methods/identify';
@@ -16,6 +17,7 @@ export class AdjustPlugin extends DestinationPlugin {
   type = PluginType.destination;
   key = 'Adjust';
 
+  private adjust: AdjustConfig | undefined = undefined;
   private settings: SegmentAdjustSettings | null = null;
 
   update(settings: SegmentAPISettings, _: UpdateType) {
@@ -35,6 +37,29 @@ export class AdjustPlugin extends DestinationPlugin {
 
     const adjustConfig = new AdjustConfig(this.settings.appToken, environment);
 
+    if (this.adjust !== undefined) {
+      adjustConfig.setAttributionCallbackListener(function (attribution) {
+        let type = 'track' as EventType.TrackEvent;
+        let trackPayload = {
+          type: type,
+          event: 'Install Attributed',
+          properties: {
+            provider: 'Adjust',
+            trackerToken: attribution.trackerToken,
+            trackerName: attribution.trackerName,
+            campaign: {
+              source: attribution.network,
+              name: attribution.campaign,
+              content: attribution.clickLabel,
+              adCreative: attribution.creative,
+              adGroup: attribution.adgroup,
+            },
+          },
+        };
+        track(trackPayload, adjustSettings);
+      });
+    }
+
     const bufferingEnabled = this.settings.setEventBufferingEnabled;
     if (bufferingEnabled) {
       adjustConfig.setEventBufferingEnabled(bufferingEnabled);
@@ -50,7 +75,6 @@ export class AdjustPlugin extends DestinationPlugin {
 
     Adjust.create(adjustConfig);
   }
-
   identify(event: IdentifyEventType) {
     identify(event);
     return event;
