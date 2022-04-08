@@ -18,18 +18,19 @@ describe('MixpanelPlugin', () => {
     },
     store,
   };
+  let plugin: MixpanelPlugin = new MixpanelPlugin();
+  let settings = sampleIntegrationSettings;
+  let updateType: UpdateType = UpdateType.initial;
 
   beforeEach(() => {
     store.reset();
     jest.clearAllMocks();
+    plugin = new MixpanelPlugin();
+    plugin.analytics = new SegmentClient(clientArgs);
   });
 
   it('calls update with settings', () => {
-    const plugin = new MixpanelPlugin();
-    plugin.analytics = new SegmentClient(clientArgs);
-    let settings = sampleIntegrationSettings;
-    let updateType: UpdateType = UpdateType.initial;
-    const updateSpy = jest.spyOn(plugin, 'update');
+    let updateSpy = jest.spyOn(plugin, 'update');
 
     plugin.update(settings, updateType);
     expect(updateSpy).toHaveBeenCalledWith(settings, updateType);
@@ -37,11 +38,6 @@ describe('MixpanelPlugin', () => {
   });
 
   it('does not initialize Mixpanel when token is undefined', () => {
-    const plugin = new MixpanelPlugin();
-    plugin.analytics = new SegmentClient(clientArgs);
-    let settings = sampleIntegrationSettings;
-    let updateType: UpdateType = UpdateType.initial;
-
     settings.integrations.Mixpanel.token = '';
 
     plugin.update(settings, updateType);
@@ -49,11 +45,6 @@ describe('MixpanelPlugin', () => {
   });
 
   it('enables the European endpoint', () => {
-    const plugin = new MixpanelPlugin();
-    plugin.analytics = new SegmentClient(clientArgs);
-    let settings = sampleIntegrationSettings;
-    let updateType: UpdateType = UpdateType.initial;
-
     settings.integrations.Mixpanel.token = '1234';
     settings.integrations.Mixpanel.enableEuropeanEndpoint = true;
 

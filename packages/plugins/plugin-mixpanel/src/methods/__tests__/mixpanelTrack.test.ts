@@ -7,59 +7,45 @@ import { sampleIntegrationSettings } from '../__mocks__/__helpers__/constants';
 import { Mixpanel } from '../__mocks__/mixpanel-react-native';
 
 describe('#mixpanelTrack', () => {
+  let mixpanel: Mixpanel;
+  const properties = {
+    firstName: 'John',
+    phone: '(555) 555-5555',
+    foo: 'bar',
+  } as JsonMap;
+  const eventName = 'Test Event';
+  const settings: SegmentMixpanelSettings =
+    sampleIntegrationSettings.integrations.Mixpanel;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    mixpanel = new Mixpanel('1234');
   });
 
   it('tracks the raw event', () => {
-    const properties = {
-      firstName: 'John',
-      phone: '(555) 555-5555',
-      foo: 'bar',
-    } as JsonMap;
-    const eventName = 'Test Event';
-    const settings: SegmentMixpanelSettings =
-      sampleIntegrationSettings.integrations.Mixpanel;
-    const mixpanel = new Mixpanel('1234');
-
     mixpanelTrack(eventName, properties, settings, mixpanel);
 
     expect(mixpanel.track).toBeCalledWith(eventName, properties);
   });
 
   it('calls People API if setting is true', () => {
-    const properties = {
-      firstName: 'John',
-      phone: '(555) 555-5555',
-      foo: 'bar',
+    settings.people = true;
+    let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
+    let newProperties = {
+      ...properties,
       prop1: 'string',
       prop2: 34,
       prop3: false,
-    } as JsonMap;
-    const eventName = 'Test Event';
-    const settings: SegmentMixpanelSettings =
-      sampleIntegrationSettings.integrations.Mixpanel;
-    const mixpanel = new Mixpanel('1234');
-    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
+    };
 
-    mixpanelTrack(eventName, properties, settings, mixpanel);
+    mixpanelTrack(eventName, newProperties, settings, mixpanel);
 
     expect(getPeopleSpy).toBeCalled();
   });
 
   it('returns if people setting is false', () => {
-    const properties = {
-      firstName: 'John',
-      phone: '(555) 555-5555',
-      foo: 'bar',
-    } as JsonMap;
-    const eventName = 'Test Event';
-    const settings: SegmentMixpanelSettings =
-      sampleIntegrationSettings.integrations.Mixpanel;
-    const mixpanel = new Mixpanel('1234');
-    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
-
     settings.people = false;
+    let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
     mixpanelTrack(eventName, properties, settings, mixpanel);
 
@@ -67,61 +53,30 @@ describe('#mixpanelTrack', () => {
   });
 
   it('sets the increment value if present', () => {
-    const properties = {
-      firstName: 'John',
-      phone: '(555) 555-5555',
-      foo: 'bar',
-      prop1: 14,
-      prop2: 'hello',
-    } as JsonMap;
-    const eventName = 'Test Event';
-    const settings: SegmentMixpanelSettings =
-      sampleIntegrationSettings.integrations.Mixpanel;
-    const mixpanel = new Mixpanel('1234');
-    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
     settings.people = true;
-    settings.propIncrements = ['prop1', 'prop2'];
+    settings.propIncrements = ['incProp'];
+    let newProperties = { ...properties, incProp: 10 };
+    let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
-    mixpanelTrack(eventName, properties, settings, mixpanel);
+    mixpanelTrack(eventName, newProperties, settings, mixpanel);
 
     expect(getPeopleSpy).toBeCalledTimes(1);
   });
 
   it('does not set the increment value if it is not a number', () => {
-    const properties = {
-      firstName: 'John',
-      phone: '(555) 555-5555',
-      foo: 'bar',
-      prop1: 'hello',
-      prop2: 'goodbye',
-    } as JsonMap;
-    const eventName = 'Test Event';
-    const settings: SegmentMixpanelSettings =
-      sampleIntegrationSettings.integrations.Mixpanel;
-    const mixpanel = new Mixpanel('1234');
-    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
+    let newProperties = { incProp: 'string' };
     settings.propIncrements = ['prop1', 'prop2'];
+    let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
-    mixpanelTrack(eventName, properties, settings, mixpanel);
+    mixpanelTrack(eventName, newProperties, settings, mixpanel);
 
     expect(getPeopleSpy).not.toHaveBeenCalled();
   });
 
   it('sets event increment values', () => {
-    const properties = {
-      firstName: 'John',
-      phone: '(555) 555-5555',
-      foo: 'bar',
-      prop1: 'hello',
-      prop2: 'goodbye',
-    } as JsonMap;
-    const eventName = 'Test Event';
-    const settings: SegmentMixpanelSettings =
-      sampleIntegrationSettings.integrations.Mixpanel;
-    const mixpanel = new Mixpanel('1234');
-    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
     settings.propIncrements = [];
     settings.eventIncrements = ['Test Event'];
+    let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
     mixpanelTrack(eventName, properties, settings, mixpanel);
 
@@ -129,19 +84,8 @@ describe('#mixpanelTrack', () => {
   });
 
   it('does not set event increment values if event name is undefined', () => {
-    const properties = {
-      firstName: 'John',
-      phone: '(555) 555-5555',
-      foo: 'bar',
-      prop1: 'hello',
-      prop2: 'goodbye',
-    } as JsonMap;
-    const eventName = 'Test Event';
-    const settings: SegmentMixpanelSettings =
-      sampleIntegrationSettings.integrations.Mixpanel;
-    const mixpanel = new Mixpanel('1234');
-    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
     settings.eventIncrements = ['Real Event'];
+    let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
     mixpanelTrack(eventName, properties, settings, mixpanel);
 
@@ -149,39 +93,17 @@ describe('#mixpanelTrack', () => {
   });
 
   it('sets revenue', () => {
-    const properties = {
-      firstName: 'John',
-      phone: '(555) 555-5555',
-      foo: 'bar',
-      prop1: 'hello',
-      prop2: 'goodbye',
-      revenue: 25,
-    } as JsonMap;
-    const eventName = 'Test Event';
-    const settings: SegmentMixpanelSettings =
-      sampleIntegrationSettings.integrations.Mixpanel;
-    const mixpanel = new Mixpanel('1234');
-    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
+    let newProperties = { revenue: 15 };
     settings.eventIncrements = [];
+    let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
-    mixpanelTrack(eventName, properties, settings, mixpanel);
+    mixpanelTrack(eventName, newProperties, settings, mixpanel);
 
     expect(getPeopleSpy).toBeCalled();
   });
 
   it('does not set revenue', () => {
-    const properties = {
-      firstName: 'John',
-      phone: '(555) 555-5555',
-      foo: 'bar',
-      prop1: 'hello',
-      prop2: 'goodbye',
-    } as JsonMap;
-    const eventName = 'Test Event';
-    const settings: SegmentMixpanelSettings =
-      sampleIntegrationSettings.integrations.Mixpanel;
-    const mixpanel = new Mixpanel('1234');
-    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
+    let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
     mixpanelTrack(eventName, properties, settings, mixpanel);
 
