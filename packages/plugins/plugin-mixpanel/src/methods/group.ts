@@ -16,7 +16,7 @@ export default (
     for (let groupTrait of groupTraits) {
       for (let eventTrait in event.traits) {
         if (groupTrait.toLocaleLowerCase() === eventTrait.toLocaleLowerCase()) {
-          let group = event.traits[eventTrait] as string;
+          let group = event.traits[groupTrait] as string;
           let traits = event.traits;
 
           mixpanel.getGroup(group, groupId).setOnce('properties', traits);

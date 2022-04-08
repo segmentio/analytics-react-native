@@ -3,7 +3,7 @@ import type {
   SegmentMixpanelSettings,
   IdentifyEventType,
 } from '@segment/analytics-react-native';
-import { sampleIntegrationSettings } from '../__mocks__/__helpers__/constants';
+import { sampleIntegrationSettings } from './__helpers__/constants';
 import { Mixpanel } from '../__mocks__/mixpanel-react-native';
 
 describe('#identify', () => {
@@ -27,7 +27,7 @@ describe('#identify', () => {
   it('calls identify with userId', () => {
     identify(payload, mixpanel, settings);
 
-    expect(mixpanel.identify).toBeCalled();
+    expect(mixpanel.identify).toBeCalledWith(payload.userId);
   });
 
   it('does not call identify when userId is undefined', () => {
@@ -41,11 +41,16 @@ describe('#identify', () => {
   it('sets all traits by default', () => {
     payload.userId = 'userId';
     settings.setAllTraitsByDefault = true;
+    let mockedTraits = {
+      $first_name: 'John',
+      $phone: '(555) 555-5555',
+      foo: 'bar',
+    };
     let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
     identify(payload, mixpanel, settings);
 
-    expect(mixpanel.registerSuperProperties).toBeCalled();
+    expect(mixpanel.registerSuperProperties).toBeCalledWith(mockedTraits);
     expect(getPeopleSpy).toBeCalled();
   });
 
@@ -62,10 +67,11 @@ describe('#identify', () => {
   it('registers superProperties', () => {
     payload.traits.prop1 = 'string';
     settings.superProperties = ['prop1'];
+    let mockedTraits = { prop1: 'string' };
 
     identify(payload, mixpanel, settings);
 
-    expect(mixpanel.registerSuperProperties).toBeCalledTimes(1);
+    expect(mixpanel.registerSuperProperties).toBeCalledWith(mockedTraits);
   });
 
   it('does not register superProperties', () => {
@@ -90,7 +96,7 @@ describe('#identify', () => {
 
   it(' does not register people Properties', () => {
     settings.peopleProperties = [];
-    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
+    let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
     identify(payload, mixpanel, settings);
 

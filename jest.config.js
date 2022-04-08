@@ -3,7 +3,10 @@ const { compilerOptions } = require('./tsconfig');
 
 module.exports = {
   preset: 'react-native',
-  testPathIgnorePatterns: ['./packages/core/src/__tests__/__helpers__/'],
+  testPathIgnorePatterns: [
+    './packages/core/src/__tests__/__helpers__/',
+    './packages/plugins/plugin-mixpanel/src/methods/__tests__/__helpers__',
+  ],
   modulePathIgnorePatterns: ['/lib/'],
   globals: {
     'ts-jest': {

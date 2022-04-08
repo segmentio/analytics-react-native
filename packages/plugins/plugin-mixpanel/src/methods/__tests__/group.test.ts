@@ -3,7 +3,7 @@ import type {
   SegmentMixpanelSettings,
   GroupEventType,
 } from '@segment/analytics-react-native';
-import { sampleIntegrationSettings } from '../__mocks__/__helpers__/constants';
+import { sampleIntegrationSettings } from './__helpers__/constants';
 import { Mixpanel } from '../__mocks__/mixpanel-react-native';
 
 describe('#group', () => {
@@ -11,7 +11,7 @@ describe('#group', () => {
   const payload = {
     type: 'group',
     traits: {
-      newGroup: true,
+      company_id: 'the_red_f',
       coolGroup: false,
       members: 4,
     },
@@ -27,12 +27,16 @@ describe('#group', () => {
 
   it('calls the group method when id is present', () => {
     let getGroupSpy = jest.spyOn(mixpanel, 'getGroup');
-    settings.groupIdentifierTraits = ['newGroup'];
+    settings.groupIdentifierTraits = ['company_id'];
+    let groupId = payload.groupId;
+    let setGroupTrait = 'company_id';
+    let mockedId = '23322';
+    let mockedGroupTrait = 'the_red_f';
 
     group(payload, mixpanel, settings);
 
-    expect(mixpanel.setGroup).toBeCalled();
-    expect(getGroupSpy).toBeCalled();
+    expect(mixpanel.setGroup).toBeCalledWith(setGroupTrait, groupId);
+    expect(getGroupSpy).toBeCalledWith(mockedGroupTrait, mockedId);
   });
 
   it(' does not call the group method when no traits are provided in settings', () => {

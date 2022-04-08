@@ -3,7 +3,7 @@ import type {
   SegmentMixpanelSettings,
   ScreenEventType,
 } from '@segment/analytics-react-native';
-import { sampleIntegrationSettings } from '../__mocks__/__helpers__/constants';
+import { sampleIntegrationSettings } from './__helpers__/constants';
 import { Mixpanel } from '../__mocks__/mixpanel-react-native';
 import mixpanelTack from '../mixpanelTrack';
 
@@ -29,10 +29,16 @@ describe('#screen', () => {
 
   it('tracks consolidated screens', () => {
     settings.consolidatedPageCalls = true;
+    let eventName = 'Loaded a Screen';
 
     screen(payload, mixpanel, settings);
 
-    expect(mixpanelTack).toBeCalled();
+    expect(mixpanelTack).toBeCalledWith(
+      eventName,
+      payload.properties,
+      settings,
+      mixpanel
+    );
   });
 
   it('does not track consolidated screens', () => {
@@ -45,10 +51,16 @@ describe('#screen', () => {
 
   it('tracks all screens', () => {
     settings.trackAllPages = true;
+    let eventName = `Viewed ${payload.name} Screen`;
 
     screen(payload, mixpanel, settings);
 
-    expect(mixpanelTack).toBeCalledTimes(1);
+    expect(mixpanelTack).toBeCalledWith(
+      eventName,
+      payload.properties,
+      settings,
+      mixpanel
+    );
   });
 
   it('does not track all screens', () => {
@@ -61,10 +73,16 @@ describe('#screen', () => {
 
   it('tracks named pages', () => {
     settings.trackNamedPages = true;
+    let eventName = `Viewed ${payload.name} Screen`;
 
     screen(payload, mixpanel, settings);
 
-    expect(mixpanelTack).toBeCalledTimes(1);
+    expect(mixpanelTack).toBeCalledWith(
+      eventName,
+      payload.properties,
+      settings,
+      mixpanel
+    );
   });
 
   it('does not track named pages', () => {
@@ -78,10 +96,16 @@ describe('#screen', () => {
   it('tracks categorized pages', () => {
     payload.properties.category = 'e-commerce';
     settings.trackCategorizedPages = true;
+    let eventName = `Viewed ${payload.properties.category} Screen`;
 
     screen(payload, mixpanel, settings);
 
-    expect(mixpanelTack).toBeCalledTimes(1);
+    expect(mixpanelTack).toBeCalledWith(
+      eventName,
+      payload.properties,
+      settings,
+      mixpanel
+    );
   });
 
   it('does not track categorized pages', () => {

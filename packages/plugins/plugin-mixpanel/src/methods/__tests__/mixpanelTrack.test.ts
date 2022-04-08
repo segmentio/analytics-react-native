@@ -3,7 +3,7 @@ import type {
   SegmentMixpanelSettings,
   JsonMap,
 } from '@segment/analytics-react-native';
-import { sampleIntegrationSettings } from '../__mocks__/__helpers__/constants';
+import { sampleIntegrationSettings } from './__helpers__/constants';
 import { Mixpanel } from '../__mocks__/mixpanel-react-native';
 
 describe('#mixpanelTrack', () => {

@@ -2,7 +2,7 @@ import { MixpanelPlugin, EU_SERVER } from '../../MixpanelPlugin';
 import { SegmentClient } from '../../../../../core/src/analytics';
 import { MockSegmentStore } from '../../../../../core/src/__tests__/__helpers__/mockSegmentStore';
 import { getMockLogger } from '../../../../../core/src/__tests__/__helpers__/mockLogger';
-import { sampleIntegrationSettings } from '../__mocks__/__helpers__/constants';
+import { sampleIntegrationSettings } from './__helpers__/constants';
 import { UpdateType } from '../../../../../core/src/types';
 import { initMock, setServerMock } from '../__mocks__/mixpanel-react-native';
 

@@ -27,7 +27,7 @@ export default (
 
     callMixpanelTrack(eventName, properties);
   } else if (settings.trackAllPages === true) {
-    let eventName = ` Viewed ${event.name} Screen`;
+    let eventName = `Viewed ${event.name} Screen`;
     let properties = event.properties;
 
     callMixpanelTrack(eventName, properties);
