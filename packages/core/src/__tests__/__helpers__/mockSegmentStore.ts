@@ -12,7 +12,6 @@ import { createCallbackManager } from './utils';
 
 type Data = {
   isReady: boolean;
-  events: SegmentEvent[];
   context?: DeepPartial<Context>;
   settings: SegmentAPIIntegrations;
   userInfo: UserInfoState;
@@ -21,7 +20,6 @@ type Data = {
 
 const INITIAL_VALUES: Data = {
   isReady: true,
-  events: [],
   context: undefined,
   settings: {
     [SEGMENT_DESTINATION_KEY]: {},
@@ -36,6 +34,34 @@ const INITIAL_VALUES: Data = {
     url: '',
   },
 };
+
+export class MockEventStore {
+  private initialData: SegmentEvent[] = [];
+  private events: SegmentEvent[] = [];
+
+  private callbackManager = createCallbackManager<{ events: SegmentEvent[] }>();
+
+  constructor(initialData?: SegmentEvent[]) {
+    this.events = [...(initialData ?? [])];
+    this.initialData = JSON.parse(JSON.stringify(initialData ?? []));
+  }
+
+  reset = () => {
+    this.events = JSON.parse(JSON.stringify(this.initialData));
+  };
+
+  getState = () => this.events;
+
+  subscribe = (callback: (value: { events: SegmentEvent[] }) => void) =>
+    this.callbackManager.register(callback);
+
+  dispatch = (
+    callback: (value: { events: SegmentEvent[] }) => { events: SegmentEvent[] }
+  ) => {
+    this.events = callback({ events: this.events }).events;
+    this.callbackManager.run({ events: this.events });
+  };
+}
 
 export class MockSegmentStore implements Storage {
   private data: Data;
@@ -55,7 +81,6 @@ export class MockSegmentStore implements Storage {
   private callbacks = {
     context: createCallbackManager<DeepPartial<Context> | undefined>(),
     settings: createCallbackManager<SegmentAPIIntegrations>(),
-    events: createCallbackManager<SegmentEvent[]>(),
     userInfo: createCallbackManager<UserInfoState>(),
     deepLinkData: createCallbackManager<DeepLinkData>(),
   };
@@ -94,25 +119,6 @@ export class MockSegmentStore implements Storage {
     add: (key: string, value: IntegrationSettings) => {
       this.data.settings[key] = value;
       this.callbacks.settings.run(this.data.settings);
-    },
-  };
-
-  readonly events = {
-    get: () => this.data.events,
-    onChange: (callback: (value: SegmentEvent[]) => void) =>
-      this.callbacks.events.register(callback),
-    add: (event: SegmentEvent | SegmentEvent[]) => {
-      const eventsToAdd = Array.isArray(event) ? event : [event];
-      this.data.events.push(...eventsToAdd);
-      this.callbacks.events.run(this.data.events);
-    },
-    remove: (event: SegmentEvent | SegmentEvent[]) => {
-      const eventsToRemove = Array.isArray(event) ? event : [event];
-      const setToRemove = new Set(eventsToRemove);
-      this.data.events = this.data.events.filter(
-        (callback) => !setToRemove.has(callback)
-      );
-      this.callbacks.events.run(this.data.events);
     },
   };
 

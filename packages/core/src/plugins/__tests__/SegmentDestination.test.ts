@@ -218,14 +218,23 @@ describe('SegmentDestination', () => {
       { messageId: 'message-4' },
     ] as SegmentEvent[];
 
-    plugin.analytics = new SegmentClient({
+    const analytics = new SegmentClient({
       ...clientArgs,
       store: new MockSegmentStore({
-        events,
+        settings: {
+          [SEGMENT_DESTINATION_KEY]: {},
+        },
       }),
     });
 
-    const sendEventsSpy = jest.spyOn(api, 'sendEvents').mockResolvedValue();
+    plugin.configure(analytics);
+
+    jest
+      // @ts-ignore
+      .spyOn(plugin.queuePlugin.queueStore!, 'getState')
+      .mockReturnValue({ events });
+
+    const sendEventsSpy = jest.spyOn(api, 'uploadEvents').mockResolvedValue();
 
     await plugin.flush();
 

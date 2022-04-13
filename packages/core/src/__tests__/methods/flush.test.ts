@@ -1,6 +1,6 @@
 import { SegmentClient } from '../../analytics';
 import { getMockLogger } from '../__helpers__/mockLogger';
-import { PluginType, SegmentEvent } from '../../types';
+import { PluginType } from '../../types';
 import { getMockTimeline } from '../__helpers__/mockTimeline';
 import type { DestinationPlugin } from '../../plugin';
 import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
@@ -9,32 +9,24 @@ jest.mock('react-native');
 jest.mock('../../uuid');
 
 describe('methods #flush', () => {
-  const store = new MockSegmentStore({
-    events: [
-      { messageId: 'message-1' },
-      { messageId: 'message-2' },
-      { messageId: 'message-3' },
-      { messageId: 'message-4' },
-    ] as SegmentEvent[],
-  });
+  const store = new MockSegmentStore();
 
   const clientArgs = {
     config: {
       writeKey: '123-456',
+      autoAddSegmentDestination: false,
+      trackAppLifecycleEvents: false,
     },
     logger: getMockLogger(),
     store: store,
   };
-  beforeEach(() => {
-    jest.useFakeTimers();
-  });
 
   afterEach(() => {
     store.reset();
     jest.clearAllMocks();
   });
 
-  it('does not send any events when the client is destroyed', async () => {
+  it('does not flush plugins when the client is destroyed', async () => {
     const client = new SegmentClient(clientArgs);
 
     // @ts-ignore
@@ -48,28 +40,7 @@ describe('methods #flush', () => {
     expect(mockDestinationPlugin.flush).not.toHaveBeenCalled();
   });
 
-  it('does not dispatch any actions when there are no events to be sent', async () => {
-    const client = new SegmentClient({
-      ...clientArgs,
-      store: new MockSegmentStore({ events: [] }),
-    });
-
-    // @ts-ignore
-    client.timeline = getMockTimeline();
-
-    await client.flush();
-
-    const destinations = client.getPlugins(PluginType.destination);
-    const mockDestinationPlugin = destinations[0] as DestinationPlugin;
-    expect(mockDestinationPlugin.flush).not.toHaveBeenCalled();
-  });
-
-  it('sends the events correctly', async () => {
-    const events = [
-      { messageId: 'message-1' },
-      { messageId: 'message-2' },
-    ] as SegmentEvent[];
-
+  it('calls flush on the plugins correctly', async () => {
     const client = new SegmentClient({
       ...clientArgs,
       store: new MockSegmentStore({
@@ -79,7 +50,6 @@ describe('methods #flush', () => {
             name: 'Mary',
           },
         },
-        events: events,
       }),
     });
     // @ts-ignore
@@ -91,8 +61,6 @@ describe('methods #flush', () => {
     await client.flush();
 
     expect(mockDestinationPlugin.flush).toHaveBeenCalledTimes(1);
-    expect(client.events.get()).toHaveLength(2);
-    expect(client.events.get()).toEqual(events);
   });
 
   // it('handles errors in posting an event', async () => {

@@ -1,9 +1,10 @@
 import { DestinationPlugin } from '../plugin';
 import { PluginType, SegmentEvent } from '../types';
 import { chunk } from '../util';
-import { sendEvents } from '../api';
+import { uploadEvents } from '../api';
 import type { SegmentClient } from '../analytics';
 import { DestinationMetadataEnrichment } from './DestinationMetadataEnrichment';
+import { QueueFlushingPlugin } from './QueueFlushingPlugin';
 
 const MAX_EVENTS_PER_BATCH = 100;
 export const SEGMENT_DESTINATION_KEY = 'Segment.io';
@@ -13,23 +14,11 @@ export class SegmentDestination extends DestinationPlugin {
 
   key = SEGMENT_DESTINATION_KEY;
 
-  configure(analytics: SegmentClient): void {
-    super.configure(analytics);
-
-    // Enrich events with the Destination metadata
-    this.add(new DestinationMetadataEnrichment(SEGMENT_DESTINATION_KEY));
-  }
-
-  execute(event: SegmentEvent): SegmentEvent | undefined {
-    const enrichedEvent = super.execute(event);
-    if (enrichedEvent !== undefined) {
-      this.analytics?.queueEvent(enrichedEvent);
+  private sendEvents = async (events: SegmentEvent[]): Promise<void> => {
+    if (events.length === 0) {
+      return Promise.resolve();
     }
-    return enrichedEvent;
-  }
 
-  async flush() {
-    const events = this.analytics?.events.get() ?? [];
     const chunkedEvents: SegmentEvent[][] = chunk(
       events,
       this.analytics?.getConfig().maxBatchSize ?? MAX_EVENTS_PER_BATCH
@@ -41,7 +30,7 @@ export class SegmentDestination extends DestinationPlugin {
     await Promise.all(
       chunkedEvents.map(async (batch: SegmentEvent[]) => {
         try {
-          await sendEvents({
+          await uploadEvents({
             config: this.analytics?.getConfig()!,
             events: batch,
           });
@@ -50,7 +39,7 @@ export class SegmentDestination extends DestinationPlugin {
           console.warn(e);
           numFailedEvents += batch.length;
         } finally {
-          this.analytics?.removeEvents(sentEvents);
+          this.queuePlugin.dequeue(sentEvents);
         }
       })
     );
@@ -64,5 +53,27 @@ export class SegmentDestination extends DestinationPlugin {
     if (numFailedEvents) {
       console.error(`Failed to send ${numFailedEvents} events.`);
     }
+
+    return Promise.resolve();
+  };
+
+  private readonly queuePlugin = new QueueFlushingPlugin(this.sendEvents);
+
+  configure(analytics: SegmentClient): void {
+    super.configure(analytics);
+
+    // Enrich events with the Destination metadata
+    this.add(new DestinationMetadataEnrichment(SEGMENT_DESTINATION_KEY));
+    this.add(this.queuePlugin);
+  }
+
+  execute(event: SegmentEvent): SegmentEvent | undefined {
+    // Execute the internal timeline here, the queue plugin will pick up the event and add it to the queue automatically
+    const enrichedEvent = super.execute(event);
+    return enrichedEvent;
+  }
+
+  async flush() {
+    return this.queuePlugin.flush();
   }
 }

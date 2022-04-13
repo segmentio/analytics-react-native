@@ -6,7 +6,7 @@ import {
   TrackEventType,
   UserTraits,
 } from '../types';
-import { sendEvents } from '../api';
+import { uploadEvents } from '../api';
 import * as context from '../context';
 import { batchApi } from '../constants';
 
@@ -58,7 +58,7 @@ describe('#sendEvents', () => {
       ...additionalEventProperties,
     };
 
-    await sendEvents({
+    await uploadEvents({
       config,
       events: [event],
     });

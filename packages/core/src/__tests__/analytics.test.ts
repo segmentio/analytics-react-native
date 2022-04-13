@@ -1,12 +1,12 @@
 import type { AppStateStatus } from 'react-native';
 import { AppState } from 'react-native';
-import { EventType, IdentifyEventType } from '..';
 import { SegmentClient } from '../analytics';
 import { getMockLogger } from './__helpers__/mockLogger';
 import { MockSegmentStore } from './__helpers__/mockSegmentStore';
 
 jest.mock('react-native');
 jest.mock('../uuid');
+jest.mock('../api');
 
 describe('SegmentClient', () => {
   const store = new MockSegmentStore();
@@ -144,71 +144,5 @@ describe('SegmentClient', () => {
         traits: undefined,
       });
     });
-  });
-});
-
-describe('SegmentClient onUpdateStore', () => {
-  const store = new MockSegmentStore();
-  const clientArgs = {
-    config: {
-      writeKey: 'SEGMENT_KEY',
-      flushAt: 10,
-      trackAppLifecycleEvents: true,
-    },
-    logger: getMockLogger(),
-    store: store,
-  };
-
-  let client: SegmentClient;
-
-  const sampleEvent: IdentifyEventType = {
-    userId: 'user-123',
-    anonymousId: 'eWpqvL-EHSHLWoiwagN-T',
-    type: EventType.IdentifyEvent,
-    integrations: {},
-    timestamp: '2000-01-01T00:00:00.000Z',
-    traits: {
-      foo: 'bar',
-    },
-    messageId: 'iDMkR2-I7c2_LCsPPlvwH',
-  };
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    store.reset();
-  });
-
-  afterEach(() => {
-    client.cleanup();
-  });
-
-  /**
-   * Creates a client wired up with store subscriptions and flush mocks for testing automatic flushes
-   */
-  const setupClient = async (flushAt: number): Promise<SegmentClient> => {
-    const args = {
-      ...clientArgs,
-      config: {
-        ...clientArgs.config,
-        flushAt,
-      },
-    };
-    const segmentClient = new SegmentClient(args);
-    await segmentClient.init();
-    // It is important to setup the flush spy before setting up the subscriptions so that it tracks the calls in the closure
-    jest.spyOn(segmentClient, 'flush').mockResolvedValueOnce();
-    return segmentClient;
-  };
-
-  it('calls flush when there are unsent events', async () => {
-    client = await setupClient(1);
-    store.events.add(sampleEvent);
-    expect(client.flush).toHaveBeenCalledTimes(1);
-  });
-
-  it('does not flush when number of events does not exceed the flush threshold', async () => {
-    client = await setupClient(5);
-    store.events.add(sampleEvent);
-    expect(client.flush).not.toHaveBeenCalled();
   });
 });

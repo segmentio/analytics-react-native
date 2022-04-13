@@ -45,7 +45,7 @@
     "detox": "^19.6.0",
     "eslint": "8.2.0",
     "express": "^4.17.1",
-    "jest": "^27.3.1",
+    "jest": "^27.5.1",
     "jest-circus": "^27.3.1",
     "metro-react-native-babel-preset": "^0.66.2",
     "react-native-codegen": "^0.0.7",

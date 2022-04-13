@@ -2,7 +2,7 @@ import type { Config, SegmentEvent } from './types';
 import { Base64 } from 'js-base64';
 import { batchApi } from './constants';
 
-export const sendEvents = async ({
+export const uploadEvents = async ({
   config,
   events,
 }: {

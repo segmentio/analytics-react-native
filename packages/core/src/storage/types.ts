@@ -1,5 +1,4 @@
 import type { Unsubscribe, Persistor } from '@segment/sovran-react-native';
-import type { SegmentEvent } from '..';
 import type {
   Context,
   DeepPartial,
@@ -57,9 +56,6 @@ export interface Storage {
   readonly settings: Watchable<SegmentAPIIntegrations | undefined> &
     Settable<SegmentAPIIntegrations> &
     Dictionary<string, IntegrationSettings>;
-
-  readonly events: Watchable<SegmentEvent[]> &
-    Queue<SegmentEvent | SegmentEvent[]>;
 
   readonly userInfo: Watchable<UserInfoState> & Settable<UserInfoState>;
 
