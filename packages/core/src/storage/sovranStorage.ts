@@ -195,6 +195,9 @@ export class SovranStorage implements Storage {
     remove: (event: SegmentEvent | SegmentEvent[]) => {
       this.eventsStore.dispatch((state) => {
         const eventsToRemove = Array.isArray(event) ? event : [event];
+        if (eventsToRemove.length === 0 || state.events.length === 0) {
+          return state;
+        }
         const setToRemove = new Set(eventsToRemove);
         const filteredEvents = state.events.filter((e) => !setToRemove.has(e));
         return { events: filteredEvents };
