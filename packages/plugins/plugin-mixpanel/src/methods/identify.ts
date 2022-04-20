@@ -2,8 +2,8 @@ import type { Mixpanel } from 'mixpanel-react-native';
 import {
   IdentifyEventType,
   generateMapTransform,
-  SegmentMixpanelSettings,
 } from '@segment/analytics-react-native';
+import type { SegmentMixpanelSettings } from '../types';
 
 const traitMap: { [key: string]: string } = {
   firstName: '$first_name',

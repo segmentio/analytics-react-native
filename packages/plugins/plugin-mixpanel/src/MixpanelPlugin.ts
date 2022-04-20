@@ -5,12 +5,12 @@ import {
   ScreenEventType,
   SegmentAPISettings,
   UpdateType,
-  SegmentMixpanelSettings,
   IdentifyEventType,
   GroupEventType,
   JsonMap,
   AliasEventType,
 } from '@segment/analytics-react-native';
+import type { SegmentMixpanelSettings } from './types';
 import { Mixpanel } from 'mixpanel-react-native';
 import identify from './methods/identify';
 import screen from './methods/screen';
@@ -24,7 +24,7 @@ export class MixpanelPlugin extends DestinationPlugin {
   key = 'Mixpanel';
   trackScreens = false;
   private mixpanel: Mixpanel | undefined;
-  private settings: SegmentMixpanelSettings | undefined = undefined;
+  private settings: SegmentMixpanelSettings | undefined;
 
   update(settings: SegmentAPISettings, _: UpdateType) {
     const mixpanelSettings = settings.integrations[

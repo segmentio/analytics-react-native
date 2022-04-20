@@ -1,8 +1,6 @@
 import screen from '../screen';
-import type {
-  SegmentMixpanelSettings,
-  ScreenEventType,
-} from '@segment/analytics-react-native';
+import type { ScreenEventType } from '@segment/analytics-react-native';
+import type { SegmentMixpanelSettings } from '../../types';
 import { sampleIntegrationSettings } from './__helpers__/constants';
 import { Mixpanel } from '../__mocks__/mixpanel-react-native';
 import mixpanelTack from '../mixpanelTrack';

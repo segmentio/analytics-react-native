@@ -1,9 +1,6 @@
 import type { Mixpanel } from 'mixpanel-react-native';
-import type {
-  ScreenEventType,
-  SegmentMixpanelSettings,
-  JsonMap,
-} from '@segment/analytics-react-native';
+import type { ScreenEventType, JsonMap } from '@segment/analytics-react-native';
+import type { SegmentMixpanelSettings } from '../types';
 
 import mixpanelTrack from './mixpanelTrack';
 

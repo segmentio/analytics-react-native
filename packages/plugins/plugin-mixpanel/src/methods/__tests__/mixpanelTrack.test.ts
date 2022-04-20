@@ -1,8 +1,6 @@
 import mixpanelTrack from '../mixpanelTrack';
-import type {
-  SegmentMixpanelSettings,
-  JsonMap,
-} from '@segment/analytics-react-native';
+import type { JsonMap } from '@segment/analytics-react-native';
+import type { SegmentMixpanelSettings } from '../../types';
 import { sampleIntegrationSettings } from './__helpers__/constants';
 import { Mixpanel } from '../__mocks__/mixpanel-react-native';
 
