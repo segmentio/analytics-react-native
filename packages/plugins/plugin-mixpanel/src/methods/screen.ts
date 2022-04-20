@@ -15,11 +15,11 @@ export default (
   const callMixpanelTrack = (eventName: string, properties: JsonMap) => {
     mixpanelTrack(eventName, properties, settings, mixpanel);
   };
+  const properties = event.properties;
 
   if (settings.consolidatedPageCalls === true) {
     let eventName = 'Loaded a Screen';
     let name = event.name;
-    let properties = event.properties;
 
     if (name !== undefined) {
       properties[name] = name;
@@ -28,26 +28,19 @@ export default (
     callMixpanelTrack(eventName, properties);
   } else if (settings.trackAllPages === true) {
     let eventName = `Viewed ${event.name} Screen`;
-    let properties = event.properties;
 
     callMixpanelTrack(eventName, properties);
-  } else if (settings.trackNamedPages === true) {
-    let name = event.name;
+  } else if (settings.trackNamedPages === true && event.name !== undefined) {
+    let eventName = `Viewed ${event.name} Screen`;
 
-    if (name !== undefined) {
-      let eventName = `Viewed ${name} Screen`;
-      let properties = event.properties;
+    callMixpanelTrack(eventName, properties);
+  } else if (
+    settings.trackCategorizedPages === true &&
+    event.properties?.category !== undefined
+  ) {
+    let category = event.properties.category;
+    let eventName = `Viewed ${category} Screen`;
 
-      callMixpanelTrack(eventName, properties);
-    }
-  } else if (settings.trackCategorizedPages === true) {
-    let category = event.properties.category ?? undefined;
-
-    if (category !== undefined) {
-      let eventName = `Viewed ${category} Screen`;
-      let properties = event.properties;
-
-      callMixpanelTrack(eventName, properties);
-    }
+    callMixpanelTrack(eventName, properties);
   }
 };

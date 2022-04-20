@@ -18,7 +18,10 @@ export default (
     return;
   }
 
-  if (settings.propIncrements?.length) {
+  if (
+    settings.propIncrements !== undefined &&
+    settings.propIncrements?.length > 0
+  ) {
     let propIncrements = settings.propIncrements;
 
     for (let propString of propIncrements) {
@@ -33,16 +36,19 @@ export default (
     }
   }
 
-  if (settings.eventIncrements?.length) {
-    let eventIncrements = settings.eventIncrements;
+  if (
+    settings.eventIncrements !== undefined &&
+    settings.eventIncrements.length > 0
+  ) {
+    const eventIncrements = settings.eventIncrements;
 
     for (let eventString of eventIncrements) {
       if (eventString.toLowerCase() === eventName.toLowerCase()) {
-        let property = eventName;
+        const property = eventName;
         mixpanel.getPeople().increment(property, 1);
 
-        let lastEvent = `Last ${property}`;
-        let lastDate = Date();
+        const lastEvent = `Last ${property}`;
+        const lastDate = Date();
         mixpanel.getPeople().set(lastEvent, lastDate);
       }
     }

@@ -84,4 +84,8 @@ export class MixpanelPlugin extends DestinationPlugin {
     }
     return event;
   }
+
+  flush(): void {
+    this.mixpanel?.flush();
+  }
 }
