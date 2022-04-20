@@ -10,6 +10,7 @@ export default async (event: AliasEventType, mixpanel: Mixpanel) => {
   } catch (e) {
     console.log(e);
   }
-
-  mixpanel.alias(newId, distinctId);
+  if (distinctId !== '') {
+    mixpanel.alias(newId, distinctId);
+  }
 };

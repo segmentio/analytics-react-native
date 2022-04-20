@@ -10,12 +10,12 @@ export default (
   const groupId = event.groupId;
   const groupTraits = settings.groupIdentifierTraits;
 
-  if (groupId !== null && groupTraits?.length) {
+  if (groupTraits !== undefined) {
     for (let groupTrait of groupTraits) {
       for (let eventTrait in event.traits) {
         if (groupTrait.toLocaleLowerCase() === eventTrait.toLocaleLowerCase()) {
-          let group = event.traits[groupTrait] as string;
-          let traits = event.traits;
+          const group = event.traits[groupTrait] as string;
+          const traits = event.traits;
 
           mixpanel.getGroup(group, groupId).setOnce('properties', traits);
         }

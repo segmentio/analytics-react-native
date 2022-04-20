@@ -25,6 +25,8 @@ export class MixpanelPlugin extends DestinationPlugin {
   trackScreens = false;
   private mixpanel: Mixpanel | undefined;
   private settings: SegmentMixpanelSettings | undefined;
+  private isInitialized = () =>
+    this.mixpanel !== undefined && this.settings !== undefined;
 
   update(settings: SegmentAPISettings, _: UpdateType) {
     const mixpanelSettings = settings.integrations[
@@ -34,13 +36,12 @@ export class MixpanelPlugin extends DestinationPlugin {
     if (mixpanelSettings === undefined || this.mixpanel !== undefined) {
       return;
     }
-    if (mixpanelSettings.token.length > 0) {
-      this.mixpanel = new Mixpanel(mixpanelSettings.token);
-      this.mixpanel.init();
-      this.settings = mixpanelSettings;
-    } else {
+    if (mixpanelSettings.token.length === 0) {
       return;
     }
+    this.mixpanel = new Mixpanel(mixpanelSettings.token);
+    this.mixpanel.init();
+    this.settings = mixpanelSettings;
 
     if (mixpanelSettings.enableEuropeanEndpoint) {
       this.mixpanel?.setServerURL(EU_SERVER);
@@ -48,8 +49,8 @@ export class MixpanelPlugin extends DestinationPlugin {
   }
 
   identify(event: IdentifyEventType) {
-    if (this.mixpanel !== undefined && this.settings !== undefined) {
-      identify(event, this.mixpanel, this.settings);
+    if (this.isInitialized()) {
+      identify(event, this.mixpanel!, this.settings!);
     }
     return event;
   }
@@ -58,22 +59,22 @@ export class MixpanelPlugin extends DestinationPlugin {
     const eventName = event.event;
     const properties = event.properties as JsonMap;
 
-    if (this.mixpanel !== undefined && this.settings !== undefined) {
-      mixpanelTrack(eventName, properties, this.settings, this.mixpanel);
+    if (this.isInitialized()) {
+      mixpanelTrack(eventName, properties, this.settings!, this.mixpanel!);
     }
     return event;
   }
 
   screen(event: ScreenEventType) {
-    if (this.mixpanel !== undefined && this.settings !== undefined) {
-      screen(event, this.mixpanel, this.settings);
+    if (this.isInitialized()) {
+      screen(event, this.mixpanel!, this.settings!);
     }
     return event;
   }
 
   group(event: GroupEventType) {
-    if (this.mixpanel !== undefined && this.settings !== undefined) {
-      group(event, this.mixpanel, this.settings);
+    if (this.isInitialized()) {
+      group(event, this.mixpanel!, this.settings!);
     }
     return event;
   }
@@ -86,6 +87,8 @@ export class MixpanelPlugin extends DestinationPlugin {
   }
 
   flush(): void {
-    this.mixpanel?.flush();
+    if (this.isInitialized()) {
+      this.mixpanel?.flush();
+    }
   }
 }

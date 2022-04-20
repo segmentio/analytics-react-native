@@ -52,7 +52,7 @@ export default (
     }
   }
 
-  if (properties.revenue) {
+  if (properties.revenue !== undefined) {
     let revenue = properties.revenue as number;
 
     mixpanel.getPeople().trackCharge(revenue, properties);

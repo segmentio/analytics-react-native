@@ -38,7 +38,10 @@ export default (
     }
   }
 
-  if (settings.superProperties?.length) {
+  if (
+    settings.superProperties !== undefined &&
+    settings.superProperties.length
+  ) {
     let superProperties = settings.superProperties;
     let superPropertyTraits: { [key: string]: any } = {};
 
@@ -46,11 +49,15 @@ export default (
       superPropertyTraits[superProperty] = mixpanelTraits[superProperty];
     }
 
-    let mappedSuperProperties = mapTransform(superPropertyTraits);
+    const mappedSuperProperties = mapTransform(superPropertyTraits);
     mixpanel.registerSuperProperties(mappedSuperProperties);
   }
 
-  if (settings.people === true && settings.peopleProperties?.length) {
+  if (
+    settings.people === true &&
+    settings.peopleProperties !== undefined &&
+    settings.peopleProperties.length
+  ) {
     let peopleProperties = settings.peopleProperties;
     let peoplePropertyTraits: { [key: string]: any } = {};
 
@@ -58,7 +65,7 @@ export default (
       peoplePropertyTraits[peopleProperty] = event.traits[peopleProperty];
     }
 
-    let mappedPeopleProperties = mapTransform(peoplePropertyTraits);
+    const mappedPeopleProperties = mapTransform(peoplePropertyTraits);
     mixpanel.getPeople().set(mappedPeopleProperties);
   }
 };
