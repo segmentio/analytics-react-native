@@ -16,7 +16,7 @@ export class AdjustPlugin extends DestinationPlugin {
   type = PluginType.destination;
   key = 'Adjust';
 
-  private adjust: AdjustConfig | undefined = undefined;
+  private adjust: AdjustConfig | undefined;
   private settings: SegmentAdjustSettings | null = null;
 
   update(settings: SegmentAPISettings, _: UpdateType) {
