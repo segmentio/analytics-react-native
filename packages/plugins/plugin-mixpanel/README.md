@@ -1,4 +1,4 @@
-# @segment/analytics-react-native-plugin-facebook-app-events
+# @segment/analytics-react-native-plugin-mixpanel
 
 `DestinationPlugin` for [Mixpanel](https://https://mixpanel.com/). Wraps [`mixpanel-react-native`](https://github.com/mixpanel/mixpanel-react-native).
 
