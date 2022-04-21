@@ -911,7 +911,7 @@
     "@babel/helper-create-regexp-features-plugin" "^7.16.7"
     "@babel/helper-plugin-utils" "^7.16.7"
 
-"@babel/preset-env@^7.12.11":
+"@babel/preset-env@^7.12.11", "@babel/preset-env@^7.16.11":
   version "7.16.11"
   resolved "https://registry.yarnpkg.com/@babel/preset-env/-/preset-env-7.16.11.tgz#5dd88fd885fae36f88fd7c8342475c9f0abe2982"
   integrity sha512-qcmWG8R7ZW6WBRPZK//y+E3Cli151B20W1Rv7ln27vuPaXU/8TKms6jFdiJtF7UDTxcrb7mZd88tAeK9LjdT8g==
@@ -7337,6 +7337,11 @@ mixme@^0.5.1:
   version "0.5.4"
   resolved "https://registry.yarnpkg.com/mixme/-/mixme-0.5.4.tgz#8cb3bd0cd32a513c161bf1ca99d143f0bcf2eff3"
   integrity sha512-3KYa4m4Vlqx98GPdOHghxSdNtTvcP8E0kkaJ5Dlh+h2DRzF7zpuVVcA8B0QpKd11YJeP9QQ7ASkKzOeu195Wzw==
+
+mixpanel-react-native@^1.3.9:
+  version "1.3.10"
+  resolved "https://registry.yarnpkg.com/mixpanel-react-native/-/mixpanel-react-native-1.3.10.tgz#fde0df0ba7600b1e47f2edfb4ddd9ca6e6577b8d"
+  integrity sha512-u+oVG46FgHA2GIKonOi+XQ1bRHbznlkRMKuMCAVra4/u3w/qo9cxmiqcOhDAP3RbJUDkKlNDREkC7YOh4uDKUg==
 
 mkdirp@^0.5.1:
   version "0.5.5"
