@@ -1,9 +1,15 @@
 import { DestinationPlugin, UtilityPlugin } from '../plugin';
 import { PluginType, SegmentEvent } from '../types';
-import { SEGMENT_DESTINATION_KEY } from './SegmentDestination';
 
 export class DestinationMetadataEnrichment extends UtilityPlugin {
   type = PluginType.enrichment;
+
+  private destinationKey: string;
+
+  constructor(destinationKey: string) {
+    super();
+    this.destinationKey = destinationKey;
+  }
 
   execute(event: SegmentEvent): SegmentEvent {
     const pluginSettings = this.analytics?.settings.get();
@@ -19,7 +25,7 @@ export class DestinationMetadataEnrichment extends UtilityPlugin {
     const bundled: string[] = [];
 
     for (const key of destinations) {
-      if (key === SEGMENT_DESTINATION_KEY) {
+      if (key === this.destinationKey) {
         continue;
       }
 
@@ -30,7 +36,7 @@ export class DestinationMetadataEnrichment extends UtilityPlugin {
 
     const unbundled: string[] = [];
     const segmentInfo =
-      (pluginSettings[SEGMENT_DESTINATION_KEY] as Record<string, any>) ?? {};
+      (pluginSettings[this.destinationKey] as Record<string, any>) ?? {};
     const unbundledIntegrations: string[] =
       segmentInfo.unbundledIntegrations ?? [];
 
