@@ -1,4 +1,5 @@
 import type { Mixpanel } from 'mixpanel-react-native';
+//@ts-ignore
 import type { JsonMap } from '@segment/analytics-react-native';
 import type { SegmentMixpanelSettings } from '../types';
 

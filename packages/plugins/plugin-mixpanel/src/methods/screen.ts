@@ -2,15 +2,15 @@ import type { Mixpanel } from 'mixpanel-react-native';
 import type { ScreenEventType, JsonMap } from '@segment/analytics-react-native';
 import type { SegmentMixpanelSettings } from '../types';
 
-import mixpanelTrack from './mixpanelTrack';
+import track from './track';
 
 export default (
   event: ScreenEventType,
   mixpanel: Mixpanel,
   settings: SegmentMixpanelSettings
 ) => {
-  const callMixpanelTrack = (eventName: string, properties: JsonMap) => {
-    mixpanelTrack(eventName, properties, settings, mixpanel);
+  const callTrack = (eventName: string, properties: JsonMap) => {
+    track(eventName, properties, settings, mixpanel);
   };
   const properties = event.properties;
 
@@ -22,15 +22,15 @@ export default (
       properties[name] = name;
     }
 
-    callMixpanelTrack(eventName, properties);
+    callTrack(eventName, properties);
   } else if (settings.trackAllPages === true) {
     let eventName = `Viewed ${event.name} Screen`;
 
-    callMixpanelTrack(eventName, properties);
+    callTrack(eventName, properties);
   } else if (settings.trackNamedPages === true && event.name !== undefined) {
     let eventName = `Viewed ${event.name} Screen`;
 
-    callMixpanelTrack(eventName, properties);
+    callTrack(eventName, properties);
   } else if (
     settings.trackCategorizedPages === true &&
     event.properties?.category !== undefined
@@ -38,6 +38,6 @@ export default (
     let category = event.properties.category;
     let eventName = `Viewed ${category} Screen`;
 
-    callMixpanelTrack(eventName, properties);
+    callTrack(eventName, properties);
   }
 };

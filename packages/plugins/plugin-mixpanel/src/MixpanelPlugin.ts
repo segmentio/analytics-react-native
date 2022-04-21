@@ -16,7 +16,7 @@ import identify from './methods/identify';
 import screen from './methods/screen';
 import group from './methods/group';
 import alias from './methods/alias';
-import mixpanelTrack from './methods/mixpanelTrack';
+import track from './methods/track';
 
 export const EU_SERVER = 'api.eu.mixpanel.com';
 export class MixpanelPlugin extends DestinationPlugin {
@@ -60,7 +60,7 @@ export class MixpanelPlugin extends DestinationPlugin {
     const properties = event.properties as JsonMap;
 
     if (this.isInitialized()) {
-      mixpanelTrack(eventName, properties, this.settings!, this.mixpanel!);
+      track(eventName, properties, this.settings!, this.mixpanel!);
     }
     return event;
   }
@@ -81,7 +81,7 @@ export class MixpanelPlugin extends DestinationPlugin {
 
   alias(event: AliasEventType) {
     if (this.mixpanel !== undefined) {
-      alias(event, this.mixpanel);
+      alias(event, this.mixpanel, this.analytics!);
     }
     return event;
   }

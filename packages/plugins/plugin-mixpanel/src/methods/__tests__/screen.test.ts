@@ -3,9 +3,9 @@ import type { ScreenEventType } from '@segment/analytics-react-native';
 import type { SegmentMixpanelSettings } from '../../types';
 import { sampleIntegrationSettings } from './__helpers__/constants';
 import { Mixpanel } from '../__mocks__/mixpanel-react-native';
-import mixpanelTack from '../mixpanelTrack';
+import track from '../track';
 
-jest.mock('../mixpanelTrack.ts');
+jest.mock('../track.ts');
 
 describe('#screen', () => {
   let mixpanel: Mixpanel;
@@ -31,7 +31,7 @@ describe('#screen', () => {
 
     screen(payload, mixpanel, settings);
 
-    expect(mixpanelTack).toBeCalledWith(
+    expect(track).toBeCalledWith(
       eventName,
       payload.properties,
       settings,
@@ -44,7 +44,7 @@ describe('#screen', () => {
 
     screen(payload, mixpanel, settings);
 
-    expect(mixpanelTack).not.toHaveBeenCalled();
+    expect(track).not.toHaveBeenCalled();
   });
 
   it('tracks all screens', () => {
@@ -53,7 +53,7 @@ describe('#screen', () => {
 
     screen(payload, mixpanel, settings);
 
-    expect(mixpanelTack).toBeCalledWith(
+    expect(track).toBeCalledWith(
       eventName,
       payload.properties,
       settings,
@@ -66,7 +66,7 @@ describe('#screen', () => {
 
     screen(payload, mixpanel, settings);
 
-    expect(mixpanelTack).not.toHaveBeenCalled();
+    expect(track).not.toHaveBeenCalled();
   });
 
   it('tracks named pages', () => {
@@ -75,7 +75,7 @@ describe('#screen', () => {
 
     screen(payload, mixpanel, settings);
 
-    expect(mixpanelTack).toBeCalledWith(
+    expect(track).toBeCalledWith(
       eventName,
       payload.properties,
       settings,
@@ -88,7 +88,7 @@ describe('#screen', () => {
 
     screen(payload, mixpanel, settings);
 
-    expect(mixpanelTack).not.toHaveBeenCalled();
+    expect(track).not.toHaveBeenCalled();
   });
 
   it('tracks categorized pages', () => {
@@ -98,7 +98,7 @@ describe('#screen', () => {
 
     screen(payload, mixpanel, settings);
 
-    expect(mixpanelTack).toBeCalledWith(
+    expect(track).toBeCalledWith(
       eventName,
       payload.properties,
       settings,
@@ -111,6 +111,6 @@ describe('#screen', () => {
 
     screen(payload, mixpanel, settings);
 
-    expect(mixpanelTack).not.toHaveBeenCalled();
+    expect(track).not.toHaveBeenCalled();
   });
 });
