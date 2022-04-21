@@ -521,7 +521,6 @@ Refer to the following table for example Plugins you can use and alter to meet y
 | Amplitude Sessions      | `@segment/analytics-react-native-plugin-amplitude-session`|
 | AppsFlyer    | `@segment/analytics-react-native-plugin-appsflyer`|
 | Braze      | `@segment/analytics-react-native-plugin-braze`|
-| Consent Manager     | `@segment/analytics-react-native-plugin-adjust`|
 | Facebook App Events    | `@segment/analytics-react-native-plugin-facebook-app-events` |
 | Firebase      | `@segment/analytics-react-native-plugin-firebase`|
 | IDFA     | `@segment/analytics-react-native-plugin-idfa` |
