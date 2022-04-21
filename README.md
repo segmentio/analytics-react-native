@@ -523,7 +523,7 @@ Refer to the following table for example Plugins you can use and alter to meet y
 | Braze      | `@segment/analytics-react-native-plugin-braze`|
 | Consent Manager     | `@segment/analytics-react-native-plugin-adjust`|
 | Facebook App Events    | `@segment/analytics-react-native-plugin-facebook-app-events` |
-| Firebase      | `@segment/analytics-react-native-plugin-consent-firebase`|
+| Firebase      | `@segment/analytics-react-native-plugin-firebase`|
 | IDFA     | `@segment/analytics-react-native-plugin-idfa` |
 | Mixpanel    | `@segment/analytics-react-native-plugin-mixpanel` |
 | [Taplytics](https://github.com/taplytics/segment-react-native-plugin-taplytics)     | `@taplytics/segment-react-native-plugin-taplytics` |
