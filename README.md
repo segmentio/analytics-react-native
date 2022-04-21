@@ -36,7 +36,7 @@ The hassle-free way to add Segment analytics to your React-Native app.
     - [Destination Plugins](#destination-plugins)
     - [Adding Plugins](#adding-plugins)
     - [Writing your own Plugins](#writing-your-own-plugins)
-    - [Example Plugins](#example-plugins)
+    - [Supported Plugins](#supported-plugins)
   - [Contributing](#contributing)
   - [Code of Conduct](#code-of-conduct)
   - [License](#license)
