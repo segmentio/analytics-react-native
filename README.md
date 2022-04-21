@@ -511,9 +511,9 @@ segmentClient.add({ plugin: new Logger() });
 
 As it overrides the `execute()` method, this `Logger` will call `console.log` for every event going through the Timeline.
   
-### Example Plugins 
+### Supported Plugins 
   
-Refer to the following table for example Plugins you can use and alter to meet your tracking needs:
+Refer to the following table for Plugins you can use to meet your tracking needs:
   
 | Plugin      | Package     |
 | ----------- | ----------- |
