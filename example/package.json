@@ -26,7 +26,7 @@
     "@react-navigation/stack": "^6.0.7",
     "@segment/sovran-react-native": "^0.2.6",
     "react": "17.0.2",
-    "react-native": "0.67.3",
+    "react-native": "0.68.1",
     "react-native-bootsplash": "^3.2.4",
     "react-native-gesture-handler": "^2.2.0",
     "react-native-safe-area-context": "^3.3.0",

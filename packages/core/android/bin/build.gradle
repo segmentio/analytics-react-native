@@ -8,7 +8,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:7.1.1'
+    classpath 'com.android.tools.build:gradle:4.0.1'
     // noinspection DifferentKotlinGradleVersion
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
   }
@@ -32,6 +32,8 @@ android {
     minSdkVersion 21
     targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
     compileSdkVersion = getExtOrIntegerDefault('compileSdkVersion')
+    versionCode 1
+    versionName "1.0"
 
   }
 
