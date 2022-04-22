@@ -8,6 +8,7 @@ module.exports = {
     './packages/plugins/plugin-mixpanel/src/methods/__tests__/__helpers__',
   ],
   modulePathIgnorePatterns: ['/lib/'],
+  projects: ['<rootDir>/packages/*'],
   globals: {
     'ts-jest': {
       tsconfig: 'tsconfig.json',

@@ -87,7 +87,7 @@ export class EventPlugin extends Plugin {
     return event;
   }
 
-  flush() {}
+  flush(): void | Promise<void> {}
 
   reset() {}
 }

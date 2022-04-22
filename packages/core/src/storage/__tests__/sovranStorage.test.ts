@@ -1,12 +1,12 @@
 import type { Persistor } from '@segment/sovran-react-native';
 import deepmerge from 'deepmerge';
-import { createCallbackManager } from '../../__tests__/__helpers__/utils';
+import { createCallbackManager as mockCreateCallbackManager } from '../../__tests__/__helpers__/utils';
 import { SovranStorage } from '../sovranStorage';
 
 jest.mock('@segment/sovran-react-native', () => ({
   registerBridgeStore: jest.fn(),
   createStore: <T extends {}>(initialState: T) => {
-    const callbackManager = createCallbackManager<T>();
+    const callbackManager = mockCreateCallbackManager<T>();
 
     let store = {
       ...initialState,
