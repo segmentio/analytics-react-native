@@ -91,4 +91,10 @@ export class MixpanelPlugin extends DestinationPlugin {
       this.mixpanel?.flush();
     }
   }
+
+  reset(): void {
+    if (this.isInitialized()) {
+      this.mixpanel?.reset();
+    }
+  }
 }
