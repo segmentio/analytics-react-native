@@ -87,14 +87,10 @@ export class MixpanelPlugin extends DestinationPlugin {
   }
 
   flush(): void {
-    if (this.isInitialized()) {
-      this.mixpanel?.flush();
-    }
+    this.mixpanel?.flush();
   }
 
   reset(): void {
-    if (this.isInitialized()) {
-      this.mixpanel?.reset();
-    }
+    this.mixpanel?.reset();
   }
 }
