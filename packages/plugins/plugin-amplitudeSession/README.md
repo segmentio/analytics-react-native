@@ -6,12 +6,12 @@
 
 Using NPM:
 ```bash
-npm install --save @segment/analytics-react-native-plugin-amplitude
+npm install --save @segment/analytics-react-native-plugin-amplitude-session
 ```
 
 Using Yarn:
 ```bash
-yarn add @segment/analytics-react-native-plugin-amplitude
+yarn add @segment/analytics-react-native-plugin-amplitude-session
 ```
 
 ## Usage
