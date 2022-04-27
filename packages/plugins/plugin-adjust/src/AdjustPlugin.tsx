@@ -16,8 +16,8 @@ export class AdjustPlugin extends DestinationPlugin {
   type = PluginType.destination;
   key = 'Adjust';
 
-  private adjust: AdjustConfig | undefined;
   private settings: SegmentAdjustSettings | null = null;
+  private registeredCallback: Boolean = false;
 
   update(settings: SegmentAPISettings, _: UpdateType) {
     const adjustSettings = settings.integrations[
@@ -36,7 +36,7 @@ export class AdjustPlugin extends DestinationPlugin {
 
     const adjustConfig = new AdjustConfig(this.settings.appToken, environment);
 
-    if (this.adjust !== undefined) {
+    if (this.registeredCallback === false) {
       adjustConfig.setAttributionCallbackListener((attribution) => {
         let trackPayload = {
           provider: 'Adjust',
@@ -66,6 +66,7 @@ export class AdjustPlugin extends DestinationPlugin {
         adjustConfig.setDelayStart(delayTime);
       }
     }
+    this.registeredCallback = true;
 
     Adjust.create(adjustConfig);
   }
