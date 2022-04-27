@@ -62,7 +62,7 @@ npx pod-install
 
 🚀 `@segment/analytics-react-native 2.0` is compatible with Expo's [Custom Dev Client](https://docs.expo.dev/clients/getting-started/) and [EAS builds](https://docs.expo.dev/build/introduction/) without any additional configuration. Destination Plugins that require native modules may require custom [Expo Config Plugins](https://docs.expo.dev/guides/config-plugins/).
 
-⚠️ `@segment/analytics-react-native 2.0` is not compatible with Expo's managed workflow. 
+⚠️ `@segment/analytics-react-native 2.0` is not compatible with Expo Go. 
 ### Permissions
 
 <details>
