@@ -29,7 +29,7 @@ export class DestinationMetadataEnrichment extends UtilityPlugin {
         continue;
       }
 
-      if (key in pluginSettings) {
+      if (Object.keys(pluginSettings).includes(key)) {
         bundled.push(key);
       }
     }
@@ -41,7 +41,7 @@ export class DestinationMetadataEnrichment extends UtilityPlugin {
       segmentInfo.unbundledIntegrations ?? [];
 
     for (const integration of unbundledIntegrations) {
-      if (!(integration in bundled)) {
+      if (!bundled.includes(integration)) {
         unbundled.push(integration);
       }
     }
