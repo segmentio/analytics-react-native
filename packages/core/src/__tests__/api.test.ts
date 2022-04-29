@@ -63,14 +63,16 @@ describe('#sendEvents', () => {
       events: [event],
     });
 
-    expect(fetch).toHaveBeenCalledWith('https://api.segment.io/v1/batch', {
+    expect(fetch).toHaveBeenCalledWith('https://api.segment.io/v1/b', {
       method: 'POST',
       body: JSON.stringify({
-        batch: [{ ...event, sentAt: '2001-01-01T00:00:00.000Z' }],
+        batch: [event],
+        sentAt: '2001-01-01T00:00:00.000Z',
+        writeKey: 'SEGMENT_KEY',
       }),
       headers: {
         'Authorization': 'Basic U0VHTUVOVF9LRVk6',
-        'Content-Type': 'application/json',
+        'Content-Type': 'text/plain',
       },
     });
   });
