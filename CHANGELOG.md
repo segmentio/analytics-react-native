@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [1.5.2](https://github.com/segmentio/analytics-react-native/compare/v1.5.1...v1.5.2) (2022-05-04)
 
+* remove jcenter, use maven instead ([#525](https://github.com/segmentio/analytics-react-native/issues/525))
+
 
 ### Bug Fixes
 
