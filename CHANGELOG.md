@@ -2,10 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.3](https://github.com/segmentio/analytics-react-native/compare/v1.5.2...v1.5.3) (2022-05-05)
+
+
+### Bug Fixes
+
+* remove jcenter, add maven ([4bcd4ae](https://github.com/segmentio/analytics-react-native/commit/4bcd4ae8303d624134c75886c5e5d32b129bb3ca))
+
 ### [1.5.2](https://github.com/segmentio/analytics-react-native/compare/v1.5.1...v1.5.2) (2022-05-04)
-
-* remove jcenter, use maven instead ([#525](https://github.com/segmentio/analytics-react-native/issues/525))
-
 
 ### Bug Fixes
 
