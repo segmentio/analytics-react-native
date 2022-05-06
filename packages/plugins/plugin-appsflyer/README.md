@@ -25,8 +25,6 @@ Follow the [instructions for adding plugins](https://github.com/segmentio/analyt
 
 In your code where you initialize the analytics client call the `.add(plugin)` method with an `AppsflyerPlugin` instance. 
 
-You can provide [additional options](https://github.com/AppsFlyerSDK/appsflyer-react-native-plugin#--initializing-the-sdk) when constructing the plugin. These will be passed to `appsFlyer.initSdk()`.
-
 ```ts
 // app.js
 
@@ -38,14 +36,7 @@ const segmentClient = createClient({
   writeKey: 'SEGMENT_KEY'
 });
 
-const plugin = new AppsflyerPlugin({
-  devKey: 'K2***********99',
-  isDebug: false,
-  appId: '41*****44',
-  onInstallConversionDataListener: true, //Optional
-  onDeepLinkListener: true, //Optional
-  timeToWaitForATTUserAuthorization: 10 //for iOS 14.5
-})
+const plugin = new AppsflyerPlugin();
 
 segmentClient.add({ plugin });
 ```
