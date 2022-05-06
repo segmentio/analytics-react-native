@@ -17,7 +17,7 @@ export class AdjustPlugin extends DestinationPlugin {
   key = 'Adjust';
 
   private settings: SegmentAdjustSettings | null = null;
-  private hasRegisteredCallback: Boolean = false;
+  private hasRegisteredCallback: boolean = false;
 
   update(settings: SegmentAPISettings, _: UpdateType) {
     const adjustSettings = settings.integrations[
