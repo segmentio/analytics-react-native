@@ -16,14 +16,13 @@ export class AppsflyerPlugin extends DestinationPlugin {
   key = 'AppsFlyer';
 
   private settings: SegmentAppsflyerSettings | null = null;
-  private hasRegisteredInstallCallback: Boolean = false;
-  private hasRegisteredDeepLinkCallback: Boolean = false;
-
-  private hasInitialized: Boolean = false;
+  private hasRegisteredInstallCallback: boolean = false;
+  private hasRegisteredDeepLinkCallback: boolean = false;
+  private hasInitialized: boolean = false;
 
   update(settings: SegmentAPISettings, _: UpdateType) {
     let defaultOpts = {
-      isDebug: true,
+      isDebug: false,
       timeToWaitForATTUserAuthorization: 60,
       onInstallConversionDataListener: true,
     };
@@ -32,7 +31,7 @@ export class AppsflyerPlugin extends DestinationPlugin {
       this.key
     ] as SegmentAppsflyerSettings;
 
-    if (!appsflyerSettings) {
+    if (appsflyerSettings === undefined) {
       return;
     }
     const clientConfig = this.analytics?.getConfig();
@@ -40,36 +39,25 @@ export class AppsflyerPlugin extends DestinationPlugin {
     this.settings = appsflyerSettings;
 
     if (
-      this.settings.trackAttributionData === true &&
-      this.hasRegisteredInstallCallback === false
+      this.settings.trackAttributionData &&
+      !this.hasRegisteredInstallCallback
     ) {
-      this.conversionCallback();
+      this.registerConversionCallback();
       this.hasRegisteredInstallCallback = true;
     }
 
     if (
       clientConfig?.trackDeepLinks === true &&
-      this.hasRegisteredDeepLinkCallback === false
+      !this.hasRegisteredDeepLinkCallback
     ) {
-      this.deepLinkCallback();
+      this.registerDeepLinkCallback();
       this.hasRegisteredDeepLinkCallback = true;
     }
-
-    if (
-      this.hasInitialized === false &&
-      clientConfig?.trackDeepLinks === true
-    ) {
+    if (!this.hasInitialized) {
       appsFlyer.initSdk({
         devKey: this.settings.appsFlyerDevKey,
         appId: this.settings.appleAppID,
-        onDeepLinkListener: true,
-        ...defaultOpts,
-      });
-      this.hasInitialized = true;
-    } else {
-      appsFlyer.initSdk({
-        devKey: this.settings.appsFlyerDevKey,
-        appId: this.settings.appleAppID,
+        onDeepLinkListener: clientConfig?.trackDeepLinks === true,
         ...defaultOpts,
       });
       this.hasInitialized = true;
@@ -86,20 +74,19 @@ export class AppsflyerPlugin extends DestinationPlugin {
     return event;
   }
 
-  conversionCallback = () => {
+  registerConversionCallback = () => {
     appsFlyer.onInstallConversionData((res) => {
-      const isFirstLaunch = JSON.parse(res?.data?.is_first_launch);
-      const status = res?.data?.af_status;
+      const { af_status, media_source, campaign, is_first_launch } = res?.data;
       const properties = {
-        provider: 'Appsflyer',
+        provider: this.key,
         campaign: {
-          source: res?.data?.media_source,
-          name: res?.data?.campaign,
+          source: media_source,
+          name: campaign,
         },
       };
 
-      if (isFirstLaunch === true) {
-        if (status === 'Non-organic') {
+      if (is_first_launch === 'true') {
+        if (af_status === 'Non-organic') {
           this.analytics?.track('Install Attributed', properties);
         } else {
           this.analytics?.track('Organic Install', { provider: 'AppsFlyer' });
@@ -108,14 +95,15 @@ export class AppsflyerPlugin extends DestinationPlugin {
     });
   };
 
-  deepLinkCallback = () => {
+  registerDeepLinkCallback = () => {
     appsFlyer.onAppOpenAttribution((res) => {
       if (res?.status === 'success') {
+        const { campaign, media_source } = res.data;
         const properties = {
-          provider: 'Appsflyer',
+          provider: this.key,
           campaign: {
-            name: res.data.campaign,
-            source: res.data.media_source,
+            name: campaign,
+            source: media_source,
           },
         };
         this.analytics?.track('Deep Link Opened', properties);
