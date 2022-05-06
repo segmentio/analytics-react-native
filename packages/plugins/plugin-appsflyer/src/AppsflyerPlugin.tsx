@@ -74,7 +74,6 @@ export class AppsflyerPlugin extends DestinationPlugin {
       });
       this.hasInitialized = true;
     }
-    console.log('SETTINGS', appsflyerSettings);
   }
 
   identify(event: IdentifyEventType) {
@@ -89,7 +88,6 @@ export class AppsflyerPlugin extends DestinationPlugin {
 
   conversionCallback = () => {
     appsFlyer.onInstallConversionData((res) => {
-      console.log('RESPONSE', res);
       const isFirstLaunch = JSON.parse(res?.data?.is_first_launch);
       const status = res?.data?.af_status;
       const properties = {
