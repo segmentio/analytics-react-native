@@ -26,17 +26,12 @@
       "pre-commit": "yarn lint && yarn typescript && yarn test"
     }
   },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
-  },
   "devDependencies": {
     "@changesets/cli": "^2.16.0",
-    "@commitlint/config-conventional": "^11.0.0",
+    "@commitlint/config-conventional": "^16.2.4",
     "@react-native-community/eslint-config": "^2.0.0",
     "@release-it/conventional-changelog": "^2.0.0",
-    "commitlint": "^11.0.0",
+    "commitlint": "^16.2.4",
     "eslint": "^7.2.0",
     "eslint-config-prettier": "^7.0.0",
     "eslint-plugin-prettier": "^3.1.3",
