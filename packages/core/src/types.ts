@@ -128,11 +128,11 @@ export type Config = {
 export type ClientMethods = {
   screen: (name: string, properties?: JsonMap) => void;
   track: (event: string, properties?: JsonMap) => void;
-  identify: (userId: string, userTraits?: UserTraits) => void;
+  identify: (userId?: string, userTraits?: UserTraits) => void;
   flush: () => Promise<void>;
   group: (groupId: string, groupTraits?: GroupTraits) => void;
   alias: (newUserId: string) => void;
-  reset: () => void;
+  reset: (resetAnonymousId?: boolean) => void;
 };
 
 type ContextApp = {
@@ -152,6 +152,7 @@ export type ContextDevice = {
   adTrackingEnabled?: boolean; // ios only
   advertisingId?: string; // ios only
   trackingStatus?: string;
+  token?: string;
 };
 
 type ContextLibrary = {

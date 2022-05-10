@@ -64,6 +64,6 @@ export const useAnalytics = (): ClientMethods => {
     flush: () => client.flush(),
     group: (...args) => client.group(...args),
     alias: (...args) => client.alias(...args),
-    reset: () => client.reset(),
+    reset: (...args) => client.reset(...args),
   };
 };
