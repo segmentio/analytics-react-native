@@ -99,6 +99,7 @@ export class MockSegmentStore implements Storage {
     set: (value: DeepPartial<Context>) => {
       this.data.context = { ...value };
       this.callbacks.context.run(value);
+      return this.data.context;
     },
   };
 
@@ -110,6 +111,7 @@ export class MockSegmentStore implements Storage {
     set: (value: SegmentAPIIntegrations) => {
       this.data.settings = value;
       this.callbacks.settings.run(value);
+      return this.data.settings;
     },
     add: (key: string, value: IntegrationSettings) => {
       this.data.settings[key] = value;
@@ -143,6 +145,7 @@ export class MockSegmentStore implements Storage {
     set: (value: UserInfoState) => {
       this.data.userInfo = value;
       this.callbacks.userInfo.run(value);
+      return this.data.userInfo;
     },
   };
 
