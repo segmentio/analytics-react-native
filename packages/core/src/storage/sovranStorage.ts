@@ -160,10 +160,11 @@ export class SovranStorage implements Storage {
     get: () => this.contextStore.getState().context,
     onChange: (callback: (value?: DeepPartial<Context>) => void) =>
       this.contextStore.subscribe((store) => callback(store.context)),
-    set: (value: DeepPartial<Context>) => {
-      this.contextStore.dispatch((state) => {
+    set: async (value: DeepPartial<Context>) => {
+      const { context } = await this.contextStore.dispatch((state) => {
         return { context: { ...state.context, ...value } };
       });
+      return context;
     },
   };
   readonly settings = {
@@ -171,10 +172,11 @@ export class SovranStorage implements Storage {
     onChange: (
       callback: (value?: SegmentAPIIntegrations | undefined) => void
     ) => this.settingsStore.subscribe((store) => callback(store.settings)),
-    set: (value: SegmentAPIIntegrations) => {
-      this.settingsStore.dispatch((state) => {
+    set: async (value: SegmentAPIIntegrations) => {
+      const { settings } = await this.settingsStore.dispatch((state) => {
         return { settings: { ...state.settings, ...value } };
       });
+      return settings;
     },
     add: (key: string, value: IntegrationSettings) => {
       this.settingsStore.dispatch((state) => ({
@@ -209,10 +211,11 @@ export class SovranStorage implements Storage {
     get: () => this.userInfoStore.getState().userInfo,
     onChange: (callback: (value: UserInfoState) => void) =>
       this.userInfoStore.subscribe((store) => callback(store.userInfo)),
-    set: (value: UserInfoState) => {
-      this.userInfoStore.dispatch((state) => ({
+    set: async (value: UserInfoState) => {
+      const { userInfo } = await this.userInfoStore.dispatch((state) => ({
         userInfo: { ...state.userInfo, ...value },
       }));
+      return userInfo;
     },
   };
 

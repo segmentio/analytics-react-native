@@ -27,11 +27,14 @@ import {
   SegmentAPIIntegrations,
   SegmentAPISettings,
   SegmentEvent,
+  UpdateType,
   UserInfoState,
   UserTraits,
 } from './types';
 import { getPluginsWithFlush, getPluginsWithReset } from './util';
 import { getUUID } from './uuid';
+
+type OnContextLoadCallback = (type: UpdateType) => void | Promise<void>;
 
 export class SegmentClient {
   // the config parameters for the client - a merge of user provided and default options
@@ -70,6 +73,10 @@ export class SegmentClient {
   private pluginsToAdd: Plugin[] = [];
 
   private isInitialized = false;
+
+  private isContextLoaded = false;
+
+  private onContextLoadedCallback: OnContextLoadCallback | undefined;
 
   get platformPlugins() {
     const plugins: PlatformPlugin[] = [];
@@ -568,8 +575,14 @@ export class SegmentClient {
     const previousContext = this.store.context.get();
 
     // Only overwrite the previous context values to preserve any values that are added by enrichment plugins like IDFA
-    this.store.context.set(deepmerge(previousContext ?? {}, context));
+    await this.store.context.set(deepmerge(previousContext ?? {}, context));
 
+    // Only callback during the intial context load
+    if (this.onContextLoadedCallback !== undefined && !this.isContextLoaded) {
+      this.onContextLoadedCallback(UpdateType.initial);
+    }
+
+    this.isContextLoaded = true;
     if (!this.config.trackAppLifecycleEvents) {
       return;
     }
@@ -668,5 +681,20 @@ export class SegmentClient {
     getPluginsWithReset(this.timeline).forEach((plugin) => plugin.reset());
 
     this.logger.info('Client has been reset');
+  }
+
+  /**
+   * Registers a callback for when the client has loaded the device context. This happens at the startup of the app, but
+   * it is handy for plugins that require context data during configure as it guarantees the context data is available.
+   *
+   * If the context is already loaded it will call the callback immediately.
+   *
+   * @param callback Function to call when context is ready.
+   */
+  onContextLoaded(callback: OnContextLoadCallback) {
+    this.onContextLoadedCallback = callback;
+    if (this.isContextLoaded) {
+      this.onContextLoadedCallback(UpdateType.initial);
+    }
   }
 }
