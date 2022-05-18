@@ -521,14 +521,14 @@ Refer to the following table for Plugins you can use to meet your tracking needs
   
 | Plugin      | Package     |
 | ----------- | ----------- |
-| Adjust      | `@segment/analytics-react-native-plugin-adjust`|
-| Amplitude Sessions      | `@segment/analytics-react-native-plugin-amplitude-session`|
-| AppsFlyer    | `@segment/analytics-react-native-plugin-appsflyer`|
-| Braze      | `@segment/analytics-react-native-plugin-braze`|
-| Facebook App Events    | `@segment/analytics-react-native-plugin-facebook-app-events` |
-| Firebase      | `@segment/analytics-react-native-plugin-firebase`|
-| IDFA     | `@segment/analytics-react-native-plugin-idfa` |
-| Mixpanel    | `@segment/analytics-react-native-plugin-mixpanel` |
+| [Adjust](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-adjust)      | `@segment/analytics-react-native-plugin-adjust`|
+| [Amplitude Sessions](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-amplitudeSession)      | `@segment/analytics-react-native-plugin-amplitude-session`|
+| [AppsFlyer](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-appsflyer)    | `@segment/analytics-react-native-plugin-appsflyer`|
+| [Braze](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-braze)      | `@segment/analytics-react-native-plugin-braze`|
+| [Facebook App Events](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-facebook-app-events)    | `@segment/analytics-react-native-plugin-facebook-app-events` |
+| [Firebase](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-firebase)      | `@segment/analytics-react-native-plugin-firebase`|
+| [IDFA](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-idfa)     | `@segment/analytics-react-native-plugin-idfa` |
+| [Mixpanel](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-mixpanel)    | `@segment/analytics-react-native-plugin-mixpanel` |
 | [Taplytics](https://github.com/taplytics/segment-react-native-plugin-taplytics)     | `@taplytics/segment-react-native-plugin-taplytics` |
 
   

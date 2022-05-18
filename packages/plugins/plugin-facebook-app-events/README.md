@@ -18,6 +18,8 @@ yarn add @segment/analytics-react-native-plugin-facebook-app-events react-native
 
 Run `pod install` after the installation to autolink the Facebook SDK.
 
+Follow the instructions in [Configure projects](https://github.com/thebergamo/react-native-fbsdk-next#3-configure-projects) of React-Native-fbsdk-next to finish the setup of FBSDK.
+
 See [React Native FBSDK Next](https://github.com/thebergamo/react-native-fbsdk-next) for more details of this dependency.
 ## Usage
 
