@@ -3,6 +3,7 @@ import {
   registerBridgeStore,
   Store,
 } from '@segment/sovran-react-native';
+import deepmerge from 'deepmerge';
 import type {
   SegmentAPIIntegrations,
   IntegrationSettings,
@@ -162,7 +163,7 @@ export class SovranStorage implements Storage {
       this.contextStore.subscribe((store) => callback(store.context)),
     set: async (value: DeepPartial<Context>) => {
       const { context } = await this.contextStore.dispatch((state) => {
-        return { context: { ...state.context, ...value } };
+        return { context: deepmerge(state.context, value) };
       });
       return context;
     },

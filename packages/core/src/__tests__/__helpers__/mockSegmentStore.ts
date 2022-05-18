@@ -8,6 +8,7 @@ import type {
   SegmentEvent,
   UserInfoState,
 } from '../../types';
+import { createCallbackManager } from './utils';
 
 type Data = {
   isReady: boolean;
@@ -51,35 +52,12 @@ export class MockSegmentStore implements Storage {
     );
   }
 
-  // Callbacks
-  private createCallbackManager = <V, R = void>() => {
-    type Callback = (value: V) => R;
-    const callbacks: Callback[] = [];
-
-    const deregister = (callback: Callback) => {
-      callbacks.splice(callbacks.indexOf(callback), 1);
-    };
-
-    const register = (callback: Callback) => {
-      callbacks.push(callback);
-      return () => {
-        deregister(callback);
-      };
-    };
-
-    const run = (value: V) => {
-      callbacks.forEach((callback) => callback(value));
-    };
-
-    return { register, deregister, run };
-  };
-
   private callbacks = {
-    context: this.createCallbackManager<DeepPartial<Context> | undefined>(),
-    settings: this.createCallbackManager<SegmentAPIIntegrations>(),
-    events: this.createCallbackManager<SegmentEvent[]>(),
-    userInfo: this.createCallbackManager<UserInfoState>(),
-    deepLinkData: this.createCallbackManager<DeepLinkData>(),
+    context: createCallbackManager<DeepPartial<Context> | undefined>(),
+    settings: createCallbackManager<SegmentAPIIntegrations>(),
+    events: createCallbackManager<SegmentEvent[]>(),
+    userInfo: createCallbackManager<UserInfoState>(),
+    deepLinkData: createCallbackManager<DeepLinkData>(),
   };
 
   readonly isReady = {
