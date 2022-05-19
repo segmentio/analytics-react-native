@@ -47,7 +47,7 @@
     "@segment/analytics-react-native": "*"
   },
   "dependencies": {
-    "react-native-fbsdk-next": "^4.6.0"
+    "react-native-fbsdk-next": "^8.0.5"
   },
   "devDependencies": {
     "@types/jest": "^27.0.3",
