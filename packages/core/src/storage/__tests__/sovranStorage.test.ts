@@ -1,3 +1,4 @@
+import type { Persistor } from '@segment/sovran-react-native';
 import deepmerge from 'deepmerge';
 import { createCallbackManager } from '../../__tests__/__helpers__/utils';
 import { SovranStorage } from '../sovranStorage';
@@ -33,9 +34,8 @@ jest.mock('@segment/sovran-react-native', () => ({
 }));
 
 describe('sovranStorage', () => {
-  it('works', async () => {
+  async function commonAssertions(sovran: SovranStorage) {
     // First test that the constructor works correctly
-    const sovran = new SovranStorage('test');
     expect(sovran.isReady.get()).toBe(false);
 
     // Setup a listener for context changes
@@ -98,5 +98,27 @@ describe('sovranStorage', () => {
     const updatedSettings = await sovran.settings.set(settingsUpdate);
     expect(updatedSettings).toEqual(settingsUpdate);
     expect(sovran.settings.get()).toEqual(settingsUpdate);
+  }
+
+  it('works', async () => {
+    const sovran = new SovranStorage({ storeId: 'test' });
+    await commonAssertions(sovran);
+  });
+
+  it('works with custom Persistor', async () => {
+    const customStorage: any = {};
+    const CustomPersistor: Persistor = {
+      get: async <T>(key: string): Promise<T | undefined> => {
+        return Promise.resolve(customStorage[key] as T);
+      },
+      set: async <T>(key: string, state: T): Promise<void> => {
+        customStorage[key] = state;
+      },
+    };
+    const sovran = new SovranStorage({
+      storeId: 'custom-persistor',
+      storePersistor: CustomPersistor,
+    });
+    await commonAssertions(sovran);
   });
 });
