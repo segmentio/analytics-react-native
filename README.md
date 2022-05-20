@@ -98,17 +98,18 @@ You must pass at least the `writeKey`. Additional configuration options are list
   
 ### Client Options
 
-| Name                       | Default   | Description                                                                                                                          |
-| -------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `writeKey` **(REQUIRED)**  | ''        | Your Segment API key.                                                                                                                |
-| `debug`                    | true\*    | When set to false, it will not generate any logs.                                                                                    |
-| `flushAt`                  | 20        | How many events to accumulate before sending events to the backend.                                                                  |
-| `flushInterval`            | 30        | In seconds, how often to send events to the backend.                                                                                 |
-| `maxBatchSize`             | 1000      | How many events to send to the API at once                                                                                           |
+| Name                       | Default   | Description                                                                                                                                    |
+| -------------------------- | --------- | -----------------------------------------------------------------------------------------------------------------------------------------------|
+| `writeKey` **(REQUIRED)**  | ''        | Your Segment API key.                                                                                                                          |
+| `debug`                    | true\*    | When set to false, it will not generate any logs.                                                                                              |
+| `flushAt`                  | 20        | How many events to accumulate before sending events to the backend.                                                                            |
+| `flushInterval`            | 30        | In seconds, how often to send events to the backend.                                                                                           |
+| `maxBatchSize`             | 1000      | How many events to send to the API at once                                                                                                     |
 | `trackAppLifecycleEvents`  | false     | Enable automatic tracking for [app lifecycle events](https://segment.com/docs/connections/spec/mobile/#lifecycle-events): application installed, opened, updated, backgrounded) |
 | `trackDeepLinks`           | false     | Enable automatic tracking for when the user opens the app via a deep link (Note: Requires additional setup on iOS, [see instructions](#ios-deep-link-tracking-setup))                                                            |
-| `defaultSettings`          | undefined | Settings that will be used if the request to get the settings from Segment fails                                                     |
-| `autoAddSegmentDestination`| true      | Set to false to skip adding the SegmentDestination plugin                                                                            |
+| `defaultSettings`          | undefined | Settings that will be used if the request to get the settings from Segment fails                                                               |
+| `autoAddSegmentDestination`| true      | Set to false to skip adding the SegmentDestination plugin                                                                                      |
+| `storePersistor`           | undefined | A custom persistor for the store that `analytics-react-native` leverages. Must match `Persistor` interface exported from [sovran-react-native](https://github.com/segmentio/sovran-react-native).|
 
 \* The default value of `debug` will be false in production.
 
