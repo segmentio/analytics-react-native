@@ -85,7 +85,7 @@ export class AppsflyerPlugin extends DestinationPlugin {
         },
       };
 
-      if (is_first_launch === 'true') {
+      if (JSON.parse(is_first_launch) === true) {
         if (af_status === 'Non-organic') {
           this.analytics?.track('Install Attributed', properties);
         } else {

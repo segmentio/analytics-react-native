@@ -22,10 +22,10 @@ import {
   Context,
   DeepPartial,
   GroupTraits,
+  IntegrationSettings,
   JsonMap,
   PluginType,
   SegmentAPIIntegrations,
-  SegmentAPISettings,
   SegmentEvent,
   UpdateType,
   UserInfoState,
@@ -351,20 +351,23 @@ export class SegmentClient {
 
   /**
    * Adds a new plugin to the currently loaded set.
-   * @param {{ plugin: Plugin, settings?: SegmentAPISettings }} Plugin to be added. Settings are optional if you want to force a configuration instead of the Segment Cloud received one
+   * @param {{ plugin: Plugin, settings?: IntegrationSettings }} Plugin to be added. Settings are optional if you want to force a configuration instead of the Segment Cloud received one
    */
-  add({
+  add<P extends Plugin>({
     plugin,
     settings,
   }: {
-    plugin: Plugin;
-    settings?: Plugin extends DestinationPlugin ? SegmentAPISettings : never;
+    plugin: P;
+    settings?: P extends DestinationPlugin ? IntegrationSettings : never;
   }) {
     // plugins can either be added immediately or
     // can be cached and added later during the next state update
     // this is to avoid adding plugins before network requests made as part of setup have resolved
     if (settings !== undefined && plugin.type === PluginType.destination) {
-      this.store.settings.add((plugin as DestinationPlugin).key, settings);
+      this.store.settings.add(
+        (plugin as unknown as DestinationPlugin).key,
+        settings
+      );
     }
 
     if (!this.store.isReady.get()) {
