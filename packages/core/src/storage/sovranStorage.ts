@@ -2,6 +2,7 @@ import {
   createStore,
   registerBridgeStore,
   Store,
+  Persistor,
 } from '@segment/sovran-react-native';
 import deepmerge from 'deepmerge';
 import type {
@@ -13,7 +14,11 @@ import type {
   UserInfoState,
 } from '..';
 import { getUUID } from '../uuid';
-import type { Storage, DeepLinkData } from './types';
+import type { Storage, StorageConfig, DeepLinkData } from './types';
+
+// NOTE: Not exported from @segment/sovran-react-native. Must explicitly declare here.
+// Also this fallback is used in store.ts in @segment/sovran-react-native yet "storeId" is required.
+const DEFAULT_STORE_NAME = 'default';
 
 type Data = {
   isReady: boolean;
@@ -73,6 +78,7 @@ registerBridgeStore({
 
 export class SovranStorage implements Storage {
   private storeId: string;
+  private storePersistor?: Persistor;
   private readinessStore: Store<ReadinessStore>;
   private contextStore: Store<{ context: DeepPartial<Context> }>;
   private settingsStore: Store<{ settings: SegmentAPIIntegrations }>;
@@ -80,27 +86,45 @@ export class SovranStorage implements Storage {
   private userInfoStore: Store<{ userInfo: UserInfoState }>;
   private deepLinkStore: Store<DeepLinkData> = deepLinkStore;
 
-  constructor(storeId: string) {
-    this.storeId = storeId;
-    this.readinessStore = createStore<ReadinessStore>({
-      hasLoadedContext: false,
-    });
+  constructor(config: StorageConfig) {
+    this.storeId = config.storeId;
+    this.storePersistor = config.storePersistor;
+    this.readinessStore = createStore<ReadinessStore>(
+      {
+        hasLoadedContext: false,
+      },
+      {
+        persist: {
+          storeId: DEFAULT_STORE_NAME,
+          persistor: this.storePersistor,
+        },
+      }
+    );
     this.contextStore = createStore(
       { context: INITIAL_VALUES.context },
       {
-        persist: { storeId: `${this.storeId}-context` },
+        persist: {
+          storeId: `${this.storeId}-context`,
+          persistor: this.storePersistor,
+        },
       }
     );
     this.settingsStore = createStore(
       { settings: INITIAL_VALUES.settings },
       {
-        persist: { storeId: `${this.storeId}-settings` },
+        persist: {
+          storeId: `${this.storeId}-settings`,
+          persistor: this.storePersistor,
+        },
       }
     );
     this.eventsStore = createStore(
       { events: INITIAL_VALUES.events },
       {
-        persist: { storeId: `${this.storeId}-events` },
+        persist: {
+          storeId: `${this.storeId}-events`,
+          persistor: this.storePersistor,
+        },
       }
     );
     this.userInfoStore = createStore(
@@ -108,6 +132,7 @@ export class SovranStorage implements Storage {
       {
         persist: {
           storeId: `${this.storeId}-userInfo`,
+          persistor: this.storePersistor,
         },
       }
     );

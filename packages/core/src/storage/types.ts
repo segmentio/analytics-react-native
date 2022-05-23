@@ -1,4 +1,4 @@
-import type { Unsubscribe } from '@segment/sovran-react-native';
+import type { Unsubscribe, Persistor } from '@segment/sovran-react-native';
 import type { SegmentEvent } from '..';
 import type {
   Context,
@@ -69,3 +69,8 @@ export interface DeepLinkData {
   referring_application: string;
   url: string;
 }
+
+export type StorageConfig = {
+  storeId: string;
+  storePersistor?: Persistor;
+};

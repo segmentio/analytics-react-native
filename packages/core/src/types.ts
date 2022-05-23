@@ -1,3 +1,5 @@
+import type { Persistor } from '@segment/sovran-react-native';
+
 export type JsonValue =
   | boolean
   | number
@@ -123,6 +125,7 @@ export type Config = {
   defaultSettings?: SegmentAPISettings;
   autoAddSegmentDestination?: boolean;
   collectDeviceId?: boolean;
+  storePersistor?: Persistor;
 };
 
 export type ClientMethods = {
