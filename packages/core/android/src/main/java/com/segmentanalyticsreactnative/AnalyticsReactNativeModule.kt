@@ -19,6 +19,7 @@ import com.facebook.react.ReactApplication
 import com.facebook.react.bridge.*
 import com.facebook.react.module.annotations.ReactModule
 import com.sovranreactnative.SovranModule
+import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import java.lang.Exception
 import java.util.*
 
@@ -189,6 +190,17 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
     sovran?.dispatch("add-deepLink-data", properties)
   }
 
+  //fun  getAdvertisingId() {
+
+    //  val info = AdvertisingIdClient.getAdvertisingIdInfo(reactApplicationContext)
+     // val id = info.id
+   //   val advertisingId = id.toString()
+    //  val properties = Hashtable<String, String>()
+
+    //  properties["id"] = advertisingId
+    //  Log.d(id, "id=${id}")
+
+ // }
   override fun onActivityResult(activity: Activity?, requestCode: Int, resultCode: Int, data: Intent?) {
     // Do nothing
   }

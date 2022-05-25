@@ -15,7 +15,13 @@ import type { Logger } from './logger';
 import type { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
 import { InjectContext } from './plugins/Context';
 import { SegmentDestination } from './plugins/SegmentDestination';
-import type { DeepLinkData, Settable, Storage, Watchable } from './storage';
+import type {
+  AdvertisingIdData,
+  DeepLinkData,
+  Settable,
+  Storage,
+  Watchable,
+} from './storage';
 import { Timeline } from './timeline';
 import {
   Config,
@@ -122,6 +128,8 @@ export class SegmentClient {
 
   readonly deepLinkData: Watchable<DeepLinkData>;
 
+  readonly advertisingIdData: Watchable<AdvertisingIdData>;
+
   /**
    * Returns the plugins currently loaded in the timeline
    * @param ofType Type of plugins, defaults to all
@@ -211,6 +219,11 @@ export class SegmentClient {
       get: this.store.deepLinkData.get,
       onChange: this.store.deepLinkData.onChange,
     };
+
+    this.advertisingIdData = {
+      get: this.store.advertisingIdData.get,
+      onChange: this.store.advertisingIdData.onChange,
+    };
   }
 
   /**
@@ -240,6 +253,8 @@ export class SegmentClient {
 
     // save the current installed version
     await this.checkInstalledVersion();
+
+    await this.trackAdvertisingId();
 
     this.isInitialized = true;
   }
@@ -423,6 +438,11 @@ export class SegmentClient {
       this.process(event);
       this.logger.info('TRACK (Deep Link Opened) event saved', event);
     }
+  }
+
+  private async trackAdvertisingId() {
+    const advertisingId = this.store.advertisingIdData.get();
+    console.log(advertisingId);
   }
 
   /**

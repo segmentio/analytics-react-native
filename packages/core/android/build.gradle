@@ -16,6 +16,8 @@ buildscript {
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.google.gms.google-services'
+
 
 def getExtOrDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['AnalyticsReactNative_' + name]
@@ -128,5 +130,7 @@ dependencies {
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  implementation "com.google.android.gms:play-services-ads-identifier:18.0.1"
+  implementation "com.google.android.gms:play-services-base:18.0.1"
   implementation project(path: ':segment_sovran-react-native')
 }
