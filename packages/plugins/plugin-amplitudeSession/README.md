@@ -23,7 +23,7 @@ In your code where you initialize the analytics client call the `.add(plugin)` m
 ```ts
 import { createClient } from '@segment/analytics-react-native';
 
-import { AmplitudeSessionPlugin } from '@segment/analytics-react-native-plugin-amplitude';
+import { AmplitudeSessionPlugin } from '@segment/analytics-react-native-plugin-amplitude-session';
 
 const segmentClient = createClient({
   writeKey: 'SEGMENT_KEY'
