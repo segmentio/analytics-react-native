@@ -64,8 +64,6 @@ export interface Storage {
   readonly userInfo: Watchable<UserInfoState> & Settable<UserInfoState>;
 
   readonly deepLinkData: Watchable<DeepLinkData>;
-
-  readonly advertisingIdData: Watchable<AdvertisingIdData>;
 }
 export interface DeepLinkData {
   referring_application: string;
@@ -76,7 +74,3 @@ export type StorageConfig = {
   storeId: string;
   storePersistor?: Persistor;
 };
-
-export interface AdvertisingIdData {
-  id: string;
-}
