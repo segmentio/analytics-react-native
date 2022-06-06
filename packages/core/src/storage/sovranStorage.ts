@@ -76,28 +76,6 @@ registerBridgeStore({
   },
 });
 
-// const advertisingIdStore = createStore<AdvertisingIdData>({
-//   id: '',
-// });
-
-// /**
-//  * Action to set the referring app and link url
-//  * @param advertisingIdData referring app and link url
-//  */
-
-// const addAdvertisingIdData = (advertisingIdData: AdvertisingIdData) => () => {
-//   return {
-//     id: advertisingIdData.id,
-//   };
-// };
-
-// registerBridgeStore({
-//   store: advertisingIdStore,
-//   actions: {
-//     'add-advertisingId-data': addAdvertisingIdData,
-//   },
-// });
-
 export class SovranStorage implements Storage {
   private storeId: string;
   private storePersistor?: Persistor;
@@ -107,7 +85,6 @@ export class SovranStorage implements Storage {
   private eventsStore: Store<{ events: SegmentEvent[] }>;
   private userInfoStore: Store<{ userInfo: UserInfoState }>;
   private deepLinkStore: Store<DeepLinkData> = deepLinkStore;
-  // private advertisingIdStore: Store<AdvertisingIdData> = advertisingIdStore;
 
   constructor(config: StorageConfig) {
     this.storeId = config.storeId;
@@ -273,10 +250,4 @@ export class SovranStorage implements Storage {
     onChange: (callback: (value: DeepLinkData) => void) =>
       this.deepLinkStore.subscribe(callback),
   };
-
-  // readonly advertisingIdData = {
-  //   get: () => this.advertisingIdStore.getState(),
-  //   onChange: (callback: (value: AdvertisingIdData) => void) =>
-  //     this.advertisingIdStore.subscribe(callback),
-  // };
 }

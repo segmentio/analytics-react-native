@@ -1,16 +1,17 @@
 //@ts-ignore
-import { DestinationPlugin, PluginType } from '@segment/analytics-react-native';
+import { Plugin, PluginType } from '@segment/analytics-react-native';
 import type { SegmentClient } from '@segment/analytics-react-native/src/analytics';
 import {
   createStore,
   registerBridgeStore,
   Store,
   Persistor,
+  Unsubscribe,
 } from '@segment/sovran-react-native';
-import type { AdvertisingIdData } from './types';
+import type { AdvertisingIdData, StorageConfig } from './types';
 
 const advertisingIdStore = createStore<AdvertisingIdData>({
-  id: '',
+  id: undefined,
 });
 
 /**
@@ -31,19 +32,23 @@ registerBridgeStore({
   },
 });
 
-export class AdvertisingIdPlugin extends DestinationPlugin {
+export class AdvertisingIdPlugin extends Plugin {
   type = PluginType.enrichment;
-
+  hasRegisteredListener: boolean = false;
+  private storeId: string;
   private storePersistor?: Persistor;
   private advertisingIdStore: Store<AdvertisingIdData> = advertisingIdStore;
+  private watcher: Unsubscribe[] = [];
 
-  constructor() {
+  constructor(config: StorageConfig) {
     super();
-    this.advertisingIdStore = createStore(
-      { id: '' },
+    this.storeId = config.storeId;
+    this.storePersistor = config.storePersistor;
+    this.advertisingIdStore = createStore<AdvertisingIdData>(
+      { id: undefined },
       {
         persist: {
-          storeId: 'advertisingId-store',
+          storeId: `${this.storeId}-context`,
           persistor: this.storePersistor,
         },
       }
@@ -59,28 +64,46 @@ export class AdvertisingIdPlugin extends DestinationPlugin {
   configure(analytics: SegmentClient): void {
     this.analytics = analytics;
 
-    this.getAdvertisingId();
+    this.setTrackingStatus();
+
+    if (this.hasRegisteredListener === false) {
+      this.registerTrackingStatusListener();
+    }
   }
 
-  getAdvertisingId() {
+  setTrackingStatus() {
     let adIdData = this.advertisingIdData.get();
 
-    if (adIdData.id !== '') {
-      this.analytics?.context.set({
-        device: {
-          advertisingId: adIdData.id,
-          adTrackingEnabled: true,
-        },
-      });
+    if (adIdData.id !== undefined) {
+      this.setContext(adIdData);
     }
+  }
 
+  registerTrackingStatusListener() {
     this.advertisingIdData.onChange((data) => {
-      this.analytics?.context.set({
-        device: {
-          advertisingId: data.id,
-          adTrackingEnabled: true,
-        },
-      });
+      this.setContext(data);
     });
+    this.hasRegisteredListener = true;
+  }
+
+  setContext(adIdData: AdvertisingIdData) {
+    this.analytics?.context.set({
+      device: {
+        advertisingId: adIdData.id,
+        adTrackingEnabled: true,
+      },
+    });
+  }
+
+  shutdown(): void {
+    if (this.watcher.length > 0) {
+      for (const unsubscribe of this.watcher) {
+        try {
+          unsubscribe();
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    }
   }
 }

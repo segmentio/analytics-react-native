@@ -37,7 +37,7 @@ import { AmplitudeSessionPlugin } from '@segment/analytics-react-native-plugin-a
 import { AdvertisingIdPlugin } from '@segment/analytics-react-native-plugin-advertising-id';
 
 const segmentClient = createClient({
-  writeKey: 'WRITE_KEY',
+  writeKey: 'QKoI2cHIPlixGDB358Y3T86tVqpaBZK3',
   trackAppLifecycleEvents: true,
   collectDeviceId: true,
   debug: true,
@@ -61,7 +61,11 @@ segmentClient.add({ plugin: LoggerPlugin });
 // segmentClient.add({ plugin: new IdfaPlugin() });
 
 segmentClient.add({ plugin: new AmplitudeSessionPlugin() });
-segmentClient.add({ plugin: new AdvertisingIdPlugin() });
+segmentClient.add({
+  plugin: new AdvertisingIdPlugin({
+    storeId: 'advertisingId',
+  }),
+});
 
 const MainStack = createStackNavigator();
 const RootStack = createStackNavigator();
