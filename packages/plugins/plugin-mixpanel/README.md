@@ -28,7 +28,7 @@ In your code where you initialize the analytics client call the `.add(plugin)` m
 ```ts
 import { createClient } from '@segment/analytics-react-native';
 
-import { MixpanelPlugin } from '@segment/analytics-react-native-plugin-adjust';
+import { MixpanelPlugin } from '@segment/analytics-react-native-plugin-mixpanel';
 
 const segmentClient = createClient({
   writeKey: 'SEGMENT_KEY'
