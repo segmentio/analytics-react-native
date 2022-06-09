@@ -96,6 +96,7 @@ describe('SegmentDestination', () => {
         settings: {
           [SEGMENT_DESTINATION_KEY]: {
             unbundledIntegrations: ['firebase'],
+            maybeBundledConfigIds: {},
           },
         },
       }),
