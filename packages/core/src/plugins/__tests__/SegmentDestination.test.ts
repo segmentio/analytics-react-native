@@ -131,6 +131,50 @@ describe('SegmentDestination', () => {
     });
   });
 
+  it('marks maybeBundled integrations to unbundled if they are not bundled', () => {
+    const plugin = new SegmentDestination();
+    const analytics = new SegmentClient({
+      ...clientArgs,
+      store: new MockSegmentStore({
+        settings: {
+          [SEGMENT_DESTINATION_KEY]: {
+            unbundledIntegrations: ['Amplitude'],
+            maybeBundledConfigIds: { Mixpanel: ['123'] },
+          },
+        },
+      }),
+    });
+    plugin.configure(analytics);
+
+    plugin.analytics!.getPlugins = jest.fn().mockReturnValue([
+      {
+        key: 'firebase',
+        type: 'destination',
+      },
+    ]);
+
+    const event: TrackEventType = {
+      anonymousId: '3534a492-e975-4efa-a18b-3c70c562fec2',
+      event: 'Awesome event',
+      type: EventType.TrackEvent,
+      properties: {},
+      timestamp: '2000-01-01T00:00:00.000Z',
+      messageId: '1d1744bf-5beb-41ac-ad7a-943eac33babc',
+      context: { app: { name: 'TestApp' } },
+      integrations: {},
+    };
+
+    const result = plugin.execute(event);
+    expect(result).toEqual({
+      ...event,
+      _metadata: {
+        bundled: [],
+        unbundled: ['Amplitude', 'Mixpanel'],
+        bundledIds: [],
+      },
+    });
+  });
+
   it('lets plugins/events override destination settings', () => {
     const plugin = new SegmentDestination();
     // @ts-ignore
