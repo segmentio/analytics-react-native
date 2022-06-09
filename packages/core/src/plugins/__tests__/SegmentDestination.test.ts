@@ -146,13 +146,6 @@ describe('SegmentDestination', () => {
     });
     plugin.configure(analytics);
 
-    plugin.analytics!.getPlugins = jest.fn().mockReturnValue([
-      {
-        key: 'firebase',
-        type: 'destination',
-      },
-    ]);
-
     const event: TrackEventType = {
       anonymousId: '3534a492-e975-4efa-a18b-3c70c562fec2',
       event: 'Awesome event',

@@ -41,8 +41,9 @@ export class DestinationMetadataEnrichment extends UtilityPlugin {
       segmentInfo.unbundledIntegrations ?? [];
 
     if (segmentInfo.maybeBundledConfigIds) {
-      const maybeBundledIntegrations: string[] =
-        Object.keys(segmentInfo.maybeBundledConfigIds) ?? [];
+      const maybeBundledIntegrations: string[] = Object.keys(
+        segmentInfo.maybeBundledConfigIds
+      );
       unbundledIntegrations = unbundledIntegrations.concat(
         maybeBundledIntegrations
       );
