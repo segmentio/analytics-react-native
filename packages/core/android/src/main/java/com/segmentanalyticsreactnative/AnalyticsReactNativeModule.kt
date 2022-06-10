@@ -6,12 +6,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.res.Resources
+import android.media.MediaDrm
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
-import android.provider.Settings
-import android.provider.Settings.Secure.getString
 import android.util.Log
 import androidx.core.content.pm.PackageInfoCompat
 import com.facebook.react.ReactActivity
@@ -21,6 +20,8 @@ import com.facebook.react.module.annotations.ReactModule
 import com.sovranreactnative.SovranModule
 import java.lang.Exception
 import java.util.*
+import java.security.MessageDigest
+import java.util.UUID
 
 
 enum class ConnectionType {
@@ -54,88 +55,118 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
       return PackageInfoCompat.getLongVersionCode(pInfo).toString()
     }
 
-    @SuppressLint("HardwareIds")
-    private fun getUniqueId(collectDeviceId : Boolean): String? {
-      if (collectDeviceId) {
-        return getString(reactApplicationContext.contentResolver, Settings.Secure.ANDROID_ID)
-      }
-      return null
-    }
+  fun ByteArray.toHexString() = joinToString("") { "%02x".format(it) }
 
-    private fun getConnectionType(context: Context): ConnectionType {
-      val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-      var result: ConnectionType = ConnectionType.Unknown
+  /**
+   * Workaround for not able to get device id on Android 10 or above using DRM API
+   * {@see https://stackoverflow.com/questions/58103580/android-10-imei-no-longer-available-on-api-29-looking-for-alternatives}
+   * {@see https://developer.android.com/training/articles/user-data-ids}
+   */
+  private fun getUniqueId(collectDeviceId : Boolean): String? {
+    if (collectDeviceId) {
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2)
+        return null
 
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        cm?.run {
-          cm.getNetworkCapabilities(cm.activeNetwork)?.run {
-            if (hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-              result = ConnectionType.Wifi
-            } else if (hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-              result = ConnectionType.Cellular
-            } else {
-              result = ConnectionType.Unknown
-            }
-          }
-        }
-      } else {
-        cm?.run {
-          cm.activeNetworkInfo?.run {
-            if (type == ConnectivityManager.TYPE_WIFI) {
-              result = ConnectionType.Wifi
-            } else if (type == ConnectivityManager.TYPE_MOBILE) {
-              result = ConnectionType.Cellular
-            } else {
-              result = ConnectionType.Unknown
-            }
-          }
+      val WIDEVINE_UUID = UUID(-0x121074568629b532L, -0x5c37d8232ae2de13L)
+      var wvDrm: MediaDrm? = null
+      try {
+        wvDrm = MediaDrm(WIDEVINE_UUID)
+        val wideVineId = wvDrm.getPropertyByteArray(MediaDrm.PROPERTY_DEVICE_UNIQUE_ID)
+        val md = MessageDigest.getInstance("SHA-256")
+        md.update(wideVineId)
+        return md.digest().toHexString()
+      } catch (e: Exception) {
+        return null
+      } finally {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+          wvDrm?.close()
+        } else {
+          wvDrm?.release()
         }
       }
-      return result
     }
+    return null
+  }
 
-    @ReactMethod
-    fun getContextInfo(config: ReadableMap, promise: Promise) {
-      val appName: String = reactApplicationContext.applicationInfo.loadLabel(reactApplicationContext.packageManager).toString()
-      val appVersion: String = pInfo.versionName
-      val buildNumber = getBuildNumber()
-      val bundleId = reactApplicationContext.packageName
+  private fun getConnectionType(context: Context): ConnectionType {
+    val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+    var result: ConnectionType = ConnectionType.Unknown
 
-      val connectionType: ConnectionType = getConnectionType(reactApplicationContext)
-      val timezone: TimeZone = TimeZone.getDefault()
-      val currentLocale: Locale = Locale.getDefault()
-      val locale: String = "${currentLocale.language}-${currentLocale.country}"
-
-      val screenWidth =  Resources.getSystem().displayMetrics.widthPixels
-      val screenHeight =  Resources.getSystem().displayMetrics.heightPixels
-
-      val screenDensity = Resources.getSystem().displayMetrics.density;
-
-      val contextInfo: WritableMap = Arguments.createMap()
-
-      contextInfo.putString("appName", appName)
-      contextInfo.putString("appVersion", appVersion)
-      contextInfo.putString("buildNumber", buildNumber)
-      contextInfo.putString("bundleId", bundleId)
-      contextInfo.putString("deviceId", getUniqueId(config.hasKey("collectDeviceId") && config.getBoolean("collectDeviceId")))
-      contextInfo.putString("deviceName", Build.DEVICE)
-      contextInfo.putString("deviceType", "android")
-      contextInfo.putString("manufacturer", Build.MANUFACTURER)
-      contextInfo.putString("model", Build.MODEL)
-
-      contextInfo.putString("timezone", timezone.id)
-      contextInfo.putString("locale", locale)
-      contextInfo.putString("networkType", connectionType.toString().toLowerCase(currentLocale))
-
-      contextInfo.putString("osName", "Android")
-      contextInfo.putString("osVersion", Build.VERSION.RELEASE)
-
-      contextInfo.putInt("screenWidth", screenWidth)
-      contextInfo.putInt("screenHeight", screenHeight)
-      contextInfo.putDouble("screenDensity", screenDensity.toDouble())
-
-      promise.resolve(contextInfo)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      cm?.run {
+        cm.getNetworkCapabilities(cm.activeNetwork)?.run {
+          if (hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+            result = ConnectionType.Wifi
+          } else if (hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+            result = ConnectionType.Cellular
+          } else {
+            result = ConnectionType.Unknown
+          }
+        }
+      }
+    } else {
+      cm?.run {
+        cm.activeNetworkInfo?.run {
+          if (type == ConnectivityManager.TYPE_WIFI) {
+            result = ConnectionType.Wifi
+          } else if (type == ConnectivityManager.TYPE_MOBILE) {
+            result = ConnectionType.Cellular
+          } else {
+            result = ConnectionType.Unknown
+          }
+        }
+      }
     }
+    return result
+  }
+
+  @ReactMethod
+  fun getContextInfo(config: ReadableMap, promise: Promise) {
+    val appName: String = reactApplicationContext.applicationInfo.loadLabel(reactApplicationContext.packageManager).toString()
+    val appVersion: String = pInfo.versionName
+    val buildNumber = getBuildNumber()
+    val bundleId = reactApplicationContext.packageName
+
+    val connectionType: ConnectionType = getConnectionType(reactApplicationContext)
+    val timezone: TimeZone = TimeZone.getDefault()
+    val currentLocale: Locale = Locale.getDefault()
+    val locale: String = "${currentLocale.language}-${currentLocale.country}"
+
+    val screenWidth =  Resources.getSystem().displayMetrics.widthPixels
+    val screenHeight =  Resources.getSystem().displayMetrics.heightPixels
+
+    val screenDensity = Resources.getSystem().displayMetrics.density;
+
+    val contextInfo: WritableMap = Arguments.createMap()
+
+    // generate random identifier that does not persist across installations
+    // use it as the fallback in case DRM API failed to generate one.
+    val fallbackDeviceId = UUID.randomUUID().toString()
+    val deviceId = getUniqueId(config.hasKey("collectDeviceId") && config.getBoolean("collectDeviceId"))?: fallbackDeviceId
+
+    contextInfo.putString("appName", appName)
+    contextInfo.putString("appVersion", appVersion)
+    contextInfo.putString("buildNumber", buildNumber)
+    contextInfo.putString("bundleId", bundleId)
+    contextInfo.putString("deviceId", deviceId)
+    contextInfo.putString("deviceName", Build.DEVICE)
+    contextInfo.putString("deviceType", "android")
+    contextInfo.putString("manufacturer", Build.MANUFACTURER)
+    contextInfo.putString("model", Build.MODEL)
+
+    contextInfo.putString("timezone", timezone.id)
+    contextInfo.putString("locale", locale)
+    contextInfo.putString("networkType", connectionType.toString().toLowerCase(currentLocale))
+
+    contextInfo.putString("osName", "Android")
+    contextInfo.putString("osVersion", Build.VERSION.RELEASE)
+
+    contextInfo.putInt("screenWidth", screenWidth)
+    contextInfo.putInt("screenHeight", screenHeight)
+    contextInfo.putDouble("screenDensity", screenDensity.toDouble())
+
+    promise.resolve(contextInfo)
+  }
 
   fun getReferrer(activity: Activity): Uri? {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
