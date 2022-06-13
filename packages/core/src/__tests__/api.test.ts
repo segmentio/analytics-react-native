@@ -1,4 +1,5 @@
 import {
+  Config,
   Context,
   EventType,
   SegmentAPIIntegrations,
@@ -7,6 +8,7 @@ import {
 } from '../types';
 import { sendEvents } from '../api';
 import * as context from '../context';
+import { batchApi } from '../constants';
 
 describe('#sendEvents', () => {
   beforeEach(() => {
@@ -26,7 +28,7 @@ describe('#sendEvents', () => {
       .mockReturnValue('2001-01-01T00:00:00.000Z');
   });
 
-  it('sends an event', async () => {
+  async function sendAnEventPer(config: Config, toUrl: string) {
     const mockResponse = Promise.resolve('MANOS');
     // @ts-ignore
     global.fetch = jest.fn(() => Promise.resolve(mockResponse));
@@ -57,13 +59,11 @@ describe('#sendEvents', () => {
     };
 
     await sendEvents({
-      config: {
-        writeKey: 'SEGMENT_KEY',
-      },
+      config,
       events: [event],
     });
 
-    expect(fetch).toHaveBeenCalledWith('https://api.segment.io/v1/b', {
+    expect(fetch).toHaveBeenCalledWith(toUrl, {
       method: 'POST',
       body: JSON.stringify({
         batch: [event],
@@ -75,5 +75,22 @@ describe('#sendEvents', () => {
         'Content-Type': 'text/plain',
       },
     });
+  }
+
+  it('sends an event', async () => {
+    const toSegmentBatchApi = batchApi;
+    const config = {
+      writeKey: 'SEGMENT_KEY',
+    };
+    await sendAnEventPer(config, toSegmentBatchApi);
+  });
+
+  it('sends an event to proxy', async () => {
+    const toProxyUrl = 'https://myprox.io/b';
+    const config = {
+      writeKey: 'SEGMENT_KEY',
+      proxy: toProxyUrl,
+    };
+    await sendAnEventPer(config, toProxyUrl);
   });
 });
