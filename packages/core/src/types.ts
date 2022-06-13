@@ -126,6 +126,7 @@ export type Config = {
   autoAddSegmentDestination?: boolean;
   collectDeviceId?: boolean;
   storePersistor?: Persistor;
+  proxy?: string;
 };
 
 export type ClientMethods = {
