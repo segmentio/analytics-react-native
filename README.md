@@ -110,6 +110,8 @@ You must pass at least the `writeKey`. Additional configuration options are list
 | `defaultSettings`          | undefined | Settings that will be used if the request to get the settings from Segment fails                                                               |
 | `autoAddSegmentDestination`| true      | Set to false to skip adding the SegmentDestination plugin                                                                                      |
 | `storePersistor`           | undefined | A custom persistor for the store that `analytics-react-native` leverages. Must match `Persistor` interface exported from [sovran-react-native](https://github.com/segmentio/sovran-react-native).|
+| `proxy`                    | undefined | `proxy` is a batch url to post to instead of 'https://api.segment.io/v1/b'.                                                                    |
+
 
 \* The default value of `debug` will be false in production.
 
