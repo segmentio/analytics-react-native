@@ -4,3 +4,6 @@ include ':app'
 
 include ':segmentanalyticsreactnative'
 project(':segmentanalyticsreactnative').projectDir = new File(rootProject.projectDir, '../../packages/core/android')
+
+include ':analyticsreactnativepluginadvertisingid'
+project(':analyticsreactnativepluginadvertisingid').projectDir = new File(rootProject.projectDir, '../../packages/plugins/plugin-advertising-id/android')

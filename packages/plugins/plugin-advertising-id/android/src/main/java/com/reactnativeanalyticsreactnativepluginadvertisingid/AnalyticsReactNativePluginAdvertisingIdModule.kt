@@ -7,9 +7,12 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.ReactApplication
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.sovranreactnative.SovranModule
+import com.facebook.react.module.annotations.ReactModule
+import android.util.Log
 
+@ReactModule(name="AnalyticsReactNativePluginAdvertisingId")
 class AnalyticsReactNativePluginAdvertisingIdModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
-  constructor(reactContext: ReactApplicationContext) : super(reactContext) {
+  init{
     getAdvertisingId(reactContext)
   }
 
@@ -17,19 +20,21 @@ class AnalyticsReactNativePluginAdvertisingIdModule(reactContext: ReactApplicati
       return "AnalyticsReactNativePluginAdvertisingId"
   }
 
-  fun  getAdvertisingId(reactContext) {
+  fun  getAdvertisingId(reactContext: ReactApplicationContext) {
 
      val info = AdvertisingIdClient.getAdvertisingIdInfo(reactContext)
      val id = info.id
      val advertisingId = id.toString()
-     val properties = Hashtable<String, String>()
+
       val sovran = (currentActivity?.application as ReactApplication)
       ?.reactNativeHost
       ?.reactInstanceManager
       ?.currentReactContext
       ?.getNativeModule(SovranModule::class.java)
 
-     properties["id"] = advertisingId
+    Log.d("NATIVE CODE HIT", "IT IS AT LEAST BEING INVOKED")
+    Log.d("ADVERTISING ID", advertisingId);
+     val properties = mapOf("id" to advertisingId)
      sovran?.dispatch("add-advertisingId-data", properties)
  }
 }

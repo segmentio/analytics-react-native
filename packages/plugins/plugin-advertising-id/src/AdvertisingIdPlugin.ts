@@ -63,7 +63,7 @@ export class AdvertisingIdPlugin extends Plugin {
 
   configure(analytics: SegmentClient): void {
     this.analytics = analytics;
-
+    console.log('PLUGIN ENABLED');
     this.setTrackingStatus();
 
     if (this.hasRegisteredListener === false) {
