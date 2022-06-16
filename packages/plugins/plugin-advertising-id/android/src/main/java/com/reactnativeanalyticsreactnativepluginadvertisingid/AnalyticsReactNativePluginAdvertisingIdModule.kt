@@ -12,29 +12,29 @@ import android.util.Log
 
 @ReactModule(name="AnalyticsReactNativePluginAdvertisingId")
 class AnalyticsReactNativePluginAdvertisingIdModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
-  init{
-    getAdvertisingId(reactContext)
-  }
-
   override fun getName(): String {
       return "AnalyticsReactNativePluginAdvertisingId"
   }
 
-  fun  getAdvertisingId(reactContext: ReactApplicationContext) {
+  @ReactMethod
+  fun getAdvertisingId(promise: Promise) {
+    val reactContext = (currentActivity?.application as ReactApplication)
+    ?.reactNativeHost
+    ?.reactInstanceManager
+    ?.currentReactContext
 
-     val info = AdvertisingIdClient.getAdvertisingIdInfo(reactContext)
-     val id = info.id
+    if (reactContext == null) {
+      return
+    }
+
+     val advertisingInfo = AdvertisingIdClient.getAdvertisingIdInfo(reactContext)
+     val isLimitAdTrackingEnabled = advertisingInfo.isLimitAdTrackingEnabled
+     if (isLimitAdTrackingEnabled) {
+      promise.resolve(null)
+     }
+     val id = advertisingInfo.id
      val advertisingId = id.toString()
 
-      val sovran = (currentActivity?.application as ReactApplication)
-      ?.reactNativeHost
-      ?.reactInstanceManager
-      ?.currentReactContext
-      ?.getNativeModule(SovranModule::class.java)
-
-    Log.d("NATIVE CODE HIT", "IT IS AT LEAST BEING INVOKED")
-    Log.d("ADVERTISING ID", advertisingId);
-     val properties = mapOf("id" to advertisingId)
-     sovran?.dispatch("add-advertisingId-data", properties)
+    promise.resolve(advertisingId)
  }
 }
