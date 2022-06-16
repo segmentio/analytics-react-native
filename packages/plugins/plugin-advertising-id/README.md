@@ -4,9 +4,13 @@
 
 ## Installation
 
+Add the package
+
 ```sh
 yarn add react-native-analytics-react-native-plugin-advertising-id
 ```
+
+This plugin requires a `compileSdkVersion` of at least 31. 
 
 See [Google Play Services documentation](https://developers.google.com/admob/android/quick-start) for `advertisingId` setup
 ## Usage
