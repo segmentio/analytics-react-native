@@ -1,19 +1,13 @@
 name: Publish
 
 on:
-  push:
-    tags:
-      - 'v*'
-    paths:
-    # Only supporting core for now
-      - 'packages/core/**'
   workflow_dispatch:
     inputs:
       workspace:
-        description: 'Workspace to publish e.g. core, plugin-idfa'
+        description: 'Workspace to publish. (Leave empty to release everything that needs a release) e.g. core, plugin-idfa'
         required: false
         type: string
-        default: 'core'
+        default: ''
     secrets:
       NPM_TOKEN:
         required: true
@@ -27,7 +21,7 @@ jobs:
 
       - uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'
           cache: 'yarn'
 
       - name: Config and Build
@@ -39,38 +33,28 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Set Working Directory
+        if: github.event.inputs.workspace != ''
         env: 
-          IS_PUSH: ${{ github.event_name  == 'push' }}
           IS_PLUGIN: ${{ startsWith(github.event.inputs.workspace, 'plugin-') }}
         run: |
           if ${IS_PLUGIN}; then
             echo "DIR=packages/plugins/${{github.event.inputs.workspace}}" >> $GITHUB_ENV
-          elif ${IS_PUSH}; then
-            echo "DIR=packages/core" >> $GITHUB_ENV
           else
             echo "DIR=packages/${{github.event.inputs.workspace}}" >> $GITHUB_ENV
           fi
           echo "Setting working directory to: WORKSPACE=$DIR"
 
-      - name: Publish
+      - name: Publish (Workspace)
+        if: github.event.inputs.workspace != ''
         working-directory: ${{env.DIR}}
-        run: npm publish
-        
-  create-github-release:
-    if: github.event.inputs.workspace == '' || github.event.inputs.workspace == 'core'
-    name: Create GitHub Release
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    needs: publish
-    steps:        
-      - name: Create Release Notes
-        uses: actions/github-script@v4.0.2
-
-        with:
-          script: |
-            await github.request(`POST /repos/${{ github.repository }}/releases`, {
-              tag_name: "${{ github.ref }}",
-              generate_release_notes: true,
-              draft: true
-            });
+        run: yarn release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      
+      - name: Publish (All)
+        if: github.event.inputs.workspace == ''
+        run: yarn workspaces run release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
