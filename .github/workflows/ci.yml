@@ -71,7 +71,7 @@ jobs:
     runs-on: 'macos-11' # This is important, linux cannot run the emulator graphically for e2e tests
     strategy:
       matrix:
-        api-level: [21]
+        api-level: [31]
         profile: ['pixel_xl']
     steps:
       - uses: actions/checkout@v2
@@ -104,7 +104,7 @@ jobs:
         with:
           api-level: ${{ matrix.api-level }}
           profile: ${{matrix.profile}}
-          name: Pixel_API_21_AOSP
+          name: Pixel_API_31_AOSP
           target: default
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
