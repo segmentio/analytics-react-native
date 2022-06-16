@@ -19,7 +19,6 @@ import com.facebook.react.ReactApplication
 import com.facebook.react.bridge.*
 import com.facebook.react.module.annotations.ReactModule
 import com.sovranreactnative.SovranModule
-import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import java.lang.Exception
 import java.util.*
 

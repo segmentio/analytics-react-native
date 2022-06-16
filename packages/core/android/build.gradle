@@ -16,7 +16,6 @@ buildscript {
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'com.google.gms.google-services'
 
 
 def getExtOrDefault(name) {
@@ -130,7 +129,5 @@ dependencies {
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'com.google.android.gms:play-services-ads:20.5.0'
-
   implementation project(path: ':segment_sovran-react-native')
 }
