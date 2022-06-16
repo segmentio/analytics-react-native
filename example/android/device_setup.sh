@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-avdmanager=$ANDROID_HOME/tools/bin/avdmanager
-sdkmanager=$ANDROID_HOME/tools/bin/sdkmanager
+avdmanager=$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager
+sdkmanager=$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager
 emulator=$ANDROID_HOME/emulator/emulator
 green=`tput setaf 2`
 reset=`tput sgr0`

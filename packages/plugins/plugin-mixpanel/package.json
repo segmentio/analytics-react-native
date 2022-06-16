@@ -51,7 +51,6 @@
     "mixpanel-react-native": "^1.3.9"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.16.11",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/commit-analyzer": "^9.0.2",
     "@semantic-release/git": "^10.0.1",
@@ -82,6 +81,5 @@
   },
   "engines": {
     "node": ">=12"
-  },
-  "type": "module"
+  }
 }
