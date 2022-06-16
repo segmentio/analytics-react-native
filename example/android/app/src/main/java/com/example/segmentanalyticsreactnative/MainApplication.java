@@ -11,7 +11,7 @@ import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.segmentanalyticsreactnative.AnalyticsReactNativePackage;
-import com.analyticsreactnativepluginadvertisingid.AnalyticsReactNativePluginAdvertisingIdPackage;
+// import com.analyticsreactnativepluginadvertisingid.AnalyticsReactNativePluginAdvertisingIdPackage;
 
 
 public class MainApplication extends Application implements ReactApplication {
@@ -28,9 +28,8 @@ public class MainApplication extends Application implements ReactApplication {
       List<ReactPackage> packages = new PackageList(this).getPackages();
       // Packages that cannot be autolinked yet can be added manually here, for
       // AnalyticsReactNativeExample:
-      // packages.add(new MyReactNativePackage());
       packages.add(new AnalyticsReactNativePackage());
-      packages.add(new AnalyticsReactNativePluginAdvertisingIdPackage());
+      // packages.add(new AnalyticsReactNativePluginAdvertisingIdPackage());
       return packages;
     }
 
