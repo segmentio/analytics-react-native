@@ -24,6 +24,7 @@ class AnalyticsReactNativePluginAdvertisingIdModule(reactContext: ReactApplicati
     ?.currentReactContext
 
     if (reactContext == null) {
+      promise.resolve(null)
       return
     }
 

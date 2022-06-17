@@ -1,8 +1,6 @@
 //@ts-ignore
 import { Plugin, PluginType } from '@segment/analytics-react-native';
 import type { SegmentClient } from '@segment/analytics-react-native/src/analytics';
-import type { AdvertisingIdData } from './types';
-
 import { NativeModules } from 'react-native';
 
 export class AdvertisingIdPlugin extends Plugin {
@@ -13,22 +11,21 @@ export class AdvertisingIdPlugin extends Plugin {
 
     NativeModules.AnalyticsReactNativePluginAdvertisingId.getAdvertisingId().then(
       (id: string) => {
-        console.log('advertisingId', id);
         if (id === null) {
           analytics.track(
-            'LimitAdTrackingEnabled (Google Play Services) is true'
+            'LimitAdTrackingEnabled (Google Play Services) is enabled'
           );
         } else {
-          this.setContext({ id });
+          this.setContext(id);
         }
       }
     );
   }
 
-  setContext(adIdData: AdvertisingIdData) {
+  setContext(id: string) {
     this.analytics?.context.set({
       device: {
-        advertisingId: adIdData.id,
+        advertisingId: id,
         adTrackingEnabled: true,
       },
     });
