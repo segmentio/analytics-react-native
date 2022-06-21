@@ -6,9 +6,12 @@ import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.Promise
 import com.facebook.react.ReactApplication
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.sovranreactnative.SovranModule
 import com.facebook.react.module.annotations.ReactModule
 import android.util.Log
+import java.io.IOException;
+
 
 @ReactModule(name="AnalyticsReactNativePluginAdvertisingId")
 class AnalyticsReactNativePluginAdvertisingIdModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
@@ -28,14 +31,25 @@ class AnalyticsReactNativePluginAdvertisingIdModule(reactContext: ReactApplicati
       return
     }
 
-     val advertisingInfo = AdvertisingIdClient.getAdvertisingIdInfo(reactContext)
-     val isLimitAdTrackingEnabled = advertisingInfo.isLimitAdTrackingEnabled
-     if (isLimitAdTrackingEnabled) {
-      promise.resolve(null)
-     }
+     try {
+      val advertisingInfo = AdvertisingIdClient.getAdvertisingIdInfo(reactContext)
+      val isLimitAdTrackingEnabled = advertisingInfo.isLimitAdTrackingEnabled
+      
+      if (isLimitAdTrackingEnabled) {
+       promise.resolve(null)
+      }
+
      val id = advertisingInfo.id
      val advertisingId = id.toString()
-
-    promise.resolve(advertisingId)
+     promise.resolve(advertisingId)
+     }
+     catch (e: GooglePlayServicesNotAvailableException) {
+      Log.d(name, e.toString())
+      promise.resolve(null)
+     }
+     catch ( e: IOException) {
+      Log.d(name, e.toString())
+      promise.resolve(null) 
+     }    
  }
 }
