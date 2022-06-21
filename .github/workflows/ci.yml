@@ -71,7 +71,7 @@ jobs:
     runs-on: 'macos-11' # This is important, linux cannot run the emulator graphically for e2e tests
     strategy:
       matrix:
-        api-level: [31]
+        api-level: [21]
         profile: ['pixel_xl']
     steps:
       - uses: actions/checkout@v2
