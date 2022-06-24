@@ -21,8 +21,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        persist-credentials: false
-        token: ${{ secrets.GH_TOKEN }}
+        with: 
+          persist-credentials: false
+          token: ${{ secrets.GH_TOKEN }}
 
       - uses: actions/setup-node@v2
         with:
