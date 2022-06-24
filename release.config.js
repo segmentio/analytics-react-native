@@ -11,5 +11,4 @@ module.exports = {
     '@semantic-release/git',
   ],
   extends: 'semantic-release-monorepo',
-  dryRun: true,
 };

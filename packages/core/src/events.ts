@@ -82,11 +82,13 @@ const isAliasEvent = (event: SegmentEvent): event is AliasEventType =>
   event.type === EventType.AliasEvent;
 const isIdentifyEvent = (event: SegmentEvent): event is AliasEventType =>
   event.type === EventType.IdentifyEvent;
+const isGroupEvent = (event: SegmentEvent): event is GroupEventType =>
+  event.type === EventType.GroupEvent;
 
 export const applyRawEventData = (
   event: SegmentEvent,
   userInfo: UserInfoState
-) => {
+): SegmentEvent => {
   return {
     ...event,
     anonymousId: userInfo.anonymousId,
@@ -97,5 +99,9 @@ export const applyRawEventData = (
       isAliasEvent(event) || isIdentifyEvent(event)
         ? event.userId
         : userInfo.userId,
+    traits:
+      isIdentifyEvent(event) || isGroupEvent(event)
+        ? event.traits
+        : userInfo.traits,
   };
 };

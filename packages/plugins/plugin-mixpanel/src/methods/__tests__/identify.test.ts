@@ -63,7 +63,7 @@ describe('#identify', () => {
   });
 
   it('registers superProperties', () => {
-    payload.traits.prop1 = 'string';
+    payload.traits!.prop1 = 'string';
     settings.superProperties = ['prop1'];
     let mockedTraits = { prop1: 'string' };
 

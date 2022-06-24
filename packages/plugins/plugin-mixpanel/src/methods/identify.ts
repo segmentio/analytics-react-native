@@ -24,7 +24,7 @@ export default (
   settings: SegmentMixpanelSettings
 ) => {
   const userId = event.userId;
-  const mixpanelTraits = mapTransform(event.traits);
+  const mixpanelTraits = mapTransform(event.traits ?? {});
 
   if (userId !== undefined) {
     mixpanel.identify(userId);
@@ -54,6 +54,7 @@ export default (
   }
 
   if (
+    event.traits !== undefined &&
     settings.people === true &&
     settings.peopleProperties !== undefined &&
     settings.peopleProperties.length
