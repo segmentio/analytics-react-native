@@ -13,7 +13,7 @@
     "typescript": "tsc --noEmit --composite false",
     "test": "jest",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
-    "release": "release-it"
+    "release": "yarn workspaces run release"
   },
   "jest": {
     "projects": [
