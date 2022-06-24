@@ -102,4 +102,49 @@ describe('methods #identify', () => {
       },
     });
   });
+
+  it('persists identity traits accross events', () => {
+    const client = new SegmentClient(clientArgs);
+    jest.spyOn(client, 'process');
+    // @ts-ignore accessing the internal timeline to check the processed events
+    jest.spyOn(client.timeline, 'process');
+
+    client.identify('new-user-id', { name: 'Mary', age: 30 });
+
+    const expectedEvent = {
+      traits: {
+        name: 'Mary',
+        age: 30,
+      },
+      userId: 'new-user-id',
+      type: 'identify',
+    };
+
+    expect(client.process).toHaveBeenCalledTimes(1);
+    expect(client.process).toHaveBeenCalledWith(expectedEvent);
+
+    expect(client.userInfo.get()).toEqual({
+      ...initialUserInfo,
+      userId: 'new-user-id',
+      traits: expectedEvent.traits,
+    });
+
+    client.track('track event');
+
+    // @ts-ignore
+    expect(client.timeline.process).toHaveBeenLastCalledWith({
+      anonymousId: 'very-anonymous',
+      event: 'track event',
+      integrations: {},
+      messageId: 'mocked-uuid',
+      properties: {},
+      timestamp: '2010-01-01T00:00:00.000Z',
+      traits: {
+        age: 30,
+        name: 'Mary',
+      },
+      type: 'track',
+      userId: 'new-user-id',
+    });
+  });
 });
