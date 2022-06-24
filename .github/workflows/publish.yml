@@ -1,9 +1,7 @@
 name: Publish
 
-permissions: 
-  contents: write
-
 on:
+envi
   workflow_dispatch:
     inputs:
       workspace:
@@ -12,15 +10,20 @@ on:
         type: string
         default: ''
     secrets:
+      GITHUB_TOKEN:
+        required: true
       NPM_TOKEN:
         required: true
 
 jobs:
   publish:
     name: Publish to npm
+    environment: Publish
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        persist-credentials: false
+        token: ${{ secrets.GH_TOKEN }}
 
       - uses: actions/setup-node@v2
         with:
@@ -52,12 +55,12 @@ jobs:
         working-directory: ${{env.DIR}}
         run: yarn release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       
       - name: Publish (All)
         if: github.event.inputs.workspace == ''
         run: yarn workspaces run release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
