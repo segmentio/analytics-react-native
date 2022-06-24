@@ -1,7 +1,6 @@
 name: Publish
 
 on:
-envi
   workflow_dispatch:
     inputs:
       workspace:
