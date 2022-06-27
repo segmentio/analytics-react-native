@@ -1,5 +1,5 @@
 apply plugin: "com.android.application"
-apply plugin: 'com.google.gms.google-services'
+// apply plugin: 'com.google.gms.google-services'
 
 import com.android.build.OutputFile
 
@@ -210,6 +210,8 @@ dependencies {
     }
 
     implementation project(':segmentanalyticsreactnative')
+    // implementation "com.google.android.gms:play-services-ads-identifier:18.0.1"
+    implementation project(':analyticsreactnativepluginadvertisingid')
 
     androidTestImplementation('com.wix:detox:+')
 }

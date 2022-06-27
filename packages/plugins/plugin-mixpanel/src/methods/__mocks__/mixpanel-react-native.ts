@@ -40,6 +40,8 @@ export class Mixpanel {
   reset = jest.fn();
   getDistinctId = jest.fn(() => Promise.resolve('mixpanelId'));
   flush = jest.fn();
+  getDeviceId = jest.fn();
+  setFlushOnBackground = jest.fn();
 }
 
 export class People {

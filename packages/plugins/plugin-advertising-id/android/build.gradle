@@ -1,14 +1,15 @@
 buildscript {
   // Buildscript is evaluated before everything else so we can't use getExtOrDefault
-  def kotlin_version = rootProject.ext.has('kotlinVersion') ? rootProject.ext.get('kotlinVersion') : project.properties['AnalyticsReactNative_kotlinVersion']
+  def kotlin_version = rootProject.ext.has('kotlinVersion') ? rootProject.ext.get('kotlinVersion') : project.properties['AnalyticsReactNativePluginAdvertisingId_kotlinVersion']
 
   repositories {
     google()
+    mavenCentral()
     jcenter()
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:4.0.1'
+    classpath 'com.android.tools.build:gradle:3.2.1'
     // noinspection DifferentKotlinGradleVersion
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
   }
@@ -17,27 +18,24 @@ buildscript {
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
-
 def getExtOrDefault(name) {
-  return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['AnalyticsReactNative_' + name]
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['AnalyticsReactNativePluginAdvertisingId_' + name]
 }
 
 def getExtOrIntegerDefault(name) {
-  return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['AnalyticsReactNative_' + name]).toInteger()
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['AnalyticsReactNativePluginAdvertisingId_' + name]).toInteger()
 }
 
 android {
   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
-  buildToolsVersion getExtOrDefault('buildToolsVersion')
   defaultConfig {
-    minSdkVersion 21
+    minSdkVersion 31
     targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
-    compileSdkVersion = getExtOrIntegerDefault('compileSdkVersion')
     versionCode 1
     versionName "1.0"
-
+    
   }
-
+  
   buildTypes {
     release {
       minifyEnabled false
@@ -129,5 +127,6 @@ dependencies {
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  implementation "com.google.android.gms:play-services-ads-identifier:18.0.1"
   implementation project(path: ':segment_sovran-react-native')
 }
