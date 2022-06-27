@@ -128,7 +128,7 @@ jobs:
         with:
           api-level: ${{ matrix.api-level }}
           profile: ${{matrix.profile}}
-          avd-name: Pixel_API_31_AOSP
+          avd-name: Pixel_API_21_AOSP
           target: default
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
