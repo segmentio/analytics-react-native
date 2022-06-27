@@ -8,28 +8,30 @@ class AnalyticsReactNativePluginIdfa: RCTEventEmitter {
     override static func requiresMainQueueSetup() -> Bool {
        return true
      }
-    
-    @available(iOS 14, *)
 
     @objc
     func getTrackingAuthorizationStatus(
         _ resolve: RCTPromiseResolveBlock,
         rejecter reject: RCTPromiseRejectBlock
     ) -> Void {
-        let status = ATTrackingManager.trackingAuthorizationStatus
-        if status == .notDetermined {
-            // we don't know, so should ask the user.
-            askForPermission()
+        let adTrackingEnabled: Bool
+        let trackingStatus: String
+
+        if #available(iOS 14, *) {
+            let status = ATTrackingManager.trackingAuthorizationStatus
+            if status == .notDetermined {
+                // we don't know, so should ask the user.
+                askForPermission()
+            }
+
+            adTrackingEnabled = status == .authorized
+            trackingStatus = statusToString(status)
+        } else {
+            adTrackingEnabled = ASIdentifierManager.shared().isAdvertisingTrackingEnabled
+            trackingStatus = adTrackingEnabled ? "authorized" : "denied"
         }
-        
-        let trackingStatus = statusToString(status)
-        var idfa = fallbackValue
-        var adTrackingEnabled = false
-        
-        if status == .authorized {
-            adTrackingEnabled = true
-            idfa = ASIdentifierManager.shared().advertisingIdentifier.uuidString
-        }
+
+        let idfa = adTrackingEnabled ? ASIdentifierManager.shared().advertisingIdentifier.uuidString : fallbackValue
         
         let context: [String: Any] = [
             "adTrackingEnabled": adTrackingEnabled,
@@ -37,7 +39,7 @@ class AnalyticsReactNativePluginIdfa: RCTEventEmitter {
             "trackingStatus": trackingStatus
         ]
         
-        _ = JSONSerialization.isValidJSONObject(context)
+        assert(JSONSerialization.isValidJSONObject(context))
         
         resolve(context);
     }

@@ -9,7 +9,8 @@ export const sendEvents = async ({
   config: Config;
   events: SegmentEvent[];
 }) => {
-  await fetch(batchApi, {
+  const requestUrl = config.proxy || batchApi;
+  await fetch(requestUrl, {
     method: 'POST',
     body: JSON.stringify({
       batch: events,

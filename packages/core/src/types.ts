@@ -26,6 +26,7 @@ interface BaseEventType {
   messageId?: string;
   userId?: string;
   timestamp?: string;
+  traits?: UserTraits | GroupTraits;
 
   context?: PartialContext;
   integrations?: SegmentAPIIntegrations;
@@ -46,13 +47,13 @@ export interface ScreenEventType extends BaseEventType {
 
 export interface IdentifyEventType extends BaseEventType {
   type: EventType.IdentifyEvent;
-  traits: UserTraits;
+  traits?: UserTraits;
 }
 
 export interface GroupEventType extends BaseEventType {
   type: EventType.GroupEvent;
   groupId: string;
-  traits: GroupTraits;
+  traits?: GroupTraits;
 }
 
 export interface AliasEventType extends BaseEventType {
@@ -126,6 +127,7 @@ export type Config = {
   autoAddSegmentDestination?: boolean;
   collectDeviceId?: boolean;
   storePersistor?: Persistor;
+  proxy?: string;
 };
 
 export type ClientMethods = {
@@ -296,5 +298,5 @@ export enum EventType {
 export type UserInfoState = {
   anonymousId: string;
   userId?: string;
-  traits?: UserTraits;
+  traits?: UserTraits | GroupTraits;
 };

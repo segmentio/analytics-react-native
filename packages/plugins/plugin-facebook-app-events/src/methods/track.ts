@@ -46,7 +46,10 @@ export default (event: TrackEventType) => {
   let safeProps = sanitizeEvent(safeEvent);
   const currency = (safeProps.fb_currency as string | undefined) ?? 'USD';
 
-  if (safeProps._valueToSum !== undefined) {
+  if (
+    safeProps._valueToSum !== undefined &&
+    safeName === 'fb_mobile_purchase'
+  ) {
     let purchasePrice = safeProps._valueToSum as number;
 
     AppEventsLogger.logPurchase(purchasePrice, currency, safeProps);

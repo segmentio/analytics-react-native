@@ -110,6 +110,8 @@ You must pass at least the `writeKey`. Additional configuration options are list
 | `defaultSettings`          | undefined | Settings that will be used if the request to get the settings from Segment fails                                                               |
 | `autoAddSegmentDestination`| true      | Set to false to skip adding the SegmentDestination plugin                                                                                      |
 | `storePersistor`           | undefined | A custom persistor for the store that `analytics-react-native` leverages. Must match `Persistor` interface exported from [sovran-react-native](https://github.com/segmentio/sovran-react-native).|
+| `proxy`                    | undefined | `proxy` is a batch url to post to instead of 'https://api.segment.io/v1/b'.                                                                    |
+
 
 \* The default value of `debug` will be false in production.
 
@@ -372,42 +374,28 @@ Our [example app](./example) is set up with screen tracking using React Navigati
 
 Essentially what we'll do is find the root level navigation container and call `screen()` whenever user has navigated to a new screen.
 
-Find the file where you've used the `NavigationContainer` - the main top level container for React Navigation. In this component, create a new state variable to store the current route name:
+Find the file where you've used the `NavigationContainer` - the main top level container for React Navigation. In this component, create 2 new refs to store the `navigation` object and the current route name:
 
 ```js
-const [routeName, setRouteName] = useState('Unknown');
+const navigationRef = useRef(null);
+const routeNameRef = useRef(null);
 ```
 
-Now, outside of the component, create a utility function for determining the name of the selected route:
-
-```js
-const getActiveRouteName = (
-  state: NavigationState | PartialState<NavigationState> | undefined
-): string => {
-  if (!state || typeof state.index !== 'number') {
-    return 'Unknown';
-  }
-
-  const route = state.routes[state.index];
-
-  if (route.state) {
-    return getActiveRouteName(route.state);
-  }
-
-  return route.name;
-};
-```
-
-Finally, pass a function in the `onStateChange` prop of your `NavigationContainer` that checks for the active route name and calls `client.screen()` if the route has changes. You can pass in any additional screen parameters as the second argument for screen call as needed.
+Next, pass the ref to `NavigationContainer` and a function in the `onReady` prop to store the initial route name. Finally, pass a function in the `onStateChange` prop of your `NavigationContainer` that checks for the active route name and calls `client.screen()` if the route has changes. You can pass in any additional screen parameters as the second argument for screen call as needed.
 
 ```js
 <NavigationContainer
-  onStateChange={(state) => {
-    const newRouteName = getActiveRouteName(state);
+  ref={navigationRef}
+  onReady={() => {
+    routeNameRef.current = navigationRef.current.getCurrentRoute().name;
+  }}
+  onStateChange={() => {
+    const previousRouteName = routeNameRef.current;
+    const currentRouteName = navigationRef.current?.getCurrentRoute().name;
 
-    if (routeName !== newRouteName) {
-      segmentClient.screen(newRouteName);
-      setRouteName(newRouteName);
+    if (previousRouteName !== currentRouteName) {
+      segmentClient.screen(currentRouteName);
+      routeNameRef.current = currentRouteName;
     }
   }}
 >

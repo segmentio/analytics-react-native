@@ -9,7 +9,7 @@ export default (payload: IdentifyEventType) => {
     ReactAppboy.changeUser(payload.userId);
   }
 
-  if (payload.traits.birthday) {
+  if (payload.traits?.birthday !== undefined) {
     const data = new Date(payload.traits.birthday);
     ReactAppboy.setDateOfBirth(
       data.getFullYear(),
@@ -19,19 +19,19 @@ export default (payload: IdentifyEventType) => {
     );
   }
 
-  if (payload.traits.email) {
+  if (payload.traits?.email !== undefined) {
     ReactAppboy.setEmail(payload.traits.email);
   }
 
-  if (payload.traits.firstName) {
+  if (payload.traits?.firstName !== undefined) {
     ReactAppboy.setFirstName(payload.traits.firstName);
   }
 
-  if (payload.traits.lastName) {
+  if (payload.traits?.lastName !== undefined) {
     ReactAppboy.setLastName(payload.traits.lastName);
   }
 
-  if (payload.traits.gender) {
+  if (payload.traits?.gender !== undefined) {
     const validGenders = ['m', 'f', 'n', 'o', 'p', 'u'];
     const isValidGender = validGenders.indexOf(payload.traits.gender) > -1;
     if (isValidGender) {
@@ -41,15 +41,15 @@ export default (payload: IdentifyEventType) => {
     }
   }
 
-  if (payload.traits.phone) {
+  if (payload.traits?.phone !== undefined) {
     ReactAppboy.setPhoneNumber(payload.traits.phone);
   }
 
-  if (payload.traits.address) {
-    if (payload.traits.address.city) {
+  if (payload.traits?.address !== undefined) {
+    if (payload.traits.address.city !== undefined) {
       ReactAppboy.setHomeCity(payload.traits.address.city);
     }
-    if (payload.traits.address.country) {
+    if (payload.traits?.address.country !== undefined) {
       ReactAppboy.setCountry(payload.traits.address.country);
     }
   }
@@ -64,7 +64,7 @@ export default (payload: IdentifyEventType) => {
     'address',
   ];
 
-  Object.entries(payload.traits).forEach(([key, value]) => {
+  Object.entries(payload.traits ?? {}).forEach(([key, value]) => {
     if (appBoyTraits.indexOf(key) < 0) {
       ReactAppboy.setCustomUserAttribute(key, value as any);
     }

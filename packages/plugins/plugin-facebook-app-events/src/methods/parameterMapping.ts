@@ -7,6 +7,7 @@ export const mapEventNames = {
   'Order Completed': 'fb_mobile_purchase',
   'Product Added': 'fb_mobile_add_to_cart',
   'Product Added to Wishlist': 'fb_mobile_add_to_wishlist',
+  'Checkout Started': 'fb_mobile_initiated_checkout',
 } as any;
 
 export const mapEventProps: { [key: string]: string } = {
