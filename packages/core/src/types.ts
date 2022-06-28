@@ -26,7 +26,6 @@ interface BaseEventType {
   messageId?: string;
   userId?: string;
   timestamp?: string;
-  traits?: UserTraits | GroupTraits;
 
   context?: PartialContext;
   integrations?: SegmentAPIIntegrations;
