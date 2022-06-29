@@ -157,7 +157,7 @@ Also review [the main package list](README.md#supported-plugins) for new V2 plug
 
 ### Context Traits
 
-Previous versions of this library used to persist `traits` accross events after an `identify` was sent inside `context.traits` we're not supporting this out of the box in V2 and the rest of our mobile libraries due concerns of data privacy for some device destinations. Some device mode destinations might not accept events if they contain identifiable data.
+Previous versions of this library used to persist `traits` in `context.traits` across all event types after an `identify` event was sent. We no longer not support this out of the box in V2 as well as the rest of our mobile libraries due to concerns of data privacy for some device mode destinations. Some device mode destinations might not accept events if they contain identifiable data as it is against their Terms of Service.
 
 If you need to keep this behavior, we have an example plugin [`InjectTraits`](example/src/plugins/InjectTraits.ts) that you can use for it. This plugin injects the current user traits into `context.traits` of every event.
 
@@ -175,4 +175,4 @@ const segmentClient = createClient({
 segmentClient.add({ plugin: new InjectTraits() });
 ```
 
-Please note that as this is an example we don't offer full support for it nor release it as an npm package.
+Please note that as this is an example we don't offer full support for it and will not release it as an NPM package.
