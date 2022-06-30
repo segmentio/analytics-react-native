@@ -59,6 +59,11 @@ describe('methods #identify', () => {
       ...initialUserInfo,
       userId: 'new-user-id',
     });
+    expect(client.context.get()?.traits).toEqual({
+      ...initialContext.traits,
+      name: 'Mary',
+      age: 30,
+    });
   });
 
   it('does not update user traits when there are no new ones provided', () => {
@@ -83,6 +88,11 @@ describe('methods #identify', () => {
       ...initialUserInfo,
       userId: 'new-user-id',
     });
+    expect(client.context.get()?.traits).toEqual({
+      ...initialContext.traits,
+      name: 'Stacy',
+      age: 30,
+    });
   });
 
   it('does not update userId when userId is undefined', () => {
@@ -103,7 +113,9 @@ describe('methods #identify', () => {
       ...initialUserInfo,
     });
     expect(client.context.get()?.traits).toEqual({
-      ...expectedEvent.traits,
+      ...initialContext.traits,
+      name: 'Mary',
+      age: 30,
     });
   });
 
@@ -131,7 +143,11 @@ describe('methods #identify', () => {
       ...initialUserInfo,
       userId: 'new-user-id',
     });
-    expect(client.context.get()?.traits).toEqual(expectedEvent.traits);
+    expect(client.context.get()?.traits).toEqual({
+      ...initialContext.traits,
+      name: 'Mary',
+      age: 30,
+    });
 
     client.track('track event');
 
