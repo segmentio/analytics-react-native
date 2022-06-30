@@ -103,7 +103,7 @@ describe('methods #identify', () => {
     });
   });
 
-  it('persists identity traits accross events', () => {
+  it('does not persist identity traits accross events', () => {
     const client = new SegmentClient(clientArgs);
     jest.spyOn(client, 'process');
     // @ts-ignore accessing the internal timeline to check the processed events
@@ -139,10 +139,6 @@ describe('methods #identify', () => {
       messageId: 'mocked-uuid',
       properties: {},
       timestamp: '2010-01-01T00:00:00.000Z',
-      traits: {
-        age: 30,
-        name: 'Mary',
-      },
       type: 'track',
       userId: 'new-user-id',
     });
