@@ -29,7 +29,6 @@ const INITIAL_VALUES: Data = {
   userInfo: {
     anonymousId: 'anonymousId',
     userId: undefined,
-    traits: undefined,
   },
   deepLinkData: {
     referring_application: '',

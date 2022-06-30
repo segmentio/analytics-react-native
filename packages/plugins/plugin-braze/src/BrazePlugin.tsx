@@ -14,13 +14,14 @@ export class BrazePlugin extends DestinationPlugin {
 
   identify(event: IdentifyEventType) {
     const currentUserInfo = this.analytics?.userInfo.get();
+    const traits = this.analytics?.context.get()?.traits;
 
     //check to see if anything has changed.
     //if it hasn't changed don't send event
     if (
       currentUserInfo?.userId === event.userId &&
       currentUserInfo?.anonymousId === event.anonymousId &&
-      currentUserInfo?.traits === event.traits
+      traits === event.traits
     ) {
       let integrations = event.integrations;
 

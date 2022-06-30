@@ -37,7 +37,6 @@ const INITIAL_VALUES: Data = {
   userInfo: {
     anonymousId: getUUID(),
     userId: undefined,
-    traits: undefined,
   },
 };
 

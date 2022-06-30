@@ -9,16 +9,19 @@ jest
   .mockReturnValue('2010-01-01T00:00:00.000Z');
 
 describe('methods #identify', () => {
-  const initialUserInfo = {
+  const initialContext = {
     traits: {
       name: 'Stacy',
       age: 30,
     },
+  };
+  const initialUserInfo = {
     userId: 'current-user-id',
     anonymousId: 'very-anonymous',
   };
   const store = new MockSegmentStore({
     userInfo: initialUserInfo,
+    context: initialContext,
   });
 
   const clientArgs = {
@@ -55,7 +58,6 @@ describe('methods #identify', () => {
     expect(client.userInfo.get()).toEqual({
       ...initialUserInfo,
       userId: 'new-user-id',
-      traits: expectedEvent.traits,
     });
   });
 
@@ -66,9 +68,12 @@ describe('methods #identify', () => {
     client.identify('new-user-id');
 
     const expectedEvent = {
-      traits: initialUserInfo.traits,
       userId: 'new-user-id',
       type: 'identify',
+      traits: {
+        name: 'Stacy',
+        age: 30,
+      },
     };
 
     expect(client.process).toHaveBeenCalledTimes(1);
@@ -96,10 +101,9 @@ describe('methods #identify', () => {
     expect(client.process).toHaveBeenCalledWith(expectedEvent);
     expect(client.userInfo.get()).toEqual({
       ...initialUserInfo,
-      traits: {
-        age: 30,
-        name: 'Mary',
-      },
+    });
+    expect(client.context.get()?.traits).toEqual({
+      ...expectedEvent.traits,
     });
   });
 
@@ -126,8 +130,8 @@ describe('methods #identify', () => {
     expect(client.userInfo.get()).toEqual({
       ...initialUserInfo,
       userId: 'new-user-id',
-      traits: expectedEvent.traits,
     });
+    expect(client.context.get()?.traits).toEqual(expectedEvent.traits);
 
     client.track('track event');
 
@@ -139,10 +143,6 @@ describe('methods #identify', () => {
       messageId: 'mocked-uuid',
       properties: {},
       timestamp: '2010-01-01T00:00:00.000Z',
-      traits: {
-        age: 30,
-        name: 'Mary',
-      },
       type: 'track',
       userId: 'new-user-id',
     });

@@ -128,7 +128,6 @@ describe('SegmentClient', () => {
       expect(setUserInfo).toHaveBeenCalledWith({
         anonymousId: 'anonymousId',
         userId: undefined,
-        traits: undefined,
       });
     });
 
@@ -141,7 +140,6 @@ describe('SegmentClient', () => {
       expect(setUserInfo).toHaveBeenCalledWith({
         anonymousId: 'mocked-uuid',
         userId: undefined,
-        traits: undefined,
       });
     });
   });

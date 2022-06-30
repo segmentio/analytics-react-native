@@ -75,9 +75,6 @@ describe('methods #flush', () => {
       store: new MockSegmentStore({
         userInfo: {
           anonymousId: '123-456',
-          traits: {
-            name: 'Mary',
-          },
         },
         events: events,
       }),

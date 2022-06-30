@@ -504,7 +504,8 @@ export class SegmentClient {
 
   identify(userId?: string, userTraits?: UserTraits) {
     const userInfo = this.store.userInfo.get();
-    const { traits: currentUserTraits } = userInfo;
+    const context = this.store.context.get();
+    const currentUserTraits = context?.traits || {};
 
     const mergedTraits = {
       ...currentUserTraits,
@@ -519,6 +520,10 @@ export class SegmentClient {
     this.store.userInfo.set({
       ...userInfo,
       userId: userId ?? userInfo.userId,
+    });
+
+    this.store.context.set({
+      ...context,
       traits: mergedTraits,
     });
 
@@ -678,7 +683,6 @@ export class SegmentClient {
     this.store.userInfo.set({
       anonymousId,
       userId: undefined,
-      traits: undefined,
     });
 
     getPluginsWithReset(this.timeline).forEach((plugin) => plugin.reset());

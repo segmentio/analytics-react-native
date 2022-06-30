@@ -26,7 +26,6 @@ interface BaseEventType {
   messageId?: string;
   userId?: string;
   timestamp?: string;
-  traits?: UserTraits | GroupTraits;
 
   context?: PartialContext;
   integrations?: SegmentAPIIntegrations;
@@ -53,7 +52,7 @@ export interface IdentifyEventType extends BaseEventType {
 export interface GroupEventType extends BaseEventType {
   type: EventType.GroupEvent;
   groupId: string;
-  traits?: GroupTraits;
+  traits: GroupTraits;
 }
 
 export interface AliasEventType extends BaseEventType {
@@ -298,5 +297,4 @@ export enum EventType {
 export type UserInfoState = {
   anonymousId: string;
   userId?: string;
-  traits?: UserTraits | GroupTraits;
 };

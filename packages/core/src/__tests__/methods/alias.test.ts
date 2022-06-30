@@ -48,7 +48,6 @@ describe('methods #alias', () => {
     expect(client.userInfo.get()).toEqual({
       anonymousId: 'anonymousId',
       userId: 'new-user-id',
-      traits: undefined,
     });
   });
 
@@ -78,7 +77,6 @@ describe('methods #alias', () => {
     expect(client.userInfo.get()).toEqual({
       anonymousId: 'anonymousId',
       userId: 'new-user-id',
-      traits: undefined,
     });
   });
 });
