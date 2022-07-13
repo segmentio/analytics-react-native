@@ -42,6 +42,7 @@ const segmentClient = createClient({
   collectDeviceId: true,
   debug: true,
   trackDeepLinks: true,
+  flushInterval: 10,
 });
 
 const LoggerPlugin = new Logger();

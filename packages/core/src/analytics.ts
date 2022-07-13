@@ -1,5 +1,6 @@
 import type { Unsubscribe } from '@segment/sovran-react-native';
 import deepmerge from 'deepmerge';
+import allSettled from 'promise.allsettled';
 import { AppState, AppStateStatus } from 'react-native';
 import { settingsCDN } from './constants';
 import { getContext } from './context';
@@ -34,6 +35,9 @@ import {
 import { getPluginsWithFlush, getPluginsWithReset } from './util';
 import { getUUID } from './uuid';
 
+// Important! We need to polyfill Promise.allSettled because it's not supported in RN (https://github.com/facebook/react-native/issues/30236)
+allSettled.shim();
+
 type OnContextLoadCallback = (type: UpdateType) => void | Promise<void>;
 
 export class SegmentClient {
@@ -53,16 +57,13 @@ export class SegmentClient {
   public logger: Logger;
 
   // internal time to know when to flush, ticks every second
-  private flushInterval: ReturnType<typeof setInterval> | null = null;
+  private flushInterval: ReturnType<typeof setTimeout> | null = null;
 
   // unsubscribe watchers for the store
   private watchers: Unsubscribe[] = [];
 
   // whether the user has called cleanup
   private destroyed: boolean = false;
-
-  // has a pending upload to respond
-  private isPendingUpload: boolean = false;
 
   private isAddingPlugins: boolean = false;
 
@@ -109,11 +110,6 @@ export class SegmentClient {
    * Access or subscribe to integration settings
    */
   readonly settings: Watchable<SegmentAPIIntegrations | undefined>;
-
-  /**
-   * Access or suscribe to the events in the timeline
-   */
-  readonly events: Watchable<SegmentEvent[]>;
 
   /**
    * Access or subscribe to user info (anonymousId, userId, traits)
@@ -164,13 +160,6 @@ export class SegmentClient {
     this.store = store;
     this.timeline = new Timeline();
 
-    // add segment destination plugin unless
-    // asked not to via configuration.
-    if (this.config.autoAddSegmentDestination) {
-      const segmentDestination = new SegmentDestination();
-      this.add({ plugin: segmentDestination });
-    }
-
     // Initialize the watchables
     this.context = {
       get: this.store.context.get,
@@ -196,21 +185,24 @@ export class SegmentClient {
       onChange: this.store.userInfo.onChange,
     };
 
-    this.events = {
-      get: this.store.events.get,
-      onChange: this.store.events.onChange,
+    this.deepLinkData = {
+      get: this.store.deepLinkData.get,
+      onChange: this.store.deepLinkData.onChange,
     };
 
     // Watch for isReady so that we can handle any pending events
     // Delays events processing in the timeline until the store is ready to prevent missing data injected from the plugins
     this.store.isReady.onChange((value) => this.onStorageReady(value));
 
+    // add segment destination plugin unless
+    // asked not to via configuration.
+    if (this.config.autoAddSegmentDestination) {
+      const segmentDestination = new SegmentDestination();
+      this.add({ plugin: segmentDestination });
+    }
+
     // Setup platform specific plugins
     this.platformPlugins.forEach((plugin) => this.add({ plugin: plugin }));
-    this.deepLinkData = {
-      get: this.store.deepLinkData.get,
-      onChange: this.store.deepLinkData.onChange,
-    };
   }
 
   /**
@@ -317,14 +309,6 @@ export class SegmentClient {
 
   private setupStorageSubscribers() {
     this.unsubscribeStorageWatchers();
-
-    this.watchers.push(
-      this.store.events.onChange((events: SegmentEvent[]) => {
-        if (events.length >= this.config.flushAt!) {
-          this.flush();
-        }
-      })
-    );
   }
 
   private setupLifecycleEvents() {
@@ -456,7 +440,7 @@ export class SegmentClient {
     }
   }
 
-  async flush(debounceInterval: boolean = true) {
+  async flush(debounceInterval: boolean = true): Promise<void> {
     if (this.destroyed) {
       return;
     }
@@ -466,20 +450,14 @@ export class SegmentClient {
       this.setupInterval();
     }
 
-    if (!this.isPendingUpload) {
-      this.isPendingUpload = true;
-      try {
-        const events = this.store.events.get();
+    const promises: (void | Promise<void>)[] = [];
+    getPluginsWithFlush(this.timeline).forEach((plugin) => {
+      promises.push(plugin.flush());
+    });
 
-        if (events.length > 0) {
-          getPluginsWithFlush(this.timeline).forEach((plugin) =>
-            plugin.flush()
-          );
-        }
-      } finally {
-        this.isPendingUpload = false;
-      }
-    }
+    await Promise.allSettled(promises);
+
+    return Promise.resolve();
   }
 
   screen(name: string, options?: JsonMap) {
@@ -551,14 +529,6 @@ export class SegmentClient {
 
     this.process(event);
     this.logger.info('ALIAS event saved', event);
-  }
-
-  queueEvent(event: SegmentEvent) {
-    this.store.events.add(event);
-  }
-
-  removeEvents(event: SegmentEvent | SegmentEvent[]) {
-    this.store.events.remove(event);
   }
 
   /**
