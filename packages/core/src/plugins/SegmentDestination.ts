@@ -7,6 +7,7 @@ import { DestinationMetadataEnrichment } from './DestinationMetadataEnrichment';
 import { QueueFlushingPlugin } from './QueueFlushingPlugin';
 
 const MAX_EVENTS_PER_BATCH = 100;
+const MAX_PAYLOAD_SIZE_IN_KB = 500;
 export const SEGMENT_DESTINATION_KEY = 'Segment.io';
 
 export class SegmentDestination extends DestinationPlugin {
@@ -21,7 +22,8 @@ export class SegmentDestination extends DestinationPlugin {
 
     const chunkedEvents: SegmentEvent[][] = chunk(
       events,
-      this.analytics?.getConfig().maxBatchSize ?? MAX_EVENTS_PER_BATCH
+      this.analytics?.getConfig().maxBatchSize ?? MAX_EVENTS_PER_BATCH,
+      MAX_PAYLOAD_SIZE_IN_KB
     );
 
     let sentEvents: SegmentEvent[] = [];
