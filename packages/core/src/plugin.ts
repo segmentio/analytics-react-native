@@ -155,7 +155,7 @@ export class DestinationPlugin extends EventPlugin {
 
   execute(event: SegmentEvent): SegmentEvent | undefined {
     if (!this.isEnabled(event)) {
-      return undefined;
+      return;
     }
 
     // Apply before and enrichment plugins

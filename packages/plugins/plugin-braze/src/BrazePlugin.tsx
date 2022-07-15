@@ -10,7 +10,7 @@ import flush from './methods/flush';
 
 export class BrazePlugin extends DestinationPlugin {
   type = PluginType.destination;
-  key = 'Braze';
+  key = 'Appboy';
 
   identify(event: IdentifyEventType) {
     const currentUserInfo = this.analytics?.userInfo.get();
