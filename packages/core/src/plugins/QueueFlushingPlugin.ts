@@ -35,7 +35,10 @@ export class QueueFlushingPlugin extends UtilityPlugin {
     this.queueStore = createStore(
       { events: [] as SegmentEvent[] },
       {
-        persist: { storeId: `${config.writeKey}-events` },
+        persist: {
+          storeId: `${config.writeKey}-events`,
+          persistor: config.storePersistor,
+        },
       }
     );
 
