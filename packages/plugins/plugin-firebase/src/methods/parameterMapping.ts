@@ -1,4 +1,4 @@
-const mapEventNames = {
+const mapEventNames: { [key: string]: string } = {
   'Product Clicked': 'select_content',
   'Product Viewed': 'view_item',
   'Product Added': 'add_to_cart',
@@ -13,7 +13,7 @@ const mapEventNames = {
   'Product Shared': 'share',
   'Cart Shared': 'share',
   'Products Searched': 'search',
-} as any;
+};
 
 export const mapEventProps: { [key: string]: string } = {
   price: 'price',
@@ -24,7 +24,7 @@ export const mapEventProps: { [key: string]: string } = {
   productId: 'item_id',
   category: 'item_category',
   query: 'search_term',
-} as any;
+};
 
 export const transformMap: { [key: string]: (value: any) => any } = {
   event: (value: string) => {
