@@ -1,5 +1,5 @@
 import { PluginType, SegmentEvent, UpdateType } from './types';
-import type { Plugin } from './plugin';
+import type { DestinationPlugin, Plugin } from './plugin';
 import { getAllPlugins } from './util';
 
 /*
@@ -97,7 +97,19 @@ export class Timeline {
     if (plugins) {
       plugins.forEach((plugin) => {
         if (result) {
-          result = plugin.execute(result);
+          try {
+            const pluginResult = plugin.execute(result);
+            // Each destination is independent from each other, so we don't roll over changes caused internally in each one of their processing
+            if (type !== PluginType.destination) {
+              result = pluginResult;
+            }
+          } catch (error) {
+            console.warn(
+              `Destination ${
+                (plugin as DestinationPlugin).key
+              } failed to execute: ${JSON.stringify(error)}`
+            );
+          }
         }
       });
     }
