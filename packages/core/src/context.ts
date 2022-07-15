@@ -1,5 +1,5 @@
 import { NativeModules } from 'react-native';
-import packageJson from '../package.json';
+import { libraryInfo } from './info';
 
 import type {
   Context,
@@ -54,8 +54,8 @@ export const getContext = async (
     },
     device,
     library: {
-      name: packageJson.name,
-      version: packageJson.version,
+      name: libraryInfo.name,
+      version: libraryInfo.version,
     },
     locale,
     network: {
