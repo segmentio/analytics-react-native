@@ -1,25 +1,20 @@
 import firebaseAnalytics from '@react-native-firebase/analytics';
-import type { TrackEventType } from '@segment/analytics-react-native';
+import {
+  generateMapTransform,
+  TrackEventType,
+} from '@segment/analytics-react-native';
+import { mapEventProps, transformMap } from './parameterMapping';
 
-const mapEventNames = {
-  'Product Clicked': 'select_content',
-  'Product Viewed': 'view_item',
-  'Product Added': 'add_to_cart',
-  'Product Removed': 'remove_from_cart',
-  'Checkout Started': 'begin_checkout',
-  'Promotion Viewed': 'present_offer',
-  'Payment Info Entered': 'add_payment_info',
-  'Order Completed': 'ecommerce_purchase',
-  'Order Refunded': 'purchase_refund',
-  'Product List Viewed': 'view_item_list',
-  'Product Added to Wishlist': 'add_to_wishlist',
-  'Product Shared': 'share',
-  'Cart Shared': 'share',
-  'Products Searched': 'search',
-} as any;
+const mappedPropNames = generateMapTransform(mapEventProps, transformMap);
+
+const sanitizeName = (name: string) => {
+  return name.replace(/[^a-zA-Z0-9]/g, '_');
+};
 
 export default async (event: TrackEventType) => {
-  const safeEventName =
-    mapEventNames[event.event] || event.event.replace(/[^a-zA-Z0-9]/g, '_');
-  await firebaseAnalytics().logEvent(safeEventName, event.properties);
+  const safeEvent = mappedPropNames(event as Record<string, any>);
+  let convertedName = safeEvent.event as string;
+  const safeEventName = sanitizeName(convertedName);
+  const safeProps = safeEvent.properties as { [key: string]: any };
+  await firebaseAnalytics().logEvent(safeEventName, safeProps);
 };

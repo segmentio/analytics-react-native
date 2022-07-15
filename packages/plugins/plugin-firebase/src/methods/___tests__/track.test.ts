@@ -78,6 +78,6 @@ describe('#track', () => {
     await track(event);
 
     expect(mockLogEvent).toHaveBeenCalledTimes(1);
-    expect(mockLogEvent).toHaveBeenCalledWith('purchase_refund', {});
+    expect(mockLogEvent).toHaveBeenCalledWith('refund', {});
   });
 });
