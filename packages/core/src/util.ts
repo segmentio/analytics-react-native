@@ -1,18 +1,43 @@
 import type { EventPlugin } from './plugin';
 import type { Timeline } from './timeline';
 
-export const chunk = (array: any[], size: number) => {
-  if (!array.length || !size) {
+const sizeOf = (obj: unknown): number => {
+  const size = encodeURI(JSON.stringify(obj)).split(/%..|./).length - 1;
+  return size / 1024;
+};
+
+export const chunk = (array: any[], count: number, maxKB?: number) => {
+  if (!array.length || !count) {
     return [];
   }
 
-  let index = 0;
-  let resIndex = 0;
-  const result = new Array(Math.ceil(array.length / size));
+  let currentChunk = 0;
+  let rollingKBSize = 0;
+  const result: any[] = array.reduce(
+    (chunks: any[][], item: any, index: number) => {
+      if (maxKB !== undefined) {
+        rollingKBSize += sizeOf(item);
+        // If we overflow chunk until the previous index, else keep going
+        if (rollingKBSize >= maxKB) {
+          chunks[++currentChunk] = [item];
+          return chunks;
+        }
+      }
 
-  while (index < array.length) {
-    result[resIndex++] = array.slice(index, (index += size));
-  }
+      if (index !== 0 && index % count === 0) {
+        chunks[++currentChunk] = [item];
+      } else {
+        if (chunks[currentChunk] === undefined) {
+          chunks[currentChunk] = [];
+        }
+        chunks[currentChunk].push(item);
+      }
+
+      return chunks;
+    },
+    []
+  );
+
   return result;
 };
 
