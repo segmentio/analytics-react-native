@@ -29,7 +29,9 @@ export class Plugin {
     // do nothing by default, user can override.
   }
 
-  execute(event: SegmentEvent): SegmentEvent | undefined {
+  execute(
+    event: SegmentEvent
+  ): Promise<SegmentEvent | undefined> | SegmentEvent | undefined {
     // do nothing.
     return event;
   }
@@ -40,7 +42,9 @@ export class Plugin {
 }
 
 export class EventPlugin extends Plugin {
-  execute(event: SegmentEvent): SegmentEvent | undefined {
+  execute(
+    event: SegmentEvent
+  ): Promise<SegmentEvent | undefined> | SegmentEvent | undefined {
     if (event === undefined) {
       return event;
     }
@@ -153,13 +157,13 @@ export class DestinationPlugin extends EventPlugin {
     this.timeline.remove(plugin);
   }
 
-  execute(event: SegmentEvent): SegmentEvent | undefined {
+  async execute(event: SegmentEvent): Promise<SegmentEvent | undefined> {
     if (!this.isEnabled(event)) {
       return;
     }
 
     // Apply before and enrichment plugins
-    const beforeResult = this.timeline.applyPlugins({
+    const beforeResult = await this.timeline.applyPlugins({
       type: PluginType.before,
       event,
     });
@@ -168,16 +172,20 @@ export class DestinationPlugin extends EventPlugin {
       return;
     }
 
-    const enrichmentResult = this.timeline.applyPlugins({
+    const enrichmentResult = await this.timeline.applyPlugins({
       type: PluginType.enrichment,
       event: beforeResult,
     });
 
+    if (enrichmentResult === undefined) {
+      return;
+    }
+
     // Now send the event to the destination by executing the normal flow of an EventPlugin
-    super.execute(enrichmentResult);
+    await super.execute(enrichmentResult);
 
     // apply .after plugins
-    let afterResult = this.timeline.applyPlugins({
+    let afterResult = await this.timeline.applyPlugins({
       type: PluginType.after,
       event: enrichmentResult,
     });

@@ -54,7 +54,7 @@ describe('timeline', () => {
     }
   }
 
-  it('processes each destination independently', () => {
+  it('processes each destination independently', async () => {
     const timeline = new Timeline();
 
     const goodPlugin = jest.fn().mockImplementation((e) => e);
@@ -70,14 +70,14 @@ describe('timeline', () => {
       },
     };
 
-    const result = timeline.process(expectedEvent);
+    const result = await timeline.process(expectedEvent);
 
     expect(result).toEqual(expectedEvent);
     expect(goodPlugin).toHaveBeenCalled();
     expect(badPlugin).toHaveBeenCalled();
   });
 
-  it('handles errors from plugins execution', () => {
+  it('handles errors from plugins execution', async () => {
     const timeline = new Timeline();
 
     const goodPlugin = jest.fn().mockImplementation((e) => e);
@@ -95,14 +95,14 @@ describe('timeline', () => {
       },
     };
 
-    const result = timeline.process(expectedEvent);
+    const result = await timeline.process(expectedEvent);
 
     expect(result).toEqual(expectedEvent);
     expect(goodPlugin).toHaveBeenCalled();
     expect(badPlugin).toHaveBeenCalled();
   });
 
-  it('shortcircuits plugin execution if a plugin return undefined', () => {
+  it('shortcircuits plugin execution if a plugin return undefined', async () => {
     const timeline = new Timeline();
 
     const goodPlugin = jest.fn().mockImplementation((e) => e);
@@ -119,7 +119,7 @@ describe('timeline', () => {
       },
     };
 
-    const result = timeline.process(expectedEvent);
+    const result = await timeline.process(expectedEvent);
 
     expect(result).toEqual(undefined);
     expect(goodPlugin).not.toHaveBeenCalled();

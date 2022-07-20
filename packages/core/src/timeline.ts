@@ -57,9 +57,11 @@ export class Timeline {
     getAllPlugins(this).forEach((plugin) => closure(plugin));
   }
 
-  process(incomingEvent: SegmentEvent) {
+  async process(
+    incomingEvent: SegmentEvent
+  ): Promise<SegmentEvent | undefined> {
     // apply .before and .enrichment types first ...
-    const beforeResult = this.applyPlugins({
+    const beforeResult = await this.applyPlugins({
       type: PluginType.before,
       event: incomingEvent,
     });
@@ -68,21 +70,25 @@ export class Timeline {
       return;
     }
     // .enrichment here is akin to source middleware in the old analytics-ios.
-    const enrichmentResult = this.applyPlugins({
+    const enrichmentResult = await this.applyPlugins({
       type: PluginType.enrichment,
       event: beforeResult,
     });
 
+    if (enrichmentResult === undefined) {
+      return;
+    }
+
     // once the event enters a destination, we don't want
     // to know about changes that happen there. those changes
     // are to only be received by the destination.
-    this.applyPlugins({
+    await this.applyPlugins({
       type: PluginType.destination,
       event: enrichmentResult,
     });
 
     // apply .after plugins ...
-    let afterResult = this.applyPlugins({
+    let afterResult = await this.applyPlugins({
       type: PluginType.after,
       event: enrichmentResult,
     });
@@ -90,18 +96,24 @@ export class Timeline {
     return afterResult;
   }
 
-  applyPlugins({ type, event }: { type: PluginType; event: SegmentEvent }) {
+  async applyPlugins({
+    type,
+    event,
+  }: {
+    type: PluginType;
+    event: SegmentEvent;
+  }): Promise<SegmentEvent | undefined> {
     let result: SegmentEvent | undefined = event;
 
     const plugins = this.plugins[type];
     if (plugins) {
-      plugins.forEach((plugin) => {
+      for (const plugin of plugins) {
         if (result) {
           try {
             const pluginResult = plugin.execute(result);
             // Each destination is independent from each other, so we don't roll over changes caused internally in each one of their processing
             if (type !== PluginType.destination) {
-              result = pluginResult;
+              result = await pluginResult;
             }
           } catch (error) {
             console.warn(
@@ -111,7 +123,7 @@ export class Timeline {
             );
           }
         }
-      });
+      }
     }
     return result;
   }
