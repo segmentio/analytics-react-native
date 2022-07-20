@@ -4,7 +4,10 @@ import {
   SEGMENT_DESTINATION_KEY,
 } from '../SegmentDestination';
 import { SegmentClient } from '../../analytics';
-import { MockSegmentStore } from '../../__tests__/__helpers__/mockSegmentStore';
+import {
+  createMockStoreGetter,
+  MockSegmentStore,
+} from '../../__tests__/__helpers__/mockSegmentStore';
 import { getMockLogger } from '../../__tests__/__helpers__/mockLogger';
 import * as api from '../../api';
 
@@ -232,7 +235,7 @@ describe('SegmentDestination', () => {
     jest
       // @ts-ignore
       .spyOn(plugin.queuePlugin.queueStore!, 'getState')
-      .mockReturnValue({ events });
+      .mockImplementation(createMockStoreGetter(() => ({ events })));
 
     const sendEventsSpy = jest.spyOn(api, 'uploadEvents').mockResolvedValue();
 

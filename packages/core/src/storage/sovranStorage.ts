@@ -14,7 +14,16 @@ import type {
   UserInfoState,
 } from '..';
 import { getUUID } from '../uuid';
-import type { Storage, StorageConfig, DeepLinkData } from './types';
+import { createGetter } from './helpers';
+import type {
+  Storage,
+  StorageConfig,
+  DeepLinkData,
+  getStateFunc,
+  Watchable,
+  Settable,
+  Dictionary,
+} from './types';
 
 // NOTE: Not exported from @segment/sovran-react-native. Must explicitly declare here.
 // Also this fallback is used in store.ts in @segment/sovran-react-native yet "storeId" is required.
@@ -76,6 +85,57 @@ registerBridgeStore({
   },
 });
 
+// function createGetter<
+//   U,
+//   Z extends keyof U | undefined = undefined,
+//   V = undefined
+// >(store: Store<U>, key?: Z): getStateFunc<Z extends keyof U ? V : U> {
+//   type X = Z extends keyof U ? V : U;
+//   function getState(): X;
+//   function getState(safe: true): Promise<X>;
+//   function getState(safe?: boolean): X | Promise<X> {
+//     if (safe === true) {
+//       const promise = store.getState(true);
+
+//       if (key !== undefined) {
+//         return promise.then((state) => state[key!]) as Promise<X>;
+//       }
+//       return promise as Promise<X>;
+//     }
+//     const state = store.getState();
+//     if (key !== undefined) {
+//       return state[key!] as unknown as X;
+//     }
+//     return state as X;
+//   }
+//   return getState;
+// }
+
+function createStoreGetter<
+  U,
+  Z extends keyof U | undefined = undefined,
+  V = undefined
+>(store: Store<U>, key?: Z): getStateFunc<Z extends keyof U ? V : U> {
+  type X = Z extends keyof U ? V : U;
+  return createGetter(
+    () => {
+      const state = store.getState();
+      if (key !== undefined) {
+        return state[key!] as unknown as X;
+      }
+      return state as X;
+    },
+    () => {
+      const promise = store.getState(true);
+
+      if (key !== undefined) {
+        return promise.then((state) => state[key!]) as Promise<X>;
+      }
+      return promise as Promise<X>;
+    }
+  );
+}
+
 export class SovranStorage implements Storage {
   private storeId: string;
   private storePersistor?: Persistor;
@@ -84,6 +144,19 @@ export class SovranStorage implements Storage {
   private settingsStore: Store<{ settings: SegmentAPIIntegrations }>;
   private userInfoStore: Store<{ userInfo: UserInfoState }>;
   private deepLinkStore: Store<DeepLinkData> = deepLinkStore;
+
+  readonly isReady: Watchable<boolean>;
+
+  readonly context: Watchable<DeepPartial<Context> | undefined> &
+    Settable<DeepPartial<Context>>;
+
+  readonly settings: Watchable<SegmentAPIIntegrations | undefined> &
+    Settable<SegmentAPIIntegrations> &
+    Dictionary<string, IntegrationSettings>;
+
+  readonly userInfo: Watchable<UserInfoState> & Settable<UserInfoState>;
+
+  readonly deepLinkData: Watchable<DeepLinkData>;
 
   constructor(config: StorageConfig) {
     this.storeId = config.storeId;
@@ -99,6 +172,18 @@ export class SovranStorage implements Storage {
         },
       }
     );
+
+    this.isReady = {
+      get: createStoreGetter(this.readinessStore, 'hasLoadedContext'),
+      onChange: (callback: (value: boolean) => void) => {
+        return this.readinessStore.subscribe((store) => {
+          if (store.hasLoadedContext) {
+            callback(true);
+          }
+        });
+      },
+    };
+
     this.contextStore = createStore(
       { context: INITIAL_VALUES.context },
       {
@@ -108,6 +193,18 @@ export class SovranStorage implements Storage {
         },
       }
     );
+    this.context = {
+      get: createStoreGetter(this.contextStore, 'context'),
+      onChange: (callback: (value?: DeepPartial<Context>) => void) =>
+        this.contextStore.subscribe((store) => callback(store.context)),
+      set: async (value: DeepPartial<Context>) => {
+        const { context } = await this.contextStore.dispatch((state) => {
+          return { context: deepmerge(state.context, value) };
+        });
+        return context;
+      },
+    };
+
     this.settingsStore = createStore(
       { settings: INITIAL_VALUES.settings },
       {
@@ -117,6 +214,25 @@ export class SovranStorage implements Storage {
         },
       }
     );
+
+    this.settings = {
+      get: createStoreGetter(this.settingsStore, 'settings'),
+      onChange: (
+        callback: (value?: SegmentAPIIntegrations | undefined) => void
+      ) => this.settingsStore.subscribe((store) => callback(store.settings)),
+      set: async (value: SegmentAPIIntegrations) => {
+        const { settings } = await this.settingsStore.dispatch((state) => {
+          return { settings: { ...state.settings, ...value } };
+        });
+        return settings;
+      },
+      add: (key: string, value: IntegrationSettings) => {
+        this.settingsStore.dispatch((state) => ({
+          settings: { ...state.settings, [key]: value },
+        }));
+      },
+    };
+
     this.userInfoStore = createStore(
       { userInfo: INITIAL_VALUES.userInfo },
       {
@@ -126,6 +242,24 @@ export class SovranStorage implements Storage {
         },
       }
     );
+
+    this.userInfo = {
+      get: createStoreGetter(this.userInfoStore, 'userInfo'),
+      onChange: (callback: (value: UserInfoState) => void) =>
+        this.userInfoStore.subscribe((store) => callback(store.userInfo)),
+      set: async (value: UserInfoState) => {
+        const { userInfo } = await this.userInfoStore.dispatch((state) => ({
+          userInfo: { ...state.userInfo, ...value },
+        }));
+        return userInfo;
+      },
+    };
+
+    this.deepLinkData = {
+      get: createStoreGetter(this.deepLinkStore),
+      onChange: (callback: (value: DeepLinkData) => void) =>
+        this.deepLinkStore.subscribe(callback),
+    };
 
     this.fixAnonymousId();
 
@@ -155,67 +289,5 @@ export class SovranStorage implements Storage {
       }
       fixUnsubscribe();
     });
-  };
-
-  // Check for all things that need to be ready before sending events through the timeline
-  readonly isReady = {
-    get: () => {
-      const ready = this.readinessStore.getState();
-      return ready.hasLoadedContext;
-    },
-    onChange: (callback: (value: boolean) => void) => {
-      return this.readinessStore.subscribe((store) => {
-        if (store.hasLoadedContext) {
-          callback(true);
-        }
-      });
-    },
-  };
-
-  readonly context = {
-    get: () => this.contextStore.getState().context,
-    onChange: (callback: (value?: DeepPartial<Context>) => void) =>
-      this.contextStore.subscribe((store) => callback(store.context)),
-    set: async (value: DeepPartial<Context>) => {
-      const { context } = await this.contextStore.dispatch((state) => {
-        return { context: deepmerge(state.context, value) };
-      });
-      return context;
-    },
-  };
-  readonly settings = {
-    get: () => this.settingsStore.getState().settings,
-    onChange: (
-      callback: (value?: SegmentAPIIntegrations | undefined) => void
-    ) => this.settingsStore.subscribe((store) => callback(store.settings)),
-    set: async (value: SegmentAPIIntegrations) => {
-      const { settings } = await this.settingsStore.dispatch((state) => {
-        return { settings: { ...state.settings, ...value } };
-      });
-      return settings;
-    },
-    add: (key: string, value: IntegrationSettings) => {
-      this.settingsStore.dispatch((state) => ({
-        settings: { ...state.settings, [key]: value },
-      }));
-    },
-  };
-
-  readonly userInfo = {
-    get: () => this.userInfoStore.getState().userInfo,
-    onChange: (callback: (value: UserInfoState) => void) =>
-      this.userInfoStore.subscribe((store) => callback(store.userInfo)),
-    set: async (value: UserInfoState) => {
-      const { userInfo } = await this.userInfoStore.dispatch((state) => ({
-        userInfo: { ...state.userInfo, ...value },
-      }));
-      return userInfo;
-    },
-  };
-
-  readonly deepLinkData = {
-    get: () => this.deepLinkStore.getState(),
-    onChange: (callback: (value: DeepLinkData) => void) =>
-      this.deepLinkStore.subscribe(callback),
   };
 }

@@ -1,4 +1,5 @@
-import type { Unsubscribe } from '@segment/sovran-react-native';
+//@ts-ignore
+import { Unsubscribe } from '@segment/sovran-react-native';
 import deepmerge from 'deepmerge';
 import allSettled from 'promise.allsettled';
 import { AppState, AppStateStatus } from 'react-native';
@@ -16,7 +17,13 @@ import type { Logger } from './logger';
 import type { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
 import { InjectContext } from './plugins/Context';
 import { SegmentDestination } from './plugins/SegmentDestination';
-import type { DeepLinkData, Settable, Storage, Watchable } from './storage';
+import {
+  createGetter,
+  DeepLinkData,
+  Settable,
+  Storage,
+  Watchable,
+} from './storage';
 import { Timeline } from './timeline';
 import {
   Config,
@@ -168,7 +175,13 @@ export class SegmentClient {
     };
 
     this.adTrackingEnabled = {
-      get: () => this.store.context.get()?.device?.adTrackingEnabled ?? false,
+      get: createGetter(
+        () => this.store.context.get()?.device?.adTrackingEnabled ?? false,
+        async () => {
+          const context = await this.store.context.get(true);
+          return context?.device?.adTrackingEnabled ?? false;
+        }
+      ),
       onChange: (callback: (value: boolean) => void) =>
         this.store.context.onChange((context?: DeepPartial<Context>) => {
           callback(context?.device?.adTrackingEnabled ?? false);
@@ -244,7 +257,7 @@ export class SegmentClient {
       const resJson = await res.json();
       const integrations = resJson.integrations;
       this.logger.info(`Received settings from Segment succesfully.`);
-      this.store.settings.set(integrations);
+      await this.store.settings.set(integrations);
     } catch {
       this.logger.warn(
         `Could not receive settings from Segment. ${
@@ -254,7 +267,7 @@ export class SegmentClient {
         }`
       );
       if (this.config.defaultSettings) {
-        this.store.settings.set(this.config.defaultSettings);
+        await this.store.settings.set(this.config.defaultSettings);
       }
     }
   }
