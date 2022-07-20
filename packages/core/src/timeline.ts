@@ -113,9 +113,7 @@ export class Timeline {
             const pluginResult = plugin.execute(result);
             // Each destination is independent from each other, so we don't roll over changes caused internally in each one of their processing
             if (type !== PluginType.destination) {
-              console.log('[Timeline]', 'applyPlugins', plugin.type);
               result = await pluginResult;
-              console.log('[Timeline]', 'applyPlugins', plugin.type, result);
             }
           } catch (error) {
             console.warn(

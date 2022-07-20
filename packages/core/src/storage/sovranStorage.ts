@@ -101,14 +101,6 @@ function createStoreGetter<
     },
     async () => {
       const promise = await store.getState(true);
-      console.log(
-        '[sovranStorage]',
-        'createStoreGetter',
-        'async',
-        key,
-        promise
-      );
-
       if (key !== undefined) {
         return promise[key!] as unknown as X;
         // return promise.then((state) => state[key!]) as Promise<X>;
