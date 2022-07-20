@@ -85,32 +85,6 @@ registerBridgeStore({
   },
 });
 
-// function createGetter<
-//   U,
-//   Z extends keyof U | undefined = undefined,
-//   V = undefined
-// >(store: Store<U>, key?: Z): getStateFunc<Z extends keyof U ? V : U> {
-//   type X = Z extends keyof U ? V : U;
-//   function getState(): X;
-//   function getState(safe: true): Promise<X>;
-//   function getState(safe?: boolean): X | Promise<X> {
-//     if (safe === true) {
-//       const promise = store.getState(true);
-
-//       if (key !== undefined) {
-//         return promise.then((state) => state[key!]) as Promise<X>;
-//       }
-//       return promise as Promise<X>;
-//     }
-//     const state = store.getState();
-//     if (key !== undefined) {
-//       return state[key!] as unknown as X;
-//     }
-//     return state as X;
-//   }
-//   return getState;
-// }
-
 function createStoreGetter<
   U,
   Z extends keyof U | undefined = undefined,
@@ -125,13 +99,21 @@ function createStoreGetter<
       }
       return state as X;
     },
-    () => {
-      const promise = store.getState(true);
+    async () => {
+      const promise = await store.getState(true);
+      console.log(
+        '[sovranStorage]',
+        'createStoreGetter',
+        'async',
+        key,
+        promise
+      );
 
       if (key !== undefined) {
-        return promise.then((state) => state[key!]) as Promise<X>;
+        return promise[key!] as unknown as X;
+        // return promise.then((state) => state[key!]) as Promise<X>;
       }
-      return promise as Promise<X>;
+      return promise as unknown as X;
     }
   );
 }
@@ -197,9 +179,15 @@ export class SovranStorage implements Storage {
       get: createStoreGetter(this.contextStore, 'context'),
       onChange: (callback: (value?: DeepPartial<Context>) => void) =>
         this.contextStore.subscribe((store) => callback(store.context)),
-      set: async (value: DeepPartial<Context>) => {
+      set: async (value) => {
         const { context } = await this.contextStore.dispatch((state) => {
-          return { context: deepmerge(state.context, value) };
+          let newState: typeof state.context;
+          if (value instanceof Function) {
+            newState = value(state.context);
+          } else {
+            newState = deepmerge(state.context, value);
+          }
+          return { context: newState };
         });
         return context;
       },
@@ -220,9 +208,15 @@ export class SovranStorage implements Storage {
       onChange: (
         callback: (value?: SegmentAPIIntegrations | undefined) => void
       ) => this.settingsStore.subscribe((store) => callback(store.settings)),
-      set: async (value: SegmentAPIIntegrations) => {
+      set: async (value) => {
         const { settings } = await this.settingsStore.dispatch((state) => {
-          return { settings: { ...state.settings, ...value } };
+          let newState: typeof state.settings;
+          if (value instanceof Function) {
+            newState = value(state.settings);
+          } else {
+            newState = { ...state.settings, ...value };
+          }
+          return { settings: newState };
         });
         return settings;
       },
@@ -247,10 +241,16 @@ export class SovranStorage implements Storage {
       get: createStoreGetter(this.userInfoStore, 'userInfo'),
       onChange: (callback: (value: UserInfoState) => void) =>
         this.userInfoStore.subscribe((store) => callback(store.userInfo)),
-      set: async (value: UserInfoState) => {
-        const { userInfo } = await this.userInfoStore.dispatch((state) => ({
-          userInfo: { ...state.userInfo, ...value },
-        }));
+      set: async (value) => {
+        const { userInfo } = await this.userInfoStore.dispatch((state) => {
+          let newState: typeof state.userInfo;
+          if (value instanceof Function) {
+            newState = value(state.userInfo);
+          } else {
+            newState = deepmerge(state.userInfo, value);
+          }
+          return { userInfo: newState };
+        });
         return userInfo;
       },
     };

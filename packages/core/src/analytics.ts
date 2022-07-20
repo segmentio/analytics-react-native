@@ -388,8 +388,9 @@ export class SegmentClient {
     this.timeline.remove(plugin);
   }
 
-  process(incomingEvent: SegmentEvent) {
-    const event = applyRawEventData(incomingEvent, this.store.userInfo.get());
+  async process(incomingEvent: SegmentEvent) {
+    const userData = await this.store.userInfo.get(true);
+    const event = applyRawEventData(incomingEvent, userData);
     if (this.store.isReady.get() === true) {
       this.timeline.process(event);
     } else {
@@ -399,7 +400,7 @@ export class SegmentClient {
 
   private async trackDeepLinks() {
     if (this.getConfig().trackDeepLinks === true) {
-      const deepLinkProperties = this.store.deepLinkData.get();
+      const deepLinkProperties = await this.store.deepLinkData.get(true);
       this.trackDeepLinkEvent(deepLinkProperties);
 
       this.store.deepLinkData.onChange((data) => {
@@ -473,74 +474,71 @@ export class SegmentClient {
     return Promise.resolve();
   }
 
-  screen(name: string, options?: JsonMap) {
+  async screen(name: string, options?: JsonMap) {
     const event = createScreenEvent({
       name,
       properties: options,
     });
 
-    this.process(event);
+    await this.process(event);
     this.logger.info('SCREEN event saved', event);
   }
 
-  track(eventName: string, options?: JsonMap) {
+  async track(eventName: string, options?: JsonMap) {
     const event = createTrackEvent({
       event: eventName,
       properties: options,
     });
 
-    this.process(event);
+    await this.process(event);
     this.logger.info('TRACK event saved', event);
   }
 
-  identify(userId?: string, userTraits?: UserTraits) {
-    const userInfo = this.store.userInfo.get();
-    const { traits: currentUserTraits } = userInfo;
-
-    const mergedTraits = {
-      ...currentUserTraits,
-      ...userTraits,
-    };
+  async identify(userId?: string, userTraits?: UserTraits) {
+    const userData = await this.store.userInfo.set((state) => ({
+      ...state,
+      userId: userId ?? state.userId,
+      traits: {
+        ...state.traits,
+        ...userTraits,
+      },
+    }));
 
     const event = createIdentifyEvent({
-      userId,
-      userTraits: mergedTraits,
+      userId: userData.userId,
+      userTraits: userData.traits,
     });
 
-    this.store.userInfo.set({
-      ...userInfo,
-      userId: userId ?? userInfo.userId,
-      traits: mergedTraits,
-    });
-
-    this.process(event);
+    await this.process(event);
     this.logger.info('IDENTIFY event saved', event);
   }
 
-  group(groupId: string, groupTraits?: GroupTraits) {
+  async group(groupId: string, groupTraits?: GroupTraits) {
     const event = createGroupEvent({
       groupId,
       groupTraits,
     });
 
-    this.process(event);
+    await this.process(event);
     this.logger.info('GROUP event saved', event);
   }
 
-  alias(newUserId: string) {
-    const { anonymousId, userId } = this.userInfo.get();
+  async alias(newUserId: string) {
+    const { anonymousId, userId: previousUserId } =
+      await this.store.userInfo.get(true);
+
+    await this.store.userInfo.set((state) => ({
+      ...state,
+      userId: newUserId,
+    }));
+
     const event = createAliasEvent({
       anonymousId,
-      userId,
+      userId: previousUserId,
       newUserId,
     });
 
-    this.store.userInfo.set({
-      ...this.store.userInfo.get(),
-      userId: newUserId,
-    });
-
-    this.process(event);
+    await this.process(event);
     this.logger.info('ALIAS event saved', event);
   }
 

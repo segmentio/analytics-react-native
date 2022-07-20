@@ -31,7 +31,7 @@ export interface Watchable<T> {
  * Implements a value that can be set
  */
 export interface Settable<T> {
-  set: (value: T) => T | Promise<T>;
+  set: (value: T | ((state: T) => T)) => T | Promise<T>;
 }
 
 /**

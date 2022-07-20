@@ -40,7 +40,8 @@ const Home = ({ navigation }: { navigation: any }) => {
         name: 'Identify',
         testID: 'BUTTON_IDENTIFY',
         onPress: () => {
-          identify('user_2', { username: 'simplyTheBest' });
+          identify('user_oberto', { username: 'oberto' });
+          track('testing identify should be oberto');
         },
       },
       {

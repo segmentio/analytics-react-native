@@ -1,5 +1,11 @@
 import { SEGMENT_DESTINATION_KEY } from '../../plugins/SegmentDestination';
-import type { DeepLinkData, Storage } from '../../storage';
+import type {
+  DeepLinkData,
+  Dictionary,
+  Settable,
+  Storage,
+  Watchable,
+} from '../../storage';
 import type {
   Context,
   DeepPartial,
@@ -75,25 +81,34 @@ export class MockSegmentStore implements Storage {
     },
   };
 
-  readonly context = {
+  readonly context: Watchable<DeepPartial<Context> | undefined> &
+    Settable<DeepPartial<Context>> = {
     get: createMockStoreGetter(() => ({ ...this.data.context })),
     onChange: (callback: (value?: DeepPartial<Context>) => void) =>
       this.callbacks.context.register(callback),
-    set: (value: DeepPartial<Context>) => {
-      this.data.context = { ...value };
-      this.callbacks.context.run(value);
+    set: (value) => {
+      this.data.context =
+        value instanceof Function
+          ? value(this.data.context ?? {})
+          : { ...value };
+      this.callbacks.context.run(this.data.context);
       return this.data.context;
     },
   };
 
-  readonly settings = {
+  readonly settings: Watchable<SegmentAPIIntegrations | undefined> &
+    Settable<SegmentAPIIntegrations> &
+    Dictionary<string, IntegrationSettings> = {
     get: createMockStoreGetter(() => this.data.settings),
     onChange: (
       callback: (value?: SegmentAPIIntegrations | undefined) => void
     ) => this.callbacks.settings.register(callback),
-    set: (value: SegmentAPIIntegrations) => {
-      this.data.settings = value;
-      this.callbacks.settings.run(value);
+    set: (value) => {
+      this.data.settings =
+        value instanceof Function
+          ? value(this.data.settings ?? {})
+          : { ...value };
+      this.callbacks.settings.run(this.data.settings);
       return this.data.settings;
     },
     add: (key: string, value: IntegrationSettings) => {
@@ -102,13 +117,16 @@ export class MockSegmentStore implements Storage {
     },
   };
 
-  readonly userInfo = {
+  readonly userInfo: Watchable<UserInfoState> & Settable<UserInfoState> = {
     get: createMockStoreGetter(() => this.data.userInfo),
     onChange: (callback: (value: UserInfoState) => void) =>
       this.callbacks.userInfo.register(callback),
-    set: (value: UserInfoState) => {
-      this.data.userInfo = value;
-      this.callbacks.userInfo.run(value);
+    set: (value) => {
+      this.data.userInfo =
+        value instanceof Function
+          ? value(this.data.userInfo ?? {})
+          : { ...value };
+      this.callbacks.userInfo.run(this.data.userInfo);
       return this.data.userInfo;
     },
   };
