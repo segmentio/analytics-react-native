@@ -48,7 +48,8 @@ export class EventPlugin extends Plugin {
     if (event === undefined) {
       return event;
     }
-    let result = event;
+    let result: Promise<SegmentEvent | undefined> | SegmentEvent | undefined =
+      event;
     switch (result.type) {
       case EventType.IdentifyEvent:
         result = this.identify(result);
@@ -71,23 +72,33 @@ export class EventPlugin extends Plugin {
 
   // Default implementations that forward the event. This gives plugin
   // implementors the chance to interject on an event.
-  identify(event: IdentifyEventType) {
+  identify(
+    event: IdentifyEventType
+  ): Promise<IdentifyEventType | undefined> | IdentifyEventType | undefined {
     return event;
   }
 
-  track(event: TrackEventType) {
+  track(
+    event: TrackEventType
+  ): Promise<TrackEventType | undefined> | TrackEventType | undefined {
     return event;
   }
 
-  screen(event: ScreenEventType) {
+  screen(
+    event: ScreenEventType
+  ): Promise<ScreenEventType | undefined> | ScreenEventType | undefined {
     return event;
   }
 
-  alias(event: AliasEventType) {
+  alias(
+    event: AliasEventType
+  ): Promise<AliasEventType | undefined> | AliasEventType | undefined {
     return event;
   }
 
-  group(event: GroupEventType) {
+  group(
+    event: GroupEventType
+  ): Promise<GroupEventType | undefined> | GroupEventType | undefined {
     return event;
   }
 
