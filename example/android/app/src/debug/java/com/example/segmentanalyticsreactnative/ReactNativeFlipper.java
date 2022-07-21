@@ -21,6 +21,8 @@ import com.facebook.flipper.plugins.react.ReactFlipperPlugin;
 import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.ReactInstanceEventListener;
+import com.facebook.react.ReactInstanceEventListener;
 import com.facebook.react.modules.network.NetworkingModule;
 import okhttp3.OkHttpClient;
 
@@ -48,7 +50,7 @@ public class ReactNativeFlipper {
       ReactContext reactContext = reactInstanceManager.getCurrentReactContext();
       if (reactContext == null) {
         reactInstanceManager.addReactInstanceEventListener(
-            new ReactInstanceManager.ReactInstanceEventListener() {
+            new ReactInstanceEventListener() {
               @Override
               public void onReactContextInitialized(ReactContext reactContext) {
                 reactInstanceManager.removeReactInstanceEventListener(this);
