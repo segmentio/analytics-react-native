@@ -1,7 +1,7 @@
 import type { getStateFunc } from './types';
 
 /**
- * Helper to create a function that can execute both async and async.
+ * Helper to create a function that can execute both sync and async.
  * Used for supporting Sovran's getState signature. e.g.
  * - Async => enforces consistency by executing inline with the reducers
  * - Sync => returns immediately with the current value, not awaiting for any reducer

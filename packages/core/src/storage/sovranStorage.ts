@@ -103,7 +103,6 @@ function createStoreGetter<
       const promise = await store.getState(true);
       if (key !== undefined) {
         return promise[key!] as unknown as X;
-        // return promise.then((state) => state[key!]) as Promise<X>;
       }
       return promise as unknown as X;
     }
