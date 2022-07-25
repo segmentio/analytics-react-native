@@ -29,7 +29,9 @@ export class Plugin {
     // do nothing by default, user can override.
   }
 
-  execute(event: SegmentEvent): SegmentEvent | undefined {
+  execute(
+    event: SegmentEvent
+  ): Promise<SegmentEvent | undefined> | SegmentEvent | undefined {
     // do nothing.
     return event;
   }
@@ -40,11 +42,14 @@ export class Plugin {
 }
 
 export class EventPlugin extends Plugin {
-  execute(event: SegmentEvent): SegmentEvent | undefined {
+  execute(
+    event: SegmentEvent
+  ): Promise<SegmentEvent | undefined> | SegmentEvent | undefined {
     if (event === undefined) {
       return event;
     }
-    let result = event;
+    let result: Promise<SegmentEvent | undefined> | SegmentEvent | undefined =
+      event;
     switch (result.type) {
       case EventType.IdentifyEvent:
         result = this.identify(result);
@@ -67,23 +72,33 @@ export class EventPlugin extends Plugin {
 
   // Default implementations that forward the event. This gives plugin
   // implementors the chance to interject on an event.
-  identify(event: IdentifyEventType) {
+  identify(
+    event: IdentifyEventType
+  ): Promise<IdentifyEventType | undefined> | IdentifyEventType | undefined {
     return event;
   }
 
-  track(event: TrackEventType) {
+  track(
+    event: TrackEventType
+  ): Promise<TrackEventType | undefined> | TrackEventType | undefined {
     return event;
   }
 
-  screen(event: ScreenEventType) {
+  screen(
+    event: ScreenEventType
+  ): Promise<ScreenEventType | undefined> | ScreenEventType | undefined {
     return event;
   }
 
-  alias(event: AliasEventType) {
+  alias(
+    event: AliasEventType
+  ): Promise<AliasEventType | undefined> | AliasEventType | undefined {
     return event;
   }
 
-  group(event: GroupEventType) {
+  group(
+    event: GroupEventType
+  ): Promise<GroupEventType | undefined> | GroupEventType | undefined {
     return event;
   }
 
@@ -153,13 +168,13 @@ export class DestinationPlugin extends EventPlugin {
     this.timeline.remove(plugin);
   }
 
-  execute(event: SegmentEvent): SegmentEvent | undefined {
+  async execute(event: SegmentEvent): Promise<SegmentEvent | undefined> {
     if (!this.isEnabled(event)) {
       return;
     }
 
     // Apply before and enrichment plugins
-    const beforeResult = this.timeline.applyPlugins({
+    const beforeResult = await this.timeline.applyPlugins({
       type: PluginType.before,
       event,
     });
@@ -168,16 +183,20 @@ export class DestinationPlugin extends EventPlugin {
       return;
     }
 
-    const enrichmentResult = this.timeline.applyPlugins({
+    const enrichmentResult = await this.timeline.applyPlugins({
       type: PluginType.enrichment,
       event: beforeResult,
     });
 
+    if (enrichmentResult === undefined) {
+      return;
+    }
+
     // Now send the event to the destination by executing the normal flow of an EventPlugin
-    super.execute(enrichmentResult);
+    await super.execute(enrichmentResult);
 
     // apply .after plugins
-    let afterResult = this.timeline.applyPlugins({
+    let afterResult = await this.timeline.applyPlugins({
       type: PluginType.after,
       event: enrichmentResult,
     });

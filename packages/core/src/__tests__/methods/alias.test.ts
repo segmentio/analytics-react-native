@@ -29,12 +29,12 @@ describe('methods #alias', () => {
     jest.clearAllMocks();
   });
 
-  it('adds the alias event correctly', () => {
+  it('adds the alias event correctly', async () => {
     const client = new SegmentClient(clientArgs);
 
     jest.spyOn(client, 'process');
 
-    client.alias('new-user-id');
+    await client.alias('new-user-id');
 
     const expectedEvent = {
       previousId: 'current-user-id',
@@ -52,7 +52,7 @@ describe('methods #alias', () => {
     });
   });
 
-  it('uses anonymousId in event if no userId in store', () => {
+  it('uses anonymousId in event if no userId in store', async () => {
     const client = new SegmentClient({
       ...clientArgs,
       store: new MockSegmentStore({
@@ -64,7 +64,7 @@ describe('methods #alias', () => {
     });
     jest.spyOn(client, 'process');
 
-    client.alias('new-user-id');
+    await client.alias('new-user-id');
 
     const expectedEvent = {
       previousId: 'anonymousId',

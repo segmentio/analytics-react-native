@@ -7,6 +7,11 @@ import type {
   UserInfoState,
 } from '../types';
 
+export interface getStateFunc<T> {
+  (): T;
+  (safe: true): Promise<T>;
+}
+
 /**
  * Implements a value that can be subscribed for changes
  */
@@ -14,7 +19,7 @@ export interface Watchable<T> {
   /**
    * Get current value
    */
-  get: () => T;
+  get: getStateFunc<T>;
   /**
    * Register a callback to be called when the value changes
    * @returns a function to unsubscribe
@@ -26,7 +31,7 @@ export interface Watchable<T> {
  * Implements a value that can be set
  */
 export interface Settable<T> {
-  set: (value: T) => T | Promise<T>;
+  set: (value: T | ((state: T) => T)) => T | Promise<T>;
 }
 
 /**

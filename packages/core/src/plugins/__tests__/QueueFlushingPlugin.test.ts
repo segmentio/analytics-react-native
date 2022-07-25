@@ -1,40 +1,44 @@
+import { MockEventStore } from '../../__tests__/__helpers__/mockEventStore';
+import type { SegmentClient } from '../../analytics';
 import { QueueFlushingPlugin } from '../QueueFlushingPlugin';
-import { SegmentClient } from '../../analytics';
-import { getMockLogger } from '../../__tests__/__helpers__/mockLogger';
-import {
-  MockEventStore,
-  MockSegmentStore,
-} from '../../__tests__/__helpers__/mockSegmentStore';
 import { EventType, SegmentEvent } from '../../types';
+import { createStore } from '@segment/sovran-react-native';
 
-jest.mock('@segment/sovran-react-native', () => ({
-  createStore: () => new MockEventStore(),
-}));
+jest.mock('@segment/sovran-react-native');
 
 describe('QueueFlushingPlugin', () => {
+  function setupQueuePlugin(
+    onFlush: (events: SegmentEvent[]) => Promise<void>,
+    flushAt: number
+  ) {
+    const queuePlugin = new QueueFlushingPlugin(onFlush);
+    // We override the createStore before the queue plugin is initialized to use our own mocked event store
+    (createStore as jest.Mock).mockReturnValue(new MockEventStore());
+    queuePlugin.configure({
+      getConfig: () => ({
+        writeKey: 'SEGMENT_KEY',
+        flushAt,
+      }),
+    } as unknown as SegmentClient);
+
+    // Mock the create store just before the queue plugin creates its store
+    return queuePlugin;
+  }
+
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.resetModules();
   });
 
   it('should queue events when executed in the timeline', async () => {
     const onFlush = jest.fn();
-    const queuePlugin = new QueueFlushingPlugin(onFlush);
-
-    const client = new SegmentClient({
-      config: {
-        writeKey: 'SEGMENT_KEY',
-        flushAt: 10,
-      },
-      logger: getMockLogger(),
-      store: new MockSegmentStore(),
-    });
-    queuePlugin.configure(client);
+    const queuePlugin = setupQueuePlugin(onFlush, 10);
 
     const result = queuePlugin.execute({
       type: EventType.TrackEvent,
-      event: 'test',
+      event: 'test1',
       properties: {
-        test: 'test',
+        test: 'test1',
       },
     } as SegmentEvent);
 
@@ -44,7 +48,7 @@ describe('QueueFlushingPlugin', () => {
     await new Promise(process.nextTick);
 
     // @ts-ignore
-    expect(queuePlugin.queueStore?.getState()).toHaveLength(1);
+    expect(queuePlugin.queueStore?.getState().events).toHaveLength(1);
 
     // No flush called yet
     expect(onFlush).not.toHaveBeenCalled();
@@ -52,17 +56,7 @@ describe('QueueFlushingPlugin', () => {
 
   it('should call onFlush when queue reaches limit', async () => {
     const onFlush = jest.fn().mockResolvedValue(undefined);
-    const queuePlugin = new QueueFlushingPlugin(onFlush);
-
-    const client = new SegmentClient({
-      config: {
-        writeKey: 'SEGMENT_KEY',
-        flushAt: 1,
-      },
-      logger: getMockLogger(),
-      store: new MockSegmentStore(),
-    });
-    queuePlugin.configure(client);
+    const queuePlugin = setupQueuePlugin(onFlush, 1);
 
     const result = queuePlugin.execute({
       type: EventType.TrackEvent,
@@ -82,25 +76,17 @@ describe('QueueFlushingPlugin', () => {
 
   it('should dequeue events on demand', async () => {
     const onFlush = jest.fn().mockResolvedValue(undefined);
-    const queuePlugin = new QueueFlushingPlugin(onFlush);
+    const queuePlugin = setupQueuePlugin(onFlush, 10);
 
-    const client = new SegmentClient({
-      config: {
-        writeKey: 'SEGMENT_KEY',
-        flushAt: 10,
-      },
-      logger: getMockLogger(),
-      store: new MockSegmentStore(),
-    });
-    queuePlugin.configure(client);
-
-    const result = queuePlugin.execute({
+    const event: SegmentEvent = {
       type: EventType.TrackEvent,
-      event: 'test',
+      event: 'test2',
       properties: {
-        test: 'test',
+        test: 'test2',
       },
-    } as SegmentEvent);
+    };
+
+    const result = queuePlugin.execute(event);
 
     expect(result).not.toBeUndefined();
 
@@ -108,6 +94,9 @@ describe('QueueFlushingPlugin', () => {
     await new Promise(process.nextTick);
 
     // @ts-ignore
-    expect(queuePlugin.queueStore?.getState()).toHaveLength(1);
+    expect(queuePlugin.queueStore?.getState().events).toHaveLength(1);
+    queuePlugin.dequeue(event);
+    // @ts-ignore
+    expect(queuePlugin.queueStore?.getState().events).toHaveLength(0);
   });
 });

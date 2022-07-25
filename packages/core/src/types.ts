@@ -130,13 +130,13 @@ export type Config = {
 };
 
 export type ClientMethods = {
-  screen: (name: string, properties?: JsonMap) => void;
-  track: (event: string, properties?: JsonMap) => void;
-  identify: (userId?: string, userTraits?: UserTraits) => void;
+  screen: (name: string, properties?: JsonMap) => Promise<void>;
+  track: (event: string, properties?: JsonMap) => Promise<void>;
+  identify: (userId?: string, userTraits?: UserTraits) => Promise<void>;
   flush: () => Promise<void>;
-  group: (groupId: string, groupTraits?: GroupTraits) => void;
-  alias: (newUserId: string) => void;
-  reset: (resetAnonymousId?: boolean) => void;
+  group: (groupId: string, groupTraits?: GroupTraits) => Promise<void>;
+  alias: (newUserId: string) => Promise<void>;
+  reset: (resetAnonymousId?: boolean) => Promise<void>;
 };
 
 type ContextApp = {

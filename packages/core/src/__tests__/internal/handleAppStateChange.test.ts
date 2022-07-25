@@ -86,8 +86,8 @@ describe('SegmentClient #handleAppStateChange', () => {
       event: 'Application Opened',
       properties: {
         from_background: true,
-        build: store.context.get().app?.build,
-        version: store.context.get().app?.version,
+        build: store.context.get()?.app?.build,
+        version: store.context.get()?.app?.version,
       },
       type: EventType.TrackEvent,
     });
@@ -104,8 +104,8 @@ describe('SegmentClient #handleAppStateChange', () => {
       event: 'Application Opened',
       properties: {
         from_background: true,
-        build: store.context.get().app?.build,
-        version: store.context.get().app?.version,
+        build: store.context.get()?.app?.build,
+        version: store.context.get()?.app?.version,
       },
       type: EventType.TrackEvent,
     });
