@@ -2427,10 +2427,10 @@
   resolved "https://registry.yarnpkg.com/@react-native/polyfills/-/polyfills-2.0.0.tgz#4c40b74655c83982c8cf47530ee7dc13d957b6aa"
   integrity sha512-K0aGNn1TjalKj+65D7ycc1//H9roAQ51GJVk5ZJQFb2teECGmzd86bYDC0aYdbRf7gtovescq4Zt6FR0tgXiHQ==
 
-"@segment/sovran-react-native@^0.4.2":
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/@segment/sovran-react-native/-/sovran-react-native-0.4.2.tgz#537d168b78d83e9f0f172d4e3766da3c0c774371"
-  integrity sha512-sar1ZYWeyFYo3l/oDZaCeoH/JmXcqAwNX9H9qm8DUF9CQO3Rh3yVgbEliwa1figxyzswkVBBeVBv99s7LxdUEg==
+"@segment/sovran-react-native@^0.4.3":
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/@segment/sovran-react-native/-/sovran-react-native-0.4.3.tgz#cccfa95ea86ceeccd27bc152081a0f451d196417"
+  integrity sha512-5AVPXmeVoaAlHo0pF/8CPHHfCQuQlAEMkdyjlN+xwO7NPG3e4i1gsJ5CB4QNP0U8adKjmNvvWEKc5WggpZUQgQ==
   dependencies:
     "@react-native-async-storage/async-storage" "^1.15.15"
     ansi-regex "5.0.1"

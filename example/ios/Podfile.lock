@@ -303,7 +303,7 @@ PODS:
     - sovran-react-native
   - segment-analytics-react-native-plugin-idfa (0.4.0):
     - React-Core
-  - sovran-react-native (0.4.2):
+  - sovran-react-native (0.4.3):
     - React-Core
   - Yoga (1.14.0)
 
@@ -441,12 +441,12 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: a7c83b31436843459a1961bfd74b96033dc77234
-  DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
+  DoubleConversion: 831926d9b8bf8166fd87886c4abab286c2422662
   FBLazyVector: e3c1479be506060131807f2f2435af5107c58410
   FBReactNativeSpec: 1381e8c4230895b6c2d20cea6b216ac7096a95f0
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  glog: 3d02b25ca00c2d456734d0bcff864cbc62f6ae1a
-  RCT-Folly: b9d9fe1fc70114b751c076104e52f3b1b5e5a95a
+  glog: 85ecdd10ee8d8ec362ef519a6a45ff9aa27b2e85
+  RCT-Folly: 803a9cfd78114b2ec0f140cfa6fa2a6bafb2d685
   RCTRequired: b723d4d6da2795df58189a01f92856b6912cf256
   RCTTypeSafety: 3973d2fcf39f43f7819e840d56ea6b2fe45996a0
   React: 242d4ffb093ed57c4761307a69b23b2479930ae9
@@ -480,7 +480,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: bad495418bcbd3ab47017a38d93d290ebd406f50
   segment-analytics-react-native: 3535da141d18cbbbfa35701b806e26ecaea0e019
   segment-analytics-react-native-plugin-idfa: 9befc7ff398e8a1fc49d353b7d74dab62a23e519
-  sovran-react-native: d63e96982806633d6ee312ca61bf4f56b78c809a
+  sovran-react-native: d9adc84c3666579aacd5d96e315e399cd52241ac
   Yoga: 236056dd74cda4d9d76c20306fd8c20bb087614d
 
 PODFILE CHECKSUM: 01bf23449aa7ae5e4f79c64bf149c75658c02426
