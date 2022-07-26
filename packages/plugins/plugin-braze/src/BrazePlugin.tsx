@@ -13,15 +13,17 @@ export class BrazePlugin extends DestinationPlugin {
   key = 'Appboy';
 
   identify(event: IdentifyEventType) {
-    const currentUserInfo = this.analytics?.userInfo.get();
+    let currentUserInfo = null;
 
     //check to see if anything has changed.
     //if it hasn't changed don't send event
-    if (
-      currentUserInfo?.userId === event.userId &&
-      currentUserInfo?.anonymousId === event.anonymousId &&
-      currentUserInfo?.traits === event.traits
-    ) {
+    this.analytics?.userInfo.onChange((newUserInfo) => {
+      if (newUserInfo !== undefined) {
+        currentUserInfo = newUserInfo;
+      }
+    });
+
+    if (currentUserInfo === null) {
       let integrations = event.integrations;
 
       if (integrations !== undefined) {
@@ -29,6 +31,7 @@ export class BrazePlugin extends DestinationPlugin {
       }
     } else {
       identify(event);
+      currentUserInfo = null;
     }
     return event;
   }
