@@ -61,12 +61,12 @@ export const useAnalytics = (): ClientMethods => {
     return {};
   }
   return {
-    screen: (...args) => client.screen(...args),
-    track: (...args) => client.track(...args),
-    identify: (...args) => client.identify(...args),
-    flush: () => client.flush(),
-    group: (...args) => client.group(...args),
-    alias: (...args) => client.alias(...args),
-    reset: (...args) => client.reset(...args),
+    screen: async (...args) => client.screen(...args),
+    track: async (...args) => client.track(...args),
+    identify: async (...args) => client.identify(...args),
+    flush: async () => client.flush(),
+    group: async (...args) => client.group(...args),
+    alias: async (...args) => client.alias(...args),
+    reset: async (...args) => client.reset(...args),
   };
 };

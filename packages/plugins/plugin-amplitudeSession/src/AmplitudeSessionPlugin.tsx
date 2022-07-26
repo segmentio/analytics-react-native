@@ -12,18 +12,19 @@ import {
   AliasEventType,
 } from '@segment/analytics-react-native';
 
+const MAX_SESSION_TIME_IN_MS = 300000;
 export class AmplitudeSessionPlugin extends EventPlugin {
   type = PluginType.enrichment;
   key = 'Actions Amplitude';
   active = false;
-  sessionId = Date.now();
-  sessionTimer = false;
+  sessionId: number | undefined;
+  sessionTimer: ReturnType<typeof setTimeout> | undefined;
 
   update(settings: SegmentAPISettings, _: UpdateType) {
     let integrations = settings.integrations;
     if (this.key in integrations) {
       this.active = true;
-      this.startSession();
+      this.refreshSession();
     }
   }
 
@@ -32,7 +33,7 @@ export class AmplitudeSessionPlugin extends EventPlugin {
       return event;
     }
 
-    this.handleTimer();
+    this.refreshSession();
 
     let result = event;
     switch (result.type) {
@@ -75,6 +76,10 @@ export class AmplitudeSessionPlugin extends EventPlugin {
     return this.insertSession(event) as AliasEventType;
   }
 
+  reset() {
+    this.resetSession();
+  }
+
   private insertSession = (event: SegmentEvent) => {
     const returnEvent = event;
     const integrations = event.integrations;
@@ -87,23 +92,23 @@ export class AmplitudeSessionPlugin extends EventPlugin {
     return returnEvent;
   };
 
-  private resetTimer = () => {
-    this.sessionTimer = false;
-    this.sessionId = -1;
-  };
-
-  private startSession = () => {
-    const maxSessionTime = 300000;
-
-    setTimeout(() => this.resetTimer(), maxSessionTime);
+  private resetSession = () => {
     this.sessionId = Date.now();
-    this.sessionTimer = true;
+    this.sessionTimer = undefined;
   };
 
-  private handleTimer = () => {
-    if (!this.sessionTimer) {
-      this.startSession();
+  private refreshSession = () => {
+    if (this.sessionId === undefined) {
+      this.sessionId = Date.now();
     }
-    return;
+
+    if (this.sessionTimer !== undefined) {
+      clearTimeout(this.sessionTimer);
+    }
+
+    this.sessionTimer = setTimeout(
+      () => this.resetSession(),
+      MAX_SESSION_TIME_IN_MS
+    );
   };
 }

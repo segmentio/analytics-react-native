@@ -69,7 +69,7 @@ export class SegmentDestination extends DestinationPlugin {
     this.add(this.queuePlugin);
   }
 
-  execute(event: SegmentEvent): SegmentEvent | undefined {
+  execute(event: SegmentEvent): Promise<SegmentEvent | undefined> {
     // Execute the internal timeline here, the queue plugin will pick up the event and add it to the queue automatically
     const enrichedEvent = super.execute(event);
     return enrichedEvent;

@@ -2,7 +2,10 @@ import { SegmentClient } from '../../analytics';
 import { getMockLogger } from '../__helpers__/mockLogger';
 import * as ReactNative from 'react-native';
 import { EventType } from '../../types';
-import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
+import {
+  createMockStoreGetter,
+  MockSegmentStore,
+} from '../__helpers__/mockSegmentStore';
 
 jest
   .spyOn(Date.prototype, 'toISOString')
@@ -40,7 +43,9 @@ describe('#trackDeepLinks', () => {
       url: 'myapp://open',
       referring_application: 'Safari',
     };
-    jest.spyOn(store.deepLinkData, 'get').mockReturnValue(deepLinkData);
+    jest
+      .spyOn(store.deepLinkData, 'get')
+      .mockImplementation(createMockStoreGetter(() => deepLinkData));
     const client = new SegmentClient(clientArgs);
     jest.spyOn(client, 'process');
 

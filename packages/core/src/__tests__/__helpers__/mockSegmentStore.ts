@@ -1,14 +1,20 @@
 import { SEGMENT_DESTINATION_KEY } from '../../plugins/SegmentDestination';
-import type { DeepLinkData, Storage } from '../../storage';
+import type {
+  DeepLinkData,
+  Dictionary,
+  Settable,
+  Storage,
+  Watchable,
+} from '../../storage';
 import type {
   Context,
   DeepPartial,
   IntegrationSettings,
   SegmentAPIIntegrations,
-  SegmentEvent,
   UserInfoState,
 } from '../../types';
 import { createCallbackManager } from './utils';
+import { createGetter } from '../../storage/helpers';
 
 type Data = {
   isReady: boolean;
@@ -35,32 +41,12 @@ const INITIAL_VALUES: Data = {
   },
 };
 
-export class MockEventStore {
-  private initialData: SegmentEvent[] = [];
-  private events: SegmentEvent[] = [];
-
-  private callbackManager = createCallbackManager<{ events: SegmentEvent[] }>();
-
-  constructor(initialData?: SegmentEvent[]) {
-    this.events = [...(initialData ?? [])];
-    this.initialData = JSON.parse(JSON.stringify(initialData ?? []));
-  }
-
-  reset = () => {
-    this.events = JSON.parse(JSON.stringify(this.initialData));
-  };
-
-  getState = () => this.events;
-
-  subscribe = (callback: (value: { events: SegmentEvent[] }) => void) =>
-    this.callbackManager.register(callback);
-
-  dispatch = (
-    callback: (value: { events: SegmentEvent[] }) => { events: SegmentEvent[] }
-  ) => {
-    this.events = callback({ events: this.events }).events;
-    this.callbackManager.run({ events: this.events });
-  };
+export function createMockStoreGetter<T>(fn: () => T) {
+  return createGetter(fn, () => {
+    return new Promise((resolve) => {
+      resolve(fn());
+    });
+  });
 }
 
 export class MockSegmentStore implements Storage {
@@ -86,34 +72,43 @@ export class MockSegmentStore implements Storage {
   };
 
   readonly isReady = {
-    get: () => {
+    get: createMockStoreGetter(() => {
       return this.data.isReady;
-    },
+    }),
     onChange: (_callback: (value: boolean) => void) => {
       // Not doing anything cause this mock store is always ready, this is just legacy from the redux persistor
       return () => {};
     },
   };
 
-  readonly context = {
-    get: () => ({ ...this.data.context }),
+  readonly context: Watchable<DeepPartial<Context> | undefined> &
+    Settable<DeepPartial<Context>> = {
+    get: createMockStoreGetter(() => ({ ...this.data.context })),
     onChange: (callback: (value?: DeepPartial<Context>) => void) =>
       this.callbacks.context.register(callback),
-    set: (value: DeepPartial<Context>) => {
-      this.data.context = { ...value };
-      this.callbacks.context.run(value);
+    set: (value) => {
+      this.data.context =
+        value instanceof Function
+          ? value(this.data.context ?? {})
+          : { ...value };
+      this.callbacks.context.run(this.data.context);
       return this.data.context;
     },
   };
 
-  readonly settings = {
-    get: () => this.data.settings,
+  readonly settings: Watchable<SegmentAPIIntegrations | undefined> &
+    Settable<SegmentAPIIntegrations> &
+    Dictionary<string, IntegrationSettings> = {
+    get: createMockStoreGetter(() => this.data.settings),
     onChange: (
       callback: (value?: SegmentAPIIntegrations | undefined) => void
     ) => this.callbacks.settings.register(callback),
-    set: (value: SegmentAPIIntegrations) => {
-      this.data.settings = value;
-      this.callbacks.settings.run(value);
+    set: (value) => {
+      this.data.settings =
+        value instanceof Function
+          ? value(this.data.settings ?? {})
+          : { ...value };
+      this.callbacks.settings.run(this.data.settings);
       return this.data.settings;
     },
     add: (key: string, value: IntegrationSettings) => {
@@ -122,21 +117,24 @@ export class MockSegmentStore implements Storage {
     },
   };
 
-  readonly userInfo = {
-    get: () => this.data.userInfo,
+  readonly userInfo: Watchable<UserInfoState> & Settable<UserInfoState> = {
+    get: createMockStoreGetter(() => this.data.userInfo),
     onChange: (callback: (value: UserInfoState) => void) =>
       this.callbacks.userInfo.register(callback),
-    set: (value: UserInfoState) => {
-      this.data.userInfo = value;
-      this.callbacks.userInfo.run(value);
+    set: (value) => {
+      this.data.userInfo =
+        value instanceof Function
+          ? value(this.data.userInfo ?? {})
+          : { ...value };
+      this.callbacks.userInfo.run(this.data.userInfo);
       return this.data.userInfo;
     },
   };
 
   readonly deepLinkData = {
-    get: () => {
+    get: createMockStoreGetter(() => {
       return this.data.deepLinkData;
-    },
+    }),
     set: (value: DeepLinkData) => {
       this.data.deepLinkData = value;
       this.callbacks.deepLinkData.run(value);

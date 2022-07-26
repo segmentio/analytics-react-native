@@ -4,7 +4,10 @@ import {
   SEGMENT_DESTINATION_KEY,
 } from '../SegmentDestination';
 import { SegmentClient } from '../../analytics';
-import { MockSegmentStore } from '../../__tests__/__helpers__/mockSegmentStore';
+import {
+  createMockStoreGetter,
+  MockSegmentStore,
+} from '../../__tests__/__helpers__/mockSegmentStore';
 import { getMockLogger } from '../../__tests__/__helpers__/mockLogger';
 import * as api from '../../api';
 
@@ -24,7 +27,7 @@ describe('SegmentDestination', () => {
     jest.clearAllMocks();
   });
 
-  it('executes', () => {
+  it('executes', async () => {
     const plugin = new SegmentDestination();
     // @ts-ignore
     plugin.analytics = new SegmentClient(clientArgs);
@@ -40,11 +43,11 @@ describe('SegmentDestination', () => {
         Firebase: false,
       },
     };
-    const result = plugin.execute(event);
+    const result = await plugin.execute(event);
     expect(result).toEqual(event);
   });
 
-  it('disables device mode plugins to prevent dups', () => {
+  it('disables device mode plugins to prevent dups', async () => {
     const plugin = new SegmentDestination();
     const analytics = new SegmentClient({
       ...clientArgs,
@@ -77,7 +80,7 @@ describe('SegmentDestination', () => {
       integrations: {},
     };
 
-    const result = plugin.execute(event);
+    const result = await plugin.execute(event);
     expect(result).toEqual({
       ...event,
       _metadata: {
@@ -88,7 +91,7 @@ describe('SegmentDestination', () => {
     });
   });
 
-  it('marks unbundled plugins where the cloud mode is disabled', () => {
+  it('marks unbundled plugins where the cloud mode is disabled', async () => {
     const plugin = new SegmentDestination();
     const analytics = new SegmentClient({
       ...clientArgs,
@@ -121,7 +124,7 @@ describe('SegmentDestination', () => {
       integrations: {},
     };
 
-    const result = plugin.execute(event);
+    const result = await plugin.execute(event);
     expect(result).toEqual({
       ...event,
       _metadata: {
@@ -132,7 +135,7 @@ describe('SegmentDestination', () => {
     });
   });
 
-  it('marks maybeBundled integrations to unbundled if they are not bundled', () => {
+  it('marks maybeBundled integrations to unbundled if they are not bundled', async () => {
     const plugin = new SegmentDestination();
     const analytics = new SegmentClient({
       ...clientArgs,
@@ -158,7 +161,7 @@ describe('SegmentDestination', () => {
       integrations: {},
     };
 
-    const result = plugin.execute(event);
+    const result = await plugin.execute(event);
     expect(result).toEqual({
       ...event,
       _metadata: {
@@ -169,7 +172,7 @@ describe('SegmentDestination', () => {
     });
   });
 
-  it('lets plugins/events override destination settings', () => {
+  it('lets plugins/events override destination settings', async () => {
     const plugin = new SegmentDestination();
     // @ts-ignore
     plugin.analytics = new SegmentClient({
@@ -204,7 +207,7 @@ describe('SegmentDestination', () => {
       },
     };
 
-    const result = plugin.execute(event);
+    const result = await plugin.execute(event);
     expect(result).toEqual(event);
   });
 
@@ -232,7 +235,7 @@ describe('SegmentDestination', () => {
     jest
       // @ts-ignore
       .spyOn(plugin.queuePlugin.queueStore!, 'getState')
-      .mockReturnValue({ events });
+      .mockImplementation(createMockStoreGetter(() => ({ events })));
 
     const sendEventsSpy = jest.spyOn(api, 'uploadEvents').mockResolvedValue();
 
@@ -259,7 +262,7 @@ describe('SegmentDestination', () => {
     });
   });
 
-  it('lets plugins/events disable destinations individually', () => {
+  it('lets plugins/events disable destinations individually', async () => {
     const plugin = new SegmentDestination();
     // @ts-ignore
     plugin.analytics = new SegmentClient({
@@ -284,7 +287,7 @@ describe('SegmentDestination', () => {
       },
     };
 
-    const result = plugin.execute(event);
+    const result = await plugin.execute(event);
     expect(result).toEqual(undefined);
   });
 });

@@ -34,11 +34,11 @@ describe('methods #identify', () => {
     jest.clearAllMocks();
   });
 
-  it('adds the identify event correctly', () => {
+  it('adds the identify event correctly', async () => {
     const client = new SegmentClient(clientArgs);
     jest.spyOn(client, 'process');
 
-    client.identify('new-user-id', { name: 'Mary', age: 30 });
+    await client.identify('new-user-id', { name: 'Mary', age: 30 });
 
     const expectedEvent = {
       traits: {
@@ -59,11 +59,11 @@ describe('methods #identify', () => {
     });
   });
 
-  it('does not update user traits when there are no new ones provided', () => {
+  it('does not update user traits when there are no new ones provided', async () => {
     const client = new SegmentClient(clientArgs);
     jest.spyOn(client, 'process');
 
-    client.identify('new-user-id');
+    await client.identify('new-user-id');
 
     const expectedEvent = {
       traits: initialUserInfo.traits,
@@ -80,15 +80,15 @@ describe('methods #identify', () => {
     });
   });
 
-  it('does not update userId when userId is undefined', () => {
+  it('does not update userId when userId is undefined', async () => {
     const client = new SegmentClient(clientArgs);
     jest.spyOn(client, 'process');
 
-    client.identify(undefined, { name: 'Mary' });
+    await client.identify(undefined, { name: 'Mary' });
 
     const expectedEvent = {
       traits: { name: 'Mary', age: 30 },
-      userId: undefined,
+      userId: 'current-user-id',
       type: 'identify',
     };
 
@@ -103,13 +103,13 @@ describe('methods #identify', () => {
     });
   });
 
-  it('does not persist identity traits accross events', () => {
+  it('does not persist identity traits accross events', async () => {
     const client = new SegmentClient(clientArgs);
     jest.spyOn(client, 'process');
     // @ts-ignore accessing the internal timeline to check the processed events
     jest.spyOn(client.timeline, 'process');
 
-    client.identify('new-user-id', { name: 'Mary', age: 30 });
+    await client.identify('new-user-id', { name: 'Mary', age: 30 });
 
     const expectedEvent = {
       traits: {
@@ -130,6 +130,9 @@ describe('methods #identify', () => {
     });
 
     client.track('track event');
+
+    // Await all promises
+    await new Promise(process.nextTick);
 
     // @ts-ignore
     expect(client.timeline.process).toHaveBeenLastCalledWith({
