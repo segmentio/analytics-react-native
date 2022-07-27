@@ -121,7 +121,7 @@ You must pass at least the `writeKey`. Additional configuration options are list
 To track deep links in iOS you must add the following to your `AppDelegate.m` file:
 
 ```objc
-  @import segment_analytics_react_native;
+  #import <segment_analytics_react_native-Swift.h>
   
   ...
   
