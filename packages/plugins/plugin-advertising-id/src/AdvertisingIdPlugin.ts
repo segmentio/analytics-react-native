@@ -1,6 +1,9 @@
 //@ts-ignore
-import { Plugin, PluginType } from '@segment/analytics-react-native';
-import type { SegmentClient } from '@segment/analytics-react-native/src/analytics';
+import {
+  Plugin,
+  PluginType,
+  SegmentClient,
+} from '@segment/analytics-react-native';
 import { NativeModules } from 'react-native';
 
 export class AdvertisingIdPlugin extends Plugin {

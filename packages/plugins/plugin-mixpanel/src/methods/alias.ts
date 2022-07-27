@@ -1,6 +1,8 @@
 import type { Mixpanel } from 'mixpanel-react-native';
-import type { AliasEventType } from '@segment/analytics-react-native';
-import type { SegmentClient } from '@segment/analytics-react-native/src/analytics';
+import type {
+  AliasEventType,
+  SegmentClient,
+} from '@segment/analytics-react-native';
 
 export default async (
   event: AliasEventType,

@@ -4,7 +4,7 @@ import {
   SegmentEvent,
 } from '@segment/analytics-react-native';
 
-import type { SegmentClient } from '@segment/analytics-react-native/src/analytics';
+import type { SegmentClient } from '@segment/analytics-react-native';
 
 import { Alert } from 'react-native';
 

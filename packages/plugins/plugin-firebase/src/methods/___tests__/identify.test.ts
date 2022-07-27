@@ -1,4 +1,4 @@
-import type { IdentifyEventType } from '@segment/analytics-react-native/src';
+import type { IdentifyEventType } from '@segment/analytics-react-native';
 import identify from '../identify';
 
 const mockSetUserId = jest.fn();

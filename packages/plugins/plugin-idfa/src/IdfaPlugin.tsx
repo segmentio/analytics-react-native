@@ -1,5 +1,8 @@
-import { Plugin, PluginType } from '@segment/analytics-react-native';
-import type { SegmentClient } from '../../../core/src/analytics';
+import {
+  Plugin,
+  PluginType,
+  SegmentClient,
+} from '@segment/analytics-react-native';
 import { IdfaEvents } from './IdfaEvents';
 import type { IdfaData } from './types';
 import { AnalyticsReactNativePluginIdfa } from './AnalyticsReactNativePluginIdfa';
