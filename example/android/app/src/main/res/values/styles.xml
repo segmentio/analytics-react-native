@@ -8,6 +8,6 @@
     </style>
 
     <style name="BootTheme" parent="AppTheme">
-        <item name="android:background">@drawable/bootsplash</item>
+        <item name="windowSplashScreenBackground">@color/bootsplash_background</item>
     </style>
 </resources>

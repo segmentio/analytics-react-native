@@ -290,7 +290,7 @@ PODS:
     - React-jsi (= 0.69.2)
     - React-logger (= 0.69.2)
     - React-perflogger (= 0.69.2)
-  - RNBootSplash (3.2.7):
+  - RNBootSplash (4.2.3):
     - React-Core
   - RNCAsyncStorage (1.17.7):
     - React-Core
@@ -298,7 +298,7 @@ PODS:
     - React
   - RNGestureHandler (2.5.0):
     - React-Core
-  - segment-analytics-react-native (2.4.0):
+  - segment-analytics-react-native (2.5.0):
     - React-Core
     - sovran-react-native
   - segment-analytics-react-native-plugin-idfa (0.4.0):
@@ -441,12 +441,12 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: a7c83b31436843459a1961bfd74b96033dc77234
-  DoubleConversion: 831926d9b8bf8166fd87886c4abab286c2422662
+  DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: e3c1479be506060131807f2f2435af5107c58410
   FBReactNativeSpec: 1381e8c4230895b6c2d20cea6b216ac7096a95f0
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  glog: 85ecdd10ee8d8ec362ef519a6a45ff9aa27b2e85
-  RCT-Folly: 803a9cfd78114b2ec0f140cfa6fa2a6bafb2d685
+  glog: 3d02b25ca00c2d456734d0bcff864cbc62f6ae1a
+  RCT-Folly: b9d9fe1fc70114b751c076104e52f3b1b5e5a95a
   RCTRequired: b723d4d6da2795df58189a01f92856b6912cf256
   RCTTypeSafety: 3973d2fcf39f43f7819e840d56ea6b2fe45996a0
   React: 242d4ffb093ed57c4761307a69b23b2479930ae9
@@ -474,11 +474,11 @@ SPEC CHECKSUMS:
   React-RCTVibration: 0d07f00705b5f11e88aaaaf9131f5e1785d4bd6e
   React-runtimeexecutor: 8030b9cf9b9e87b878d92da680b55b5e74c58e70
   ReactCommon: a9414b91f0d19de002b55d9f4f6cb176d6dd8452
-  RNBootSplash: f31eba8f6d496e2029859e06e5582cac4607256d
+  RNBootSplash: e8a36a88f8c868769ec998c5afe3082032e82fc2
   RNCAsyncStorage: d81ee5c3db1060afd49ea7045ad460eff82d2b7d
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNGestureHandler: bad495418bcbd3ab47017a38d93d290ebd406f50
-  segment-analytics-react-native: 3535da141d18cbbbfa35701b806e26ecaea0e019
+  segment-analytics-react-native: f35d0f9bd60d03ca93068b4e8d6457a4e95e83be
   segment-analytics-react-native-plugin-idfa: 9befc7ff398e8a1fc49d353b7d74dab62a23e519
   sovran-react-native: d9adc84c3666579aacd5d96e315e399cd52241ac
   Yoga: 236056dd74cda4d9d76c20306fd8c20bb087614d
