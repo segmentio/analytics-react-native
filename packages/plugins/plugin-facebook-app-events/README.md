@@ -20,7 +20,7 @@ Run `pod install` after the installation to autolink the Facebook SDK.
 
 Follow the instructions in [Configure projects](https://github.com/thebergamo/react-native-fbsdk-next#3-configure-projects) of React-Native-fbsdk-next to finish the setup of FBSDK.
 
-See [React Native FBSDK Next](https://github.com/thebergamo/react-native-fbsdk-next) for more details of this dependency.
+See [React Native FBSDK Next](https://github.com/thebergamo/react-native-fbsdk-next) for more details of this dependency. The plugin automatically calls the `Settings.initializeSDK();` method, so you do not need to explictly add that code to your app. Adding the method again may result in an error.
 ## Usage
 
 Follow the [instructions for adding plugins](https://github.com/segmentio/analytics-react-native#adding-plugins) on the main Analytics client:
