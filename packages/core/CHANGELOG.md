@@ -1,3 +1,15 @@
+## [@segment/analytics-react-native-v2.5.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.4.0...@segment/analytics-react-native-v2.5.0) (2022-07-27)
+
+
+### Features
+
+* update react native in example to 0.69.2 ([#613](https://github.com/segmentio/analytics-react-native/issues/613)) ([d9e7967](https://github.com/segmentio/analytics-react-native/commit/d9e79672fcd1ec49603bc87e0fdf1efbd2504d68))
+
+
+### Bug Fixes
+
+* race condition when using state changing events ([#611](https://github.com/segmentio/analytics-react-native/issues/611)) ([40ede04](https://github.com/segmentio/analytics-react-native/commit/40ede04ce465eef03816185e5a1d3a58f1d8b8a9))
+
 ## [@segment/analytics-react-native-v2.4.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.3.2...@segment/analytics-react-native-v2.4.0) (2022-07-15)
 
 
