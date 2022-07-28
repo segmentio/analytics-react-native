@@ -2,7 +2,7 @@ import { createStore, Store, Unsubscribe } from '@segment/sovran-react-native';
 import type { SegmentClient } from '../analytics';
 import { defaultConfig } from '../constants';
 import { UtilityPlugin } from '../plugin';
-import { PluginType, type SegmentEvent } from '../types';
+import { PluginType, SegmentEvent } from '../types';
 
 /**
  * This plugin manages a queue where all events get added to after timeline processing.

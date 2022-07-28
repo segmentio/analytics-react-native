@@ -9,7 +9,7 @@ import {
 } from '@segment/analytics-react-native';
 import track from './methods/track';
 import screen from './methods/screen';
-import type { SegmentClient } from '@segment/analytics-react-native/src/analytics';
+import type { SegmentClient } from '@segment/analytics-react-native';
 
 import { Settings } from 'react-native-fbsdk-next';
 

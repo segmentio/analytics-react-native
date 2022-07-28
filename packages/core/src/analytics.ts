@@ -42,9 +42,6 @@ import {
 import { getPluginsWithFlush, getPluginsWithReset } from './util';
 import { getUUID } from './uuid';
 
-// Important! We need to polyfill Promise.allSettled because it's not supported in RN (https://github.com/facebook/react-native/issues/30236)
-allSettled.shim();
-
 type OnContextLoadCallback = (type: UpdateType) => void | Promise<void>;
 
 export class SegmentClient {
@@ -469,7 +466,7 @@ export class SegmentClient {
       promises.push(plugin.flush());
     });
 
-    await Promise.allSettled(promises);
+    await allSettled(promises);
 
     return Promise.resolve();
   }

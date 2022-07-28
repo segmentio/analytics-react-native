@@ -1,5 +1,5 @@
 import firebaseAnalytics from '@react-native-firebase/analytics';
-import type { ScreenEventType } from '@segment/analytics-react-native/src';
+import type { ScreenEventType } from '@segment/analytics-react-native';
 
 export default async (event: ScreenEventType) => {
   await firebaseAnalytics().logScreenView({
