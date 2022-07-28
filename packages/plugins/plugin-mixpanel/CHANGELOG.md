@@ -1,3 +1,15 @@
+## [@segment/analytics-react-native-plugin-mixpanel-v0.2.2](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-mixpanel-v0.2.1...@segment/analytics-react-native-plugin-mixpanel-v0.2.2) (2022-07-28)
+
+
+### Features
+
+* Add AdvertisingId Plugin ([#574](https://github.com/segmentio/analytics-react-native/issues/574)) ([9f47e67](https://github.com/segmentio/analytics-react-native/commit/9f47e67906c658519e13c022a19c3f4640622ad6))
+
+
+### Bug Fixes
+
+* replace allSettled shim, fix imports from plugins ([#620](https://github.com/segmentio/analytics-react-native/issues/620)) ([18f8ecd](https://github.com/segmentio/analytics-react-native/commit/18f8ecdb291d8c5ecb02e087aa0043df4fc72e97))
+
 ## [@segment/analytics-react-native-plugin-mixpanel-v0.2.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-mixpanel-v0.2.0...@segment/analytics-react-native-plugin-mixpanel-v0.2.1) (2022-06-24)
 
 
