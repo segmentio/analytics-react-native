@@ -12,8 +12,7 @@ import flush from './methods/flush';
 export class BrazePlugin extends DestinationPlugin {
   type = PluginType.destination;
   key = 'Appboy';
-  lastSeenTraits: UserInfoState | null = null;
-  userIdentified: boolean = false;
+  private lastSeenTraits: UserInfoState | undefined = undefined;
 
   identify(event: IdentifyEventType) {
     //check to see if anything has changed.
@@ -23,17 +22,9 @@ export class BrazePlugin extends DestinationPlugin {
       this.lastSeenTraits?.anonymousId === event.anonymousId &&
       this.lastSeenTraits?.traits === event.traits
     ) {
-      let integrations = event.integrations;
-
-      if (integrations !== undefined) {
-        integrations[this.key] = false;
-      }
+      return;
     } else {
       identify(event);
-      this.userIdentified = true;
-    }
-
-    if (this.userIdentified === true) {
       this.lastSeenTraits = {
         anonymousId: event.anonymousId ?? '',
         userId: event.userId,
