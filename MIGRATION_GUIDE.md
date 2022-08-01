@@ -3,6 +3,14 @@
 Analytics-React-Native 2.0 currently supports [these destinations](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins) with Segment actively adding more to the list. 
 If you’re using  `analytics-react-native 1.5.1`  or older, follow these steps to migrate to the `analytics-react-native 2.0`. You can continue to use your React Native source write key for the migration to view historical events.
 
+---
+
+🚨 **Important Note**: Analytics React Native 2.0 implements a new storage framework, [@segment/sovran-react-native](https://github.com/segmentio/sovran-react-native), **which makes it impossible to determine if your app has been previously installed**. 
+
+**Migrating to Analytics React Native 2.0 results in new `Application Installed` events for your existing users**. To filter these events out you can either create an Enrichment Plugin to drop events or filter them using your Segment workspace.
+
+---
+
 1. Update existing package
 
 ```sh
