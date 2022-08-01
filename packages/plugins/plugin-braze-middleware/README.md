@@ -1,6 +1,6 @@
 # @segment/analytics-react-native-plugin-braze-middleware
 
-`BeforePlugin`  to debounce `identify` events for [Braze](https://www.braze.com).
+`BeforePlugin`  to debounce `identify` events for [Braze](https://www.braze.com). This Plugin should be used with a [Cloud Mode](https://segment.com/docs/connections/destinations/#connection-modes) connection to Braze. To connect to Braze with a Device Mode connection use the [Braze Destination Plugin]((https://www.npmjs.com/package/@segment/analytics-react-native-plugin-braze))instead. It is not possible to use both plugins in one `Analytics React Native` instance. 
 
 ## Installation
 

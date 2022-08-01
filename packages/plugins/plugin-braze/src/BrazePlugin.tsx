@@ -12,7 +12,7 @@ import flush from './methods/flush';
 export class BrazePlugin extends DestinationPlugin {
   type = PluginType.destination;
   key = 'Appboy';
-  private lastSeenTraits: UserInfoState | undefined = undefined;
+  private lastSeenTraits: UserInfoState | undefined;
 
   identify(event: IdentifyEventType) {
     //check to see if anything has changed.

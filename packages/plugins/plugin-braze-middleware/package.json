@@ -31,7 +31,9 @@
     "!src/**/*.e2e.mock.js",
     "!**/__tests__",
     "!**/__fixtures__",
-    "!**/__mocks__"
+    "!**/__mocks__",
+    "!android/.gradle",
+    "!android/.idea"
   ],
   "repository": {
     "type": "git",

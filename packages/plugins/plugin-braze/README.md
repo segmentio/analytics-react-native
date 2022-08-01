@@ -1,6 +1,6 @@
 # @segment/analytics-react-native-plugin-braze
 
-`DestinationPlugin` for [Braze](https://www.braze.com). Wraps [`react-native-appboy-sdk`](https://github.com/Appboy/appboy-react-sdk).
+`DestinationPlugin` for [Braze](https://www.braze.com). Wraps [`react-native-appboy-sdk`](https://github.com/Appboy/appboy-react-sdk). This Plugin should be used with a [Device Mode](https://segment.com/docs/connections/destinations/#connection-modes) connection to Braze. To connect to Braze with a Cloud Mode connection use the [Braze Middleware Plugin]((https://www.npmjs.com/package/@segment/analytics-react-native-plugin-braze))instead. It is not possible to use both plugins in one `Analytics React Native` instance. 
 
 ## Installation
 
