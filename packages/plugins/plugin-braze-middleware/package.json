@@ -1,6 +1,6 @@
 {
-  "name": "@segment/analytics-react-native-plugin-braze",
-  "version": "0.3.0",
+  "name": "@segment/analytics-react-native-plugin-braze-middleware",
+  "version": "0.1.0",
   "description": "The hassle-free way to add Segment analytics to your React-Native app.",
   "main": "lib/commonjs/index",
   "scripts": {
@@ -48,9 +48,6 @@
   "homepage": "https://github.com/segmentio/analytics-react-native#readme",
   "peerDependencies": {
     "@segment/analytics-react-native": "*"
-  },
-  "dependencies": {
-    "react-native-appboy-sdk": "^1.32.0"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.1",

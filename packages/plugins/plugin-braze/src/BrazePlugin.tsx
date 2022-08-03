@@ -3,6 +3,7 @@ import {
   IdentifyEventType,
   PluginType,
   TrackEventType,
+  UserInfoState,
 } from '@segment/analytics-react-native';
 import identify from './methods/identify';
 import track from './methods/track';
@@ -11,24 +12,24 @@ import flush from './methods/flush';
 export class BrazePlugin extends DestinationPlugin {
   type = PluginType.destination;
   key = 'Appboy';
+  private lastSeenTraits: UserInfoState | undefined;
 
   identify(event: IdentifyEventType) {
-    const currentUserInfo = this.analytics?.userInfo.get();
-
     //check to see if anything has changed.
     //if it hasn't changed don't send event
     if (
-      currentUserInfo?.userId === event.userId &&
-      currentUserInfo?.anonymousId === event.anonymousId &&
-      currentUserInfo?.traits === event.traits
+      this.lastSeenTraits?.userId === event.userId &&
+      this.lastSeenTraits?.anonymousId === event.anonymousId &&
+      this.lastSeenTraits?.traits === event.traits
     ) {
-      let integrations = event.integrations;
-
-      if (integrations !== undefined) {
-        integrations[this.key] = false;
-      }
+      return;
     } else {
       identify(event);
+      this.lastSeenTraits = {
+        anonymousId: event.anonymousId ?? '',
+        userId: event.userId,
+        traits: event.traits,
+      };
     }
     return event;
   }

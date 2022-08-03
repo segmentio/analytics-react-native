@@ -1,41 +1,36 @@
-# @segment/analytics-react-native-plugin-braze
+# @segment/analytics-react-native-plugin-braze-middleware
 
-`DestinationPlugin` for [Braze](https://www.braze.com). Wraps [`react-native-appboy-sdk`](https://github.com/Appboy/appboy-react-sdk). This Plugin should be used with a [Device Mode](https://segment.com/docs/connections/destinations/#connection-modes) connection to Braze. To connect to Braze with a Cloud Mode connection use the [Braze Middleware Plugin]((https://www.npmjs.com/package/@segment/analytics-react-native-plugin-braze))instead. It is not possible to use both plugins in one `Analytics React Native` instance. 
+`BeforePlugin`  to debounce `identify` events for [Braze](https://www.braze.com). This Plugin should be used with a [Cloud Mode](https://segment.com/docs/connections/destinations/#connection-modes) connection to Braze. To connect to Braze with a Device Mode connection use the [Braze Destination Plugin]((https://www.npmjs.com/package/@segment/analytics-react-native-plugin-braze))instead. It is not possible to use both plugins in one `Analytics React Native` instance. 
 
 ## Installation
 
-You need to install the `@segment/analytics-react-native-plugin-braze` and the `react-native-appboy-sdk` dependency.
+You need to install the `@segment/analytics-react-native-plugin-braze-middleware`.
 
 Using NPM:
 ```bash
-npm install --save @segment/analytics-react-native-plugin-braze react-native-appboy-sdk
+npm install --save @segment/analytics-react-native-plugin-braze-middleware 
 ```
 
 Using Yarn:
 ```bash
-yarn add @segment/analytics-react-native-plugin-braze react-native-appboy-sdk
+yarn add @segment/analytics-react-native-plugin-braze-middleware
 ```
-
-Run `pod install` after the installation to autolink the Braze SDK.
-
-See [Braze React SDK](https://github.com/Appboy/appboy-react-sdk) for more details of this dependency.
-
 ## Usage
 
 Follow the [instructions for adding plugins](https://github.com/segmentio/analytics-react-native#adding-plugins) on the main Analytics client:
 
-In your code where you initialize the analytics client call the `.add(plugin)` method with an `BrazePlugin` instance:
+In your code where you initialize the analytics client call the `.add(plugin)` method with an `BrazeMiddlewarePlugin` instance:
 
 ```ts
 import { createClient } from '@segment/analytics-react-native';
 
-import { BrazePlugin } from '@segment/analytics-react-native-plugin-braze';
+import { BrazePlugin } from '@segment/analytics-react-native-plugin-braze-middleware';
 
 const segmentClient = createClient({
   writeKey: 'SEGMENT_KEY'
 });
 
-segmentClient.add({ plugin: new BrazePlugin() });
+segmentClient.add({ plugin: new BrazeMiddlewarePlugin() });
 ```
 
 ## Support
