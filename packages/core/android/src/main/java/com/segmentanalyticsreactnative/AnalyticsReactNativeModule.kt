@@ -76,7 +76,9 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
         md.update(wideVineId)
         return md.digest().toHexString()
       } catch (e: Exception) {
-        return null
+        // generate random identifier that does not persist across installations
+        // use it as the fallback in case DRM API failed to generate one.
+          return UUID.randomUUID().toString()
       } finally {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
           wvDrm?.close()
@@ -120,15 +122,6 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
     return result
   }
 
-  // generate random identifier that does not persist across installations
-  // use it as the fallback in case DRM API failed to generate one.
-  private  fun getFallbackDeviceId(collectDeviceId : Boolean): String? {
-    if (collectDeviceId) {
-      return UUID.randomUUID().toString()
-    }
-    return null
-  }
-
   @ReactMethod
   fun getContextInfo(config: ReadableMap, promise: Promise) {
     val appName: String = reactApplicationContext.applicationInfo.loadLabel(reactApplicationContext.packageManager).toString()
@@ -148,7 +141,7 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
 
     val contextInfo: WritableMap = Arguments.createMap()
 
-    val deviceId = getUniqueId(config.hasKey("collectDeviceId") && config.getBoolean("collectDeviceId"))?: getFallbackDeviceId(config.hasKey("collectDeviceId") && config.getBoolean("collectDeviceId"))
+    val deviceId = getUniqueId(config.hasKey("collectDeviceId") && config.getBoolean("collectDeviceId"))
 
     contextInfo.putString("appName", appName)
     contextInfo.putString("appVersion", appVersion)
@@ -157,8 +150,8 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
 
     if (deviceId !== null) {
       contextInfo.putString("deviceId", deviceId)
-    } 
-    
+    }
+
     contextInfo.putString("deviceName", Build.DEVICE)
     contextInfo.putString("deviceType", "android")
     contextInfo.putString("manufacturer", Build.MANUFACTURER)
