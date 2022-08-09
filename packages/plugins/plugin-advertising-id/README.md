@@ -7,7 +7,7 @@
 Add the package
 
 ```sh
-yarn add react-native-analytics-react-native-plugin-advertising-id
+yarn add @segment/analytics-react-native-plugin-advertising-id
 ```
 
 This plugin requires a `compileSdkVersion` of at least 31. 
