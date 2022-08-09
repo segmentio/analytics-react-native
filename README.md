@@ -190,7 +190,7 @@ import {
   AnalyticsProvider,
 } from '@segment/analytics-react-native';
 
-// create the client once when he app loads
+// create the client once when the app loads
 const segmentClient = createClient({
   writeKey: 'SEGMENT_API_KEY'
 });
