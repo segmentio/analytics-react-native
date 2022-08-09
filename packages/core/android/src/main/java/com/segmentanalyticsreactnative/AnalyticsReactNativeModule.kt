@@ -120,6 +120,15 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
     return result
   }
 
+  // generate random identifier that does not persist across installations
+  // use it as the fallback in case DRM API failed to generate one.
+  private  fun getFallbackDeviceId(collectDeviceId : Boolean): String? {
+    if (collectDeviceId) {
+      return UUID.randomUUID().toString()
+    }
+    return null
+  }
+
   @ReactMethod
   fun getContextInfo(config: ReadableMap, promise: Promise) {
     val appName: String = reactApplicationContext.applicationInfo.loadLabel(reactApplicationContext.packageManager).toString()
@@ -139,16 +148,17 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
 
     val contextInfo: WritableMap = Arguments.createMap()
 
-    // generate random identifier that does not persist across installations
-    // use it as the fallback in case DRM API failed to generate one.
-    val fallbackDeviceId = UUID.randomUUID().toString()
-    val deviceId = getUniqueId(config.hasKey("collectDeviceId") && config.getBoolean("collectDeviceId"))?: fallbackDeviceId
+    val deviceId = getUniqueId(config.hasKey("collectDeviceId") && config.getBoolean("collectDeviceId"))?: getFallbackDeviceId(config.hasKey("collectDeviceId") && config.getBoolean("collectDeviceId"))
 
     contextInfo.putString("appName", appName)
     contextInfo.putString("appVersion", appVersion)
     contextInfo.putString("buildNumber", buildNumber)
     contextInfo.putString("bundleId", bundleId)
-    contextInfo.putString("deviceId", deviceId)
+
+    if (deviceId !== null) {
+      contextInfo.putString("deviceId", deviceId)
+    } 
+    
     contextInfo.putString("deviceName", Build.DEVICE)
     contextInfo.putString("deviceType", "android")
     contextInfo.putString("manufacturer", Build.MANUFACTURER)
