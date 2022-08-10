@@ -1,6 +1,6 @@
 {
   "name": "@segment/analytics-react-native-plugin-advertising-id",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "The hassle-free way to add Segment analytics to your React-Native app.",
   "main": "lib/commonjs/index",
   "scripts": {
