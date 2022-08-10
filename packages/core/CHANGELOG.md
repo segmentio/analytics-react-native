@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-v2.7.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.6.0...@segment/analytics-react-native-v2.7.0) (2022-08-10)
+
+
+### Features
+
+* prepare advertising-id for release ([#640](https://github.com/segmentio/analytics-react-native/issues/640)) ([0f2b5aa](https://github.com/segmentio/analytics-react-native/commit/0f2b5aaf77829e32399d91b3aab38081699beecf))
+
 ## [@segment/analytics-react-native-v2.6.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.5.1...@segment/analytics-react-native-v2.6.0) (2022-08-10)
 
 
