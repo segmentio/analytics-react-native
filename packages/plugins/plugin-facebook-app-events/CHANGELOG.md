@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-facebook-app-events-v0.4.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-facebook-app-events-v0.3.1...@segment/analytics-react-native-plugin-facebook-app-events-v0.4.0) (2022-08-10)
+
+
+### Features
+
+* prepare facebook app events  for release ([#636](https://github.com/segmentio/analytics-react-native/issues/636)) ([ed43310](https://github.com/segmentio/analytics-react-native/commit/ed433101267ab26140b13c2362f63130920690fc))
+
 ## [@segment/analytics-react-native-plugin-facebook-app-events-v0.3.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-facebook-app-events-v0.3.0...@segment/analytics-react-native-plugin-facebook-app-events-v0.3.1) (2022-07-28)
 
 
