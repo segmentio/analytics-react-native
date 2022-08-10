@@ -76,9 +76,7 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
         md.update(wideVineId)
         return md.digest().toHexString()
       } catch (e: Exception) {
-        // generate random identifier that does not persist across installations
-        // use it as the fallback in case DRM API failed to generate one.
-          return UUID.randomUUID().toString()
+        return null
       } finally {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
           wvDrm?.close()
@@ -140,17 +138,19 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
     val screenDensity = Resources.getSystem().displayMetrics.density;
 
     val contextInfo: WritableMap = Arguments.createMap()
-
-    val deviceId = getUniqueId(config.hasKey("collectDeviceId") && config.getBoolean("collectDeviceId"))
+    
+    
+    if (config.hasKey("collectDeviceId") && config.getBoolean("collectDeviceId")) {
+      val fallbackDeviceId = UUID.randomUUID().toString()
+      val deviceId = getUniqueId(config.hasKey("collectDeviceId") && config.getBoolean("collectDeviceId"))?: fallbackDeviceId
+      
+      contextInfo.putString("deviceId", deviceId)
+    }
 
     contextInfo.putString("appName", appName)
     contextInfo.putString("appVersion", appVersion)
     contextInfo.putString("buildNumber", buildNumber)
     contextInfo.putString("bundleId", bundleId)
-
-    if (deviceId !== null) {
-      contextInfo.putString("deviceId", deviceId)
-    }
 
     contextInfo.putString("deviceName", Build.DEVICE)
     contextInfo.putString("deviceType", "android")
