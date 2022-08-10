@@ -138,17 +138,20 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
     val screenDensity = Resources.getSystem().displayMetrics.density;
 
     val contextInfo: WritableMap = Arguments.createMap()
-
-    // generate random identifier that does not persist across installations
-    // use it as the fallback in case DRM API failed to generate one.
-    val fallbackDeviceId = UUID.randomUUID().toString()
-    val deviceId = getUniqueId(config.hasKey("collectDeviceId") && config.getBoolean("collectDeviceId"))?: fallbackDeviceId
+    
+    
+    if (config.hasKey("collectDeviceId") && config.getBoolean("collectDeviceId")) {
+      val fallbackDeviceId = UUID.randomUUID().toString()
+      val deviceId = getUniqueId(config.hasKey("collectDeviceId") && config.getBoolean("collectDeviceId"))?: fallbackDeviceId
+      
+      contextInfo.putString("deviceId", deviceId)
+    }
 
     contextInfo.putString("appName", appName)
     contextInfo.putString("appVersion", appVersion)
     contextInfo.putString("buildNumber", buildNumber)
     contextInfo.putString("bundleId", bundleId)
-    contextInfo.putString("deviceId", deviceId)
+
     contextInfo.putString("deviceName", Build.DEVICE)
     contextInfo.putString("deviceType", "android")
     contextInfo.putString("manufacturer", Build.MANUFACTURER)
