@@ -1,3 +1,15 @@
+## [@segment/analytics-react-native-v2.6.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.5.1...@segment/analytics-react-native-v2.6.0) (2022-08-10)
+
+
+### Features
+
+* prepare for release ([#627](https://github.com/segmentio/analytics-react-native/issues/627)) ([68d69ae](https://github.com/segmentio/analytics-react-native/commit/68d69aec143777b3444f256b4cb16f6913440dca))
+
+
+### Bug Fixes
+
+* fix device.id logic to prevent random ids ([#637](https://github.com/segmentio/analytics-react-native/issues/637)) ([d8f1d39](https://github.com/segmentio/analytics-react-native/commit/d8f1d39fe169d3d6dcfe9ff8b9b8c90f69ffe281))
+
 ## [@segment/analytics-react-native-v2.5.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.5.0...@segment/analytics-react-native-v2.5.1) (2022-07-28)
 
 
