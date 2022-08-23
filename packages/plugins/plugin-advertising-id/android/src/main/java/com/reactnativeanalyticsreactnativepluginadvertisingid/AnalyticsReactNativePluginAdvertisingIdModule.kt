@@ -21,14 +21,19 @@ class AnalyticsReactNativePluginAdvertisingIdModule(reactContext: ReactApplicati
 
   @ReactMethod
   fun getAdvertisingId(promise: Promise) {
-    val reactContext = (currentActivity?.application as ReactApplication)
-    ?.reactNativeHost
-    ?.reactInstanceManager
-    ?.currentReactContext
-
-    if (reactContext == null) {
+    if (currentActivity?.application == null) {
       promise.resolve(null)
       return
+    } else {
+      val reactContext = (currentActivity?.application as ReactApplication)
+      ?.reactNativeHost
+      ?.reactInstanceManager
+      ?.currentReactContext
+
+      if (reactContext == null) {
+        promise.resolve(null)
+        return
+      }
     }
 
      try {
