@@ -24,18 +24,18 @@ class AnalyticsReactNativePluginAdvertisingIdModule(reactContext: ReactApplicati
     if (currentActivity?.application == null) {
       promise.resolve(null)
       return
-    } else {
-      val reactContext = (currentActivity?.application as ReactApplication)
-      ?.reactNativeHost
-      ?.reactInstanceManager
-      ?.currentReactContext
+    } 
 
-      if (reactContext == null) {
-        promise.resolve(null)
-        return
-      }
+    val reactContext = (currentActivity?.application as ReactApplication)
+    ?.reactNativeHost
+    ?.reactInstanceManager
+    ?.currentReactContext
+
+    if (reactContext == null) {
+      promise.resolve(null)
+      return
     }
-
+    
      try {
       val advertisingInfo = AdvertisingIdClient.getAdvertisingIdInfo(reactContext)
       val isLimitAdTrackingEnabled = advertisingInfo.isLimitAdTrackingEnabled
