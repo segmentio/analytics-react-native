@@ -16,7 +16,7 @@ export class InjectTraits extends PlatformPlugin {
       context: {
         ...event.context,
         traits: {
-          ...event.context,
+          ...event.context?.traits,
           ...this.analytics!.userInfo.get().traits,
         },
       },
