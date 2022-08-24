@@ -1,3 +1,11 @@
+## [@segment/analytics-react-native-v2.7.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.7.0...@segment/analytics-react-native-v2.7.1) (2022-08-24)
+
+
+### Bug Fixes
+
+* bump kotlin version ([#652](https://github.com/segmentio/analytics-react-native/issues/652)) ([3746738](https://github.com/segmentio/analytics-react-native/commit/37467383935b5293a89f20398c4dfd8f08ebf610))
+* do not attempt to cast null as ReactApplication ([#651](https://github.com/segmentio/analytics-react-native/issues/651)) ([7697587](https://github.com/segmentio/analytics-react-native/commit/7697587186ef4a7e7fe242c557d14a8249275b42))
+
 ## [@segment/analytics-react-native-v2.7.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.6.0...@segment/analytics-react-native-v2.7.0) (2022-08-10)
 
 
