@@ -1,3 +1,15 @@
+## [@segment/analytics-react-native-plugin-advertising-id-v1.1.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-advertising-id-v1.0.1...@segment/analytics-react-native-plugin-advertising-id-v1.1.0) (2022-08-24)
+
+
+### Features
+
+* prepare advertising-id for release ([#640](https://github.com/segmentio/analytics-react-native/issues/640)) ([0f2b5aa](https://github.com/segmentio/analytics-react-native/commit/0f2b5aaf77829e32399d91b3aab38081699beecf))
+
+
+### Bug Fixes
+
+* do not attempt to cast null as ReactApplication ([#651](https://github.com/segmentio/analytics-react-native/issues/651)) ([7697587](https://github.com/segmentio/analytics-react-native/commit/7697587186ef4a7e7fe242c557d14a8249275b42))
+
 ## [@segment/analytics-react-native-plugin-advertising-id-v1.0.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-advertising-id-v1.0.0...@segment/analytics-react-native-plugin-advertising-id-v1.0.1) (2022-07-28)
 
 
