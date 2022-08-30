@@ -11,23 +11,41 @@ const { getTrackingAuthorizationStatus } = AnalyticsReactNativePluginIdfa;
 
 export class IdfaPlugin extends Plugin {
   type = PluginType.enrichment;
+  private trackingStatusRequested: boolean = false;
+
+  constructor() {
+    super();
+    getTrackingAuthorizationStatus().then((idfa: IdfaData) => {
+      if (
+        idfa.trackingStatus === 'notDetermined' ||
+        idfa.trackingStatus === 'unknown'
+      ) {
+        IdfaEvents.addListener('IDFAQuery', (res) => {
+          this.getTrackingStatus();
+          console.log('idfa status not determined', res);
+        });
+      } else {
+        IdfaEvents.addListener('IDFAQuery', (res) => {
+          this.trackingStatusRequested = true;
+          this.analytics?.track('IDFAQuery', res);
+        });
+      }
+    });
+  }
 
   configure(analytics: SegmentClient) {
     this.analytics = analytics;
 
-    this.getTrackingStatus();
-
-    // subscribe to IDFAQuery event
-    // emitted when we prompt a user for permission
-    IdfaEvents.addListener('IDFAQuery', (res) => {
+    if (this.trackingStatusRequested === false) {
       this.getTrackingStatus();
-      this.analytics?.track('IDFAQuery', res);
-    });
+      this.trackingStatusRequested = true;
+    }
   }
 
   getTrackingStatus() {
     getTrackingAuthorizationStatus()
       .then((idfa: IdfaData) => {
+        console.log('idfaData', idfa);
         // update our context with the idfa data
         this.analytics?.context.set({ device: { ...idfa } });
       })

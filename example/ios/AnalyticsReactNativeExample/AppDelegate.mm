@@ -50,7 +50,6 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
   return YES;
 }
 
-
 - (BOOL)application:(UIApplication *)application
             openURL: (NSURL *)url
             options:(nonnull NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
