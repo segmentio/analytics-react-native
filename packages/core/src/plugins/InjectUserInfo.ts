@@ -49,6 +49,7 @@ export class InjectUserInfo extends PlatformPlugin {
 
       return {
         ...injectedEvent,
+        userId: event.userId,
         previousId: previousUserId || anonymousId,
       } as AliasEventType;
     }
