@@ -25,10 +25,6 @@ import type {
   Dictionary,
 } from './types';
 
-// NOTE: Not exported from @segment/sovran-react-native. Must explicitly declare here.
-// Also this fallback is used in store.ts in @segment/sovran-react-native yet "storeId" is required.
-const DEFAULT_STORE_NAME = 'default';
-
 type Data = {
   isReady: boolean;
   events: SegmentEvent[];
@@ -37,6 +33,7 @@ type Data = {
   settings: SegmentAPIIntegrations;
   userInfo: UserInfoState;
 };
+
 const INITIAL_VALUES: Data = {
   isReady: true,
   events: [],
@@ -52,7 +49,13 @@ const INITIAL_VALUES: Data = {
 
 interface ReadinessStore {
   hasLoadedContext: boolean;
+  hasRestoredContext: boolean;
+  hasRestoredSettings: boolean;
+  hasRestoredUserInfo: boolean;
 }
+
+const isEverythingReady = (state: ReadinessStore) =>
+  Object.values(state).every((v) => v === true);
 
 /**
  * Global store for deeplink information
@@ -134,28 +137,43 @@ export class SovranStorage implements Storage {
   constructor(config: StorageConfig) {
     this.storeId = config.storeId;
     this.storePersistor = config.storePersistor;
-    this.readinessStore = createStore<ReadinessStore>(
-      {
-        hasLoadedContext: false,
-      },
-      {
-        persist: {
-          storeId: DEFAULT_STORE_NAME,
-          persistor: this.storePersistor,
-        },
-      }
-    );
+    this.readinessStore = createStore<ReadinessStore>({
+      hasLoadedContext: false,
+      hasRestoredContext: false,
+      hasRestoredSettings: false,
+      hasRestoredUserInfo: false,
+    });
+
+    const markAsReadyGenerator = (key: keyof ReadinessStore) => () => {
+      this.readinessStore.dispatch((state) => ({
+        ...state,
+        [key]: true,
+      }));
+    };
 
     this.isReady = {
-      get: createStoreGetter(this.readinessStore, 'hasLoadedContext'),
+      get: createGetter(
+        () => {
+          const state = this.readinessStore.getState();
+          return isEverythingReady(state);
+        },
+        async () => {
+          const promise = await this.readinessStore
+            .getState(true)
+            .then(isEverythingReady);
+          return promise as boolean;
+        }
+      ),
       onChange: (callback: (value: boolean) => void) => {
         return this.readinessStore.subscribe((store) => {
-          if (store.hasLoadedContext) {
+          if (isEverythingReady(store)) {
             callback(true);
           }
         });
       },
     };
+
+    // Context Store
 
     this.contextStore = createStore(
       { context: INITIAL_VALUES.context },
@@ -163,6 +181,7 @@ export class SovranStorage implements Storage {
         persist: {
           storeId: `${this.storeId}-context`,
           persistor: this.storePersistor,
+          onInitialized: markAsReadyGenerator('hasRestoredContext'),
         },
       }
     );
@@ -184,12 +203,15 @@ export class SovranStorage implements Storage {
       },
     };
 
+    // Settings Store
+
     this.settingsStore = createStore(
       { settings: INITIAL_VALUES.settings },
       {
         persist: {
           storeId: `${this.storeId}-settings`,
           persistor: this.storePersistor,
+          onInitialized: markAsReadyGenerator('hasRestoredSettings'),
         },
       }
     );
@@ -218,12 +240,15 @@ export class SovranStorage implements Storage {
       },
     };
 
+    // User Info Store
+
     this.userInfoStore = createStore(
       { userInfo: INITIAL_VALUES.userInfo },
       {
         persist: {
           storeId: `${this.storeId}-userInfo`,
           persistor: this.storePersistor,
+          onInitialized: markAsReadyGenerator('hasRestoredUserInfo'),
         },
       }
     );
@@ -257,10 +282,7 @@ export class SovranStorage implements Storage {
     // Wait for context to be loaded
     const unsubscribeContext = this.contextStore.subscribe((store) => {
       if (store.context !== INITIAL_VALUES.context) {
-        this.readinessStore.dispatch((state) => ({
-          ...state,
-          hasLoadedContext: true,
-        }));
+        markAsReadyGenerator('hasLoadedContext')();
         unsubscribeContext();
       }
     });

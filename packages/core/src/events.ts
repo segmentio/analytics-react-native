@@ -11,7 +11,6 @@ import {
   AliasEventType,
   EventType,
   SegmentEvent,
-  UserInfoState,
 } from './types';
 
 export const createTrackEvent = ({
@@ -78,24 +77,11 @@ export const createAliasEvent = ({
   previousId: userId || anonymousId,
 });
 
-const isAliasEvent = (event: SegmentEvent): event is AliasEventType =>
-  event.type === EventType.AliasEvent;
-const isIdentifyEvent = (event: SegmentEvent): event is AliasEventType =>
-  event.type === EventType.IdentifyEvent;
-
-export const applyRawEventData = (
-  event: SegmentEvent,
-  userInfo: UserInfoState
-): SegmentEvent => {
+export const applyRawEventData = (event: SegmentEvent): SegmentEvent => {
   return {
     ...event,
-    anonymousId: userInfo.anonymousId,
     messageId: getUUID(),
     timestamp: new Date().toISOString(),
     integrations: event.integrations ?? {},
-    userId:
-      isAliasEvent(event) || isIdentifyEvent(event)
-        ? event.userId
-        : userInfo.userId,
   };
 };
