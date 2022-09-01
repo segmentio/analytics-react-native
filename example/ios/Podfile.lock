@@ -292,11 +292,11 @@ PODS:
     - React-perflogger (= 0.69.2)
   - RNBootSplash (3.2.7):
     - React-Core
-  - RNCAsyncStorage (1.17.8):
+  - RNCAsyncStorage (1.17.10):
     - React-Core
   - RNCMaskedView (0.1.11):
     - React
-  - RNGestureHandler (2.5.0):
+  - RNGestureHandler (2.6.0):
     - React-Core
   - segment-analytics-react-native (2.7.1):
     - React-Core
@@ -475,14 +475,14 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: 8030b9cf9b9e87b878d92da680b55b5e74c58e70
   ReactCommon: a9414b91f0d19de002b55d9f4f6cb176d6dd8452
   RNBootSplash: f31eba8f6d496e2029859e06e5582cac4607256d
-  RNCAsyncStorage: 7cbd0d823dbb0e415d40a7e77fea2292483c8bdb
+  RNCAsyncStorage: 0c357f3156fcb16c8589ede67cc036330b6698ca
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
-  RNGestureHandler: bad495418bcbd3ab47017a38d93d290ebd406f50
+  RNGestureHandler: 920eb17f5b1e15dae6e5ed1904045f8f90e0b11e
   segment-analytics-react-native: d3600ae853119d465d7f5b5884ef1c776796138a
   segment-analytics-react-native-plugin-idfa: 68fbc668f277eaf2e1e2673c6a5543ea857a1671
   sovran-react-native: 5f9715a62b50008d72c0cf904cb08c8377777b62
   Yoga: 236056dd74cda4d9d76c20306fd8c20bb087614d
 
-PODFILE CHECKSUM: 01bf23449aa7ae5e4f79c64bf149c75658c02426
+PODFILE CHECKSUM: 5df1bd43a50322f0e6eb5d11d6ae1922ebfec385
 
 COCOAPODS: 1.11.3
