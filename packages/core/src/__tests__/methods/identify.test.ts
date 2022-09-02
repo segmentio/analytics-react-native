@@ -1,12 +1,5 @@
-import { SegmentClient } from '../../analytics';
-import { getMockLogger } from '../__helpers__/mockLogger';
-import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
-
-jest.mock('../../uuid');
-
-jest
-  .spyOn(Date.prototype, 'toISOString')
-  .mockReturnValue('2010-01-01T00:00:00.000Z');
+import { EventType, SegmentEvent } from '../../types';
+import { createTestClient } from '../__helpers__/setupSegmentClient';
 
 describe('methods #identify', () => {
   const initialUserInfo = {
@@ -17,17 +10,9 @@ describe('methods #identify', () => {
     userId: 'current-user-id',
     anonymousId: 'very-anonymous',
   };
-  const store = new MockSegmentStore({
+  const { store, client, expectEvent } = createTestClient({
     userInfo: initialUserInfo,
   });
-
-  const clientArgs = {
-    config: {
-      writeKey: 'mock-write-key',
-    },
-    logger: getMockLogger(),
-    store: store,
-  };
 
   beforeEach(() => {
     store.reset();
@@ -35,22 +20,18 @@ describe('methods #identify', () => {
   });
 
   it('adds the identify event correctly', async () => {
-    const client = new SegmentClient(clientArgs);
-    jest.spyOn(client, 'process');
-
     await client.identify('new-user-id', { name: 'Mary', age: 30 });
 
-    const expectedEvent = {
+    const expectedEvent: Partial<SegmentEvent> = {
       traits: {
         name: 'Mary',
         age: 30,
       },
       userId: 'new-user-id',
-      type: 'identify',
+      type: EventType.IdentifyEvent,
     };
 
-    expect(client.process).toHaveBeenCalledTimes(1);
-    expect(client.process).toHaveBeenCalledWith(expectedEvent);
+    expectEvent(expectedEvent);
 
     expect(client.userInfo.get()).toEqual({
       ...initialUserInfo,
@@ -60,19 +41,15 @@ describe('methods #identify', () => {
   });
 
   it('does not update user traits when there are no new ones provided', async () => {
-    const client = new SegmentClient(clientArgs);
-    jest.spyOn(client, 'process');
-
     await client.identify('new-user-id');
 
     const expectedEvent = {
       traits: initialUserInfo.traits,
       userId: 'new-user-id',
-      type: 'identify',
+      type: EventType.IdentifyEvent,
     };
 
-    expect(client.process).toHaveBeenCalledTimes(1);
-    expect(client.process).toHaveBeenCalledWith(expectedEvent);
+    expectEvent(expectedEvent);
 
     expect(client.userInfo.get()).toEqual({
       ...initialUserInfo,
@@ -81,7 +58,6 @@ describe('methods #identify', () => {
   });
 
   it('does not update userId when userId is undefined', async () => {
-    const client = new SegmentClient(clientArgs);
     jest.spyOn(client, 'process');
 
     await client.identify(undefined, { name: 'Mary' });
@@ -89,11 +65,10 @@ describe('methods #identify', () => {
     const expectedEvent = {
       traits: { name: 'Mary', age: 30 },
       userId: 'current-user-id',
-      type: 'identify',
+      type: EventType.IdentifyEvent,
     };
 
-    expect(client.process).toHaveBeenCalledTimes(1);
-    expect(client.process).toHaveBeenCalledWith(expectedEvent);
+    expectEvent(expectedEvent);
     expect(client.userInfo.get()).toEqual({
       ...initialUserInfo,
       traits: {
@@ -104,24 +79,17 @@ describe('methods #identify', () => {
   });
 
   it('does not persist identity traits accross events', async () => {
-    const client = new SegmentClient(clientArgs);
-    jest.spyOn(client, 'process');
-    // @ts-ignore accessing the internal timeline to check the processed events
-    jest.spyOn(client.timeline, 'process');
-
     await client.identify('new-user-id', { name: 'Mary', age: 30 });
 
-    const expectedEvent = {
+    const expectedEvent: Partial<SegmentEvent> = {
       traits: {
         name: 'Mary',
         age: 30,
       },
       userId: 'new-user-id',
-      type: 'identify',
+      type: EventType.IdentifyEvent,
     };
-
-    expect(client.process).toHaveBeenCalledTimes(1);
-    expect(client.process).toHaveBeenCalledWith(expectedEvent);
+    expectEvent(expectedEvent);
 
     expect(client.userInfo.get()).toEqual({
       ...initialUserInfo,
@@ -129,20 +97,16 @@ describe('methods #identify', () => {
       traits: expectedEvent.traits,
     });
 
-    client.track('track event');
+    await client.track('track event');
 
-    // Await all promises
-    await new Promise(process.nextTick);
-
-    // @ts-ignore
-    expect(client.timeline.process).toHaveBeenLastCalledWith({
+    expectEvent({
       anonymousId: 'very-anonymous',
       event: 'track event',
       integrations: {},
       messageId: 'mocked-uuid',
       properties: {},
       timestamp: '2010-01-01T00:00:00.000Z',
-      type: 'track',
+      type: EventType.TrackEvent,
       userId: 'new-user-id',
     });
   });

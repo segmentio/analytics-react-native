@@ -15,7 +15,8 @@ import {
 } from './events';
 import type { Logger } from './logger';
 import type { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
-import { InjectContext } from './plugins/Context';
+import { InjectContext } from './plugins/InjectContext';
+import { InjectUserInfo } from './plugins/InjectUserInfo';
 import { SegmentDestination } from './plugins/SegmentDestination';
 import {
   createGetter,
@@ -83,20 +84,10 @@ export class SegmentClient {
 
   private onContextLoadedCallback: OnContextLoadCallback | undefined;
 
-  get platformPlugins() {
-    const plugins: PlatformPlugin[] = [];
-
-    // add context plugin as well as it's platform specific internally.
-    // this must come first.
-    plugins.push(new InjectContext());
-
-    // setup lifecycle if desired
-    if (this.config.trackAppLifecycleEvents) {
-      // todo: more plugins!
-    }
-
-    return plugins;
-  }
+  private readonly platformPlugins: PlatformPlugin[] = [
+    new InjectUserInfo(),
+    new InjectContext(),
+  ];
 
   // Watchables
   /**
@@ -118,7 +109,7 @@ export class SegmentClient {
   /**
    * Access or subscribe to user info (anonymousId, userId, traits)
    */
-  readonly userInfo: Watchable<UserInfoState>;
+  readonly userInfo: Watchable<UserInfoState> & Settable<UserInfoState>;
 
   readonly deepLinkData: Watchable<DeepLinkData>;
 
@@ -192,6 +183,7 @@ export class SegmentClient {
 
     this.userInfo = {
       get: this.store.userInfo.get,
+      set: this.store.userInfo.set,
       onChange: this.store.userInfo.onChange,
     };
 
@@ -386,12 +378,12 @@ export class SegmentClient {
   }
 
   async process(incomingEvent: SegmentEvent) {
-    const userData = await this.store.userInfo.get(true);
-    const event = applyRawEventData(incomingEvent, userData);
+    const event = applyRawEventData(incomingEvent);
     if (this.store.isReady.get() === true) {
-      this.timeline.process(event);
+      return this.timeline.process(event);
     } else {
       this.pendingEvents.push(event);
+      return event;
     }
   }
 
@@ -492,18 +484,9 @@ export class SegmentClient {
   }
 
   async identify(userId?: string, userTraits?: UserTraits) {
-    const userData = await this.store.userInfo.set((state) => ({
-      ...state,
-      userId: userId ?? state.userId,
-      traits: {
-        ...state.traits,
-        ...userTraits,
-      },
-    }));
-
     const event = createIdentifyEvent({
-      userId: userData.userId,
-      userTraits: userData.traits,
+      userId: userId,
+      userTraits: userTraits,
     });
 
     await this.process(event);
@@ -523,11 +506,6 @@ export class SegmentClient {
   async alias(newUserId: string) {
     const { anonymousId, userId: previousUserId } =
       await this.store.userInfo.get(true);
-
-    await this.store.userInfo.set((state) => ({
-      ...state,
-      userId: newUserId,
-    }));
 
     const event = createAliasEvent({
       anonymousId,

@@ -16,7 +16,7 @@ import type {
 import { createCallbackManager } from './utils';
 import { createGetter } from '../../storage/helpers';
 
-type Data = {
+export type StoreData = {
   isReady: boolean;
   context?: DeepPartial<Context>;
   settings: SegmentAPIIntegrations;
@@ -24,7 +24,7 @@ type Data = {
   deepLinkData: DeepLinkData;
 };
 
-const INITIAL_VALUES: Data = {
+const INITIAL_VALUES: StoreData = {
   isReady: true,
   context: undefined,
   settings: {
@@ -50,14 +50,14 @@ export function createMockStoreGetter<T>(fn: () => T) {
 }
 
 export class MockSegmentStore implements Storage {
-  private data: Data;
-  private initialData: Data;
+  private data: StoreData;
+  private initialData: StoreData;
 
   reset = () => {
     this.data = JSON.parse(JSON.stringify(this.initialData));
   };
 
-  constructor(initialData?: Partial<Data>) {
+  constructor(initialData?: Partial<StoreData>) {
     this.data = { ...INITIAL_VALUES, ...initialData };
     this.initialData = JSON.parse(
       JSON.stringify({ ...INITIAL_VALUES, ...initialData })
