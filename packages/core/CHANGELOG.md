@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-v2.7.2](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.7.1...@segment/analytics-react-native-v2.7.2) (2022-09-07)
+
+
+### Bug Fixes
+
+* apply userInfo on processing to prevent concurrency issues ([#660](https://github.com/segmentio/analytics-react-native/issues/660)) ([4f60a84](https://github.com/segmentio/analytics-react-native/commit/4f60a84918e8f9a0bb3e8e5fbdb2412f23048f94))
+
 ## [@segment/analytics-react-native-v2.7.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.7.0...@segment/analytics-react-native-v2.7.1) (2022-08-24)
 
 
