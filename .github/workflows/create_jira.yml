@@ -31,7 +31,6 @@ jobs:
         description: |
           Github Link: ${{ github.event.issue.html_url }}
           ${{ github.event.issue.body }}
-        fields: '{"component": "analytics-react-native"}'
 
     - name: Log created issue
       run: echo "Issue ${{ steps.create.outputs.issue }} was created"
