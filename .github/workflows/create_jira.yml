@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: IssueTracker
     steps:
+    - name: Checkout
+      uses: actions/checkout@master
     - name: Login
       uses: atlassian/gajira-login@master
       env:
@@ -18,7 +20,7 @@ jobs:
 
     - name: Create
       id: create
-      uses: ./
+      uses: atlassian/gajira-create@master
       with:
         project: Libraries - Mobile
         issuetype: Bug
