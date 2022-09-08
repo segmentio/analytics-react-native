@@ -1,3 +1,5 @@
+name: Create Jira Ticket
+
 on: 
   issues:
     types:
@@ -22,7 +24,7 @@ jobs:
       id: create
       uses: atlassian/gajira-create@master
       with:
-        project: Libraries - Mobile
+        project: LIBMOBILE
         issuetype: Bug
         summary: |
           [${{ github.event.repository.name }}] (${{ github.event.issue.number }}): ${{ github.event.issue.title }}
