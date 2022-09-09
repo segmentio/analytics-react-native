@@ -7,7 +7,7 @@ import { SegmentClient } from './analytics';
 import { SovranStorage } from './storage';
 
 export const createClient = (config: Config) => {
-  const logger = createLogger();
+  const logger = config?.logger || createLogger();
   if (typeof config?.debug === 'boolean') {
     if (config.debug) {
       logger.enable();

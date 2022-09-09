@@ -32,7 +32,7 @@ export class IdfaPlugin extends Plugin {
         this.analytics?.context.set({ device: { ...idfa } });
       })
       .catch((err: any) => {
-        console.warn(err);
+        this.analytics?.logger.warn(err);
       });
   }
 }

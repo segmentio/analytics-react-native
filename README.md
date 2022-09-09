@@ -103,6 +103,7 @@ You must pass at least the `writeKey`. Additional configuration options are list
 | `writeKey` **(REQUIRED)**  | ''        | Your Segment API key.                                                                                                                          |
 | `collectDeviceId`          | false    | Set to true to automatically collect the device Id.from the DRM API on Android devices.                                           |
 | `debug`                    | true\*    | When set to false, it will not generate any logs.                                                                                              |
+| `logger`                   | undefined | Custom logger instance to expose internal Segment client logging.                                                                            |
 | `flushAt`                  | 20        | How many events to accumulate before sending events to the backend.                                                                            |
 | `flushInterval`            | 30        | In seconds, how often to send events to the backend.                                                                                           |
 | `maxBatchSize`             | 1000      | How many events to send to the API at once                                                                                                     |
