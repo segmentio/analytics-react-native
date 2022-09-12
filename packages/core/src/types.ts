@@ -114,9 +114,21 @@ export type GroupTraits = JsonMap & {
   plan?: string;
 };
 
+export interface LoggerType {
+  info(message?: any, ...optionalParams: any[]): void;
+  warn(message?: any, ...optionalParams: any[]): void;
+  error(message?: any, ...optionalParams: any[]): void;
+}
+
+export interface DeactivableLoggerType extends LoggerType {
+  enable(): void;
+  disable(): void;
+}
+
 export type Config = {
   writeKey: string;
   debug?: boolean;
+  logger?: DeactivableLoggerType;
   flushAt?: number;
   flushInterval?: number;
   trackAppLifecycleEvents?: boolean;

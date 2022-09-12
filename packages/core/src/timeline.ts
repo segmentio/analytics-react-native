@@ -116,7 +116,7 @@ export class Timeline {
               result = await pluginResult;
             }
           } catch (error) {
-            console.warn(
+            plugin.analytics?.logger.warn(
               `Destination ${
                 (plugin as DestinationPlugin).key
               } failed to execute: ${JSON.stringify(error)}`

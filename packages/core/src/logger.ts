@@ -1,4 +1,6 @@
-export class Logger {
+import type { DeactivableLoggerType } from './types';
+
+export class Logger implements DeactivableLoggerType {
   isDisabled: boolean;
 
   constructor(isDisabled: boolean = process.env.NODE_ENV === 'production') {

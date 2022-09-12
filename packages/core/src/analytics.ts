@@ -13,7 +13,6 @@ import {
   createScreenEvent,
   createTrackEvent,
 } from './events';
-import type { Logger } from './logger';
 import type { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
 import { InjectContext } from './plugins/InjectContext';
 import { InjectUserInfo } from './plugins/InjectUserInfo';
@@ -33,6 +32,7 @@ import {
   GroupTraits,
   IntegrationSettings,
   JsonMap,
+  LoggerType,
   PluginType,
   SegmentAPIIntegrations,
   SegmentEvent,
@@ -59,7 +59,7 @@ export class SegmentClient {
   private appStateSubscription: any;
 
   // logger
-  public logger: Logger;
+  public logger: LoggerType;
 
   // internal time to know when to flush, ticks every second
   private flushInterval: ReturnType<typeof setTimeout> | null = null;
@@ -147,7 +147,7 @@ export class SegmentClient {
     store,
   }: {
     config: Config;
-    logger: Logger;
+    logger: LoggerType;
     store: any;
   }) {
     this.logger = logger;
