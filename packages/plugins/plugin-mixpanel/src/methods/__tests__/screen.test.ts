@@ -33,7 +33,10 @@ describe('#screen', () => {
 
     expect(track).toBeCalledWith(
       eventName,
-      payload.properties,
+      {
+        ...payload.properties,
+        name: 'Home',
+      },
       settings,
       mixpanel
     );
