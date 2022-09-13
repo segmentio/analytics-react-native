@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-facebook-app-events-v0.4.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-facebook-app-events-v0.4.0...@segment/analytics-react-native-plugin-facebook-app-events-v0.4.1) (2022-09-13)
+
+
+### Bug Fixes
+
+* apply facebook mapping and settings ([#663](https://github.com/segmentio/analytics-react-native/issues/663)) ([c3434f0](https://github.com/segmentio/analytics-react-native/commit/c3434f0b9347375b1aad6d4a755f75aaaf57d471))
+
 ## [@segment/analytics-react-native-plugin-facebook-app-events-v0.4.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-facebook-app-events-v0.3.1...@segment/analytics-react-native-plugin-facebook-app-events-v0.4.0) (2022-08-10)
 
 
