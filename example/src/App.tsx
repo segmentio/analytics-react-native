@@ -122,7 +122,6 @@ const App = () => {
   //     console.warn(store.message);
   //   });
   // });
-  // IdfaPlugin.enable();
 
   const [routeName, setRouteName] = useState('Unknown');
 
