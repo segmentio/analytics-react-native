@@ -16,10 +16,10 @@ export default (
 
   if (settings.consolidatedPageCalls === true) {
     let eventName = 'Loaded a Screen';
-    let name = event.name;
+    let screenName = event.name;
 
-    if (name !== undefined) {
-      properties[name] = name;
+    if (screenName !== undefined) {
+      properties.name = screenName;
     }
 
     callTrack(eventName, properties);
