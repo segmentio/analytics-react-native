@@ -36,6 +36,39 @@ const segmentClient = createClient({
 segmentClient.add({ plugin: new IdfaPlugin() });
 ```
 
+## Customize IDFA Plugin Initialization
+
+To delay the `IDFA Plugin` initialization (ie. to avoid race condition with push notification prompt) implement the following: 
+
+```ts
+import { createClient } from '@segment/analytics-react-native';
+
+import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
+
+const segmentClient = createClient({
+  writeKey: 'SEGMENT_KEY'
+});
+
+...
+
+ /** The IDFA Plugin supports an optional `shouldAskPermission` boolean
+ which defaults to true. Setting to false prevents the plugin from 
+ requesting permission from the user. If you set the parameter to `false` on
+ initialization you **must** call `requestTrackingPermission()` 
+ to retrieve the `idfa`  
+ */
+const idfaPlugin = new IdfaPlugin(false);
+segmentClient.add({ plugin: idfaPlugin });
+
+
+/** `requestTrackingPermission()` will prompt the user for 
+tracking permission and returns a promise you can use to 
+make additional tracking decisions based on the response 
+*/
+idfaPlugin.requestTrackingPermission().then((enabled: boolean) => {
+  console.log('Tracking Enabled -->', enabled);
+});
+```
 ## Support
 
 Please use Github issues, Pull Requests, or feel free to reach out to our [support team](https://segment.com/help/).

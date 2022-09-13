@@ -58,8 +58,8 @@ segmentClient.add({ plugin: LoggerPlugin });
 
 // To test the Facebook App Events plugin make sure to add your Facebook App Id to Info.plist
 // segmentClient.add({ plugin: new FacebookAppEventsPlugin() });
-
-// segmentClient.add({ plugin: new IdfaPlugin() });
+// const idfaPlugin = new IdfaPlugin();
+// segmentClient.add({ plugin: idfaPlugin });
 
 segmentClient.add({ plugin: new AmplitudeSessionPlugin() });
 
@@ -69,7 +69,6 @@ segmentClient.add({ plugin: new AmplitudeSessionPlugin() });
 
 const MainStack = createStackNavigator();
 const RootStack = createStackNavigator();
-
 function MainStackScreen() {
   return (
     <MainStack.Navigator
