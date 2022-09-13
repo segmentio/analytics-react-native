@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-idfa-v0.5.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-idfa-v0.4.1...@segment/analytics-react-native-plugin-idfa-v0.5.0) (2022-09-13)
+
+
+### Features
+
+* adds option to provide a custom logger object to consume library logs ([#670](https://github.com/segmentio/analytics-react-native/issues/670)) ([d40a315](https://github.com/segmentio/analytics-react-native/commit/d40a315e380cf2ce7a1f7805b85893b6370fbe6f))
+
 ## [@segment/analytics-react-native-plugin-idfa-v0.4.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-idfa-v0.4.0...@segment/analytics-react-native-plugin-idfa-v0.4.1) (2022-07-28)
 
 
