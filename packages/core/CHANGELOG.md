@@ -1,3 +1,15 @@
+## [@segment/analytics-react-native-v2.8.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.7.2...@segment/analytics-react-native-v2.8.0) (2022-09-13)
+
+
+### Features
+
+* adds option to provide a custom logger object to consume library logs ([#670](https://github.com/segmentio/analytics-react-native/issues/670)) ([d40a315](https://github.com/segmentio/analytics-react-native/commit/d40a315e380cf2ce7a1f7805b85893b6370fbe6f))
+
+
+### Bug Fixes
+
+* update kotlin version in adId plugin to resolve build errors ([#668](https://github.com/segmentio/analytics-react-native/issues/668)) ([3f51c58](https://github.com/segmentio/analytics-react-native/commit/3f51c58540d893350028f2a118f19c30bc543af7))
+
 ## [@segment/analytics-react-native-v2.7.2](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.7.1...@segment/analytics-react-native-v2.7.2) (2022-09-07)
 
 
