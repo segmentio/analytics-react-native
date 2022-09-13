@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-mixpanel-v0.2.3](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-mixpanel-v0.2.2...@segment/analytics-react-native-plugin-mixpanel-v0.2.3) (2022-09-13)
+
+
+### Bug Fixes
+
+* setting screen name as name property in mixpanel ([#672](https://github.com/segmentio/analytics-react-native/issues/672)) ([bf26f0b](https://github.com/segmentio/analytics-react-native/commit/bf26f0b3bb98f10fb96e0ff3a4f8d321e38ad39a))
+
 ## [@segment/analytics-react-native-plugin-mixpanel-v0.2.2](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-mixpanel-v0.2.1...@segment/analytics-react-native-plugin-mixpanel-v0.2.2) (2022-07-28)
 
 
