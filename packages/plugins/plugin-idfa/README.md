@@ -66,7 +66,7 @@ tracking permission and returns a promise you can use to
 make additional tracking decisions based on the response 
 */
 idfaPlugin.requestTrackingPermission().then((enabled: boolean) => {
-  console.log('IDFA -->', enabled);
+  console.log('Tracking Enabled -->', enabled);
 });
 ```
 ## Support

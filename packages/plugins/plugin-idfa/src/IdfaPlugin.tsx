@@ -14,16 +14,11 @@ const { getTrackingAuthorizationStatus } = AnalyticsReactNativePluginIdfa;
 
 export class IdfaPlugin extends Plugin {
   type = PluginType.enrichment;
-  private isPermissionEnabled: boolean = true;
 
   constructor(shouldAskPermission: boolean = true) {
     super();
 
-    if (shouldAskPermission === false) {
-      this.isPermissionEnabled = false;
-    }
-
-    if (this.isPermissionEnabled === true) {
+    if (shouldAskPermission === true) {
       this.getTrackingStatus();
     }
   }
