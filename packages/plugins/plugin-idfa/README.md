@@ -36,6 +36,32 @@ const segmentClient = createClient({
 segmentClient.add({ plugin: new IdfaPlugin() });
 ```
 
+## Customize IDFA Plugin Initialization
+
+To delay the `IDFA Plugin` initialization (ie. to avoid race condition with push notification prompt) implement the following: 
+
+```ts
+import { createClient } from '@segment/analytics-react-native';
+
+import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
+
+const segmentClient = createClient({
+  writeKey: 'SEGMENT_KEY'
+});
+
+...
+
+//The IDFA Plugin supports an optional `enabled` boolean 
+//setting to false disables plugin on initialization
+const idfaPlugin = new IdfaPlugin(false);
+segmentClient.add({ plugin: idfaPlugin });
+
+//enable returns a promise you can use to 
+//make additional tracking decisions
+idfaPlugin.enable().then((enabled: boolean) => {
+  console.log('IDFA -->', enabled);
+});
+```
 ## Support
 
 Please use Github issues, Pull Requests, or feel free to reach out to our [support team](https://segment.com/help/).

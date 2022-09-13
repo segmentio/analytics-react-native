@@ -3,7 +3,6 @@ import {
   PluginType,
   SegmentClient,
 } from '@segment/analytics-react-native';
-import { IdfaEvents } from './IdfaEvents';
 import type { IdfaData } from './types';
 import { AnalyticsReactNativePluginIdfa } from './AnalyticsReactNativePluginIdfa';
 
@@ -11,18 +10,45 @@ const { getTrackingAuthorizationStatus } = AnalyticsReactNativePluginIdfa;
 
 export class IdfaPlugin extends Plugin {
   type = PluginType.enrichment;
+  private isEnabled?: boolean = false;
+  private isDisabled?: boolean;
+
+  constructor(enabled?: boolean) {
+    super();
+    if (enabled === false) {
+      this.isDisabled = true;
+    }
+
+    if (this.isDisabled !== true) {
+      this.getTrackingStatus();
+    }
+  }
 
   configure(analytics: SegmentClient) {
     this.analytics = analytics;
 
-    this.getTrackingStatus();
-
-    // subscribe to IDFAQuery event
-    // emitted when we prompt a user for permission
-    IdfaEvents.addListener('IDFAQuery', (res) => {
+    // since configure can be called multiple times potentially
+    // this accounts for both enabling and disabling plugin
+    if (this.isEnabled === false && this.isDisabled !== true) {
       this.getTrackingStatus();
-      this.analytics?.track('IDFAQuery', res);
-    });
+    }
+  }
+
+  async enable(): Promise<boolean> {
+    try {
+      let idfaData: IdfaData = await getTrackingAuthorizationStatus();
+
+      this.analytics?.context.set({ device: { ...idfaData } });
+      return idfaData.adTrackingEnabled;
+    } catch (error) {
+      this.analytics?.logger.warn(error);
+      return false;
+    }
+  }
+
+  //not sure we actually need this
+  disable() {
+    this.isDisabled = true;
   }
 
   getTrackingStatus() {
@@ -30,9 +56,11 @@ export class IdfaPlugin extends Plugin {
       .then((idfa: IdfaData) => {
         // update our context with the idfa data
         this.analytics?.context.set({ device: { ...idfa } });
+        this.isEnabled = true;
+        return idfa;
       })
       .catch((err: any) => {
-        console.warn(err);
+        this.analytics?.logger.warn(err);
       });
   }
 }
