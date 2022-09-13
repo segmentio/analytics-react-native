@@ -51,14 +51,21 @@ const segmentClient = createClient({
 
 ...
 
-//The IDFA Plugin supports an optional `enabled` boolean 
-//setting to false disables plugin on initialization
+ /** The IDFA Plugin supports an optional `shouldAskPermission` boolean
+ which defaults to true. Setting to false prevents the plugin from 
+ requesting permission from the user. If you set the parameter to `false` on
+ initialization you **must** call `requestTrackingPermission()` 
+ to retrieve the `idfa`  
+ */
 const idfaPlugin = new IdfaPlugin(false);
 segmentClient.add({ plugin: idfaPlugin });
 
-//enable returns a promise you can use to 
-//make additional tracking decisions
-idfaPlugin.enable().then((enabled: boolean) => {
+
+/** `requestTrackingPermission()` will prompt the user for 
+tracking permission and returns a promise you can use to 
+make additional tracking decisions based on the response 
+*/
+idfaPlugin.requestTrackingPermission().then((enabled: boolean) => {
   console.log('IDFA -->', enabled);
 });
 ```
