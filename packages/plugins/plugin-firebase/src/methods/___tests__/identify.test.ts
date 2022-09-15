@@ -49,4 +49,22 @@ describe('#identify', () => {
     expect(mockSetUserId).toHaveBeenCalledWith('123');
     expect(mockSetUserProperties).toHaveBeenCalledWith({ name: 'Mary' });
   });
+
+  it('forwards the identify event without ID', async () => {
+    const event = {
+      type: 'identify',
+      anonymousId: 'anon',
+      messageId: 'message-id',
+      timestamp: '00000',
+      traits: {
+        name: 'Mary',
+      },
+    } as IdentifyEventType;
+
+    await identify(event);
+
+    expect(mockSetUserId).not.toHaveBeenCalled();
+    expect(mockSetUserProperties).toHaveBeenCalledTimes(1);
+    expect(mockSetUserProperties).toHaveBeenCalledWith({ name: 'Mary' });
+  });
 });
