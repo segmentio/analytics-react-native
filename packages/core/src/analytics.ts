@@ -3,7 +3,7 @@ import { Unsubscribe } from '@segment/sovran-react-native';
 import deepmerge from 'deepmerge';
 import allSettled from 'promise.allsettled';
 import { AppState, AppStateStatus } from 'react-native';
-import { settingsCDN } from './constants';
+import { settingsCDN, workspaceDestinationFilterKey } from './constants';
 import { getContext } from './context';
 import {
   applyRawEventData,
@@ -42,8 +42,11 @@ import {
 } from './types';
 import { getPluginsWithFlush, getPluginsWithReset } from './util';
 import { getUUID } from './uuid';
+import type { SegmentAPISettings, DestinationFilters } from './types';
+import type { Rule } from '@segment/tsub/dist/store';
 
 type OnContextLoadCallback = (type: UpdateType) => void | Promise<void>;
+type OnPluginAddedCallback = (plugin: Plugin) => void;
 
 export class SegmentClient {
   // the config parameters for the client - a merge of user provided and default options
@@ -82,7 +85,8 @@ export class SegmentClient {
 
   private isContextLoaded = false;
 
-  private onContextLoadedCallback: OnContextLoadCallback | undefined;
+  private onContextLoadedObservers: OnContextLoadCallback[] = [];
+  private onPluginAddedObservers: OnPluginAddedCallback[] = [];
 
   private readonly platformPlugins: PlatformPlugin[] = [
     new InjectUserInfo(),
@@ -105,6 +109,11 @@ export class SegmentClient {
    * Access or subscribe to integration settings
    */
   readonly settings: Watchable<SegmentAPIIntegrations | undefined>;
+
+  /**
+   * Access or subscribe to destination filter settings
+   */
+  readonly filters: Watchable<DestinationFilters | undefined>;
 
   /**
    * Access or subscribe to user info (anonymousId, userId, traits)
@@ -181,6 +190,11 @@ export class SegmentClient {
       onChange: this.store.settings.onChange,
     };
 
+    this.filters = {
+      get: this.store.filters.get,
+      onChange: this.store.filters.onChange,
+    };
+
     this.userInfo = {
       get: this.store.userInfo.get,
       set: this.store.userInfo.set,
@@ -238,15 +252,32 @@ export class SegmentClient {
     this.isInitialized = true;
   }
 
+  private generateFiltersMap(rules: Rule[]): DestinationFilters {
+    const map: DestinationFilters = {};
+
+    for (const r of rules) {
+      const key = r.destinationName ?? workspaceDestinationFilterKey;
+      map[key] = r;
+    }
+
+    return map;
+  }
+
   async fetchSettings() {
     const settingsEndpoint = `${settingsCDN}/${this.config.writeKey}/settings`;
 
     try {
       const res = await fetch(settingsEndpoint);
-      const resJson = await res.json();
+      const resJson: SegmentAPISettings = await res.json();
       const integrations = resJson.integrations;
+      const filters = this.generateFiltersMap(
+        resJson.middlewareSettings?.routingRules ?? []
+      );
       this.logger.info(`Received settings from Segment succesfully.`);
-      await this.store.settings.set(integrations);
+      await Promise.all([
+        this.store.settings.set(integrations),
+        this.store.filters.set(filters),
+      ]);
     } catch {
       this.logger.warn(
         `Could not receive settings from Segment. ${
@@ -366,6 +397,7 @@ export class SegmentClient {
   private addPlugin(plugin: Plugin) {
     plugin.configure(this);
     this.timeline.add(plugin);
+    this.triggerOnPluginLoaded(plugin);
   }
 
   /**
@@ -537,8 +569,8 @@ export class SegmentClient {
     await this.store.context.set(deepmerge(previousContext ?? {}, context));
 
     // Only callback during the intial context load
-    if (this.onContextLoadedCallback !== undefined && !this.isContextLoaded) {
-      this.onContextLoadedCallback(UpdateType.initial);
+    if (!this.isContextLoaded) {
+      this.triggerOnContextLoad(UpdateType.initial);
     }
 
     this.isContextLoaded = true;
@@ -651,9 +683,25 @@ export class SegmentClient {
    * @param callback Function to call when context is ready.
    */
   onContextLoaded(callback: OnContextLoadCallback) {
-    this.onContextLoadedCallback = callback;
+    this.onContextLoadedObservers.push(callback);
     if (this.isContextLoaded) {
-      this.onContextLoadedCallback(UpdateType.initial);
+      this.triggerOnContextLoad(UpdateType.initial);
     }
+  }
+
+  private triggerOnContextLoad(type: UpdateType) {
+    this.onContextLoadedObservers.map((f) => f?.(type));
+  }
+
+  /**
+   * Registers a callback for each plugin that gets added to the analytics client.
+   * @param callback Function to call
+   */
+  onPluginLoaded(callback: OnPluginAddedCallback) {
+    this.onPluginAddedObservers.push(callback);
+  }
+
+  private triggerOnPluginLoaded(plugin: Plugin) {
+    this.onPluginAddedObservers.map((f) => f?.(plugin));
   }
 }

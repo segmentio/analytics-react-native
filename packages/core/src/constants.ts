@@ -14,3 +14,5 @@ export const defaultConfig: Config = {
   trackAppLifecycleEvents: false,
   autoAddSegmentDestination: true,
 };
+
+export const workspaceDestinationFilterKey = '';

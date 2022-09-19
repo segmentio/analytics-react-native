@@ -1,4 +1,5 @@
 import type { Persistor } from '@segment/sovran-react-native';
+import type { Rule } from '@segment/tsub/dist/store';
 
 export type JsonValue =
   | boolean
@@ -270,8 +271,25 @@ export type SegmentAPIIntegrations = {
   [key: string]: IntegrationSettings;
 };
 
+export type RoutingRule = Rule;
+
+export interface MetricsOptions {
+  host?: string;
+  sampleRate?: number;
+  flushTimer?: number;
+  maxQueueSize?: number;
+}
+
+export interface DestinationFilters {
+  [key: string]: RoutingRule;
+}
+
 export type SegmentAPISettings = {
   integrations: SegmentAPIIntegrations;
+  middlewareSettings?: {
+    routingRules: RoutingRule[];
+  };
+  metrics?: MetricsOptions;
 };
 
 export type DestinationMetadata = {

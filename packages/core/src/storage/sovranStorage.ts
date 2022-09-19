@@ -12,6 +12,8 @@ import type {
   DeepPartial,
   Context,
   UserInfoState,
+  RoutingRule,
+  DestinationFilters,
 } from '..';
 import { getUUID } from '../uuid';
 import { createGetter } from './helpers';
@@ -26,20 +28,20 @@ import type {
 } from './types';
 
 type Data = {
-  isReady: boolean;
   events: SegmentEvent[];
   eventsToRetry: SegmentEvent[];
   context: DeepPartial<Context>;
   settings: SegmentAPIIntegrations;
   userInfo: UserInfoState;
+  filters: DestinationFilters;
 };
 
 const INITIAL_VALUES: Data = {
-  isReady: true,
   events: [],
   eventsToRetry: [],
   context: {},
   settings: {},
+  filters: {},
   userInfo: {
     anonymousId: getUUID(),
     userId: undefined,
@@ -52,6 +54,7 @@ interface ReadinessStore {
   hasRestoredContext: boolean;
   hasRestoredSettings: boolean;
   hasRestoredUserInfo: boolean;
+  hasRestoredFilters: boolean;
 }
 
 const isEverythingReady = (state: ReadinessStore) =>
@@ -89,7 +92,7 @@ registerBridgeStore({
 });
 
 function createStoreGetter<
-  U,
+  U extends {},
   Z extends keyof U | undefined = undefined,
   V = undefined
 >(store: Store<U>, key?: Z): getStateFunc<Z extends keyof U ? V : U> {
@@ -120,6 +123,7 @@ export class SovranStorage implements Storage {
   private settingsStore: Store<{ settings: SegmentAPIIntegrations }>;
   private userInfoStore: Store<{ userInfo: UserInfoState }>;
   private deepLinkStore: Store<DeepLinkData> = deepLinkStore;
+  private filtersStore: Store<DestinationFilters>;
 
   readonly isReady: Watchable<boolean>;
 
@@ -129,6 +133,10 @@ export class SovranStorage implements Storage {
   readonly settings: Watchable<SegmentAPIIntegrations | undefined> &
     Settable<SegmentAPIIntegrations> &
     Dictionary<string, IntegrationSettings>;
+
+  readonly filters: Watchable<DestinationFilters | undefined> &
+    Settable<DestinationFilters> &
+    Dictionary<string, RoutingRule>;
 
   readonly userInfo: Watchable<UserInfoState> & Settable<UserInfoState>;
 
@@ -142,6 +150,7 @@ export class SovranStorage implements Storage {
       hasRestoredContext: false,
       hasRestoredSettings: false,
       hasRestoredUserInfo: false,
+      hasRestoredFilters: false,
     });
 
     const markAsReadyGenerator = (key: keyof ReadinessStore) => () => {
@@ -236,6 +245,40 @@ export class SovranStorage implements Storage {
       add: (key: string, value: IntegrationSettings) => {
         this.settingsStore.dispatch((state) => ({
           settings: { ...state.settings, [key]: value },
+        }));
+      },
+    };
+
+    // Filters
+
+    this.filtersStore = createStore(INITIAL_VALUES.filters, {
+      persist: {
+        storeId: `${this.storeId}-filters`,
+        persistor: this.storePersistor,
+        onInitialized: markAsReadyGenerator('hasRestoredFilters'),
+      },
+    });
+
+    this.filters = {
+      get: createStoreGetter(this.filtersStore),
+      onChange: (callback: (value?: DestinationFilters | undefined) => void) =>
+        this.filtersStore.subscribe((store) => callback(store)),
+      set: async (value) => {
+        const filters = await this.filtersStore.dispatch((state) => {
+          let newState: typeof state;
+          if (value instanceof Function) {
+            newState = value(state);
+          } else {
+            newState = { ...state, ...value };
+          }
+          return newState;
+        });
+        return filters;
+      },
+      add: (key, value) => {
+        this.filtersStore.dispatch((state) => ({
+          ...state,
+          [key]: value,
         }));
       },
     };
