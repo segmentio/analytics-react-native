@@ -5,6 +5,11 @@ export default (payload: TrackEventType) => {
   if (payload.event === 'Install Attributed') {
     if (payload.properties?.campaign) {
       const attributionData: any = payload.properties.campaign;
+      for (const [attribution, data] of Object.entries(attributionData)) {
+        if (data === undefined || data === null) {
+          attributionData[attribution] = '';
+        }
+      }
       const network = attributionData.source;
       const campaign = attributionData.name;
       const adGroup = attributionData.ad_group;
