@@ -15,11 +15,6 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "release": "yarn workspaces run release"
   },
-  "jest": {
-    "projects": [
-      "<rootDir>/packages/*"
-    ]
-  },
   "devDependencies": {
     "@changesets/cli": "^2.16.0",
     "@commitlint/config-conventional": "^16.2.4",

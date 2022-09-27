@@ -2463,7 +2463,7 @@
     deepmerge "^4.2.2"
     shell-quote "1.7.3"
 
-"@segment/tsub@^0.2.0":
+"@segment/tsub@^0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@segment/tsub/-/tsub-0.2.0.tgz#456345ad04bca81f6c3fefacac722fd9eb4923ce"
   integrity sha512-DThHEnZ+1PlSjj59Q7Ns/ESevjfztDV4PtKMcoVp1PWSWaaPcaktWGdTeDgi8ucsJO91qtY9N4aM2cbfGr/yWA==
