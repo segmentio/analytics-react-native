@@ -256,7 +256,7 @@ export class SegmentClient {
         }`
       );
       if (this.config.defaultSettings) {
-        await this.store.settings.set(this.config.defaultSettings);
+        await this.store.settings.set(this.config.defaultSettings.integrations);
       }
     }
   }

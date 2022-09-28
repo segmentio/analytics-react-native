@@ -2,12 +2,16 @@ import { getMockLogger } from '../__helpers__/mockLogger';
 import { SegmentClient } from '../../analytics';
 import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
 import { SEGMENT_DESTINATION_KEY } from '../../plugins/SegmentDestination';
+import { settingsCDN } from '../../constants';
 
 describe('internal #getSettings', () => {
   const defaultIntegrationSettings = {
     integrations: {
-      // This one is injected by the mock
-      [SEGMENT_DESTINATION_KEY]: {},
+      // Make sure the value associated with this key here is different
+      // from the initial value in `store.settings` as set by the mock store.
+      // Otherwise we can't actually test that default settings are set correctly
+      // i.e. tests that should fail could misleadingly appear to succeed.
+      [SEGMENT_DESTINATION_KEY]: { apiKey: 'bar', apiHost: 'boo' },
     },
   };
   const store = new MockSegmentStore();
@@ -30,7 +34,7 @@ describe('internal #getSettings', () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   it('fetches the settings succesfully ', async () => {
@@ -44,14 +48,12 @@ describe('internal #getSettings', () => {
     await client.fetchSettings();
 
     expect(fetch).toHaveBeenCalledWith(
-      'https://cdn-settings.segment.com/v1/projects/123-456/settings'
+      `${settingsCDN}/${clientArgs.config.writeKey}/settings`
     );
 
     expect(setSettingsSpy).toHaveBeenCalledWith(mockJSONResponse.integrations);
     expect(store.settings.get()).toEqual(mockJSONResponse.integrations);
-    expect(client.settings.get()).toEqual({
-      ...mockJSONResponse.integrations,
-    });
+    expect(client.settings.get()).toEqual(mockJSONResponse.integrations);
   });
 
   it('fails to the settings succesfully and uses the default if specified', async () => {
@@ -61,10 +63,12 @@ describe('internal #getSettings', () => {
     await client.fetchSettings();
 
     expect(fetch).toHaveBeenCalledWith(
-      'https://cdn-settings.segment.com/v1/projects/123-456/settings'
+      `${settingsCDN}/${clientArgs.config.writeKey}/settings`
     );
 
-    expect(setSettingsSpy).toHaveBeenCalledWith(defaultIntegrationSettings);
+    expect(setSettingsSpy).toHaveBeenCalledWith(
+      defaultIntegrationSettings.integrations
+    );
     expect(store.settings.get()).toEqual(
       defaultIntegrationSettings.integrations
     );
@@ -84,7 +88,7 @@ describe('internal #getSettings', () => {
     await anotherClient.fetchSettings();
 
     expect(fetch).toHaveBeenCalledWith(
-      'https://cdn-settings.segment.com/v1/projects/123-456/settings'
+      `${settingsCDN}/${clientArgs.config.writeKey}/settings`
     );
     expect(setSettingsSpy).not.toHaveBeenCalled();
   });
