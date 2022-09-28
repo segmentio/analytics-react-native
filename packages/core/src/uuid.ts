@@ -1,6 +1,5 @@
 import { nanoid } from 'nanoid/non-secure';
-import { NativeModules } from 'react-native';
-import { warnMissingNativeModule } from './util';
+import { getNativeModule } from './util';
 
 export const getUUID = (): string => {
   // Currently the RN dev server does not allow to call synchronous methods via the bridge.
@@ -9,9 +8,5 @@ export const getUUID = (): string => {
   if (__DEV__) {
     return nanoid();
   }
-  let uuid = '';
-  if (NativeModules.AnalyticsReactNative) {
-    uuid = NativeModules.AnalyticsReactNative.getUUIDSync();
-  } else warnMissingNativeModule();
-  return uuid;
+  return getNativeModule('AnalyticsReactNative')?.getUUIDSync() ?? '';
 };

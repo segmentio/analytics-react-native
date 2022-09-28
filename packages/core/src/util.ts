@@ -1,4 +1,4 @@
-import { Platform } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 import type { EventPlugin } from './plugin';
 import type { Timeline } from './timeline';
 
@@ -14,6 +14,12 @@ export const warnMissingNativeModule = () => {
     '- You rebuilt the app after installing the package\n' +
     '- You are not using Expo managed workflow\n';
   console.warn(MISSING_NATIVE_MODULE_WARNING);
+};
+
+export const getNativeModule = (moduleName: string) => {
+  const module = NativeModules[moduleName] || undefined;
+  if (module === undefined) warnMissingNativeModule();
+  return module;
 };
 
 export const chunk = (array: any[], count: number, maxKB?: number) => {

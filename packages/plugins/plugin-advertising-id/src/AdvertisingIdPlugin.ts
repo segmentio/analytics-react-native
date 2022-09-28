@@ -4,29 +4,24 @@ import {
   PluginType,
   SegmentClient,
 } from '@segment/analytics-react-native';
-import { warnMissingNativeModule } from '@segment/analytics-react-native/src/util';
-import { NativeModules } from 'react-native';
+import { getNativeModule } from '@segment/analytics-react-native/src/util';
 
 export class AdvertisingIdPlugin extends Plugin {
   type = PluginType.enrichment;
 
   configure(analytics: SegmentClient): void {
     this.analytics = analytics;
-    if (NativeModules.AnalyticsReactNativePluginAdvertisingId) {
-      NativeModules.AnalyticsReactNativePluginAdvertisingId.getAdvertisingId().then(
-        (id: string) => {
-          if (id === null) {
-            analytics.track(
-              'LimitAdTrackingEnabled (Google Play Services) is enabled'
-            );
-          } else {
-            this.setContext(id);
-          }
+    getNativeModule('AnalyticsReactNativePluginAdvertisingId')
+      ?.getAdvertisingId()
+      .then((id: string) => {
+        if (id === null) {
+          analytics.track(
+            'LimitAdTrackingEnabled (Google Play Services) is enabled'
+          );
+        } else {
+          this.setContext(id);
         }
-      );
-    } else {
-      warnMissingNativeModule();
-    }
+      });
   }
 
   setContext(id: string) {
