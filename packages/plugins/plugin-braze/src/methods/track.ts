@@ -1,19 +1,22 @@
 import ReactAppboy from 'react-native-appboy-sdk';
 import type { TrackEventType, JsonMap } from '@segment/analytics-react-native';
 
+const attributionProperties = {
+  network: '',
+  campaign: '',
+  adGroup: '',
+  creative: '',
+};
+
 export default (payload: TrackEventType) => {
   if (payload.event === 'Install Attributed') {
     if (payload.properties?.campaign) {
       const attributionData: any = payload.properties.campaign;
-      for (const [attribution, data] of Object.entries(attributionData)) {
-        if (data === undefined || data === null) {
-          attributionData[attribution] = '';
-        }
-      }
-      const network = attributionData.source;
-      const campaign = attributionData.name;
-      const adGroup = attributionData.ad_group;
-      const creative = attributionData.ad_creative;
+      const network = attributionData.source ?? attributionProperties.network;
+      const campaign = attributionData.name ?? attributionProperties.campaign;
+      const adGroup = attributionData.ad_group ?? attributionProperties.adGroup;
+      const creative =
+        attributionData.ad_creative ?? attributionProperties.creative;
       ReactAppboy.setAttributionData(network, campaign, adGroup, creative);
     }
   }
