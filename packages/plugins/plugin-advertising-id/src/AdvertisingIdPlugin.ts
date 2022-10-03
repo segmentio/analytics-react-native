@@ -3,7 +3,7 @@ import {
   Plugin,
   PluginType,
   SegmentClient,
-  getNativeModule
+  getNativeModule,
 } from '@segment/analytics-react-native';
 
 export class AdvertisingIdPlugin extends Plugin {
