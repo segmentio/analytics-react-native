@@ -82,6 +82,70 @@ describe('#track', () => {
     });
   });
 
+  it('tracks an Application Installed event when a value is null', () => {
+    const payload = {
+      type: 'track',
+      event: 'Install Attributed',
+      properties: {
+        campaign: {
+          source: 'source',
+          name: 'name',
+          ad_group: null,
+          ad_creative: 'ad_creative',
+        },
+      },
+    };
+
+    track(payload as TrackEventType);
+
+    expect(setAttributionData).toHaveBeenCalledWith(
+      'source',
+      'name',
+      '',
+      'ad_creative'
+    );
+    expect(logCustomEvent).toHaveBeenCalledWith('Install Attributed', {
+      campaign: {
+        source: 'source',
+        name: 'name',
+        ad_group: null,
+        ad_creative: 'ad_creative',
+      },
+    });
+  });
+
+  it('tracks an Application Installed event when a value is undefined/missing', () => {
+    const payload = {
+      type: 'track',
+      event: 'Install Attributed',
+      properties: {
+        campaign: {
+          source: 'source',
+          name: 'name',
+          //missing value
+          // ad_group: null,
+          ad_creative: 'ad_creative',
+        },
+      },
+    };
+
+    track(payload as TrackEventType);
+
+    expect(setAttributionData).toHaveBeenCalledWith(
+      'source',
+      'name',
+      '',
+      'ad_creative'
+    );
+    expect(logCustomEvent).toHaveBeenCalledWith('Install Attributed', {
+      campaign: {
+        source: 'source',
+        name: 'name',
+        ad_creative: 'ad_creative',
+      },
+    });
+  });
+
   it('logs an order completed event', () => {
     const payload = {
       type: 'track',
