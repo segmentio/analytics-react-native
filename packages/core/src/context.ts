@@ -1,4 +1,3 @@
-import { NativeModules } from 'react-native';
 import { libraryInfo } from './info';
 
 import type {
@@ -7,16 +6,36 @@ import type {
   NativeContextInfo,
   UserTraits,
 } from './types';
+import { getNativeModule } from './util';
 
 interface GetContextConfig {
   collectDeviceId?: boolean;
 }
+
+const defaultContext = {
+  appName: '',
+  appVersion: '',
+  buildNumber: '',
+  bundleId: '',
+  locale: '',
+  networkType: '',
+  osName: '',
+  osVersion: '',
+  screenHeight: 0,
+  screenWidth: 0,
+  timezone: '',
+  manufacturer: '',
+  model: '',
+  deviceName: '',
+  deviceId: '',
+  deviceType: '',
+  screenDensity: 0,
+};
+
 export const getContext = async (
   userTraits: UserTraits = {},
   config: GetContextConfig = {}
 ): Promise<Context> => {
-  const { AnalyticsReactNative } = NativeModules;
-
   const {
     appName,
     appVersion,
@@ -35,7 +54,9 @@ export const getContext = async (
     deviceId,
     deviceType,
     screenDensity,
-  }: NativeContextInfo = await AnalyticsReactNative.getContextInfo(config);
+  }: NativeContextInfo =
+    (await getNativeModule('AnalyticsReactNative')?.getContextInfo(config)) ??
+    defaultContext;
 
   const device: ContextDevice = {
     id: deviceId,
