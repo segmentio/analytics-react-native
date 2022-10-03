@@ -39,7 +39,7 @@ export class MixpanelPlugin extends DestinationPlugin {
     if (mixpanelSettings.token.length === 0) {
       return;
     }
-    this.mixpanel = new Mixpanel(mixpanelSettings.token);
+    this.mixpanel = new Mixpanel(mixpanelSettings.token, false);
     this.mixpanel.init();
     this.settings = mixpanelSettings;
 
