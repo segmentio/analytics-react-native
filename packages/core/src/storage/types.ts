@@ -2,7 +2,9 @@ import type { Unsubscribe, Persistor } from '@segment/sovran-react-native';
 import type {
   Context,
   DeepPartial,
+  DestinationFilters,
   IntegrationSettings,
+  RoutingRule,
   SegmentAPIIntegrations,
   UserInfoState,
 } from '../types';
@@ -61,6 +63,10 @@ export interface Storage {
   readonly settings: Watchable<SegmentAPIIntegrations | undefined> &
     Settable<SegmentAPIIntegrations> &
     Dictionary<string, IntegrationSettings>;
+
+  readonly filters: Watchable<DestinationFilters | undefined> &
+    Settable<DestinationFilters> &
+    Dictionary<string, RoutingRule>;
 
   readonly userInfo: Watchable<UserInfoState> & Settable<UserInfoState>;
 

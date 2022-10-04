@@ -9,7 +9,9 @@ import type {
 import type {
   Context,
   DeepPartial,
+  DestinationFilters,
   IntegrationSettings,
+  RoutingRule,
   SegmentAPIIntegrations,
   UserInfoState,
 } from '../../types';
@@ -20,6 +22,7 @@ export type StoreData = {
   isReady: boolean;
   context?: DeepPartial<Context>;
   settings: SegmentAPIIntegrations;
+  filters: DestinationFilters;
   userInfo: UserInfoState;
   deepLinkData: DeepLinkData;
 };
@@ -30,6 +33,7 @@ const INITIAL_VALUES: StoreData = {
   settings: {
     [SEGMENT_DESTINATION_KEY]: {},
   },
+  filters: {},
   userInfo: {
     anonymousId: 'anonymousId',
     userId: undefined,
@@ -67,6 +71,7 @@ export class MockSegmentStore implements Storage {
   private callbacks = {
     context: createCallbackManager<DeepPartial<Context> | undefined>(),
     settings: createCallbackManager<SegmentAPIIntegrations>(),
+    filters: createCallbackManager<DestinationFilters>(),
     userInfo: createCallbackManager<UserInfoState>(),
     deepLinkData: createCallbackManager<DeepLinkData>(),
   };
@@ -100,9 +105,8 @@ export class MockSegmentStore implements Storage {
     Settable<SegmentAPIIntegrations> &
     Dictionary<string, IntegrationSettings> = {
     get: createMockStoreGetter(() => this.data.settings),
-    onChange: (
-      callback: (value?: SegmentAPIIntegrations | undefined) => void
-    ) => this.callbacks.settings.register(callback),
+    onChange: (callback: (value?: SegmentAPIIntegrations) => void) =>
+      this.callbacks.settings.register(callback),
     set: (value) => {
       this.data.settings =
         value instanceof Function
@@ -114,6 +118,26 @@ export class MockSegmentStore implements Storage {
     add: (key: string, value: IntegrationSettings) => {
       this.data.settings[key] = value;
       this.callbacks.settings.run(this.data.settings);
+    },
+  };
+
+  readonly filters: Watchable<DestinationFilters | undefined> &
+    Settable<DestinationFilters> &
+    Dictionary<string, RoutingRule> = {
+    get: createMockStoreGetter(() => this.data.filters),
+    onChange: (callback: (value?: DestinationFilters) => void) =>
+      this.callbacks.filters.register(callback),
+    set: (value) => {
+      this.data.filters =
+        value instanceof Function
+          ? value(this.data.filters ?? {})
+          : { ...value };
+      this.callbacks.filters.run(this.data.filters);
+      return this.data.filters;
+    },
+    add: (key: string, value: RoutingRule) => {
+      this.data.filters[key] = value;
+      this.callbacks.filters.run(this.data.filters);
     },
   };
 
