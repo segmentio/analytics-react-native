@@ -22,7 +22,7 @@ export class DestinationMetadataEnrichment extends UtilityPlugin {
     // Disable all destinations that have a device mode plugin
     const destinations =
       plugins?.map((plugin) => (plugin as DestinationPlugin).key) ?? [];
-    const bundled: string[] = [];
+    const bundled = new Set<string>();
 
     for (const key of destinations) {
       if (key === this.destinationKey) {
@@ -30,28 +30,26 @@ export class DestinationMetadataEnrichment extends UtilityPlugin {
       }
 
       if (Object.keys(pluginSettings).includes(key)) {
-        bundled.push(key);
+        bundled.add(key);
       }
     }
 
-    const unbundled: string[] = [];
+    const unbundled = new Set<string>();
     const segmentInfo =
       (pluginSettings[this.destinationKey] as Record<string, any>) ?? {};
     var unbundledIntegrations: string[] =
       segmentInfo.unbundledIntegrations ?? [];
 
-    if (segmentInfo.maybeBundledConfigIds) {
-      const maybeBundledIntegrations: string[] = Object.keys(
-        segmentInfo.maybeBundledConfigIds
-      );
-      unbundledIntegrations = unbundledIntegrations.concat(
-        maybeBundledIntegrations
-      );
+    // All active integrations, not in `bundled` are put in `unbundled`
+    // All unbundledIntegrations not in `bundled` are put in `unbundled`
+    for (const integration in segmentInfo) {
+      if (integration !== this.destinationKey && !bundled.has(integration)) {
+        unbundled.add(integration);
+      }
     }
-
     for (const integration of unbundledIntegrations) {
-      if (!bundled.includes(integration)) {
-        unbundled.push(integration);
+      if (!bundled.has(integration)) {
+        unbundled.add(integration);
       }
     }
 
@@ -59,8 +57,8 @@ export class DestinationMetadataEnrichment extends UtilityPlugin {
     const enrichedEvent: SegmentEvent = {
       ...event,
       _metadata: {
-        bundled,
-        unbundled,
+        bundled: Array.from(bundled),
+        unbundled: Array.from(unbundled),
         bundledIds: [],
       },
     };
