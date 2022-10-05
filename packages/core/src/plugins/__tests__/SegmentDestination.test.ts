@@ -142,7 +142,7 @@ describe('SegmentDestination', () => {
       store: new MockSegmentStore({
         settings: {
           [SEGMENT_DESTINATION_KEY]: {
-            unbundledIntegrations: ['Amplitude', 'firebase'],
+            unbundledIntegrations: ['Amplitude'],
           },
           Mixpanel: {}, // Mixpanel is active but not bundled
         },
@@ -166,7 +166,7 @@ describe('SegmentDestination', () => {
       ...event,
       _metadata: {
         bundled: [],
-        unbundled: ['Amplitude', 'Mixpanel'],
+        unbundled: ['Mixpanel', 'Amplitude'],
         bundledIds: [],
       },
     });
