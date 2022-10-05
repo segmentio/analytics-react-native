@@ -42,7 +42,7 @@ export class DestinationMetadataEnrichment extends UtilityPlugin {
 
     // All active integrations, not in `bundled` are put in `unbundled`
     // All unbundledIntegrations not in `bundled` are put in `unbundled`
-    for (const integration in segmentInfo) {
+    for (const integration in pluginSettings) {
       if (integration !== this.destinationKey && !bundled.has(integration)) {
         unbundled.add(integration);
       }
