@@ -135,7 +135,7 @@ describe('SegmentDestination', () => {
     });
   });
 
-  it('marks maybeBundled integrations to unbundled if they are not bundled', async () => {
+  it('marks active integrations as unbundled if plugin is not bundled', async () => {
     const plugin = new SegmentDestination();
     const analytics = new SegmentClient({
       ...clientArgs,
@@ -143,8 +143,8 @@ describe('SegmentDestination', () => {
         settings: {
           [SEGMENT_DESTINATION_KEY]: {
             unbundledIntegrations: ['Amplitude'],
-            maybeBundledConfigIds: { Mixpanel: ['123'] },
           },
+          Mixpanel: {}, // Mixpanel is active but not bundled
         },
       }),
     });
@@ -166,7 +166,7 @@ describe('SegmentDestination', () => {
       ...event,
       _metadata: {
         bundled: [],
-        unbundled: ['Amplitude', 'Mixpanel'],
+        unbundled: ['Mixpanel', 'Amplitude'],
         bundledIds: [],
       },
     });
