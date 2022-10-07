@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-firebase-v0.3.2](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-firebase-v0.3.1...@segment/analytics-react-native-plugin-firebase-v0.3.2) (2022-10-07)
+
+
+### Bug Fixes
+
+* avoids calling Firebase setUserId with undefined value ([#676](https://github.com/segmentio/analytics-react-native/issues/676)) ([076848f](https://github.com/segmentio/analytics-react-native/commit/076848f9fffbd9bcf126805b177f4d62029017b2))
+
 ## [@segment/analytics-react-native-plugin-firebase-v0.3.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-firebase-v0.3.0...@segment/analytics-react-native-plugin-firebase-v0.3.1) (2022-07-28)
 
 

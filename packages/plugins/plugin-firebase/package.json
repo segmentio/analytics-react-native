@@ -1,6 +1,6 @@
 {
   "name": "@segment/analytics-react-native-plugin-firebase",
-  "version": "0.3.3",
+  "version": "0.3.2",
   "description": "The hassle-free way to add Segment analytics to your React-Native app.",
   "main": "lib/commonjs/index",
   "scripts": {
@@ -49,7 +49,7 @@
   },
   "dependencies": {
     "@react-native-firebase/analytics": "^15.4.0",
-    "@react-native-firebase/app":  "^15.4.0"
+    "@react-native-firebase/app": "^15.4.0"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.1",
