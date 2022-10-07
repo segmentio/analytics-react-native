@@ -1,3 +1,16 @@
+## [@segment/analytics-react-native-v2.9.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.8.0...@segment/analytics-react-native-v2.9.0) (2022-10-07)
+
+
+### Features
+
+* destination filter support for device mode plugins ([#685](https://github.com/segmentio/analytics-react-native/issues/685)) ([3cfa8b9](https://github.com/segmentio/analytics-react-native/commit/3cfa8b953eb1ae66f519b16fc4ed43a527586832))
+* short-circuit and throw warnings when missing native modules ([#680](https://github.com/segmentio/analytics-react-native/issues/680)) ([bed01c1](https://github.com/segmentio/analytics-react-native/commit/bed01c10c0e452c9f24f76831f7e932837ff50bd))
+
+
+### Bug Fixes
+
+* default integrations settings are set properly when unable to fetch ([#684](https://github.com/segmentio/analytics-react-native/issues/684)) ([0627deb](https://github.com/segmentio/analytics-react-native/commit/0627deb66ae16d44dc97eeb51853c8abd98cceec))
+
 ## [@segment/analytics-react-native-v2.8.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.7.2...@segment/analytics-react-native-v2.8.0) (2022-09-13)
 
 
