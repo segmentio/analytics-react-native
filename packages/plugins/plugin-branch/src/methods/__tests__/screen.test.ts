@@ -1,14 +1,13 @@
 //@ts-ignore
 import { EventType, ScreenEventType } from '@segment/analytics-react-native';
-import { BranchEvent } from '../__mocks__/react-native-branch';
+import { BranchEvent } from 'react-native-branch';
+import { mockLogEvent } from '../__mocks__/react-native-branch';
 import * as util from '../../util';
 import screen from '../screen';
 
 jest.mock('react-native-branch');
 
 describe('#screen', () => {
-  const mockLogEvent = jest.fn();
-  BranchEvent.prototype.logEvent = mockLogEvent;
   const spyCreateBranchEventWithProps = jest.spyOn(
     util,
     'createBranchEventWithProps'
@@ -17,7 +16,7 @@ describe('#screen', () => {
     jest.clearAllMocks();
   });
 
-  it('forwards a screen event and replaces the name with a branch event name', async () => {
+  it('forwards a screen event and sets the appropriate branch event name', async () => {
     const event = {
       type: EventType.ScreenEvent,
       name: 'test_event',

@@ -24,7 +24,6 @@ export class BranchPlugin extends DestinationPlugin {
   }
 
   track(event: TrackEventType) {
-    console.log('COUCOU Branch');
     track(event);
     return event;
   }

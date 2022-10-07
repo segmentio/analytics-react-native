@@ -43,7 +43,6 @@ export async function createBranchEventWithProps(
       customData,
     };
   }
-  console.log('COUCOU - createBranchEvent', eventName, eventProps);
   return new BranchEvent(
     eventName,
     isStandardBranchEvent ? branchUniversalObjects : undefined,

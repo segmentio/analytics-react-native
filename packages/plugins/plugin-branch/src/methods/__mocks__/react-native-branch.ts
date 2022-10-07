@@ -1,5 +1,3 @@
-import { BranchEvent } from 'react-native-branch';
-
 export default {
   setIdentity: jest.fn(),
   createBranchUniversalObject: jest
@@ -9,4 +7,10 @@ export default {
     }),
 };
 
-export { BranchEvent };
+export const mockLogEvent = jest.fn();
+
+export const BranchEvent = jest.fn().mockImplementation(() => {
+  return {
+    logEvent: mockLogEvent,
+  };
+});

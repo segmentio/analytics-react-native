@@ -1,15 +1,13 @@
 //@ts-ignore
 import { EventType, TrackEventType } from '@segment/analytics-react-native';
 import track from '../track';
-import { BranchEvent } from '../__mocks__/react-native-branch';
+import { mockLogEvent } from '../__mocks__/react-native-branch';
 import * as util from '../../util';
-import { mapEventNames } from 'src/parameterMapping';
+import { mapEventNames } from '../../parameterMapping';
 
 jest.mock('react-native-branch');
 
 describe('#track', () => {
-  const mockLogEvent = jest.fn();
-  BranchEvent.prototype.logEvent = mockLogEvent;
   const spyCreateBranchEventWithProps = jest.spyOn(
     util,
     'createBranchEventWithProps'

@@ -1,40 +1,40 @@
-# @segment/analytics-react-native-plugin-mixpanel
+# @segment/analytics-react-native-plugin-branch
 
-`DestinationPlugin` for [Mixpanel](https://https://mixpanel.com/). Wraps [`mixpanel-react-native`](https://github.com/mixpanel/mixpanel-react-native).
+`DestinationPlugin` for [Branch](https://branch.io/). Wraps [`react-native-branch`](https://github.com/BranchMetrics/react-native-branch-deep-linking-attribution).
 
 ## Installation
 
-You need to install the `@segment/analytics-react-native-plugin-mixpanel` and the `mixpanel-react-native` dependency.
+You need to install the `@segment/analytics-react-native-plugin-branch` and the `react-native-branch` dependency.
 
 Using NPM:
 ```bash
-npm install --save @segment/analytics-react-native-plugin-mixpanel mixpanel-react-native
+npm install --save @segment/analytics-react-native-plugin-branch react-native-branch
 ```
 
 Using Yarn:
 ```bash
-yarn add @segment/analytics-react-native-plugin-mixpanel mixpanel-react-native
+yarn add @segment/analytics-react-native-plugin-branch react-native-branch
 ```
 
-Run `pod install` after the installation to autolink the Mixpanel SDK.
+Run `pod install` after the installation to autolink the Branch SDK.
 
-See [Mixpanel React Native SDK](https://github.com/mixpanel/mixpanel-react-native) for more details of this dependency.
+See [`Branch React Native SDK`](https://github.com/BranchMetrics/react-native-branch-deep-linking-attribution) for more details of this dependency.
 ## Usage
 
 Follow the [instructions for adding plugins](https://github.com/segmentio/analytics-react-native#adding-plugins) on the main Analytics client:
 
-In your code where you initialize the analytics client call the `.add(plugin)` method with an `MixpanelPlugin` instance:
+In your code where you initialize the analytics client call the `.add(plugin)` method with an `BranchPlugin` instance:
 
 ```ts
 import { createClient } from '@segment/analytics-react-native';
 
-import { MixpanelPlugin } from '@segment/analytics-react-native-plugin-mixpanel';
+import { BranchPlugin } from '@segment/analytics-react-native-plugin-branch';
 
 const segmentClient = createClient({
   writeKey: 'SEGMENT_KEY'
 });
 
-segmentClient.add({ plugin: new MixpanelPlugin() });
+segmentClient.add({ plugin: new BranchPlugin() });
 ```
 
 ## Support
