@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-advertising-id-v1.2.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-advertising-id-v1.1.1...@segment/analytics-react-native-plugin-advertising-id-v1.2.0) (2022-10-07)
+
+
+### Features
+
+* short-circuit and throw warnings when missing native modules ([#680](https://github.com/segmentio/analytics-react-native/issues/680)) ([bed01c1](https://github.com/segmentio/analytics-react-native/commit/bed01c10c0e452c9f24f76831f7e932837ff50bd))
+
 ## [@segment/analytics-react-native-plugin-advertising-id-v1.1.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-advertising-id-v1.1.0...@segment/analytics-react-native-plugin-advertising-id-v1.1.1) (2022-09-13)
 
 
