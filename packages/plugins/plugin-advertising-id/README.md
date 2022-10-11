@@ -32,14 +32,6 @@ const segmentClient = createClient({
 segmentClient.add({ plugin: new AdvertisingIdPlugin() });
 ```
 
-You will also need to ensure you have added the Application_ID `metadata` tag to your `AndroidManifest.xml`
- ```
- <!-- Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713 -->
- <!-- <meta-data
-        android:name="com.google.android.gms.ads.APPLICATION_ID"
-        android:value="ca-app-pub-3940256099942544~3347511713"/> -->
-```
-
 ## Contributing
 
 See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
