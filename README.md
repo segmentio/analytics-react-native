@@ -521,6 +521,7 @@ Refer to the following table for Plugins you can use to meet your tracking needs
 | [Firebase](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-firebase)      | `@segment/analytics-react-native-plugin-firebase`|
 | [IDFA](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-idfa)     | `@segment/analytics-react-native-plugin-idfa` |
 | [Mixpanel](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-mixpanel)    | `@segment/analytics-react-native-plugin-mixpanel` |
+| [Sprig](https://github.com/UserLeap/analytics-react-native-plugin-sprig)    | [`@sprig-technologies/analytics-react-native-plugin-sprig`](https://www.npmjs.com/package/@sprig-technologies/analytics-react-native-plugin-sprig) |
 | [Taplytics](https://github.com/taplytics/segment-react-native-plugin-taplytics)     | `@taplytics/segment-react-native-plugin-taplytics` |
 | [Android Advertising ID](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-advertising-id) | `@segment/analytics-react-native-plugin-advertising-id` |
   
