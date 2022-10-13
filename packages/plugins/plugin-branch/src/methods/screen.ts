@@ -1,10 +1,8 @@
 import { BranchEvent } from 'react-native-branch';
-//@ts-ignore
 import { generateMapTransform } from '@segment/analytics-react-native';
-//@ts-ignore
 import type { ScreenEventType } from '@segment/analytics-react-native';
-import { mapEventProps, transformMap } from '../parameterMapping';
-import { createBranchEventWithProps } from '../util';
+import { mapEventProps, transformMap } from './parameterMapping';
+import { createBranchEventWithProps } from './util';
 
 export default async (event: ScreenEventType) => {
   const transformEvent = generateMapTransform(mapEventProps, transformMap);

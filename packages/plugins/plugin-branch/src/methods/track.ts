@@ -1,13 +1,7 @@
-//@ts-ignore
 import { generateMapTransform } from '@segment/analytics-react-native';
-//@ts-ignore
 import type { TrackEventType } from '@segment/analytics-react-native';
-import {
-  mapEventNames,
-  mapEventProps,
-  transformMap,
-} from '../parameterMapping';
-import { createBranchEventWithProps } from '../util';
+import { mapEventNames, mapEventProps, transformMap } from './parameterMapping';
+import { createBranchEventWithProps } from './util';
 
 export default async (event: TrackEventType) => {
   const transformEvent = generateMapTransform(mapEventProps, transformMap);

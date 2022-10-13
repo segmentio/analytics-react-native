@@ -5,8 +5,6 @@ import {
   ScreenEventType,
   IdentifyEventType,
   AliasEventType,
-
-  // @ts-ignore
 } from '@segment/analytics-react-native';
 import identify from './methods/identify';
 import screen from './methods/screen';

@@ -1,9 +1,8 @@
-//@ts-ignore
 import { EventType, TrackEventType } from '@segment/analytics-react-native';
 import track from '../track';
 import { mockLogEvent } from '../__mocks__/react-native-branch';
-import * as util from '../../util';
-import { mapEventNames } from '../../parameterMapping';
+import * as util from '../util';
+import { mapEventNames } from '../parameterMapping';
 
 jest.mock('react-native-branch');
 

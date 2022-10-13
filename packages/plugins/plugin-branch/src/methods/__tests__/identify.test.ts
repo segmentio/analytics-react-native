@@ -1,4 +1,3 @@
-//@ts-ignore
 import type { IdentifyEventType } from '@segment/analytics-react-native';
 import branch from '../__mocks__/react-native-branch';
 import identify from '../identify';

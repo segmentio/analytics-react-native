@@ -1,8 +1,7 @@
-//@ts-ignore
 import { EventType, ScreenEventType } from '@segment/analytics-react-native';
 import { BranchEvent } from 'react-native-branch';
 import { mockLogEvent } from '../__mocks__/react-native-branch';
-import * as util from '../../util';
+import * as util from '../util';
 import screen from '../screen';
 
 jest.mock('react-native-branch');
