@@ -51,22 +51,22 @@ export const AnalyticsProvider = ({
 
 export const useAnalytics = (): ClientMethods => {
   const client = useContext(Context);
-  if (!client) {
-    console.error(
-      'Segment client not configured!',
-      'To use the useAnalytics() hook, pass an initialized Segment client into the AnalyticsProvider'
-    );
+  return React.useMemo(() => {
+    if (!client) {
+      console.error(
+        'Segment client not configured!',
+        'To use the useAnalytics() hook, pass an initialized Segment client into the AnalyticsProvider'
+      );
+    }
 
-    // @ts-ignore
-    return {};
-  }
-  return {
-    screen: async (...args) => client.screen(...args),
-    track: async (...args) => client.track(...args),
-    identify: async (...args) => client.identify(...args),
-    flush: async () => client.flush(),
-    group: async (...args) => client.group(...args),
-    alias: async (...args) => client.alias(...args),
-    reset: async (...args) => client.reset(...args),
-  };
+    return {
+      screen: async (...args) => client?.screen(...args),
+      track: async (...args) => client?.track(...args),
+      identify: async (...args) => client?.identify(...args),
+      flush: async () => client?.flush(),
+      group: async (...args) => client?.group(...args),
+      alias: async (...args) => client?.alias(...args),
+      reset: async (...args) => client?.reset(...args),
+    };
+  }, [client]);
 };
