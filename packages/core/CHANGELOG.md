@@ -1,3 +1,12 @@
+## [@segment/analytics-react-native-v2.9.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.9.0...@segment/analytics-react-native-v2.9.1) (2022-11-01)
+
+
+### Bug Fixes
+
+* memoize useAnalytics ([#693](https://github.com/segmentio/analytics-react-native/issues/693)) ([e4b27b4](https://github.com/segmentio/analytics-react-native/commit/e4b27b4a1bff8bd0c4e542a8fdfbffb84b9c746b))
+* remove special anonymousID behaviour on dev mode ([#700](https://github.com/segmentio/analytics-react-native/issues/700)) ([c3e41ea](https://github.com/segmentio/analytics-react-native/commit/c3e41ead9de261bd3232305444eccd824294acc7))
+* upgrade sovran to v0.4.5, adds shortcircuit for ExpoGo Testing ([#697](https://github.com/segmentio/analytics-react-native/issues/697)) ([c348023](https://github.com/segmentio/analytics-react-native/commit/c348023ded65d7f08d86a7925c0b49770cf759a5))
+
 ## [@segment/analytics-react-native-v2.9.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.8.0...@segment/analytics-react-native-v2.9.0) (2022-10-07)
 
 
