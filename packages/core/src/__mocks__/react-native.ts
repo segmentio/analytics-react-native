@@ -31,6 +31,7 @@ export const NativeModules = {
       deviceId: '123-456-789',
       deviceType: 'phone',
     }),
+    getUUIDSync: jest.fn().mockReturnValue('anonymousId-1234'),
   },
   Sovran: {
     getConstants: () => ({
