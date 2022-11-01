@@ -9411,11 +9411,6 @@ mute-stream@0.0.8, mute-stream@~0.0.4:
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.8.tgz#1630c42b2251ff81e2a283de96a5497ea92e5e0d"
   integrity sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==
 
-nanoid@^3.1.25:
-  version "3.3.4"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.4.tgz#730b67e3cd09e2deacf03c027c81c9d9dbc5e8ab"
-  integrity sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==
-
 nanomatch@^1.2.9:
   version "1.2.13"
   resolved "https://registry.yarnpkg.com/nanomatch/-/nanomatch-1.2.13.tgz#b87a8aa4fc0de8fe6be88895b38983ff265bd119"
@@ -10613,6 +10608,11 @@ react-native-appsflyer@^6.3.50:
   version "6.6.1"
   resolved "https://registry.yarnpkg.com/react-native-appsflyer/-/react-native-appsflyer-6.6.1.tgz#9e0cb55f9a318a7a4f345ed51b18fa0e8f817a10"
   integrity sha512-OPy4ujSlGDpOgrIcVi+Koe967weGIk6Gzx3Z1Fwd0JPp6nu/Tv0Lt6HUPJjMaQUqnC+sdricHikrNixaCo0/dQ==
+
+react-native-branch@^5.6.0:
+  version "5.6.2"
+  resolved "https://registry.yarnpkg.com/react-native-branch/-/react-native-branch-5.6.2.tgz#c3ec137a5427a21fcd6559b83f02e6162ea627f6"
+  integrity sha512-plYpedNI1SSquD7bDOJ4UptkPIrGtz4O1NXfFA5tBshGb0AhuUSYS13dNZuHa+Ug+7YaqBcc0SF02vIB0ktZKw==
 
 react-native-builder-bob@^0.18.2:
   version "0.18.3"
