@@ -5,8 +5,6 @@ import { getMockTimeline } from '../__helpers__/mockTimeline';
 import type { DestinationPlugin } from '../../plugin';
 import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
 
-jest.spyOn(global, 'setTimeout');
-
 jest.mock('react-native');
 jest.mock('../../uuid');
 
@@ -65,9 +63,6 @@ describe('methods #flush', () => {
     const mockDestinationPlugin = destinations[0] as DestinationPlugin;
 
     await client.flush();
-
-    // We expect the flush interval to be reset by default
-    expect(setTimeout).toBeCalled();
 
     expect(mockDestinationPlugin.flush).toHaveBeenCalledTimes(1);
   });

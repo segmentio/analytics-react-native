@@ -110,7 +110,6 @@ describe('SegmentClient', () => {
       segmentClient.cleanup();
       // @ts-ignore
       expect(segmentClient.destroyed).toBe(true);
-      expect(clearInterval).toHaveBeenCalledTimes(1);
       // @ts-ignore
       expect(segmentClient.appStateSubscription.remove).toHaveBeenCalledTimes(
         1
