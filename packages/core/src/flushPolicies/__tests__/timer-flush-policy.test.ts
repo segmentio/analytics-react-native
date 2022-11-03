@@ -8,6 +8,7 @@ describe('TimerFlushPolicy', () => {
   it('triggers a flush when timer is done', () => {
     const time = 100;
     const policy = new TimerFlushPolicy(time);
+    policy.start();
 
     const observer = jest.fn().mockImplementation((value) => {
       console.log(`new value: ${value}`);
@@ -16,7 +17,6 @@ describe('TimerFlushPolicy', () => {
     policy.shouldFlush.onChange(observer);
 
     jest.advanceTimersByTime(time);
-
     expect(observer).toHaveBeenCalledWith(true);
 
     // Won't trigger again until it is handled and reset

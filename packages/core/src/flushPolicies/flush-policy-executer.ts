@@ -13,12 +13,12 @@ export class FlushPolicyExecuter {
 
     // Now listen to changes on the flush policies shouldFlush
     for (const policy of this.policies) {
-      this.watchShouldFlush(policy);
+      this.startPolicy(policy);
     }
   }
 
   add(policy: FlushPolicy) {
-    this.watchShouldFlush(policy);
+    this.startPolicy(policy);
     this.policies.push(policy);
   }
 
@@ -82,7 +82,8 @@ export class FlushPolicyExecuter {
     }
   }
 
-  private watchShouldFlush(policy: FlushPolicy) {
+  private startPolicy(policy: FlushPolicy) {
+    policy.start();
     const unsubscribe = policy.shouldFlush.onChange((shouldFlush) => {
       if (shouldFlush) {
         this.onFlush();

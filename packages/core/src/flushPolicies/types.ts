@@ -44,6 +44,14 @@ export interface FlushPolicy {
   shouldFlush: Observable<boolean>;
 
   /**
+   * Start gets executed when the FlushPolicy is added to the client.
+   *
+   * This is a good place to initialize configuration or timers as it will only
+   * execute when this policy is enabled
+   */
+  start(): void;
+
+  /**
    * Executed every time an event is tracked by the client
    * @param event triggered event
    */
@@ -68,6 +76,8 @@ export abstract class FlushPolicyBase implements FlushPolicy {
   reset(): void {
     this.shouldFlush.value = false;
   }
+
+  abstract start(): void;
 
   abstract onEvent(event: SegmentEvent): void;
 }

@@ -13,6 +13,10 @@ export class CountFlushPolicy extends FlushPolicyBase {
     this.flushAt = limit;
   }
 
+  start(): void {
+    this.count = 0;
+  }
+
   onEvent(_event: SegmentEvent): void {
     this.count += 1;
     if (this.count >= this.flushAt) {

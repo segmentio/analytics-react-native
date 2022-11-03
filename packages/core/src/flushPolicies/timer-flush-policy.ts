@@ -1,14 +1,12 @@
 import type { SegmentEvent } from '../types';
-import { type FlushPolicy, Observable } from './types';
+import { FlushPolicyBase } from './types';
 
 /**
  * A Timer based flush policy.
  *
  * Flushes events on an interval.
  */
-export class TimerFlushPolicy implements FlushPolicy {
-  shouldFlush = new Observable<boolean>(false);
-
+export class TimerFlushPolicy extends FlushPolicyBase {
   private flushTimeout!: ReturnType<typeof setTimeout>;
   private interval: number;
 
@@ -23,7 +21,11 @@ export class TimerFlushPolicy implements FlushPolicy {
    * @param interval interval to flush in milliseconds
    */
   constructor(interval: number) {
+    super();
     this.interval = interval;
+  }
+
+  start(): void {
     this.startTimer();
   }
 
@@ -33,7 +35,7 @@ export class TimerFlushPolicy implements FlushPolicy {
   }
 
   reset(): void {
-    this.shouldFlush.value = false;
+    super.reset();
     this.startTimer();
   }
 }
