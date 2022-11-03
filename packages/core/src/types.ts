@@ -1,5 +1,6 @@
 import type { Persistor } from '@segment/sovran-react-native';
 import type { Rule } from '@segment/tsub/dist/store';
+import type { FlushPolicy } from './flushPolicies';
 
 export type JsonValue =
   | boolean
@@ -130,8 +131,11 @@ export type Config = {
   writeKey: string;
   debug?: boolean;
   logger?: DeactivableLoggerType;
+  // Legacy, for compat only
   flushAt?: number;
   flushInterval?: number;
+  // New flush policies
+  flushPolicies?: FlushPolicy[];
   trackAppLifecycleEvents?: boolean;
   maxBatchSize?: number;
   trackDeepLinks?: boolean;

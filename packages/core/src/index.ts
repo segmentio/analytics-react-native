@@ -4,3 +4,4 @@ export * from './types';
 export * from './mapTransform';
 export { getNativeModule } from './util';
 export { SegmentClient } from './analytics';
+export * from './flushPolicies';

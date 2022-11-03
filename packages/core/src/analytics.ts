@@ -1,5 +1,5 @@
 //@ts-ignore
-import { Unsubscribe } from '@segment/sovran-react-native';
+import type { Rule } from '@segment/tsub/dist/store';
 import deepmerge from 'deepmerge';
 import allSettled from 'promise.allsettled';
 import { AppState, AppStateStatus } from 'react-native';
@@ -13,6 +13,8 @@ import {
   createScreenEvent,
   createTrackEvent,
 } from './events';
+import { CountFlushPolicy, TimerFlushPolicy } from './flushPolicies';
+import { FlushPolicyExecuter } from './flushPolicies/flush-policy-executer';
 import type { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
 import { InjectContext } from './plugins/InjectContext';
 import { InjectUserInfo } from './plugins/InjectUserInfo';
@@ -25,6 +27,7 @@ import {
   Watchable,
 } from './storage';
 import { Timeline } from './timeline';
+import type { DestinationFilters, SegmentAPISettings } from './types';
 import {
   Config,
   Context,
@@ -42,8 +45,7 @@ import {
 } from './types';
 import { getPluginsWithFlush, getPluginsWithReset } from './util';
 import { getUUID } from './uuid';
-import type { SegmentAPISettings, DestinationFilters } from './types';
-import type { Rule } from '@segment/tsub/dist/store';
+import type { FlushPolicy } from './flushPolicies';
 
 type OnContextLoadCallback = (type: UpdateType) => void | Promise<void>;
 type OnPluginAddedCallback = (plugin: Plugin) => void;
@@ -64,12 +66,6 @@ export class SegmentClient {
   // logger
   public logger: LoggerType;
 
-  // internal time to know when to flush, ticks every second
-  private flushInterval: ReturnType<typeof setTimeout> | null = null;
-
-  // unsubscribe watchers for the store
-  private watchers: Unsubscribe[] = [];
-
   // whether the user has called cleanup
   private destroyed: boolean = false;
 
@@ -81,8 +77,10 @@ export class SegmentClient {
 
   private pluginsToAdd: Plugin[] = [];
 
-  private isInitialized = false;
+  private flushPolicyExecuter!: FlushPolicyExecuter;
 
+  private isInitialized = false;
+  // TODO: Refactor into Observable<T>
   private isContextLoaded = false;
 
   private onContextLoadedObservers: OnContextLoadCallback[] = [];
@@ -208,7 +206,9 @@ export class SegmentClient {
 
     // Watch for isReady so that we can handle any pending events
     // Delays events processing in the timeline until the store is ready to prevent missing data injected from the plugins
-    this.store.isReady.onChange((value) => this.onStorageReady(value));
+    this.store.isReady.onChange((value) => {
+      this.onStorageReady(value);
+    });
 
     // add segment destination plugin unless
     // asked not to via configuration.
@@ -219,6 +219,9 @@ export class SegmentClient {
 
     // Setup platform specific plugins
     this.platformPlugins.forEach((plugin) => this.add({ plugin: plugin }));
+
+    // Start flush policies
+    this.setupFlushPolicies();
   }
 
   /**
@@ -234,11 +237,7 @@ export class SegmentClient {
     await this.fetchSettings();
 
     // flush any stored events
-    this.flush(false);
-
-    // set up the timer/subscription for knowing when to flush events
-    this.setupInterval();
-    this.setupStorageSubscribers();
+    this.flushPolicyExecuter.manualFlush();
 
     // set up tracking for lifecycle events
     this.setupLifecycleEvents();
@@ -293,21 +292,6 @@ export class SegmentClient {
   }
 
   /**
-   * Clears all subscriptions to the store
-   */
-  private unsubscribeStorageWatchers() {
-    if (this.watchers.length > 0) {
-      for (const unsubscribe of this.watchers) {
-        try {
-          unsubscribe();
-        } catch (e) {
-          this.logger.error(e);
-        }
-      }
-    }
-  }
-
-  /**
    * There is no garbage collection in JS, which means that any listeners, timeouts and subscriptions
    * would run until the application closes
    *
@@ -318,30 +302,11 @@ export class SegmentClient {
    * it gets approved: https://github.com/tc39/proposal-weakrefs#finalizers
    */
   cleanup() {
-    if (this.flushInterval) {
-      clearInterval(this.flushInterval);
-    }
-
-    this.unsubscribeStorageWatchers();
-
+    this.flushPolicyExecuter.cleanup();
     this.appStateSubscription?.remove();
 
     this.destroyed = true;
     this.isInitialized = false;
-  }
-
-  private setupInterval() {
-    if (this.flushInterval !== null && this.flushInterval !== undefined) {
-      clearInterval(this.flushInterval);
-    }
-
-    this.flushInterval = setTimeout(() => {
-      this.flush();
-    }, this.config.flushInterval! * 1000);
-  }
-
-  private setupStorageSubscribers() {
-    this.unsubscribeStorageWatchers();
   }
 
   private setupLifecycleEvents() {
@@ -412,6 +377,7 @@ export class SegmentClient {
   async process(incomingEvent: SegmentEvent) {
     const event = applyRawEventData(incomingEvent);
     if (this.store.isReady.get() === true) {
+      this.flushPolicyExecuter.notify(event);
       return this.timeline.process(event);
     } else {
       this.pendingEvents.push(event);
@@ -475,15 +441,12 @@ export class SegmentClient {
     }
   }
 
-  async flush(debounceInterval: boolean = true): Promise<void> {
+  async flush(): Promise<void> {
     if (this.destroyed) {
       return;
     }
 
-    if (debounceInterval) {
-      // Reset interval
-      this.setupInterval();
-    }
+    this.flushPolicyExecuter.reset();
 
     const promises: (void | Promise<void>)[] = [];
     getPluginsWithFlush(this.timeline).forEach((plugin) => {
@@ -703,5 +666,57 @@ export class SegmentClient {
 
   private triggerOnPluginLoaded(plugin: Plugin) {
     this.onPluginAddedObservers.map((f) => f?.(plugin));
+  }
+
+  /**
+   * Initializes the flush policies from config and subscribes to updates to
+   * trigger flush
+   */
+  private setupFlushPolicies() {
+    let flushPolicies = this.config.flushPolicies ?? [];
+
+    // Compatibility with older arguments
+    if (this.config.flushAt !== undefined) {
+      flushPolicies.push(new CountFlushPolicy(this.config.flushAt));
+    }
+
+    if (this.config.flushInterval !== undefined) {
+      flushPolicies.push(
+        new TimerFlushPolicy(this.config.flushInterval * 1000)
+      );
+    }
+
+    this.flushPolicyExecuter = new FlushPolicyExecuter(flushPolicies, () => {
+      this.flush();
+    });
+  }
+
+  /**
+   * Adds a FlushPolicy to the list
+   * @param policies policies to add
+   */
+  addFlushPolicy(...policies: FlushPolicy[]) {
+    for (const policy of policies) {
+      this.flushPolicyExecuter.add(policy);
+    }
+  }
+
+  /**
+   * Removes a FlushPolicy from the execution
+   *
+   * @param policies policies to remove
+   * @returns true if the value was removed, false if not found
+   */
+  removeFlushPolicy(...policies: FlushPolicy[]) {
+    for (const policy of policies) {
+      this.flushPolicyExecuter.remove(policy);
+    }
+  }
+
+  /**
+   * Returns the current enabled flush policies
+   */
+  getFlushPolicies() {
+    return this.flushPolicyExecuter.policies;
   }
 }
