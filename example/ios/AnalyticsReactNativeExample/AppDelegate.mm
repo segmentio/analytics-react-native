@@ -3,8 +3,8 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import <React/RCTAppSetupUtils.h>
-#import <segment_analytics_react_native-Swift.h>
- #import <Firebase.h>
+// #import <segment_analytics_react_native-Swift.h>
+//  #import <Firebase.h>
 #if RCT_NEW_ARCH_ENABLED
 #import <React/CoreModulesPlugins.h>
 #import <React/RCTCxxBridgeDelegate.h>
@@ -48,7 +48,7 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   // enable for firebase plugin
-   [FIRApp configure];
+  //  [FIRApp configure];
   return YES;
 }
 
