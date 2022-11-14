@@ -1,7 +1,10 @@
 {
-  "testRunner": "jest",
-  "runnerConfig": "e2e/config.json",
-  "skipLegacyWorkersInjection": true,
+  "testRunner": {
+    "$0": "jest",
+    "args": {
+      "config": "e2e/jest.config.js"
+    }
+  },
   "behavior": {
     "init": {
       "reinstallApp": true,
