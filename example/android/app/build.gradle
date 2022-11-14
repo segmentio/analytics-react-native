@@ -133,11 +133,6 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-  packagingOptions {
-        pickFirst '**/libc++_shared.so'
-        pickFirst '**/libfbjni.so'
-  }
-
     defaultConfig {
         applicationId "com.example.segmentanalyticsreactnative"
         minSdkVersion rootProject.ext.minSdkVersion
