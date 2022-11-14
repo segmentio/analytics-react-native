@@ -4,7 +4,7 @@
 #import <React/RCTRootView.h>
 #import <React/RCTAppSetupUtils.h>
 #import <segment_analytics_react_native-Swift.h>
-// #import <Firebase.h>
+//  #import <Firebase.h>
 #if RCT_NEW_ARCH_ENABLED
 #import <React/CoreModulesPlugins.h>
 #import <React/RCTCxxBridgeDelegate.h>

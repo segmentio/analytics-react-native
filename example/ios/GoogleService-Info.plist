@@ -3,34 +3,34 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>169668264691-98m0t8lofv1nja1ki1hvi8j0heb5hesa.apps.googleusercontent.com</string>
+	<string>447181399992-mv10i4tdu1hm2m41k4c538uldc0sjtvc.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.169668264691-98m0t8lofv1nja1ki1hvi8j0heb5hesa</string>
+	<string>com.googleusercontent.apps.447181399992-mv10i4tdu1hm2m41k4c538uldc0sjtvc</string>
 	<key>API_KEY</key>
-	<string>GOOGLE API KEY</string>
+	<string>WRITE_KEY</string>
 	<key>GCM_SENDER_ID</key>
-	<string>169668264691</string>
+	<string>447181399992</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>org.reactjs.native.AnalyticsReactNativeExample</string>
+	<string>org.reactjs.native.example.reactNativeTest</string>
 	<key>PROJECT_ID</key>
-	<string>segment-rn-analytics-tes-758c9</string>
+	<string>segment-react-native-test</string>
 	<key>STORAGE_BUCKET</key>
-	<string>segment-rn-analytics-tes-758c9.appspot.com</string>
+	<string>segment-react-native-test.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
-	<false/>
+	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false/>
+	<false></false>
 	<key>IS_APPINVITE_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>IS_GCM_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:169668264691:ios:1e6687e6b5ed544316ed86</string>
+	<string>1:447181399992:ios:7bca95b14ea38f8190114d</string>
 	<key>DATABASE_URL</key>
-	<string>https://segment-rn-analytics-tes-758c9.firebaseio.com</string>
+	<string>https://segment-react-native-test.firebaseio.com</string>
 </dict>
 </plist>
