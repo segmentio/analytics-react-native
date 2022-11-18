@@ -4,4 +4,5 @@ export * from './types';
 export * from './mapTransform';
 export { getNativeModule } from './util';
 export { SegmentClient } from './analytics';
+export { SegmentDestination } from './plugins/SegmentDestination';
 export * from './flushPolicies';
