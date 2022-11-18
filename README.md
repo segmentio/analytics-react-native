@@ -40,6 +40,8 @@ The hassle-free way to add Segment analytics to your React-Native app.
   - [Controlling Upload With Flush Policies](#controlling-upload-with-flush-policies)
   - [Adding or removing policies](#adding-or-removing-policies)
     - [Creating your own flush policies](#creating-your-own-flush-policies)
+  - [Handling errors](#handling-errors)
+    - [Reporting errors from plugins](#reporting-errors-from-plugins)
   - [Contributing](#contributing)
   - [Code of Conduct](#code-of-conduct)
   - [License](#license)
@@ -620,6 +622,60 @@ export class FlushOnScreenEventsPolicy extends FlushPolicyBase {
   }
 }
 ```
+
+## Handling errors
+
+You can handle analytics client errors through the `errorHandler` option.
+
+The error handler configuration receives a function which will get called whenever an error happens on the analytics client. It will receive an argument of [`SegmentError`](packages/core/src/errors.ts#L20) type. 
+
+You can use this error handling to trigger different behaviours in the client when a problem occurs. For example if the client gets rate limited you could use the error handler to swap flush policies to be less aggressive:
+
+```ts
+const flushPolicies = [new CountFlushPolicy(5), new TimerFlushPolicy(500)];
+
+const errorHandler = (error: SegmentError) => {
+  if (error.type === ErrorType.NetworkServerLimited) {
+    // Remove all flush policies
+    segmentClient.removeFlushPolicy(...segmentClient.getFlushPolicies());
+    // Add less persistent flush policies
+    segmentClient.addFlushPolicy(
+      new CountFlushPolicy(100),
+      new TimerFlushPolicy(5000)
+    );
+  }
+};
+
+const segmentClient = createClient({
+  writeKey: 'WRITE_KEY',
+  trackAppLifecycleEvents: true,
+  collectDeviceId: true,
+  debug: true,
+  trackDeepLinks: true,
+  flushPolicies: flushPolicies,
+  errorHandler: errorHandler,
+});
+
+```
+
+The reported errors can be of any of the [`ErrorType`](packages/core/src/errors.ts#L4) enum values. 
+
+### Reporting errors from plugins
+
+Plugins can also report errors to the handler by using the [`.reportInternalError`](packages/core/src/analytics.ts#L741) function of the analytics client, we recommend using the `ErrorType.PluginError` for consistency, and attaching the `innerError` with the actual exception that was hit:
+
+```ts
+  try {
+    distinctId = await mixpanel.getDistinctId();
+  } catch (e) {
+    analytics.reportInternalError(
+      new SegmentError(ErrorType.PluginError, 'Error: Mixpanel error calling getDistinctId', e)
+    );
+    analytics.logger.warn(e);
+  }
+```
+
+
 
 
 ## Contributing
