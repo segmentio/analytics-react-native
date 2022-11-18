@@ -37,6 +37,9 @@ The hassle-free way to add Segment analytics to your React-Native app.
     - [Adding Plugins](#adding-plugins)
     - [Writing your own Plugins](#writing-your-own-plugins)
     - [Supported Plugins](#supported-plugins)
+  - [Controlling Upload With Flush Policies](#controlling-upload-with-flush-policies)
+  - [Adding or removing policies](#adding-or-removing-policies)
+    - [Creating your own flush policies](#creating-your-own-flush-policies)
   - [Contributing](#contributing)
   - [Code of Conduct](#code-of-conduct)
   - [License](#license)
@@ -526,6 +529,98 @@ Refer to the following table for Plugins you can use to meet your tracking needs
 | [Android Advertising ID](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-advertising-id) | `@segment/analytics-react-native-plugin-advertising-id` |
   
   
+## Controlling Upload With Flush Policies
+
+To more granurily control when events are uploaded you can use `FlushPolicies`
+
+A Flush Policy defines the strategy for deciding when to flush, this can be on an interval, on a certain time of day, after receiving a certain number of events or even after receiving a particular event. This gives you even more flexibility on when to send event to Segment.
+
+To make use of flush policies you can set them in the configuration of the client:
+
+```ts
+const client = createClient({
+  // ...
+  flushPolicies: [
+    new CountFlushPolicy(5),
+    new TimerFlushPolicy(500),
+    new StartupFlushPolicy(),
+  ],
+});
+```
+
+You can set several policies at a time. Whenever any of them decides it is time for a flush it will trigger an upload of the events. The rest get reset so that their logic restarts after every flush. 
+
+That means only the first policy to reach `shouldFlush` gets to trigger a flush at a time. In the example above either the event count gets to 5 or the timer reaches 500ms, whatever comes first will trigger a flush.
+
+We have several standard FlushPolicies:
+- `CountFlushPolicy` triggers whenever a certain number of events is reached
+- `TimerFlushPolicy` triggers on an interval of milliseconds
+- `StartupFlushPolicy` triggers on client startup only
+
+## Adding or removing policies
+
+One of the main advatanges of FlushPolicies is that you can add and remove policies on the fly. This is very powerful when you want to reduce or increase the amount of flushes. 
+
+For example you might want to disable flushes if you detect the user has no network:
+
+```ts
+
+import NetInfo from "@react-native-community/netinfo";
+
+const policiesIfNetworkIsUp = [
+  new CountFlushPolicy(5),
+  new TimerFlushPolicy(500),
+];
+
+// Create our client with our policies by default
+const client = createClient({
+  // ...
+  flushPolicies: policies,
+});
+
+// If we detect the user disconnects from the network remove all flush policies, 
+// that way we won't keep attempting to send events to segment but we will still 
+// store them for future upload.
+// If the network comes back up we add the policies back
+const unsubscribe = NetInfo.addEventListener((state) => {
+  if (state.isConnected) {
+    client.addFlushPolicy(...policiesIfNetworkIsUp);
+  } else {
+    client.removeFlushPolicy(...policiesIfNetworkIsUp)
+  }
+});
+
+```
+
+### Creating your own flush policies
+
+You can create a custom FlushPolicy special for your application needs by implementing the  `FlushPolicy` interface. You can also extend the `FlushPolicyBase` class that already creates and handles the `shouldFlush` value reset.
+
+A `FlushPolicy` only needs to implement 2 methods:
+- `start()`: Executed when the flush policy is enabled and added to the client. This is a good place to start background operations, make async calls, configure things before execution
+- `onEvent(event: SegmentEvent)`: Gets called on every event tracked by your client
+- `reset()`: Called after a flush is triggered (either by your policy, by another policy or manually)
+
+They also have a `shouldFlush` observable boolean value. When this is set to true the client will atempt to upload events. Each policy should reset this value to `false` according to its own logic, although it is pretty common to do it inside the `reset` method.
+
+```ts
+export class FlushOnScreenEventsPolicy extends FlushPolicyBase {
+
+  onEvent(event: SegmentEvent): void {
+    // Only flush when a screen even happens
+    if (event.type === EventType.ScreenEvent) {
+      this.shouldFlush.value = true;
+    }
+  }
+
+  reset(): void {
+    // Superclass will reset the shouldFlush value so that the next screen event triggers a flush again
+    // But you can also reset the value whenever, say another event comes in or after a timeout
+    super.reset();
+  }
+}
+```
+
 
 ## Contributing
 
