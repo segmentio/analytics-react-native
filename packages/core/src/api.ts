@@ -10,7 +10,7 @@ export const uploadEvents = async ({
   events: SegmentEvent[];
 }) => {
   const requestUrl = config.proxy || batchApi;
-  await fetch(requestUrl, {
+  return await fetch(requestUrl, {
     method: 'POST',
     body: JSON.stringify({
       batch: events,

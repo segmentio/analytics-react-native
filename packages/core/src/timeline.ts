@@ -1,16 +1,8 @@
 import { PluginType, SegmentEvent, UpdateType } from './types';
 import type { DestinationPlugin, Plugin } from './plugin';
 import { getAllPlugins } from './util';
+import { ErrorType, SegmentError } from './errors';
 
-/*
-type TimelinePlugins = {
-    before?: Plugin[] | undefined;
-    enrichment?: Plugin[] | undefined;
-    destination?: Plugin[] | undefined;
-    after?: Plugin[] | undefined;
-    utility?: Plugin[] | undefined;
-}
- */
 type TimelinePlugins = {
   [key in PluginType]?: Plugin[];
 };
@@ -116,6 +108,13 @@ export class Timeline {
               result = await pluginResult;
             }
           } catch (error) {
+            plugin.analytics?.reportInternalError(
+              new SegmentError(
+                ErrorType.PluginError,
+                JSON.stringify(error),
+                error
+              )
+            );
             plugin.analytics?.logger.warn(
               `Destination ${
                 (plugin as DestinationPlugin).key
