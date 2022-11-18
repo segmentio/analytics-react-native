@@ -676,11 +676,19 @@ export class SegmentClient {
     let flushPolicies = this.config.flushPolicies ?? [];
 
     // Compatibility with older arguments
-    if (this.config.flushAt !== undefined) {
+    if (
+      this.config.flushAt !== undefined &&
+      this.config.flushAt !== null &&
+      this.config.flushAt > 0
+    ) {
       flushPolicies.push(new CountFlushPolicy(this.config.flushAt));
     }
 
-    if (this.config.flushInterval !== undefined) {
+    if (
+      this.config.flushInterval !== undefined &&
+      this.config.flushInterval !== null &&
+      this.config.flushInterval > 0
+    ) {
       flushPolicies.push(
         new TimerFlushPolicy(this.config.flushInterval * 1000)
       );
