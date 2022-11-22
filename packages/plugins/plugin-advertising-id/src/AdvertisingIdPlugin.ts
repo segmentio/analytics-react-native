@@ -6,10 +6,16 @@ import {
   getNativeModule,
 } from '@segment/analytics-react-native';
 
+import { Platform } from 'react-native';
+
 export class AdvertisingIdPlugin extends Plugin {
   type = PluginType.enrichment;
 
   configure(analytics: SegmentClient): void {
+    if (Platform.OS !== 'android') {
+      return;
+    }
+
     this.analytics = analytics;
     getNativeModule('AnalyticsReactNativePluginAdvertisingId')
       ?.getAdvertisingId()
