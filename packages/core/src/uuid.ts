@@ -1,5 +1,6 @@
-import { getNativeModule } from './util';
+import uuid from 'react-native-uuid';
 
 export const getUUID = (): string => {
-  return getNativeModule('AnalyticsReactNative')?.getUUIDSync() ?? '';
+  let UUID = uuid.v4().toString();
+  return UUID;
 };

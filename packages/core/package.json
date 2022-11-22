@@ -50,7 +50,8 @@
     "@segment/sovran-react-native": "^0.4.5",
     "deepmerge": "^4.2.2",
     "js-base64": "^3.7.2",
-    "promise.allsettled": "^1.0.5"
+    "promise.allsettled": "^1.0.5",
+    "react-native-uuid": "^2.0.1"
   },
   "peerDependencies": {
     "react": "*",
