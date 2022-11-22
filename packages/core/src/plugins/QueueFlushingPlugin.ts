@@ -63,7 +63,7 @@ export class QueueFlushingPlugin extends UtilityPlugin {
    * Calls the onFlush callback with the events in the queue
    */
   async flush() {
-    const events = this.queueStore?.getState().events ?? [];
+    const events = (await this.queueStore?.getState(true))?.events ?? [];
     if (!this.isPendingUpload) {
       try {
         this.isPendingUpload = true;

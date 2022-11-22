@@ -1,4 +1,9 @@
-import { Plugin, PluginType } from '@segment/analytics-react-native';
+import {
+  ErrorType,
+  Plugin,
+  PluginType,
+  SegmentError,
+} from '@segment/analytics-react-native';
 import type { IdfaData } from './types';
 import { AnalyticsReactNativePluginIdfa } from './AnalyticsReactNativePluginIdfa';
 
@@ -34,6 +39,9 @@ make additional tracking decisions based on the user response
       this.analytics?.context.set({ device: { ...idfaData } });
       return idfaData.adTrackingEnabled;
     } catch (error) {
+      this.analytics?.reportInternalError(
+        new SegmentError(ErrorType.PluginError, JSON.stringify(error), error)
+      );
       this.analytics?.logger.warn(error);
       return false;
     }
@@ -46,8 +54,11 @@ make additional tracking decisions based on the user response
         this.analytics?.context.set({ device: { ...idfa } });
         return idfa;
       })
-      .catch((err: any) => {
-        this.analytics?.logger.warn(err);
+      .catch((error: any) => {
+        this.analytics?.reportInternalError(
+          new SegmentError(ErrorType.PluginError, JSON.stringify(error), error)
+        );
+        this.analytics?.logger.warn(error);
       });
   }
 }

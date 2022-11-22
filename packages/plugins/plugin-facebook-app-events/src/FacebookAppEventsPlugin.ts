@@ -1,11 +1,13 @@
 import {
   DestinationPlugin,
+  ErrorType,
   generateMapTransform,
   IntegrationSettings,
   PluginType,
   ScreenEventType,
   SegmentAPISettings,
   SegmentClient,
+  SegmentError,
   TrackEventType,
   UpdateType,
 } from '@segment/analytics-react-native';
@@ -86,6 +88,9 @@ export class FacebookAppEventsPlugin extends DestinationPlugin {
         await Settings.setAdvertiserTrackingEnabled(true);
       } catch (e) {
         //handle error
+        this.analytics?.reportInternalError(
+          new SegmentError(ErrorType.PluginError, JSON.stringify(e), e)
+        );
         this.analytics?.logger.warn('Add Tracking Enabled Error', e);
       }
     }

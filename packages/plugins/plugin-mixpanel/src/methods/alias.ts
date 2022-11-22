@@ -1,7 +1,9 @@
 import type { Mixpanel } from 'mixpanel-react-native';
-import type {
+import {
   AliasEventType,
+  ErrorType,
   SegmentClient,
+  SegmentError,
 } from '@segment/analytics-react-native';
 
 export default async (
@@ -15,6 +17,9 @@ export default async (
   try {
     distinctId = await mixpanel.getDistinctId();
   } catch (e) {
+    analytics.reportInternalError(
+      new SegmentError(ErrorType.PluginError, JSON.stringify(e), e)
+    );
     analytics.logger.warn(e);
   }
   if (distinctId !== '') {

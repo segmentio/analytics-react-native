@@ -237,7 +237,9 @@ describe('SegmentDestination', () => {
       .spyOn(plugin.queuePlugin.queueStore!, 'getState')
       .mockImplementation(createMockStoreGetter(() => ({ events })));
 
-    const sendEventsSpy = jest.spyOn(api, 'uploadEvents').mockResolvedValue();
+    const sendEventsSpy = jest
+      .spyOn(api, 'uploadEvents')
+      .mockResolvedValue({ ok: true } as Response);
 
     await plugin.flush();
 
