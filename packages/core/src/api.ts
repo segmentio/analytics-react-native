@@ -1,24 +1,24 @@
-import type { Config, SegmentEvent } from './types';
+import type { SegmentEvent } from './types';
 import { Base64 } from 'js-base64';
-import { batchApi } from './constants';
 
 export const uploadEvents = async ({
-  config,
+  writeKey,
+  url,
   events,
 }: {
-  config: Config;
+  writeKey: String;
+  url: RequestInfo;
   events: SegmentEvent[];
 }) => {
-  const requestUrl = config.proxy || batchApi;
-  await fetch(requestUrl, {
+  await fetch(url, {
     method: 'POST',
     body: JSON.stringify({
       batch: events,
       sentAt: new Date().toISOString(),
-      writeKey: config.writeKey,
+      writeKey: writeKey,
     }),
     headers: {
-      'Authorization': `Basic ${Base64.encode(`${config.writeKey}:`)}`,
+      'Authorization': `Basic ${Base64.encode(`${writeKey}:`)}`,
       'Content-Type': 'text/plain',
     },
   });

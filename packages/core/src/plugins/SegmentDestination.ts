@@ -5,6 +5,7 @@ import { uploadEvents } from '../api';
 import type { SegmentClient } from '../analytics';
 import { DestinationMetadataEnrichment } from './DestinationMetadataEnrichment';
 import { QueueFlushingPlugin } from './QueueFlushingPlugin';
+import { defaultApiHost } from '../constants';
 
 const MAX_EVENTS_PER_BATCH = 100;
 const MAX_PAYLOAD_SIZE_IN_KB = 500;
@@ -28,17 +29,19 @@ export class SegmentDestination extends DestinationPlugin {
 
     let sentEvents: SegmentEvent[] = [];
     let numFailedEvents = 0;
+    const config = this.analytics?.getConfig();
 
     await Promise.all(
       chunkedEvents.map(async (batch: SegmentEvent[]) => {
         try {
           await uploadEvents({
-            config: this.analytics?.getConfig()!,
+            writeKey: config!.writeKey,
+            url: this.getEndpoint(),
             events: batch,
           });
           sentEvents = sentEvents.concat(batch);
         } catch (e) {
-          this.analytics?.logger.warn(e);
+          console.warn(e);
           numFailedEvents += batch.length;
         } finally {
           this.queuePlugin.dequeue(sentEvents);
@@ -48,18 +51,37 @@ export class SegmentDestination extends DestinationPlugin {
 
     if (sentEvents.length) {
       if (this.analytics?.getConfig().debug) {
-        this.analytics?.logger.info(`Sent ${sentEvents.length} events`);
+        console.info(`Sent ${sentEvents.length} events`);
       }
     }
 
     if (numFailedEvents) {
-      this.analytics?.logger.error(`Failed to send ${numFailedEvents} events.`);
+      console.error(`Failed to send ${numFailedEvents} events.`);
     }
 
     return Promise.resolve();
   };
 
   private readonly queuePlugin = new QueueFlushingPlugin(this.sendEvents);
+
+  getEndpoint(): RequestInfo {
+    const config = this.analytics?.getConfig();
+    let api;
+    let settings = this.analytics?.settings.get();
+
+    if (
+      settings !== undefined &&
+      Object.keys(settings).includes(SEGMENT_DESTINATION_KEY)
+    ) {
+      const segmentInfo =
+        (settings[SEGMENT_DESTINATION_KEY] as Record<string, any>) ?? {};
+      api = segmentInfo.apiHost;
+    }
+
+    let requestUrl = config!.proxy || api || defaultApiHost;
+    requestUrl = 'https://' + requestUrl + '/b';
+    return requestUrl;
+  }
 
   configure(analytics: SegmentClient): void {
     super.configure(analytics);

@@ -243,19 +243,15 @@ describe('SegmentDestination', () => {
 
     expect(sendEventsSpy).toHaveBeenCalledTimes(2);
     expect(sendEventsSpy).toHaveBeenCalledWith({
-      config: {
-        maxBatchSize: 2,
-        writeKey: '123-456',
-      },
+      writeKey: '123-456',
+      url: 'https://api.segment.io/v1/b',
       events: events.slice(0, 2).map((e) => ({
         ...e,
       })),
     });
     expect(sendEventsSpy).toHaveBeenCalledWith({
-      config: {
-        maxBatchSize: 2,
-        writeKey: '123-456',
-      },
+      writeKey: '123-456',
+      url: 'https://api.segment.io/v1/b',
       events: events.slice(2, 4).map((e) => ({
         ...e,
       })),
