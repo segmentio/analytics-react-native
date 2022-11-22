@@ -41,7 +41,7 @@ export class SegmentDestination extends DestinationPlugin {
           });
           sentEvents = sentEvents.concat(batch);
         } catch (e) {
-          console.warn(e);
+          this.analytics?.logger.warn(e);
           numFailedEvents += batch.length;
         } finally {
           this.queuePlugin.dequeue(sentEvents);
@@ -51,12 +51,12 @@ export class SegmentDestination extends DestinationPlugin {
 
     if (sentEvents.length) {
       if (this.analytics?.getConfig().debug) {
-        console.info(`Sent ${sentEvents.length} events`);
+        this.analytics?.logger.info(`Sent ${sentEvents.length} events`);
       }
     }
 
     if (numFailedEvents) {
-      console.error(`Failed to send ${numFailedEvents} events.`);
+      this.analytics?.logger.error(`Failed to send ${numFailedEvents} events.`);
     }
 
     return Promise.resolve();
