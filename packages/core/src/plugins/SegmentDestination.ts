@@ -66,8 +66,8 @@ export class SegmentDestination extends DestinationPlugin {
 
   getEndpoint(): RequestInfo {
     const config = this.analytics?.getConfig();
+    const settings = this.analytics?.settings.get();
     let api;
-    let settings = this.analytics?.settings.get();
 
     if (
       settings !== undefined &&
