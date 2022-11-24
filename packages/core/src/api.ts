@@ -10,7 +10,7 @@ export const uploadEvents = async ({
   url: RequestInfo;
   events: SegmentEvent[];
 }) => {
- return await fetch(url, {
+  return await fetch(url, {
     method: 'POST',
     body: JSON.stringify({
       batch: events,
