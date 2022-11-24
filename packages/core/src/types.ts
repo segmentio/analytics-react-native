@@ -1,5 +1,6 @@
 import type { Persistor } from '@segment/sovran-react-native';
 import type { Rule } from '@segment/tsub/dist/store';
+import type { SegmentError } from './errors';
 import type { FlushPolicy } from './flushPolicies';
 
 export type JsonValue =
@@ -144,6 +145,7 @@ export type Config = {
   collectDeviceId?: boolean;
   storePersistor?: Persistor;
   proxy?: string;
+  errorHandler?: (error: SegmentError) => void;
 };
 
 export type ClientMethods = {

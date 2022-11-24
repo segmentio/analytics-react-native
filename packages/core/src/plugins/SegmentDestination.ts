@@ -6,6 +6,7 @@ import type { SegmentClient } from '../analytics';
 import { DestinationMetadataEnrichment } from './DestinationMetadataEnrichment';
 import { QueueFlushingPlugin } from './QueueFlushingPlugin';
 import { defaultApiHost } from '../constants';
+import { checkResponseForErrors, translateHTTPError } from '../errors';
 
 const MAX_EVENTS_PER_BATCH = 100;
 const MAX_PAYLOAD_SIZE_IN_KB = 500;
@@ -34,13 +35,15 @@ export class SegmentDestination extends DestinationPlugin {
     await Promise.all(
       chunkedEvents.map(async (batch: SegmentEvent[]) => {
         try {
-          await uploadEvents({
+          const res = await uploadEvents({
             writeKey: config!.writeKey,
             url: this.getEndpoint(),
             events: batch,
           });
+          checkResponseForErrors(res);
           sentEvents = sentEvents.concat(batch);
         } catch (e) {
+          this.analytics?.reportInternalError(translateHTTPError(e));
           this.analytics?.logger.warn(e);
           numFailedEvents += batch.length;
         } finally {

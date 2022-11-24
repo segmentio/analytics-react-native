@@ -46,11 +46,6 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
       return "AnalyticsReactNative"
   }
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun getUUIDSync(): String {
-    return UUID.randomUUID().toString()
-  }
-
   private fun getBuildNumber(): String {
       return PackageInfoCompat.getLongVersionCode(pInfo).toString()
     }

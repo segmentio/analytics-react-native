@@ -1,6 +1,7 @@
 import type { AppStateStatus } from 'react-native';
 import { AppState } from 'react-native';
 import { SegmentClient } from '../analytics';
+import { ErrorType, SegmentError } from '../errors';
 import { getMockLogger } from './__helpers__/mockLogger';
 import { MockSegmentStore } from './__helpers__/mockSegmentStore';
 
@@ -142,6 +143,24 @@ describe('SegmentClient', () => {
         userId: undefined,
         traits: undefined,
       });
+    });
+  });
+
+  describe('Error Handler', () => {
+    it('calls the error handler when reportErrorInternal is called', () => {
+      const errorHandler = jest.fn();
+      client = new SegmentClient({
+        ...clientArgs,
+        config: { ...clientArgs.config, errorHandler: errorHandler },
+      });
+
+      const error = new SegmentError(
+        ErrorType.NetworkUnknown,
+        'Some weird error'
+      );
+      client.reportInternalError(error);
+
+      expect(errorHandler).toHaveBeenCalledWith(error);
     });
   });
 });

@@ -40,6 +40,7 @@ describe('internal #getSettings', () => {
   it('fetches the settings succesfully ', async () => {
     const mockJSONResponse = { integrations: { foo: 'bar' } };
     const mockResponse = Promise.resolve({
+      ok: true,
       json: () => mockJSONResponse,
     });
     // @ts-ignore
@@ -80,6 +81,26 @@ describe('internal #getSettings', () => {
   it('fails to the settings succesfully and has no default settings', async () => {
     // @ts-ignore
     global.fetch = jest.fn(() => Promise.reject());
+    const anotherClient = new SegmentClient({
+      ...clientArgs,
+      config: { ...clientArgs.config, defaultSettings: undefined },
+    });
+
+    await anotherClient.fetchSettings();
+
+    expect(fetch).toHaveBeenCalledWith(
+      `${settingsCDN}/${clientArgs.config.writeKey}/settings`
+    );
+    expect(setSettingsSpy).not.toHaveBeenCalled();
+  });
+
+  it('fails to the settings succesfully and has no default settings for soft API errors', async () => {
+    const mockResponse = Promise.resolve({
+      ok: false,
+      status: 500,
+    });
+    // @ts-ignore
+    global.fetch = jest.fn(() => Promise.resolve(mockResponse));
     const anotherClient = new SegmentClient({
       ...clientArgs,
       config: { ...clientArgs.config, defaultSettings: undefined },

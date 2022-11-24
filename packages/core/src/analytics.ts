@@ -46,6 +46,11 @@ import {
 import { getPluginsWithFlush, getPluginsWithReset } from './util';
 import { getUUID } from './uuid';
 import type { FlushPolicy } from './flushPolicies';
+import {
+  checkResponseForErrors,
+  SegmentError,
+  translateHTTPError,
+} from './errors';
 
 type OnContextLoadCallback = (type: UpdateType) => void | Promise<void>;
 type OnPluginAddedCallback = (plugin: Plugin) => void;
@@ -267,6 +272,8 @@ export class SegmentClient {
 
     try {
       const res = await fetch(settingsEndpoint);
+      checkResponseForErrors(res);
+
       const resJson: SegmentAPISettings = await res.json();
       const integrations = resJson.integrations;
       const filters = this.generateFiltersMap(
@@ -277,7 +284,9 @@ export class SegmentClient {
         this.store.settings.set(integrations),
         this.store.filters.set(filters),
       ]);
-    } catch {
+    } catch (e) {
+      this.reportInternalError(translateHTTPError(e));
+
       this.logger.warn(
         `Could not receive settings from Segment. ${
           this.config.defaultSettings
@@ -285,6 +294,7 @@ export class SegmentClient {
             : 'Device mode destinations will be ignored unless you specify default settings in the client config.'
         }`
       );
+
       if (this.config.defaultSettings) {
         await this.store.settings.set(this.config.defaultSettings.integrations);
       }
@@ -726,5 +736,14 @@ export class SegmentClient {
    */
   getFlushPolicies() {
     return this.flushPolicyExecuter.policies;
+  }
+
+  reportInternalError(error: SegmentError, fatal: boolean = false) {
+    if (fatal) {
+      this.logger.error('A critical error ocurred: ', error);
+    } else {
+      this.logger.warn('An internal error occurred: ', error);
+    }
+    this.config.errorHandler?.(error);
   }
 }
