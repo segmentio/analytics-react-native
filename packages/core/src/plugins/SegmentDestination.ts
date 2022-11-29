@@ -71,18 +71,22 @@ export class SegmentDestination extends DestinationPlugin {
     const config = this.analytics?.getConfig();
     const settings = this.analytics?.settings.get();
     let api;
+    let requestUrl;
 
     if (
       settings !== undefined &&
       Object.keys(settings).includes(SEGMENT_DESTINATION_KEY)
     ) {
-      const segmentInfo =
-        (settings[SEGMENT_DESTINATION_KEY] as Record<string, any>) ?? {};
-      api = segmentInfo.apiHost;
+      const segmentInfo = settings[SEGMENT_DESTINATION_KEY] as Record<
+        string,
+        any
+      >;
+      if (segmentInfo.apiHost !== undefined && segmentInfo.apiHost !== null) {
+        api = `https://${segmentInfo.apiHost}/b`;
+      }
     }
 
-    let requestUrl = config!.proxy || api || defaultApiHost;
-    requestUrl = 'https://' + requestUrl + '/b';
+    requestUrl = config?.proxy ?? api ?? defaultApiHost;
     return requestUrl;
   }
 

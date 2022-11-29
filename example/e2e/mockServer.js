@@ -19,6 +19,7 @@ export const startServer = async (mockServerListener) => {
     app.post('/events', (req, res) => {
       console.log(`➡️  Received request`);
       const body = JSON.parse(req.body);
+      console.log('➡️➡️➡️BODY➡️➡️➡️', body);
       mockServerListener(body);
 
       res.status(200).send({ mockSuccess: true });

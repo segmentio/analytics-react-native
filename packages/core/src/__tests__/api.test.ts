@@ -7,7 +7,6 @@ import {
 } from '../types';
 import { uploadEvents } from '../api';
 import * as context from '../context';
-import { batchApi } from '../constants';
 
 describe('#sendEvents', () => {
   beforeEach(() => {
@@ -78,7 +77,7 @@ describe('#sendEvents', () => {
   }
 
   it('sends an event', async () => {
-    const toSegmentBatchApi = batchApi;
+    const toSegmentBatchApi = 'https://api.segment.io/v1.b';
     const writeKey = 'SEGMENT_KEY';
 
     await sendAnEventPer(writeKey, toSegmentBatchApi);
