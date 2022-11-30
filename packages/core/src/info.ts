@@ -1,4 +1,4 @@
 export const libraryInfo = {
   name: '@segment/analytics-react-native',
-  version: '2.9.1',
+  version: '2.10.0',
 };
