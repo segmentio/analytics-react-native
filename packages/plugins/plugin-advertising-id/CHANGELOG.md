@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-advertising-id-v1.2.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-advertising-id-v1.2.0...@segment/analytics-react-native-plugin-advertising-id-v1.2.1) (2022-11-30)
+
+
+### Bug Fixes
+
+* check for platform before configuring adId plugin ([#714](https://github.com/segmentio/analytics-react-native/issues/714)) ([3b44278](https://github.com/segmentio/analytics-react-native/commit/3b44278b70f9a67812dc83dccceea6c65243e06e))
+
 ## [@segment/analytics-react-native-plugin-advertising-id-v1.2.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-advertising-id-v1.1.1...@segment/analytics-react-native-plugin-advertising-id-v1.2.0) (2022-10-07)
 
 
