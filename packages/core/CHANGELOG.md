@@ -1,3 +1,18 @@
+## [@segment/analytics-react-native-v2.10.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.9.1...@segment/analytics-react-native-v2.10.0) (2022-11-30)
+
+
+### Features
+
+* add Flush Policies ([#703](https://github.com/segmentio/analytics-react-native/issues/703)) ([004b596](https://github.com/segmentio/analytics-react-native/commit/004b59659453b8d610b32e5e202033e190abbaee))
+* added errorHandler option to client ([#713](https://github.com/segmentio/analytics-react-native/issues/713)) ([b95788b](https://github.com/segmentio/analytics-react-native/commit/b95788ba8ecb547ffc9f43ba94f628c25f3660d1))
+
+
+### Bug Fixes
+
+* add segmentDestination plugin to exports ([#712](https://github.com/segmentio/analytics-react-native/issues/712)) ([d47ceb1](https://github.com/segmentio/analytics-react-native/commit/d47ceb1ea1934fa68e5f8c939c51345dee88fdcb))
+* Firebase custom screen properties ([#707](https://github.com/segmentio/analytics-react-native/issues/707)) ([18b75af](https://github.com/segmentio/analytics-react-native/commit/18b75af1bb38246d75ccbfba06d6d972c6db0339))
+* replace native modules with react-native-uuid ([#718](https://github.com/segmentio/analytics-react-native/issues/718)) ([db38836](https://github.com/segmentio/analytics-react-native/commit/db38836befcbddee01abd9ee7381c45e04f83dba))
+
 ## [@segment/analytics-react-native-v2.9.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.9.0...@segment/analytics-react-native-v2.9.1) (2022-11-01)
 
 
