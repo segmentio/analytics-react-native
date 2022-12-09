@@ -71,7 +71,6 @@ describe('#sendEvents', () => {
         writeKey: 'SEGMENT_KEY',
       }),
       headers: {
-        'Authorization': 'Basic U0VHTUVOVF9LRVk6',
         'Content-Type': 'text/plain',
       },
     });

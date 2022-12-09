@@ -209,6 +209,7 @@ export type Context = {
   screen: ContextScreen;
   timezone: string;
   traits: UserTraits;
+  instanceId: string;
 };
 
 /**

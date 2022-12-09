@@ -1,5 +1,4 @@
 import type { Config, SegmentEvent } from './types';
-import { Base64 } from 'js-base64';
 import { batchApi } from './constants';
 
 export const uploadEvents = async ({
@@ -18,7 +17,6 @@ export const uploadEvents = async ({
       writeKey: config.writeKey,
     }),
     headers: {
-      'Authorization': `Basic ${Base64.encode(`${config.writeKey}:`)}`,
       'Content-Type': 'text/plain',
     },
   });

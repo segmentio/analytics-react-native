@@ -7,6 +7,7 @@ import type {
   UserTraits,
 } from './types';
 import { getNativeModule } from './util';
+import { getUUID } from './uuid';
 
 interface GetContextConfig {
   collectDeviceId?: boolean;
@@ -94,5 +95,6 @@ export const getContext = async (
     },
     timezone,
     traits: userTraits,
+    instanceId: getUUID(),
   };
 };

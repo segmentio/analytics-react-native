@@ -5,6 +5,12 @@ import packageJson from '../../package.json';
 
 import { getContext } from '../context';
 
+const UUID = 'uuid-uuid-very-unique';
+
+jest.mock('../uuid', () => ({
+  getUUID: () => UUID,
+}));
+
 describe('#getContext', () => {
   const mockNativeContext: NativeContextInfo = {
     appName: 'Segment Example',
@@ -60,6 +66,7 @@ describe('#getContext', () => {
     },
     timezone: 'Europe/London',
     traits: {},
+    instanceId: UUID,
   };
 
   beforeEach(() => {
