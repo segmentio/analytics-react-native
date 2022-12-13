@@ -1,6 +1,6 @@
 # @segment/analytics-react-native
-
-The hassle-free way to add analytics to your React-Native app.
+## End of Support Announcement
+On May 15, 2023, Segment will end support for Analytics React Native Classic, which includes versions 1.5.1 and older. Upgrade to Analytics React Native 2.0. See the Analytics React Native 2.0 docs to learn more.
 
 [![CircleCI](https://circleci.com/gh/segmentio/analytics-react-native.svg?style=svg)](https://circleci.com/gh/segmentio/analytics-react-native) [![codecov](https://codecov.io/gh/segmentio/analytics-react-native/branch/develop/graph/badge.svg)](https://codecov.io/gh/segmentio/analytics-react-native) [![npm](https://img.shields.io/npm/v/@segment/analytics-react-native.svg)](https://www.npmjs.com/package/@segment/analytics-react-native)
 
