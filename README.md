@@ -2,7 +2,7 @@
 
 The hassle-free way to add Segment analytics to your React-Native app.
 
-⚠️ This readme covers `analytics-react-native 2.0.0` and greater. The code and readme for `analytics-react-native` versions below `2.0.0` can be found on the `analytics-react-native-v1` branch. On May 15, 2023, Segment will end support for Analytics React Native Classic, which includes versions 1.5.1 and older. Upgrade to Analytics React Native 2.0. See the Analytics React Native 2.0 docs to learn more.
+⚠️ This readme covers `analytics-react-native 2.0.0` and greater. The code and readme for `analytics-react-native` versions below `2.0.0` can be found on the `analytics-react-native-v1` branch. On May 15, 2023, Segment will end support for Analytics React Native Classic, which includes versions 1.5.1 and older. Upgrade to Analytics React Native 2.0. 
 
 
 
