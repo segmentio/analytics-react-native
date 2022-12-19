@@ -50,12 +50,19 @@ The hassle-free way to add Segment analytics to your React-Native app.
 
 ## Installation
 
-Install `@segment/analytics-react-native`,  [`@segment/sovran-react-native`](https://github.com/segmentio/sovran-react-native) and [`react-native-async-storage/async-storage`](https://github.com/react-native-async-storage/async-storage): 
+Install `@segment/analytics-react-native`,  [`@segment/sovran-react-native`](https://github.com/segmentio/sovran-react-native): 
 
 ```sh
-yarn add @segment/analytics-react-native @segment/sovran-react-native @react-native-async-storage/async-storage 
+yarn add @segment/analytics-react-native @segment/sovran-react-native
 # or
-npm install --save @segment/analytics-react-native @segment/sovran-react-native @react-native-async-storage/async-storage
+npm install --save @segment/analytics-react-native @segment/sovran-react-native
+```
+
+If using default persistor for the Segment Analytics client, install [`react-native-async-storage/async-storage`](https://github.com/react-native-async-storage/async-storage) (for more context, check <a href="#client-options">Client Options's `storePersistor`</a>):
+```sh
+yarn add @react-native-async-storage/async-storage 
+# or
+npm install --save @react-native-async-storage/async-storage
 ```
 
 For iOS, install native modules with:
