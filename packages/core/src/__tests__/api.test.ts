@@ -26,7 +26,7 @@ describe('#sendEvents', () => {
       .mockReturnValue('2001-01-01T00:00:00.000Z');
   });
 
-  async function sendAnEventPer(writeKey: string, toUrl: RequestInfo) {
+  async function sendAnEventPer(writeKey: string, toUrl: string) {
     const mockResponse = Promise.resolve('MANOS');
     // @ts-ignore
     global.fetch = jest.fn(() => Promise.resolve(mockResponse));
@@ -57,7 +57,7 @@ describe('#sendEvents', () => {
     };
 
     await uploadEvents({
-      writeKey,
+      writeKey: writeKey,
       url: toUrl,
       events: [event],
     });

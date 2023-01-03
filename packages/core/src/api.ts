@@ -6,8 +6,8 @@ export const uploadEvents = async ({
   url,
   events,
 }: {
-  writeKey: String;
-  url: RequestInfo;
+  writeKey: string;
+  url: string;
   events: SegmentEvent[];
 }) => {
   return await fetch(url, {

@@ -1,5 +1,11 @@
 import { DestinationPlugin } from '../plugin';
-import { PluginType, SegmentEvent } from '../types';
+import {
+  PluginType,
+  SegmentAPIIntegration,
+  SegmentAPISettings,
+  SegmentEvent,
+  UpdateType,
+} from '../types';
 import { chunk } from '../util';
 import { uploadEvents } from '../api';
 import type { SegmentClient } from '../analytics';
@@ -7,6 +13,7 @@ import { DestinationMetadataEnrichment } from './DestinationMetadataEnrichment';
 import { QueueFlushingPlugin } from './QueueFlushingPlugin';
 import { defaultApiHost } from '../constants';
 import { checkResponseForErrors, translateHTTPError } from '../errors';
+import { defaultConfig } from '../constants';
 
 const MAX_EVENTS_PER_BATCH = 100;
 const MAX_PAYLOAD_SIZE_IN_KB = 500;
@@ -14,29 +21,36 @@ export const SEGMENT_DESTINATION_KEY = 'Segment.io';
 
 export class SegmentDestination extends DestinationPlugin {
   type = PluginType.destination;
-
   key = SEGMENT_DESTINATION_KEY;
+  private apiHost?: string;
+  private isReady = false;
 
   private sendEvents = async (events: SegmentEvent[]): Promise<void> => {
+    if (!this.isReady) {
+      // We're not sending events until Segment has loaded all settings
+      return Promise.resolve();
+    }
+
     if (events.length === 0) {
       return Promise.resolve();
     }
 
+    const config = this.analytics?.getConfig() ?? defaultConfig;
+
     const chunkedEvents: SegmentEvent[][] = chunk(
       events,
-      this.analytics?.getConfig().maxBatchSize ?? MAX_EVENTS_PER_BATCH,
+      config.maxBatchSize ?? MAX_EVENTS_PER_BATCH,
       MAX_PAYLOAD_SIZE_IN_KB
     );
 
     let sentEvents: SegmentEvent[] = [];
     let numFailedEvents = 0;
-    const config = this.analytics?.getConfig();
 
     await Promise.all(
       chunkedEvents.map(async (batch: SegmentEvent[]) => {
         try {
           const res = await uploadEvents({
-            writeKey: config!.writeKey,
+            writeKey: config.writeKey,
             url: this.getEndpoint(),
             events: batch,
           });
@@ -53,7 +67,7 @@ export class SegmentDestination extends DestinationPlugin {
     );
 
     if (sentEvents.length) {
-      if (this.analytics?.getConfig().debug) {
+      if (config.debug) {
         this.analytics?.logger.info(`Sent ${sentEvents.length} events`);
       }
     }
@@ -67,27 +81,9 @@ export class SegmentDestination extends DestinationPlugin {
 
   private readonly queuePlugin = new QueueFlushingPlugin(this.sendEvents);
 
-  getEndpoint(): RequestInfo {
+  private getEndpoint(): string {
     const config = this.analytics?.getConfig();
-    const settings = this.analytics?.settings.get();
-    let api;
-    let requestUrl;
-
-    if (
-      settings !== undefined &&
-      Object.keys(settings).includes(SEGMENT_DESTINATION_KEY)
-    ) {
-      const segmentInfo = settings[SEGMENT_DESTINATION_KEY] as Record<
-        string,
-        any
-      >;
-      if (segmentInfo.apiHost !== undefined && segmentInfo.apiHost !== null) {
-        api = `https://${segmentInfo.apiHost}/b`;
-      }
-    }
-
-    requestUrl = config?.proxy ?? api ?? defaultApiHost;
-    return requestUrl;
+    return config?.proxy ?? this.apiHost ?? defaultApiHost;
   }
 
   configure(analytics: SegmentClient): void {
@@ -96,6 +92,20 @@ export class SegmentDestination extends DestinationPlugin {
     // Enrich events with the Destination metadata
     this.add(new DestinationMetadataEnrichment(SEGMENT_DESTINATION_KEY));
     this.add(this.queuePlugin);
+  }
+
+  // We block sending stuff to segment until we get the settings
+  update(settings: SegmentAPISettings, _type: UpdateType): void {
+    const segmentSettings = settings.integrations[
+      this.key
+    ] as SegmentAPIIntegration;
+    if (
+      segmentSettings?.apiHost !== undefined &&
+      segmentSettings?.apiHost !== null
+    ) {
+      this.apiHost = `https://${segmentSettings.apiHost}/b`;
+    }
+    this.isReady = true;
   }
 
   execute(event: SegmentEvent): Promise<SegmentEvent | undefined> {
