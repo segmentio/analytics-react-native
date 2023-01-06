@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-facebook-app-events-v0.5.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-facebook-app-events-v0.4.1...@segment/analytics-react-native-plugin-facebook-app-events-v0.5.0) (2022-11-30)
+
+
+### Features
+
+* added errorHandler option to client ([#713](https://github.com/segmentio/analytics-react-native/issues/713)) ([b95788b](https://github.com/segmentio/analytics-react-native/commit/b95788ba8ecb547ffc9f43ba94f628c25f3660d1))
+
 ## [@segment/analytics-react-native-plugin-facebook-app-events-v0.4.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-facebook-app-events-v0.4.0...@segment/analytics-react-native-plugin-facebook-app-events-v0.4.1) (2022-09-13)
 
 

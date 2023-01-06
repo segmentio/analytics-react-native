@@ -5,6 +5,7 @@ import { uploadEvents } from '../api';
 import type { SegmentClient } from '../analytics';
 import { DestinationMetadataEnrichment } from './DestinationMetadataEnrichment';
 import { QueueFlushingPlugin } from './QueueFlushingPlugin';
+import { defaultApiHost } from '../constants';
 import { checkResponseForErrors, translateHTTPError } from '../errors';
 
 const MAX_EVENTS_PER_BATCH = 100;
@@ -29,12 +30,14 @@ export class SegmentDestination extends DestinationPlugin {
 
     let sentEvents: SegmentEvent[] = [];
     let numFailedEvents = 0;
+    const config = this.analytics?.getConfig();
 
     await Promise.all(
       chunkedEvents.map(async (batch: SegmentEvent[]) => {
         try {
           const res = await uploadEvents({
-            config: this.analytics?.getConfig()!,
+            writeKey: config!.writeKey,
+            url: this.getEndpoint(),
             events: batch,
           });
           checkResponseForErrors(res);
@@ -63,6 +66,29 @@ export class SegmentDestination extends DestinationPlugin {
   };
 
   private readonly queuePlugin = new QueueFlushingPlugin(this.sendEvents);
+
+  getEndpoint(): RequestInfo {
+    const config = this.analytics?.getConfig();
+    const settings = this.analytics?.settings.get();
+    let api;
+    let requestUrl;
+
+    if (
+      settings !== undefined &&
+      Object.keys(settings).includes(SEGMENT_DESTINATION_KEY)
+    ) {
+      const segmentInfo = settings[SEGMENT_DESTINATION_KEY] as Record<
+        string,
+        any
+      >;
+      if (segmentInfo.apiHost !== undefined && segmentInfo.apiHost !== null) {
+        api = `https://${segmentInfo.apiHost}/b`;
+      }
+    }
+
+    requestUrl = config?.proxy ?? api ?? defaultApiHost;
+    return requestUrl;
+  }
 
   configure(analytics: SegmentClient): void {
     super.configure(analytics);

@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-firebase-v0.3.3](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-firebase-v0.3.2...@segment/analytics-react-native-plugin-firebase-v0.3.3) (2022-11-30)
+
+
+### Bug Fixes
+
+* Firebase custom screen properties ([#707](https://github.com/segmentio/analytics-react-native/issues/707)) ([18b75af](https://github.com/segmentio/analytics-react-native/commit/18b75af1bb38246d75ccbfba06d6d972c6db0339))
+
 ## [@segment/analytics-react-native-plugin-firebase-v0.3.2](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-firebase-v0.3.1...@segment/analytics-react-native-plugin-firebase-v0.3.2) (2022-10-07)
 
 

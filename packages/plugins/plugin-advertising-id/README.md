@@ -21,7 +21,7 @@ In your code where you initialize the Analytics client call the `.add(plugin)` m
 
 ```js
 import { createClient } from '@segment/analytics-react-native';
-import { AdvertisingIdPlugin } from '@segment/analytics-react-native-plugin-adjust';
+import { AdvertisingIdPlugin } from '@segment/analytics-react-native-plugin-advertising-id';
 
 const segmentClient = createClient({
   writeKey: 'SEGMENT_KEY'
