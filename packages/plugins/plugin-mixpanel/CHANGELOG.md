@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-mixpanel-v0.3.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-mixpanel-v0.2.4...@segment/analytics-react-native-plugin-mixpanel-v0.3.0) (2023-01-09)
+
+
+### Features
+
+* added errorHandler option to client ([#713](https://github.com/segmentio/analytics-react-native/issues/713)) ([b95788b](https://github.com/segmentio/analytics-react-native/commit/b95788ba8ecb547ffc9f43ba94f628c25f3660d1))
+
 ## [@segment/analytics-react-native-plugin-mixpanel-v0.2.4](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-mixpanel-v0.2.3...@segment/analytics-react-native-plugin-mixpanel-v0.2.4) (2022-11-01)
 
 
