@@ -1,15 +1,23 @@
-import { EventType, SegmentEvent, TrackEventType } from '../../types';
-import {
-  SegmentDestination,
-  SEGMENT_DESTINATION_KEY,
-} from '../SegmentDestination';
 import { SegmentClient } from '../../analytics';
+import * as api from '../../api';
+import { defaultApiHost } from '../../constants';
+import {
+  Config,
+  EventType,
+  SegmentAPIIntegration,
+  SegmentEvent,
+  TrackEventType,
+  UpdateType,
+} from '../../types';
+import { getMockLogger } from '../../__tests__/__helpers__/mockLogger';
 import {
   createMockStoreGetter,
   MockSegmentStore,
 } from '../../__tests__/__helpers__/mockSegmentStore';
-import { getMockLogger } from '../../__tests__/__helpers__/mockLogger';
-import * as api from '../../api';
+import {
+  SegmentDestination,
+  SEGMENT_DESTINATION_KEY,
+} from '../SegmentDestination';
 
 describe('SegmentDestination', () => {
   const store = new MockSegmentStore();
@@ -211,55 +219,6 @@ describe('SegmentDestination', () => {
     expect(result).toEqual(event);
   });
 
-  it('chunks the events correctly', async () => {
-    const plugin = new SegmentDestination();
-
-    const events = [
-      { messageId: 'message-1' },
-      { messageId: 'message-2' },
-      { messageId: 'message-3' },
-      { messageId: 'message-4' },
-    ] as SegmentEvent[];
-
-    const analytics = new SegmentClient({
-      ...clientArgs,
-      store: new MockSegmentStore({
-        settings: {
-          [SEGMENT_DESTINATION_KEY]: {},
-        },
-      }),
-    });
-
-    plugin.configure(analytics);
-
-    jest
-      // @ts-ignore
-      .spyOn(plugin.queuePlugin.queueStore!, 'getState')
-      .mockImplementation(createMockStoreGetter(() => ({ events })));
-
-    const sendEventsSpy = jest
-      .spyOn(api, 'uploadEvents')
-      .mockResolvedValue({ ok: true } as Response);
-
-    await plugin.flush();
-
-    expect(sendEventsSpy).toHaveBeenCalledTimes(2);
-    expect(sendEventsSpy).toHaveBeenCalledWith({
-      writeKey: '123-456',
-      url: 'https://api.segment.io/v1/b',
-      events: events.slice(0, 2).map((e) => ({
-        ...e,
-      })),
-    });
-    expect(sendEventsSpy).toHaveBeenCalledWith({
-      writeKey: '123-456',
-      url: 'https://api.segment.io/v1/b',
-      events: events.slice(2, 4).map((e) => ({
-        ...e,
-      })),
-    });
-  });
-
   it('lets plugins/events disable destinations individually', async () => {
     const plugin = new SegmentDestination();
     // @ts-ignore
@@ -287,5 +246,143 @@ describe('SegmentDestination', () => {
 
     const result = await plugin.execute(event);
     expect(result).toEqual(undefined);
+  });
+
+  describe('uploads', () => {
+    const createTestWith = async ({
+      config,
+      settings,
+      events,
+    }: {
+      config?: Config;
+      settings?: SegmentAPIIntegration;
+      events: SegmentEvent[];
+    }) => {
+      const plugin = new SegmentDestination();
+
+      const analytics = new SegmentClient({
+        ...clientArgs,
+        config: config ?? clientArgs.config,
+        store: new MockSegmentStore({
+          settings: {
+            [SEGMENT_DESTINATION_KEY]: {},
+          },
+        }),
+      });
+
+      plugin.configure(analytics);
+      // The settings store won't match but that's ok, the plugin should rely only on the settings it receives during update
+      plugin.update(
+        {
+          integrations: {
+            [SEGMENT_DESTINATION_KEY]: settings ?? {},
+          },
+        },
+        UpdateType.initial
+      );
+
+      jest
+        // @ts-ignore
+        .spyOn(plugin.queuePlugin.queueStore!, 'getState')
+        .mockImplementation(createMockStoreGetter(() => ({ events })));
+
+      const sendEventsSpy = jest
+        .spyOn(api, 'uploadEvents')
+        .mockResolvedValue({ ok: true } as Response);
+
+      return {
+        plugin,
+        sendEventsSpy,
+      };
+    };
+
+    it('chunks the events correctly', async () => {
+      const events = [
+        { messageId: 'message-1' },
+        { messageId: 'message-2' },
+        { messageId: 'message-3' },
+        { messageId: 'message-4' },
+      ] as SegmentEvent[];
+
+      const { plugin, sendEventsSpy } = await createTestWith({
+        events: events,
+      });
+
+      await plugin.flush();
+
+      expect(sendEventsSpy).toHaveBeenCalledTimes(2);
+      expect(sendEventsSpy).toHaveBeenCalledWith({
+        url: defaultApiHost,
+        writeKey: '123-456',
+        events: events.slice(0, 2).map((e) => ({
+          ...e,
+        })),
+      });
+      expect(sendEventsSpy).toHaveBeenCalledWith({
+        url: defaultApiHost,
+        writeKey: '123-456',
+        events: events.slice(2, 4).map((e) => ({
+          ...e,
+        })),
+      });
+    });
+
+    it('uses segment settings apiHost for uploading events', async () => {
+      const customEndpoint: string = 'events.eu1.segmentapis.com';
+      const events = [
+        { messageId: 'message-1' },
+        { messageId: 'message-2' },
+      ] as SegmentEvent[];
+
+      const { plugin, sendEventsSpy } = await createTestWith({
+        events: events,
+        settings: {
+          apiKey: '',
+          apiHost: customEndpoint,
+        },
+      });
+
+      await plugin.flush();
+
+      expect(sendEventsSpy).toHaveBeenCalledTimes(1);
+      expect(sendEventsSpy).toHaveBeenCalledWith({
+        url: `https://${customEndpoint}/b`,
+        writeKey: '123-456',
+        events: events.slice(0, 2).map((e) => ({
+          ...e,
+        })),
+      });
+    });
+
+    it('lets user override apiHost with proxy', async () => {
+      const customEndpoint: string = 'https://customproxy.com/batchEvents';
+      const events = [
+        { messageId: 'message-1' },
+        { messageId: 'message-2' },
+      ] as SegmentEvent[];
+
+      const { plugin, sendEventsSpy } = await createTestWith({
+        events: events,
+        settings: {
+          apiKey: '',
+          apiHost: 'events.eu1.segmentapis.com',
+        },
+        config: {
+          ...clientArgs.config,
+          proxy: customEndpoint,
+        },
+      });
+
+      await plugin.flush();
+
+      expect(sendEventsSpy).toHaveBeenCalledTimes(1);
+      expect(sendEventsSpy).toHaveBeenCalledWith({
+        url: customEndpoint,
+        writeKey: '123-456',
+        events: events.slice(0, 2).map((e) => ({
+          ...e,
+        })),
+      });
+    });
   });
 });
