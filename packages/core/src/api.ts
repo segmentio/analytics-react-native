@@ -1,5 +1,4 @@
 import type { SegmentEvent } from './types';
-import { Base64 } from 'js-base64';
 
 export const uploadEvents = async ({
   writeKey,
@@ -18,7 +17,6 @@ export const uploadEvents = async ({
       writeKey: writeKey,
     }),
     headers: {
-      'Authorization': `Basic ${Base64.encode(`${writeKey}:`)}`,
       'Content-Type': 'text/plain',
     },
   });
