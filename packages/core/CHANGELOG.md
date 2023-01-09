@@ -1,3 +1,11 @@
+## [@segment/analytics-react-native-v2.10.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.10.0...@segment/analytics-react-native-v2.10.1) (2023-01-09)
+
+
+### Bug Fixes
+
+* add instanceId, remove writekey from header ([#729](https://github.com/segmentio/analytics-react-native/issues/729)) ([28bbb9e](https://github.com/segmentio/analytics-react-native/commit/28bbb9eaa6bb012fd0ebfec065fd901e7301a46c))
+* always await for segment settings before upload, apiHost tests ([#739](https://github.com/segmentio/analytics-react-native/issues/739)) ([579c957](https://github.com/segmentio/analytics-react-native/commit/579c95773418a77342d4996f73af3e0e3254593f))
+
 ## [@segment/analytics-react-native-v2.10.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.9.1...@segment/analytics-react-native-v2.10.0) (2022-11-30)
 
 
