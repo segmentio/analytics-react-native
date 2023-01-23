@@ -1,7 +1,6 @@
 //@ts-ignore
 import type { Rule } from '@segment/tsub/dist/store';
 import deepmerge from 'deepmerge';
-import allSettled from 'promise.allsettled';
 import { AppState, AppStateStatus } from 'react-native';
 import { settingsCDN, workspaceDestinationFilterKey } from './constants';
 import { getContext } from './context';
@@ -451,6 +450,23 @@ export class SegmentClient {
     }
   }
 
+   private allSettled(promises: (void | Promise<void>)[]): void {
+      Promise.all(
+          promises.map((promise) => {
+              if (promise)
+                  promise
+                      .then((value) => ({
+                          status: 'fulfilled',
+                          value,
+                      }))
+                      .catch((reason) => ({
+                          status: 'rejected',
+                          reason,
+                      }));
+          }),
+      );
+  }
+
   async flush(): Promise<void> {
     if (this.destroyed) {
       return;
@@ -463,7 +479,7 @@ export class SegmentClient {
       promises.push(plugin.flush());
     });
 
-    await allSettled(promises);
+    this.allSettled(promises);
 
     return Promise.resolve();
   }
