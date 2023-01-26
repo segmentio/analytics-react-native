@@ -42,7 +42,7 @@ import {
   UserInfoState,
   UserTraits,
 } from './types';
-import { getPluginsWithFlush, getPluginsWithReset } from './util';
+import { allSettled, getPluginsWithFlush, getPluginsWithReset } from './util';
 import { getUUID } from './uuid';
 import type { FlushPolicy } from './flushPolicies';
 import {
@@ -450,22 +450,6 @@ export class SegmentClient {
     }
   }
 
- private allSettled(promises: (void | Promise<void>)[]): void {
-    Promise.all(
-        promises.map((promise) => {
-            if (promise)
-                promise
-                    .then((value) => ({
-                        status: 'fulfilled',
-                        value,
-                    }))
-                    .catch((reason) => ({
-                        status: 'rejected',
-                        reason,
-                    }));
-        }),
-    );
-
   async flush(): Promise<void> {
     if (this.destroyed) {
       return;
@@ -478,9 +462,8 @@ export class SegmentClient {
       promises.push(plugin.flush());
     });
 
-    this.allSettled(promises);
-
-    return Promise.resolve();
+    await allSettled(promises);
+    return;
   }
 
   async screen(name: string, options?: JsonMap) {

@@ -1,4 +1,4 @@
-import { chunk } from '../util';
+import { chunk, allSettled } from '../util';
 
 describe('#chunk', () => {
   it('handles empty array', () => {
@@ -34,5 +34,31 @@ describe('#chunk', () => {
     expect(
       chunk([about500bString, about500bString, about500bString], 2, 1)
     ).toEqual([[about500bString, about500bString], [about500bString]]);
+  });
+});
+
+describe('allSettled', () => {
+  it('handles all resolved and rejected promises properly', async () => {
+    const promises: (Promise<number> | number)[] = [];
+    promises.push(Promise.resolve(1));
+    promises.push(2);
+    promises.push(Promise.reject(3));
+
+    const results = await allSettled(promises);
+
+    expect(results).toEqual([
+      {
+        status: 'fulfilled',
+        value: 1,
+      },
+      {
+        status: 'fulfilled',
+        value: 2,
+      },
+      {
+        status: 'rejected',
+        reason: 3,
+      },
+    ]);
   });
 });

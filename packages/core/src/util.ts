@@ -94,3 +94,36 @@ export const getPluginsWithReset = (timeline: Timeline) => {
 
   return eventPlugins;
 };
+
+type PromiseResult<T> =
+  | {
+      status: 'fulfilled';
+      value: T;
+    }
+  | {
+      status: 'rejected';
+      reason: unknown;
+    };
+
+const settlePromise = async <T>(
+  promise: Promise<T> | T
+): Promise<PromiseResult<T>> => {
+  try {
+    const result = await promise;
+    return {
+      status: 'fulfilled',
+      value: result,
+    };
+  } catch (error) {
+    return {
+      status: 'rejected',
+      reason: error,
+    };
+  }
+};
+
+export const allSettled = async <T>(
+  promises: (Promise<T> | T)[]
+): Promise<PromiseResult<T>[]> => {
+  return Promise.all(promises.map(settlePromise));
+};
