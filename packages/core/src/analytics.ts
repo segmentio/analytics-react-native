@@ -1,7 +1,6 @@
 //@ts-ignore
 import type { Rule } from '@segment/tsub/dist/store';
 import deepmerge from 'deepmerge';
-import allSettled from 'promise.allsettled';
 import { AppState, AppStateStatus } from 'react-native';
 import { settingsCDN, workspaceDestinationFilterKey } from './constants';
 import { getContext } from './context';
@@ -43,7 +42,7 @@ import {
   UserInfoState,
   UserTraits,
 } from './types';
-import { getPluginsWithFlush, getPluginsWithReset } from './util';
+import { allSettled, getPluginsWithFlush, getPluginsWithReset } from './util';
 import { getUUID } from './uuid';
 import type { FlushPolicy } from './flushPolicies';
 import {
@@ -464,8 +463,7 @@ export class SegmentClient {
     });
 
     await allSettled(promises);
-
-    return Promise.resolve();
+    return;
   }
 
   async screen(name: string, options?: JsonMap) {
