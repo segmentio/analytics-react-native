@@ -7,6 +7,13 @@ type TimelinePlugins = {
   [key in PluginType]?: Plugin[];
 };
 
+const PLUGIN_ORDER = [
+  PluginType.before,
+  PluginType.enrichment,
+  PluginType.destination,
+  PluginType.after,
+];
+
 export class Timeline {
   plugins: TimelinePlugins = {};
 
@@ -52,40 +59,24 @@ export class Timeline {
   async process(
     incomingEvent: SegmentEvent
   ): Promise<SegmentEvent | undefined> {
-    // apply .before and .enrichment types first ...
-    const beforeResult = await this.applyPlugins({
-      type: PluginType.before,
-      event: incomingEvent,
-    });
+    let result: SegmentEvent | undefined = incomingEvent;
 
-    if (beforeResult === undefined) {
-      return;
-    }
-    // .enrichment here is akin to source middleware in the old analytics-ios.
-    const enrichmentResult = await this.applyPlugins({
-      type: PluginType.enrichment,
-      event: beforeResult,
-    });
+    for (const key of PLUGIN_ORDER) {
+      let pluginResult: SegmentEvent | undefined = await this.applyPlugins({
+        type: key,
+        event: result!,
+      });
 
-    if (enrichmentResult === undefined) {
-      return;
+      if (key !== PluginType.destination) {
+        if (result === undefined) {
+          return;
+        } else {
+          result = pluginResult;
+        }
+      }
     }
 
-    // once the event enters a destination, we don't want
-    // to know about changes that happen there. those changes
-    // are to only be received by the destination.
-    await this.applyPlugins({
-      type: PluginType.destination,
-      event: enrichmentResult,
-    });
-
-    // apply .after plugins ...
-    let afterResult = await this.applyPlugins({
-      type: PluginType.after,
-      event: enrichmentResult,
-    });
-
-    return afterResult;
+    return result;
   }
 
   async applyPlugins({
@@ -106,6 +97,9 @@ export class Timeline {
             // Each destination is independent from each other, so we don't roll over changes caused internally in each one of their processing
             if (type !== PluginType.destination) {
               result = await pluginResult;
+              if (result === undefined) {
+                break;
+              }
             }
           } catch (error) {
             plugin.analytics?.reportInternalError(
