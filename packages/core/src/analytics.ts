@@ -507,8 +507,9 @@ export class SegmentClient {
   }
 
   async alias(newUserId: string) {
-    const { anonymousId, userId: previousUserId } =
-      await this.store.userInfo.get(true);
+    // We don't use a concurrency safe version of get here as we don't want to lock the values yet,
+    // we will update the values correctly when InjectUserInfo processes the change
+    const { anonymousId, userId: previousUserId } = this.store.userInfo.get();
 
     const event = createAliasEvent({
       anonymousId,
