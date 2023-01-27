@@ -96,4 +96,18 @@ describe('#getContext', () => {
     expect(AnalyticsReactNative.getContextInfo).toHaveBeenCalledTimes(1);
     expect(context).toEqual({ ...contextResult, traits: userTraits });
   });
+
+  it('strip non-required config from native calls', async () => {
+    const { AnalyticsReactNative } = NativeModules;
+    await getContext(undefined, {
+      writeKey: 'notRequiredInNative',
+      collectDeviceId: true,
+      flushPolicies: [], // Shouldn't get to native as this is RN specific
+    });
+
+    expect(AnalyticsReactNative.getContextInfo).toHaveBeenCalledTimes(1);
+    expect(AnalyticsReactNative.getContextInfo).toHaveBeenCalledWith({
+      collectDeviceId: true,
+    });
+  });
 });
