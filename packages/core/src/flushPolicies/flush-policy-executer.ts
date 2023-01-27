@@ -23,6 +23,7 @@ export class FlushPolicyExecuter {
   }
 
   remove(policy: FlushPolicy) {
+    policy.end();
     let i = this.policies.findIndex((p) => p === policy);
     return this.removeIndex(i);
   }
@@ -79,6 +80,9 @@ export class FlushPolicyExecuter {
       for (const unsubscribe of this.observers) {
         unsubscribe();
       }
+    }
+    for (const policy of this.policies) {
+      policy.end();
     }
   }
 

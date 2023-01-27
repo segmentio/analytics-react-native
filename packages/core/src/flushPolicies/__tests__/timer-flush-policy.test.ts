@@ -10,9 +10,7 @@ describe('TimerFlushPolicy', () => {
     const policy = new TimerFlushPolicy(time);
     policy.start();
 
-    const observer = jest.fn().mockImplementation((value) => {
-      console.log(`new value: ${value}`);
-    });
+    const observer = jest.fn();
 
     policy.shouldFlush.onChange(observer);
 
