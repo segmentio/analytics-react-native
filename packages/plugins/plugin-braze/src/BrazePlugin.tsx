@@ -5,9 +5,12 @@ import {
   TrackEventType,
   UserInfoState,
 } from '@segment/analytics-react-native';
-import identify from './methods/identify';
-import track from './methods/track';
+import ReactAppboy, {
+  GenderTypes,
+  MonthsAsNumber,
+} from 'react-native-appboy-sdk';
 import flush from './methods/flush';
+import track from './methods/track';
 
 export class BrazePlugin extends DestinationPlugin {
   type = PluginType.destination;
@@ -24,7 +27,82 @@ export class BrazePlugin extends DestinationPlugin {
     ) {
       return;
     } else {
-      identify(event);
+      if (event.userId) {
+        ReactAppboy.changeUser(event.userId);
+      }
+
+      if (event.traits?.birthday !== undefined) {
+        const birthday = new Date(event.traits.birthday);
+        if (
+          birthday !== undefined &&
+          birthday !== null &&
+          !isNaN(birthday.getTime())
+        ) {
+          const data = new Date(event.traits.birthday);
+          ReactAppboy.setDateOfBirth(
+            data.getFullYear(),
+            // getMonth is zero indexed
+            (data.getMonth() + 1) as MonthsAsNumber,
+            data.getDate()
+          );
+        } else {
+          this.analytics?.logger.warn(
+            `Birthday found "${event.traits?.birthday}" could not be parsed as a Date. Try converting to ISO format.`
+          );
+        }
+      }
+
+      if (event.traits?.email !== undefined) {
+        ReactAppboy.setEmail(event.traits.email);
+      }
+
+      if (event.traits?.firstName !== undefined) {
+        ReactAppboy.setFirstName(event.traits.firstName);
+      }
+
+      if (event.traits?.lastName !== undefined) {
+        ReactAppboy.setLastName(event.traits.lastName);
+      }
+
+      if (event.traits?.gender !== undefined) {
+        const validGenders = ['m', 'f', 'n', 'o', 'p', 'u'];
+        const isValidGender = validGenders.indexOf(event.traits.gender) > -1;
+        if (isValidGender) {
+          ReactAppboy.setGender(
+            event.traits.gender as GenderTypes[keyof GenderTypes]
+          );
+        }
+      }
+
+      if (event.traits?.phone !== undefined) {
+        ReactAppboy.setPhoneNumber(event.traits.phone);
+      }
+
+      if (event.traits?.address !== undefined) {
+        if (event.traits.address.city !== undefined) {
+          ReactAppboy.setHomeCity(event.traits.address.city);
+        }
+        if (event.traits?.address.country !== undefined) {
+          ReactAppboy.setCountry(event.traits.address.country);
+        }
+      }
+
+      const appBoyTraits = [
+        'birthday',
+        'email',
+        'firstName',
+        'lastName',
+        'gender',
+        'phone',
+        'address',
+      ];
+
+      Object.entries(event.traits ?? {}).forEach(([key, value]) => {
+        if (appBoyTraits.indexOf(key) < 0) {
+          ReactAppboy.setCustomUserAttribute(key, value as any);
+        }
+      });
+
       this.lastSeenTraits = {
         anonymousId: event.anonymousId ?? '',
         userId: event.userId,
