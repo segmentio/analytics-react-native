@@ -1,0 +1,175 @@
+{
+  "name": "@segment/sovran-react-native",
+  "version": "0.4.5",
+  "description": "A cross-platform state management system",
+  "main": "lib/commonjs/index",
+  "module": "lib/module/index",
+  "types": "lib/typescript/index.d.ts",
+  "react-native": "src/index",
+  "source": "src/index",
+  "files": [
+    "src",
+    "lib",
+    "android",
+    "ios",
+    "cpp",
+    "sovran-react-native.podspec",
+    "!lib/typescript/example",
+    "!android/build",
+    "!ios/build",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__",
+    "!android/.gradle",
+    "!android/.idea"
+  ],
+  "scripts": {
+    "test": "jest",
+    "typescript": "tsc --noEmit",
+    "build": "bob build",
+    "clean": "rimraf lib node_modules",
+    "release": "semantic-release"
+  },
+  "keywords": [
+    "react-native",
+    "ios",
+    "android",
+    "segment"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/segmentio/analytics-react-native.git"
+  },
+  "author": "Segment <hello@segment.com> (https://segment.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/segmentio/analytics-react-native/issues"
+  },
+  "homepage": "https://github.com/segmentio/analytics-react-native/tree/master/packages/sovran#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "devDependencies": {
+    "@commitlint/config-conventional": "^16.2.4",
+    "@react-native-community/eslint-config": "^3.0.1",
+    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/commit-analyzer": "^9.0.2",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^8.0.4",
+    "@semantic-release/npm": "^9.0.1",
+    "@semantic-release/release-notes-generator": "^10.0.3",
+    "@types/deepmerge": "^2.2.0",
+    "@types/jest": "^27.0.3",
+    "@types/react": "^17.0.39",
+    "@types/react-native": "0.66.15",
+    "commitlint": "^16.2.4",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "husky": "^6.0.0",
+    "jest": "^27.4.3",
+    "metro-react-native-babel-preset": "^0.70.3",
+    "pod-install": "^0.1.0",
+    "prettier": "^2.5.1",
+    "react": "17.0.2",
+    "react-native": "0.67.2",
+    "react-native-builder-bob": "^0.18.0",
+    "rimraf": "^3.0.2",
+    "semantic-release": "^19.0.3",
+    "semantic-release-monorepo": "^7.0.5",
+    "typescript": "^4.5.2"
+  },
+  "jest": {
+    "preset": "react-native",
+    "modulePathIgnorePatterns": [
+      "<rootDir>/example/node_modules",
+      "<rootDir>/lib/"
+    ]
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore: release ${version}",
+      "tagName": "v${version}"
+    },
+    "npm": {
+      "publish": true
+    },
+    "github": {
+      "release": true
+    },
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": "angular"
+      }
+    }
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@react-native-community",
+      "prettier"
+    ],
+    "rules": {
+      "prettier/prettier": [
+        "error",
+        {
+          "quoteProps": "consistent",
+          "singleQuote": true,
+          "tabWidth": 2,
+          "trailingComma": "es5",
+          "useTabs": false
+        }
+      ]
+    }
+  },
+  "eslintIgnore": [
+    "node_modules/",
+    "lib/"
+  ],
+  "prettier": {
+    "quoteProps": "consistent",
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "useTabs": false
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      [
+        "typescript",
+        {
+          "project": "tsconfig.build.json"
+        }
+      ]
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "yarn lint && yarn typescript && yarn test"
+    }
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.15.15",
+    "ansi-regex": "5.0.1",
+    "deepmerge": "^4.2.2",
+    "shell-quote": "1.7.3"
+  },
+  "resolutions": {
+    "shell-quote": "1.7.3",
+    "ansi-regex": "5.0.1"
+  }
+}

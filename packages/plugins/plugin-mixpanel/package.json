@@ -43,7 +43,7 @@
   "bugs": {
     "url": "https://github.com/segmentio/analytics-react-native/issues"
   },
-  "homepage": "https://github.com/segmentio/analytics-react-native#readme",
+  "homepage": "https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-mixpanel#readme",
   "peerDependencies": {
     "@segment/analytics-react-native": "*"
   },

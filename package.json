@@ -2,11 +2,13 @@
   "private": true,
   "workspaces": [
     "packages/core",
+    "packages/sovran",
     "packages/plugins/*"
   ],
   "scripts": {
     "bootstrap": "yarn install && yarn example install && yarn example pods && husky install",
     "core": "yarn workspace @segment/analytics-react-native",
+    "sovran": "yarn workspace @segment/sovran-react-native",
     "example": "yarn --cwd example",
     "build": "yarn workspaces run build",
     "clean": "yarn workspaces run clean",

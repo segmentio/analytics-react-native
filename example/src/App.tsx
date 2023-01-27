@@ -10,6 +10,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 import {
   createClient,
   AnalyticsProvider,
+  CountFlushPolicy,
+  TimerFlushPolicy,
+  StartupFlushPolicy,
 } from '@segment/analytics-react-native';
 import Home from './Home';
 import SecondPage from './SecondPage';
@@ -42,7 +45,11 @@ const segmentClient = createClient({
   collectDeviceId: true,
   debug: true,
   trackDeepLinks: true,
-  flushInterval: 10,
+  flushPolicies: [
+    new CountFlushPolicy(5),
+    new TimerFlushPolicy(500),
+    new StartupFlushPolicy(),
+  ],
 });
 
 const LoggerPlugin = new Logger();
