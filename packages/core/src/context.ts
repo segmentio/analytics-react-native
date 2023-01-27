@@ -1,6 +1,7 @@
 import { libraryInfo } from './info';
 
 import type {
+  Config,
   Context,
   ContextDevice,
   NativeContextInfo,
@@ -10,7 +11,7 @@ import { getNativeModule } from './util';
 import { getUUID } from './uuid';
 
 interface GetContextConfig {
-  collectDeviceId?: boolean;
+  collectDeviceId: boolean;
 }
 
 const defaultContext = {
@@ -35,8 +36,13 @@ const defaultContext = {
 
 export const getContext = async (
   userTraits: UserTraits = {},
-  config: GetContextConfig = {}
+  config?: Config
 ): Promise<Context> => {
+  // We need to remove all stuff from the config that is not actually required by the native module
+  const nativeConfig: GetContextConfig = {
+    collectDeviceId: config?.collectDeviceId ?? false,
+  };
+
   const {
     appName,
     appVersion,
@@ -56,8 +62,9 @@ export const getContext = async (
     deviceType,
     screenDensity,
   }: NativeContextInfo =
-    (await getNativeModule('AnalyticsReactNative')?.getContextInfo(config)) ??
-    defaultContext;
+    (await getNativeModule('AnalyticsReactNative')?.getContextInfo(
+      nativeConfig
+    )) ?? defaultContext;
 
   const device: ContextDevice = {
     id: deviceId,
