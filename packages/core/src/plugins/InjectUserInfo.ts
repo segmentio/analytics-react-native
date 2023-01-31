@@ -14,15 +14,12 @@ export class InjectUserInfo extends PlatformPlugin {
   type = PluginType.before;
 
   async execute(event: SegmentEvent): Promise<SegmentEvent> {
-    const userInfo = await this.analytics!.userInfo.get(true);
-    const injectedEvent: SegmentEvent = {
-      ...event,
-      anonymousId: userInfo.anonymousId,
-      userId: userInfo.userId,
-    };
-
+    // Order here is IMPORTANT!
+    // Identify and Alias userInfo set operations have to come as soon as possible
+    // Do not block the set by doing a safe get first as it might cause a race condition
+    // within events procesing in the timeline asyncronously
     if (event.type === EventType.IdentifyEvent) {
-      await this.analytics!.userInfo.set((state) => ({
+      const userInfo = await this.analytics!.userInfo.set((state) => ({
         ...state,
         userId: event.userId ?? state.userId,
         traits: {
@@ -32,7 +29,8 @@ export class InjectUserInfo extends PlatformPlugin {
       }));
 
       return {
-        ...injectedEvent,
+        ...event,
+        anonymousId: userInfo.anonymousId,
         userId: event.userId ?? userInfo.userId,
         traits: {
           ...userInfo.traits,
@@ -40,19 +38,32 @@ export class InjectUserInfo extends PlatformPlugin {
         },
       } as IdentifyEventType;
     } else if (event.type === EventType.AliasEvent) {
-      const { anonymousId, userId: previousUserId } = userInfo;
+      let previousUserId: string;
 
-      await this.analytics!.userInfo.set((state) => ({
-        ...state,
-        userId: event.userId,
-      }));
+      const userInfo = await this.analytics!.userInfo.set((state) => {
+        previousUserId = state.userId ?? state.anonymousId;
+
+        return {
+          ...state,
+          userId: event.userId,
+        };
+      });
 
       return {
-        ...injectedEvent,
+        ...event,
+        anonymousId: userInfo.anonymousId,
         userId: event.userId,
-        previousId: previousUserId || anonymousId,
+        previousId: previousUserId!,
       } as AliasEventType;
     }
+
+    const userInfo = await this.analytics!.userInfo.get(true);
+    const injectedEvent: SegmentEvent = {
+      ...event,
+      anonymousId: userInfo.anonymousId,
+      userId: userInfo.userId,
+    };
+
     return injectedEvent;
   }
 }
