@@ -5,9 +5,7 @@ describe('CountFlushPolicy', () => {
   it('triggers a flush when reaching limit', () => {
     const policy = new CountFlushPolicy(3);
 
-    const observer = jest.fn().mockImplementation((value) => {
-      console.log(`new value: ${value}`);
-    });
+    const observer = jest.fn();
 
     policy.shouldFlush.onChange(observer);
 
