@@ -18,6 +18,7 @@ export class AppsflyerPlugin extends DestinationPlugin {
   private settings: SegmentAppsflyerSettings | null = null;
   private hasRegisteredInstallCallback: boolean = false;
   private hasRegisteredDeepLinkCallback: boolean = false;
+  private hasRegisteredUnifiedLinkCallback: boolean = false;
   private hasInitialized: boolean = false;
 
   update(settings: SegmentAPISettings, _: UpdateType) {
@@ -47,11 +48,15 @@ export class AppsflyerPlugin extends DestinationPlugin {
     }
 
     if (
-      clientConfig?.trackDeepLinks === true &&
-      !this.hasRegisteredDeepLinkCallback
+      (clientConfig?.trackDeepLinks === true &&
+        !this.hasRegisteredDeepLinkCallback) ||
+      !this.hasRegisteredUnifiedLinkCallback
     ) {
       this.registerDeepLinkCallback();
       this.hasRegisteredDeepLinkCallback = true;
+
+      this.registerUnifiedDeepLinkCallback();
+      this.hasRegisteredUnifiedLinkCallback = true;
     }
     if (!this.hasInitialized) {
       appsFlyer.initSdk({
@@ -101,6 +106,22 @@ export class AppsflyerPlugin extends DestinationPlugin {
         const { campaign, media_source } = res.data;
         const properties = {
           provider: this.key,
+          campaign: {
+            name: campaign,
+            source: media_source,
+          },
+        };
+        this.analytics?.track('Deep Link Opened', properties);
+      }
+    });
+  };
+
+  registerUnifiedDeepLinkCallback = () => {
+    appsFlyer.onDeepLink((res) => {
+      if (res.deepLinkStatus !== 'NOT_FOUND') {
+        const { DLValue, media_source, campaign } = res.data;
+        const properties = {
+          deepLink: DLValue,
           campaign: {
             name: campaign,
             source: media_source,

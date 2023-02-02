@@ -10521,10 +10521,10 @@ react-native-appboy-sdk@^1.32.0:
   resolved "https://registry.yarnpkg.com/react-native-appboy-sdk/-/react-native-appboy-sdk-1.36.0.tgz#fdda158ba8e6fb87dda7ab8c89510686fe13c02c"
   integrity sha512-ZveH33LRxJNVEc5ym/tYVpKEEeQwMShV/5Afdum5NZjeTi2Mh/ghTVlCp3t+Icb1BWDnMjke3myiqISYyFXMFw==
 
-react-native-appsflyer@^6.3.50:
-  version "6.6.1"
-  resolved "https://registry.yarnpkg.com/react-native-appsflyer/-/react-native-appsflyer-6.6.1.tgz#9e0cb55f9a318a7a4f345ed51b18fa0e8f817a10"
-  integrity sha512-OPy4ujSlGDpOgrIcVi+Koe967weGIk6Gzx3Z1Fwd0JPp6nu/Tv0Lt6HUPJjMaQUqnC+sdricHikrNixaCo0/dQ==
+react-native-appsflyer@^6.9.4:
+  version "6.9.4"
+  resolved "https://registry.yarnpkg.com/react-native-appsflyer/-/react-native-appsflyer-6.9.4.tgz#35d8adbee93d169a7af3770739e8fe04de2d2680"
+  integrity sha512-GR02uyTjN08oAotVErCqE6nuqKReEskztSCcZhLZ8RbAYAu4Phj6ySvElc6cPF/KxBtR0Q9SE0RLaC1QLBM4mw==
 
 react-native-branch@^5.6.0:
   version "5.6.2"
