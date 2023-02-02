@@ -18,7 +18,6 @@ export class AppsflyerPlugin extends DestinationPlugin {
   private settings: SegmentAppsflyerSettings | null = null;
   private hasRegisteredInstallCallback: boolean = false;
   private hasRegisteredDeepLinkCallback: boolean = false;
-  private hasRegisteredUnifiedLinkCallback: boolean = false;
   private hasInitialized: boolean = false;
 
   update(settings: SegmentAPISettings, _: UpdateType) {
@@ -48,15 +47,13 @@ export class AppsflyerPlugin extends DestinationPlugin {
     }
 
     if (
-      (clientConfig?.trackDeepLinks === true &&
-        !this.hasRegisteredDeepLinkCallback) ||
-      !this.hasRegisteredUnifiedLinkCallback
+      clientConfig?.trackDeepLinks === true &&
+      !this.hasRegisteredDeepLinkCallback
     ) {
       this.registerDeepLinkCallback();
-      this.hasRegisteredDeepLinkCallback = true;
-
       this.registerUnifiedDeepLinkCallback();
-      this.hasRegisteredUnifiedLinkCallback = true;
+
+      this.hasRegisteredDeepLinkCallback = true;
     }
     if (!this.hasInitialized) {
       appsFlyer.initSdk({
