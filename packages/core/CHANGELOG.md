@@ -1,3 +1,17 @@
+## [@segment/analytics-react-native-v2.11.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.10.1...@segment/analytics-react-native-v2.11.0) (2023-02-02)
+
+
+### Features
+
+* add end method to flush policies for cleanup ([#753](https://github.com/segmentio/analytics-react-native/issues/753)) ([96b0893](https://github.com/segmentio/analytics-react-native/commit/96b08934a4358788397b67d2c786177ae442db92))
+
+
+### Bug Fixes
+
+* prevent locking before setting new user data ([#751](https://github.com/segmentio/analytics-react-native/issues/751)) ([d8439e3](https://github.com/segmentio/analytics-react-native/commit/d8439e3671003b1bafa998675dc0ba841d627fd3))
+* refactor allSettled to remove dependencies ([#746](https://github.com/segmentio/analytics-react-native/issues/746)) ([479e468](https://github.com/segmentio/analytics-react-native/commit/479e4686a410ad9ebb02ed50a15509a9051ec073))
+* remove non-required parameters from native calls ([#750](https://github.com/segmentio/analytics-react-native/issues/750)) ([6ebd65e](https://github.com/segmentio/analytics-react-native/commit/6ebd65ed5e669d4f89643999ded1b5fa65a414fc))
+
 ## [@segment/analytics-react-native-v2.10.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.10.0...@segment/analytics-react-native-v2.10.1) (2023-01-09)
 
 
