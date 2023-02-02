@@ -51,6 +51,8 @@ export class AppsflyerPlugin extends DestinationPlugin {
       !this.hasRegisteredDeepLinkCallback
     ) {
       this.registerDeepLinkCallback();
+      this.registerUnifiedDeepLinkCallback();
+
       this.hasRegisteredDeepLinkCallback = true;
     }
     if (!this.hasInitialized) {
@@ -101,6 +103,22 @@ export class AppsflyerPlugin extends DestinationPlugin {
         const { campaign, media_source } = res.data;
         const properties = {
           provider: this.key,
+          campaign: {
+            name: campaign,
+            source: media_source,
+          },
+        };
+        this.analytics?.track('Deep Link Opened', properties);
+      }
+    });
+  };
+
+  registerUnifiedDeepLinkCallback = () => {
+    appsFlyer.onDeepLink((res) => {
+      if (res.deepLinkStatus !== 'NOT_FOUND') {
+        const { DLValue, media_source, campaign } = res.data;
+        const properties = {
+          deepLink: DLValue,
           campaign: {
             name: campaign,
             source: media_source,
