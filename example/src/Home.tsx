@@ -40,7 +40,10 @@ const Home = ({ navigation }: { navigation: any }) => {
         name: 'Identify',
         testID: 'BUTTON_IDENTIFY',
         onPress: () => {
-          identify('user_2', { username: 'simplyTheBest' });
+          identify('user_2', {
+            username: 'simplyTheBest',
+            birthday: 'Saturday February 29, 20',
+          });
         },
       },
       {

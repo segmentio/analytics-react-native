@@ -16,12 +16,30 @@ export class ClevertapPlugin extends DestinationPlugin {
   key = 'CleverTap';
 
   identify(event: IdentifyEventType) {
-    const traits = event.traits as Record<string, any>;
+    const traits = event.traits as Record<string, unknown>;
     const safeTraits = mappedTraits(traits);
     const userId = event.userId ?? event.anonymousId;
 
-    let clevertapTraits = { ...safeTraits, Identity: userId };
+    if (event.traits?.birthday !== undefined) {
+      const birthday = new Date(event.traits.birthday);
+      if (
+        birthday !== undefined &&
+        birthday !== null &&
+        !isNaN(birthday.getTime())
+      ) {
+        const data = new Date(event.traits.birthday);
+        console.log('DATEEE', data);
+        safeTraits.DOB = data;
+      } else {
+        delete safeTraits.DOB;
 
+        this.analytics?.logger.warn(
+          `Birthday found "${event.traits?.birthday}" could not be parsed as a Date. Try converting to ISO format.`
+        );
+      }
+    }
+
+    let clevertapTraits = { ...safeTraits, Identity: userId };
     CleverTap.profileSet(clevertapTraits);
     return event;
   }

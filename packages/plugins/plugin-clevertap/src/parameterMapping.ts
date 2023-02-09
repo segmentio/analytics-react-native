@@ -7,10 +7,12 @@ export const mapTraits: { [key: string]: string } = {
   email: 'Email',
 };
 
-export const transformMap: { [key: string]: (value: any) => any } = {
-  event: (value: string) => {
-    if (value in mapTraits) {
-      return mapTraits[value];
+export const transformMap: { [key: string]: (value: unknown) => unknown } = {
+  event: (value: unknown) => {
+    if (typeof value === 'string') {
+      if (value in mapTraits) {
+        return mapTraits[value];
+      }
     }
     return value;
   },
