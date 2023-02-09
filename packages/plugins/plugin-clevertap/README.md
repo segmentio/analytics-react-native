@@ -1,6 +1,6 @@
-# @segment/analytics-react-native-plugin-mixpanel
+# @segment/analytics-react-native-plugin-clevertap
 
-`DestinationPlugin` for [CleverTap](https://https://clevertap.com/). Wraps [`mixpanel-react-native`](https://github.com/CleverTap/clevertap-react-native).
+`DestinationPlugin` for [CleverTap](https://https://clevertap.com/). Wraps [`clevertap-react-native`](https://github.com/CleverTap/clevertap-react-native).
 
 ## Installation
 
