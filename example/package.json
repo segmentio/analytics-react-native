@@ -25,7 +25,6 @@
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/stack": "^6.0.7",
     "@segment/sovran-react-native": "0.4.5",
-    "clevertap-react-native": "^1.0.0",
     "react": "18.0.0",
     "react-native": "0.69.7",
     "react-native-bootsplash": "^3.2.4",

@@ -1,10 +1,5 @@
 PODS:
   - boost (1.76.0)
-  - CleverTap-iOS-SDK (4.2.0):
-    - SDWebImage (~> 5.11)
-  - clevertap-react-native (1.0.0):
-    - CleverTap-iOS-SDK (= 4.2.0)
-    - React-Core
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.69.7)
   - FBReactNativeSpec (0.69.7):
@@ -303,9 +298,6 @@ PODS:
     - React
   - RNGestureHandler (2.6.0):
     - React-Core
-  - SDWebImage (5.15.1):
-    - SDWebImage/Core (= 5.15.1)
-  - SDWebImage/Core (5.15.1)
   - segment-analytics-react-native (2.12.0):
     - React-Core
     - sovran-react-native
@@ -317,7 +309,6 @@ PODS:
 
 DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
-  - clevertap-react-native (from `../node_modules/clevertap-react-native`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
@@ -362,15 +353,11 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - CleverTap-iOS-SDK
     - fmt
-    - SDWebImage
 
 EXTERNAL SOURCES:
   boost:
     :podspec: "../node_modules/react-native/third-party-podspecs/boost.podspec"
-  clevertap-react-native:
-    :path: "../node_modules/clevertap-react-native"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   FBLazyVector:
@@ -454,8 +441,6 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: a7c83b31436843459a1961bfd74b96033dc77234
-  CleverTap-iOS-SDK: 124ee0f4bd90c5ffa213b2da05f81496d7339015
-  clevertap-react-native: 1fd21f3fae8672c564100d793c206496c4b0ee5f
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 6b7f5692909b4300d50e7359cdefbcd09dd30faa
   FBReactNativeSpec: affcf71d996f6b0c01f68883482588297b9d5e6e
@@ -493,7 +478,6 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: 0c357f3156fcb16c8589ede67cc036330b6698ca
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNGestureHandler: 920eb17f5b1e15dae6e5ed1904045f8f90e0b11e
-  SDWebImage: a254f2c53b46e3fba7946b1f8b8b3eaf00413b92
   segment-analytics-react-native: f28f404167ef4e2b4f5d5decf9526180393512f4
   segment-analytics-react-native-plugin-idfa: c9335ec0327b8f5f35c78bbf0bf7821e9137537e
   sovran-react-native: fd3dc8f1a4b14acdc4ad25fc6b4ac4f52a2a2a15

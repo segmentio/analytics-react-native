@@ -37,15 +37,15 @@ import { AmplitudeSessionPlugin } from '@segment/analytics-react-native-plugin-a
 // import { AdvertisingIdPlugin } from '@segment/analytics-react-native-plugin-advertising-id';
 
 //@ts-ignore
-import { ClevertapPlugin } from '@segment/analytics-react-native-plugin-clevertap';
+// import { ClevertapPlugin } from '@segment/analytics-react-native-plugin-clevertap';
 
 const segmentClient = createClient({
-  writeKey: 'QKoI2cHIPlixGDB358Y3T86tVqpaBZK3',
+  writeKey: 'WRITE_KEY',
   trackAppLifecycleEvents: true,
   collectDeviceId: true,
   debug: true,
   trackDeepLinks: true,
-  flushInterval: 1,
+  flushInterval: 10,
 });
 
 const LoggerPlugin = new Logger();
@@ -66,7 +66,7 @@ segmentClient.add({ plugin: LoggerPlugin });
 
 segmentClient.add({ plugin: new AmplitudeSessionPlugin() });
 
-segmentClient.add({ plugin: new ClevertapPlugin() });
+// segmentClient.add({ plugin: new ClevertapPlugin() });
 
 // segmentClient.add({
 //   plugin: new AdvertisingIdPlugin(),

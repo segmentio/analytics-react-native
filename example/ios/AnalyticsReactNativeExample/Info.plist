@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CleverTapAccountID</key>
-	<string>8W6-WW7-576Z</string>
+	<string>UserCleverTapAccountID</string>
 	<key>CleverTapToken</key>
-	<string>a00-60b</string>
+	<string>USERCleverTapToken</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
