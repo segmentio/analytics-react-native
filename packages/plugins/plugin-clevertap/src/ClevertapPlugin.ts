@@ -20,16 +20,23 @@ export class ClevertapPlugin extends DestinationPlugin {
     const safeTraits = mappedTraits(traits);
     const userId = event.userId ?? event.anonymousId;
 
-    if (event.traits?.birthday !== undefined) {
-      const birthday = new Date(event.traits.birthday);
+    if (
+      safeTraits.DOB !== undefined &&
+      safeTraits.DOB !== null &&
+      !(safeTraits.DOB instanceof Date)
+    ) {
       if (
-        birthday !== undefined &&
-        birthday !== null &&
-        !isNaN(birthday.getTime())
+        typeof safeTraits.DOB === 'string' ||
+        typeof safeTraits.DOB === 'number'
       ) {
-        const data = new Date(event.traits.birthday);
-        console.log('DATEEE', data);
-        safeTraits.DOB = data;
+        const birthday = new Date(safeTraits.DOB);
+        if (
+          birthday !== undefined &&
+          birthday !== null &&
+          !isNaN(birthday.getTime())
+        ) {
+          safeTraits.DOB = birthday;
+        }
       } else {
         delete safeTraits.DOB;
 
@@ -38,7 +45,6 @@ export class ClevertapPlugin extends DestinationPlugin {
         );
       }
     }
-
     let clevertapTraits = { ...safeTraits, Identity: userId };
     CleverTap.profileSet(clevertapTraits);
     return event;
