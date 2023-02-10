@@ -5,6 +5,8 @@
 #import <React/RCTAppSetupUtils.h>
 #import <segment_analytics_react_native-Swift.h>
 //  #import <Firebase.h>
+// #import <CleverTap-iOS-SDK/CleverTap.h>
+// #import <clevertap-react-native/CleverTapReactManager.h>
 #if RCT_NEW_ARCH_ENABLED
 #import <React/CoreModulesPlugins.h>
 #import <React/RCTCxxBridgeDelegate.h>
@@ -49,6 +51,10 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
   [self.window makeKeyAndVisible];
   // enable for firebase plugin
   // [FIRApp configure];
+  
+  // integrate CleverTap SDK using the autoIntegrate option
+  // [CleverTap autoIntegrate]; 
+  // [[CleverTapReactManager sharedInstance] applicationDidLaunchWithOptions:launchOptions];
   return YES;
 }
 
