@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-v2.13.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.12.0...@segment/analytics-react-native-v2.13.0) (2023-02-10)
+
+
+### Features
+
+* add clevertap plugin ([#759](https://github.com/segmentio/analytics-react-native/issues/759)) ([fcf3933](https://github.com/segmentio/analytics-react-native/commit/fcf393321145995ab9a2c46b15ee05cf4e066dfd))
+
 ## [@segment/analytics-react-native-v2.12.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.11.0...@segment/analytics-react-native-v2.12.0) (2023-02-02)
 
 
