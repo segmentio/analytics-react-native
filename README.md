@@ -524,6 +524,7 @@ Refer to the following table for Plugins you can use to meet your tracking needs
 | [AppsFlyer](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-appsflyer)    | `@segment/analytics-react-native-plugin-appsflyer`|
 | [Braze](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-braze)      | `@segment/analytics-react-native-plugin-braze`|
 | [Braze Middleware (Cloud Mode)](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-braze)      | `@segment/analytics-react-native-plugin-braze-middleware`|
+| [CleverTap](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-clevertap)      | `@segment/analytics-react-native-plugin-clevertap`|
 | [Facebook App Events](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-facebook-app-events)    | `@segment/analytics-react-native-plugin-facebook-app-events` |
 | [Firebase](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-firebase)      | `@segment/analytics-react-native-plugin-firebase`|
 | [FullStory](https://github.com/fullstorydev/segment-react-native-plugin-fullstory) | `@fullstory/segment-react-native-plugin-fullstory`|
