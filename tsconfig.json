@@ -26,6 +26,5 @@
     "strict": true,
     "target": "esnext",
     "outDir": "lib/typescript"
-  },
-  "exclude": ["**/__tests__/**/*", "**/__mocks__/**/*"]
+  }
 }
