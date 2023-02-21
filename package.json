@@ -1,8 +1,8 @@
 {
   "private": true,
   "workspaces": [
-    "packages/core",
     "packages/sovran",
+    "packages/core",
     "packages/plugins/*"
   ],
   "scripts": {
