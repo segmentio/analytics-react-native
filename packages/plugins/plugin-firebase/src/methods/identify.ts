@@ -6,6 +6,13 @@ export default async (event: IdentifyEventType) => {
     await firebaseAnalytics().setUserId(event.userId!);
   }
   if (event.traits) {
-    await firebaseAnalytics().setUserProperties(event.traits as any);
+    let eventTraits = event.traits;
+    let safeTraits = Object.keys(eventTraits).reduce((acc: any, trait) => {
+      if (!acc[trait]) {
+        acc[trait] = eventTraits[trait]?.toString();
+      }
+      return acc;
+    }, {});
+    await firebaseAnalytics().setUserProperties(safeTraits);
   }
 };
