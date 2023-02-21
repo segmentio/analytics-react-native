@@ -9,6 +9,9 @@ if (settings.hasProperty("newArchEnabled") && settings.newArchEnabled == "true")
     project(":ReactAndroid:hermes-engine").projectDir = file('../node_modules/react-native/ReactAndroid/hermes-engine')
 }
 
+include ':sovranreactnative'
+project(':sovranreactnative').projectDir = new File(rootProject.projectDir, '../../packages/sovran/android')
+
 include ':segmentanalyticsreactnative'
 project(':segmentanalyticsreactnative').projectDir = new File(rootProject.projectDir, '../../packages/core/android')
 

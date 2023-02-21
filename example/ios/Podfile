@@ -36,6 +36,7 @@ flags = get_default_flags()
   
   # Pods for AnalyticsReactNativeExample
   pod 'segment-analytics-react-native', :path => '../../packages/core'
+  pod 'sovran-react-native', :path => '../../packages/sovran'
   # Pods for Plugins
   pod 'segment-analytics-react-native-plugin-idfa', :path => '../../packages/plugins/plugin-idfa'
 
