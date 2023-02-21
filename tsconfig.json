@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "@segment/sovran-react-native": ["packages/sovran/src/index"],
       "@segment/analytics-react-native": ["packages/core/src/index"]
     },
     "composite": true,
@@ -25,5 +26,6 @@
     "strict": true,
     "target": "esnext",
     "outDir": "lib/typescript"
-  }
+  },
+  "exclude": ["**/__tests__/**/*", "**/__mocks__/**/*"]
 }
