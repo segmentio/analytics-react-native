@@ -31,22 +31,25 @@ import { Logger } from './plugins/Logger';
 // import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
 
 // @ts-ignore
-import { AmplitudeSessionPlugin } from '@segment/analytics-react-native-plugin-amplitude-session';
+// import { AmplitudeSessionPlugin } from '@segment/analytics-react-native-plugin-amplitude-session';
 
 //@ts-ignore
 // import { AdvertisingIdPlugin } from '@segment/analytics-react-native-plugin-advertising-id';
+import { useAnalytics } from '../../packages/core/src/client';
 
 //@ts-ignore
 // import { ClevertapPlugin } from '@segment/analytics-react-native-plugin-clevertap';
 
 const segmentClient = createClient({
-  writeKey: 'WRITE_KEY',
+  writeKey: 'VeTjvRdJ5FAExbRjLfjpw4FT0b286TBV',
   trackAppLifecycleEvents: true,
   collectDeviceId: true,
   debug: true,
   trackDeepLinks: true,
   flushInterval: 10,
 });
+
+segmentClient.track('First Event');
 
 const LoggerPlugin = new Logger();
 
@@ -64,7 +67,7 @@ segmentClient.add({ plugin: LoggerPlugin });
 // const idfaPlugin = new IdfaPlugin();
 // segmentClient.add({ plugin: idfaPlugin });
 
-segmentClient.add({ plugin: new AmplitudeSessionPlugin() });
+// segmentClient.add({ plugin: new AmplitudeSessionPlugin() });
 
 // segmentClient.add({ plugin: new ClevertapPlugin() });
 
@@ -75,6 +78,12 @@ segmentClient.add({ plugin: new AmplitudeSessionPlugin() });
 const MainStack = createStackNavigator();
 const RootStack = createStackNavigator();
 function MainStackScreen() {
+  const { track } = useAnalytics();
+
+  React.useEffect(() => {
+    track('Root Screen mount');
+  }, [track]);
+
   return (
     <MainStack.Navigator
       screenOptions={{

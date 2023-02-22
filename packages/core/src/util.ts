@@ -22,15 +22,15 @@ export const getNativeModule = (moduleName: string) => {
   return module;
 };
 
-export const chunk = (array: any[], count: number, maxKB?: number) => {
+export const chunk = <T>(array: T[], count: number, maxKB?: number): T[][] => {
   if (!array.length || !count) {
     return [];
   }
 
   let currentChunk = 0;
   let rollingKBSize = 0;
-  const result: any[] = array.reduce(
-    (chunks: any[][], item: any, index: number) => {
+  const result: T[][] = array.reduce(
+    (chunks: T[][], item: T, index: number) => {
       if (maxKB !== undefined) {
         rollingKBSize += sizeOf(item);
         // If we overflow chunk until the previous index, else keep going

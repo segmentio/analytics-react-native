@@ -1,4 +1,4 @@
-import { createStore, Store, Unsubscribe } from '@segment/sovran-react-native';
+import { createStore, Store } from '@segment/sovran-react-native';
 import type { SegmentClient } from '../analytics';
 import { defaultConfig } from '../constants';
 import { UtilityPlugin } from '../plugin';
@@ -15,7 +15,6 @@ export class QueueFlushingPlugin extends UtilityPlugin {
 
   private isPendingUpload = false;
   private queueStore: Store<{ events: SegmentEvent[] }> | undefined;
-  private unsubscribe: Unsubscribe | undefined;
   private onFlush: (events: SegmentEvent[]) => Promise<void>;
 
   /**
@@ -41,14 +40,6 @@ export class QueueFlushingPlugin extends UtilityPlugin {
         },
       }
     );
-
-    // Setup subscribers to flush the events
-    this.unsubscribe?.();
-    this.unsubscribe = this.queueStore.subscribe(({ events }) => {
-      if (events.length >= config.flushAt!) {
-        this.flush();
-      }
-    });
   }
 
   execute(event: SegmentEvent): SegmentEvent | undefined {

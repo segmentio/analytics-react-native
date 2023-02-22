@@ -17,9 +17,10 @@ describe('methods #alias', () => {
     userInfo: initialUserInfo,
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     store.reset();
     jest.clearAllMocks();
+    await client.init();
   });
 
   it('adds the alias event correctly', async () => {
@@ -33,7 +34,8 @@ describe('methods #alias', () => {
 
     expectEvent(expectedEvent);
 
-    expect(client.userInfo.get()).toEqual({
+    const info = await client.userInfo.get(true);
+    expect(info).toEqual({
       anonymousId: 'anonymousId',
       userId: 'new-user-id',
       traits: undefined,
@@ -41,6 +43,8 @@ describe('methods #alias', () => {
   });
 
   it('uses anonymousId in event if no userId in store', async () => {
+    await client.init();
+
     await store.userInfo.set({
       anonymousId: 'anonymousId',
       userId: undefined,

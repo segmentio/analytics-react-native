@@ -14,9 +14,10 @@ describe('methods #identify', () => {
     userInfo: initialUserInfo,
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     store.reset();
     jest.clearAllMocks();
+    await client.init();
   });
 
   it('adds the identify event correctly', async () => {
