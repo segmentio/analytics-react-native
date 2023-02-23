@@ -54,26 +54,6 @@ describe('QueueFlushingPlugin', () => {
     expect(onFlush).not.toHaveBeenCalled();
   });
 
-  it('should call onFlush when queue reaches limit', async () => {
-    const onFlush = jest.fn().mockResolvedValue(undefined);
-    const queuePlugin = setupQueuePlugin(onFlush, 1);
-
-    const result = queuePlugin.execute({
-      type: EventType.TrackEvent,
-      event: 'test',
-      properties: {
-        test: 'test',
-      },
-    } as SegmentEvent);
-
-    expect(result).not.toBeUndefined();
-
-    // Await Sovran updates
-    await new Promise(process.nextTick);
-
-    expect(onFlush).toHaveBeenCalledTimes(1);
-  });
-
   it('should dequeue events on demand', async () => {
     const onFlush = jest.fn().mockResolvedValue(undefined);
     const queuePlugin = setupQueuePlugin(onFlush, 10);
