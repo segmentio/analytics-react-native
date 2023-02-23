@@ -14,9 +14,10 @@ describe('methods #identify', () => {
     userInfo: initialUserInfo,
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     store.reset();
     jest.clearAllMocks();
+    await client.init();
   });
 
   it('adds the identify event correctly', async () => {
@@ -58,8 +59,6 @@ describe('methods #identify', () => {
   });
 
   it('does not update userId when userId is undefined', async () => {
-    jest.spyOn(client, 'process');
-
     await client.identify(undefined, { name: 'Mary' });
 
     const expectedEvent = {
@@ -107,6 +106,26 @@ describe('methods #identify', () => {
       properties: {},
       timestamp: '2010-01-01T00:00:00.000Z',
       type: EventType.TrackEvent,
+      userId: 'new-user-id',
+    });
+  });
+
+  it('is concurrency safe', async () => {
+    // We trigger an identify and do not await it, we do a track immediately and await.
+    // The track call should have the correct values injected into it.
+    client.identify('new-user-id');
+    await client.track('something');
+
+    const expectedTrackEvent: Partial<SegmentEvent> = {
+      event: 'something',
+      userId: 'new-user-id',
+      type: EventType.TrackEvent,
+    };
+
+    expectEvent(expectedTrackEvent);
+
+    expect(client.userInfo.get()).toEqual({
+      ...initialUserInfo,
       userId: 'new-user-id',
     });
   });

@@ -206,26 +206,14 @@ describe('internal #checkInstalledVersion', () => {
     );
   });
 
-  it('executes callback when context is updated in store', async () => {
+  it('executes callback when client is ready', async () => {
     client = new SegmentClient(clientArgs);
     const callback = jest.fn().mockImplementation(() => {
       expect(store.context.get()).toEqual(currentContext);
     });
-    client.onContextLoaded(callback);
+    client.isReady.onChange(callback);
     jest.spyOn(context, 'getContext').mockResolvedValueOnce(currentContext);
     await client.init();
-    expect(callback).toHaveBeenCalled();
-  });
-
-  it('executes callback immediatley if registered after context was already loaded', async () => {
-    client = new SegmentClient(clientArgs);
-    jest.spyOn(context, 'getContext').mockResolvedValueOnce(currentContext);
-    await client.init();
-    // Register callback after context is loaded
-    const callback = jest.fn().mockImplementation(() => {
-      expect(store.context.get()).toEqual(currentContext);
-    });
-    client.onContextLoaded(callback);
     expect(callback).toHaveBeenCalled();
   });
 });

@@ -25,6 +25,7 @@ import type {
   Watchable,
   Settable,
   Dictionary,
+  ReadinessStore,
 } from './types';
 
 type Data = {
@@ -48,14 +49,6 @@ const INITIAL_VALUES: Data = {
     traits: undefined,
   },
 };
-
-interface ReadinessStore {
-  hasLoadedContext: boolean;
-  hasRestoredContext: boolean;
-  hasRestoredSettings: boolean;
-  hasRestoredUserInfo: boolean;
-  hasRestoredFilters: boolean;
-}
 
 const isEverythingReady = (state: ReadinessStore) =>
   Object.values(state).every((v) => v === true);
@@ -146,7 +139,6 @@ export class SovranStorage implements Storage {
     this.storeId = config.storeId;
     this.storePersistor = config.storePersistor;
     this.readinessStore = createStore<ReadinessStore>({
-      hasLoadedContext: false,
       hasRestoredContext: false,
       hasRestoredSettings: false,
       hasRestoredUserInfo: false,
@@ -321,14 +313,6 @@ export class SovranStorage implements Storage {
     };
 
     this.fixAnonymousId();
-
-    // Wait for context to be loaded
-    const unsubscribeContext = this.contextStore.subscribe((store) => {
-      if (store.context !== INITIAL_VALUES.context) {
-        markAsReadyGenerator('hasLoadedContext')();
-        unsubscribeContext();
-      }
-    });
   }
 
   /**

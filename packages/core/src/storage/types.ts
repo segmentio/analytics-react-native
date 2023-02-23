@@ -51,6 +51,13 @@ export interface Dictionary<K, T> {
   add: (key: K, value: T) => void;
 }
 
+export interface ReadinessStore {
+  hasRestoredContext: boolean;
+  hasRestoredSettings: boolean;
+  hasRestoredUserInfo: boolean;
+  hasRestoredFilters: boolean;
+}
+
 /**
  * Interface for interacting with the storage layer of the client data
  */

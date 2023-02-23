@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-appsflyer-v0.5.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-appsflyer-v0.4.0...@segment/analytics-react-native-plugin-appsflyer-v0.5.0) (2023-02-02)
+
+
+### Features
+
+* add unified DL support to appsflyer ([#756](https://github.com/segmentio/analytics-react-native/issues/756)) ([8d9e110](https://github.com/segmentio/analytics-react-native/commit/8d9e110da4d0ae79efb423fcf9773d56600a54a0))
+
 ## [@segment/analytics-react-native-plugin-appsflyer-v0.4.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-appsflyer-v0.3.3...@segment/analytics-react-native-plugin-appsflyer-v0.4.0) (2022-07-15)
 
 

@@ -1,11 +1,9 @@
 {
-  "name": "@segment/analytics-react-native",
-  "version": "2.13.0",
+  "name": "@segment/analytics-react-native-plugin-clevertap",
+  "version": "1.0.0",
   "description": "The hassle-free way to add Segment analytics to your React-Native app.",
   "main": "lib/commonjs/index",
   "scripts": {
-    "prebuild": "node constants-generator.js && eslint --fix ./src/info.ts",
-    "postversion": "yarn prebuild",
     "build": "bob build",
     "test": "jest",
     "typescript": "tsc --noEmit",
@@ -46,21 +44,13 @@
     "url": "https://github.com/segmentio/analytics-react-native/issues"
   },
   "homepage": "https://github.com/segmentio/analytics-react-native#readme",
-  "dependencies": {
-    "@react-native-async-storage/async-storage": "^1.15.17",
-    "@segment/sovran-react-native": "^0.4.5",
-    "deepmerge": "^4.2.2",
-    "js-base64": "^3.7.2",
-    "react-native-uuid": "^2.0.1"
-  },
   "peerDependencies": {
-    "react": "*",
-    "react-native": "*"
+    "@segment/analytics-react-native": "*"
+  },
+  "dependencies": {
+    "clevertap-react-native": "^1.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9",
-    "@babel/runtime": "^7.12.5",
-    "@react-native-community/eslint-config": "^2.0.0",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/commit-analyzer": "^9.0.2",
     "@semantic-release/git": "^10.0.1",
@@ -68,23 +58,17 @@
     "@semantic-release/npm": "^9.0.1",
     "@semantic-release/release-notes-generator": "^10.0.3",
     "@types/jest": "^27.0.3",
-    "@types/js-base64": "^3.3.1",
-    "@types/react": "18.0.15",
-    "@types/react-native": "0.69.3",
-    "@types/uuid": "^8.3.3",
-    "babel-jest": "^27.3.1",
     "conventional-changelog-conventionalcommits": "^5.0.0",
-    "eslint": "^8.2.0",
-    "jest": "^27.5.1",
-    "metro-react-native-babel-preset": "^0.66.2",
-    "react": "^17.0.2",
-    "react-native": "^0.67.2",
-    "react-native-builder-bob": "^0.18.2",
     "rimraf": "^3.0.2",
     "semantic-release": "^19.0.3",
     "semantic-release-monorepo": "^7.0.5",
     "ts-jest": "^27.0.7",
     "typescript": "^4.4.4"
+  },
+  "jest": {
+    "setupFiles": [
+      "<rootDir>/src/methods/__tests__/jest_setup.ts"
+    ]
   },
   "react-native-builder-bob": {
     "source": "src",

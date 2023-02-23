@@ -81,7 +81,6 @@ export class MockSegmentStore implements Storage {
       return this.data.isReady;
     }),
     onChange: (_callback: (value: boolean) => void) => {
-      // Not doing anything cause this mock store is always ready, this is just legacy from the redux persistor
       return () => {};
     },
   };

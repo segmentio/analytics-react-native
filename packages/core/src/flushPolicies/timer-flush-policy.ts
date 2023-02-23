@@ -29,6 +29,10 @@ export class TimerFlushPolicy extends FlushPolicyBase {
     this.startTimer();
   }
 
+  end(): void {
+    clearTimeout(this.flushTimeout);
+  }
+
   onEvent(_event: SegmentEvent): void {
     // Reset interval
     this.startTimer();

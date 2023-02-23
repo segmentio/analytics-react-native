@@ -12,7 +12,11 @@ import {
   createScreenEvent,
   createTrackEvent,
 } from './events';
-import { CountFlushPolicy, TimerFlushPolicy } from './flushPolicies';
+import {
+  CountFlushPolicy,
+  Observable,
+  TimerFlushPolicy,
+} from './flushPolicies';
 import { FlushPolicyExecuter } from './flushPolicies/flush-policy-executer';
 import type { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
 import { InjectContext } from './plugins/InjectContext';
@@ -38,7 +42,6 @@ import {
   PluginType,
   SegmentAPIIntegrations,
   SegmentEvent,
-  UpdateType,
   UserInfoState,
   UserTraits,
 } from './types';
@@ -51,7 +54,6 @@ import {
   translateHTTPError,
 } from './errors';
 
-type OnContextLoadCallback = (type: UpdateType) => void | Promise<void>;
 type OnPluginAddedCallback = (plugin: Plugin) => void;
 
 export class SegmentClient {
@@ -83,11 +85,6 @@ export class SegmentClient {
 
   private flushPolicyExecuter!: FlushPolicyExecuter;
 
-  private isInitialized = false;
-  // TODO: Refactor into Observable<T>
-  private isContextLoaded = false;
-
-  private onContextLoadedObservers: OnContextLoadCallback[] = [];
   private onPluginAddedObservers: OnPluginAddedCallback[] = [];
 
   private readonly platformPlugins: PlatformPlugin[] = [
@@ -96,6 +93,10 @@ export class SegmentClient {
   ];
 
   // Watchables
+  /**
+   * Observable to know when the client is fully initialized and ready to send events to destination
+   */
+  readonly isReady = new Observable<boolean>(false);
   /**
    * Access or subscribe to client context
    */
@@ -123,6 +124,8 @@ export class SegmentClient {
   readonly userInfo: Watchable<UserInfoState> & Settable<UserInfoState>;
 
   readonly deepLinkData: Watchable<DeepLinkData>;
+
+  // private telemetry?: Telemetry;
 
   /**
    * Returns the plugins currently loaded in the timeline
@@ -208,12 +211,6 @@ export class SegmentClient {
       onChange: this.store.deepLinkData.onChange,
     };
 
-    // Watch for isReady so that we can handle any pending events
-    // Delays events processing in the timeline until the store is ready to prevent missing data injected from the plugins
-    this.store.isReady.onChange((value) => {
-      this.onStorageReady(value);
-    });
-
     // add segment destination plugin unless
     // asked not to via configuration.
     if (this.config.autoAddSegmentDestination) {
@@ -226,6 +223,18 @@ export class SegmentClient {
 
     // Start flush policies
     this.setupFlushPolicies();
+
+    // set up tracking for lifecycle events
+    this.setupLifecycleEvents();
+  }
+
+  // Watch for isReady so that we can handle any pending events
+  private async storageReady(): Promise<boolean> {
+    return new Promise((resolve) => {
+      this.store.isReady.onChange((value) => {
+        resolve(value);
+      });
+    });
   }
 
   /**
@@ -233,26 +242,29 @@ export class SegmentClient {
    * Can only be called once.
    */
   async init() {
-    if (this.isInitialized) {
+    if (this.isReady.value) {
       this.logger.warn('SegmentClient already initialized');
       return;
     }
 
-    await this.fetchSettings();
+    if ((await this.store.isReady.get(true)) === false) {
+      await this.storageReady();
+    }
+
+    await allSettled([
+      // Get new settings from segment
+      this.fetchSettings(),
+      // save the current installed version
+      this.checkInstalledVersion(),
+      // check if the app was opened from a deep link
+      this.trackDeepLinks(),
+    ]);
+
+    this.onReady();
+    this.isReady.value = true;
 
     // flush any stored events
     this.flushPolicyExecuter.manualFlush();
-
-    // set up tracking for lifecycle events
-    this.setupLifecycleEvents();
-
-    // check if the app was opened from a deep link
-    await this.trackDeepLinks();
-
-    // save the current installed version
-    await this.checkInstalledVersion();
-
-    this.isInitialized = true;
   }
 
   private generateFiltersMap(rules: Rule[]): DestinationFilters {
@@ -315,7 +327,6 @@ export class SegmentClient {
     this.appStateSubscription?.remove();
 
     this.destroyed = true;
-    this.isInitialized = false;
   }
 
   private setupLifecycleEvents() {
@@ -361,7 +372,7 @@ export class SegmentClient {
       );
     }
 
-    if (!this.store.isReady.get()) {
+    if (!this.isReady.value) {
       this.pluginsToAdd.push(plugin);
     } else {
       this.addPlugin(plugin);
@@ -385,7 +396,7 @@ export class SegmentClient {
 
   async process(incomingEvent: SegmentEvent) {
     const event = applyRawEventData(incomingEvent);
-    if (this.store.isReady.get() === true) {
+    if (this.isReady.value) {
       this.flushPolicyExecuter.notify(event);
       return this.timeline.process(event);
     } else {
@@ -420,34 +431,32 @@ export class SegmentClient {
   }
 
   /**
-   * Executes when the state store is initialized.
+   * Executes when everything in the client is ready for sending events
    * @param isReady
    */
-  private onStorageReady(isReady: boolean) {
-    if (isReady) {
-      // Add all plugins awaiting store
-      if (this.pluginsToAdd.length > 0 && !this.isAddingPlugins) {
-        this.isAddingPlugins = true;
-        try {
-          // start by adding the plugins
-          this.pluginsToAdd.forEach((plugin) => {
-            this.addPlugin(plugin);
-          });
+  private onReady() {
+    // Add all plugins awaiting store
+    if (this.pluginsToAdd.length > 0 && !this.isAddingPlugins) {
+      this.isAddingPlugins = true;
+      try {
+        // start by adding the plugins
+        this.pluginsToAdd.forEach((plugin) => {
+          this.addPlugin(plugin);
+        });
 
-          // now that they're all added, clear the cache
-          // this prevents this block running for every update
-          this.pluginsToAdd = [];
-        } finally {
-          this.isAddingPlugins = false;
-        }
+        // now that they're all added, clear the cache
+        // this prevents this block running for every update
+        this.pluginsToAdd = [];
+      } finally {
+        this.isAddingPlugins = false;
       }
-
-      // Send all events in the queue
-      for (const e of this.pendingEvents) {
-        this.timeline.process(e);
-      }
-      this.pendingEvents = [];
     }
+
+    // Send all events in the queue
+    for (const e of this.pendingEvents) {
+      this.timeline.process(e);
+    }
+    this.pendingEvents = [];
   }
 
   async flush(): Promise<void> {
@@ -507,8 +516,9 @@ export class SegmentClient {
   }
 
   async alias(newUserId: string) {
-    const { anonymousId, userId: previousUserId } =
-      await this.store.userInfo.get(true);
+    // We don't use a concurrency safe version of get here as we don't want to lock the values yet,
+    // we will update the values correctly when InjectUserInfo processes the change
+    const { anonymousId, userId: previousUserId } = this.store.userInfo.get();
 
     const event = createAliasEvent({
       anonymousId,
@@ -539,12 +549,6 @@ export class SegmentClient {
     // Only overwrite the previous context values to preserve any values that are added by enrichment plugins like IDFA
     await this.store.context.set(deepmerge(previousContext ?? {}, context));
 
-    // Only callback during the intial context load
-    if (!this.isContextLoaded) {
-      this.triggerOnContextLoad(UpdateType.initial);
-    }
-
-    this.isContextLoaded = true;
     if (!this.config.trackAppLifecycleEvents) {
       return;
     }
@@ -643,25 +647,6 @@ export class SegmentClient {
     getPluginsWithReset(this.timeline).forEach((plugin) => plugin.reset());
 
     this.logger.info('Client has been reset');
-  }
-
-  /**
-   * Registers a callback for when the client has loaded the device context. This happens at the startup of the app, but
-   * it is handy for plugins that require context data during configure as it guarantees the context data is available.
-   *
-   * If the context is already loaded it will call the callback immediately.
-   *
-   * @param callback Function to call when context is ready.
-   */
-  onContextLoaded(callback: OnContextLoadCallback) {
-    this.onContextLoadedObservers.push(callback);
-    if (this.isContextLoaded) {
-      this.triggerOnContextLoad(UpdateType.initial);
-    }
-  }
-
-  private triggerOnContextLoad(type: UpdateType) {
-    this.onContextLoadedObservers.map((f) => f?.(type));
   }
 
   /**

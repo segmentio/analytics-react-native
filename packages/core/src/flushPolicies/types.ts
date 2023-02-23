@@ -63,6 +63,12 @@ export interface FlushPolicy {
    * Called when the flush has been completed.
    */
   reset(): void;
+
+  /**
+   * Ends the execution of the flush policy.
+   * All cleanup methods should be contained here
+   */
+  end(): void;
 }
 
 /**
@@ -75,6 +81,10 @@ export abstract class FlushPolicyBase implements FlushPolicy {
 
   reset(): void {
     this.shouldFlush.value = false;
+  }
+
+  end(): void {
+    // Nothing to cleanup
   }
 
   abstract start(): void;

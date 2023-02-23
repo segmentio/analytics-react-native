@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-braze-v0.4.2](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-braze-v0.4.1...@segment/analytics-react-native-plugin-braze-v0.4.2) (2023-02-02)
+
+
+### Bug Fixes
+
+* add warnings when the date format does not parse ([#748](https://github.com/segmentio/analytics-react-native/issues/748)) ([2777bea](https://github.com/segmentio/analytics-react-native/commit/2777beadab176d8897a189e8a6d6861f1b9042b9))
+
 ## [@segment/analytics-react-native-plugin-braze-v0.4.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-braze-v0.4.0...@segment/analytics-react-native-plugin-braze-v0.4.1) (2022-10-07)
 
 

@@ -1,8 +1,9 @@
 import { AppState, AppStateStatus } from 'react-native';
-import { SegmentClient } from '../../analytics';
-import { EventType } from '../../types';
-import { getMockLogger } from '../__helpers__/mockLogger';
-import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
+import type { SegmentClient } from '../../analytics';
+import type { UtilityPlugin } from '../../plugin';
+import { EventType, SegmentEvent } from '../../types';
+import type { MockSegmentStore } from '../__helpers__/mockSegmentStore';
+import { createTestClient } from '../__helpers__/setupSegmentClient';
 
 jest.mock('../../uuid');
 jest.mock('../../context');
@@ -13,37 +14,24 @@ jest
   .mockReturnValue('2010-01-01T00:00:00.000Z');
 
 describe('SegmentClient #handleAppStateChange', () => {
-  const store = new MockSegmentStore();
-
-  const clientArgs = {
-    config: {
-      writeKey: 'mock-write-key',
-      trackAppLifecycleEvents: true,
-    },
-    logger: getMockLogger(),
-    store: store,
-  };
-
+  let store: MockSegmentStore;
   let client: SegmentClient;
+  let appStateChangeListener: ((state: AppStateStatus) => void) | undefined;
+  let expectEvent: (event: Partial<SegmentEvent>) => void;
+  let mockPlugin: UtilityPlugin;
 
   afterEach(() => {
     jest.clearAllMocks();
+    store.reset();
     client.cleanup();
   });
 
-  beforeEach(() => {
-    store.reset();
-  });
-
   const setupTest = async (
-    segmentClient: SegmentClient,
     from: AppStateStatus,
-    to: AppStateStatus
+    to: AppStateStatus,
+    initialTrackAppLifecycleEvents: boolean = false,
+    trackAppLifecycleEvents: boolean = true
   ) => {
-    // @ts-ignore
-    segmentClient.appState = from;
-
-    let appStateChangeListener: ((state: AppStateStatus) => void) | undefined;
     AppState.addEventListener = jest
       .fn()
       .mockImplementation(
@@ -52,37 +40,48 @@ describe('SegmentClient #handleAppStateChange', () => {
         }
       );
 
-    await segmentClient.init();
-    const clientProcess = jest.spyOn(segmentClient, 'process');
+    const stuff = createTestClient(undefined, {
+      trackAppLifecycleEvents: initialTrackAppLifecycleEvents,
+    });
+    store = stuff.store;
+    client = stuff.client;
+    expectEvent = stuff.expectEvent;
+    mockPlugin = stuff.plugin;
+
+    // @ts-ignore
+    client.appState = from;
+
+    await client.init();
+
+    // @ts-ignore settings the track here to filter out initial events
+    client.config.trackAppLifecycleEvents = trackAppLifecycleEvents;
 
     expect(appStateChangeListener).toBeDefined();
 
     appStateChangeListener!(to);
-    return clientProcess;
+    // Since the calls to process lifecycle events are not awaitable we have to await for ticks here
+    await new Promise(process.nextTick);
+    await new Promise(process.nextTick);
+    await new Promise(process.nextTick);
   };
 
   it('does not send events when trackAppLifecycleEvents is not enabled', async () => {
-    client = new SegmentClient({
-      ...clientArgs,
-      config: {
-        writeKey: 'mock-write-key',
-        trackAppLifecycleEvents: false,
-      },
-    });
-    const processSpy = await setupTest(client, 'active', 'background');
+    await setupTest('active', 'background', false, false);
 
-    expect(processSpy).not.toHaveBeenCalled();
+    expect(mockPlugin.execute).not.toHaveBeenCalled();
 
     // @ts-ignore
     expect(client.appState).toBe('background');
   });
 
   it('sends an event when inactive => active', async () => {
-    client = new SegmentClient(clientArgs);
-    const processSpy = await setupTest(client, 'inactive', 'active');
+    await setupTest('inactive', 'active');
 
-    expect(processSpy).toHaveBeenCalledTimes(1);
-    expect(processSpy).toHaveBeenCalledWith({
+    // @ts-ignore
+    expect(client.appState).toBe('active');
+
+    expect(mockPlugin.execute).toHaveBeenCalledTimes(1);
+    expectEvent({
       event: 'Application Opened',
       properties: {
         from_background: true,
@@ -91,16 +90,16 @@ describe('SegmentClient #handleAppStateChange', () => {
       },
       type: EventType.TrackEvent,
     });
-    // @ts-ignore
-    expect(client.appState).toBe('active');
   });
 
   it('sends an event when background => active', async () => {
-    client = new SegmentClient(clientArgs);
-    const processSpy = await setupTest(client, 'background', 'active');
+    await setupTest('background', 'active');
 
-    expect(processSpy).toHaveBeenCalledTimes(1);
-    expect(processSpy).toHaveBeenCalledWith({
+    // @ts-ignore
+    expect(client.appState).toBe('active');
+
+    expect(mockPlugin.execute).toHaveBeenCalledTimes(1);
+    expectEvent({
       event: 'Application Opened',
       properties: {
         from_background: true,
@@ -109,62 +108,60 @@ describe('SegmentClient #handleAppStateChange', () => {
       },
       type: EventType.TrackEvent,
     });
-    // @ts-ignore
-    expect(client.appState).toBe('active');
   });
 
   it('sends an event when active => inactive', async () => {
-    client = new SegmentClient(clientArgs);
-    const processSpy = await setupTest(client, 'active', 'inactive');
+    await setupTest('active', 'inactive');
 
-    expect(processSpy).toHaveBeenCalledTimes(1);
-    expect(processSpy).toHaveBeenCalledWith({
+    // @ts-ignore
+    expect(client.appState).toBe('inactive');
+
+    expect(mockPlugin.execute).toHaveBeenCalledTimes(1);
+    expectEvent({
       event: 'Application Backgrounded',
       properties: {},
       type: EventType.TrackEvent,
     });
-    // @ts-ignore
-    expect(client.appState).toBe('inactive');
   });
 
   it('sends an event when active => background', async () => {
-    client = new SegmentClient(clientArgs);
-    const processSpy = await setupTest(client, 'active', 'background');
+    await setupTest('active', 'background');
 
-    expect(processSpy).toHaveBeenCalledTimes(1);
-    expect(processSpy).toHaveBeenCalledWith({
+    // @ts-ignore
+    expect(client.appState).toBe('background');
+
+    expect(mockPlugin.execute).toHaveBeenCalledTimes(1);
+    expectEvent({
       event: 'Application Backgrounded',
       properties: {},
       type: EventType.TrackEvent,
     });
-    // @ts-ignore
-    expect(client.appState).toBe('background');
   });
 
-  it('does not send an event when unknown => active', async () => {
-    client = new SegmentClient(clientArgs);
-    const processSpy = await setupTest(client, 'unknown', 'active');
+  it('sends an event when unknown => active', async () => {
+    await setupTest('unknown', 'active');
 
-    expect(processSpy).not.toHaveBeenCalled();
     // @ts-ignore
     expect(client.appState).toBe('active');
+
+    expect(mockPlugin.execute).not.toHaveBeenCalled();
   });
 
-  it('does not send an event when unknown => background', async () => {
-    client = new SegmentClient(clientArgs);
-    const processSpy = await setupTest(client, 'unknown', 'background');
+  it('sends an event when unknown => background', async () => {
+    await setupTest('unknown', 'background');
 
-    expect(processSpy).not.toHaveBeenCalled();
     // @ts-ignore
     expect(client.appState).toBe('background');
+
+    expect(mockPlugin.execute).not.toHaveBeenCalled();
   });
 
-  it('does not send an event when unknown => inactive', async () => {
-    client = new SegmentClient(clientArgs);
-    const processSpy = await setupTest(client, 'unknown', 'inactive');
+  it('sends an event when unknown => inactive', async () => {
+    await setupTest('unknown', 'inactive');
 
-    expect(processSpy).not.toHaveBeenCalled();
     // @ts-ignore
     expect(client.appState).toBe('inactive');
+
+    expect(mockPlugin.execute).not.toHaveBeenCalled();
   });
 });

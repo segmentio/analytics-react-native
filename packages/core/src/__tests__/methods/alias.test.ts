@@ -1,6 +1,5 @@
-import { SegmentClient } from '../../analytics';
-import { getMockLogger } from '../__helpers__/mockLogger';
-import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
+import { EventType, SegmentEvent } from '../../types';
+import { createTestClient } from '../__helpers__/setupSegmentClient';
 
 jest.mock('../../uuid');
 
@@ -9,43 +8,34 @@ jest
   .mockReturnValue('2010-01-01T00:00:00.000Z');
 
 describe('methods #alias', () => {
-  const store = new MockSegmentStore({
-    userInfo: {
-      anonymousId: 'anonymousId',
-      userId: 'current-user-id',
-    },
-  });
-
-  const clientArgs = {
-    config: {
-      writeKey: '123-456',
-    },
-    logger: getMockLogger(),
-    store: store,
+  const initialUserInfo = {
+    anonymousId: 'anonymousId',
+    userId: 'current-user-id',
   };
 
-  beforeEach(() => {
+  const { store, client, expectEvent } = createTestClient({
+    userInfo: initialUserInfo,
+  });
+
+  beforeEach(async () => {
     store.reset();
     jest.clearAllMocks();
+    await client.init();
   });
 
   it('adds the alias event correctly', async () => {
-    const client = new SegmentClient(clientArgs);
-
-    jest.spyOn(client, 'process');
-
     await client.alias('new-user-id');
 
     const expectedEvent = {
       previousId: 'current-user-id',
-      type: 'alias',
+      type: EventType.AliasEvent,
       userId: 'new-user-id',
     };
 
-    expect(client.process).toHaveBeenCalledTimes(1);
-    expect(client.process).toHaveBeenCalledWith(expectedEvent);
+    expectEvent(expectedEvent);
 
-    expect(client.userInfo.get()).toEqual({
+    const info = await client.userInfo.get(true);
+    expect(info).toEqual({
       anonymousId: 'anonymousId',
       userId: 'new-user-id',
       traits: undefined,
@@ -53,32 +43,47 @@ describe('methods #alias', () => {
   });
 
   it('uses anonymousId in event if no userId in store', async () => {
-    const client = new SegmentClient({
-      ...clientArgs,
-      store: new MockSegmentStore({
-        userInfo: {
-          anonymousId: 'anonymousId',
-          userId: undefined,
-        },
-      }),
+    await client.init();
+
+    await store.userInfo.set({
+      anonymousId: 'anonymousId',
+      userId: undefined,
     });
-    jest.spyOn(client, 'process');
 
     await client.alias('new-user-id');
 
     const expectedEvent = {
       previousId: 'anonymousId',
-      type: 'alias',
+      type: EventType.AliasEvent,
       userId: 'new-user-id',
     };
 
-    expect(client.process).toHaveBeenCalledTimes(1);
-    expect(client.process).toHaveBeenCalledWith(expectedEvent);
+    expectEvent(expectedEvent);
 
     expect(client.userInfo.get()).toEqual({
       anonymousId: 'anonymousId',
       userId: 'new-user-id',
       traits: undefined,
+    });
+  });
+
+  it('is concurrency safe', async () => {
+    // We trigger an alias and do not await it, we do a track immediately and await.
+    // The track call should have the correct values injected into it.
+    client.alias('new-user-id');
+    await client.track('something');
+
+    const expectedTrackEvent: Partial<SegmentEvent> = {
+      event: 'something',
+      userId: 'new-user-id',
+      type: EventType.TrackEvent,
+    };
+
+    expectEvent(expectedTrackEvent);
+
+    expect(client.userInfo.get()).toEqual({
+      ...initialUserInfo,
+      userId: 'new-user-id',
     });
   });
 });

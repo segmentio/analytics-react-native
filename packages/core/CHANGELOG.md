@@ -1,3 +1,31 @@
+## [@segment/analytics-react-native-v2.13.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.12.0...@segment/analytics-react-native-v2.13.0) (2023-02-10)
+
+
+### Features
+
+* add clevertap plugin ([#759](https://github.com/segmentio/analytics-react-native/issues/759)) ([fcf3933](https://github.com/segmentio/analytics-react-native/commit/fcf393321145995ab9a2c46b15ee05cf4e066dfd))
+
+## [@segment/analytics-react-native-v2.12.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.11.0...@segment/analytics-react-native-v2.12.0) (2023-02-02)
+
+
+### Features
+
+* add unified DL support to appsflyer ([#756](https://github.com/segmentio/analytics-react-native/issues/756)) ([8d9e110](https://github.com/segmentio/analytics-react-native/commit/8d9e110da4d0ae79efb423fcf9773d56600a54a0))
+
+## [@segment/analytics-react-native-v2.11.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.10.1...@segment/analytics-react-native-v2.11.0) (2023-02-02)
+
+
+### Features
+
+* add end method to flush policies for cleanup ([#753](https://github.com/segmentio/analytics-react-native/issues/753)) ([96b0893](https://github.com/segmentio/analytics-react-native/commit/96b08934a4358788397b67d2c786177ae442db92))
+
+
+### Bug Fixes
+
+* prevent locking before setting new user data ([#751](https://github.com/segmentio/analytics-react-native/issues/751)) ([d8439e3](https://github.com/segmentio/analytics-react-native/commit/d8439e3671003b1bafa998675dc0ba841d627fd3))
+* refactor allSettled to remove dependencies ([#746](https://github.com/segmentio/analytics-react-native/issues/746)) ([479e468](https://github.com/segmentio/analytics-react-native/commit/479e4686a410ad9ebb02ed50a15509a9051ec073))
+* remove non-required parameters from native calls ([#750](https://github.com/segmentio/analytics-react-native/issues/750)) ([6ebd65e](https://github.com/segmentio/analytics-react-native/commit/6ebd65ed5e669d4f89643999ded1b5fa65a414fc))
+
 ## [@segment/analytics-react-native-v2.10.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.10.0...@segment/analytics-react-native-v2.10.1) (2023-01-09)
 
 

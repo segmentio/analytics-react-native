@@ -15,9 +15,10 @@ describe('DestinationFiltersPlugin', () => {
     }
   }
 
-  beforeEach(() => {
+  beforeEach(async () => {
     store.reset();
     jest.clearAllMocks();
+    await client.init();
   });
 
   it('works', async () => {
