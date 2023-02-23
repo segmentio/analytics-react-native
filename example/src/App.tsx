@@ -11,7 +11,6 @@ import {
   createClient,
   AnalyticsProvider,
   CountFlushPolicy,
-  TimerFlushPolicy,
   StartupFlushPolicy,
 } from '@segment/analytics-react-native';
 import Home from './Home';
@@ -50,7 +49,7 @@ const segmentClient = createClient({
   trackDeepLinks: true,
   flushPolicies: [
     new CountFlushPolicy(5),
-    new TimerFlushPolicy(500),
+    // new TimerFlushPolicy(1000), // Do not enable for Detox tests as synchronization won't work with a the continuous timer
     new StartupFlushPolicy(),
   ],
 });
@@ -128,12 +127,6 @@ const App = () => {
   React.useEffect(() => {
     RNBootSplash.hide();
   }, []);
-
-  // React.useEffect(() => {
-  //   testSovran.subscribe((store) => {
-  //     console.warn(store.message);
-  //   });
-  // });
 
   const [routeName, setRouteName] = useState('Unknown');
 
