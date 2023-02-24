@@ -1,5 +1,5 @@
 import flush from '../flush';
-import { requestImmediateDataFlush } from '../__mocks__/react-native-appboy-sdk';
+import { requestImmediateDataFlush } from '../__mocks__/@braze/react-native-sdk';
 
 describe('#flush', () => {
   beforeEach(() => {

@@ -1,4 +1,4 @@
-import ReactAppboy from 'react-native-appboy-sdk';
+import Braze from '@braze/react-native-sdk';
 import type { TrackEventType, JsonMap } from '@segment/analytics-react-native';
 
 const attributionProperties = {
@@ -17,7 +17,7 @@ export default (payload: TrackEventType) => {
       const adGroup = attributionData.ad_group ?? attributionProperties.adGroup;
       const creative =
         attributionData.ad_creative ?? attributionProperties.creative;
-      ReactAppboy.setAttributionData(network, campaign, adGroup, creative);
+      Braze.setAttributionData(network, campaign, adGroup, creative);
     }
   }
 
@@ -53,7 +53,7 @@ export default (payload: TrackEventType) => {
             appBoyProperties,
             productDict
           );
-          ReactAppboy.logPurchase(
+          Braze.logPurchase(
             productId,
             String(productRevenue),
             currency,
@@ -62,7 +62,7 @@ export default (payload: TrackEventType) => {
           );
         });
       } else {
-        ReactAppboy.logPurchase(
+        Braze.logPurchase(
           payload.event,
           String(revenue),
           currency,
@@ -71,10 +71,10 @@ export default (payload: TrackEventType) => {
         );
       }
     } else {
-      ReactAppboy.logPurchase(payload.event, String(revenue), currency, 1);
+      Braze.logPurchase(payload.event, String(revenue), currency, 1);
     }
   } else {
-    ReactAppboy.logCustomEvent(payload.event, payload.properties);
+    Braze.logCustomEvent(payload.event, payload.properties);
   }
 
   return payload;
