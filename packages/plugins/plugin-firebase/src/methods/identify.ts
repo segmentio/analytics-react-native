@@ -7,12 +7,26 @@ export default async (event: IdentifyEventType) => {
   }
   if (event.traits) {
     let eventTraits = event.traits;
-    let safeTraits = Object.keys(eventTraits).reduce((acc: any, trait) => {
-      if (!acc[trait]) {
-        acc[trait] = eventTraits[trait]?.toString();
-      }
-      return acc;
-    }, {});
+    let safeTraits: Record<string, string>;
+
+    const checkType = (value: any) => {
+      return typeof value === 'object' && !Array.isArray(value);
+    };
+    safeTraits = Object.keys(eventTraits).reduce(
+      (acc: Record<string, string>, trait) => {
+        if (checkType(eventTraits[trait])) {
+          console.log(
+            'We detected an object or array data type. Firebase does not accept nested traits.'
+          );
+        }
+        if (trait !== undefined) {
+          acc[trait] = eventTraits[trait]!.toString();
+        }
+        return acc;
+      },
+      {}
+    );
+
     await firebaseAnalytics().setUserProperties(safeTraits);
   }
 };
