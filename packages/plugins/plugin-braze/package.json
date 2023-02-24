@@ -50,7 +50,7 @@
     "@segment/analytics-react-native": "*"
   },
   "dependencies": {
-    "react-native-appboy-sdk": "^1.32.0"
+    "@braze/react-native-sdk": "^2.0.2"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.1",

@@ -1091,6 +1091,11 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
+"@braze/react-native-sdk@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@braze/react-native-sdk/-/react-native-sdk-2.0.2.tgz#6d0576dd6c69c9ddd77de3b8f43a67c8235613b8"
+  integrity sha512-rY1GQdlFfxmYpJhMMw5c0arbyWZG4K8dbV7mEZTC8uxB+vWnwyULy4uuHejbtM3p/AF2vF9wbnlyZhzVQYY1vw==
+
 "@changesets/apply-release-plan@^6.0.2":
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/@changesets/apply-release-plan/-/apply-release-plan-6.0.2.tgz#6937f39425c93a70b1e155d76cfa06bf7255c992"
@@ -10559,11 +10564,6 @@ react-native-adjust@^4.29.4:
   version "4.29.6"
   resolved "https://registry.yarnpkg.com/react-native-adjust/-/react-native-adjust-4.29.6.tgz#cf7cc4fdfe516f10a4f42b9df73826c0898fd0c3"
   integrity sha512-6XShRFrqx/kif0iPutaS4gj6LhZtzPIpH3MAxxKOoqwWWX0UPVQ9boQC4j2BtFjmerVQG1p2LGwsdylsGOiJ2g==
-
-react-native-appboy-sdk@^1.32.0:
-  version "1.36.0"
-  resolved "https://registry.yarnpkg.com/react-native-appboy-sdk/-/react-native-appboy-sdk-1.36.0.tgz#fdda158ba8e6fb87dda7ab8c89510686fe13c02c"
-  integrity sha512-ZveH33LRxJNVEc5ym/tYVpKEEeQwMShV/5Afdum5NZjeTi2Mh/ghTVlCp3t+Icb1BWDnMjke3myiqISYyFXMFw==
 
 react-native-appsflyer@^6.9.4:
   version "6.9.4"

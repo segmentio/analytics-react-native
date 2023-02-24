@@ -1,5 +1,5 @@
-import ReactAppboy from 'react-native-appboy-sdk';
+import Braze from '@braze/react-native-sdk';
 
 export default () => {
-  ReactAppboy.requestImmediateDataFlush();
+  Braze.requestImmediateDataFlush();
 };

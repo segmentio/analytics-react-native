@@ -5,8 +5,14 @@
 #import <React/RCTAppSetupUtils.h>
 #import <segment_analytics_react_native-Swift.h>
 //  #import <Firebase.h>
+
 // #import <CleverTap-iOS-SDK/CleverTap.h>
 // #import <clevertap-react-native/CleverTapReactManager.h>
+
+//#import "BrazeReactUtils.h"
+//#import "BrazeReactBridge.h"
+//#import <BrazeKit/BrazeKit-Swift.h>
+
 #if RCT_NEW_ARCH_ENABLED
 #import <React/CoreModulesPlugins.h>
 #import <React/RCTCxxBridgeDelegate.h>
@@ -25,11 +31,24 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 }
 @end
 #endif
+
+
 @implementation AppDelegate
+
+//enable for Braze Plugin
+//static NSString *const apiKey = @"<YOUR API KEY>";
+//static NSString *const endpoint = @"<YOUR ENDPOINT>";
+
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  
+// enable for Braze Plugin
+//  id<RCTBridgeDelegate> moduleInitializer = [[BrazeReactBridge alloc] init];
   RCTAppSetupPrepareApp(application);
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+  
+  
 #if RCT_NEW_ARCH_ENABLED
   _contextContainer = std::make_shared<facebook::react::ContextContainer const>();
   _reactNativeConfig = std::make_shared<facebook::react::EmptyReactNativeConfig const>();
@@ -37,6 +56,7 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
   _bridgeAdapter = [[RCTSurfacePresenterBridgeAdapter alloc] initWithBridge:bridge contextContainer:_contextContainer];
   bridge.surfacePresenter = _bridgeAdapter.surfacePresenter;
 #endif
+  
   NSDictionary *initProps = [self prepareInitialProps];
   UIView *rootView = RCTAppSetupDefaultRootView(bridge, @"AnalyticsReactNativeExample", initProps);
   if (@available(iOS 13.0, *)) {
@@ -44,6 +64,9 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
   } else {
     rootView.backgroundColor = [UIColor whiteColor];
   }
+
+  
+  
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
   rootViewController.view = rootView;
@@ -55,6 +78,16 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
   // integrate CleverTap SDK using the autoIntegrate option
   // [CleverTap autoIntegrate]; 
   // [[CleverTapReactManager sharedInstance] applicationDidLaunchWithOptions:launchOptions];
+  
+//  enable for braze plugin
+//  BRZConfiguration *configuration = [[BRZConfiguration alloc] initWithApiKey:apiKey
+//                                                                    endpoint:endpoint];
+  // - Enable logging and customize the configuration here
+//  configuration.logger.level = BRZLoggerLevelInfo;
+//  Braze *braze = [BrazeReactBridge initBraze:configuration];
+//  AppDelegate.braze = braze;
+
+  
   return YES;
 }
 
@@ -122,4 +155,19 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
   return RCTAppSetupDefaultModuleFromClass(moduleClass);
 }
 #endif
+
+// enable for Braze Plugin
+
+//#pragma mark - AppDelegate.braze
+//
+//static Braze *_braze = nil;
+//
+//+ (Braze *)braze {
+//  return _braze;
+//}
+//
+//+ (void)setBraze:(Braze *)braze {
+//  _braze = braze;
+//}
+
 @end
