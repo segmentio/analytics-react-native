@@ -1,5 +1,5 @@
 import type { IdentifyEventType } from '@segment/analytics-react-native';
-import identify from '../identify';
+import { FirebasePlugin } from '../../FirebasePlugin';
 
 const mockSetUserId = jest.fn();
 const mockSetUserProperties = jest.fn();
@@ -15,6 +15,7 @@ describe('#identify', () => {
   });
 
   it('forwards the identify event with ID only', async () => {
+    const plugin = new FirebasePlugin();
     const event = {
       type: 'identify',
       userId: '123',
@@ -23,7 +24,7 @@ describe('#identify', () => {
       timestamp: '00000',
     } as IdentifyEventType;
 
-    await identify(event);
+    await plugin.identify(event);
 
     expect(mockSetUserId).toHaveBeenCalledTimes(1);
     expect(mockSetUserProperties).not.toHaveBeenCalled();
@@ -31,6 +32,7 @@ describe('#identify', () => {
   });
 
   it('forwards the identify event with ID and properties', async () => {
+    const plugin = new FirebasePlugin();
     const event = {
       type: 'identify',
       userId: '123',
@@ -42,7 +44,7 @@ describe('#identify', () => {
       },
     } as IdentifyEventType;
 
-    await identify(event);
+    await plugin.identify(event);
 
     expect(mockSetUserId).toHaveBeenCalledTimes(1);
     expect(mockSetUserProperties).toHaveBeenCalledTimes(1);
@@ -51,6 +53,7 @@ describe('#identify', () => {
   });
 
   it('forwards the identify event without ID', async () => {
+    const plugin = new FirebasePlugin();
     const event = {
       type: 'identify',
       anonymousId: 'anon',
@@ -61,7 +64,7 @@ describe('#identify', () => {
       },
     } as IdentifyEventType;
 
-    await identify(event);
+    await plugin.identify(event);
 
     expect(mockSetUserId).not.toHaveBeenCalled();
     expect(mockSetUserProperties).toHaveBeenCalledTimes(1);
