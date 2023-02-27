@@ -5,10 +5,7 @@ import {
   TrackEventType,
   UserInfoState,
 } from '@segment/analytics-react-native';
-import ReactAppboy, {
-  GenderTypes,
-  MonthsAsNumber,
-} from 'react-native-appboy-sdk';
+import Braze, { GenderTypes, MonthsAsNumber } from '@braze/react-native-sdk';
 import flush from './methods/flush';
 import track from './methods/track';
 
@@ -28,7 +25,7 @@ export class BrazePlugin extends DestinationPlugin {
       return;
     } else {
       if (event.userId) {
-        ReactAppboy.changeUser(event.userId);
+        Braze.changeUser(event.userId);
       }
 
       if (event.traits?.birthday !== undefined) {
@@ -39,7 +36,7 @@ export class BrazePlugin extends DestinationPlugin {
           !isNaN(birthday.getTime())
         ) {
           const data = new Date(event.traits.birthday);
-          ReactAppboy.setDateOfBirth(
+          Braze.setDateOfBirth(
             data.getFullYear(),
             // getMonth is zero indexed
             (data.getMonth() + 1) as MonthsAsNumber,
@@ -53,37 +50,37 @@ export class BrazePlugin extends DestinationPlugin {
       }
 
       if (event.traits?.email !== undefined) {
-        ReactAppboy.setEmail(event.traits.email);
+        Braze.setEmail(event.traits.email);
       }
 
       if (event.traits?.firstName !== undefined) {
-        ReactAppboy.setFirstName(event.traits.firstName);
+        Braze.setFirstName(event.traits.firstName);
       }
 
       if (event.traits?.lastName !== undefined) {
-        ReactAppboy.setLastName(event.traits.lastName);
+        Braze.setLastName(event.traits.lastName);
       }
 
       if (event.traits?.gender !== undefined) {
         const validGenders = ['m', 'f', 'n', 'o', 'p', 'u'];
         const isValidGender = validGenders.indexOf(event.traits.gender) > -1;
         if (isValidGender) {
-          ReactAppboy.setGender(
+          Braze.setGender(
             event.traits.gender as GenderTypes[keyof GenderTypes]
           );
         }
       }
 
       if (event.traits?.phone !== undefined) {
-        ReactAppboy.setPhoneNumber(event.traits.phone);
+        Braze.setPhoneNumber(event.traits.phone);
       }
 
       if (event.traits?.address !== undefined) {
         if (event.traits.address.city !== undefined) {
-          ReactAppboy.setHomeCity(event.traits.address.city);
+          Braze.setHomeCity(event.traits.address.city);
         }
         if (event.traits?.address.country !== undefined) {
-          ReactAppboy.setCountry(event.traits.address.country);
+          Braze.setCountry(event.traits.address.country);
         }
       }
 
@@ -99,7 +96,7 @@ export class BrazePlugin extends DestinationPlugin {
 
       Object.entries(event.traits ?? {}).forEach(([key, value]) => {
         if (appBoyTraits.indexOf(key) < 0) {
-          ReactAppboy.setCustomUserAttribute(key, value as any);
+          Braze.setCustomUserAttribute(key, value as any);
         }
       });
 

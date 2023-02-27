@@ -41,6 +41,9 @@ import { AmplitudeSessionPlugin } from '@segment/analytics-react-native-plugin-a
 //@ts-ignore
 // import { ClevertapPlugin } from '@segment/analytics-react-native-plugin-clevertap';
 
+//@ts-ignore
+// import { BrazePlugin } from '@segment/analytics-react-native-plugin-braze';
+
 const segmentClient = createClient({
   writeKey: 'WRITE_KEY',
   trackAppLifecycleEvents: true,
@@ -71,6 +74,8 @@ segmentClient.add({ plugin: LoggerPlugin });
 // segmentClient.add({ plugin: idfaPlugin });
 
 segmentClient.add({ plugin: new AmplitudeSessionPlugin() });
+
+// segmentClient.add({ plugin: new BrazePlugin() });
 
 // segmentClient.add({ plugin: new ClevertapPlugin() });
 

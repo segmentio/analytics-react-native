@@ -48,7 +48,7 @@
     "@segment/analytics-react-native": "*"
   },
   "dependencies": {
-    "react-native-adjust": "^4.29.4"
+    "react-native-adjust": "^4.33.0"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.1",

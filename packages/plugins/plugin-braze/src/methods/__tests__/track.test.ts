@@ -4,7 +4,7 @@ import {
   logCustomEvent,
   logPurchase,
   setAttributionData,
-} from '../__mocks__/react-native-appboy-sdk';
+} from '../__mocks__/@braze/react-native-sdk';
 
 describe('#track', () => {
   beforeEach(() => {
