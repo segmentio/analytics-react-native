@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-firebase-v0.3.4](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-firebase-v0.3.3...@segment/analytics-react-native-plugin-firebase-v0.3.4) (2023-02-28)
+
+
+### Bug Fixes
+
+* add logic to convert traits to strings ([#763](https://github.com/segmentio/analytics-react-native/issues/763)) ([559a3bb](https://github.com/segmentio/analytics-react-native/commit/559a3bb70654faee04546b4f18ed6f340d5712db))
+
 ## [@segment/analytics-react-native-plugin-firebase-v0.3.3](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-firebase-v0.3.2...@segment/analytics-react-native-plugin-firebase-v0.3.3) (2022-11-30)
 
 
