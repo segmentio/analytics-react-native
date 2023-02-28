@@ -7,7 +7,6 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.ReactApplication
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.sovranreactnative.SovranModule
 import com.facebook.react.module.annotations.ReactModule
 import android.util.Log
 import java.io.IOException;

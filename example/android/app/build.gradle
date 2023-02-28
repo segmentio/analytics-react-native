@@ -286,6 +286,7 @@ dependencies {
         implementation jscFlavor
     }
 
+    implementation project(':segment_sovran-react-native')
     implementation project(':segmentanalyticsreactnative')
     // implementation "com.google.android.gms:play-services-ads-identifier:18.0.1"
     implementation project(':analyticsreactnativepluginadvertisingid')

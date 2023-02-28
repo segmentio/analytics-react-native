@@ -348,7 +348,7 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - segment-analytics-react-native (from `../../packages/core`)
   - segment-analytics-react-native-plugin-idfa (from `../../packages/plugins/plugin-idfa`)
-  - "sovran-react-native (from `../node_modules/@segment/sovran-react-native`)"
+  - sovran-react-native (from `../../packages/sovran`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -435,7 +435,7 @@ EXTERNAL SOURCES:
   segment-analytics-react-native-plugin-idfa:
     :path: "../../packages/plugins/plugin-idfa"
   sovran-react-native:
-    :path: "../node_modules/@segment/sovran-react-native"
+    :path: "../../packages/sovran"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -479,10 +479,10 @@ SPEC CHECKSUMS:
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNGestureHandler: 920eb17f5b1e15dae6e5ed1904045f8f90e0b11e
   segment-analytics-react-native: bd1f13ea95bad2313a9c7130da032af0e9a6da60
-  segment-analytics-react-native-plugin-idfa: c9335ec0327b8f5f35c78bbf0bf7821e9137537e
-  sovran-react-native: fd3dc8f1a4b14acdc4ad25fc6b4ac4f52a2a2a15
+  segment-analytics-react-native-plugin-idfa: 6b0231a40b5aebc869eba83d51ea509023345ef7
+  sovran-react-native: 046c21798af2c4c34acdf963329cd331df069649
   Yoga: 0b84a956f7393ef1f37f3bb213c516184e4a689d
 
-PODFILE CHECKSUM: 2ecd5be7772aafe05298cc4aa625fde6b4fcae1d
+PODFILE CHECKSUM: 148f23dc44ebce74497f5fef0651f1fea1f8a361
 
 COCOAPODS: 1.11.3

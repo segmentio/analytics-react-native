@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "@segment/sovran-react-native": ["packages/sovran/src/index"],
       "@segment/analytics-react-native": ["packages/core/src/index"]
     },
     "composite": true,

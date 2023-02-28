@@ -132,5 +132,4 @@ dependencies {
   api 'com.facebook.react:react-native:+'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation "com.google.android.gms:play-services-ads-identifier:18.0.1"
-  implementation project(path: ':segment_sovran-react-native')
 }

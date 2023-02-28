@@ -5,7 +5,8 @@
     "paths": {
       "@segment/analytics-react-native": [
         "<rootDir>/../packages/core/src/index"
-      ]
+      ],
+      "@segment/sovran-react-native": ["<rootDir>/../packages/sovran/src/index"]
     },
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
@@ -18,5 +19,8 @@
     "strict": true,
     "target": "esnext"
   },
-  "references": [{ "path": "../packages/core" }]
+  "references": [
+    { "path": "../packages/core" },
+    { "path": "../packages/sovran" }
+  ]
 }
