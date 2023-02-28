@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-adjust-v0.6.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-adjust-v0.5.0...@segment/analytics-react-native-plugin-adjust-v0.6.0) (2023-02-28)
+
+
+### Features
+
+* bump adjust sdk to 4.33.0 to support new features ([#767](https://github.com/segmentio/analytics-react-native/issues/767)) ([a874459](https://github.com/segmentio/analytics-react-native/commit/a874459f959bc1a605f12a6df05624b08726be24))
+
 ## [@segment/analytics-react-native-plugin-adjust-v0.5.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-adjust-v0.4.0...@segment/analytics-react-native-plugin-adjust-v0.5.0) (2022-07-15)
 
 
