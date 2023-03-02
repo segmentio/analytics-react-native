@@ -15,6 +15,9 @@ describe('QueueFlushingPlugin', () => {
     // We override the createStore before the queue plugin is initialized to use our own mocked event store
     (createStore as jest.Mock).mockReturnValue(new MockEventStore());
     queuePlugin.configure({
+      telemetry: {
+        getTelemetryForPlugin: jest.fn(),
+      },
       getConfig: () => ({
         writeKey: 'SEGMENT_KEY',
         flushAt,

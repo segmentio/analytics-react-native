@@ -307,10 +307,10 @@ export class SegmentClient {
       ]);
 
       // Initialize Metrics with the settings
-      this.telemetry.configure(resJson.metrics);
+      await this.telemetry.configure(resJson.metrics);
     } catch (e) {
       // Initialize metrics with defaults so that we can log the error during settings read
-      this.telemetry.configure();
+      await this.telemetry.configure();
       this.reportInternalError(translateHTTPError(e));
 
       this.logger.warn(

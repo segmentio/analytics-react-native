@@ -67,7 +67,7 @@ export class Metrics {
    * Metrics before configuration will still be stored.
    * @param options C
    */
-  constructor(options?: MetricsOptions) {
+  constructor(options?: Partial<MetricsOptions>) {
     if (options !== undefined) {
       this.configure(options);
     }
@@ -80,8 +80,8 @@ export class Metrics {
   async configure(options?: Partial<MetricsOptions>) {
     this.settings = {
       host: options?.host ?? 'api.segment.io/v1',
-      sampleRate: options?.sampleRate ?? 1,
-      flushTimer: options?.flushTimer ?? 5 * 1000, // 30 secs
+      sampleRate: options?.sampleRate ?? 0.1,
+      flushTimer: options?.flushTimer ?? 30 * 1000, // 30 secs
       maxQueueSize: options?.maxQueueSize ?? 20,
     };
 
@@ -98,6 +98,7 @@ export class Metrics {
     if (this.settings !== undefined) {
       this.intervalFlush = setTimeout(async () => {
         await this.flush();
+        this.startTimer();
       }, this.settings.flushTimer);
     }
   }
@@ -108,11 +109,10 @@ export class Metrics {
    * @returns true if metric will be sent
    */
   private isInSample(): Boolean {
-    return true;
-    // if (this.settings === undefined) {
-    //   return false;
-    // }
-    // return Math.random() <= this.settings.sampleRate;
+    if (this.settings === undefined) {
+      return false;
+    }
+    return Math.random() <= this.settings.sampleRate;
   }
 
   private limitNTagsByPriority(
@@ -229,7 +229,7 @@ export class Metrics {
     }
 
     if (uploaded.length > 0) {
-      this.metricStore.dispatch((queue) => {
+      await this.metricStore.dispatch((queue) => {
         const setToRemove = new Set(uploaded);
         const filteredQueue = queue.filter((m) => !setToRemove.has(m));
         return filteredQueue;
@@ -237,7 +237,6 @@ export class Metrics {
     }
 
     this.isFlushing = false;
-    this.startTimer();
   }
 
   /**
@@ -250,8 +249,9 @@ export class Metrics {
   /**
    * Cleans up resources and cancels timers
    */
-  cleanup() {
+  async cleanup() {
     clearTimeout(this.intervalFlush);
+    await this.metricStore.dispatch(() => []);
   }
 
   private async upload(metrics: Metric[]): Promise<Boolean> {
@@ -263,12 +263,6 @@ export class Metrics {
 
     const headers = { 'Content-Type': 'text/plain' };
     const url = `https://${this.settings.host}/m`;
-    console.log(
-      `Uploading ${metrics.length} metrics to ${url}, payload: ${JSON.stringify(
-        payload
-      )}`
-    );
-
     try {
       const response = await fetch(url, {
         headers,

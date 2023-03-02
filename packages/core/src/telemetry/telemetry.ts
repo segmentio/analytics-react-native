@@ -1,6 +1,7 @@
 import type { Watchable } from '../storage';
 import type { Context, DeepPartial } from '../types';
 import { Metrics, MetricsOptions, MetricNames } from './metrics';
+import { libraryInfo } from '../info';
 
 const UNKNOWN_TAG_VALUE = 'unknown';
 
@@ -42,6 +43,7 @@ export class Telemetry implements TelemetryRecorder {
   private metrics = new Metrics();
   private writeKey: string;
   private context: Watchable<DeepPartial<Context> | undefined>;
+  private options?: Partial<MetricsOptions>;
 
   /**
    * Creates the telemetry object
@@ -66,6 +68,7 @@ export class Telemetry implements TelemetryRecorder {
    */
   enable() {
     this.isEnabled = true;
+    this.metrics.configure(this.options);
   }
 
   /**
@@ -73,14 +76,18 @@ export class Telemetry implements TelemetryRecorder {
    */
   disable() {
     this.isEnabled = false;
+    this.metrics.cleanup();
   }
 
   /**
    * Configures the metrics object. Until this method is called it will start uploading metrics.
    * @param options Metrics Options
    */
-  configure(options?: Partial<MetricsOptions>) {
-    this.metrics.configure(options);
+  async configure(options?: Partial<MetricsOptions>) {
+    this.options = options;
+    if (this.isEnabled) {
+      await this.metrics.configure(options);
+    }
   }
 
   private async injectTags(
@@ -96,8 +103,10 @@ export class Telemetry implements TelemetryRecorder {
       os: `${current?.os?.name ?? UNKNOWN_TAG_VALUE}-${
         current?.os?.version ?? UNKNOWN_TAG_VALUE
       }`,
-      libraryName: current?.library?.name ?? UNKNOWN_TAG_VALUE,
-      libraryVersion: current?.library?.version ?? UNKNOWN_TAG_VALUE,
+      libraryName:
+        current?.library?.name ?? libraryInfo.name ?? UNKNOWN_TAG_VALUE,
+      libraryVersion:
+        current?.library?.version ?? libraryInfo.version ?? UNKNOWN_TAG_VALUE,
     };
   }
 
@@ -169,7 +178,7 @@ export class Telemetry implements TelemetryRecorder {
       });
     };
     let error = (errorMessage: string, tags: RecordTags = {}) => {
-      return this.recordInternal('integration.invoke.error', errorMessage, {
+      return this.errorInternal('integration.invoke.error', errorMessage, {
         ...tags,
         plugin,
       });
@@ -181,7 +190,7 @@ export class Telemetry implements TelemetryRecorder {
     };
   }
 
-  cleanup() {
-    this.metrics.cleanup();
+  async cleanup() {
+    await this.metrics.cleanup();
   }
 }
