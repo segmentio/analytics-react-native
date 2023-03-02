@@ -113,6 +113,7 @@ You must pass at least the `writeKey`. Additional configuration options are list
 | `logger`                   | undefined | Custom logger instance to expose internal Segment client logging.                                                                            |
 | `flushAt`                  | 20        | How many events to accumulate before sending events to the backend.                                                                            |
 | `flushInterval`            | 30        | In seconds, how often to send events to the backend.                                                                                           |
+| `flushPolicies`            | undefined | Add more granular control for when to flush, see [Adding or removing policies](#adding-or-removing-policies)                                   |
 | `maxBatchSize`             | 1000      | How many events to send to the API at once                                                                                                     |
 | `trackAppLifecycleEvents`  | false     | Enable automatic tracking for [app lifecycle events](https://segment.com/docs/connections/spec/mobile/#lifecycle-events): application installed, opened, updated, backgrounded) |
 | `trackDeepLinks`           | false     | Enable automatic tracking for when the user opens the app via a deep link (Note: Requires additional setup on iOS, [see instructions](#ios-deep-link-tracking-setup))                                                            |
@@ -120,6 +121,7 @@ You must pass at least the `writeKey`. Additional configuration options are list
 | `autoAddSegmentDestination`| true      | Set to false to skip adding the SegmentDestination plugin                                                                                      |
 | `storePersistor`           | undefined | A custom persistor for the store that `analytics-react-native` leverages. Must match `Persistor` interface exported from [sovran-react-native](https://github.com/segmentio/sovran-react-native).|
 | `proxy`                    | undefined | `proxy` is a batch url to post to instead of 'https://api.segment.io/v1/b'.                                                                    |
+| `errorHandler`             | undefined | Create custom actions when errors happen, see [Handling errors](#handling-errors)                                                              |
 
 
 \* The default value of `debug` will be false in production.
