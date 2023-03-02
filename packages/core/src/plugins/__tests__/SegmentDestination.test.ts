@@ -19,6 +19,8 @@ import {
   SEGMENT_DESTINATION_KEY,
 } from '../SegmentDestination';
 
+jest.mock('uuid');
+
 describe('SegmentDestination', () => {
   const store = new MockSegmentStore();
   const clientArgs = {

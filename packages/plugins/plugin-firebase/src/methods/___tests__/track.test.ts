@@ -1,6 +1,8 @@
 import { EventType, TrackEventType } from '@segment/analytics-react-native';
 import track from '../track';
 
+jest.mock('uuid');
+
 const mockLogEvent = jest.fn();
 
 jest.mock('@react-native-firebase/analytics', () => () => ({

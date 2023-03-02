@@ -5,7 +5,7 @@ import { EventType, SegmentEvent } from '../../types';
 import type { MockSegmentStore } from '../__helpers__/mockSegmentStore';
 import { createTestClient } from '../__helpers__/setupSegmentClient';
 
-jest.mock('../../uuid');
+jest.mock('uuid');
 jest.mock('../../context');
 jest.mock('react-native');
 
