@@ -499,6 +499,7 @@ export class SegmentClient {
 
     await this.process(event);
     this.logger.info('SCREEN event saved', event);
+    this.telemetry.record('Screen');
   }
 
   async track(eventName: string, options?: JsonMap) {
@@ -509,6 +510,7 @@ export class SegmentClient {
 
     await this.process(event);
     this.logger.info('TRACK event saved', event);
+    this.telemetry.record('Track');
   }
 
   async identify(userId?: string, userTraits?: UserTraits) {
@@ -519,6 +521,7 @@ export class SegmentClient {
 
     await this.process(event);
     this.logger.info('IDENTIFY event saved', event);
+    this.telemetry.record('Identify');
   }
 
   async group(groupId: string, groupTraits?: GroupTraits) {
@@ -544,6 +547,7 @@ export class SegmentClient {
 
     await this.process(event);
     this.logger.info('ALIAS event saved', event);
+    this.telemetry.record('Alias');
   }
 
   /**

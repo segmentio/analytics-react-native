@@ -10,7 +10,7 @@ const TAGS_LIMIT = 10;
 /**
  * We prioritize these tags over user defined ones if the number is over the limit, ordered by importance
  */
-const PRIORITED_TAGS = [
+const PRIORITIZED_TAGS = [
   'writeKey',
   'message',
   'error',
@@ -128,7 +128,7 @@ export class Metrics {
     let sanitizedTags: Record<string, string> = {};
     let count = 0;
     for (const k of keys) {
-      if (count < n && PRIORITED_TAGS.includes(k)) {
+      if (count < n && PRIORITIZED_TAGS.includes(k)) {
         sanitizedTags[k] = tags[k];
         count++;
         if (count >= n) {
@@ -220,12 +220,12 @@ export class Metrics {
     this.isFlushing = true;
 
     const chunks = chunk(queue, this.settings.maxQueueSize);
-    const uploaded: Metric[] = [];
+    let uploaded: Metric[] = [];
 
     for (const metrics of chunks) {
       await this.upload(metrics);
       // This is best effort only, if we are not successful sending metrics we won't retry
-      uploaded.concat(metrics);
+      uploaded = uploaded.concat(metrics);
     }
 
     if (uploaded.length > 0) {
