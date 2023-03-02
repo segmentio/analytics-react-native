@@ -53,6 +53,7 @@ import {
   SegmentError,
   translateHTTPError,
 } from './errors';
+import { Telemetry } from './telemetry';
 
 type OnPluginAddedCallback = (plugin: Plugin) => void;
 
@@ -92,6 +93,8 @@ export class SegmentClient {
     new InjectContext(),
   ];
 
+  readonly telemetry: Telemetry;
+
   // Watchables
   /**
    * Observable to know when the client is fully initialized and ready to send events to destination
@@ -124,8 +127,6 @@ export class SegmentClient {
   readonly userInfo: Watchable<UserInfoState> & Settable<UserInfoState>;
 
   readonly deepLinkData: Watchable<DeepLinkData>;
-
-  // private telemetry?: Telemetry;
 
   /**
    * Returns the plugins currently loaded in the timeline
@@ -218,6 +219,13 @@ export class SegmentClient {
       this.add({ plugin: segmentDestination });
     }
 
+    // Initialize telemetry client
+    this.telemetry = new Telemetry(
+      this.config.writeKey,
+      this.context,
+      this.config.disableTelemetry !== true
+    );
+
     // Setup platform specific plugins
     this.platformPlugins.forEach((plugin) => this.add({ plugin: plugin }));
 
@@ -226,6 +234,8 @@ export class SegmentClient {
 
     // set up tracking for lifecycle events
     this.setupLifecycleEvents();
+
+    this.telemetry.record('Client Constructor', { test: 'test-OB' });
   }
 
   // Watch for isReady so that we can handle any pending events
@@ -295,7 +305,12 @@ export class SegmentClient {
         this.store.settings.set(integrations),
         this.store.filters.set(filters),
       ]);
+
+      // Initialize Metrics with the settings
+      this.telemetry.configure(resJson.metrics);
     } catch (e) {
+      // Initialize metrics with defaults so that we can log the error during settings read
+      this.telemetry.configure();
       this.reportInternalError(translateHTTPError(e));
 
       this.logger.warn(
@@ -325,6 +340,7 @@ export class SegmentClient {
   cleanup() {
     this.flushPolicyExecuter.cleanup();
     this.appStateSubscription?.remove();
+    this.telemetry.cleanup();
 
     this.destroyed = true;
   }
@@ -727,6 +743,10 @@ export class SegmentClient {
     } else {
       this.logger.warn('An internal error occurred: ', error);
     }
+    this.telemetry.error(error.type.toString(), {
+      errorName: error.name,
+      fatal: fatal ? '1' : '0',
+    });
     this.config.errorHandler?.(error);
   }
 }

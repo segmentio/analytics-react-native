@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import type { SegmentClient } from './analytics';
+import type { TelemetryRecorder } from './telemetry';
 import { Timeline } from './timeline';
 import {
   AliasEventType,
@@ -17,11 +18,33 @@ import {
 
 export class Plugin {
   // default to utility to avoid automatic processing
+  /**
+   * Identifier for this plugin
+   */
+  id?: string;
+  /**
+   * Plugin type:
+   * - Before: Executed before event processing begins.
+   * - Enrichment: Executed as the first level of event processing. Can attach information to events.
+   * - Destination: Executed as events begin to pass off to destinations.
+   * - After: Executed after all event processing is completed.  This can be used to perform cleanup operations, etc.
+   * - Utility:  Executed only when called manually, such as Logging.
+   */
   type: PluginType = PluginType.utility;
+  /**
+   * Access to the client object this plugin is attached to
+   */
   analytics?: SegmentClient = undefined;
+  /**
+   * Telemetry client specifically configured for this plugin, use to record events and errors
+   */
+  telemetry?: TelemetryRecorder = undefined;
 
   configure(analytics: SegmentClient) {
     this.analytics = analytics;
+    this.telemetry = analytics.telemetry.getTelemetryForPlugin(
+      this.id ?? 'unkown'
+    );
   }
 
   // @ts-ignore
@@ -153,7 +176,8 @@ export class DestinationPlugin extends EventPlugin {
   }
 
   configure(analytics: SegmentClient) {
-    this.analytics = analytics;
+    this.id = this.key;
+    super.configure(analytics);
     this.apply((plugin) => {
       plugin.configure(analytics);
     });
