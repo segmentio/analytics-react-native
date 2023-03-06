@@ -5,6 +5,8 @@ import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
 import { Context, EventType } from '../../types';
 import deepmerge from 'deepmerge';
 
+jest.mock('uuid');
+
 jest
   .spyOn(Date.prototype, 'toISOString')
   .mockReturnValue('2010-01-01T00:00:00.000Z');

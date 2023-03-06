@@ -1,7 +1,7 @@
 import { EventType, SegmentEvent } from '../../types';
 import { createTestClient } from '../__helpers__/setupSegmentClient';
 
-jest.mock('../../uuid');
+jest.mock('uuid');
 
 jest
   .spyOn(Date.prototype, 'toISOString')

@@ -4,7 +4,7 @@ import { EventType } from '../../types';
 import { getMockLogger } from '../__helpers__/mockLogger';
 import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
 
-jest.mock('../../uuid');
+jest.mock('uuid');
 
 jest
   .spyOn(Date.prototype, 'toISOString')

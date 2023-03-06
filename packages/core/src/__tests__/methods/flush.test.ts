@@ -6,7 +6,7 @@ import type { DestinationPlugin } from '../../plugin';
 import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
 
 jest.mock('react-native');
-jest.mock('../../uuid');
+jest.mock('uuid');
 
 describe('methods #flush', () => {
   const store = new MockSegmentStore();

@@ -2,6 +2,8 @@ import type { SegmentClient } from '../analytics';
 import { createClient } from '../client';
 import { getMockLogger } from './__helpers__/mockLogger';
 
+jest.mock('uuid');
+
 describe('#createClient', () => {
   const config = {
     writeKey: 'SEGMENT_KEY',
