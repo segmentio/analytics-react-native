@@ -3,6 +3,8 @@ import deepmerge from 'deepmerge';
 import { createCallbackManager as mockCreateCallbackManager } from '../../__tests__/__helpers__/utils';
 import { SovranStorage } from '../sovranStorage';
 
+jest.mock('uuid');
+
 jest.mock('@segment/sovran-react-native', () => ({
   registerBridgeStore: jest.fn(),
   createStore: <T extends {}>(initialState: T) => {

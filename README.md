@@ -50,7 +50,7 @@ The hassle-free way to add Segment analytics to your React-Native app.
 
 ## Installation
 
-Install `@segment/analytics-react-native`,  [`@segment/sovran-react-native`](https://github.com/segmentio/sovran-react-native) and [`react-native-async-storage/async-storage`](https://github.com/react-native-async-storage/async-storage): 
+Install `@segment/analytics-react-native`,  [`@segment/sovran-react-native`](https://github.com/segmentio/sovran-react-native), [`react-native-get-random-values`](https://github.com/LinusU/react-native-get-random-values) and [`react-native-async-storage/async-storage`](https://github.com/react-native-async-storage/async-storage): 
 
 ```sh
 yarn add @segment/analytics-react-native @segment/sovran-react-native @react-native-async-storage/async-storage 

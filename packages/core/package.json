@@ -51,7 +51,8 @@
     "@segment/sovran-react-native": "^0.4.5",
     "deepmerge": "^4.2.2",
     "js-base64": "^3.7.2",
-    "react-native-uuid": "^2.0.1"
+    "react-native-get-random-values": "^1.8.0",
+    "uuid": "^9.0.0"
   },
   "peerDependencies": {
     "react": "*",

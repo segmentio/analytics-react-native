@@ -7,6 +7,8 @@ import {
   MockSegmentStore,
 } from '../__helpers__/mockSegmentStore';
 
+jest.mock('uuid');
+
 jest
   .spyOn(Date.prototype, 'toISOString')
   .mockReturnValue('2000-01-01T00:00:00.000Z');

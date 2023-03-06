@@ -6,6 +6,7 @@ import { SegmentClient } from '../../../../../core/src/analytics';
 import { MockSegmentStore } from '../../../../../core/src/__tests__/__helpers__/mockSegmentStore';
 import { getMockLogger } from '../../../../../core/src/__tests__/__helpers__/mockLogger';
 
+jest.mock('uuid');
 jest.mock('mixpanel-react-native');
 
 describe('#alias', () => {
