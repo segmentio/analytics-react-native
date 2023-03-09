@@ -5,37 +5,44 @@ import {
 } from '@segment/analytics-react-native';
 import { Platform } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
+import type { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 
 export class DeviceTokenPlugin extends PlatformPlugin {
   type = PluginType.enrichment;
+  authStatus: Promise<FirebaseMessagingTypes.AuthorizationStatus | undefined> =
+    this.checkUserPermission();
 
   async configure(analytics: SegmentClient) {
-    const isAuthorized = await this.checkUserPermission();
+    const isAuthorized = await this.authStatus;
     this.analytics = analytics;
 
     if (isAuthorized) {
-      this.retrieveDeviceToken();
+      let token = await this.getDeviceToken();
+
+      if (token !== undefined) {
+        this.setDeviceToken(token);
+      }
     } else {
       this.analytics?.logger.warn('Not authorized to retrieve device token');
     }
   }
 
-  async retrieveDeviceToken() {
+  private async getDeviceToken(): Promise<string | undefined> {
     if (Platform.OS === 'ios') {
-      let APNSToken = await messaging().getAPNSToken();
-      if (APNSToken !== null) {
-        this.setDeviceToken(APNSToken);
-      }
-    } else if (Platform.OS === 'android') {
-      let deviceToken = await messaging().getToken();
-      if (deviceToken !== undefined && deviceToken.length) {
-        this.setDeviceToken(deviceToken);
+      return (await messaging().getAPNSToken()) ?? undefined;
+    }
+    if (Platform.OS === 'android') {
+      let deviceToken = (await messaging().getToken()) ?? undefined;
+      if (deviceToken !== undefined && deviceToken.length > 0) {
+        return deviceToken;
       } else {
-        this.analytics?.logger.warn(
-          'Device token only available on iOS and Android platforms'
-        );
+        return undefined;
       }
     }
+    this.analytics?.logger.warn(
+      'Device token only available on iOS and Android platforms'
+    );
+    return undefined;
   }
 
   async setDeviceToken(token: string) {
@@ -47,16 +54,20 @@ export class DeviceTokenPlugin extends PlatformPlugin {
     const isAuthorized = await this.checkUserPermission();
 
     if (isAuthorized) {
-      this.retrieveDeviceToken();
+      let token = await this.getDeviceToken();
+
+      if (token !== undefined) {
+        this.setDeviceToken(token);
+      }
     }
   }
 
-  async checkUserPermission() {
+  private async checkUserPermission() {
     try {
       return await messaging().hasPermission();
     } catch (e) {
       this.analytics?.logger.warn(e);
-      return;
+      return undefined;
     }
   }
 }
