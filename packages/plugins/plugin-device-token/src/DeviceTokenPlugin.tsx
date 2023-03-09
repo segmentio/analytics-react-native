@@ -62,7 +62,9 @@ export class DeviceTokenPlugin extends PlatformPlugin {
     }
   }
 
-  private async checkUserPermission() {
+  private async checkUserPermission(): Promise<
+    FirebaseMessagingTypes.AuthorizationStatus | undefined
+  > {
     try {
       return await messaging().hasPermission();
     } catch (e) {
