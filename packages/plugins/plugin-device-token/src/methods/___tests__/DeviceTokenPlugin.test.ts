@@ -75,11 +75,8 @@ describe('DeviceTokenPlugin', () => {
     let analytics = new SegmentClient(clientArgs);
     await plugin.configure(analytics);
 
-    expect(store.context.get()).toEqual({
-      device: {
-        token: 'device-token',
-      },
-    });
+    const token = await store.context.get(true);
+    expect(token).toEqual({ device: { token: 'device-token' } });
   });
 
   it('sets the device token in context for Android', async () => {
@@ -87,10 +84,7 @@ describe('DeviceTokenPlugin', () => {
     let analytics = new SegmentClient(clientArgs);
     await plugin.configure(analytics);
 
-    expect(store.context.get()).toEqual({
-      device: {
-        token: 'device-token',
-      },
-    });
+    const token = await store.context.get(true);
+    expect(token).toEqual({ device: { token: 'device-token' } });
   });
 });

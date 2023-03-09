@@ -5,16 +5,12 @@ import {
 } from '@segment/analytics-react-native';
 import { Platform } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
-import type { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 
 export class DeviceTokenPlugin extends PlatformPlugin {
   type = PluginType.enrichment;
 
-  authStatus: Promise<FirebaseMessagingTypes.AuthorizationStatus> =
-    checkUserPermission();
-
   async configure(analytics: SegmentClient) {
-    const isAuthorized = await this.authStatus;
+    const isAuthorized = await this.checkUserPermission();
     this.analytics = analytics;
 
     if (isAuthorized) {
@@ -28,14 +24,12 @@ export class DeviceTokenPlugin extends PlatformPlugin {
     if (Platform.OS === 'ios') {
       let APNSToken = await messaging().getAPNSToken();
       if (APNSToken !== null) {
-        await this.analytics?.context.set({ device: { token: APNSToken } });
-        this.analytics?.track('Device Token Retrieved');
+        this.setDeviceToken(APNSToken);
       }
     } else if (Platform.OS === 'android') {
       let deviceToken = await messaging().getToken();
       if (deviceToken !== undefined && deviceToken.length) {
-        await this.analytics?.context.set({ device: { token: deviceToken } });
-        this.analytics?.track('Device Token Retrieved');
+        this.setDeviceToken(deviceToken);
       } else {
         this.analytics?.logger.warn(
           'Device token only available on iOS and Android platforms'
@@ -44,15 +38,25 @@ export class DeviceTokenPlugin extends PlatformPlugin {
     }
   }
 
+  async setDeviceToken(token: string) {
+    await this.analytics?.context.set({ device: { token: token } });
+    this.analytics?.track('Device Token Retrieved');
+  }
+
   async updatePermissionStatus() {
-    const isAuthorized = await this.authStatus;
+    const isAuthorized = await this.checkUserPermission();
 
     if (isAuthorized) {
       this.retrieveDeviceToken();
     }
   }
-}
 
-async function checkUserPermission() {
-  return await messaging().hasPermission();
+  async checkUserPermission() {
+    try {
+      return await messaging().hasPermission();
+    } catch (e) {
+      this.analytics?.logger.warn(e);
+      return;
+    }
+  }
 }
