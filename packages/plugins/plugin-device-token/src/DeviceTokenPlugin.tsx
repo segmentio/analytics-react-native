@@ -4,7 +4,6 @@ import {
   PluginType,
 } from '@segment/analytics-react-native';
 import { Platform } from 'react-native';
-
 import messaging from '@react-native-firebase/messaging';
 import type { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 
@@ -12,34 +11,35 @@ export class DeviceTokenPlugin extends PlatformPlugin {
   type = PluginType.enrichment;
 
   authStatus: Promise<FirebaseMessagingTypes.AuthorizationStatus> =
-    requestUserPermission();
-  APNSToken: Promise<string | null> | null | string = null;
+    checkUserPermission();
 
   async configure(analytics: SegmentClient) {
     const isAuthorized = await this.authStatus;
     this.analytics = analytics;
 
     if (isAuthorized) {
-      this.requestDeviceToken();
+      this.retrieveDeviceToken();
     } else {
       this.analytics?.logger.warn('Not authorized to retrieve device token');
     }
   }
 
-  async requestDeviceToken() {
+  async retrieveDeviceToken() {
     if (Platform.OS === 'ios') {
-      this.APNSToken = await retrieveAPNSToken();
-      if (this.APNSToken !== null) {
-        this.analytics?.context.set({ device: { token: this.APNSToken } });
-        this.analytics?.track('Push Notifications Enabled');
+      let APNSToken = await messaging().getAPNSToken();
+      if (APNSToken !== null) {
+        await this.analytics?.context.set({ device: { token: APNSToken } });
+        this.analytics?.track('Device Token Retrieved');
       }
-    } else {
-      let deviceToken = await getDeviceToken();
+    } else if (Platform.OS === 'android') {
+      let deviceToken = await messaging().getToken();
       if (deviceToken !== undefined && deviceToken.length) {
         await this.analytics?.context.set({ device: { token: deviceToken } });
-        this.analytics?.track('Push Notifications Enabled');
+        this.analytics?.track('Device Token Retrieved');
       } else {
-        this.analytics?.logger.warn('Unable to retrieve device token');
+        this.analytics?.logger.warn(
+          'Device token only available on iOS and Android platforms'
+        );
       }
     }
   }
@@ -48,23 +48,11 @@ export class DeviceTokenPlugin extends PlatformPlugin {
     const isAuthorized = await this.authStatus;
 
     if (isAuthorized) {
-      this.requestDeviceToken();
+      this.retrieveDeviceToken();
     }
   }
 }
 
-async function retrieveAPNSToken() {
-  if (Platform.OS === 'ios') {
-    return await messaging().getAPNSToken();
-  } else {
-    return null;
-  }
-}
-
-async function requestUserPermission() {
+async function checkUserPermission() {
   return await messaging().hasPermission();
-}
-
-async function getDeviceToken() {
-  return await messaging().getToken();
 }
