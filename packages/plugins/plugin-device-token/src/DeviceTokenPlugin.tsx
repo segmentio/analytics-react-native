@@ -2,6 +2,8 @@ import {
   PlatformPlugin,
   SegmentClient,
   PluginType,
+  ErrorType,
+  SegmentError,
 } from '@segment/analytics-react-native';
 import { Platform } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
@@ -13,17 +15,28 @@ export class DeviceTokenPlugin extends PlatformPlugin {
     this.checkUserPermission();
 
   async configure(analytics: SegmentClient) {
-    const isAuthorized = await this.authStatus;
     this.analytics = analytics;
+    try {
+      const isAuthorized = await this.authStatus;
 
-    if (isAuthorized) {
-      let token = await this.getDeviceToken();
+      if (isAuthorized) {
+        let token = await this.getDeviceToken();
 
-      if (token !== undefined) {
-        this.setDeviceToken(token);
+        if (token !== undefined) {
+          this.setDeviceToken(token);
+        }
+      } else {
+        this.analytics?.logger.warn('Not authorized to retrieve device token');
       }
-    } else {
-      this.analytics?.logger.warn('Not authorized to retrieve device token');
+    } catch (error) {
+      this.analytics?.logger.warn(error);
+      this.analytics?.reportInternalError(
+        new SegmentError(
+          ErrorType.PluginError,
+          'Unable to confirm authorization status',
+          error
+        )
+      );
     }
   }
 
@@ -67,8 +80,15 @@ export class DeviceTokenPlugin extends PlatformPlugin {
   > {
     try {
       return await messaging().hasPermission();
-    } catch (e) {
-      this.analytics?.logger.warn(e);
+    } catch (error) {
+      this.analytics?.logger.warn(error);
+      this.analytics?.reportInternalError(
+        new SegmentError(
+          ErrorType.PluginError,
+          'Unable to confirm authorization status',
+          error
+        )
+      );
       return undefined;
     }
   }
