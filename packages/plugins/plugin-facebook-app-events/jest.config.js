@@ -4,7 +4,7 @@ const { compilerOptions } = require('./tsconfig');
 module.exports = {
   preset: 'react-native',
   roots: ['<rootDir>'],
-  setupFiles: ['../../core/src/__tests__/__helpers__/setup.js'],
+  setupFiles: ['../../core/src/__tests__/__helpers__/setup.ts'],
   testPathIgnorePatterns: ['.../../core/src/__tests__/__helpers__/'],
   modulePathIgnorePatterns: ['/lib/'],
   transform: {

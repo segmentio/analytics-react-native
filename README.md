@@ -50,13 +50,23 @@ The hassle-free way to add Segment analytics to your React-Native app.
 
 ## Installation
 
-Install `@segment/analytics-react-native`,  [`@segment/sovran-react-native`](https://github.com/segmentio/sovran-react-native), [`react-native-get-random-values`](https://github.com/LinusU/react-native-get-random-values) and [`react-native-async-storage/async-storage`](https://github.com/react-native-async-storage/async-storage): 
+Install `@segment/analytics-react-native`,  [`@segment/sovran-react-native`](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran) and [`react-native-get-random-values`](https://github.com/LinusU/react-native-get-random-values):
 
 ```sh
-yarn add @segment/analytics-react-native @segment/sovran-react-native @react-native-async-storage/async-storage 
+yarn add @segment/analytics-react-native @segment/sovran-react-native react-native-get-random-values
 # or
-npm install --save @segment/analytics-react-native @segment/sovran-react-native @react-native-async-storage/async-storage
+npm install --save @segment/analytics-react-native @segment/sovran-react-native react-native-get-random-values
 ```
+
+If you want to use the default persistor for the Segment Analytics client, you also have to install [`react-native-async-storage/async-storage`](https://github.com/react-native-async-storage/async-storage).
+
+```sh
+yarn add @react-native-async-storage/async-storage 
+# or
+npm install --save @react-native-async-storage/async-storage
+```
+
+*Note: If you wish to use your own persistence layer you can use the `storePersistor` option when initializing the client. Read more [Client Options](#client-options)*
 
 For iOS, install native modules with:
 
@@ -119,7 +129,7 @@ You must pass at least the `writeKey`. Additional configuration options are list
 | `trackDeepLinks`           | false     | Enable automatic tracking for when the user opens the app via a deep link (Note: Requires additional setup on iOS, [see instructions](#ios-deep-link-tracking-setup))                                                            |
 | `defaultSettings`          | undefined | Settings that will be used if the request to get the settings from Segment fails. Type: [SegmentAPISettings](https://github.com/segmentio/analytics-react-native/blob/c0a5895c0c57375f18dd20e492b7d984393b7bc4/packages/core/src/types.ts#L293-L299)                                                               |
 | `autoAddSegmentDestination`| true      | Set to false to skip adding the SegmentDestination plugin                                                                                      |
-| `storePersistor`           | undefined | A custom persistor for the store that `analytics-react-native` leverages. Must match `Persistor` interface exported from [sovran-react-native](https://github.com/segmentio/sovran-react-native).|
+| `storePersistor`           | undefined | A custom persistor for the store that `analytics-react-native` leverages. Must match [`Persistor`](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran/src/persistor/persistor.ts#L1-L18) interface exported from [sovran-react-native](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran).|
 | `proxy`                    | undefined | `proxy` is a batch url to post to instead of 'https://api.segment.io/v1/b'.                                                                    |
 | `errorHandler`             | undefined | Create custom actions when errors happen, see [Handling errors](#handling-errors)                                                              |
 

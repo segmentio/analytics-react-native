@@ -4,6 +4,7 @@ import { createCallbackManager as mockCreateCallbackManager } from '../../__test
 import { SovranStorage } from '../sovranStorage';
 
 jest.mock('uuid');
+jest.mock('react-native-get-random-values');
 
 jest.mock('@segment/sovran-react-native', () => ({
   registerBridgeStore: jest.fn(),

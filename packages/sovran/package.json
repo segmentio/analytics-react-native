@@ -88,11 +88,16 @@
     ]
   },
   "peerDependencies": {
+    "@react-native-async-storage/async-storage": "1.x",
     "react": "*",
     "react-native": "*"
   },
+  "peerDependenciesMeta": {
+    "@react-native-async-storage/async-storage": {
+      "optional": true
+    }
+  },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "^1.15.15",
     "ansi-regex": "5.0.1",
     "deepmerge": "^4.2.2",
     "shell-quote": "1.7.3"
