@@ -48,10 +48,8 @@
     "@react-native-firebase/app": "17.x",
     "@segment/analytics-react-native": "*"
   },
-  "dependencies": {
-    "@react-native-firebase/messaging": "^17.3.2"
-  },
   "devDependencies": {
+    "@react-native-firebase/messaging": "^17.3.2",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/commit-analyzer": "^9.0.2",
     "@semantic-release/git": "^10.0.1",

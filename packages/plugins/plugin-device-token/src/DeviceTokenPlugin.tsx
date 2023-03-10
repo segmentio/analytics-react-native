@@ -60,7 +60,7 @@ export class DeviceTokenPlugin extends PlatformPlugin {
 
   async setDeviceToken(token: string) {
     await this.analytics?.context.set({ device: { token: token } });
-    this.analytics?.track('Device Token Retrieved');
+    await this.analytics?.track('Device Token Retrieved');
   }
 
   async updatePermissionStatus() {
@@ -70,7 +70,7 @@ export class DeviceTokenPlugin extends PlatformPlugin {
       let token = await this.getDeviceToken();
 
       if (token !== undefined) {
-        this.setDeviceToken(token);
+        await this.setDeviceToken(token);
       }
     }
   }

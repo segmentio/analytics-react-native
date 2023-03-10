@@ -1,7 +1,10 @@
 # @segment/analytics-react-native-plugin-device-token
 
-`EnrichmentPlugin` to collect device token values with (Firebase Cloud Messaging)[]. This plugin makes it possible to collect Android's FCM and Apple's APNS device tokens. 
+`EnrichmentPlugin` to collect device token values with [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging). This plugin makes it possible to collect Android's FCM and Apple's APNS device tokens. 
 ## Installation
+
+> warning ""
+> This plugin assumes you are using Firebase Cloud Messaging for Android push notifications. If you are strictly using Apple's Push Notification Services, we recommend creating your own enrichment plugin. 
 
 Install the dependencies. 
 
@@ -44,8 +47,7 @@ segmentClient.add({ plugin: new DeviceTokenPlugin() });
 
 ### updatePermission()
 
-iOS builds require a user to give explicit permission to retrieve the APNS value. This plugin only checks to see if permission has been authorized. You will need to handle permission requests yourself. Once permission has been granted you can call the `updatePermission()` method to begin collecting the device token. 
-
+ This plugin only checks to see if permission has been authorized, it does not ask for permissions. You will need to handle permission requests yourself. Once permission has been granted you can call the `updatePermission()` method to begin collecting the device token. 
 
 ```ts
 import messaging from '@react-native-firebase/messaging';
