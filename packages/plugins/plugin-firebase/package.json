@@ -47,7 +47,6 @@
   "peerDependencies": {
     "@segment/analytics-react-native": "*",
     "@react-native-firebase/app": "^17.x"
-
   },
   "devDependencies": {
     "@react-native-firebase/analytics": "^17.3.2",
