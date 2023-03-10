@@ -20,6 +20,11 @@ if (Sovran) {
 } else {
   console.warn(LINKING_ERROR);
 }
-export { createStore, Store, Notify, Unsubscribe } from './store';
+export {
+  createStore,
+  type Store,
+  type Notify,
+  type Unsubscribe,
+} from './store';
 export { registerBridgeStore } from './bridge';
 export * from './persistor';

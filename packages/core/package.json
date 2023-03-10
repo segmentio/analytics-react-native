@@ -47,16 +47,21 @@
   },
   "homepage": "https://github.com/segmentio/analytics-react-native#readme",
   "dependencies": {
-    "@react-native-async-storage/async-storage": "^1.15.17",
     "@segment/sovran-react-native": "^0.4.5",
     "deepmerge": "^4.2.2",
     "js-base64": "^3.7.2",
-    "react-native-get-random-values": "^1.8.0",
     "uuid": "^9.0.0"
   },
   "peerDependencies": {
+    "react-native-get-random-values": "1.x",
+    "@react-native-async-storage/async-storage": "1.x",
     "react": "*",
     "react-native": "*"
+  },
+  "peerDependenciesMeta": {
+    "@react-native-async-storage/async-storage": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

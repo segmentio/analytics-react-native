@@ -1,5 +1,15 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Persistor } from './persistor';
+
+let AsyncStorage: {
+  getItem: (key: string) => Promise<string | null>;
+  setItem: (key: string, value: string) => Promise<void>;
+} | null;
+
+try {
+  AsyncStorage = require('@react-native-async-storage/async-storage');
+} catch (error) {
+  AsyncStorage = null;
+}
 
 /**
  * Persistor implementation using AsyncStorage
@@ -7,7 +17,7 @@ import type { Persistor } from './persistor';
 export const AsyncStoragePersistor: Persistor = {
   get: async <T>(key: string): Promise<T | undefined> => {
     try {
-      const persistedStateJSON = await AsyncStorage.getItem(key);
+      const persistedStateJSON = await AsyncStorage?.getItem?.(key);
       if (persistedStateJSON !== null && persistedStateJSON !== undefined) {
         return JSON.parse(persistedStateJSON);
       }
@@ -20,7 +30,7 @@ export const AsyncStoragePersistor: Persistor = {
 
   set: async <T>(key: string, state: T): Promise<void> => {
     try {
-      await AsyncStorage.setItem(key, JSON.stringify(state));
+      await AsyncStorage?.setItem?.(key, JSON.stringify(state));
     } catch (e) {
       console.error(e);
     }
