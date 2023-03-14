@@ -1,3 +1,12 @@
+## [@segment/analytics-react-native-plugin-firebase-v0.3.5](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-firebase-v0.3.4...@segment/analytics-react-native-plugin-firebase-v0.3.5) (2023-03-14)
+
+
+### Bug Fixes
+
+* async-storage as optional peer dependency ([#779](https://github.com/segmentio/analytics-react-native/issues/779)) ([f3d5bc0](https://github.com/segmentio/analytics-react-native/commit/f3d5bc024fe3ae988386aac8b9f6f3fc6d84677a))
+* move firebase to peer dependency ([#782](https://github.com/segmentio/analytics-react-native/issues/782)) ([6a6f1cd](https://github.com/segmentio/analytics-react-native/commit/6a6f1cdf247fb82d763a7ab04514e7c515ee810c))
+* switching UUID library, new depedencies ([#772](https://github.com/segmentio/analytics-react-native/issues/772)) ([4734389](https://github.com/segmentio/analytics-react-native/commit/4734389dd6c9debd08f6be0b59d3192428586ed9))
+
 ## [@segment/analytics-react-native-plugin-firebase-v0.3.4](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-firebase-v0.3.3...@segment/analytics-react-native-plugin-firebase-v0.3.4) (2023-02-28)
 
 
