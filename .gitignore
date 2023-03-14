@@ -38,6 +38,10 @@ android.iml
 .settings/
 bin/
 
+# Android Studio
+.project
+.settings
+.classpath
 
 # Cocoapods
 #
