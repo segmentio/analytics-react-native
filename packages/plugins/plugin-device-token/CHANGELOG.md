@@ -1,3 +1,10 @@
+## @segment/analytics-react-native-plugin-device-token-v1.0.0 (2023-03-14)
+
+
+### Features
+
+* add device token plugin ([#777](https://github.com/segmentio/analytics-react-native/issues/777)) ([782a721](https://github.com/segmentio/analytics-react-native/commit/782a721043dcc20bd76b33d4a18e9e5e2ad071d8))
+
 ## [@segment/analytics-react-native-plugin-firebase-v0.3.4](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-firebase-v0.3.3...@segment/analytics-react-native-plugin-firebase-v0.3.4) (2023-02-28)
 
 
