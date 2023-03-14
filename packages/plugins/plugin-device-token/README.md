@@ -3,8 +3,7 @@
 `EnrichmentPlugin` to collect device token values with [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging). This plugin makes it possible to collect Android's FCM and Apple's APNS device tokens. 
 ## Installation
 
-> warning ""
-> This plugin assumes you are using Firebase Cloud Messaging for Android push notifications. If you are strictly using Apple's Push Notification Services, we recommend creating your own enrichment plugin. 
+⚠️ This plugin assumes you are using Firebase Cloud Messaging for Android push notifications. If you are strictly using Apple's Push Notification Services, we recommend creating your own enrichment plugin. ⚠️ 
 
 Install the dependencies. 
 
