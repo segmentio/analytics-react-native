@@ -41,6 +41,21 @@ const plugin = new AppsflyerPlugin();
 segmentClient.add({ plugin });
 ```
 
+### Tracking Deep Links on iOS
+
+The Analytics React Native SDK [requires additonal setup](https://github.com/segmentio/analytics-react-native#ios-deep-link-tracking-setup) to automatically track deep links. If you are also tracking [Universal Links](https://dev.appsflyer.com/hc/docs/ios-sdk-reference-appsflyerlib#continue), add the following to your `AppDelegate.m` : 
+
+```objc
+- (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity
+ restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler
+{
+  if ([userActivity.activityType isEqualToString: NSUserActivityTypeBrowsingWeb]) {
+    NSURL *url = userActivity.webpageURL;
+    NSDictionary *options = @{};
+    [AnalyticsReactNative trackDeepLink:url withOptions:options];
+  }
+ ```
+
 ## Support
 
 Please use Github issues, Pull Requests, or feel free to reach out to our [support team](https://segment.com/help/).
