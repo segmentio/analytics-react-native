@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-v2.13.3](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.13.2...@segment/analytics-react-native-v2.13.3) (2023-03-15)
+
+
+### Bug Fixes
+
+* bump sovran dependency version ([34e143c](https://github.com/segmentio/analytics-react-native/commit/34e143cb1c0bcc65e6ac1b8addf09a98d0d6ff88))
+
 ## [@segment/analytics-react-native-v2.13.2](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.13.1...@segment/analytics-react-native-v2.13.2) (2023-03-14)
 
 
