@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-mixpanel-v0.3.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-mixpanel-v0.3.0...@segment/analytics-react-native-plugin-mixpanel-v0.3.1) (2023-03-15)
+
+
+### Bug Fixes
+
+* switching UUID library, new depedencies ([#772](https://github.com/segmentio/analytics-react-native/issues/772)) ([4734389](https://github.com/segmentio/analytics-react-native/commit/4734389dd6c9debd08f6be0b59d3192428586ed9))
+
 ## [@segment/analytics-react-native-plugin-mixpanel-v0.3.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-mixpanel-v0.2.4...@segment/analytics-react-native-plugin-mixpanel-v0.3.0) (2023-01-09)
 
 
