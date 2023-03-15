@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-v2.13.4](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.13.3...@segment/analytics-react-native-v2.13.4) (2023-03-15)
+
+
+### Bug Fixes
+
+* adding asyncstorage as devDependency for tests ([51b7f1f](https://github.com/segmentio/analytics-react-native/commit/51b7f1f281025ca4474790bfdd57755613fbe0a8))
+
 ## [@segment/analytics-react-native-v2.13.3](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.13.2...@segment/analytics-react-native-v2.13.3) (2023-03-15)
 
 
