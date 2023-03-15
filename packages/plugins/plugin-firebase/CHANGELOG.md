@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-firebase-v0.3.7](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-firebase-v0.3.6...@segment/analytics-react-native-plugin-firebase-v0.3.7) (2023-03-15)
+
+
+### Bug Fixes
+
+* bump firebase version ([b17e3c6](https://github.com/segmentio/analytics-react-native/commit/b17e3c645fd3493912c59f0156f62bdc073c275d))
+
 ## [@segment/analytics-react-native-plugin-firebase-v0.3.6](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-firebase-v0.3.5...@segment/analytics-react-native-plugin-firebase-v0.3.6) (2023-03-15)
 
 
