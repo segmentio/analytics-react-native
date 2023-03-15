@@ -1,4 +1,4 @@
-export const initMock = jest.fn();
+export const initMock = jest.fn().mockResolvedValue(undefined);
 export const setServerMock = jest.fn();
 export const identifyMock = jest.fn();
 export const aliasMock = jest.fn();

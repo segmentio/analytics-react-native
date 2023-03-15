@@ -1,4 +1,6 @@
-export const mapEventNames = {
+import { isString } from '@segment/analytics-react-native';
+
+export const mapEventNames: Record<string, string> = {
   'Application Installed': 'MOBILE_APP_INSTALL',
   'Application Opened': 'fb_mobile_activate_app',
   'Products Searched': 'fb_mobile_search',
@@ -8,7 +10,7 @@ export const mapEventNames = {
   'Product Added': 'fb_mobile_add_to_cart',
   'Product Added to Wishlist': 'fb_mobile_add_to_wishlist',
   'Checkout Started': 'fb_mobile_initiated_checkout',
-} as any;
+};
 
 export const mapEventProps: { [key: string]: string } = {
   currency: 'fb_currency',
@@ -22,11 +24,11 @@ export const mapEventProps: { [key: string]: string } = {
   query: 'fb_search_string',
   timestamp: '_logTime',
   quantity: 'fb_num_items',
-} as any;
+};
 
-export const transformMap: { [key: string]: (value: any) => any } = {
-  event: (value: string) => {
-    if (value in mapEventNames) {
+export const transformMap: { [key: string]: (value: unknown) => unknown } = {
+  event: (value: unknown): unknown => {
+    if (isString(value) && value in mapEventNames) {
       return mapEventNames[value];
     }
     return value;

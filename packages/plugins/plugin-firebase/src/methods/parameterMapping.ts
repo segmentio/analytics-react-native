@@ -1,3 +1,5 @@
+import { isString } from '@segment/analytics-react-native';
+
 const mapEventNames: { [key: string]: string } = {
   'Product Clicked': 'select_content',
   'Product Viewed': 'view_item',
@@ -26,9 +28,9 @@ export const mapEventProps: { [key: string]: string } = {
   query: 'search_term',
 };
 
-export const transformMap: { [key: string]: (value: any) => any } = {
-  event: (value: string) => {
-    if (value in mapEventNames) {
+export const transformMap: { [key: string]: (value: unknown) => unknown } = {
+  event: (value: unknown) => {
+    if (isString(value) && value in mapEventNames) {
       return mapEventNames[value];
     }
     return value;

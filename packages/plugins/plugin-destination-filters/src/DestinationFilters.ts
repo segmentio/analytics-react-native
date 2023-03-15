@@ -1,5 +1,6 @@
 import {
   DestinationPlugin,
+  isObject,
   Plugin,
   PluginType,
   RoutingRule,
@@ -29,12 +30,12 @@ export class DestinationFiltersPlugin extends UtilityPlugin {
     this.key = destination;
   }
 
-  private addToPlugin(plugin: Plugin) {
+  private addToPlugin = (plugin: Plugin) => {
     if (plugin.type === PluginType.destination) {
       const destination: DestinationPlugin = plugin as DestinationPlugin;
       destination.add(new DestinationFiltersPlugin(destination.key));
     }
-  }
+  };
 
   override configure(analytics: SegmentClient) {
     super.configure(analytics);
@@ -70,11 +71,18 @@ export class DestinationFiltersPlugin extends UtilityPlugin {
         if (transformedEvent === undefined) {
           transformedEvent = clone(event);
         }
-        const newEvent = tsub.transform(transformedEvent, transformers[i]);
-        if (newEvent === undefined || newEvent === null) {
+        const newEvent: unknown = tsub.transform(
+          transformedEvent,
+          transformers[i]
+        );
+        if (
+          newEvent === undefined ||
+          newEvent === null ||
+          !isObject(newEvent)
+        ) {
           return undefined;
         }
-        transformedEvent = newEvent;
+        transformedEvent = newEvent as unknown as SegmentEvent;
       }
     }
     return transformedEvent ?? event;

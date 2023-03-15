@@ -7,18 +7,18 @@ describe('#identify', () => {
     jest.clearAllMocks();
   });
 
-  it('logs an event without properties', () => {
+  it('logs an event without properties', async () => {
     const payload = {
       type: 'track',
       event: 'Some Event',
     };
 
-    track(payload as TrackEventType);
+    await track(payload as TrackEventType);
 
     expect(logEvent).toHaveBeenCalledWith('Some Event', {});
   });
 
-  it('logs an event with revenue as string and currency', () => {
+  it('logs an event with revenue as string and currency', async () => {
     const payload = {
       type: 'track',
       event: 'Some Event',
@@ -29,7 +29,7 @@ describe('#identify', () => {
       },
     };
 
-    track(payload as TrackEventType);
+    await track(payload as TrackEventType);
 
     expect(logEvent).toHaveBeenCalledWith('Some Event', {
       foo: 'bar',
@@ -38,7 +38,7 @@ describe('#identify', () => {
     });
   });
 
-  it('logs an event with revenue as number and currency', () => {
+  it('logs an event with revenue as number and currency', async () => {
     const payload = {
       type: 'track',
       event: 'Some Event',
@@ -49,7 +49,7 @@ describe('#identify', () => {
       },
     };
 
-    track(payload as TrackEventType);
+    await track(payload as TrackEventType);
 
     expect(logEvent).toHaveBeenCalledWith('Some Event', {
       foo: 'bar',
@@ -58,7 +58,7 @@ describe('#identify', () => {
     });
   });
 
-  it('logs an event with raw properties if they cannot be extracted', () => {
+  it('logs an event with raw properties if they cannot be extracted', async () => {
     const payload = {
       type: 'track',
       event: 'Some Event',
@@ -69,7 +69,7 @@ describe('#identify', () => {
       },
     };
 
-    track(payload as TrackEventType);
+    await track(payload as TrackEventType);
 
     expect(logEvent).toHaveBeenCalledWith('Some Event', {
       currency: 'JPY',
@@ -78,7 +78,7 @@ describe('#identify', () => {
     });
   });
 
-  it('logs an event with the default currency', () => {
+  it('logs an event with the default currency', async () => {
     const payload = {
       type: 'track',
       event: 'Some Event',
@@ -88,7 +88,7 @@ describe('#identify', () => {
       },
     };
 
-    track(payload as TrackEventType);
+    await track(payload as TrackEventType);
 
     expect(logEvent).toHaveBeenCalledWith('Some Event', {
       foo: 'bar',

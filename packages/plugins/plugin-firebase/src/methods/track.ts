@@ -12,9 +12,11 @@ const sanitizeName = (name: string) => {
 };
 
 export default async (event: TrackEventType) => {
-  const safeEvent = mappedPropNames(event as Record<string, any>);
-  let convertedName = safeEvent.event as string;
+  const safeEvent = mappedPropNames(
+    event as unknown as Record<string, unknown>
+  );
+  const convertedName = safeEvent.event as string;
   const safeEventName = sanitizeName(convertedName);
-  const safeProps = safeEvent.properties as { [key: string]: any };
+  const safeProps = safeEvent.properties as { [key: string]: unknown };
   await firebaseAnalytics().logEvent(safeEventName, safeProps);
 };

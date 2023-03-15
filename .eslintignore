@@ -1,3 +1,9 @@
 node_modules/
 coverage/
 lib/
+e2e/
+
+
+**/*.config.js
+.eslintrc.js
+constants-generator.js

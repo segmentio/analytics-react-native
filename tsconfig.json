@@ -23,6 +23,7 @@
     "noUnusedParameters": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
+    "noImplicitAny": true,
     "strict": true,
     "target": "esnext",
     "outDir": "lib/typescript"

@@ -2,6 +2,7 @@ import type { Persistor } from '@segment/sovran-react-native';
 import type { Rule } from '@segment/tsub/dist/store';
 import type { SegmentError } from './errors';
 import type { FlushPolicy } from './flushPolicies';
+import type { NativeModule } from 'react-native';
 
 export type JsonValue =
   | boolean
@@ -15,7 +16,7 @@ export interface JsonMap {
   [key: string]: JsonValue;
   [index: number]: JsonValue;
 }
-export interface JsonList extends Array<JsonValue> {}
+export type JsonList = Array<JsonValue>;
 
 export type SegmentEvent =
   | TrackEventType
@@ -118,9 +119,9 @@ export type GroupTraits = JsonMap & {
 };
 
 export interface LoggerType {
-  info(message?: any, ...optionalParams: any[]): void;
-  warn(message?: any, ...optionalParams: any[]): void;
-  error(message?: any, ...optionalParams: any[]): void;
+  info(message?: unknown, ...optionalParams: unknown[]): void;
+  warn(message?: unknown, ...optionalParams: unknown[]): void;
+  error(message?: unknown, ...optionalParams: unknown[]): void;
 }
 
 export interface DeactivableLoggerType extends LoggerType {
@@ -216,9 +217,9 @@ export type Context = {
  * Makes all the properties in an object optional
  */
 export type DeepPartial<T> = {
-  [Property in keyof T]?: Property extends {}
+  [Property in keyof T]?: Property extends object
     ? DeepPartial<T[Property]>
-    : T[Property];
+    : Partial<T[Property]>;
 };
 
 export type PartialContext = DeepPartial<Context>;
@@ -270,7 +271,7 @@ export type IntegrationSettings =
   | SegmentAmplitudeIntegration
   | SegmentAdjustSettings
   // Support any kind of configuration in the future
-  | Record<string, any>
+  | Record<string, unknown>
   // enable/disable the integration at cloud level
   | boolean;
 
@@ -335,4 +336,13 @@ export type UserInfoState = {
   anonymousId: string;
   userId?: string;
   traits?: UserTraits | GroupTraits;
+};
+
+// Native Module types
+export interface GetContextConfig {
+  collectDeviceId: boolean;
+}
+
+export type AnalyticsReactNativeModule = NativeModule & {
+  getContextInfo: (config: GetContextConfig) => Promise<NativeContextInfo>;
 };

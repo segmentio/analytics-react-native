@@ -14,6 +14,14 @@ Object {
       "doNotTransform": "nope",
       "muchNewerKey": "123",
     },
+    Object {
+      "doNotTransform": "nope",
+      "muchNewerKey": "123",
+    },
+    Object {
+      "doNotTransform": "nope",
+      "muchNewerKey": "123",
+    },
   ],
   "newId": 1,
 }

@@ -39,16 +39,16 @@ export interface Settable<T> {
 /**
  * Implements a queue object
  */
-export interface Queue<T> {
-  add: (value: T) => void;
-  remove: (value: T) => void;
+export interface Queue<T, R> {
+  add: (value: T) => Promise<R>;
+  remove: (value: T) => Promise<R>;
 }
 
 /**
  * Implements a map of key value pairs
  */
-export interface Dictionary<K, T> {
-  add: (key: K, value: T) => void;
+export interface Dictionary<K, T, R> {
+  add: (key: K, value: T) => Promise<R>;
 }
 
 export interface ReadinessStore {
@@ -69,20 +69,20 @@ export interface Storage {
 
   readonly settings: Watchable<SegmentAPIIntegrations | undefined> &
     Settable<SegmentAPIIntegrations> &
-    Dictionary<string, IntegrationSettings>;
+    Dictionary<string, IntegrationSettings, SegmentAPIIntegrations>;
 
   readonly filters: Watchable<DestinationFilters | undefined> &
     Settable<DestinationFilters> &
-    Dictionary<string, RoutingRule>;
+    Dictionary<string, RoutingRule, DestinationFilters>;
 
   readonly userInfo: Watchable<UserInfoState> & Settable<UserInfoState>;
 
   readonly deepLinkData: Watchable<DeepLinkData>;
 }
-export interface DeepLinkData {
+export type DeepLinkData = {
   referring_application: string;
   url: string;
-}
+};
 
 export type StorageConfig = {
   storeId: string;

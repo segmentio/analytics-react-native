@@ -14,7 +14,7 @@ const traitMap: { [key: string]: string } = {
   name: '$name',
   username: '$username',
   phone: '$phone',
-} as any;
+};
 
 const mapTransform = generateMapTransform(traitMap, {});
 
@@ -42,10 +42,10 @@ export default (
     settings.superProperties !== undefined &&
     settings.superProperties.length
   ) {
-    let superProperties = settings.superProperties;
-    let superPropertyTraits: { [key: string]: any } = {};
+    const superProperties = settings.superProperties;
+    const superPropertyTraits: { [key: string]: unknown } = {};
 
-    for (let superProperty of superProperties) {
+    for (const superProperty of superProperties) {
       superPropertyTraits[superProperty] = mixpanelTraits[superProperty];
     }
 
@@ -59,10 +59,10 @@ export default (
     settings.peopleProperties !== undefined &&
     settings.peopleProperties.length
   ) {
-    let peopleProperties = settings.peopleProperties;
-    let peoplePropertyTraits: { [key: string]: any } = {};
+    const peopleProperties = settings.peopleProperties;
+    const peoplePropertyTraits: { [key: string]: unknown } = {};
 
-    for (let peopleProperty of peopleProperties) {
+    for (const peopleProperty of peopleProperties) {
       peoplePropertyTraits[peopleProperty] = event.traits[peopleProperty];
     }
 

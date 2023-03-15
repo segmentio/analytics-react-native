@@ -1,27 +1,32 @@
 import {
+  Context,
   DestinationPlugin,
   ErrorType,
   generateMapTransform,
   IntegrationSettings,
+  isNumber,
+  isObject,
   PluginType,
   ScreenEventType,
   SegmentAPISettings,
   SegmentClient,
   SegmentError,
   TrackEventType,
+  unknownToString,
   UpdateType,
 } from '@segment/analytics-react-native';
 import { AppEventsLogger, Settings } from 'react-native-fbsdk-next';
 
 import screen from './methods/screen';
 import { mapEventProps, transformMap } from './parameterMapping';
+import { sanitizeValue } from './utils';
 
 const FB_PLUGIN_KEY = 'Facebook App Events';
 // FB Event Names must be <= 40 characters
 const MAX_CHARACTERS_EVENT_NAME = 40;
 const mappedPropNames = generateMapTransform(mapEventProps, transformMap);
 
-interface FBPluginSettings extends Record<string, any> {
+interface FBPluginSettings extends Record<string, unknown> {
   trackScreenEvent?: boolean;
   limitedDataUse?: boolean;
   appEvents?: { [key: string]: string };
@@ -40,24 +45,36 @@ const isFBPluginSettings = (
 };
 
 const sanitizeEvent = (
-  event: Record<string, any>
+  event: Record<string, unknown>
 ): { [key: string]: string | number } => {
-  let products = event.properties.products ?? [];
-  const productCount = (event.properties.fb_num_items || products.length) ?? 0;
-  let params: { [key: string]: string | number } = {};
-  let logTime = event.timestamp ?? undefined;
+  const properties = event.properties;
+  if (!isObject(properties)) {
+    return {};
+  }
 
-  Object.keys(event.properties).forEach((property: string) => {
-    if (Object.values(mapEventProps).some((fbProp) => fbProp === property)) {
-      params[property] = event.properties[property];
+  const products = Array.isArray(properties.products)
+    ? properties.products
+    : [];
+  const productCount = isNumber(properties.fb_num_items)
+    ? properties.fb_num_items
+    : products.length;
+  const params: { [key: string]: string | number } = {};
+  const logTime = event.timestamp ?? undefined;
+
+  for (const key of Object.keys(properties)) {
+    if (Object.values(mapEventProps).includes(key)) {
+      const sanitized = sanitizeValue(properties[key]);
+      if (sanitized !== undefined) {
+        params[key] = sanitized;
+      }
     }
-  });
+  }
 
   return {
     ...params,
     fb_num_items: productCount,
-    _logTime: logTime,
-    _appVersion: event.context.app.version,
+    _logTime: unknownToString(logTime) ?? '',
+    _appVersion: (event.context as Context).app.version,
   };
 };
 
@@ -73,15 +90,27 @@ export class FacebookAppEventsPlugin extends DestinationPlugin {
 
   async configure(analytics: SegmentClient) {
     this.analytics = analytics;
-    let adTrackingEnabled = this.analytics?.adTrackingEnabled.get();
+    const adTrackingEnabled = this.analytics?.adTrackingEnabled.get();
 
     this.analytics.adTrackingEnabled.onChange((value) => {
-      Settings.setAdvertiserTrackingEnabled(value);
+      void (async () => {
+        try {
+          await Settings.setAdvertiserTrackingEnabled(value);
+        } catch (error) {
+          this.analytics?.reportInternalError(
+            new SegmentError(
+              ErrorType.PluginError,
+              'Facebook failed to set AdvertiserTrackingEnabled',
+              error
+            )
+          );
+        }
+      })();
     });
 
     //you will likely need consent first
     //this example assumes consentManager plugin is used
-    await Settings.initializeSDK();
+    Settings.initializeSDK();
 
     if (adTrackingEnabled) {
       try {
@@ -115,17 +144,19 @@ export class FacebookAppEventsPlugin extends DestinationPlugin {
   }
 
   track(event: TrackEventType) {
-    const safeEvent = mappedPropNames(event as Record<string, any>);
-    let convertedName = safeEvent.event as string;
-    let safeName = this.sanitizeEventName(convertedName);
-    let safeProps = sanitizeEvent(safeEvent);
+    const safeEvent = mappedPropNames(
+      event as unknown as Record<string, unknown>
+    );
+    const convertedName = safeEvent.event as string;
+    const safeName = this.sanitizeEventName(convertedName);
+    const safeProps = sanitizeEvent(safeEvent);
     const currency = (safeProps.fb_currency as string | undefined) ?? 'USD';
 
     if (
       safeProps._valueToSum !== undefined &&
       safeName === 'fb_mobile_purchase'
     ) {
-      let purchasePrice = safeProps._valueToSum as number;
+      const purchasePrice = safeProps._valueToSum as number;
 
       AppEventsLogger.logPurchase(purchasePrice, currency, safeProps);
     } else {
@@ -144,7 +175,7 @@ export class FacebookAppEventsPlugin extends DestinationPlugin {
   private sanitizeEventName(name: string) {
     //Facebook expects '_' instead of '.'
     const fbName = this.appEvents[name] ?? name;
-    let sanitizedName = fbName.replace('.', '_');
+    const sanitizedName = fbName.replace('.', '_');
     return sanitizedName.substring(0, MAX_CHARACTERS_EVENT_NAME);
   }
 }

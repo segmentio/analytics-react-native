@@ -10,9 +10,11 @@ describe('bridge', () => {
     registerBridgeStore({
       store: sovran,
       actions: {
-        ADD_EVENT: (event: Event) => (state: { events: Event[] }) => ({
-          events: [...state.events, event],
-        }),
+        ADD_EVENT: (event: unknown) => (state: { events: Event[] }) => {
+          return {
+            events: [...state.events, event as Event],
+          };
+        },
       },
     });
 

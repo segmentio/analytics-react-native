@@ -28,11 +28,11 @@ describe('methods #group', () => {
     jest.clearAllMocks();
   });
 
-  it('adds the alias event correctly', () => {
+  it('adds the alias event correctly', async () => {
     const client = new SegmentClient(clientArgs);
     jest.spyOn(client, 'process');
 
-    client.group('new-group-id', { name: 'Best Group Ever' });
+    await client.group('new-group-id', { name: 'Best Group Ever' });
 
     const expectedEvent = {
       groupId: 'new-group-id',

@@ -34,7 +34,7 @@ describe('QueueFlushingPlugin', () => {
     const onFlush = jest.fn();
     const queuePlugin = setupQueuePlugin(onFlush, 10);
 
-    const result = queuePlugin.execute({
+    const result = await queuePlugin.execute({
       type: EventType.TrackEvent,
       event: 'test1',
       properties: {
@@ -44,9 +44,7 @@ describe('QueueFlushingPlugin', () => {
 
     expect(result).not.toBeUndefined();
 
-    // Await Sovran updates
-    await new Promise(process.nextTick);
-
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     expect(queuePlugin.queueStore?.getState().events).toHaveLength(1);
 
@@ -66,16 +64,15 @@ describe('QueueFlushingPlugin', () => {
       },
     };
 
-    const result = queuePlugin.execute(event);
+    const result = await queuePlugin.execute(event);
 
     expect(result).not.toBeUndefined();
 
-    // Await Sovran updates
-    await new Promise(process.nextTick);
-
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     expect(queuePlugin.queueStore?.getState().events).toHaveLength(1);
-    queuePlugin.dequeue(event);
+    await queuePlugin.dequeue(event);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     expect(queuePlugin.queueStore?.getState().events).toHaveLength(0);
   });

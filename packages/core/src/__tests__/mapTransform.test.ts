@@ -1,4 +1,5 @@
 import { generateMapTransform } from '../mapTransform';
+import { isString } from '../util';
 
 describe('mapTransform', () => {
   const keyMap: { [key: string]: string } = {
@@ -7,9 +8,19 @@ describe('mapTransform', () => {
     oldArray: 'newArray',
   };
 
-  const transformMap: { [key: string]: (value: any) => any } = {
-    muchNewerKey: (value: string) => value.slice(0, 3),
-    newArray: (value: any[]) => value.slice(0, 1),
+  const transformMap: { [key: string]: (value: unknown) => unknown } = {
+    muchNewerKey: (value: unknown) => {
+      if (isString(value)) {
+        return value.slice(0, 3);
+      }
+      return value;
+    },
+    newArray: (value: unknown) => {
+      if (isString(value)) {
+        return value.slice(0, 1);
+      }
+      return value;
+    },
   };
 
   const testMapTransform = generateMapTransform(keyMap, transformMap);
@@ -40,7 +51,7 @@ describe('mapTransform', () => {
       ],
     };
 
-    const clone = JSON.parse(JSON.stringify(oldObject));
+    const clone = JSON.parse(JSON.stringify(oldObject)) as object;
 
     const newObject = testMapTransform(oldObject);
 

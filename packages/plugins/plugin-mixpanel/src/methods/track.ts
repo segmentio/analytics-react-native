@@ -1,5 +1,4 @@
 import type { Mixpanel } from 'mixpanel-react-native';
-//@ts-ignore
 import type { JsonMap } from '@segment/analytics-react-native';
 import type { SegmentMixpanelSettings } from '../types';
 
@@ -21,12 +20,12 @@ export default (
     settings.propIncrements !== undefined &&
     settings.propIncrements?.length > 0
   ) {
-    let propIncrements = settings.propIncrements;
+    const propIncrements = settings.propIncrements;
 
-    for (let propString of propIncrements) {
-      for (let property in properties) {
+    for (const propString of propIncrements) {
+      for (const property in properties) {
         if (propString.toLowerCase() === property.toLowerCase()) {
-          let incrementValue = properties[property];
+          const incrementValue = properties[property];
           if (typeof incrementValue === 'number') {
             mixpanel.getPeople().increment(property, incrementValue);
           }
@@ -41,7 +40,7 @@ export default (
   ) {
     const eventIncrements = settings.eventIncrements;
 
-    for (let eventString of eventIncrements) {
+    for (const eventString of eventIncrements) {
       if (eventString.toLowerCase() === eventName.toLowerCase()) {
         const property = eventName;
         mixpanel.getPeople().increment(property, 1);
@@ -54,7 +53,7 @@ export default (
   }
 
   if (properties.revenue !== undefined) {
-    let revenue = properties.revenue as number;
+    const revenue = properties.revenue as number;
 
     mixpanel.getPeople().trackCharge(revenue, properties);
   }

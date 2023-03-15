@@ -24,12 +24,12 @@ describe('#group', () => {
   });
 
   it('calls the group method when id is present', () => {
-    let getGroupSpy = jest.spyOn(mixpanel, 'getGroup');
+    const getGroupSpy = jest.spyOn(mixpanel, 'getGroup');
     settings.groupIdentifierTraits = ['company_id'];
-    let groupId = payload.groupId;
-    let setGroupTrait = 'company_id';
-    let mockedId = '23322';
-    let mockedGroupTrait = 'the_red_f';
+    const groupId = payload.groupId;
+    const setGroupTrait = 'company_id';
+    const mockedId = '23322';
+    const mockedGroupTrait = 'the_red_f';
 
     group(payload, mixpanel, settings);
 
@@ -38,7 +38,7 @@ describe('#group', () => {
   });
 
   it(' does not call the group method when no traits are provided in settings', () => {
-    let getGroupSpy = jest.spyOn(mixpanel, 'getGroup');
+    const getGroupSpy = jest.spyOn(mixpanel, 'getGroup');
     settings.groupIdentifierTraits = [];
 
     group(payload, mixpanel, settings);

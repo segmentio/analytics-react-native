@@ -5,6 +5,8 @@ import {
   TrackEventType,
   UpdateType,
   SegmentAPISettings,
+  SegmentError,
+  ErrorType,
 } from '@segment/analytics-react-native';
 import type { SegmentAppsflyerSettings } from './types';
 import appsFlyer from 'react-native-appsflyer';
@@ -16,12 +18,12 @@ export class AppsflyerPlugin extends DestinationPlugin {
   key = 'AppsFlyer';
 
   private settings: SegmentAppsflyerSettings | null = null;
-  private hasRegisteredInstallCallback: boolean = false;
-  private hasRegisteredDeepLinkCallback: boolean = false;
-  private hasInitialized: boolean = false;
+  private hasRegisteredInstallCallback = false;
+  private hasRegisteredDeepLinkCallback = false;
+  private hasInitialized = false;
 
-  update(settings: SegmentAPISettings, _: UpdateType) {
-    let defaultOpts = {
+  async update(settings: SegmentAPISettings, _: UpdateType): Promise<void> {
+    const defaultOpts = {
       isDebug: false,
       timeToWaitForATTUserAuthorization: 60,
       onInstallConversionDataListener: true,
@@ -56,13 +58,21 @@ export class AppsflyerPlugin extends DestinationPlugin {
       this.hasRegisteredDeepLinkCallback = true;
     }
     if (!this.hasInitialized) {
-      appsFlyer.initSdk({
-        devKey: this.settings.appsFlyerDevKey,
-        appId: this.settings.appleAppID,
-        onDeepLinkListener: clientConfig?.trackDeepLinks === true,
-        ...defaultOpts,
-      });
-      this.hasInitialized = true;
+      try {
+        await appsFlyer.initSdk({
+          devKey: this.settings.appsFlyerDevKey,
+          appId: this.settings.appleAppID,
+          onDeepLinkListener: clientConfig?.trackDeepLinks === true,
+          ...defaultOpts,
+        });
+        this.hasInitialized = true;
+      } catch (error) {
+        const message = 'AppsFlyer failed to initialize';
+        this.analytics?.reportInternalError(
+          new SegmentError(ErrorType.PluginError, message, error)
+        );
+        this.analytics?.logger.warn(`${message}: ${JSON.stringify(error)}`);
+      }
     }
   }
 
@@ -71,8 +81,8 @@ export class AppsflyerPlugin extends DestinationPlugin {
     return event;
   }
 
-  track(event: TrackEventType) {
-    track(event);
+  async track(event: TrackEventType) {
+    await track(event);
     return event;
   }
 
@@ -89,9 +99,11 @@ export class AppsflyerPlugin extends DestinationPlugin {
 
       if (is_first_launch && JSON.parse(is_first_launch) === true) {
         if (af_status === 'Non-organic') {
-          this.analytics?.track('Install Attributed', properties);
+          void this.analytics?.track('Install Attributed', properties);
         } else {
-          this.analytics?.track('Organic Install', { provider: 'AppsFlyer' });
+          void this.analytics?.track('Organic Install', {
+            provider: 'AppsFlyer',
+          });
         }
       }
     });
@@ -108,7 +120,7 @@ export class AppsflyerPlugin extends DestinationPlugin {
             source: media_source,
           },
         };
-        this.analytics?.track('Deep Link Opened', properties);
+        void this.analytics?.track('Deep Link Opened', properties);
       }
     });
   };
@@ -118,13 +130,13 @@ export class AppsflyerPlugin extends DestinationPlugin {
       if (res.deepLinkStatus !== 'NOT_FOUND') {
         const { DLValue, media_source, campaign } = res.data;
         const properties = {
-          deepLink: DLValue,
+          deepLink: DLValue as string,
           campaign: {
             name: campaign,
             source: media_source,
           },
         };
-        this.analytics?.track('Deep Link Opened', properties);
+        void this.analytics?.track('Deep Link Opened', properties);
       }
     });
   };
