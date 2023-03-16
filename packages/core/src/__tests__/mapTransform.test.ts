@@ -16,8 +16,8 @@ describe('mapTransform', () => {
       return value;
     },
     newArray: (value: unknown) => {
-      if (isString(value)) {
-        return value.slice(0, 1);
+      if (Array.isArray(value)) {
+        return value.slice(0, 1) as unknown[];
       }
       return value;
     },
