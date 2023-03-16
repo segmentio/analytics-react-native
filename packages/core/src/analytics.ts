@@ -234,8 +234,6 @@ export class SegmentClient {
 
     // set up tracking for lifecycle events
     this.setupLifecycleEvents();
-
-    this.telemetry.record('Client Constructor', { test: 'test-OB' });
   }
 
   // Watch for isReady so that we can handle any pending events

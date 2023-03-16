@@ -39,7 +39,7 @@ export type MetricNames =
 /**
  * Common Prefix for all our metrics. Filtered by Metrics API.
  */
-const METRIC_NAME_PREFIX = 'analytics_js';
+const METRIC_NAME_PREFIX = 'analytics_mobile';
 
 /**
  * Options for the metics client.
