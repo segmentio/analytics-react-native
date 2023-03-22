@@ -73,7 +73,7 @@ describe('metrics', () => {
           series: [
             {
               type: 'Counter',
-              metric: 'analytics_js.invoke',
+              metric: 'analytics_mobile.invoke',
               value: 1,
               tags: {
                 tag: 'someValue',
@@ -126,7 +126,7 @@ describe('metrics', () => {
           series: [
             {
               type: 'Counter',
-              metric: 'analytics_js.invoke',
+              metric: 'analytics_mobile.invoke',
               value: 1,
               tags: {
                 // These are priority tags
@@ -198,7 +198,7 @@ describe('metrics', () => {
           series: [
             {
               type: 'Counter',
-              metric: 'analytics_js.invoke',
+              metric: 'analytics_mobile.invoke',
               value: 1,
               tags: {
                 tag: 'someValue',

@@ -58,7 +58,7 @@ describe('telemetry', () => {
           series: [
             {
               type: 'Counter',
-              metric: 'analytics_js.invoke',
+              metric: 'analytics_mobile.invoke',
               value: 1,
               tags: {
                 tag: 'someValue',
@@ -112,7 +112,7 @@ describe('telemetry', () => {
           series: [
             {
               type: 'Counter',
-              metric: 'analytics_js.invoke.error',
+              metric: 'analytics_mobile.invoke.error',
               value: 1,
               tags: {
                 tag: 'someValue',
@@ -209,7 +209,7 @@ describe('telemetry', () => {
           series: [
             {
               type: 'Counter',
-              metric: 'analytics_js.invoke',
+              metric: 'analytics_mobile.invoke',
               value: 1,
               tags: {
                 tag: 'someValue',
@@ -265,7 +265,7 @@ describe('telemetry', () => {
           series: [
             {
               type: 'Counter',
-              metric: 'analytics_js.integration.invoke',
+              metric: 'analytics_mobile.integration.invoke',
               value: 1,
               tags: {
                 plugin: 'MyPlugin',
@@ -279,7 +279,7 @@ describe('telemetry', () => {
             },
             {
               type: 'Counter',
-              metric: 'analytics_js.integration.invoke.error',
+              metric: 'analytics_mobile.integration.invoke.error',
               value: 1,
               tags: {
                 plugin: 'MyPlugin',
