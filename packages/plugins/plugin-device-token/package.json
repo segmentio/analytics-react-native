@@ -46,6 +46,7 @@
   "homepage": "https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-firebase#readme",
   "peerDependencies": {
     "@react-native-firebase/app": "17.x",
+    "@react-native-firebase/messaging": "^17.x",
     "@segment/analytics-react-native": "*"
   },
   "devDependencies": {
