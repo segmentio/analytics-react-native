@@ -42,10 +42,10 @@ export default (payload: TrackEventType) => {
 
         products.forEach((product) => {
           const productDict = Object.assign({}, product);
-          const productId = productDict.productId;
+          const productId = productDict.product_id;
           const productRevenue = extractRevenue(productDict, 'price');
           const productQuantity = productDict.quantity;
-          delete productDict.productId;
+          delete productDict.product_id;
           delete productDict.price;
           delete productDict.quantity;
           let productProperties = Object.assign(

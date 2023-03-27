@@ -245,7 +245,7 @@ describe('#track', () => {
         revenue: '399.99',
         products: [
           {
-            productId: '123',
+            product_id: '123',
             price: '399.99',
             quantity: 4,
           },
