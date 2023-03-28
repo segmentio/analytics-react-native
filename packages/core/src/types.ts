@@ -2,6 +2,7 @@ import type { Persistor } from '@segment/sovran-react-native';
 import type { Rule } from '@segment/tsub/dist/store';
 import type { SegmentError } from './errors';
 import type { FlushPolicy } from './flushPolicies';
+import type { MetricsOptions } from './telemetry/metrics';
 
 export type JsonValue =
   | boolean
@@ -146,6 +147,7 @@ export type Config = {
   storePersistor?: Persistor;
   proxy?: string;
   errorHandler?: (error: SegmentError) => void;
+  disableTelemetry?: boolean;
 };
 
 export type ClientMethods = {
@@ -280,13 +282,6 @@ export type SegmentAPIIntegrations = {
 
 export type RoutingRule = Rule;
 
-export interface MetricsOptions {
-  host?: string;
-  sampleRate?: number;
-  flushTimer?: number;
-  maxQueueSize?: number;
-}
-
 export interface DestinationFilters {
   [key: string]: RoutingRule;
 }
@@ -296,7 +291,7 @@ export type SegmentAPISettings = {
   middlewareSettings?: {
     routingRules: RoutingRule[];
   };
-  metrics?: MetricsOptions;
+  metrics?: Partial<MetricsOptions>;
 };
 
 export type DestinationMetadata = {
