@@ -90,7 +90,7 @@ export default (payload: TrackEventType) => {
           );
           const productId =
             unknownToString(
-              productDict.productId,
+              productDict.product_id,
               true,
               undefined,
               undefined
@@ -102,7 +102,7 @@ export default (payload: TrackEventType) => {
           const productQuantity = isNumber(productDict.quantity)
             ? productDict.quantity
             : 1;
-          delete productDict.productId;
+          delete productDict.product_id;
           delete productDict.price;
           delete productDict.quantity;
           const productProperties = Object.assign(
