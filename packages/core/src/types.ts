@@ -264,6 +264,10 @@ export type SegmentAdjustSettings = {
   delayTime?: number;
 };
 
+export type SegmentBrazeSettings = {
+  logPurchaseWhenRevenuePresent: boolean;
+};
+
 export type IntegrationSettings =
   // Strongly typed known integration settings
   | SegmentAPIIntegration

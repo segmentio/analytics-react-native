@@ -4,15 +4,27 @@ import {
   PluginType,
   TrackEventType,
   UserInfoState,
+  SegmentAPISettings,
+  UpdateType,
+  JsonMap,
+  SegmentBrazeSettings,
 } from '@segment/analytics-react-native';
 import Braze, { GenderTypes, MonthsAsNumber } from '@braze/react-native-sdk';
 import flush from './methods/flush';
-import track from './methods/track';
-
 export class BrazePlugin extends DestinationPlugin {
   type = PluginType.destination;
   key = 'Appboy';
   private lastSeenTraits: UserInfoState | undefined;
+  private revenueEnabled = false;
+
+  update(settings: SegmentAPISettings, _: UpdateType) {
+    const brazeSettings = settings.integrations[
+      this.key
+    ] as SegmentBrazeSettings;
+    if (brazeSettings.logPurchaseWhenRevenuePresent === true) {
+      this.revenueEnabled = true;
+    }
+  }
 
   identify(event: IdentifyEventType) {
     //check to see if anything has changed.
@@ -110,11 +122,116 @@ export class BrazePlugin extends DestinationPlugin {
   }
 
   track(event: TrackEventType) {
-    track(event);
+    const eventName = event.event;
+    const revenue = this.extractRevenue(event.properties, 'revenue');
+    const attributionProperties = {
+      network: '',
+      campaign: '',
+      adGroup: '',
+      creative: '',
+    };
+
+    if (event.event === 'Install Attributed') {
+      if (event.properties?.campaign) {
+        const attributionData: any = event.properties.campaign;
+        const network = attributionData.source ?? attributionProperties.network;
+        const campaign = attributionData.name ?? attributionProperties.campaign;
+        const adGroup =
+          attributionData.ad_group ?? attributionProperties.adGroup;
+        const creative =
+          attributionData.ad_creative ?? attributionProperties.creative;
+        Braze.setAttributionData(network, campaign, adGroup, creative);
+      }
+    }
+
+    if (eventName === 'Order Completed' || eventName === 'Completed Order') {
+      this.logPurchaseEvent(event);
+    } else if (
+      this.revenueEnabled === true &&
+      revenue !== 0 &&
+      revenue !== undefined
+    ) {
+      this.logPurchaseEvent(event);
+    } else {
+      Braze.logCustomEvent(eventName, event.properties);
+    }
     return event;
   }
 
   flush() {
     flush();
+  }
+
+  extractRevenue(properties: JsonMap | undefined, key: string): number {
+    if (!properties) {
+      return 0;
+    }
+    const revenue = properties[key];
+    if (revenue) {
+      switch (typeof revenue) {
+        case 'string':
+          return parseFloat(revenue);
+        case 'number':
+          return revenue;
+        default:
+          return 0;
+      }
+    } else {
+      return 0;
+    }
+  }
+
+  logPurchaseEvent(event: TrackEventType) {
+    // Make USD as the default currency.
+    let currency = 'USD';
+    const revenue = this.extractRevenue(event.properties, 'revenue');
+    if (
+      typeof event.properties?.currency === 'string' &&
+      event.properties.currency.length === 3
+    ) {
+      currency = event.properties.currency;
+    }
+    if (event.properties) {
+      const appBoyProperties = Object.assign({}, event.properties);
+      delete appBoyProperties.currency;
+      delete appBoyProperties.revenue;
+
+      if (appBoyProperties.products) {
+        const products = (appBoyProperties.products as any[]).slice(0);
+        delete appBoyProperties.products;
+
+        products.forEach((product) => {
+          const productDict = Object.assign({}, product);
+          const productId = productDict.product_id;
+          const productRevenue = this.extractRevenue(productDict, 'price');
+          const productQuantity = productDict.quantity;
+          delete productDict.product_id;
+          delete productDict.price;
+          delete productDict.quantity;
+          let productProperties = Object.assign(
+            {},
+            appBoyProperties,
+            productDict
+          );
+          Braze.logPurchase(
+            productId,
+            String(productRevenue),
+            currency,
+            productQuantity,
+            productProperties
+          );
+        });
+      } else {
+        Braze.logPurchase(
+          event.event,
+          String(revenue),
+          currency,
+          1,
+          appBoyProperties
+        );
+      }
+    } else {
+      Braze.logPurchase(event.event, String(revenue), currency, 1);
+    }
   }
 }
