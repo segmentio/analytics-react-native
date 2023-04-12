@@ -144,6 +144,7 @@ export type Config = {
   autoAddSegmentDestination?: boolean;
   collectDeviceId?: boolean;
   storePersistor?: Persistor;
+  storePersistorSaveDelay?: Number;
   proxy?: string;
   errorHandler?: (error: SegmentError) => void;
 };
