@@ -33,12 +33,12 @@ export const createTestClient = (
   class ObservablePlugin extends UtilityPlugin {
     type = PluginType.after;
 
-    override execute(
+    execute = async (
       event: SegmentEvent
-    ): SegmentEvent | Promise<SegmentEvent | undefined> | undefined {
-      super.execute(event);
+    ): Promise<SegmentEvent | undefined> => {
+      await super.execute(event);
       return event;
-    }
+    };
   }
 
   const mockPlugin = new ObservablePlugin();

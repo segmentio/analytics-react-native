@@ -1,9 +1,15 @@
 import {
   DestinationPlugin,
   IdentifyEventType,
+  isNumber,
+  isString,
+  isBoolean,
+  isDate,
   PluginType,
   TrackEventType,
   UserInfoState,
+  isObject,
+  objectToString,
 } from '@segment/analytics-react-native';
 import Braze, { GenderTypes, MonthsAsNumber } from '@braze/react-native-sdk';
 import flush from './methods/flush';
@@ -13,6 +19,42 @@ export class BrazePlugin extends DestinationPlugin {
   type = PluginType.destination;
   key = 'Appboy';
   private lastSeenTraits: UserInfoState | undefined;
+
+  /**
+   * Cleans up the attributes to only send valid values to Braze SDK
+   * @param value value of any type
+   * @returns value if type is valid, undefined if the type is not supported by Braze
+   */
+  private sanitizeAttribute = (
+    value: unknown
+  ): string | number | boolean | Date | string[] | null | undefined => {
+    // All basic values
+    if (
+      value === null ||
+      isNumber(value) ||
+      isString(value) ||
+      isBoolean(value) ||
+      isDate(value)
+    ) {
+      return value;
+    }
+
+    // Arrays and objects we will attempt to serialize
+    if (Array.isArray(value)) {
+      return value.map((v) => {
+        if (isObject(v)) {
+          return objectToString(v) ?? '';
+        }
+        return `${v}`;
+      });
+    }
+
+    if (isObject(value)) {
+      return objectToString(value);
+    }
+
+    return undefined;
+  };
 
   identify(event: IdentifyEventType) {
     //check to see if anything has changed.
@@ -24,7 +66,7 @@ export class BrazePlugin extends DestinationPlugin {
     ) {
       return;
     } else {
-      if (event.userId) {
+      if (event.userId !== undefined && event.userId !== null) {
         Braze.changeUser(event.userId);
       }
 
@@ -95,8 +137,9 @@ export class BrazePlugin extends DestinationPlugin {
       ];
 
       Object.entries(event.traits ?? {}).forEach(([key, value]) => {
-        if (appBoyTraits.indexOf(key) < 0) {
-          Braze.setCustomUserAttribute(key, value as any);
+        const sanitized = this.sanitizeAttribute(value);
+        if (sanitized !== undefined && appBoyTraits.indexOf(key) < 0) {
+          Braze.setCustomUserAttribute(key, sanitized);
         }
       });
 

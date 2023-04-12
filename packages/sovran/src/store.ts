@@ -57,7 +57,7 @@ interface getStateFunc<T> {
 /**
  * Sovran State Store
  */
-export interface Store<T extends {}> {
+export interface Store<T extends object> {
   /**
    * Register a callback for changes to the store
    * @param {Notify<T>} callback - callback to be called when the store changes
@@ -98,37 +98,42 @@ export interface StoreConfig {
  * @param config configuration options
  * @returns Sovran Store object
  */
-export const createStore = <T extends {}>(
+export const createStore = <T extends object>(
   initialState: T,
   config?: StoreConfig
 ): Store<T> => {
   let state = initialState;
-  let queue: { call: Action<T>; finally?: (newState: T) => void }[] = [];
-  let isPersisted = config?.persist !== undefined;
+  const queue: { call: Action<T>; finally?: (newState: T) => void }[] = [];
+  const isPersisted = config?.persist !== undefined;
   let saveTimeout: ReturnType<typeof setTimeout> | undefined;
-  let persistor: Persistor =
+  const persistor: Persistor =
     config?.persist?.persistor ?? AsyncStoragePersistor;
-  let storeId: string = isPersisted
-    ? config!.persist!.storeId
+  const storeId: string = isPersisted
+    ? config.persist!.storeId
     : DEFAULT_STORE_NAME;
 
   if (isPersisted) {
-    persistor.get<T>(storeId).then(async (persistedState) => {
-      if (
-        persistedState !== undefined &&
-        persistedState !== null &&
-        typeof persistedState === 'object'
-      ) {
-        const restoredState = await dispatch((oldState) => {
-          return merge(oldState, persistedState);
-        });
-        config?.persist?.onInitialized?.(restoredState);
-      } else {
-        const stateToSave = getState();
-        persistor.set(storeId, stateToSave);
-        config?.persist?.onInitialized?.(stateToSave);
-      }
-    });
+    persistor
+      .get<T>(storeId)
+      .then(async (persistedState) => {
+        if (
+          persistedState !== undefined &&
+          persistedState !== null &&
+          typeof persistedState === 'object'
+        ) {
+          const restoredState = await dispatch((oldState) => {
+            return merge(oldState, persistedState);
+          });
+          config?.persist?.onInitialized?.(restoredState);
+        } else {
+          const stateToSave = getState();
+          await persistor.set(storeId, stateToSave);
+          config?.persist?.onInitialized?.(stateToSave);
+        }
+      })
+      .catch((reason) => {
+        console.warn(reason);
+      });
   }
 
   const updatePersistor = (state: T) => {
@@ -140,8 +145,14 @@ export const createStore = <T extends {}>(
       clearTimeout(saveTimeout);
     }
     saveTimeout = setTimeout(() => {
-      persistor.set(storeId, state);
-      saveTimeout = undefined;
+      void (async () => {
+        try {
+          saveTimeout = undefined;
+          await persistor.set(storeId, state);
+        } catch (error) {
+          console.warn(error);
+        }
+      })();
     }, config.persist?.saveDelay ?? DEFAULT_SAVE_STATE_DELAY_IN_MS);
   };
 
@@ -151,7 +162,7 @@ export const createStore = <T extends {}>(
   function getState(): T;
   function getState(safe: true): Promise<T>;
   function getState(safe?: boolean): T | Promise<T> {
-    if (!safe) return { ...state } as T;
+    if (safe !== true) return { ...state };
     return new Promise<T>((resolve) => {
       queue.push({
         call: (state) => {
@@ -174,6 +185,7 @@ export const createStore = <T extends {}>(
   };
 
   const processQueue = async (): Promise<T> => {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     queueObserve.unsubscribe(processQueue);
     while (queue.length > 0) {
       const action = queue.shift();
@@ -195,10 +207,11 @@ export const createStore = <T extends {}>(
         action?.finally?.(state);
       }
     }
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     queueObserve.subscribe(processQueue);
     return state;
   };
-
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   queueObserve.subscribe(processQueue);
 
   const subscribe = (callback: Notify<T>) => {

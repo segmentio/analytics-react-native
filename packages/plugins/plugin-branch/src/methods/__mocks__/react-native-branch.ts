@@ -2,8 +2,8 @@ export default {
   setIdentity: jest.fn(),
   createBranchUniversalObject: jest
     .fn()
-    .mockImplementation(async (ident, options) => {
-      return { ident, options };
+    .mockImplementation(async (ident: unknown, options: unknown) => {
+      return Promise.resolve({ ident, options });
     }),
 };
 

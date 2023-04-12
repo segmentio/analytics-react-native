@@ -1,7 +1,20 @@
 import Braze from '@braze/react-native-sdk';
-import type { TrackEventType, JsonMap } from '@segment/analytics-react-native';
+import {
+  isNumber,
+  isObject,
+  JsonMap,
+  TrackEventType,
+} from '@segment/analytics-react-native';
+import { unknownToString } from '../../../../core/src/util';
 
-const attributionProperties = {
+interface AttributionProperties {
+  network: string;
+  campaign: string;
+  adGroup: string;
+  creative: string;
+}
+
+const defaultProperties: AttributionProperties = {
   network: '',
   campaign: '',
   adGroup: '',
@@ -10,13 +23,40 @@ const attributionProperties = {
 
 export default (payload: TrackEventType) => {
   if (payload.event === 'Install Attributed') {
-    if (payload.properties?.campaign) {
-      const attributionData: any = payload.properties.campaign;
-      const network = attributionData.source ?? attributionProperties.network;
-      const campaign = attributionData.name ?? attributionProperties.campaign;
-      const adGroup = attributionData.ad_group ?? attributionProperties.adGroup;
-      const creative =
-        attributionData.ad_creative ?? attributionProperties.creative;
+    if (
+      payload.properties?.campaign !== undefined &&
+      payload.properties?.campaign !== null
+    ) {
+      const attributionData: unknown = payload.properties.campaign;
+      let network: string, campaign: string, adGroup: string, creative: string;
+
+      if (isObject(attributionData)) {
+        network =
+          unknownToString(attributionData.source, true, undefined, undefined) ??
+          defaultProperties.network;
+        campaign =
+          unknownToString(attributionData.name, true, undefined, undefined) ??
+          defaultProperties.campaign;
+        adGroup =
+          unknownToString(
+            attributionData.ad_group,
+            true,
+            undefined,
+            undefined
+          ) ?? defaultProperties.adGroup;
+        creative =
+          unknownToString(
+            attributionData.ad_creative,
+            true,
+            undefined,
+            undefined
+          ) ?? defaultProperties.creative;
+      } else {
+        network = defaultProperties.network;
+        campaign = defaultProperties.campaign;
+        adGroup = defaultProperties.adGroup;
+        creative = defaultProperties.creative;
+      }
       Braze.setAttributionData(network, campaign, adGroup, creative);
     }
   }
@@ -36,25 +76,42 @@ export default (payload: TrackEventType) => {
       delete appBoyProperties.currency;
       delete appBoyProperties.revenue;
 
-      if (appBoyProperties.products) {
-        const products = (appBoyProperties.products as any[]).slice(0);
+      if (
+        appBoyProperties.products !== undefined &&
+        appBoyProperties.products !== null
+      ) {
+        const products = (appBoyProperties.products as unknown[]).slice(0);
         delete appBoyProperties.products;
 
         products.forEach((product) => {
-          const productDict = Object.assign({}, product);
-          const productId = productDict.product_id;
-          const productRevenue = extractRevenue(productDict, 'price');
-          const productQuantity = productDict.quantity;
+          const productDict = Object.assign(
+            {},
+            isObject(product) ? product : {}
+          );
+          const productId =
+            unknownToString(
+              productDict.product_id,
+              true,
+              undefined,
+              undefined
+            ) ?? '';
+          const productRevenue = extractRevenue(
+            productDict as unknown as JsonMap,
+            'price'
+          );
+          const productQuantity = isNumber(productDict.quantity)
+            ? productDict.quantity
+            : 1;
           delete productDict.product_id;
           delete productDict.price;
           delete productDict.quantity;
-          let productProperties = Object.assign(
+          const productProperties = Object.assign(
             {},
             appBoyProperties,
             productDict
           );
           Braze.logPurchase(
-            productId,
+            unknownToString(productId) ?? '',
             String(productRevenue),
             currency,
             productQuantity,
@@ -86,7 +143,7 @@ const extractRevenue = (properties: JsonMap | undefined, key: string) => {
   }
 
   const revenue = properties[key];
-  if (revenue) {
+  if (revenue !== undefined && revenue !== null) {
     switch (typeof revenue) {
       case 'string':
         return parseFloat(revenue);

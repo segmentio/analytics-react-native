@@ -1,5 +1,4 @@
 import mixpanelTrack from '../track';
-//@ts-ignore
 import type { JsonMap } from '@segment/analytics-react-native';
 import type { SegmentMixpanelSettings } from '../../types';
 import { sampleIntegrationSettings } from './__helpers__/constants';
@@ -29,8 +28,8 @@ describe('#mixpanelTrack', () => {
 
   it('calls People API if setting is true', () => {
     settings.people = true;
-    let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
-    let newProperties = {
+    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
+    const newProperties = {
       ...properties,
       prop1: 'string',
       prop2: 34,
@@ -44,7 +43,7 @@ describe('#mixpanelTrack', () => {
 
   it('returns if people setting is false', () => {
     settings.people = false;
-    let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
+    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
     mixpanelTrack(eventName, properties, settings, mixpanel);
 
@@ -54,8 +53,8 @@ describe('#mixpanelTrack', () => {
   it('sets the increment value if present', () => {
     settings.people = true;
     settings.propIncrements = ['incProp'];
-    let newProperties = { ...properties, incProp: 10 };
-    let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
+    const newProperties = { ...properties, incProp: 10 };
+    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
     mixpanelTrack(eventName, newProperties, settings, mixpanel);
 
@@ -63,9 +62,9 @@ describe('#mixpanelTrack', () => {
   });
 
   it('does not set the increment value if it is not a number', () => {
-    let newProperties = { incProp: 'string' };
+    const newProperties = { incProp: 'string' };
     settings.propIncrements = ['prop1', 'prop2'];
-    let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
+    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
     mixpanelTrack(eventName, newProperties, settings, mixpanel);
 
@@ -75,7 +74,7 @@ describe('#mixpanelTrack', () => {
   it('sets event increment values', () => {
     settings.propIncrements = [];
     settings.eventIncrements = ['Test Event'];
-    let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
+    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
     mixpanelTrack(eventName, properties, settings, mixpanel);
 
@@ -84,7 +83,7 @@ describe('#mixpanelTrack', () => {
 
   it('does not set event increment values if event name is undefined', () => {
     settings.eventIncrements = ['Real Event'];
-    let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
+    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
     mixpanelTrack(eventName, properties, settings, mixpanel);
 
@@ -92,9 +91,9 @@ describe('#mixpanelTrack', () => {
   });
 
   it('sets revenue', () => {
-    let newProperties = { revenue: 15 };
+    const newProperties = { revenue: 15 };
     settings.eventIncrements = [];
-    let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
+    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
     mixpanelTrack(eventName, newProperties, settings, mixpanel);
 
@@ -102,7 +101,7 @@ describe('#mixpanelTrack', () => {
   });
 
   it('does not set revenue', () => {
-    let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
+    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
     mixpanelTrack(eventName, properties, settings, mixpanel);
 

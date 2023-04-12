@@ -36,9 +36,9 @@ export class DestinationMetadataEnrichment extends UtilityPlugin {
 
     const unbundled = new Set<string>();
     const segmentInfo =
-      (pluginSettings[this.destinationKey] as Record<string, any>) ?? {};
-    var unbundledIntegrations: string[] =
-      segmentInfo.unbundledIntegrations ?? [];
+      (pluginSettings[this.destinationKey] as Record<string, unknown>) ?? {};
+    const unbundledIntegrations: string[] =
+      (segmentInfo.unbundledIntegrations as string[]) ?? [];
 
     // All active integrations, not in `bundled` are put in `unbundled`
     // All unbundledIntegrations not in `bundled` are put in `unbundled`

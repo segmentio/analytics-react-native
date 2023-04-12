@@ -2,31 +2,34 @@ import type { Action, Store } from './store';
 
 type ActionCreator<P, S> = (payload: P) => Action<S>;
 
-interface BridgeStore<T> {
+interface BridgeStore<T extends object> {
   store: Store<T>;
-  actions: { [key: string]: ActionCreator<any, T> };
+  actions: { [key: string]: ActionCreator<unknown, T> };
 }
 
-interface StoreAction<P, S> {
+interface StoreAction<P, S extends object> {
   key: string;
   store: Store<S>;
   actionCreator: ActionCreator<P, S>;
 }
 
-const actionMap: { [key: string]: StoreAction<any, any>[] } = {};
+const actionMap: { [key: string]: StoreAction<unknown, object>[] } = {};
 
-export const registerBridgeStore = <T = any>(
+export const registerBridgeStore = <T extends object>(
   ...stores: BridgeStore<T>[]
 ): void => {
   for (const store of stores) {
     for (const [key, actionCreator] of Object.entries(store.actions)) {
-      if (!actionMap[key]) {
+      if (actionMap[key] === undefined) {
         actionMap[key] = [];
       }
       actionMap[key].push({
         key,
-        store: store.store,
-        actionCreator,
+        store: store.store as unknown as Store<object>,
+        actionCreator: actionCreator as unknown as ActionCreator<
+          unknown,
+          object
+        >,
       });
     }
   }

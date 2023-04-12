@@ -9,6 +9,8 @@ import {
   GroupEventType,
   JsonMap,
   AliasEventType,
+  SegmentError,
+  ErrorType,
 } from '@segment/analytics-react-native';
 import type { SegmentMixpanelSettings } from './types';
 import { Mixpanel } from 'mixpanel-react-native';
@@ -40,10 +42,18 @@ export class MixpanelPlugin extends DestinationPlugin {
       return;
     }
     this.mixpanel = new Mixpanel(mixpanelSettings.token, false);
-    this.mixpanel.init();
+    this.mixpanel.init().catch((error) => {
+      this.analytics?.reportInternalError(
+        new SegmentError(
+          ErrorType.PluginError,
+          'Error initializing Mixpanel',
+          error
+        )
+      );
+    });
     this.settings = mixpanelSettings;
 
-    if (mixpanelSettings.enableEuropeanEndpoint) {
+    if (mixpanelSettings.enableEuropeanEndpoint === true) {
       this.mixpanel?.setServerURL(EU_SERVER);
     }
   }
@@ -79,9 +89,9 @@ export class MixpanelPlugin extends DestinationPlugin {
     return event;
   }
 
-  alias(event: AliasEventType) {
-    if (this.mixpanel !== undefined) {
-      alias(event, this.mixpanel, this.analytics!);
+  async alias(event: AliasEventType) {
+    if (this.mixpanel !== undefined && this.analytics !== undefined) {
+      await alias(event, this.mixpanel, this.analytics);
     }
     return event;
   }

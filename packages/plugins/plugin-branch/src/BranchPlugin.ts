@@ -21,13 +21,13 @@ export class BranchPlugin extends DestinationPlugin {
     return event;
   }
 
-  track(event: TrackEventType) {
-    track(event);
+  async track(event: TrackEventType) {
+    await track(event);
     return event;
   }
 
-  screen(event: ScreenEventType) {
-    screen(event);
+  async screen(event: ScreenEventType) {
+    await screen(event);
     return event;
   }
 
@@ -36,7 +36,7 @@ export class BranchPlugin extends DestinationPlugin {
     return event;
   }
 
-  reset(): void {
+  reset() {
     reset();
   }
 }

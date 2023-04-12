@@ -24,8 +24,7 @@ export class Plugin {
     this.analytics = analytics;
   }
 
-  // @ts-ignore
-  update(settings: SegmentAPISettings, type: UpdateType) {
+  update(_settings: SegmentAPISettings, _type: UpdateType) {
     // do nothing by default, user can override.
   }
 
@@ -102,9 +101,13 @@ export class EventPlugin extends Plugin {
     return event;
   }
 
-  flush(): void | Promise<void> {}
+  flush(): void | Promise<void> {
+    return;
+  }
 
-  reset() {}
+  reset(): void | Promise<void> {
+    return;
+  }
 }
 
 export class DestinationPlugin extends EventPlugin {
@@ -196,7 +199,7 @@ export class DestinationPlugin extends EventPlugin {
     await super.execute(enrichmentResult);
 
     // apply .after plugins
-    let afterResult = await this.timeline.applyPlugins({
+    const afterResult = await this.timeline.applyPlugins({
       type: PluginType.after,
       event: enrichmentResult,
     });

@@ -46,7 +46,6 @@ export const Platform = {
 };
 
 export class NativeEventEmitter {
-  constructor() {}
   addListener = () => jest.fn();
   removeListener = () => jest.fn();
   removeAllListeners = () => jest.fn();

@@ -3,10 +3,10 @@ import type {
   TrackEventType,
   ScreenEventType,
 } from '@segment/analytics-react-native';
-import { ClevertapPlugin } from './ClevertapPlugin';
-import { SegmentClient } from '../../../core/src/analytics';
-import { getMockLogger } from '../../../core/src/__tests__/__helpers__/mockLogger';
-import { MockSegmentStore } from '../../../core/src/__tests__/__helpers__/mockSegmentStore';
+import { ClevertapPlugin } from '../ClevertapPlugin';
+import { SegmentClient } from '../../../../core/src/analytics';
+import { getMockLogger } from '../../../../core/src/__tests__/__helpers__/mockLogger';
+import { MockSegmentStore } from '../../../../core/src/__tests__/__helpers__/mockSegmentStore';
 import CleverTap from 'clevertap-react-native';
 
 jest.mock('clevertap-react-native');
@@ -29,7 +29,7 @@ describe('ClevertapPlugin ', () => {
     plugin.analytics = new SegmentClient(clientArgs);
   });
 
-  it('sends an identify event with correct traits', async () => {
+  it('sends an identify event with correct traits', () => {
     const payload = {
       type: 'identify',
       traits: {
@@ -53,7 +53,7 @@ describe('ClevertapPlugin ', () => {
     expect(CleverTap.profileSet).toHaveBeenCalledWith(safeTraits);
   });
 
-  it('sends an Order Completed Event', async () => {
+  it('sends an Order Completed Event', () => {
     const payload = {
       type: 'track',
       event: 'Order Completed',
@@ -120,7 +120,7 @@ describe('ClevertapPlugin ', () => {
     );
   });
 
-  it('sends a track event', async () => {
+  it('sends a track event', () => {
     const payload = {
       type: 'track',
       event: 'track user',
@@ -139,7 +139,7 @@ describe('ClevertapPlugin ', () => {
     );
   });
 
-  it('sends a screen event', async () => {
+  it('sends a screen event', () => {
     const payload = {
       type: 'screen',
       properties: {

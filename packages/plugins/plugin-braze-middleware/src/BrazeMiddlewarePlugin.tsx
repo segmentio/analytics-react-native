@@ -19,7 +19,7 @@ export class BrazeMiddlewarePlugin extends Plugin {
         this.lastSeenTraits?.anonymousId === event.anonymousId &&
         this.lastSeenTraits?.traits === event.traits
       ) {
-        let integrations = event.integrations;
+        const integrations = event.integrations;
 
         if (integrations !== undefined) {
           integrations[this.key] = false;

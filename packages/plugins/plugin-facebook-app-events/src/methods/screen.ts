@@ -1,25 +1,35 @@
 import type { ScreenEventType } from '@segment/analytics-react-native';
-import { AppEventsLogger } from 'react-native-fbsdk-next';
+import { AppEventsLogger, Params } from 'react-native-fbsdk-next';
+import { sanitizeValue } from '../utils';
 
 const PREFIX = 'Viewed';
 const SUFFIX = 'Screen';
 const MAX_CHARACTERS_EVENT_NAME = 40 - PREFIX.length - SUFFIX.length;
 
 const sanitizeName = (name: string) => {
-  let trimmedName = name.substring(0, MAX_CHARACTERS_EVENT_NAME);
+  const trimmedName = name.substring(0, MAX_CHARACTERS_EVENT_NAME);
   return `${PREFIX} ${trimmedName} ${SUFFIX}`;
 };
 
-const sanitizeEvent = (
-  event: Record<string, any>
-): { [key: string]: string | number } => {
-  let properties = event.properties ?? {};
+const sanitizeEvent = (event: ScreenEventType): Params => {
+  const properties: Params = {};
+  if (event.properties === undefined || event.properties === null) {
+    return {};
+  }
+
+  for (const key of Object.keys(event.properties)) {
+    const sanitized = sanitizeValue(event.properties[key]);
+    if (sanitized !== undefined) {
+      properties[key] = sanitized;
+    }
+  }
 
   return { ...properties };
 };
-export default async (event: ScreenEventType) => {
-  let name = sanitizeName(event.name);
-  let params = sanitizeEvent(event);
+
+export default (event: ScreenEventType) => {
+  const name = sanitizeName(event.name);
+  const params = sanitizeEvent(event);
 
   AppEventsLogger.logEvent(name, params);
 };

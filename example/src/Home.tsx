@@ -13,6 +13,7 @@ import { useAnalytics } from '@segment/analytics-react-native';
 
 const screenWidth = Dimensions.get('screen').width;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Home = ({ navigation }: { navigation: any }) => {
   const { screen, track, identify, group, alias, reset, flush } =
     useAnalytics();
@@ -24,7 +25,7 @@ const Home = ({ navigation }: { navigation: any }) => {
         name: 'Track',
         testID: 'BUTTON_TRACK',
         onPress: () => {
-          track('Track pressed', { foo: 'bar' });
+          void track('Track pressed', { foo: 'bar' });
         },
       },
       {
@@ -32,7 +33,7 @@ const Home = ({ navigation }: { navigation: any }) => {
         name: 'Screen',
         testID: 'BUTTON_SCREEN',
         onPress: () => {
-          screen('Home Screen', { foo: 'bar' });
+          void screen('Home Screen', { foo: 'bar' });
         },
       },
       {
@@ -40,20 +41,24 @@ const Home = ({ navigation }: { navigation: any }) => {
         name: 'Identify',
         testID: 'BUTTON_IDENTIFY',
         onPress: () => {
-          identify('user_2', { username: 'simplyTheBest' });
+          void identify('user_2', { username: 'simplyTheBest' });
         },
       },
       {
         color: colors.lightPurple,
         name: 'Group',
         testID: 'BUTTON_GROUP',
-        onPress: () => group('best-group', { companyId: 'Lala' }),
+        onPress: () => {
+          void group('best-group', { companyId: 'Lala' });
+        },
       },
       {
         color: colors.indigo,
         name: 'Alias',
         testID: 'BUTTON_ALIAS',
-        onPress: () => alias('new-id'),
+        onPress: () => {
+          void alias('new-id');
+        },
       },
     ];
   }, []);
@@ -63,13 +68,17 @@ const Home = ({ navigation }: { navigation: any }) => {
       color: colors.pink,
       name: 'Flush',
       testID: 'BUTTON_FLUSH',
-      onPress: () => flush(),
+      onPress: () => {
+        void flush();
+      },
     },
     {
       color: colors.orange,
       name: 'Reset',
       testID: 'BUTTON_RESET',
-      onPress: () => reset(),
+      onPress: () => {
+        void reset();
+      },
     },
   ];
 
@@ -111,7 +120,10 @@ const Home = ({ navigation }: { navigation: any }) => {
               styles.button,
               { backgroundColor: colors.purple, width: screenWidth / 2 - 40 },
             ]}
-            onPress={() => navigation.navigate('SecondPage')}
+            onPress={() => {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+              navigation.navigate('SecondPage');
+            }}
           >
             <Text style={styles.text}>Page</Text>
           </TouchableOpacity>
@@ -120,7 +132,10 @@ const Home = ({ navigation }: { navigation: any }) => {
               styles.button,
               { backgroundColor: colors.acai, width: screenWidth / 2 - 40 },
             ]}
-            onPress={() => navigation.navigate('Modal')}
+            onPress={() => {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+              navigation.navigate('Modal');
+            }}
           >
             <Text style={styles.text}>Modal</Text>
           </TouchableOpacity>

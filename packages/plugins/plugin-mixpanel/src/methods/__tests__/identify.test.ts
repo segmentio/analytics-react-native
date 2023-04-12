@@ -39,12 +39,12 @@ describe('#identify', () => {
   it('sets all traits by default', () => {
     payload.userId = 'userId';
     settings.setAllTraitsByDefault = true;
-    let mockedTraits = {
+    const mockedTraits = {
       $first_name: 'John',
       $phone: '(555) 555-5555',
       foo: 'bar',
     };
-    let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
+    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
     identify(payload, mixpanel, settings);
 
@@ -54,7 +54,7 @@ describe('#identify', () => {
 
   it('does not set all traits by default', () => {
     settings.setAllTraitsByDefault = false;
-    let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
+    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
     identify(payload, mixpanel, settings);
 
@@ -65,7 +65,7 @@ describe('#identify', () => {
   it('registers superProperties', () => {
     payload.traits!.prop1 = 'string';
     settings.superProperties = ['prop1'];
-    let mockedTraits = { prop1: 'string' };
+    const mockedTraits = { prop1: 'string' };
 
     identify(payload, mixpanel, settings);
 
@@ -85,7 +85,7 @@ describe('#identify', () => {
     settings.superProperties = [];
     settings.peopleProperties = ['prop1'];
     settings.people = true;
-    let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
+    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
     identify(payload, mixpanel, settings);
 
@@ -94,7 +94,7 @@ describe('#identify', () => {
 
   it(' does not register people Properties', () => {
     settings.peopleProperties = [];
-    let getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
+    const getPeopleSpy = jest.spyOn(mixpanel, 'getPeople');
 
     identify(payload, mixpanel, settings);
 

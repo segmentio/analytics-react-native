@@ -33,7 +33,9 @@ describe('#trackDeepLinks', () => {
     store: store,
   };
 
-  beforeEach(() => {});
+  beforeEach(() => {
+    return;
+  });
 
   afterEach(() => {
     jest.restoreAllMocks();

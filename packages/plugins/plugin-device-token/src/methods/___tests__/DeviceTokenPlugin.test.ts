@@ -4,7 +4,7 @@ import { getMockLogger } from '../../../../../core/src/__tests__/__helpers__/moc
 import { SegmentClient } from '../../../../../core/src/analytics';
 import { Platform } from 'react-native';
 
-let mockRequestPermission = jest.fn().mockReturnValue(1);
+const mockRequestPermission = jest.fn().mockReturnValue(1);
 const mockGetAPNSToken = jest.fn().mockReturnValue('device-token');
 const mockGetDeviceToken = jest.fn().mockReturnValue('device-token');
 
@@ -38,7 +38,7 @@ describe('DeviceTokenPlugin', () => {
   });
 
   it('requests authorization when configure is called', async () => {
-    let analytics = new SegmentClient(clientArgs);
+    const analytics = new SegmentClient(clientArgs);
 
     await plugin.configure(analytics);
 
@@ -46,7 +46,7 @@ describe('DeviceTokenPlugin', () => {
   });
 
   it('retrieves the APNS value if authorized and OS is iOS', async () => {
-    let analytics = new SegmentClient(clientArgs);
+    const analytics = new SegmentClient(clientArgs);
     Platform.OS = 'ios';
     await plugin.configure(analytics);
 
@@ -55,7 +55,7 @@ describe('DeviceTokenPlugin', () => {
   });
 
   it('retrieves the device token for Android builds', async () => {
-    let analytics = new SegmentClient(clientArgs);
+    const analytics = new SegmentClient(clientArgs);
     Platform.OS = 'android';
 
     await plugin.configure(analytics);
@@ -72,7 +72,7 @@ describe('DeviceTokenPlugin', () => {
   });
 
   it('sets the device token in context for iOS', async () => {
-    let analytics = new SegmentClient(clientArgs);
+    const analytics = new SegmentClient(clientArgs);
     await plugin.configure(analytics);
 
     const token = await store.context.get(true);
@@ -81,7 +81,7 @@ describe('DeviceTokenPlugin', () => {
 
   it('sets the device token in context for Android', async () => {
     Platform.OS = 'android';
-    let analytics = new SegmentClient(clientArgs);
+    const analytics = new SegmentClient(clientArgs);
     await plugin.configure(analytics);
 
     const token = await store.context.get(true);

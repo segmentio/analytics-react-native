@@ -3,12 +3,12 @@ import type { IdentifyEventType } from '@segment/analytics-react-native';
 
 export default (event: IdentifyEventType) => {
   const userId = event.userId;
-  if (userId && userId.length > 0) {
+  if (userId !== undefined && userId !== null && userId.length > 0) {
     Adjust.addSessionPartnerParameter('user_id', userId);
   }
 
   const anonId = event.anonymousId;
-  if (anonId && anonId.length > 0) {
+  if (anonId !== undefined && anonId !== null && anonId.length > 0) {
     Adjust.addSessionPartnerParameter('anonymous_id', anonId);
   }
 };
