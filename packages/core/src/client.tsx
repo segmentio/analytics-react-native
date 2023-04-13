@@ -20,6 +20,7 @@ export const createClient = (config: Config) => {
   const segmentStore = new SovranStorage({
     storeId: config.writeKey,
     storePersistor: config.storePersistor,
+    storePersistorSaveDelay: config.storePersistorSaveDelay
   });
 
   const client = new SegmentClient({
