@@ -10,15 +10,43 @@ import {
   UserInfoState,
   isObject,
   objectToString,
+  SegmentAPISettings,
+  UpdateType,
+  JsonMap,
+  SegmentBrazeSettings,
 } from '@segment/analytics-react-native';
 import Braze, { GenderTypes, MonthsAsNumber } from '@braze/react-native-sdk';
 import flush from './methods/flush';
-import track from './methods/track';
+import { unknownToString } from '../../../core/src/util';
+
+interface AttributionProperties {
+  network: string;
+  campaign: string;
+  adGroup: string;
+  creative: string;
+}
+
+const defaultProperties: AttributionProperties = {
+  network: '',
+  campaign: '',
+  adGroup: '',
+  creative: '',
+};
 
 export class BrazePlugin extends DestinationPlugin {
   type = PluginType.destination;
   key = 'Appboy';
   private lastSeenTraits: UserInfoState | undefined;
+  private revenueEnabled = false;
+
+  update(settings: SegmentAPISettings, _: UpdateType) {
+    const brazeSettings = settings.integrations[
+      this.key
+    ] as SegmentBrazeSettings;
+    if (brazeSettings.logPurchaseWhenRevenuePresent === true) {
+      this.revenueEnabled = true;
+    }
+  }
 
   /**
    * Cleans up the attributes to only send valid values to Braze SDK
@@ -153,11 +181,161 @@ export class BrazePlugin extends DestinationPlugin {
   }
 
   track(event: TrackEventType) {
-    track(event);
+    const eventName = event.event;
+    const revenue = this.extractRevenue(event.properties, 'revenue');
+
+    if (event.event === 'Install Attributed') {
+      if (
+        event.properties?.campaign !== undefined &&
+        event.properties?.campaign !== null
+      ) {
+        const attributionData: unknown = event.properties.campaign;
+        let network: string,
+          campaign: string,
+          adGroup: string,
+          creative: string;
+
+        if (isObject(attributionData)) {
+          network =
+            unknownToString(
+              attributionData.source,
+              true,
+              undefined,
+              undefined
+            ) ?? defaultProperties.network;
+          campaign =
+            unknownToString(attributionData.name, true, undefined, undefined) ??
+            defaultProperties.campaign;
+          adGroup =
+            unknownToString(
+              attributionData.ad_group,
+              true,
+              undefined,
+              undefined
+            ) ?? defaultProperties.adGroup;
+          creative =
+            unknownToString(
+              attributionData.ad_creative,
+              true,
+              undefined,
+              undefined
+            ) ?? defaultProperties.creative;
+        } else {
+          network = defaultProperties.network;
+          campaign = defaultProperties.campaign;
+          adGroup = defaultProperties.adGroup;
+          creative = defaultProperties.creative;
+        }
+        Braze.setAttributionData(network, campaign, adGroup, creative);
+      }
+    }
+
+    if (eventName === 'Order Completed' || eventName === 'Completed Order') {
+      this.logPurchaseEvent(event);
+    } else if (
+      this.revenueEnabled === true &&
+      revenue !== 0 &&
+      revenue !== undefined
+    ) {
+      this.logPurchaseEvent(event);
+    } else {
+      Braze.logCustomEvent(eventName, event.properties);
+    }
     return event;
   }
 
   flush() {
     flush();
+  }
+
+  extractRevenue = (properties: JsonMap | undefined, key: string) => {
+    if (!properties) {
+      return 0;
+    }
+
+    const revenue = properties[key];
+    if (revenue !== undefined && revenue !== null) {
+      switch (typeof revenue) {
+        case 'string':
+          return parseFloat(revenue);
+        case 'number':
+          return revenue;
+        default:
+          return 0;
+      }
+    } else {
+      return 0;
+    }
+  };
+
+  logPurchaseEvent(event: TrackEventType) {
+    // Make USD as the default currency.
+    let currency = 'USD';
+    const revenue = this.extractRevenue(event.properties, 'revenue');
+    if (
+      typeof event.properties?.currency === 'string' &&
+      event.properties.currency.length === 3
+    ) {
+      currency = event.properties.currency;
+    }
+    if (event.properties) {
+      const appBoyProperties = Object.assign({}, event.properties);
+      delete appBoyProperties.currency;
+      delete appBoyProperties.revenue;
+
+      if (
+        appBoyProperties.products !== undefined &&
+        appBoyProperties.products !== null
+      ) {
+        const products = (appBoyProperties.products as unknown[]).slice(0);
+        delete appBoyProperties.products;
+
+        products.forEach((product) => {
+          const productDict = Object.assign(
+            {},
+            isObject(product) ? product : {}
+          );
+          const productId =
+            unknownToString(
+              productDict.product_id,
+              true,
+              undefined,
+              undefined
+            ) ?? '';
+          const productRevenue = this.extractRevenue(
+            productDict as unknown as JsonMap,
+            'price'
+          );
+          const productQuantity = isNumber(productDict.quantity)
+            ? productDict.quantity
+            : 1;
+          delete productDict.product_id;
+          delete productDict.price;
+          delete productDict.quantity;
+          const productProperties = Object.assign(
+            {},
+            appBoyProperties,
+            productDict
+          );
+          Braze.logPurchase(
+            unknownToString(productId) ?? '',
+            String(productRevenue),
+            currency,
+            productQuantity,
+            productProperties
+          );
+        });
+      } else {
+        Braze.logPurchase(
+          event.event,
+          String(revenue),
+          currency,
+          1,
+          appBoyProperties
+        );
+      }
+    } else {
+      Braze.logPurchase(event.event, String(revenue), currency, 1);
+    }
   }
 }
