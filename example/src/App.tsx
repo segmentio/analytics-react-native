@@ -32,7 +32,7 @@ import { AmplitudeSessionPlugin } from '@segment/analytics-react-native-plugin-a
 // import { BrazePlugin } from '@segment/analytics-react-native-plugin-braze';
 
 const segmentClient = createClient({
-  writeKey: 'WRITE_KEY',
+  writeKey: '<WRITE_KEY>',
   trackAppLifecycleEvents: true,
   collectDeviceId: true,
   debug: true,
