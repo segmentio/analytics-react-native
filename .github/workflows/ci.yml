@@ -45,7 +45,7 @@ jobs:
 
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: 12.5.1
+          xcode-version: 14.1
 
       - name: Install applesimutils
         run:  |
