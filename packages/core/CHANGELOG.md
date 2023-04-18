@@ -1,3 +1,12 @@
+## [@segment/analytics-react-native-v2.13.5](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.13.4...@segment/analytics-react-native-v2.13.5) (2023-04-18)
+
+
+### Bug Fixes
+
+* bump kotlin version in advertisingId plugin ([#799](https://github.com/segmentio/analytics-react-native/issues/799)) ([12241e9](https://github.com/segmentio/analytics-react-native/commit/12241e9bcbdd86a73bb9ca589c8e6e88f49a48c4))
+* stricter linting, improved handling of plugin errrors ([#795](https://github.com/segmentio/analytics-react-native/issues/795)) ([1ddb4d5](https://github.com/segmentio/analytics-react-native/commit/1ddb4d571df794bc7eaa5c5302ed27b90faf9a73)), closes [#799](https://github.com/segmentio/analytics-react-native/issues/799) [#803](https://github.com/segmentio/analytics-react-native/issues/803) [#802](https://github.com/segmentio/analytics-react-native/issues/802)
+* update braze logPurchase functionality ([#812](https://github.com/segmentio/analytics-react-native/issues/812)) ([09f1222](https://github.com/segmentio/analytics-react-native/commit/09f12223c110e6121a3b8cec765158a791773827))
+
 ## [@segment/analytics-react-native-v2.13.4](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.13.3...@segment/analytics-react-native-v2.13.4) (2023-03-15)
 
 
