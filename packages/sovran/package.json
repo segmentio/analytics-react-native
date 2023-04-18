@@ -100,7 +100,7 @@
   "dependencies": {
     "ansi-regex": "5.0.1",
     "deepmerge": "^4.2.2",
-    "shell-quote": "1.7.3"
+    "shell-quote": "1.8.0"
   },
   "resolutions": {
     "shell-quote": "1.7.3",
