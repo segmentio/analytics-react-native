@@ -1,6 +1,6 @@
 {
   "name": "@segment/analytics-react-native-plugin-idfa",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "The hassle-free way to add Segment analytics to your React-Native app.",
   "main": "lib/commonjs/index",
   "scripts": {
