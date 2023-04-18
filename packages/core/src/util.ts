@@ -1,4 +1,4 @@
-import { NativeModules, Platform } from 'react-native';
+import { NativeModule, NativeModules, Platform } from 'react-native';
 import type { EventPlugin } from './plugin';
 import type { Timeline } from './timeline';
 
@@ -17,7 +17,7 @@ export const warnMissingNativeModule = () => {
 };
 
 export const getNativeModule = (moduleName: string) => {
-  const module = NativeModules[moduleName] || undefined;
+  const module = (NativeModules[moduleName] as NativeModule) ?? undefined;
   if (module === undefined) warnMissingNativeModule();
   return module;
 };
@@ -66,30 +66,22 @@ export const getAllPlugins = (timeline: Timeline) => {
 };
 
 export const getPluginsWithFlush = (timeline: Timeline) => {
-  if (!timeline) {
-    return [];
-  }
-
   const allPlugins = getAllPlugins(timeline);
 
   // checking for the existence of .flush()
   const eventPlugins = allPlugins?.filter(
-    (f) => (f as EventPlugin).flush
+    (f) => (f as EventPlugin).flush !== undefined
   ) as EventPlugin[];
 
   return eventPlugins;
 };
 
 export const getPluginsWithReset = (timeline: Timeline) => {
-  if (!timeline) {
-    return [];
-  }
-
   const allPlugins = getAllPlugins(timeline);
 
   // checking for the existence of .reset()
   const eventPlugins = allPlugins?.filter(
-    (f) => (f as EventPlugin).reset
+    (f) => (f as EventPlugin).reset !== undefined
   ) as EventPlugin[];
 
   return eventPlugins;
@@ -127,3 +119,81 @@ export const allSettled = async <T>(
 ): Promise<PromiseResult<T>[]> => {
   return Promise.all(promises.map(settlePromise));
 };
+
+export function isNumber(x: unknown): x is number {
+  return typeof x === 'number';
+}
+
+export function isString(x: unknown): x is string {
+  return typeof x === 'string';
+}
+
+export function isBoolean(x: unknown): x is boolean {
+  return typeof x === 'boolean';
+}
+
+export function isDate(value: unknown): value is Date {
+  return (
+    value instanceof Date ||
+    (typeof value === 'object' &&
+      Object.prototype.toString.call(value) === '[object Date]')
+  );
+}
+
+export function objectToString(value: object, json = true): string | undefined {
+  // If the object has a custom toString we well use that
+  if (value.toString !== Object.prototype.toString) {
+    return value.toString();
+  }
+  if (json) {
+    return JSON.stringify(value);
+  }
+  return undefined;
+}
+
+export function unknownToString(
+  value: unknown,
+  stringifyJSON = true,
+  replaceNull: string | undefined = '',
+  replaceUndefined: string | undefined = ''
+): string | undefined {
+  if (value === null) {
+    if (replaceNull !== undefined) {
+      return replaceNull;
+    } else {
+      return undefined;
+    }
+  }
+
+  if (value === undefined) {
+    if (replaceUndefined !== undefined) {
+      return replaceUndefined;
+    } else {
+      return undefined;
+    }
+  }
+
+  if (isNumber(value) || isBoolean(value) || isString(value)) {
+    return value.toString();
+  }
+
+  if (isObject(value)) {
+    return objectToString(value, stringifyJSON);
+  }
+
+  if (stringifyJSON) {
+    return JSON.stringify(value);
+  }
+  return undefined;
+}
+
+/**
+ * Checks if value is a dictionary like object
+ * @param value unknown object
+ * @returns typeguard, value is dicitonary
+ */
+export const isObject = (value: unknown): value is Record<string, unknown> =>
+  value !== null &&
+  value !== undefined &&
+  typeof value === 'object' &&
+  !Array.isArray(value);

@@ -87,13 +87,15 @@ describe('InjectContext', () => {
     const plugin = new InjectUserInfo();
     plugin.configure(client);
 
-    plugin.execute(
+    // Do not wait the first execution
+    void plugin.execute(
       createIdentifyEvent({
         userId: newUserId,
         userTraits: newTraits,
       })
     );
 
+    // But wait for the next one, which should contain the first changes
     const event = await plugin.execute(
       createTrackEvent({
         event: 'something',

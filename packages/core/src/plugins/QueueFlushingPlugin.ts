@@ -42,8 +42,8 @@ export class QueueFlushingPlugin extends UtilityPlugin {
     );
   }
 
-  execute(event: SegmentEvent): SegmentEvent | undefined {
-    this.queueStore?.dispatch((state) => {
+  async execute(event: SegmentEvent): Promise<SegmentEvent | undefined> {
+    await this.queueStore?.dispatch((state) => {
       const events = [...state.events, event];
       return { events };
     });
@@ -69,8 +69,8 @@ export class QueueFlushingPlugin extends UtilityPlugin {
    * Removes one or multiple events from the queue
    * @param events events to remove
    */
-  dequeue(events: SegmentEvent | SegmentEvent[]) {
-    this.queueStore?.dispatch((state) => {
+  async dequeue(events: SegmentEvent | SegmentEvent[]) {
+    await this.queueStore?.dispatch((state) => {
       const eventsToRemove = Array.isArray(events) ? events : [events];
 
       if (eventsToRemove.length === 0 || state.events.length === 0) {

@@ -1,5 +1,11 @@
 module.exports = {
-  extends: ['@react-native-community', 'prettier'],
+  extends: [
+    '@react-native-community',
+    'prettier',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking'
+  ],
+  plugins: ['@typescript-eslint'],
   rules: {
     'prettier/prettier': [
       'error',
@@ -11,13 +17,43 @@ module.exports = {
         useTabs: false,
       },
     ],
+    "no-void": [
+      "error", 
+      { "allowAsStatement": true }
+    ],
+    "@typescript-eslint/restrict-template-expressions": ["warn", { 
+      allowNumber: true,
+      allowBoolean: true,
+      allowAny: true,
+      allowNullish: true
+     }],
+     "@typescript-eslint/no-explicit-any": "error",
+     "@typescript-eslint/strict-boolean-expressions": "error"
   },
   overrides: [
+    // Detox tests
     {
       files: ['*.e2e.js'],
       env: {
         jest: true,
       },
     },
+    // Jest 
+    {
+      files: ['**/__tests__/**', '**/__mocks__/**'],
+      plugins: ['jest'],
+
+      rules: {
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": ["error"],
+        "@typescript-eslint/unbound-method": "warn",
+        "@typescript-eslint/no-unsafe-assignment": "warn",
+        "@typescript-eslint/no-unsafe-member-access": "warn",
+        "@typescript-eslint/ban-ts-comment": "warn"
+      },
+    },
   ],
+  parserOptions: {
+    project: ['./tsconfig.json'],
+  },
 };

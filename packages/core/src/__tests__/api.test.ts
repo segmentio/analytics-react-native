@@ -10,16 +10,14 @@ import * as context from '../context';
 
 describe('#sendEvents', () => {
   beforeEach(() => {
-    jest
-      .spyOn(context, 'getContext')
-      .mockImplementationOnce(
-        async (userTraits?: UserTraits): Promise<Context> => {
-          return {
-            appName: 'Segment Example',
-            traits: userTraits,
-          } as any;
-        }
-      );
+    jest.spyOn(context, 'getContext').mockImplementationOnce(
+      // eslint-disable-next-line @typescript-eslint/require-await
+      async (userTraits?: UserTraits): Promise<Context> => {
+        return {
+          traits: userTraits ?? {},
+        } as Context;
+      }
+    );
 
     jest
       .spyOn(Date.prototype, 'toISOString')
@@ -28,6 +26,7 @@ describe('#sendEvents', () => {
 
   async function sendAnEventPer(writeKey: string, toUrl: string) {
     const mockResponse = Promise.resolve('MANOS');
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     global.fetch = jest.fn(() => Promise.resolve(mockResponse));
 

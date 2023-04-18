@@ -6,6 +6,7 @@ let AsyncStorage: {
 } | null;
 
 try {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   AsyncStorage = require('@react-native-async-storage/async-storage');
 } catch (error) {
   AsyncStorage = null;
@@ -19,7 +20,7 @@ export const AsyncStoragePersistor: Persistor = {
     try {
       const persistedStateJSON = await AsyncStorage?.getItem?.(key);
       if (persistedStateJSON !== null && persistedStateJSON !== undefined) {
-        return JSON.parse(persistedStateJSON);
+        return JSON.parse(persistedStateJSON) as unknown as T;
       }
     } catch (e) {
       console.error(e);

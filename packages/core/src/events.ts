@@ -74,7 +74,7 @@ export const createAliasEvent = ({
 }): AliasEventType => ({
   type: EventType.AliasEvent,
   userId: newUserId,
-  previousId: userId || anonymousId,
+  previousId: userId ?? anonymousId,
 });
 
 export const applyRawEventData = (event: SegmentEvent): SegmentEvent => {

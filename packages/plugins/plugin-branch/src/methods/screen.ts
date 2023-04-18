@@ -6,8 +6,8 @@ import { createBranchEventWithProps } from './util';
 
 export default async (event: ScreenEventType) => {
   const transformEvent = generateMapTransform(mapEventProps, transformMap);
-  const safeEvent = transformEvent(event as Record<string, any>);
-  const safeProps = safeEvent.properties as { [key: string]: any };
+  const safeEvent = transformEvent(event as unknown as Record<string, unknown>);
+  const safeProps = safeEvent.properties as { [key: string]: unknown };
   const branchEvent = await createBranchEventWithProps(
     BranchEvent.ViewItem,
     safeProps,

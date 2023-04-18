@@ -17,28 +17,29 @@ export class AdjustPlugin extends DestinationPlugin {
   key = 'Adjust';
 
   private settings: SegmentAdjustSettings | null = null;
-  private hasRegisteredCallback: boolean = false;
+  private hasRegisteredCallback = false;
 
   update(settings: SegmentAPISettings, _: UpdateType) {
     const adjustSettings = settings.integrations[
       this.key
     ] as SegmentAdjustSettings;
 
-    if (!adjustSettings) {
+    if (adjustSettings === undefined || adjustSettings === null) {
       return;
     }
 
     this.settings = adjustSettings;
 
-    const environment = this.settings.setEnvironmentProduction
-      ? 'production'
-      : 'sandbox';
+    const environment =
+      this.settings.setEnvironmentProduction === true
+        ? 'production'
+        : 'sandbox';
 
     const adjustConfig = new AdjustConfig(this.settings.appToken, environment);
 
     if (this.hasRegisteredCallback === false) {
       adjustConfig.setAttributionCallbackListener((attribution) => {
-        let trackPayload = {
+        const trackPayload = {
           provider: 'Adjust',
           trackerToken: attribution.trackerToken,
           trackerName: attribution.trackerName,
@@ -50,20 +51,20 @@ export class AdjustPlugin extends DestinationPlugin {
             adGroup: attribution.adgroup,
           },
         };
-        this.analytics?.track('Install Attributed', trackPayload);
+        void this.analytics?.track('Install Attributed', trackPayload);
       });
       this.hasRegisteredCallback = true;
     }
 
     const bufferingEnabled = this.settings.setEventBufferingEnabled;
-    if (bufferingEnabled) {
+    if (bufferingEnabled === true) {
       adjustConfig.setEventBufferingEnabled(bufferingEnabled);
     }
 
     const useDelay = this.settings.setDelay;
-    if (useDelay) {
+    if (useDelay === true) {
       const delayTime = this.settings.delayTime;
-      if (delayTime) {
+      if (delayTime !== null && delayTime !== undefined) {
         adjustConfig.setDelayStart(delayTime);
       }
     }

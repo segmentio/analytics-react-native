@@ -39,6 +39,7 @@ describe('SegmentDestination', () => {
 
   it('executes', async () => {
     const plugin = new SegmentDestination();
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     plugin.analytics = new SegmentClient(clientArgs);
     const event: TrackEventType = {
@@ -184,6 +185,7 @@ describe('SegmentDestination', () => {
 
   it('lets plugins/events override destination settings', async () => {
     const plugin = new SegmentDestination();
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     plugin.analytics = new SegmentClient({
       ...clientArgs,
@@ -223,6 +225,7 @@ describe('SegmentDestination', () => {
 
   it('lets plugins/events disable destinations individually', async () => {
     const plugin = new SegmentDestination();
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     plugin.analytics = new SegmentClient({
       ...clientArgs,
@@ -251,7 +254,7 @@ describe('SegmentDestination', () => {
   });
 
   describe('uploads', () => {
-    const createTestWith = async ({
+    const createTestWith = ({
       config,
       settings,
       events,
@@ -284,6 +287,7 @@ describe('SegmentDestination', () => {
       );
 
       jest
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         .spyOn(plugin.queuePlugin.queueStore!, 'getState')
         .mockImplementation(createMockStoreGetter(() => ({ events })));
@@ -306,7 +310,7 @@ describe('SegmentDestination', () => {
         { messageId: 'message-4' },
       ] as SegmentEvent[];
 
-      const { plugin, sendEventsSpy } = await createTestWith({
+      const { plugin, sendEventsSpy } = createTestWith({
         events: events,
       });
 
@@ -330,13 +334,13 @@ describe('SegmentDestination', () => {
     });
 
     it('uses segment settings apiHost for uploading events', async () => {
-      const customEndpoint: string = 'events.eu1.segmentapis.com';
+      const customEndpoint = 'events.eu1.segmentapis.com';
       const events = [
         { messageId: 'message-1' },
         { messageId: 'message-2' },
       ] as SegmentEvent[];
 
-      const { plugin, sendEventsSpy } = await createTestWith({
+      const { plugin, sendEventsSpy } = createTestWith({
         events: events,
         settings: {
           apiKey: '',
@@ -357,13 +361,13 @@ describe('SegmentDestination', () => {
     });
 
     it('lets user override apiHost with proxy', async () => {
-      const customEndpoint: string = 'https://customproxy.com/batchEvents';
+      const customEndpoint = 'https://customproxy.com/batchEvents';
       const events = [
         { messageId: 'message-1' },
         { messageId: 'message-2' },
       ] as SegmentEvent[];
 
-      const { plugin, sendEventsSpy } = await createTestWith({
+      const { plugin, sendEventsSpy } = createTestWith({
         events: events,
         settings: {
           apiKey: '',

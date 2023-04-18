@@ -15,8 +15,8 @@ export default (
   const properties = event.properties;
 
   if (settings.consolidatedPageCalls === true) {
-    let eventName = 'Loaded a Screen';
-    let screenName = event.name;
+    const eventName = 'Loaded a Screen';
+    const screenName = event.name;
 
     if (screenName !== undefined) {
       properties.name = screenName;
@@ -24,19 +24,19 @@ export default (
 
     callTrack(eventName, properties);
   } else if (settings.trackAllPages === true) {
-    let eventName = `Viewed ${event.name} Screen`;
+    const eventName = `Viewed ${event.name} Screen`;
 
     callTrack(eventName, properties);
   } else if (settings.trackNamedPages === true && event.name !== undefined) {
-    let eventName = `Viewed ${event.name} Screen`;
+    const eventName = `Viewed ${event.name} Screen`;
 
     callTrack(eventName, properties);
   } else if (
     settings.trackCategorizedPages === true &&
     event.properties?.category !== undefined
   ) {
-    let category = event.properties.category;
-    let eventName = `Viewed ${category} Screen`;
+    const category = event.properties.category;
+    const eventName = `Viewed ${category?.toString() ?? ''} Screen`;
 
     callTrack(eventName, properties);
   }

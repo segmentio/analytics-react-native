@@ -11,11 +11,15 @@ export class MockEventStore {
 
   constructor(initialData?: SegmentEvent[]) {
     this.events = [...(initialData ?? [])];
-    this.initialData = JSON.parse(JSON.stringify(initialData ?? []));
+    this.initialData = JSON.parse(
+      JSON.stringify(initialData ?? [])
+    ) as SegmentEvent[];
   }
 
   reset = () => {
-    this.events = JSON.parse(JSON.stringify(this.initialData));
+    this.events = JSON.parse(
+      JSON.stringify(this.initialData)
+    ) as SegmentEvent[];
   };
 
   getState = createMockStoreGetter(() => ({ events: this.events }));

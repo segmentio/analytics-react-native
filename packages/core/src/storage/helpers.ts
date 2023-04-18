@@ -16,7 +16,7 @@ export function createGetter<T>(
   function getState(): T;
   function getState(safe: true): Promise<T>;
   function getState(safe?: boolean): T | Promise<T> {
-    if (safe) {
+    if (safe === true) {
       return asyncFunction();
     }
     return syncFunction();

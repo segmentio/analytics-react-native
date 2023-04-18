@@ -32,7 +32,7 @@ describe('SegmentClient', () => {
   });
 
   describe('when initializing a new client', () => {
-    it('creates the client with default values', async () => {
+    it('creates the client with default values', () => {
       client = new SegmentClient(clientArgs);
       expect(client.getConfig()).toEqual(clientArgs.config);
     });
@@ -67,7 +67,9 @@ describe('SegmentClient', () => {
 
   describe('#setupLifecycleEvents', () => {
     it('subscribes to the app state update events', async () => {
-      let updateCallback = (_val: AppStateStatus) => {};
+      let updateCallback = (_val: AppStateStatus) => {
+        return;
+      };
 
       const addSpy = jest
         .spyOn(AppState, 'addEventListener')
@@ -78,6 +80,7 @@ describe('SegmentClient', () => {
 
       client = new SegmentClient(clientArgs);
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       jest.spyOn(client, 'handleAppStateChange');
       await client.init();
@@ -85,13 +88,16 @@ describe('SegmentClient', () => {
       expect(addSpy).toHaveBeenCalledTimes(1);
       expect(addSpy).toHaveBeenCalledWith('change', expect.any(Function));
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       expect(client.handleAppStateChange).not.toHaveBeenCalled();
 
       updateCallback('active');
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       expect(client.handleAppStateChange).toHaveBeenCalledTimes(1);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       expect(client.handleAppStateChange).toHaveBeenCalledWith('active');
     });
@@ -103,27 +109,30 @@ describe('SegmentClient', () => {
       await segmentClient.init();
 
       jest.spyOn(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         segmentClient.appStateSubscription,
         'remove'
       );
 
       segmentClient.cleanup();
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       expect(segmentClient.destroyed).toBe(true);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      expect(segmentClient.appStateSubscription.remove).toHaveBeenCalledTimes(
+      expect(segmentClient.appStateSubscription?.remove).toHaveBeenCalledTimes(
         1
       );
     });
   });
 
   describe('#reset', () => {
-    it('resets all userInfo except anonymousId', () => {
+    it('resets all userInfo except anonymousId', async () => {
       client = new SegmentClient(clientArgs);
       const setUserInfo = jest.spyOn(store.userInfo, 'set');
 
-      client.reset(false);
+      await client.reset(false);
 
       expect(setUserInfo).toHaveBeenCalledWith({
         anonymousId: 'anonymousId',
@@ -132,11 +141,11 @@ describe('SegmentClient', () => {
       });
     });
 
-    it('resets user data, identity, traits', () => {
+    it('resets user data, identity, traits', async () => {
       client = new SegmentClient(clientArgs);
       const setUserInfo = jest.spyOn(store.userInfo, 'set');
 
-      client.reset();
+      await client.reset();
 
       expect(setUserInfo).toHaveBeenCalledWith({
         anonymousId: 'mocked-uuid',

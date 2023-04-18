@@ -19,8 +19,8 @@ describe('MixpanelPlugin', () => {
     store,
   };
   let plugin: MixpanelPlugin = new MixpanelPlugin();
-  let settings = sampleIntegrationSettings;
-  let updateType: UpdateType = UpdateType.initial;
+  const settings = sampleIntegrationSettings;
+  const updateType: UpdateType = UpdateType.initial;
 
   beforeEach(() => {
     store.reset();
@@ -30,7 +30,7 @@ describe('MixpanelPlugin', () => {
   });
 
   it('calls update with settings', () => {
-    let updateSpy = jest.spyOn(plugin, 'update');
+    const updateSpy = jest.spyOn(plugin, 'update');
 
     plugin.update(settings, updateType);
     expect(updateSpy).toHaveBeenCalledWith(settings, updateType);

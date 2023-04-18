@@ -58,14 +58,14 @@ export class MockSegmentStore implements Storage {
   private initialData: StoreData;
 
   reset = () => {
-    this.data = JSON.parse(JSON.stringify(this.initialData));
+    this.data = JSON.parse(JSON.stringify(this.initialData)) as StoreData;
   };
 
   constructor(initialData?: Partial<StoreData>) {
     this.data = { ...INITIAL_VALUES, ...initialData };
     this.initialData = JSON.parse(
       JSON.stringify({ ...INITIAL_VALUES, ...initialData })
-    );
+    ) as StoreData;
   }
 
   private callbacks = {
@@ -81,7 +81,9 @@ export class MockSegmentStore implements Storage {
       return this.data.isReady;
     }),
     onChange: (_callback: (value: boolean) => void) => {
-      return () => {};
+      return () => {
+        return;
+      };
     },
   };
 
@@ -102,7 +104,7 @@ export class MockSegmentStore implements Storage {
 
   readonly settings: Watchable<SegmentAPIIntegrations | undefined> &
     Settable<SegmentAPIIntegrations> &
-    Dictionary<string, IntegrationSettings> = {
+    Dictionary<string, IntegrationSettings, SegmentAPIIntegrations> = {
     get: createMockStoreGetter(() => this.data.settings),
     onChange: (callback: (value?: SegmentAPIIntegrations) => void) =>
       this.callbacks.settings.register(callback),
@@ -117,12 +119,13 @@ export class MockSegmentStore implements Storage {
     add: (key: string, value: IntegrationSettings) => {
       this.data.settings[key] = value;
       this.callbacks.settings.run(this.data.settings);
+      return Promise.resolve(this.data.settings);
     },
   };
 
   readonly filters: Watchable<DestinationFilters | undefined> &
     Settable<DestinationFilters> &
-    Dictionary<string, RoutingRule> = {
+    Dictionary<string, RoutingRule, DestinationFilters> = {
     get: createMockStoreGetter(() => this.data.filters),
     onChange: (callback: (value?: DestinationFilters) => void) =>
       this.callbacks.filters.register(callback),
@@ -137,6 +140,7 @@ export class MockSegmentStore implements Storage {
     add: (key: string, value: RoutingRule) => {
       this.data.filters[key] = value;
       this.callbacks.filters.run(this.data.filters);
+      return Promise.resolve(this.data.filters);
     },
   };
 

@@ -33,6 +33,7 @@ describe('methods #flush', () => {
   it('does not flush plugins when the client is destroyed', async () => {
     const client = new SegmentClient(clientArgs);
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     client.timeline = getMockTimeline();
     client.cleanup();
@@ -56,6 +57,7 @@ describe('methods #flush', () => {
         },
       }),
     });
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     client.timeline = getMockTimeline();
 

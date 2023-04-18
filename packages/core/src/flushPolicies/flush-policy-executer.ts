@@ -24,14 +24,14 @@ export class FlushPolicyExecuter {
 
   remove(policy: FlushPolicy) {
     policy.end();
-    let i = this.policies.findIndex((p) => p === policy);
+    const i = this.policies.findIndex((p) => p === policy);
     return this.removeIndex(i);
   }
 
   removeIndex(index: number): boolean {
     if (index < 0) return false;
 
-    let policy = this.policies[index];
+    const policy = this.policies[index];
 
     if (policy !== undefined) {
       policy.reset();

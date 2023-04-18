@@ -7,16 +7,16 @@ import { extract, mappedCustomEventToken } from '../util';
 
 export default (event: TrackEventType, settings: SegmentAdjustSettings) => {
   const anonId = event.anonymousId;
-  if (anonId && anonId.length > 0) {
+  if (anonId !== undefined && anonId !== null && anonId.length > 0) {
     Adjust.addSessionPartnerParameter('anonymous_id', anonId);
   }
 
   const token = mappedCustomEventToken(event.event, settings);
-  if (token) {
+  if (token !== undefined && token !== null) {
     const adjEvent = new AdjustEvent(token);
 
     const properties = event.properties;
-    if (properties) {
+    if (properties !== undefined && properties !== null) {
       Object.entries(properties).forEach(([key, value]) => {
         adjEvent.addCallbackParameter(key, value as string);
       });
@@ -25,11 +25,16 @@ export default (event: TrackEventType, settings: SegmentAdjustSettings) => {
       const currency = extract<string>('currency', properties, 'USD');
       const orderId = extract<string>('orderId', properties);
 
-      if (revenue && currency) {
+      if (
+        revenue !== undefined &&
+        revenue !== null &&
+        currency !== undefined &&
+        currency !== null
+      ) {
         adjEvent.setRevenue(revenue, currency);
       }
 
-      if (orderId) {
+      if (orderId !== undefined && orderId !== null) {
         adjEvent.setTransactionId(orderId);
       }
     }

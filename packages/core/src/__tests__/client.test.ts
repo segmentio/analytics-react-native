@@ -20,7 +20,7 @@ describe('#createClient', () => {
     client.cleanup();
   });
 
-  it('creates the client with the provided logger', async () => {
+  it('creates the client with the provided logger', () => {
     client = createClient(config);
     expect(client.logger).toBe(config.logger);
   });

@@ -45,7 +45,7 @@ export class ClevertapPlugin extends DestinationPlugin {
         );
       }
     }
-    let clevertapTraits = { ...safeTraits, Identity: userId };
+    const clevertapTraits = { ...safeTraits, Identity: userId };
     CleverTap.profileSet(clevertapTraits);
     return event;
   }
@@ -53,9 +53,9 @@ export class ClevertapPlugin extends DestinationPlugin {
   track(event: TrackEventType) {
     if (event.event === 'Order Completed') {
       const userId = event.userId ?? event.anonymousId;
-      let { products = [], ...props } = event.properties ?? {};
-      let chargeDetails = { ...props, Identity: userId };
-      let sanitizedProducts = products ?? [];
+      const { products = [], ...props } = event.properties ?? {};
+      const chargeDetails = { ...props, Identity: userId };
+      const sanitizedProducts = products ?? [];
 
       CleverTap.recordChargedEvent(chargeDetails, sanitizedProducts);
     } else {

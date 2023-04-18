@@ -61,13 +61,13 @@ export class SegmentDestination extends DestinationPlugin {
           this.analytics?.logger.warn(e);
           numFailedEvents += batch.length;
         } finally {
-          this.queuePlugin.dequeue(sentEvents);
+          await this.queuePlugin.dequeue(sentEvents);
         }
       })
     );
 
     if (sentEvents.length) {
-      if (config.debug) {
+      if (config.debug === true) {
         this.analytics?.logger.info(`Sent ${sentEvents.length} events`);
       }
     }

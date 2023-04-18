@@ -28,11 +28,11 @@ describe('methods #screen', () => {
     jest.clearAllMocks();
   });
 
-  it('adds the screen event correctly', () => {
+  it('adds the screen event correctly', async () => {
     const client = new SegmentClient(clientArgs);
     jest.spyOn(client, 'process');
 
-    client.screen('Home Screen', { id: 1 });
+    await client.screen('Home Screen', { id: 1 });
 
     const expectedEvent = {
       name: 'Home Screen',

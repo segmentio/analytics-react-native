@@ -1,15 +1,20 @@
 import appsFlyer from 'react-native-appsflyer';
-import type { TrackEventType } from '@segment/analytics-react-native';
+import { isString, TrackEventType } from '@segment/analytics-react-native';
 
-type Properties = { [key: string]: any };
+type Properties = { [key: string]: unknown };
 
-export default (event: TrackEventType) => {
+export default async (event: TrackEventType) => {
   const properties = event.properties || {};
 
   const revenue = extractRevenue('revenue', properties);
   const currency = extractCurrency('currency', properties, 'USD');
 
-  if (revenue && currency) {
+  if (
+    revenue !== undefined &&
+    revenue !== null &&
+    currency !== undefined &&
+    currency !== null
+  ) {
     const otherProperties = Object.entries(properties)
       .filter(([key]) => key !== 'revenue' && key !== 'currency')
       .reduce((acc: Properties, [key, val]) => {
@@ -17,26 +22,27 @@ export default (event: TrackEventType) => {
         return acc;
       }, {});
 
-    appsFlyer.logEvent(event.event, {
+    await appsFlyer.logEvent(event.event, {
       ...otherProperties,
       af_revenue: revenue,
       af_currency: currency,
     });
   } else {
-    appsFlyer.logEvent(event.event, properties);
+    await appsFlyer.logEvent(event.event, properties);
   }
 };
 
 const extractRevenue = (key: string, properties: Properties): number | null => {
-  if (!properties[key]) {
+  const value = properties[key];
+  if (value === undefined || value === null) {
     return null;
   }
 
-  switch (typeof properties[key]) {
+  switch (typeof value) {
     case 'number':
-      return properties[key];
+      return value;
     case 'string':
-      return parseFloat(properties[key]);
+      return parseFloat(value);
     default:
       return null;
   }
@@ -46,6 +52,10 @@ const extractCurrency = (
   key: string,
   properties: Properties,
   defaultCurrency: string
-) => {
-  return properties[key] || defaultCurrency;
+): string => {
+  const value = properties[key];
+  if (isString(value)) {
+    return value;
+  }
+  return defaultCurrency;
 };

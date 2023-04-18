@@ -70,7 +70,7 @@ describe('methods #alias', () => {
   it('is concurrency safe', async () => {
     // We trigger an alias and do not await it, we do a track immediately and await.
     // The track call should have the correct values injected into it.
-    client.alias('new-user-id');
+    void client.alias('new-user-id');
     await client.track('something');
 
     const expectedTrackEvent: Partial<SegmentEvent> = {
