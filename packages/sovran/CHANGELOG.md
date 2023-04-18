@@ -1,3 +1,11 @@
+## [@segment/sovran-react-native-v1.0.2](https://github.com/segmentio/analytics-react-native/compare/@segment/sovran-react-native-v1.0.1...@segment/sovran-react-native-v1.0.2) (2023-04-18)
+
+
+### Bug Fixes
+
+* stricter linting, improved handling of plugin errrors ([#795](https://github.com/segmentio/analytics-react-native/issues/795)) ([1ddb4d5](https://github.com/segmentio/analytics-react-native/commit/1ddb4d571df794bc7eaa5c5302ed27b90faf9a73)), closes [#799](https://github.com/segmentio/analytics-react-native/issues/799) [#803](https://github.com/segmentio/analytics-react-native/issues/803) [#802](https://github.com/segmentio/analytics-react-native/issues/802)
+* upgrade shell-quote from 1.7.3 to 1.8.0 ([#808](https://github.com/segmentio/analytics-react-native/issues/808)) ([ce1f643](https://github.com/segmentio/analytics-react-native/commit/ce1f6436e60cd9c7053bfd58e32e699159d428c5))
+
 ## [@segment/sovran-react-native-v1.0.1](https://github.com/segmentio/analytics-react-native/compare/@segment/sovran-react-native-v1.0.0...@segment/sovran-react-native-v1.0.1) (2023-03-14)
 
 
