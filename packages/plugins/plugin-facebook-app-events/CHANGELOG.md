@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-facebook-app-events-v0.5.2](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-facebook-app-events-v0.5.1...@segment/analytics-react-native-plugin-facebook-app-events-v0.5.2) (2023-04-18)
+
+
+### Bug Fixes
+
+* stricter linting, improved handling of plugin errrors ([#795](https://github.com/segmentio/analytics-react-native/issues/795)) ([1ddb4d5](https://github.com/segmentio/analytics-react-native/commit/1ddb4d571df794bc7eaa5c5302ed27b90faf9a73)), closes [#799](https://github.com/segmentio/analytics-react-native/issues/799) [#803](https://github.com/segmentio/analytics-react-native/issues/803) [#802](https://github.com/segmentio/analytics-react-native/issues/802)
+
 ## [@segment/analytics-react-native-plugin-facebook-app-events-v0.5.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-facebook-app-events-v0.5.0...@segment/analytics-react-native-plugin-facebook-app-events-v0.5.1) (2023-03-14)
 
 
