@@ -34,7 +34,7 @@ jobs:
 
   run-e2e-ios:
     needs: cancel_previous
-    runs-on: 'macos-11'
+    runs-on: 'macos-13'
     steps: 
       - uses: actions/checkout@v2
 
