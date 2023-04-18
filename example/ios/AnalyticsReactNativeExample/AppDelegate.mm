@@ -87,7 +87,6 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 //  Braze *braze = [BrazeReactBridge initBraze:configuration];
 //  AppDelegate.braze = braze;
 
-  
   return YES;
 }
 
@@ -96,7 +95,7 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
             openURL: (NSURL *)url
             options:(nonnull NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
   
-  [AnalyticsReactNative trackDeepLink:url withOptions:options];
+//  [AnalyticsReactNative trackDeepLink:url withOptions:options];
   return YES;
 }
 /// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.
