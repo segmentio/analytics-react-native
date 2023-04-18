@@ -2435,9 +2435,9 @@
   integrity sha512-xjgH5QFmVDHpaxxndhGMXhMFBizNg9Rkr5ukeWIMeR/K6Shi/xGVoomjn/PmgoCZWIjX3EJkokXSxsntMlh+Vg==
 
 "@react-native-firebase/app@^17.3.2":
-  version "17.3.2"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-17.3.2.tgz#c39dd34f5389ff65845c5d67313bbf2371275a8f"
-  integrity sha512-JPA9PuD3il2/FERnsW5bC/PbXdcBcVMtk4V0vL8YgLh+jQg+E3qQTQmeWn9eOWTYJb6BYOiiNHTdTglvqoo5Cg==
+  version "17.4.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-17.4.0.tgz#44aa5d02bb3ddc8f21c99341775f422af6b3d0b5"
+  integrity sha512-nd2H5j0lmMTpmny6gEeeUl5AEe6DUUWuYgzAbyjHI7jFJU5rjpNGh9mpciredKnijCfE2382M3ZboPcYUL77ow==
   dependencies:
     "@expo/config-plugins" "^5.0.4"
     opencollective-postinstall "^2.0.1"
