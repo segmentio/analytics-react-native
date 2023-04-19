@@ -4,14 +4,13 @@ import {
   PluginType,
   ScreenEventType,
   SegmentError,
+  ErrorType,
   TrackEventType,
 } from '@segment/analytics-react-native';
 import screen from './methods/screen';
 import track from './methods/track';
 import reset from './methods/reset';
 import firebaseAnalytics from '@react-native-firebase/analytics';
-import { ErrorType } from '../../../core/src/errors';
-
 export class FirebasePlugin extends DestinationPlugin {
   type = PluginType.destination;
   key = 'Firebase';
