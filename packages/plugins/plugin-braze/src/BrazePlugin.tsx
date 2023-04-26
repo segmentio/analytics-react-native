@@ -14,11 +14,10 @@ import {
   UpdateType,
   JsonMap,
   SegmentBrazeSettings,
+  unknownToString,
 } from '@segment/analytics-react-native';
 import Braze, { GenderTypes, MonthsAsNumber } from '@braze/react-native-sdk';
 import flush from './methods/flush';
-import { unknownToString } from '../../../core/src/util';
-
 interface AttributionProperties {
   network: string;
   campaign: string;
