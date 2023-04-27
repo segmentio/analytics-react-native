@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-braze-v0.5.3](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-braze-v0.5.2...@segment/analytics-react-native-plugin-braze-v0.5.3) (2023-04-27)
+
+
+### Bug Fixes
+
+* move unknownToString import ([#818](https://github.com/segmentio/analytics-react-native/issues/818)) ([939d280](https://github.com/segmentio/analytics-react-native/commit/939d2805fd6fd46e611ed7b1d84659165cc7bf91))
+
 ## [@segment/analytics-react-native-plugin-braze-v0.5.2](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-braze-v0.5.1...@segment/analytics-react-native-plugin-braze-v0.5.2) (2023-04-18)
 
 
