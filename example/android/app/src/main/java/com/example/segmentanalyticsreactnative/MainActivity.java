@@ -63,6 +63,9 @@ public class MainActivity extends ReactActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     RNBootSplash.init(R.drawable.bootsplash, MainActivity.this);
+
+      // AnalyticsReactNativeModule.setAnonymousId("ANONONON");
+    // AnalyticsReactNativePackage.addAnonymousId("ANON");
   }
 
   @Override

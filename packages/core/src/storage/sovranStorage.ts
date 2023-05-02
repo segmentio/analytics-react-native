@@ -17,7 +17,7 @@ import type {
 } from '..';
 import { getUUID } from '../uuid';
 import { createGetter } from './helpers';
-import { isObject } from '../util';
+import { isObject, isString } from '../util';
 import type {
   Storage,
   StorageConfig,
@@ -88,6 +88,31 @@ registerBridgeStore({
     'add-deepLink-data': addDeepLinkData,
   },
 });
+
+/**
+ * Action to set the anonymousId from native
+ * @param anonymousId native anonymousId string
+ */
+
+const addAnonymousId =
+  (payload: unknown) => (state: { userInfo: UserInfoState }) => {
+    if (isObject(payload)) {
+      const nativeAnonymousId = payload.anonymousId;
+
+      if (isString(nativeAnonymousId)) {
+        return {
+          userInfo: {
+            ...state.userInfo,
+            anonymousId: nativeAnonymousId,
+          },
+        };
+      } else {
+        return state;
+      }
+    } else {
+      return state;
+    }
+  };
 
 function createStoreGetter<
   U extends Record<string, unknown>,
@@ -310,6 +335,13 @@ export class SovranStorage implements Storage {
         return userInfo;
       },
     };
+
+    registerBridgeStore({
+      store: this.userInfoStore,
+      actions: {
+        'add-anonymous-id': addAnonymousId,
+      },
+    });
 
     this.deepLinkData = {
       get: createStoreGetter(this.deepLinkStore),
