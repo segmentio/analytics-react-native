@@ -229,6 +229,11 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
      val properties = Hashtable<String, String>()
      properties["anonymousId"] = anonymousId
 
+      if (currentActivity == null) {
+        Log.d(name, "No activity found")
+        return
+      }
+
       val sovran = (currentActivity?.application as ReactApplication)
       ?.reactNativeHost
       ?.reactInstanceManager
