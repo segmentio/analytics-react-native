@@ -188,7 +188,7 @@ private AnalyticsReactNativePackage analytics = new AnalyticsReactNativePackage(
     protected List<ReactPackage> getPackages() {
       @SuppressWarnings("UnnecessaryLocalVariable")
       List<ReactPackage> packages = new PackageList(this).getPackages();
-      // Packages that cannot be autolinked yet can be added manually here, for
+      // AnalyticsReactNative will be autolinked by default, but to send the anonymousId before RN startup you need to manually link it to store a reference to the package
       packages.add(analytics);
       return packages;
     }
