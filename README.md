@@ -18,6 +18,7 @@ The hassle-free way to add Segment analytics to your React-Native app.
     - [Setting up the client](#setting-up-the-client)
     - [Client Options](#client-options)
     - [iOS Deep Link Tracking Setup](#ios-deep-link-tracking-setup)
+    - [Native AnonymousId](#native-anonymousid)
     - [Usage with hooks](#usage-with-hooks)
     - [useAnalytics()](#useanalytics)
     - [Usage without hooks](#usage-without-hooks)
@@ -154,9 +155,9 @@ To track deep links in iOS you must add the following to your `AppDelegate.m` fi
   return YES;
 }
 ```
-### Native Anonymous ID 
+### Native AnonymousId 
 
-If you need to generate an `anonymousId` either natively or before the Analytics React Native package is initialized, you can send that value across the bridge and utilize it in the JavaScript layer. Segment does not generate this value for you, but does extend the functionality necessary to dispatch the value across the bridge. For reference, you can find a working example in the app and reference the code below: 
+If you need to generate an `anonymousId` either natively or before the Analytics React Native package is initialized, you can send the anonymousId value from native code. The value has to be generated and stored by the caller. For reference, you can find a working example in the app and reference the code below: 
 
 **iOS**
 ```objc
@@ -179,6 +180,18 @@ If you need to generate an `anonymousId` either natively or before the Analytics
 ...
 import com.segmentanalyticsreactnative.AnalyticsReactNativePackage;
 
+...
+private AnalyticsReactNativePackage analytics = new AnalyticsReactNativePackage();
+
+...
+   @Override
+    protected List<ReactPackage> getPackages() {
+      @SuppressWarnings("UnnecessaryLocalVariable")
+      List<ReactPackage> packages = new PackageList(this).getPackages();
+      // Packages that cannot be autolinked yet can be added manually here, for
+      packages.add(analytics);
+      return packages;
+    }
 ...
   @Override
   public void onCreate() {

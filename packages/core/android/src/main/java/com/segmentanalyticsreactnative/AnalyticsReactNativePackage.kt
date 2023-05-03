@@ -12,14 +12,16 @@ import com.facebook.react.bridge.JavaScriptModule
 class AnalyticsReactNativePackage : ReactPackage {
 
     private var isInitialized = false
-    private var anonymousId = ""
+    private var anonymousId: String? = null
     private var module: AnalyticsReactNativeModule? = null
 
     override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
         module = AnalyticsReactNativeModule(reactContext)
         module?.onInitialized = {
             isInitialized = true
-            module?.setAnonymousId(anonymousId)
+            anonymousId?.let { anonId ->
+                module?.setAnonymousId(anonId)
+            }
         }
         return listOf(module as NativeModule)
     }
@@ -30,9 +32,12 @@ class AnalyticsReactNativePackage : ReactPackage {
 
     fun setAnonymousId(nativeAnonymousId: String) {
         if (isInitialized) {
-            module?.setAnonymousId(anonymousId)
-        } else {
             anonymousId = nativeAnonymousId;
+            anonymousId?.let { anonId ->
+              module?.setAnonymousId(anonId)
+            }
+        } else {
+            anonymousId = nativeAnonymousId
         }
     }
 }

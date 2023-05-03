@@ -37,6 +37,7 @@ local.properties
 android.iml
 .settings/
 bin/
+android/.settings/
 
 # Android Studio
 .project

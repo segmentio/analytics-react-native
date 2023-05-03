@@ -106,12 +106,9 @@ const addAnonymousId =
             anonymousId: nativeAnonymousId,
           },
         };
-      } else {
-        return state;
       }
-    } else {
-      return state;
     }
+    return state;
   };
 
 function createStoreGetter<

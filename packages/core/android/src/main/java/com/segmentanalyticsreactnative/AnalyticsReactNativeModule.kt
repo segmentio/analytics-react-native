@@ -240,7 +240,7 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
       ?.currentReactContext
       ?.getNativeModule(SovranModule::class.java)
 
-    sovran?.dispatch("add-anonymous-id", properties)
+      sovran?.dispatch("add-anonymous-id", properties)
   }
 
   override fun onActivityResult(activity: Activity?, requestCode: Int, resultCode: Int, data: Intent?) {
