@@ -13,12 +13,18 @@ import com.example.segmentanalyticsreactnative.newarchitecture.MainApplicationRe
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.segmentanalyticsreactnative.AnalyticsReactNativePackage;
+import com.segmentanalyticsreactnative.AnalyticsReactNativeModule;
 import com.analyticsreactnativepluginadvertisingid.AnalyticsReactNativePluginAdvertisingIdPackage;
-
+import com.sovranreactnative.Sovran;
+import android.util.Log;
 
 public class MainApplication extends Application implements ReactApplication {
 
+  private AnalyticsReactNativePackage analytics = new AnalyticsReactNativePackage();
+  private Sovran sovran = new Sovran();
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+
+
     @Override
     public boolean getUseDeveloperSupport() {
       return BuildConfig.DEBUG;
@@ -30,7 +36,8 @@ public class MainApplication extends Application implements ReactApplication {
       List<ReactPackage> packages = new PackageList(this).getPackages();
       // Packages that cannot be autolinked yet can be added manually here, for
       // AnalyticsReactNativeExample:
-      packages.add(new AnalyticsReactNativePackage());
+      packages.add(analytics);
+      packages.add(sovran);
       packages.add(new AnalyticsReactNativePluginAdvertisingIdPackage());
       return packages;
     }
@@ -61,8 +68,11 @@ private final ReactNativeHost mNewArchitectureNativeHost =
       ReactFeatureFlags.useTurboModules = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager()); //// Remove this line if you don't want
-                                                                             //// Flipper enabled
 
+    // Flipper enabled
+
+    // Enable for native anonymousId generation
+    // analytics.setAnonymousId("My-New-Native-Id");
   }
 
   /**

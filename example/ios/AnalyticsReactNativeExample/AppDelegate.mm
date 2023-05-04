@@ -87,6 +87,8 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 //  Braze *braze = [BrazeReactBridge initBraze:configuration];
 //  AppDelegate.braze = braze;
 
+// Enable for native anonymousId generation 
+// [AnalyticsReactNative setAnonymousId: @"My-New-Native-Id"];
   return YES;
 }
 

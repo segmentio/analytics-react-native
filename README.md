@@ -18,6 +18,7 @@ The hassle-free way to add Segment analytics to your React-Native app.
     - [Setting up the client](#setting-up-the-client)
     - [Client Options](#client-options)
     - [iOS Deep Link Tracking Setup](#ios-deep-link-tracking-setup)
+    - [Native AnonymousId](#native-anonymousid)
     - [Usage with hooks](#usage-with-hooks)
     - [useAnalytics()](#useanalytics)
     - [Usage without hooks](#usage-without-hooks)
@@ -154,6 +155,56 @@ To track deep links in iOS you must add the following to your `AppDelegate.m` fi
   return YES;
 }
 ```
+### Native AnonymousId 
+
+If you need to generate an `anonymousId` either natively or before the Analytics React Native package is initialized, you can send the anonymousId value from native code. The value has to be generated and stored by the caller. For reference, you can find a working example in the app and reference the code below: 
+
+**iOS**
+```objc
+...
+#import <segment_analytics_react_native-Swift.h>
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+  ...
+  // generate your anonymousId value
+  // dispatch it across the bridge
+
+  [AnalyticsReactNative setAnonymousId: @"My-New-Native-Id"];
+  return yes
+}
+```
+**Android**
+```java
+// MainApplication.java
+...
+import com.segmentanalyticsreactnative.AnalyticsReactNativePackage;
+
+...
+private AnalyticsReactNativePackage analytics = new AnalyticsReactNativePackage();
+
+...
+   @Override
+    protected List<ReactPackage> getPackages() {
+      @SuppressWarnings("UnnecessaryLocalVariable")
+      List<ReactPackage> packages = new PackageList(this).getPackages();
+      // AnalyticsReactNative will be autolinked by default, but to send the anonymousId before RN startup you need to manually link it to store a reference to the package
+      packages.add(analytics);
+      return packages;
+    }
+...
+  @Override
+  public void onCreate() {
+    super.onCreate();
+    ...
+
+  // generate your anonymousId value
+  // dispatch it across the bridge
+
+  analytics.setAnonymousId("My-New-Native-Id");
+  }
+```
+
 ### Usage with hooks
 
 In order to use the `useAnalytics` hook within the application, we will additionally need to wrap the application in
