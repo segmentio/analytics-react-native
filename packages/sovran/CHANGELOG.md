@@ -1,3 +1,10 @@
+## [@segment/sovran-react-native-v1.0.3](https://github.com/segmentio/analytics-react-native/compare/@segment/sovran-react-native-v1.0.2...@segment/sovran-react-native-v1.0.3) (2023-05-04)
+
+
+### Bug Fixes
+
+* **async-storage-persistor:** Correctly import AsyncStorage ([#820](https://github.com/segmentio/analytics-react-native/issues/820)) ([4ef5883](https://github.com/segmentio/analytics-react-native/commit/4ef5883aa3934b55b7ae8a46759bf5530c1e6355))
+
 ## [@segment/sovran-react-native-v1.0.2](https://github.com/segmentio/analytics-react-native/compare/@segment/sovran-react-native-v1.0.1...@segment/sovran-react-native-v1.0.2) (2023-04-18)
 
 
