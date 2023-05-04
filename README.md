@@ -66,7 +66,7 @@ yarn add @react-native-async-storage/async-storage
 npm install --save @react-native-async-storage/async-storage
 ```
 
-*Note: If you wish to use your own persistence layer you can use the `storePersistor` option when initializing the client. Read more [Client Options](#client-options)*
+*Note: If you wish to use your own persistence layer you can use the `storePersistor` option when initializing the client. Make sure you always have a persistor (either by having AsyncStorage package installed or by explicitly passing a value), else you might get unexpected sideeffects like multiple 'Application Installed' events. Read more [Client Options](#client-options)*
 
 For iOS, install native modules with:
 
