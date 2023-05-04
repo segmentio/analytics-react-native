@@ -223,24 +223,20 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
       ?.currentReactContext
       ?.getNativeModule(SovranModule::class.java)
     sovran?.dispatch("add-deepLink-data", properties)
+
+    
   }
 
-    fun setAnonymousId(anonymousId: String) {
-     val properties = Hashtable<String, String>()
-     properties["anonymousId"] = anonymousId
+  fun setAnonymousId(anonymousId: String) {
+    val properties = Hashtable<String, String>()
+    properties["anonymousId"] = anonymousId
 
-      if (currentActivity == null) {
-        Log.d(name, "No activity found")
-        return
-      }
+    val currentContext = getReactApplicationContext()
 
-      val sovran = (currentActivity?.application as ReactApplication)
-      ?.reactNativeHost
-      ?.reactInstanceManager
-      ?.currentReactContext
-      ?.getNativeModule(SovranModule::class.java)
-
+    if (currentContext != null) {
+      val sovran = currentContext.getNativeModule(SovranModule::class.java)
       sovran?.dispatch("add-anonymous-id", properties)
+    }
   }
 
   override fun onActivityResult(activity: Activity?, requestCode: Int, resultCode: Int, data: Intent?) {
