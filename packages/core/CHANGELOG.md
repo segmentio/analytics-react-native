@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-v2.14.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.13.5...@segment/analytics-react-native-v2.14.0) (2023-05-04)
+
+
+### Features
+
+* add native anonymousId functionality ([#822](https://github.com/segmentio/analytics-react-native/issues/822)) ([c34d34f](https://github.com/segmentio/analytics-react-native/commit/c34d34fea8158453e3a43699b821bc49e3bd7816))
+
 ## [@segment/analytics-react-native-v2.13.5](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.13.4...@segment/analytics-react-native-v2.13.5) (2023-04-18)
 
 
