@@ -60,7 +60,7 @@ async handlePermission() {
     let permissionStatus = await messaging.requestPermission()
 
     if (permissionStatus) {
-        deviceTokenPlugin.updatePermission()
+        deviceTokenPlugin.updatePermissionStatus()
     }
 }
 ```
