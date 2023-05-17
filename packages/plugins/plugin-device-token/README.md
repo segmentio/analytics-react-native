@@ -34,8 +34,7 @@ In your code where you initialize the analytics client call the `.add(plugin)` m
 
 ```ts
 import { createClient } from '@segment/analytics-react-native';
-
-import { FirebasePlugin } from '@segment/analytics-react-native-plugin-device-token';
+import { DeviceTokenPlugin } from '@segment/analytics-react-native-plugin-device-token';
 
 const segmentClient = createClient({
   writeKey: 'SEGMENT_KEY'
@@ -50,7 +49,7 @@ segmentClient.add({ plugin: new DeviceTokenPlugin() });
 
 ```ts
 import messaging from '@react-native-firebase/messaging';
-import { DeviceTokenPlugin } from '@segment/analytics-react-native-plugin-device-token'
+import { DeviceTokenPlugin } from '@segment/analytics-react-native-plugin-device-token';
 
 const deviceTokenPlugin = new DeviceTokenPlugin()
 
@@ -61,7 +60,7 @@ async handlePermission() {
     let permissionStatus = await messaging.requestPermission()
 
     if (permissionStatus) {
-        deviceTokenPlugin.updatePermission()
+        deviceTokenPlugin.updatePermissionStatus()
     }
 }
 ```
