@@ -1,5 +1,15 @@
 PODS:
   - boost (1.76.0)
+  - braze-react-native-sdk (4.1.0):
+    - BrazeKit (~> 5.13.0)
+    - BrazeLocation (~> 5.13.0)
+    - BrazeUI (~> 5.13.0)
+    - React-Core
+  - BrazeKit (5.13.0)
+  - BrazeLocation (5.13.0):
+    - BrazeKit (= 5.13.0)
+  - BrazeUI (5.13.0):
+    - BrazeKit (= 5.13.0)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.69.7)
   - FBReactNativeSpec (0.69.7):
@@ -300,17 +310,18 @@ PODS:
     - React
   - RNGestureHandler (2.9.0):
     - React-Core
-  - segment-analytics-react-native (2.13.5):
+  - segment-analytics-react-native (2.14.0):
     - React-Core
     - sovran-react-native
   - segment-analytics-react-native-plugin-idfa (0.6.2):
     - React-Core
-  - sovran-react-native (1.0.2):
+  - sovran-react-native (1.0.3):
     - React-Core
   - Yoga (1.14.0)
 
 DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
+  - "braze-react-native-sdk (from `../node_modules/@braze/react-native-sdk`)"
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
@@ -356,11 +367,16 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - BrazeKit
+    - BrazeLocation
+    - BrazeUI
     - fmt
 
 EXTERNAL SOURCES:
   boost:
     :podspec: "../node_modules/react-native/third-party-podspecs/boost.podspec"
+  braze-react-native-sdk:
+    :path: "../node_modules/@braze/react-native-sdk"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   FBLazyVector:
@@ -446,6 +462,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: a7c83b31436843459a1961bfd74b96033dc77234
+  braze-react-native-sdk: 686da10a997500422984bd4b39c78fc19fcd701a
+  BrazeKit: 97f6875bf05920a46a2f0c9d0e452b6b840c5f99
+  BrazeLocation: 571ee6bf6b2f5c1aba20d9a75e4da190f8db7e5b
+  BrazeUI: 31dd9f0235149f05d6f7e37f273be7293e000587
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 6b7f5692909b4300d50e7359cdefbcd09dd30faa
   FBReactNativeSpec: affcf71d996f6b0c01f68883482588297b9d5e6e
@@ -484,9 +504,9 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: 0c357f3156fcb16c8589ede67cc036330b6698ca
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
-  segment-analytics-react-native: 76a34e456743b72adfd0f1d7a537a0dc22b52f8b
+  segment-analytics-react-native: 83f46e22fcd44a85f450464ad98e6c8e128e3f8e
   segment-analytics-react-native-plugin-idfa: 6165a8eb6c35fdfecc3e9f966a2c9895ed9abaf1
-  sovran-react-native: b237e6a8b37a754b2e1123a3130d01a07cf4e91b
+  sovran-react-native: 217270c2c5d1ad45b2f60e31b06b18d478018202
   Yoga: 0b84a956f7393ef1f37f3bb213c516184e4a689d
 
 PODFILE CHECKSUM: 148f23dc44ebce74497f5fef0651f1fea1f8a361
