@@ -146,6 +146,7 @@ export type Config = {
   collectDeviceId?: boolean;
   storePersistor?: Persistor;
   proxy?: string;
+  cdnProxy?: string;
   errorHandler?: (error: SegmentError) => void;
 };
 
