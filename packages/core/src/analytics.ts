@@ -293,17 +293,8 @@ export class SegmentClient {
   }
 
   async fetchSettings() {
-    let settingsEndpoint: string;
-
-    if (this.config.cdnProxy !== undefined && this.config.cdnProxy !== null) {
-      // Sets an alternative CDN host for settings retrieval. This is useful when
-      // a proxy is in use, or settings need to be queried from certain locales at
-      // all times (such as the EU). The default value is `https://cdn-settings.segment.com/v1/projects`.
-
-      settingsEndpoint = `${this.config.cdnProxy}}/${this.config.writeKey}/settings`;
-    } else {
-      settingsEndpoint = `${settingsCDN}/${this.config.writeKey}/settings`;
-    }
+    const settingsPrefix: string = this.config.cdnProxy ?? settingsCDN;
+    const settingsEndpoint = `${settingsPrefix}/${this.config.writeKey}/settings`;
 
     try {
       const res = await fetch(settingsEndpoint);

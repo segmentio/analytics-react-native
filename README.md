@@ -133,6 +133,7 @@ You must pass at least the `writeKey`. Additional configuration options are list
 | `storePersistor`           | undefined | A custom persistor for the store that `analytics-react-native` leverages. Must match [`Persistor`](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran/src/persistor/persistor.ts#L1-L18) interface exported from [sovran-react-native](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran).|
 | `proxy`                    | undefined | `proxy` is a batch url to post to instead of 'https://api.segment.io/v1/b'.                                                                    |
 | `errorHandler`             | undefined | Create custom actions when errors happen, see [Handling errors](#handling-errors)                                                              |
+| `cdnProxy`                 | undefined | Sets an alternative CDN host for settings retrieval                                                            |
 
 
 \* The default value of `debug` will be false in production.
