@@ -111,7 +111,7 @@ function createStoreGetter<
 export class SovranStorage implements Storage {
   private storeId: string;
   private storePersistor?: Persistor;
-  private storePersistorSaveDelay?: Number;
+  private storePersistorSaveDelay?: number;
   private readinessStore: Store<ReadinessStore>;
   private contextStore: Store<{ context: DeepPartial<Context> }>;
   private settingsStore: Store<{ settings: SegmentAPIIntegrations }>;
