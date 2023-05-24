@@ -8,7 +8,6 @@ import {
 import { settingsCDN, workspaceDestinationFilterKey } from './constants';
 import { getContext } from './context';
 import {
-  applyRawEventData,
   createAliasEvent,
   createGroupEvent,
   createIdentifyEvent,
@@ -22,8 +21,6 @@ import {
 } from './flushPolicies';
 import { FlushPolicyExecuter } from './flushPolicies/flush-policy-executer';
 import type { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
-import { InjectContext } from './plugins/InjectContext';
-import { InjectUserInfo } from './plugins/InjectUserInfo';
 import { SegmentDestination } from './plugins/SegmentDestination';
 import {
   createGetter,
@@ -33,7 +30,7 @@ import {
   Watchable,
 } from './storage';
 import { Timeline } from './timeline';
-import type { DestinationFilters, SegmentAPISettings } from './types';
+import { DestinationFilters, EventType, SegmentAPISettings } from './types';
 import {
   Config,
   Context,
@@ -91,10 +88,7 @@ export class SegmentClient {
 
   private onPluginAddedObservers: OnPluginAddedCallback[] = [];
 
-  private readonly platformPlugins: PlatformPlugin[] = [
-    new InjectUserInfo(),
-    new InjectContext(),
-  ];
+  private readonly platformPlugins: PlatformPlugin[] = [];
 
   // Watchables
   /**
@@ -256,9 +250,12 @@ export class SegmentClient {
         await this.storageReady();
       }
 
+      // Get new settings from segment
+      // It's important to run this before checkInstalledVersion and trackDeeplinks to give time for destination plugins
+      // which make use of the settings object to initialize
+      await this.fetchSettings();
+
       await allSettled([
-        // Get new settings from segment
-        this.fetchSettings(),
         // save the current installed version
         this.checkInstalledVersion(),
         // check if the app was opened from a deep link
@@ -411,7 +408,8 @@ export class SegmentClient {
   }
 
   async process(incomingEvent: SegmentEvent) {
-    const event = applyRawEventData(incomingEvent);
+    const event = await this.applyRawEventData(incomingEvent);
+
     if (this.isReady.value) {
       this.flushPolicyExecuter.notify(event);
       return this.timeline.process(event);
@@ -663,10 +661,8 @@ export class SegmentClient {
 
   async reset(resetAnonymousId = true) {
     try {
-      const anonymousId =
-        resetAnonymousId === true
-          ? getUUID()
-          : this.store.userInfo.get().anonymousId;
+      const { anonymousId: currentId } = await this.store.userInfo.get(true);
+      const anonymousId = resetAnonymousId === true ? getUUID() : currentId;
 
       await this.store.userInfo.set({
         anonymousId,
@@ -766,4 +762,87 @@ export class SegmentClient {
     }
     this.config.errorHandler?.(error);
   }
+
+  /**
+   * Injects context and userInfo data into the event, sets the messageId and timestamp
+   * This is handled outside of the timeline to prevent concurrency issues between plugins
+   * @param event Segment Event
+   * @returns event with data injected
+   */
+  private applyRawEventData = async (
+    event: SegmentEvent
+  ): Promise<SegmentEvent> => {
+    const userInfo = await this.processUserInfo(event);
+    const context = await this.context.get(true);
+
+    return {
+      ...event,
+      ...userInfo,
+      context: {
+        ...event.context,
+        ...context,
+      },
+      messageId: getUUID(),
+      timestamp: new Date().toISOString(),
+      integrations: event.integrations ?? {},
+    } as SegmentEvent;
+  };
+
+  /**
+   * Processes the userInfo to add to an event.
+   * For Identify and Alias: it saves the new userId and traits into the storage
+   * For all: set the userId and anonymousId from the current values
+   * @param event segment event
+   * @returns userInfo to inject to an event
+   */
+  private processUserInfo = async (
+    event: SegmentEvent
+  ): Promise<Partial<SegmentEvent>> => {
+    // Order here is IMPORTANT!
+    // Identify and Alias userInfo set operations have to come as soon as possible
+    // Do not block the set by doing a safe get first as it might cause a race condition
+    // within events procesing in the timeline asyncronously
+    if (event.type === EventType.IdentifyEvent) {
+      const userInfo = await this.userInfo.set((state) => ({
+        ...state,
+        userId: event.userId ?? state.userId,
+        traits: {
+          ...state.traits,
+          ...event.traits,
+        },
+      }));
+
+      return {
+        anonymousId: userInfo.anonymousId,
+        userId: event.userId ?? userInfo.userId,
+        traits: {
+          ...userInfo.traits,
+          ...event.traits,
+        },
+      };
+    } else if (event.type === EventType.AliasEvent) {
+      let previousUserId: string;
+
+      const userInfo = await this.userInfo.set((state) => {
+        previousUserId = state.userId ?? state.anonymousId;
+
+        return {
+          ...state,
+          userId: event.userId,
+        };
+      });
+
+      return {
+        anonymousId: userInfo.anonymousId,
+        userId: event.userId,
+        previousId: previousUserId!,
+      };
+    }
+
+    const userInfo = await this.userInfo.get(true);
+    return {
+      anonymousId: userInfo.anonymousId,
+      userId: userInfo.userId,
+    };
+  };
 }
