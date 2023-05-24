@@ -154,4 +154,28 @@ describe('#mainTest', () => {
       expect(context.network.wifi).toBe(true);
     }
   });
+
+  it('checks that persistence is working', async () => {
+    await clearLifecycleEvents();
+
+    await trackButton.tap();
+    await identifyButton.tap();
+
+    await device.sendToHome();
+    await device.launchApp({ newInstance: true });
+
+    await flushButton.tap();
+
+    expect(mockServerListener).toHaveBeenCalledTimes(1);
+
+    const events = mockServerListener.mock.calls[0][0].batch;
+
+    expect(events).toHaveLength(3); // Track + Identify + App Launch
+    expect(events).toHaveEventWith({ type: 'identify', userId: 'user_2' });
+    expect(events).toHaveEventWith({ type: 'track', userId: 'user_2' });
+    expect(events).toHaveEventWith({
+      type: 'track',
+      event: 'Application Opened',
+    });
+  });
 });
