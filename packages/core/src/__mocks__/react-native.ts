@@ -3,6 +3,7 @@ import type { PlatformOSType } from 'react-native';
 export const AppState = {
   addEventListener: jest.fn(),
   removeEventListener: jest.fn(),
+  currentState: 'active',
 };
 
 export const Linking = {

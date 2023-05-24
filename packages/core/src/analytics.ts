@@ -5,7 +5,12 @@ import {
   AppStateStatus,
   NativeEventSubscription,
 } from 'react-native';
-import { settingsCDN, workspaceDestinationFilterKey } from './constants';
+import {
+  settingsCDN,
+  workspaceDestinationFilterKey,
+  defaultFlushInterval,
+  defaultFlushAt,
+} from './constants';
 import { getContext } from './context';
 import {
   applyRawEventData,
@@ -703,25 +708,31 @@ export class SegmentClient {
    * trigger flush
    */
   private setupFlushPolicies() {
-    const flushPolicies = this.config.flushPolicies ?? [];
+    const flushPolicies = [];
 
-    // Compatibility with older arguments
-    if (
-      this.config.flushAt !== undefined &&
-      this.config.flushAt !== null &&
-      this.config.flushAt > 0
-    ) {
-      flushPolicies.push(new CountFlushPolicy(this.config.flushAt));
-    }
+    // If there are zero policies or flushAt/flushInterval use the defaults:
+    if (this.config.flushPolicies !== undefined) {
+      flushPolicies.push(...this.config.flushPolicies);
+    } else {
+      if (
+        this.config.flushAt === undefined ||
+        (this.config.flushAt !== null && this.config.flushAt > 0)
+      ) {
+        flushPolicies.push(
+          new CountFlushPolicy(this.config.flushAt ?? defaultFlushAt)
+        );
+      }
 
-    if (
-      this.config.flushInterval !== undefined &&
-      this.config.flushInterval !== null &&
-      this.config.flushInterval > 0
-    ) {
-      flushPolicies.push(
-        new TimerFlushPolicy(this.config.flushInterval * 1000)
-      );
+      if (
+        this.config.flushInterval === undefined ||
+        (this.config.flushInterval !== null && this.config.flushInterval > 0)
+      ) {
+        flushPolicies.push(
+          new TimerFlushPolicy(
+            (this.config.flushInterval ?? defaultFlushInterval) * 1000
+          )
+        );
+      }
     }
 
     this.flushPolicyExecuter = new FlushPolicyExecuter(flushPolicies, () => {

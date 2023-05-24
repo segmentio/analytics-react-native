@@ -8,7 +8,7 @@ export class FlushPolicyExecuter {
   private onFlush: () => void;
 
   constructor(policies: FlushPolicy[], onFlush: () => void) {
-    this.policies = policies;
+    this.policies = [...policies];
     this.onFlush = onFlush;
 
     // Now listen to changes on the flush policies shouldFlush

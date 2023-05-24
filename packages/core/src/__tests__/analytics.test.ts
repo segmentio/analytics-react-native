@@ -2,6 +2,7 @@ import type { AppStateStatus } from 'react-native';
 import { AppState } from 'react-native';
 import { SegmentClient } from '../analytics';
 import { ErrorType, SegmentError } from '../errors';
+import { CountFlushPolicy, TimerFlushPolicy } from '../flushPolicies';
 import { getMockLogger } from './__helpers__/mockLogger';
 import { MockSegmentStore } from './__helpers__/mockSegmentStore';
 
@@ -170,6 +171,82 @@ describe('SegmentClient', () => {
       client.reportInternalError(error);
 
       expect(errorHandler).toHaveBeenCalledWith(error);
+    });
+  });
+
+  describe('Flush Policies', () => {
+    it('creates the default flush policies when config is empty', () => {
+      client = new SegmentClient({
+        ...clientArgs,
+        config: {
+          ...clientArgs.config,
+          flushAt: undefined,
+          flushInterval: undefined,
+        },
+      });
+      const flushPolicies = client.getFlushPolicies();
+      expect(flushPolicies.length).toBe(2);
+    });
+
+    it('setting flush policies is mutually exclusive with flushAt/Interval', () => {
+      client = new SegmentClient({
+        ...clientArgs,
+        config: {
+          ...clientArgs.config,
+          flushAt: 5,
+          flushInterval: 30,
+          flushPolicies: [new CountFlushPolicy(1)],
+        },
+      });
+      const flushPolicies = client.getFlushPolicies();
+      expect(flushPolicies.length).toBe(1);
+    });
+
+    it('setting flushAt/Interval to 0 should make the client have no uploads', () => {
+      client = new SegmentClient({
+        ...clientArgs,
+        config: {
+          ...clientArgs.config,
+          flushAt: 0,
+          flushInterval: 0,
+        },
+      });
+      const flushPolicies = client.getFlushPolicies();
+      expect(flushPolicies.length).toBe(0);
+    });
+
+    it('setting an empty array of policies should make the client have no uploads', () => {
+      client = new SegmentClient({
+        ...clientArgs,
+        config: {
+          ...clientArgs.config,
+          flushAt: undefined,
+          flushInterval: undefined,
+          flushPolicies: [],
+        },
+      });
+      const flushPolicies = client.getFlushPolicies();
+      expect(flushPolicies.length).toBe(0);
+    });
+
+    it('can add and remove policies, does not mutate original array', () => {
+      const policies = [new CountFlushPolicy(1), new TimerFlushPolicy(200)];
+      client = new SegmentClient({
+        ...clientArgs,
+        config: {
+          ...clientArgs.config,
+          flushAt: undefined,
+          flushInterval: undefined,
+          flushPolicies: policies,
+        },
+      });
+      expect(client.getFlushPolicies().length).toBe(policies.length);
+
+      client.removeFlushPolicy(...policies);
+      expect(client.getFlushPolicies().length).toBe(0);
+
+      client.addFlushPolicy(...policies);
+      expect(client.getFlushPolicies().length).toBe(policies.length);
     });
   });
 });
