@@ -124,7 +124,7 @@ You must pass at least the `writeKey`. Additional configuration options are list
 | `logger`                   | undefined | Custom logger instance to expose internal Segment client logging.                                                                            |
 | `flushAt`                  | 20        | How many events to accumulate before sending events to the backend.                                                                            |
 | `flushInterval`            | 30        | In seconds, how often to send events to the backend.                                                                                           |
-| `flushPolicies`            | undefined | Add more granular control for when to flush, see [Adding or removing policies](#adding-or-removing-policies)                                   |
+| `flushPolicies`            | undefined | Add more granular control for when to flush, see [Adding or removing policies](#adding-or-removing-policies). **Mutually exclusive with flushAt/flushInterval**                                   |
 | `maxBatchSize`             | 1000      | How many events to send to the API at once                                                                                                     |
 | `trackAppLifecycleEvents`  | false     | Enable automatic tracking for [app lifecycle events](https://segment.com/docs/connections/spec/mobile/#lifecycle-events): application installed, opened, updated, backgrounded) |
 | `trackDeepLinks`           | false     | Enable automatic tracking for when the user opens the app via a deep link (Note: Requires additional setup on iOS, [see instructions](#ios-deep-link-tracking-setup))                                                            |
@@ -601,7 +601,7 @@ Refer to the following table for Plugins you can use to meet your tracking needs
   
 ## Controlling Upload With Flush Policies
 
-To more granurily control when events are uploaded you can use `FlushPolicies`
+To more granurily control when events are uploaded you can use `FlushPolicies`. **This will override any setting on `flushAt` and `flushInterval`, but you can use `CountFlushPolicy` and `TimerFlushPolicy` to have the same behaviour respectively.**
 
 A Flush Policy defines the strategy for deciding when to flush, this can be on an interval, on a certain time of day, after receiving a certain number of events or even after receiving a particular event. This gives you even more flexibility on when to send event to Segment.
 
@@ -626,6 +626,7 @@ We have several standard FlushPolicies:
 - `CountFlushPolicy` triggers whenever a certain number of events is reached
 - `TimerFlushPolicy` triggers on an interval of milliseconds
 - `StartupFlushPolicy` triggers on client startup only
+- `BackgroundFlushPolicy` triggers when the app goes into the background/inactive.
 
 ## Adding or removing policies
 
