@@ -154,4 +154,39 @@ describe('#mainTest', () => {
       expect(context.network.wifi).toBe(true);
     }
   });
+
+  it('checks that persistence is working', async () => {
+    await clearLifecycleEvents();
+
+    await trackButton.tap();
+    await identifyButton.tap();
+
+    await device.sendToHome();
+    await device.launchApp({ newInstance: true });
+
+    await flushButton.tap();
+
+    expect(mockServerListener).toHaveBeenCalledTimes(1);
+
+    const events = mockServerListener.mock.calls[0][0].batch;
+
+    const platform = device.getPlatform();
+
+    expect(events).toHaveLength(platform === 'android' ? 4 : 3); // Track + Identify + App Launch (+ Backgrounded on Android)
+    expect(events).toHaveEventWith({ type: 'identify', userId: 'user_2' });
+    expect(events).toHaveEventWith({ type: 'track', userId: 'user_2' });
+    expect(events).toHaveEventWith({
+      type: 'track',
+      event: 'Application Opened',
+    });
+    // Android only
+    // RN in Android immediately halts JS execution when leaving the app and sends the BG event (in iOS it happens after a short while when the OS decides to)
+    // Hence in Android the event list will contain this extra event
+    if (platform === 'android') {
+      expect(events).toHaveEventWith({
+        type: 'track',
+        event: 'Application Backgrounded',
+      });
+    }
+  });
 });

@@ -12,7 +12,10 @@ import {
   createClient,
   AnalyticsProvider,
   CountFlushPolicy,
+  // @ts-ignore unused for e2e tests
   StartupFlushPolicy,
+  // @ts-ignore unused for e2e tests
+  TimerFlushPolicy,
 } from '@segment/analytics-react-native';
 import Home from './Home';
 import SecondPage from './SecondPage';
@@ -39,8 +42,9 @@ const segmentClient = createClient({
   trackDeepLinks: true,
   flushPolicies: [
     new CountFlushPolicy(5),
-    // new TimerFlushPolicy(1000), // Do not enable for Detox tests as synchronization won't work with a the continuous timer
-    new StartupFlushPolicy(),
+    // These are disabled for E2E tests
+    // new TimerFlushPolicy(1000),
+    // new StartupFlushPolicy(),
   ],
 });
 

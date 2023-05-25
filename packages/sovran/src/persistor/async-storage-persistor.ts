@@ -12,11 +12,32 @@ try {
   AsyncStorage = null;
 }
 
+let hasShownWarning = false;
+
+function warnIfMissingPackage() {
+  if (AsyncStorage === null) {
+    if (!hasShownWarning) {
+      console.warn(
+        "Segment: Tried to access AsyncStoragePersistor but couldn't find package @react-native-async-storage/async-storage.\n\
+        - Install '@react-native-async-storage/async-storage' to use the default persistence layer you need\n\
+        - You might be missing the 'storePersistor' argument in your client configuration to use your own persistence layer\n\
+        Execution will continue but no information will be persisted. This warning will only show once."
+      );
+      hasShownWarning = true;
+    }
+    return true;
+  }
+  return false;
+}
+
 /**
  * Persistor implementation using AsyncStorage
  */
 export const AsyncStoragePersistor: Persistor = {
   get: async <T>(key: string): Promise<T | undefined> => {
+    if (warnIfMissingPackage()) {
+      return;
+    }
     try {
       const persistedStateJSON = await AsyncStorage?.getItem?.(key);
       if (persistedStateJSON !== null && persistedStateJSON !== undefined) {
@@ -30,6 +51,9 @@ export const AsyncStoragePersistor: Persistor = {
   },
 
   set: async <T>(key: string, state: T): Promise<void> => {
+    if (warnIfMissingPackage()) {
+      return;
+    }
     try {
       await AsyncStorage?.setItem?.(key, JSON.stringify(state));
     } catch (e) {
