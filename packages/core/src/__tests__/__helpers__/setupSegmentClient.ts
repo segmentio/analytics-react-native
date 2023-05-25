@@ -23,6 +23,7 @@ export const createTestClient = (
     config: {
       writeKey: 'mock-write-key',
       autoAddSegmentDestination: false,
+      flushInterval: 0,
       ...config,
     },
     logger: getMockLogger(),

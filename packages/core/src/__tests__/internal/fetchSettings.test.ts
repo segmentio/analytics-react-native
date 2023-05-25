@@ -20,6 +20,7 @@ describe('internal #getSettings', () => {
     config: {
       writeKey: '123-456',
       defaultSettings: defaultIntegrationSettings,
+      flushInterval: 0,
     },
     logger: getMockLogger(),
     store: store,

@@ -16,6 +16,7 @@ describe('methods #flush', () => {
       writeKey: '123-456',
       autoAddSegmentDestination: false,
       trackAppLifecycleEvents: false,
+      flushInterval: 0,
     },
     logger: getMockLogger(),
     store: store,

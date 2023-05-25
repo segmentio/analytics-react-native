@@ -28,6 +28,7 @@ describe('SegmentDestination', () => {
     config: {
       writeKey: '123-456',
       maxBatchSize: 2,
+      flushInterval: 0,
     },
     store,
   };
