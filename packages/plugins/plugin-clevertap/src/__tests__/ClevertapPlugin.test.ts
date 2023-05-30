@@ -18,6 +18,7 @@ describe('ClevertapPlugin ', () => {
     config: {
       writeKey: '123-456',
       trackApplicationLifecycleEvents: true,
+      flushInterval: 0,
     },
     store,
   };
