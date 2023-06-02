@@ -1,3 +1,10 @@
+## [@segment/sovran-react-native-v1.0.4](https://github.com/segmentio/analytics-react-native/compare/@segment/sovran-react-native-v1.0.3...@segment/sovran-react-native-v1.0.4) (2023-06-02)
+
+
+### Bug Fixes
+
+* queue storage fixes ([#836](https://github.com/segmentio/analytics-react-native/issues/836)) ([f5a6a86](https://github.com/segmentio/analytics-react-native/commit/f5a6a86817c72ae16caa760d168c01d8eff6d0fb))
+
 ## [@segment/sovran-react-native-v1.0.3](https://github.com/segmentio/analytics-react-native/compare/@segment/sovran-react-native-v1.0.2...@segment/sovran-react-native-v1.0.3) (2023-05-04)
 
 
