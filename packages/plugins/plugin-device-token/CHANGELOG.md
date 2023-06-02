@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-device-token-v1.0.2](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-device-token-v1.0.1...@segment/analytics-react-native-plugin-device-token-v1.0.2) (2023-06-02)
+
+
+### Bug Fixes
+
+* fix flush policies reference copy, add BackgroundPolicy ([#838](https://github.com/segmentio/analytics-react-native/issues/838)) ([e4b558a](https://github.com/segmentio/analytics-react-native/commit/e4b558a95e250b1b21d677e08ffeb02a4015bda6))
+
 ## [@segment/analytics-react-native-plugin-device-token-v1.0.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-device-token-v1.0.0...@segment/analytics-react-native-plugin-device-token-v1.0.1) (2023-04-18)
 
 
