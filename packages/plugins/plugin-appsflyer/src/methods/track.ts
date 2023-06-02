@@ -1,5 +1,5 @@
 import appsFlyer from 'react-native-appsflyer';
-import { isString, TrackEventType } from '@segment/analytics-react-native';
+import { TrackEventType } from '@segment/analytics-react-native';
 
 type Properties = { [key: string]: unknown };
 
@@ -54,7 +54,7 @@ const extractCurrency = (
   defaultCurrency: string
 ): string => {
   const value = properties[key];
-  if (isString(value)) {
+  if (typeof value === 'string')) {
     return value;
   }
   return defaultCurrency;
