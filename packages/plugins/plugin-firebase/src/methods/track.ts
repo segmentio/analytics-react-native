@@ -16,7 +16,11 @@ export default async (event: TrackEventType) => {
     event as unknown as Record<string, unknown>
   );
   const convertedName = safeEvent.event as string;
-  const safeEventName = sanitizeName(convertedName);
+  let safeEventName = sanitizeName(convertedName);
   const safeProps = safeEvent.properties as { [key: string]: unknown };
+  // Clip the event name if it exceeds 40 characters
+  if (safeEventName.length > 40) {
+    safeEventName = safeEventName.substring(0, 40);
+  }
   await firebaseAnalytics().logEvent(safeEventName, safeProps);
 };
