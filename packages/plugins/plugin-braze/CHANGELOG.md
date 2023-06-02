@@ -1,3 +1,11 @@
+## [@segment/analytics-react-native-plugin-braze-v0.5.4](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-braze-v0.5.3...@segment/analytics-react-native-plugin-braze-v0.5.4) (2023-06-02)
+
+
+### Bug Fixes
+
+* move braze to peer deps ([#845](https://github.com/segmentio/analytics-react-native/issues/845)) ([f3640e3](https://github.com/segmentio/analytics-react-native/commit/f3640e3a97c4d0b14402995ca993866689127a77))
+* update braze example and readme ([#830](https://github.com/segmentio/analytics-react-native/issues/830)) ([b6a319a](https://github.com/segmentio/analytics-react-native/commit/b6a319aab9e3fe70dc125a99132ccb77abe4c391))
+
 ## [@segment/analytics-react-native-plugin-braze-v0.5.3](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-braze-v0.5.2...@segment/analytics-react-native-plugin-braze-v0.5.3) (2023-04-27)
 
 
