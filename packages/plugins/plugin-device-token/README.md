@@ -21,8 +21,7 @@ yarn add @segment/analytics-react-native-plugin-device-token
 
 Run `pod install` after the installation to autolink the Firebase SDK.
 
-> warning ""
-> Refer to Apple's [Push Notification Services](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/sending_notification_requests_to_apns) and [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) for additional setup requirements. 
+⚠️ Refer to Apple's [Push Notification Services](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/sending_notification_requests_to_apns) and [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) for additional setup requirements. ⚠️ 
 
 ## Usage 
 
