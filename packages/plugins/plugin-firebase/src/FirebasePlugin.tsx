@@ -35,7 +35,10 @@ export class FirebasePlugin extends DestinationPlugin {
             return acc;
           }
           if (trait !== undefined) {
-            acc[trait] = eventTraits[trait]!.toString();
+            acc[trait] =
+              typeof eventTraits[trait] === 'undefined'
+                ? ''
+                : eventTraits[trait]!.toString();
           }
           return acc;
         },
