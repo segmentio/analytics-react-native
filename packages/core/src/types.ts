@@ -132,6 +132,7 @@ export interface DeactivableLoggerType extends LoggerType {
 export type Config = {
   writeKey: string;
   debug?: boolean;
+  enabled?: boolean;
   logger?: DeactivableLoggerType;
   // Legacy, for compat only
   flushAt?: number;
