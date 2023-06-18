@@ -11,7 +11,7 @@ export const createClient = (config: Config) => {
 
   if (typeof config?.enabled === 'boolean' && config.enabled === false) {
     // do nothing if client is defined as disabled
-    return null;
+    return undefined;
   }
 
   if (typeof config?.debug === 'boolean') {
