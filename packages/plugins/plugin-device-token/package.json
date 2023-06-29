@@ -1,6 +1,6 @@
 {
   "name": "@segment/analytics-react-native-plugin-device-token",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "The hassle-free way to add Segment analytics to your React-Native app.",
   "main": "lib/commonjs/index",
   "scripts": {
@@ -45,10 +45,12 @@
   },
   "homepage": "https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-firebase#readme",
   "peerDependencies": {
-    "@react-native-firebase/app": "17.x",
+    "@react-native-firebase/app": "^17.3.2",
+    "@react-native-firebase/messaging": "^17.3.2",
     "@segment/analytics-react-native": "*"
   },
   "devDependencies": {
+    "@react-native-firebase/app": "^17.3.2",
     "@react-native-firebase/messaging": "^17.3.2",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/commit-analyzer": "^9.0.2",

@@ -20,7 +20,7 @@ const { getTrackingAuthorizationStatus } = AnalyticsReactNativePluginIdfa;
 export class IdfaPlugin extends Plugin {
   type = PluginType.enrichment;
 
-  constructor(shouldAskPermission: boolean = true) {
+  constructor(shouldAskPermission = true) {
     super();
 
     if (shouldAskPermission === true) {
@@ -34,9 +34,9 @@ make additional tracking decisions based on the user response
 */
   async requestTrackingPermission(): Promise<boolean> {
     try {
-      let idfaData: IdfaData = await getTrackingAuthorizationStatus();
+      const idfaData: IdfaData = await getTrackingAuthorizationStatus();
 
-      this.analytics?.context.set({ device: { ...idfaData } });
+      await this.analytics?.context.set({ device: { ...idfaData } });
       return idfaData.adTrackingEnabled;
     } catch (error) {
       this.analytics?.reportInternalError(
@@ -51,12 +51,16 @@ make additional tracking decisions based on the user response
     getTrackingAuthorizationStatus()
       .then((idfa: IdfaData) => {
         // update our context with the idfa data
-        this.analytics?.context.set({ device: { ...idfa } });
+        void this.analytics?.context.set({ device: { ...idfa } });
         return idfa;
       })
-      .catch((error: any) => {
+      .catch((error) => {
         this.analytics?.reportInternalError(
-          new SegmentError(ErrorType.PluginError, JSON.stringify(error), error)
+          new SegmentError(
+            ErrorType.PluginError,
+            'Error retreiving IDFA',
+            error
+          )
         );
         this.analytics?.logger.warn(error);
       });

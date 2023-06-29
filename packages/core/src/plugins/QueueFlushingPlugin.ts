@@ -13,6 +13,7 @@ export class QueueFlushingPlugin extends UtilityPlugin {
   // Gets executed last to keep the queue after all timeline processing is done
   type = PluginType.after;
 
+  private storeKey: string;
   private isPendingUpload = false;
   private queueStore: Store<{ events: SegmentEvent[] }> | undefined;
   private onFlush: (events: SegmentEvent[]) => Promise<void>;
@@ -20,9 +21,13 @@ export class QueueFlushingPlugin extends UtilityPlugin {
   /**
    * @param onFlush callback to execute when the queue is flushed (either by reaching the limit or manually) e.g. code to upload events to your destination
    */
-  constructor(onFlush: (events: SegmentEvent[]) => Promise<void>) {
+  constructor(
+    onFlush: (events: SegmentEvent[]) => Promise<void>,
+    storeKey = 'events'
+  ) {
     super();
     this.onFlush = onFlush;
+    this.storeKey = storeKey;
   }
 
   configure(analytics: SegmentClient): void {
@@ -35,16 +40,16 @@ export class QueueFlushingPlugin extends UtilityPlugin {
       { events: [] as SegmentEvent[] },
       {
         persist: {
-          storeId: `${config.writeKey}-events`,
+          storeId: `${config.writeKey}-${this.storeKey}`,
           persistor: config.storePersistor,
-          saveDelay: config.storePersistorSaveDelay,
+          saveDelay: config.storePersistorSaveDelay ?? 0,
         },
       }
     );
   }
 
-  execute(event: SegmentEvent): SegmentEvent | undefined {
-    this.queueStore?.dispatch((state) => {
+  async execute(event: SegmentEvent): Promise<SegmentEvent | undefined> {
+    await this.queueStore?.dispatch((state) => {
       const events = [...state.events, event];
       return { events };
     });
@@ -70,8 +75,8 @@ export class QueueFlushingPlugin extends UtilityPlugin {
    * Removes one or multiple events from the queue
    * @param events events to remove
    */
-  dequeue(events: SegmentEvent | SegmentEvent[]) {
-    this.queueStore?.dispatch((state) => {
+  async dequeue(events: SegmentEvent | SegmentEvent[]) {
+    await this.queueStore?.dispatch((state) => {
       const eventsToRemove = Array.isArray(events) ? events : [events];
 
       if (eventsToRemove.length === 0 || state.events.length === 0) {

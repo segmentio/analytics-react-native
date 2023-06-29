@@ -21,7 +21,7 @@ export class AmplitudeSessionPlugin extends EventPlugin {
   sessionTimer: ReturnType<typeof setTimeout> | undefined;
 
   update(settings: SegmentAPISettings, _: UpdateType) {
-    let integrations = settings.integrations;
+    const integrations = settings.integrations;
     if (this.key in integrations) {
       this.active = true;
       this.refreshSession();

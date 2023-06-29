@@ -23,17 +23,18 @@ jobs:
           cache: 'yarn'
       - name: Install
         run: yarn install --frozen-lockfile
-      - name: Lint
-        run: yarn lint
       - name: Build
         run: yarn build
+        # Linter has to run after the build because it relies on TS types
+      - name: Lint
+        run: yarn lint
       - name: Test
         run: yarn test --coverage
       
 
   run-e2e-ios:
     needs: cancel_previous
-    runs-on: 'macos-11'
+    runs-on: 'macos-12'
     steps: 
       - uses: actions/checkout@v2
 
@@ -44,7 +45,7 @@ jobs:
 
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: 12.5.1
+          xcode-version: 14.1
 
       - name: Install applesimutils
         run:  |

@@ -1,5 +1,6 @@
 import type { Persistor } from '@segment/sovran-react-native';
 import deepmerge from 'deepmerge';
+import type { Context, DeepPartial } from '../../types';
 import { createCallbackManager as mockCreateCallbackManager } from '../../__tests__/__helpers__/utils';
 import { SovranStorage } from '../sovranStorage';
 
@@ -8,7 +9,7 @@ jest.mock('react-native-get-random-values');
 
 jest.mock('@segment/sovran-react-native', () => ({
   registerBridgeStore: jest.fn(),
-  createStore: <T extends {}>(initialState: T) => {
+  createStore: <T extends object>(initialState: T) => {
     const callbackManager = mockCreateCallbackManager<T>();
 
     let store = {
@@ -46,11 +47,12 @@ describe('sovranStorage', () => {
     sovran.context.onChange(contextListener);
 
     // A basic test that sets up the context data in the store and checks that the listener is called
-    const appContext = {
+    const appContext: DeepPartial<Context> = {
       app: {
         name: 'test',
         namespace: 'com.segment',
         version: '1.0.0',
+        build: '1',
       },
       device: {
         manufacturer: 'Apple',
@@ -66,7 +68,7 @@ describe('sovranStorage', () => {
     expect(contextListener).toHaveBeenCalledWith(appContext);
 
     // Context should be deeply merged to preserve values set by other plugins
-    const deviceToken = {
+    const deviceToken: DeepPartial<Context> = {
       device: {
         token: '123',
       },
@@ -109,13 +111,14 @@ describe('sovranStorage', () => {
   });
 
   it('works with custom Persistor', async () => {
-    const customStorage: any = {};
+    const customStorage: Record<string, unknown> = {};
     const CustomPersistor: Persistor = {
       get: async <T>(key: string): Promise<T | undefined> => {
         return Promise.resolve(customStorage[key] as T);
       },
       set: async <T>(key: string, state: T): Promise<void> => {
         customStorage[key] = state;
+        return Promise.resolve();
       },
     };
     const sovran = new SovranStorage({

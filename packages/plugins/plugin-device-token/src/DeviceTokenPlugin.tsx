@@ -19,17 +19,16 @@ export class DeviceTokenPlugin extends PlatformPlugin {
     try {
       const isAuthorized = await this.authStatus;
 
-      if (isAuthorized) {
-        let token = await this.getDeviceToken();
+      if (isAuthorized !== undefined && isAuthorized > 0) {
+        const token = await this.getDeviceToken();
 
         if (token !== undefined) {
-          this.setDeviceToken(token);
+          await this.setDeviceToken(token);
         }
       } else {
         this.analytics?.logger.warn('Not authorized to retrieve device token');
       }
     } catch (error) {
-      this.analytics?.logger.warn(error);
       this.analytics?.reportInternalError(
         new SegmentError(
           ErrorType.PluginError,
@@ -45,7 +44,7 @@ export class DeviceTokenPlugin extends PlatformPlugin {
       return (await messaging().getAPNSToken()) ?? undefined;
     }
     if (Platform.OS === 'android') {
-      let deviceToken = (await messaging().getToken()) ?? undefined;
+      const deviceToken = (await messaging().getToken()) ?? undefined;
       if (deviceToken !== undefined && deviceToken.length > 0) {
         return deviceToken;
       } else {
@@ -66,8 +65,8 @@ export class DeviceTokenPlugin extends PlatformPlugin {
   async updatePermissionStatus() {
     const isAuthorized = await this.checkUserPermission();
 
-    if (isAuthorized) {
-      let token = await this.getDeviceToken();
+    if (isAuthorized !== undefined && isAuthorized > 0) {
+      const token = await this.getDeviceToken();
 
       if (token !== undefined) {
         await this.setDeviceToken(token);
@@ -81,7 +80,6 @@ export class DeviceTokenPlugin extends PlatformPlugin {
     try {
       return await messaging().hasPermission();
     } catch (error) {
-      this.analytics?.logger.warn(error);
       this.analytics?.reportInternalError(
         new SegmentError(
           ErrorType.PluginError,

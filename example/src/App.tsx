@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import 'react-native-gesture-handler';
 import * as React from 'react';
 import RNBootSplash from 'react-native-bootsplash';
@@ -11,7 +12,10 @@ import {
   createClient,
   AnalyticsProvider,
   CountFlushPolicy,
+  // @ts-ignore unused for e2e tests
   StartupFlushPolicy,
+  // @ts-ignore unused for e2e tests
+  TimerFlushPolicy,
 } from '@segment/analytics-react-native';
 import Home from './Home';
 import SecondPage from './SecondPage';
@@ -20,40 +24,27 @@ import { useState } from 'react';
 import { Logger } from './plugins/Logger';
 
 //To see an example Consent Manager uncomment the following
-//@ts-ignore
-// import { ConsentManager } from './plugins/ConsentManager';
-
-// @ts-ignore
-// import { FirebasePlugin } from '@segment/analytics-react-native-plugin-firebase';
-
-// @ts-ignore
-// import { FacebookAppEventsPlugin } from '@segment/analytics-react-native-plugin-facebook-app-events';
-
-// @ts-ignore
-// import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
-
 // @ts-ignore
 import { AmplitudeSessionPlugin } from '@segment/analytics-react-native-plugin-amplitude-session';
-
-//@ts-ignore
+// import { ConsentManager } from './plugins/ConsentManager';
+// import { FirebasePlugin } from '@segment/analytics-react-native-plugin-firebase';
+// import { FacebookAppEventsPlugin } from '@segment/analytics-react-native-plugin-facebook-app-events';
+// import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
 // import { AdvertisingIdPlugin } from '@segment/analytics-react-native-plugin-advertising-id';
-
-//@ts-ignore
 // import { ClevertapPlugin } from '@segment/analytics-react-native-plugin-clevertap';
-
-//@ts-ignore
 // import { BrazePlugin } from '@segment/analytics-react-native-plugin-braze';
 
 const segmentClient = createClient({
-  writeKey: 'WRITE_KEY',
+  writeKey: '<WRITE_KEY>',
   trackAppLifecycleEvents: true,
   collectDeviceId: true,
   debug: true,
   trackDeepLinks: true,
   flushPolicies: [
     new CountFlushPolicy(5),
-    // new TimerFlushPolicy(1000), // Do not enable for Detox tests as synchronization won't work with a the continuous timer
-    new StartupFlushPolicy(),
+    // These are disabled for E2E tests
+    // new TimerFlushPolicy(1000),
+    // new StartupFlushPolicy(),
   ],
 });
 
@@ -130,7 +121,7 @@ const getActiveRouteName = (
 
 const App = () => {
   React.useEffect(() => {
-    RNBootSplash.hide();
+    void RNBootSplash.hide();
   }, []);
 
   const [routeName, setRouteName] = useState('Unknown');
@@ -142,7 +133,7 @@ const App = () => {
           const newRouteName = getActiveRouteName(state);
 
           if (routeName !== newRouteName) {
-            segmentClient.screen(newRouteName);
+            void segmentClient.screen(newRouteName);
 
             setRouteName(newRouteName);
           }

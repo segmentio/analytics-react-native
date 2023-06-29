@@ -27,7 +27,7 @@ describe('#screen', () => {
 
   it('tracks consolidated screens', () => {
     settings.consolidatedPageCalls = true;
-    let eventName = 'Loaded a Screen';
+    const eventName = 'Loaded a Screen';
 
     screen(payload, mixpanel, settings);
 
@@ -52,7 +52,7 @@ describe('#screen', () => {
 
   it('tracks all screens', () => {
     settings.trackAllPages = true;
-    let eventName = `Viewed ${payload.name} Screen`;
+    const eventName = `Viewed ${payload.name} Screen`;
 
     screen(payload, mixpanel, settings);
 
@@ -74,7 +74,7 @@ describe('#screen', () => {
 
   it('tracks named pages', () => {
     settings.trackNamedPages = true;
-    let eventName = `Viewed ${payload.name} Screen`;
+    const eventName = `Viewed ${payload.name} Screen`;
 
     screen(payload, mixpanel, settings);
 
@@ -97,7 +97,7 @@ describe('#screen', () => {
   it('tracks categorized pages', () => {
     payload.properties.category = 'e-commerce';
     settings.trackCategorizedPages = true;
-    let eventName = `Viewed ${payload.properties.category} Screen`;
+    const eventName = `Viewed ${payload.properties.category} Screen`;
 
     screen(payload, mixpanel, settings);
 

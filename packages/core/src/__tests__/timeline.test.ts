@@ -32,6 +32,7 @@ describe('timeline', () => {
   const clientArgs = {
     config: {
       writeKey: 'mock-write-key',
+      flushInterval: 0,
     },
     logger: getMockLogger(),
     store: store,
@@ -59,7 +60,7 @@ describe('timeline', () => {
   it('processes each destination independently', async () => {
     const timeline = new Timeline();
 
-    const goodPlugin = jest.fn().mockImplementation((e) => e);
+    const goodPlugin = jest.fn().mockImplementation((e: SegmentEvent) => e);
     const badPlugin = jest.fn().mockImplementation(() => undefined);
     timeline.add(new MockPlugin(badPlugin, PluginType.destination));
     timeline.add(new MockPlugin(goodPlugin, PluginType.destination));
@@ -82,7 +83,7 @@ describe('timeline', () => {
   it('handles errors from plugins execution', async () => {
     const timeline = new Timeline();
 
-    const goodPlugin = jest.fn().mockImplementation((e) => e);
+    const goodPlugin = jest.fn().mockImplementation((e: SegmentEvent) => e);
     const badPlugin = jest.fn().mockImplementation(() => {
       throw 'ERROR';
     });
@@ -107,7 +108,7 @@ describe('timeline', () => {
   it('shortcircuits plugin execution if a plugin return undefined', async () => {
     const timeline = new Timeline();
 
-    const goodPlugin = jest.fn().mockImplementation((e) => e);
+    const goodPlugin = jest.fn().mockImplementation((e: SegmentEvent) => e);
     const badPlugin = jest.fn().mockImplementation(() => undefined);
     timeline.add(new MockPlugin(badPlugin, PluginType.before));
     timeline.add(new MockPlugin(goodPlugin, PluginType.before));

@@ -3,6 +3,7 @@ import type { PlatformOSType } from 'react-native';
 export const AppState = {
   addEventListener: jest.fn(),
   removeEventListener: jest.fn(),
+  currentState: 'active',
 };
 
 export const Linking = {
@@ -46,7 +47,6 @@ export const Platform = {
 };
 
 export class NativeEventEmitter {
-  constructor() {}
   addListener = () => jest.fn();
   removeListener = () => jest.fn();
   removeAllListeners = () => jest.fn();

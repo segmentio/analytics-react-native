@@ -15,19 +15,19 @@ export class Logger implements DeactivableLoggerType {
     this.isDisabled = true;
   }
 
-  info(message?: any, ...optionalParams: any[]): void {
+  info(message?: unknown, ...optionalParams: unknown[]): void {
     if (!this.isDisabled) {
       console.info(message, ...optionalParams);
     }
   }
 
-  warn(message?: any, ...optionalParams: any[]): void {
+  warn(message?: unknown, ...optionalParams: unknown[]): void {
     if (!this.isDisabled) {
       console.warn(message, ...optionalParams);
     }
   }
 
-  error(message?: any, ...optionalParams: any[]): void {
+  error(message?: unknown, ...optionalParams: unknown[]): void {
     if (!this.isDisabled) {
       console.error(message, ...optionalParams);
     }

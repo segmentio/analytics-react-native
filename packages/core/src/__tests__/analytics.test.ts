@@ -2,6 +2,7 @@ import type { AppStateStatus } from 'react-native';
 import { AppState } from 'react-native';
 import { SegmentClient } from '../analytics';
 import { ErrorType, SegmentError } from '../errors';
+import { CountFlushPolicy, TimerFlushPolicy } from '../flushPolicies';
 import { getMockLogger } from './__helpers__/mockLogger';
 import { MockSegmentStore } from './__helpers__/mockSegmentStore';
 
@@ -32,7 +33,7 @@ describe('SegmentClient', () => {
   });
 
   describe('when initializing a new client', () => {
-    it('creates the client with default values', async () => {
+    it('creates the client with default values', () => {
       client = new SegmentClient(clientArgs);
       expect(client.getConfig()).toEqual(clientArgs.config);
     });
@@ -67,7 +68,9 @@ describe('SegmentClient', () => {
 
   describe('#setupLifecycleEvents', () => {
     it('subscribes to the app state update events', async () => {
-      let updateCallback = (_val: AppStateStatus) => {};
+      let updateCallback = (_val: AppStateStatus) => {
+        return;
+      };
 
       const addSpy = jest
         .spyOn(AppState, 'addEventListener')
@@ -78,6 +81,7 @@ describe('SegmentClient', () => {
 
       client = new SegmentClient(clientArgs);
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       jest.spyOn(client, 'handleAppStateChange');
       await client.init();
@@ -85,13 +89,16 @@ describe('SegmentClient', () => {
       expect(addSpy).toHaveBeenCalledTimes(1);
       expect(addSpy).toHaveBeenCalledWith('change', expect.any(Function));
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       expect(client.handleAppStateChange).not.toHaveBeenCalled();
 
       updateCallback('active');
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       expect(client.handleAppStateChange).toHaveBeenCalledTimes(1);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       expect(client.handleAppStateChange).toHaveBeenCalledWith('active');
     });
@@ -103,27 +110,30 @@ describe('SegmentClient', () => {
       await segmentClient.init();
 
       jest.spyOn(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         segmentClient.appStateSubscription,
         'remove'
       );
 
       segmentClient.cleanup();
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       expect(segmentClient.destroyed).toBe(true);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      expect(segmentClient.appStateSubscription.remove).toHaveBeenCalledTimes(
+      expect(segmentClient.appStateSubscription?.remove).toHaveBeenCalledTimes(
         1
       );
     });
   });
 
   describe('#reset', () => {
-    it('resets all userInfo except anonymousId', () => {
+    it('resets all userInfo except anonymousId', async () => {
       client = new SegmentClient(clientArgs);
       const setUserInfo = jest.spyOn(store.userInfo, 'set');
 
-      client.reset(false);
+      await client.reset(false);
 
       expect(setUserInfo).toHaveBeenCalledWith({
         anonymousId: 'anonymousId',
@@ -132,11 +142,11 @@ describe('SegmentClient', () => {
       });
     });
 
-    it('resets user data, identity, traits', () => {
+    it('resets user data, identity, traits', async () => {
       client = new SegmentClient(clientArgs);
       const setUserInfo = jest.spyOn(store.userInfo, 'set');
 
-      client.reset();
+      await client.reset();
 
       expect(setUserInfo).toHaveBeenCalledWith({
         anonymousId: 'mocked-uuid',
@@ -161,6 +171,82 @@ describe('SegmentClient', () => {
       client.reportInternalError(error);
 
       expect(errorHandler).toHaveBeenCalledWith(error);
+    });
+  });
+
+  describe('Flush Policies', () => {
+    it('creates the default flush policies when config is empty', () => {
+      client = new SegmentClient({
+        ...clientArgs,
+        config: {
+          ...clientArgs.config,
+          flushAt: undefined,
+          flushInterval: undefined,
+        },
+      });
+      const flushPolicies = client.getFlushPolicies();
+      expect(flushPolicies.length).toBe(2);
+    });
+
+    it('setting flush policies is mutually exclusive with flushAt/Interval', () => {
+      client = new SegmentClient({
+        ...clientArgs,
+        config: {
+          ...clientArgs.config,
+          flushAt: 5,
+          flushInterval: 30,
+          flushPolicies: [new CountFlushPolicy(1)],
+        },
+      });
+      const flushPolicies = client.getFlushPolicies();
+      expect(flushPolicies.length).toBe(1);
+    });
+
+    it('setting flushAt/Interval to 0 should make the client have no uploads', () => {
+      client = new SegmentClient({
+        ...clientArgs,
+        config: {
+          ...clientArgs.config,
+          flushAt: 0,
+          flushInterval: 0,
+        },
+      });
+      const flushPolicies = client.getFlushPolicies();
+      expect(flushPolicies.length).toBe(0);
+    });
+
+    it('setting an empty array of policies should make the client have no uploads', () => {
+      client = new SegmentClient({
+        ...clientArgs,
+        config: {
+          ...clientArgs.config,
+          flushAt: undefined,
+          flushInterval: undefined,
+          flushPolicies: [],
+        },
+      });
+      const flushPolicies = client.getFlushPolicies();
+      expect(flushPolicies.length).toBe(0);
+    });
+
+    it('can add and remove policies, does not mutate original array', () => {
+      const policies = [new CountFlushPolicy(1), new TimerFlushPolicy(200)];
+      client = new SegmentClient({
+        ...clientArgs,
+        config: {
+          ...clientArgs.config,
+          flushAt: undefined,
+          flushInterval: undefined,
+          flushPolicies: policies,
+        },
+      });
+      expect(client.getFlushPolicies().length).toBe(policies.length);
+
+      client.removeFlushPolicy(...policies);
+      expect(client.getFlushPolicies().length).toBe(0);
+
+      client.addFlushPolicy(...policies);
+      expect(client.getFlushPolicies().length).toBe(policies.length);
     });
   });
 });

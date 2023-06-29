@@ -29,13 +29,13 @@ describe('SegmentClient #handleAppStateChange', () => {
   const setupTest = async (
     from: AppStateStatus,
     to: AppStateStatus,
-    initialTrackAppLifecycleEvents: boolean = false,
-    trackAppLifecycleEvents: boolean = true
+    initialTrackAppLifecycleEvents = false,
+    trackAppLifecycleEvents = true
   ) => {
     AppState.addEventListener = jest
       .fn()
       .mockImplementation(
-        (_type: String, listener: (state: AppStateStatus) => void) => {
+        (_type: string, listener: (state: AppStateStatus) => void) => {
           appStateChangeListener = listener;
         }
       );
@@ -48,11 +48,13 @@ describe('SegmentClient #handleAppStateChange', () => {
     expectEvent = stuff.expectEvent;
     mockPlugin = stuff.plugin;
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     client.appState = from;
 
     await client.init();
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore settings the track here to filter out initial events
     client.config.trackAppLifecycleEvents = trackAppLifecycleEvents;
 
@@ -70,6 +72,7 @@ describe('SegmentClient #handleAppStateChange', () => {
 
     expect(mockPlugin.execute).not.toHaveBeenCalled();
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     expect(client.appState).toBe('background');
   });
@@ -77,6 +80,7 @@ describe('SegmentClient #handleAppStateChange', () => {
   it('sends an event when inactive => active', async () => {
     await setupTest('inactive', 'active');
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     expect(client.appState).toBe('active');
 
@@ -95,6 +99,7 @@ describe('SegmentClient #handleAppStateChange', () => {
   it('sends an event when background => active', async () => {
     await setupTest('background', 'active');
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     expect(client.appState).toBe('active');
 
@@ -113,6 +118,7 @@ describe('SegmentClient #handleAppStateChange', () => {
   it('sends an event when active => inactive', async () => {
     await setupTest('active', 'inactive');
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     expect(client.appState).toBe('inactive');
 
@@ -127,6 +133,7 @@ describe('SegmentClient #handleAppStateChange', () => {
   it('sends an event when active => background', async () => {
     await setupTest('active', 'background');
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     expect(client.appState).toBe('background');
 
@@ -141,6 +148,7 @@ describe('SegmentClient #handleAppStateChange', () => {
   it('sends an event when unknown => active', async () => {
     await setupTest('unknown', 'active');
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     expect(client.appState).toBe('active');
 
@@ -150,6 +158,7 @@ describe('SegmentClient #handleAppStateChange', () => {
   it('sends an event when unknown => background', async () => {
     await setupTest('unknown', 'background');
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     expect(client.appState).toBe('background');
 
@@ -159,6 +168,7 @@ describe('SegmentClient #handleAppStateChange', () => {
   it('sends an event when unknown => inactive', async () => {
     await setupTest('unknown', 'inactive');
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     expect(client.appState).toBe('inactive');
 

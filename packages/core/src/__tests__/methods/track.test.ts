@@ -21,6 +21,7 @@ describe('methods #track', () => {
   const clientArgs = {
     config: {
       writeKey: 'mock-write-key',
+      flushInterval: 0,
     },
     logger: getMockLogger(),
     store: store,
@@ -30,11 +31,11 @@ describe('methods #track', () => {
     jest.clearAllMocks();
   });
 
-  it('adds the track event correctly', () => {
+  it('adds the track event correctly', async () => {
     const client = new SegmentClient(clientArgs);
     jest.spyOn(client, 'process');
 
-    client.track('Some Event', { id: 1 });
+    await client.track('Some Event', { id: 1 });
 
     const expectedEvent = {
       event: 'Some Event',

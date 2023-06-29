@@ -1,11 +1,18 @@
-//@ts-ignore
 import type { Rule } from '@segment/tsub/dist/store';
 import deepmerge from 'deepmerge';
-import { AppState, AppStateStatus } from 'react-native';
-import { settingsCDN, workspaceDestinationFilterKey } from './constants';
+import {
+  AppState,
+  AppStateStatus,
+  NativeEventSubscription,
+} from 'react-native';
+import {
+  settingsCDN,
+  workspaceDestinationFilterKey,
+  defaultFlushInterval,
+  defaultFlushAt,
+} from './constants';
 import { getContext } from './context';
 import {
-  applyRawEventData,
   createAliasEvent,
   createGroupEvent,
   createIdentifyEvent,
@@ -19,8 +26,6 @@ import {
 } from './flushPolicies';
 import { FlushPolicyExecuter } from './flushPolicies/flush-policy-executer';
 import type { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
-import { InjectContext } from './plugins/InjectContext';
-import { InjectUserInfo } from './plugins/InjectUserInfo';
 import { SegmentDestination } from './plugins/SegmentDestination';
 import {
   createGetter,
@@ -30,7 +35,7 @@ import {
   Watchable,
 } from './storage';
 import { Timeline } from './timeline';
-import type { DestinationFilters, SegmentAPISettings } from './types';
+import { DestinationFilters, EventType, SegmentAPISettings } from './types';
 import {
   Config,
   Context,
@@ -50,6 +55,7 @@ import { getUUID } from './uuid';
 import type { FlushPolicy } from './flushPolicies';
 import {
   checkResponseForErrors,
+  ErrorType,
   SegmentError,
   translateHTTPError,
 } from './errors';
@@ -67,15 +73,15 @@ export class SegmentClient {
   private appState: AppStateStatus | 'unknown' = 'unknown';
 
   // subscription for propagating changes to appState
-  private appStateSubscription: any;
+  private appStateSubscription?: NativeEventSubscription;
 
   // logger
   public logger: LoggerType;
 
   // whether the user has called cleanup
-  private destroyed: boolean = false;
+  private destroyed = false;
 
-  private isAddingPlugins: boolean = false;
+  private isAddingPlugins = false;
 
   private timeline: Timeline;
 
@@ -87,10 +93,7 @@ export class SegmentClient {
 
   private onPluginAddedObservers: OnPluginAddedCallback[] = [];
 
-  private readonly platformPlugins: PlatformPlugin[] = [
-    new InjectUserInfo(),
-    new InjectContext(),
-  ];
+  private readonly platformPlugins: PlatformPlugin[] = [];
 
   // Watchables
   /**
@@ -162,7 +165,7 @@ export class SegmentClient {
   }: {
     config: Config;
     logger: LoggerType;
-    store: any;
+    store: Storage;
   }) {
     this.logger = logger;
     this.config = config;
@@ -213,7 +216,7 @@ export class SegmentClient {
 
     // add segment destination plugin unless
     // asked not to via configuration.
-    if (this.config.autoAddSegmentDestination) {
+    if (this.config.autoAddSegmentDestination === true) {
       const segmentDestination = new SegmentDestination();
       this.add({ plugin: segmentDestination });
     }
@@ -242,29 +245,42 @@ export class SegmentClient {
    * Can only be called once.
    */
   async init() {
-    if (this.isReady.value) {
-      this.logger.warn('SegmentClient already initialized');
-      return;
-    }
+    try {
+      if (this.isReady.value) {
+        this.logger.warn('SegmentClient already initialized');
+        return;
+      }
 
-    if ((await this.store.isReady.get(true)) === false) {
-      await this.storageReady();
-    }
+      if ((await this.store.isReady.get(true)) === false) {
+        await this.storageReady();
+      }
 
-    await allSettled([
       // Get new settings from segment
-      this.fetchSettings(),
-      // save the current installed version
-      this.checkInstalledVersion(),
-      // check if the app was opened from a deep link
-      this.trackDeepLinks(),
-    ]);
+      // It's important to run this before checkInstalledVersion and trackDeeplinks to give time for destination plugins
+      // which make use of the settings object to initialize
+      await this.fetchSettings();
 
-    this.onReady();
-    this.isReady.value = true;
+      await allSettled([
+        // save the current installed version
+        this.checkInstalledVersion(),
+        // check if the app was opened from a deep link
+        this.trackDeepLinks(),
+      ]);
 
-    // flush any stored events
-    this.flushPolicyExecuter.manualFlush();
+      this.onReady();
+      this.isReady.value = true;
+
+      // flush any stored events
+      this.flushPolicyExecuter.manualFlush();
+    } catch (error) {
+      this.reportInternalError(
+        new SegmentError(
+          ErrorType.InitializationError,
+          'Client did not initialize correctly',
+          error
+        )
+      );
+    }
   }
 
   private generateFiltersMap(rules: Rule[]): DestinationFilters {
@@ -279,13 +295,15 @@ export class SegmentClient {
   }
 
   async fetchSettings() {
-    const settingsEndpoint = `${settingsCDN}/${this.config.writeKey}/settings`;
+    const settingsPrefix: string = this.config.cdnProxy ?? settingsCDN;
+    const settingsEndpoint = `${settingsPrefix}/${this.config.writeKey}/settings`;
 
     try {
       const res = await fetch(settingsEndpoint);
       checkResponseForErrors(res);
 
-      const resJson: SegmentAPISettings = await res.json();
+      const resJson: SegmentAPISettings =
+        (await res.json()) as SegmentAPISettings;
       const integrations = resJson.integrations;
       const filters = this.generateFiltersMap(
         resJson.middlewareSettings?.routingRules ?? []
@@ -366,7 +384,7 @@ export class SegmentClient {
     // can be cached and added later during the next state update
     // this is to avoid adding plugins before network requests made as part of setup have resolved
     if (settings !== undefined && plugin.type === PluginType.destination) {
-      this.store.settings.add(
+      void this.store.settings.add(
         (plugin as unknown as DestinationPlugin).key,
         settings
       );
@@ -395,7 +413,8 @@ export class SegmentClient {
   }
 
   async process(incomingEvent: SegmentEvent) {
-    const event = applyRawEventData(incomingEvent);
+    const event = await this.applyRawEventData(incomingEvent);
+
     if (this.isReady.value) {
       this.flushPolicyExecuter.notify(event);
       return this.timeline.process(event);
@@ -425,7 +444,7 @@ export class SegmentClient {
         },
       });
 
-      this.process(event);
+      void this.process(event);
       this.logger.info('TRACK (Deep Link Opened) event saved', event);
     }
   }
@@ -454,25 +473,38 @@ export class SegmentClient {
 
     // Send all events in the queue
     for (const e of this.pendingEvents) {
-      this.timeline.process(e);
+      void this.timeline.process(e);
     }
     this.pendingEvents = [];
   }
 
   async flush(): Promise<void> {
-    if (this.destroyed) {
-      return;
+    try {
+      if (this.destroyed) {
+        return;
+      }
+
+      this.flushPolicyExecuter.reset();
+
+      const promises: (void | Promise<void>)[] = [];
+      getPluginsWithFlush(this.timeline).forEach((plugin) => {
+        promises.push(plugin.flush());
+      });
+
+      const results = await allSettled(promises);
+      for (const r of results) {
+        if (r.status === 'rejected') {
+          this.reportInternalError(
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            new SegmentError(ErrorType.FlushError, `Flush failed: ${r.reason}`)
+          );
+        }
+      }
+    } catch (error) {
+      this.reportInternalError(
+        new SegmentError(ErrorType.FlushError, 'Flush failed', error)
+      );
     }
-
-    this.flushPolicyExecuter.reset();
-
-    const promises: (void | Promise<void>)[] = [];
-    getPluginsWithFlush(this.timeline).forEach((plugin) => {
-      promises.push(plugin.flush());
-    });
-
-    await allSettled(promises);
-    return;
   }
 
   async screen(name: string, options?: JsonMap) {
@@ -549,7 +581,7 @@ export class SegmentClient {
     // Only overwrite the previous context values to preserve any values that are added by enrichment plugins like IDFA
     await this.store.context.set(deepmerge(previousContext ?? {}, context));
 
-    if (!this.config.trackAppLifecycleEvents) {
+    if (this.config.trackAppLifecycleEvents !== true) {
       return;
     }
 
@@ -561,7 +593,7 @@ export class SegmentClient {
           build: context.app.build,
         },
       });
-      this.process(event);
+      void this.process(event);
       this.logger.info('TRACK (Application Installed) event saved', event);
     } else if (context.app.version !== previousContext.app.version) {
       const event = createTrackEvent({
@@ -573,7 +605,7 @@ export class SegmentClient {
           previous_build: previousContext.app.build,
         },
       });
-      this.process(event);
+      void this.process(event);
       this.logger.info('TRACK (Application Updated) event saved', event);
     }
 
@@ -585,7 +617,7 @@ export class SegmentClient {
         build: context.app.build,
       },
     });
-    this.process(event);
+    void this.process(event);
     this.logger.info('TRACK (Application Opened) event saved', event);
   }
 
@@ -601,7 +633,7 @@ export class SegmentClient {
    * @param nextAppState 'active', 'inactive', 'background' or 'unknown'
    */
   private handleAppStateChange(nextAppState: AppStateStatus) {
-    if (this.config.trackAppLifecycleEvents) {
+    if (this.config.trackAppLifecycleEvents === true) {
       if (
         ['inactive', 'background'].includes(this.appState) &&
         nextAppState === 'active'
@@ -615,7 +647,7 @@ export class SegmentClient {
             build: context?.app?.build,
           },
         });
-        this.process(event);
+        void this.process(event);
         this.logger.info('TRACK (Application Opened) event saved', event);
       } else if (
         this.appState === 'active' &&
@@ -624,7 +656,7 @@ export class SegmentClient {
         const event = createTrackEvent({
           event: 'Application Backgrounded',
         });
-        this.process(event);
+        void this.process(event);
         this.logger.info('TRACK (Application Backgrounded) event saved', event);
       }
     }
@@ -632,21 +664,27 @@ export class SegmentClient {
     this.appState = nextAppState;
   }
 
-  reset(resetAnonymousId: boolean = true) {
-    const anonymousId =
-      resetAnonymousId === true
-        ? getUUID()
-        : this.store.userInfo.get().anonymousId;
+  async reset(resetAnonymousId = true) {
+    try {
+      const { anonymousId: currentId } = await this.store.userInfo.get(true);
+      const anonymousId = resetAnonymousId === true ? getUUID() : currentId;
 
-    this.store.userInfo.set({
-      anonymousId,
-      userId: undefined,
-      traits: undefined,
-    });
+      await this.store.userInfo.set({
+        anonymousId,
+        userId: undefined,
+        traits: undefined,
+      });
 
-    getPluginsWithReset(this.timeline).forEach((plugin) => plugin.reset());
+      await allSettled(
+        getPluginsWithReset(this.timeline).map((plugin) => plugin.reset())
+      );
 
-    this.logger.info('Client has been reset');
+      this.logger.info('Client has been reset');
+    } catch (error) {
+      this.reportInternalError(
+        new SegmentError(ErrorType.ResetError, 'Error during reset', error)
+      );
+    }
   }
 
   /**
@@ -666,29 +704,35 @@ export class SegmentClient {
    * trigger flush
    */
   private setupFlushPolicies() {
-    let flushPolicies = this.config.flushPolicies ?? [];
+    const flushPolicies = [];
 
-    // Compatibility with older arguments
-    if (
-      this.config.flushAt !== undefined &&
-      this.config.flushAt !== null &&
-      this.config.flushAt > 0
-    ) {
-      flushPolicies.push(new CountFlushPolicy(this.config.flushAt));
-    }
+    // If there are zero policies or flushAt/flushInterval use the defaults:
+    if (this.config.flushPolicies !== undefined) {
+      flushPolicies.push(...this.config.flushPolicies);
+    } else {
+      if (
+        this.config.flushAt === undefined ||
+        (this.config.flushAt !== null && this.config.flushAt > 0)
+      ) {
+        flushPolicies.push(
+          new CountFlushPolicy(this.config.flushAt ?? defaultFlushAt)
+        );
+      }
 
-    if (
-      this.config.flushInterval !== undefined &&
-      this.config.flushInterval !== null &&
-      this.config.flushInterval > 0
-    ) {
-      flushPolicies.push(
-        new TimerFlushPolicy(this.config.flushInterval * 1000)
-      );
+      if (
+        this.config.flushInterval === undefined ||
+        (this.config.flushInterval !== null && this.config.flushInterval > 0)
+      ) {
+        flushPolicies.push(
+          new TimerFlushPolicy(
+            (this.config.flushInterval ?? defaultFlushInterval) * 1000
+          )
+        );
+      }
     }
 
     this.flushPolicyExecuter = new FlushPolicyExecuter(flushPolicies, () => {
-      this.flush();
+      void this.flush();
     });
   }
 
@@ -721,7 +765,7 @@ export class SegmentClient {
     return this.flushPolicyExecuter.policies;
   }
 
-  reportInternalError(error: SegmentError, fatal: boolean = false) {
+  reportInternalError(error: SegmentError, fatal = false) {
     if (fatal) {
       this.logger.error('A critical error ocurred: ', error);
     } else {
@@ -729,4 +773,87 @@ export class SegmentClient {
     }
     this.config.errorHandler?.(error);
   }
+
+  /**
+   * Injects context and userInfo data into the event, sets the messageId and timestamp
+   * This is handled outside of the timeline to prevent concurrency issues between plugins
+   * @param event Segment Event
+   * @returns event with data injected
+   */
+  private applyRawEventData = async (
+    event: SegmentEvent
+  ): Promise<SegmentEvent> => {
+    const userInfo = await this.processUserInfo(event);
+    const context = await this.context.get(true);
+
+    return {
+      ...event,
+      ...userInfo,
+      context: {
+        ...event.context,
+        ...context,
+      },
+      messageId: getUUID(),
+      timestamp: new Date().toISOString(),
+      integrations: event.integrations ?? {},
+    } as SegmentEvent;
+  };
+
+  /**
+   * Processes the userInfo to add to an event.
+   * For Identify and Alias: it saves the new userId and traits into the storage
+   * For all: set the userId and anonymousId from the current values
+   * @param event segment event
+   * @returns userInfo to inject to an event
+   */
+  private processUserInfo = async (
+    event: SegmentEvent
+  ): Promise<Partial<SegmentEvent>> => {
+    // Order here is IMPORTANT!
+    // Identify and Alias userInfo set operations have to come as soon as possible
+    // Do not block the set by doing a safe get first as it might cause a race condition
+    // within events procesing in the timeline asyncronously
+    if (event.type === EventType.IdentifyEvent) {
+      const userInfo = await this.userInfo.set((state) => ({
+        ...state,
+        userId: event.userId ?? state.userId,
+        traits: {
+          ...state.traits,
+          ...event.traits,
+        },
+      }));
+
+      return {
+        anonymousId: userInfo.anonymousId,
+        userId: event.userId ?? userInfo.userId,
+        traits: {
+          ...userInfo.traits,
+          ...event.traits,
+        },
+      };
+    } else if (event.type === EventType.AliasEvent) {
+      let previousUserId: string;
+
+      const userInfo = await this.userInfo.set((state) => {
+        previousUserId = state.userId ?? state.anonymousId;
+
+        return {
+          ...state,
+          userId: event.userId,
+        };
+      });
+
+      return {
+        anonymousId: userInfo.anonymousId,
+        userId: event.userId,
+        previousId: previousUserId!,
+      };
+    }
+
+    const userInfo = await this.userInfo.get(true);
+    return {
+      anonymousId: userInfo.anonymousId,
+      userId: userInfo.userId,
+    };
+  };
 }

@@ -107,15 +107,12 @@ describe('Sovran', () => {
         id: i.toString(),
         description: `test ${i}`,
       };
-      sovran.dispatch((state) => {
+      await sovran.dispatch((state) => {
         return {
           events: [...state.events, sampleEvent],
         };
       });
     }
-
-    // Wait for all promises to resolve
-    await new Promise(process.nextTick);
 
     expect(sovran.getState().events.length).toEqual(n);
   });
@@ -266,7 +263,7 @@ describe('Sovran', () => {
       };
     };
 
-    const getAwaitableSovranConstructor = async <T>(
+    const getAwaitableSovranConstructor = async <T extends object>(
       initialState: T,
       config: StoreConfig
     ): Promise<Store<T>> => {

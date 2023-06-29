@@ -1,6 +1,6 @@
 {
   "name": "@segment/sovran-react-native",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "description": "A cross-platform state management system",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -100,7 +100,7 @@
   "dependencies": {
     "ansi-regex": "5.0.1",
     "deepmerge": "^4.2.2",
-    "shell-quote": "1.7.3"
+    "shell-quote": "1.8.0"
   },
   "resolutions": {
     "shell-quote": "1.7.3",

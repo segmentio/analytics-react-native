@@ -1,3 +1,34 @@
+## [@segment/analytics-react-native-v2.15.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.14.0...@segment/analytics-react-native-v2.15.0) (2023-06-02)
+
+
+### Features
+
+* add config option for cdn proxy ([#834](https://github.com/segmentio/analytics-react-native/issues/834)) ([95562ed](https://github.com/segmentio/analytics-react-native/commit/95562ed7d009b0debe7f7bc19eb3b114d9e77763))
+
+
+### Bug Fixes
+
+* fix flush policies reference copy, add BackgroundPolicy ([#838](https://github.com/segmentio/analytics-react-native/issues/838)) ([e4b558a](https://github.com/segmentio/analytics-react-native/commit/e4b558a95e250b1b21d677e08ffeb02a4015bda6))
+* queue storage fixes ([#836](https://github.com/segmentio/analytics-react-native/issues/836)) ([f5a6a86](https://github.com/segmentio/analytics-react-native/commit/f5a6a86817c72ae16caa760d168c01d8eff6d0fb))
+* removes Inject plugins ([#837](https://github.com/segmentio/analytics-react-native/issues/837)) ([ce56c9e](https://github.com/segmentio/analytics-react-native/commit/ce56c9eceb6f880759de0e33f275fe7eab769d71))
+* update braze example and readme ([#830](https://github.com/segmentio/analytics-react-native/issues/830)) ([b6a319a](https://github.com/segmentio/analytics-react-native/commit/b6a319aab9e3fe70dc125a99132ccb77abe4c391))
+
+## [@segment/analytics-react-native-v2.14.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.13.5...@segment/analytics-react-native-v2.14.0) (2023-05-04)
+
+
+### Features
+
+* add native anonymousId functionality ([#822](https://github.com/segmentio/analytics-react-native/issues/822)) ([c34d34f](https://github.com/segmentio/analytics-react-native/commit/c34d34fea8158453e3a43699b821bc49e3bd7816))
+
+## [@segment/analytics-react-native-v2.13.5](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.13.4...@segment/analytics-react-native-v2.13.5) (2023-04-18)
+
+
+### Bug Fixes
+
+* bump kotlin version in advertisingId plugin ([#799](https://github.com/segmentio/analytics-react-native/issues/799)) ([12241e9](https://github.com/segmentio/analytics-react-native/commit/12241e9bcbdd86a73bb9ca589c8e6e88f49a48c4))
+* stricter linting, improved handling of plugin errrors ([#795](https://github.com/segmentio/analytics-react-native/issues/795)) ([1ddb4d5](https://github.com/segmentio/analytics-react-native/commit/1ddb4d571df794bc7eaa5c5302ed27b90faf9a73)), closes [#799](https://github.com/segmentio/analytics-react-native/issues/799) [#803](https://github.com/segmentio/analytics-react-native/issues/803) [#802](https://github.com/segmentio/analytics-react-native/issues/802)
+* update braze logPurchase functionality ([#812](https://github.com/segmentio/analytics-react-native/issues/812)) ([09f1222](https://github.com/segmentio/analytics-react-native/commit/09f12223c110e6121a3b8cec765158a791773827))
+
 ## [@segment/analytics-react-native-v2.13.4](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.13.3...@segment/analytics-react-native-v2.13.4) (2023-03-15)
 
 

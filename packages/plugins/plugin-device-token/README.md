@@ -21,8 +21,7 @@ yarn add @segment/analytics-react-native-plugin-device-token
 
 Run `pod install` after the installation to autolink the Firebase SDK.
 
-> warning ""
-> Refer to Apple's [Push Notification Services](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/sending_notification_requests_to_apns) and [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) for additional setup requirements. 
+⚠️ Refer to Apple's [Push Notification Services](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/sending_notification_requests_to_apns) and [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) for additional setup requirements. ⚠️ 
 
 ## Usage 
 
@@ -34,8 +33,7 @@ In your code where you initialize the analytics client call the `.add(plugin)` m
 
 ```ts
 import { createClient } from '@segment/analytics-react-native';
-
-import { FirebasePlugin } from '@segment/analytics-react-native-plugin-device-token';
+import { DeviceTokenPlugin } from '@segment/analytics-react-native-plugin-device-token';
 
 const segmentClient = createClient({
   writeKey: 'SEGMENT_KEY'
@@ -50,7 +48,7 @@ segmentClient.add({ plugin: new DeviceTokenPlugin() });
 
 ```ts
 import messaging from '@react-native-firebase/messaging';
-import { DeviceTokenPlugin } from '@segment/analytics-react-native-plugin-device-token'
+import { DeviceTokenPlugin } from '@segment/analytics-react-native-plugin-device-token';
 
 const deviceTokenPlugin = new DeviceTokenPlugin()
 
@@ -61,7 +59,7 @@ async handlePermission() {
     let permissionStatus = await messaging.requestPermission()
 
     if (permissionStatus) {
-        deviceTokenPlugin.updatePermission()
+        deviceTokenPlugin.updatePermissionStatus()
     }
 }
 ```

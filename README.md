@@ -18,6 +18,7 @@ The hassle-free way to add Segment analytics to your React-Native app.
     - [Setting up the client](#setting-up-the-client)
     - [Client Options](#client-options)
     - [iOS Deep Link Tracking Setup](#ios-deep-link-tracking-setup)
+    - [Native AnonymousId](#native-anonymousid)
     - [Usage with hooks](#usage-with-hooks)
     - [useAnalytics()](#useanalytics)
     - [Usage without hooks](#usage-without-hooks)
@@ -66,7 +67,7 @@ yarn add @react-native-async-storage/async-storage
 npm install --save @react-native-async-storage/async-storage
 ```
 
-*Note: If you wish to use your own persistence layer you can use the `storePersistor` option when initializing the client. Read more [Client Options](#client-options)*
+*Note: If you wish to use your own persistence layer you can use the `storePersistor` option when initializing the client. Make sure you always have a persistor (either by having AsyncStorage package installed or by explicitly passing a value), else you might get unexpected sideeffects like multiple 'Application Installed' events. Read more [Client Options](#client-options)*
 
 For iOS, install native modules with:
 
@@ -123,7 +124,7 @@ You must pass at least the `writeKey`. Additional configuration options are list
 | `logger`                   | undefined | Custom logger instance to expose internal Segment client logging.                                                                            |
 | `flushAt`                  | 20        | How many events to accumulate before sending events to the backend.                                                                            |
 | `flushInterval`            | 30        | In seconds, how often to send events to the backend.                                                                                           |
-| `flushPolicies`            | undefined | Add more granular control for when to flush, see [Adding or removing policies](#adding-or-removing-policies)                                   |
+| `flushPolicies`            | undefined | Add more granular control for when to flush, see [Adding or removing policies](#adding-or-removing-policies). **Mutually exclusive with flushAt/flushInterval**                                   |
 | `maxBatchSize`             | 1000      | How many events to send to the API at once                                                                                                     |
 | `trackAppLifecycleEvents`  | false     | Enable automatic tracking for [app lifecycle events](https://segment.com/docs/connections/spec/mobile/#lifecycle-events): application installed, opened, updated, backgrounded) |
 | `trackDeepLinks`           | false     | Enable automatic tracking for when the user opens the app via a deep link (Note: Requires additional setup on iOS, [see instructions](#ios-deep-link-tracking-setup))                                                            |
@@ -132,6 +133,7 @@ You must pass at least the `writeKey`. Additional configuration options are list
 | `storePersistor`           | undefined | A custom persistor for the store that `analytics-react-native` leverages. Must match [`Persistor`](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran/src/persistor/persistor.ts#L1-L18) interface exported from [sovran-react-native](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran).|
 | `proxy`                    | undefined | `proxy` is a batch url to post to instead of 'https://api.segment.io/v1/b'.                                                                    |
 | `errorHandler`             | undefined | Create custom actions when errors happen, see [Handling errors](#handling-errors)                                                              |
+| `cdnProxy`                 | undefined | Sets an alternative CDN host for settings retrieval                                                            |
 
 
 \* The default value of `debug` will be false in production.
@@ -154,6 +156,56 @@ To track deep links in iOS you must add the following to your `AppDelegate.m` fi
   return YES;
 }
 ```
+### Native AnonymousId 
+
+If you need to generate an `anonymousId` either natively or before the Analytics React Native package is initialized, you can send the anonymousId value from native code. The value has to be generated and stored by the caller. For reference, you can find a working example in the app and reference the code below: 
+
+**iOS**
+```objc
+...
+#import <segment_analytics_react_native-Swift.h>
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+  ...
+  // generate your anonymousId value
+  // dispatch it across the bridge
+
+  [AnalyticsReactNative setAnonymousId: @"My-New-Native-Id"];
+  return yes
+}
+```
+**Android**
+```java
+// MainApplication.java
+...
+import com.segmentanalyticsreactnative.AnalyticsReactNativePackage;
+
+...
+private AnalyticsReactNativePackage analytics = new AnalyticsReactNativePackage();
+
+...
+   @Override
+    protected List<ReactPackage> getPackages() {
+      @SuppressWarnings("UnnecessaryLocalVariable")
+      List<ReactPackage> packages = new PackageList(this).getPackages();
+      // AnalyticsReactNative will be autolinked by default, but to send the anonymousId before RN startup you need to manually link it to store a reference to the package
+      packages.add(analytics);
+      return packages;
+    }
+...
+  @Override
+  public void onCreate() {
+    super.onCreate();
+    ...
+
+  // generate your anonymousId value
+  // dispatch it across the bridge
+
+  analytics.setAnonymousId("My-New-Native-Id");
+  }
+```
+
 ### Usage with hooks
 
 In order to use the `useAnalytics` hook within the application, we will additionally need to wrap the application in
@@ -549,7 +601,7 @@ Refer to the following table for Plugins you can use to meet your tracking needs
   
 ## Controlling Upload With Flush Policies
 
-To more granurily control when events are uploaded you can use `FlushPolicies`
+To more granurily control when events are uploaded you can use `FlushPolicies`. **This will override any setting on `flushAt` and `flushInterval`, but you can use `CountFlushPolicy` and `TimerFlushPolicy` to have the same behaviour respectively.**
 
 A Flush Policy defines the strategy for deciding when to flush, this can be on an interval, on a certain time of day, after receiving a certain number of events or even after receiving a particular event. This gives you even more flexibility on when to send event to Segment.
 
@@ -574,6 +626,7 @@ We have several standard FlushPolicies:
 - `CountFlushPolicy` triggers whenever a certain number of events is reached
 - `TimerFlushPolicy` triggers on an interval of milliseconds
 - `StartupFlushPolicy` triggers on client startup only
+- `BackgroundFlushPolicy` triggers when the app goes into the background/inactive.
 
 ## Adding or removing policies
 

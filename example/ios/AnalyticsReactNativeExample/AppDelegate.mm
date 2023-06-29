@@ -9,9 +9,9 @@
 // #import <CleverTap-iOS-SDK/CleverTap.h>
 // #import <clevertap-react-native/CleverTapReactManager.h>
 
-//#import "BrazeReactUtils.h"
-//#import "BrazeReactBridge.h"
-//#import <BrazeKit/BrazeKit-Swift.h>
+// #import "BrazeReactUtils.h"
+// #import "BrazeReactBridge.h"
+// #import <BrazeKit/BrazeKit-Swift.h>
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/CoreModulesPlugins.h>
@@ -36,15 +36,21 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 @implementation AppDelegate
 
 //enable for Braze Plugin
-//static NSString *const apiKey = @"<YOUR API KEY>";
-//static NSString *const endpoint = @"<YOUR ENDPOINT>";
+static NSString *const apiKey = @"<BRAZE_API_KEY";
+static NSString *const endpoint = @"BRAZE_ENDPOINT";
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   
 // enable for Braze Plugin
-//  id<RCTBridgeDelegate> moduleInitializer = [[BrazeReactBridge alloc] init];
+//  NSURL *jsCodeLocation =
+//      [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
+//  RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
+//                                                      moduleName:@"AnalyticsReactNativeExample"
+//                                               initialProperties:nil
+//                                                   launchOptions:launchOptions];
+  
   RCTAppSetupPrepareApp(application);
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   
@@ -64,8 +70,6 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
   } else {
     rootView.backgroundColor = [UIColor whiteColor];
   }
-
-  
   
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
@@ -81,13 +85,14 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
   
 //  enable for braze plugin
 //  BRZConfiguration *configuration = [[BRZConfiguration alloc] initWithApiKey:apiKey
-//                                                                    endpoint:endpoint];
+//                                                                  endpoint:endpoint];
   // - Enable logging and customize the configuration here
-//  configuration.logger.level = BRZLoggerLevelInfo;
+// configuration.logger.level = BRZLoggerLevelInfo;
 //  Braze *braze = [BrazeReactBridge initBraze:configuration];
 //  AppDelegate.braze = braze;
 
-  
+// Enable for native anonymousId generation 
+// [AnalyticsReactNative setAnonymousId: @"My-New-Native-Id"];
   return YES;
 }
 
@@ -96,7 +101,7 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
             openURL: (NSURL *)url
             options:(nonnull NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
   
-  [AnalyticsReactNative trackDeepLink:url withOptions:options];
+//  [AnalyticsReactNative trackDeepLink:url withOptions:options];
   return YES;
 }
 /// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.
@@ -159,15 +164,15 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 // enable for Braze Plugin
 
 //#pragma mark - AppDelegate.braze
-//
-//static Braze *_braze = nil;
-//
-//+ (Braze *)braze {
+
+// static Braze *_braze = nil;
+
+// + (Braze *)braze {
 //  return _braze;
-//}
-//
-//+ (void)setBraze:(Braze *)braze {
-//  _braze = braze;
+// }
+
+// + (void)setBraze:(Braze *)braze {
+// _braze = braze;
 //}
 
 @end

@@ -133,4 +133,10 @@ public class AnalyticsReactNative: NSObject {
         Sovran.dispatch(action: "add-deepLink-data", payload: [ "referring_application": referringApp, "url":urlString])
     }
 
+    @objc(setAnonymousId:)
+    public static func setAnonymousId(anonymousId: String) -> Void {
+
+        Sovran.dispatch(action: "add-anonymous-id", payload: ["anonymousId": anonymousId])
+    }
+
 }

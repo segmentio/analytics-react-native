@@ -16,6 +16,7 @@ describe('#alias', () => {
     config: {
       writeKey: '123-456',
       trackApplicationLifecycleEvents: true,
+      flushInterval: 0,
     },
     store,
   };
@@ -27,7 +28,7 @@ describe('#alias', () => {
     plugin.analytics = new SegmentClient(clientArgs);
   });
 
-  it('calls the alias method', () => {
+  it('calls the alias method', async () => {
     const payload = {
       type: 'alias',
       userId: '123',
@@ -35,7 +36,7 @@ describe('#alias', () => {
     const mixpanel = new Mixpanel('123');
     const analytics = plugin.analytics!;
 
-    alias(payload, mixpanel, analytics);
+    await alias(payload, mixpanel, analytics);
 
     expect(mixpanel.getDistinctId).toBeCalled();
     // need to fix this one

@@ -3,29 +3,29 @@ import {
   IdentifyEventType,
   PluginType,
   ScreenEventType,
+  SegmentError,
+  ErrorType,
   TrackEventType,
 } from '@segment/analytics-react-native';
 import screen from './methods/screen';
 import track from './methods/track';
 import reset from './methods/reset';
 import firebaseAnalytics from '@react-native-firebase/analytics';
-
 export class FirebasePlugin extends DestinationPlugin {
   type = PluginType.destination;
   key = 'Firebase';
 
   async identify(event: IdentifyEventType) {
     if (event.userId !== undefined) {
-      await firebaseAnalytics().setUserId(event.userId!);
+      await firebaseAnalytics().setUserId(event.userId);
     }
     if (event.traits) {
-      let eventTraits = event.traits;
-      let safeTraits: Record<string, string>;
+      const eventTraits = event.traits;
 
       const checkType = (value: unknown) => {
         return typeof value === 'object' && !Array.isArray(value);
       };
-      safeTraits = Object.keys(eventTraits).reduce(
+      const safeTraits = Object.keys(eventTraits).reduce(
         (acc: Record<string, string>, trait) => {
           if (checkType(eventTraits[trait])) {
             this.analytics?.logger.warn(
@@ -35,7 +35,10 @@ export class FirebasePlugin extends DestinationPlugin {
             return acc;
           }
           if (trait !== undefined) {
-            acc[trait] = eventTraits[trait]!.toString();
+            acc[trait] =
+              typeof eventTraits[trait] === 'undefined'
+                ? ''
+                : eventTraits[trait]!.toString();
           }
           return acc;
         },
@@ -47,17 +50,47 @@ export class FirebasePlugin extends DestinationPlugin {
     return event;
   }
 
-  track(event: TrackEventType) {
-    track(event);
+  async track(event: TrackEventType) {
+    try {
+      await track(event);
+    } catch (error) {
+      this.analytics?.reportInternalError(
+        new SegmentError(
+          ErrorType.PluginError,
+          'Error on Firebase Track',
+          error
+        )
+      );
+    }
     return event;
   }
 
-  screen(event: ScreenEventType) {
-    screen(event);
+  async screen(event: ScreenEventType) {
+    try {
+      await screen(event);
+    } catch (error) {
+      this.analytics?.reportInternalError(
+        new SegmentError(
+          ErrorType.PluginError,
+          'Error on Firebase Track',
+          error
+        )
+      );
+    }
     return event;
   }
 
-  reset() {
-    reset();
+  async reset() {
+    try {
+      await reset();
+    } catch (error) {
+      this.analytics?.reportInternalError(
+        new SegmentError(
+          ErrorType.PluginError,
+          'Error on Firebase Track',
+          error
+        )
+      );
+    }
   }
 }

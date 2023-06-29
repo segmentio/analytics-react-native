@@ -62,7 +62,7 @@ export class Timeline {
     let result: SegmentEvent | undefined = incomingEvent;
 
     for (const key of PLUGIN_ORDER) {
-      let pluginResult: SegmentEvent | undefined = await this.applyPlugins({
+      const pluginResult: SegmentEvent | undefined = await this.applyPlugins({
         type: key,
         event: result!,
       });
@@ -100,6 +100,8 @@ export class Timeline {
               if (result === undefined) {
                 break;
               }
+            } else {
+              await pluginResult;
             }
           } catch (error) {
             plugin.analytics?.reportInternalError(

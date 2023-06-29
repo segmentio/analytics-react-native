@@ -20,6 +20,7 @@ describe('internal #getSettings', () => {
     config: {
       writeKey: '123-456',
       defaultSettings: defaultIntegrationSettings,
+      flushInterval: 0,
     },
     logger: getMockLogger(),
     store: store,
@@ -43,6 +44,7 @@ describe('internal #getSettings', () => {
       ok: true,
       json: () => mockJSONResponse,
     });
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     global.fetch = jest.fn(() => Promise.resolve(mockResponse));
 
@@ -58,6 +60,7 @@ describe('internal #getSettings', () => {
   });
 
   it('fails to the settings succesfully and uses the default if specified', async () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     global.fetch = jest.fn(() => Promise.reject());
 
@@ -79,6 +82,7 @@ describe('internal #getSettings', () => {
   });
 
   it('fails to the settings succesfully and has no default settings', async () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     global.fetch = jest.fn(() => Promise.reject());
     const anotherClient = new SegmentClient({
@@ -99,6 +103,7 @@ describe('internal #getSettings', () => {
       ok: false,
       status: 500,
     });
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     global.fetch = jest.fn(() => Promise.resolve(mockResponse));
     const anotherClient = new SegmentClient({

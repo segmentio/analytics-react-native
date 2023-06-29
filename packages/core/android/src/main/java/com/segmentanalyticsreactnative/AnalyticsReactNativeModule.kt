@@ -31,6 +31,8 @@ enum class ConnectionType {
 @ReactModule(name="AnalyticsReactNative")
 class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventListener, LifecycleEventListener {
 
+  var onInitialized: () -> Unit = {};
+
   constructor(reactContext: ReactApplicationContext) : super(reactContext) {
     this.pInfo = reactContext.packageManager.getPackageInfo(reactContext.packageName, 0)
     // Listen for new intents when app is in the background
@@ -38,6 +40,11 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
     // Listen for resume events when it is cold started, or in the background
     reactContext.addLifecycleEventListener(this)
   }
+
+   override fun initialize() {
+    super.initialize()
+    onInitialized()
+   }
 
   private var isColdLaunch = true
   private val pInfo: PackageInfo
@@ -133,12 +140,12 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
     val screenDensity = Resources.getSystem().displayMetrics.density;
 
     val contextInfo: WritableMap = Arguments.createMap()
-    
-    
+
+
     if (config.hasKey("collectDeviceId") && config.getBoolean("collectDeviceId")) {
       val fallbackDeviceId = UUID.randomUUID().toString()
       val deviceId = getUniqueId(config.hasKey("collectDeviceId") && config.getBoolean("collectDeviceId"))?: fallbackDeviceId
-      
+
       contextInfo.putString("deviceId", deviceId)
     }
 
@@ -216,6 +223,20 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
       ?.currentReactContext
       ?.getNativeModule(SovranModule::class.java)
     sovran?.dispatch("add-deepLink-data", properties)
+
+    
+  }
+
+  fun setAnonymousId(anonymousId: String) {
+    val properties = Hashtable<String, String>()
+    properties["anonymousId"] = anonymousId
+
+    val currentContext = getReactApplicationContext()
+
+    if (currentContext != null) {
+      val sovran = currentContext.getNativeModule(SovranModule::class.java)
+      sovran?.dispatch("add-anonymous-id", properties)
+    }
   }
 
   override fun onActivityResult(activity: Activity?, requestCode: Int, resultCode: Int, data: Intent?) {

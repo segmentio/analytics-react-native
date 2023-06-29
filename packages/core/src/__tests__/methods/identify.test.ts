@@ -110,10 +110,10 @@ describe('methods #identify', () => {
     });
   });
 
-  it('is concurrency safe', async () => {
+  it('adds userInfo to next events, concurrency safe', async () => {
     // We trigger an identify and do not await it, we do a track immediately and await.
     // The track call should have the correct values injected into it.
-    client.identify('new-user-id');
+    void client.identify('new-user-id');
     await client.track('something');
 
     const expectedTrackEvent: Partial<SegmentEvent> = {

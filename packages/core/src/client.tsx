@@ -29,7 +29,10 @@ export const createClient = (config: Config) => {
     store: segmentStore,
   });
 
-  client.init();
+  // We don't await the client to be initialized to let the user start attaching plugins and queueing events
+  // The client will handle initialization in the background and send events when it is ready
+  // To subscribe to the client being fully initialized use client.isReady.onChange()
+  void client.init();
 
   return client;
 };
@@ -41,7 +44,7 @@ export const AnalyticsProvider = ({
   children,
 }: {
   client?: SegmentClient;
-  children?: any;
+  children?: React.ReactNode;
 }) => {
   if (!client) {
     return null;

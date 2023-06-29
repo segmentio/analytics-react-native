@@ -6,8 +6,6 @@ export const settingsCDN = 'https://cdn-settings.segment.com/v1/projects';
 
 export const defaultConfig: Config = {
   writeKey: '',
-  flushAt: 20,
-  flushInterval: 30,
   maxBatchSize: 1000,
   trackDeepLinks: false,
   trackAppLifecycleEvents: false,
@@ -15,3 +13,6 @@ export const defaultConfig: Config = {
 };
 
 export const workspaceDestinationFilterKey = '';
+
+export const defaultFlushAt = 20;
+export const defaultFlushInterval = 30;

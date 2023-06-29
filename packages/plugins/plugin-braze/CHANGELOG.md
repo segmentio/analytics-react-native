@@ -1,3 +1,27 @@
+## [@segment/analytics-react-native-plugin-braze-v0.5.4](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-braze-v0.5.3...@segment/analytics-react-native-plugin-braze-v0.5.4) (2023-06-02)
+
+
+### Bug Fixes
+
+* move braze to peer deps ([#845](https://github.com/segmentio/analytics-react-native/issues/845)) ([f3640e3](https://github.com/segmentio/analytics-react-native/commit/f3640e3a97c4d0b14402995ca993866689127a77))
+* update braze example and readme ([#830](https://github.com/segmentio/analytics-react-native/issues/830)) ([b6a319a](https://github.com/segmentio/analytics-react-native/commit/b6a319aab9e3fe70dc125a99132ccb77abe4c391))
+
+## [@segment/analytics-react-native-plugin-braze-v0.5.3](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-braze-v0.5.2...@segment/analytics-react-native-plugin-braze-v0.5.3) (2023-04-27)
+
+
+### Bug Fixes
+
+* move unknownToString import ([#818](https://github.com/segmentio/analytics-react-native/issues/818)) ([939d280](https://github.com/segmentio/analytics-react-native/commit/939d2805fd6fd46e611ed7b1d84659165cc7bf91))
+
+## [@segment/analytics-react-native-plugin-braze-v0.5.2](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-braze-v0.5.1...@segment/analytics-react-native-plugin-braze-v0.5.2) (2023-04-18)
+
+
+### Bug Fixes
+
+* fix product Id to match ecommerce spec ([#803](https://github.com/segmentio/analytics-react-native/issues/803)) ([524257d](https://github.com/segmentio/analytics-react-native/commit/524257d3786bf9d67be9b3dea791ed0ba3fb0334))
+* stricter linting, improved handling of plugin errrors ([#795](https://github.com/segmentio/analytics-react-native/issues/795)) ([1ddb4d5](https://github.com/segmentio/analytics-react-native/commit/1ddb4d571df794bc7eaa5c5302ed27b90faf9a73)), closes [#799](https://github.com/segmentio/analytics-react-native/issues/799) [#803](https://github.com/segmentio/analytics-react-native/issues/803) [#802](https://github.com/segmentio/analytics-react-native/issues/802)
+* update braze logPurchase functionality ([#812](https://github.com/segmentio/analytics-react-native/issues/812)) ([09f1222](https://github.com/segmentio/analytics-react-native/commit/09f12223c110e6121a3b8cec765158a791773827))
+
 ## [@segment/analytics-react-native-plugin-braze-v0.5.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-braze-v0.5.0...@segment/analytics-react-native-plugin-braze-v0.5.1) (2023-03-14)
 
 

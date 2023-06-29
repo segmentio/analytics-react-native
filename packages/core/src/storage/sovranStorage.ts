@@ -17,6 +17,7 @@ import type {
 } from '..';
 import { getUUID } from '../uuid';
 import { createGetter } from './helpers';
+import { isObject, isString } from '../util';
 import type {
   Storage,
   StorageConfig,
@@ -67,11 +68,15 @@ const deepLinkStore = createStore<DeepLinkData>({
  * Action to set the referring app and link url
  * @param deepLinkData referring app and link url
  */
-const addDeepLinkData = (deepLinkData: DeepLinkData) => () => {
+const addDeepLinkData = (deepLinkData: unknown) => (state: DeepLinkData) => {
+  if (!isObject(deepLinkData)) {
+    return state;
+  }
+
   return {
     referring_application: deepLinkData.referring_application,
     url: deepLinkData.url,
-  };
+  } as DeepLinkData;
 };
 
 /**
@@ -84,8 +89,30 @@ registerBridgeStore({
   },
 });
 
+/**
+ * Action to set the anonymousId from native
+ * @param anonymousId native anonymousId string
+ */
+
+const addAnonymousId =
+  (payload: unknown) => (state: { userInfo: UserInfoState }) => {
+    if (isObject(payload)) {
+      const nativeAnonymousId = payload.anonymousId;
+
+      if (isString(nativeAnonymousId)) {
+        return {
+          userInfo: {
+            ...state.userInfo,
+            anonymousId: nativeAnonymousId,
+          },
+        };
+      }
+    }
+    return state;
+  };
+
 function createStoreGetter<
-  U extends {},
+  U extends Record<string, unknown>,
   Z extends keyof U | undefined = undefined,
   V = undefined
 >(store: Store<U>, key?: Z): getStateFunc<Z extends keyof U ? V : U> {
@@ -126,11 +153,11 @@ export class SovranStorage implements Storage {
 
   readonly settings: Watchable<SegmentAPIIntegrations | undefined> &
     Settable<SegmentAPIIntegrations> &
-    Dictionary<string, IntegrationSettings>;
+    Dictionary<string, IntegrationSettings, SegmentAPIIntegrations>;
 
   readonly filters: Watchable<DestinationFilters | undefined> &
     Settable<DestinationFilters> &
-    Dictionary<string, RoutingRule>;
+    Dictionary<string, RoutingRule, DestinationFilters>;
 
   readonly userInfo: Watchable<UserInfoState> & Settable<UserInfoState>;
 
@@ -148,7 +175,7 @@ export class SovranStorage implements Storage {
     });
 
     const markAsReadyGenerator = (key: keyof ReadinessStore) => () => {
-      this.readinessStore.dispatch((state) => ({
+      void this.readinessStore.dispatch((state) => ({
         ...state,
         [key]: true,
       }));
@@ -164,7 +191,7 @@ export class SovranStorage implements Storage {
           const promise = await this.readinessStore
             .getState(true)
             .then(isEverythingReady);
-          return promise as boolean;
+          return promise;
         }
       ),
       onChange: (callback: (value: boolean) => void) => {
@@ -238,7 +265,7 @@ export class SovranStorage implements Storage {
         return settings;
       },
       add: (key: string, value: IntegrationSettings) => {
-        this.settingsStore.dispatch((state) => ({
+        return this.settingsStore.dispatch((state) => ({
           settings: { ...state.settings, [key]: value },
         }));
       },
@@ -272,7 +299,7 @@ export class SovranStorage implements Storage {
         return filters;
       },
       add: (key, value) => {
-        this.filtersStore.dispatch((state) => ({
+        return this.filtersStore.dispatch((state) => ({
           ...state,
           [key]: value,
         }));
@@ -311,6 +338,13 @@ export class SovranStorage implements Storage {
       },
     };
 
+    registerBridgeStore({
+      store: this.userInfoStore,
+      actions: {
+        'add-anonymous-id': addAnonymousId,
+      },
+    });
+
     this.deepLinkData = {
       get: createStoreGetter(this.deepLinkStore),
       onChange: (callback: (value: DeepLinkData) => void) =>
@@ -326,7 +360,7 @@ export class SovranStorage implements Storage {
   private fixAnonymousId = () => {
     const fixUnsubscribe = this.userInfoStore.subscribe((store) => {
       if (store.userInfo.anonymousId === 'anonymousId') {
-        this.userInfoStore.dispatch((state) => {
+        void this.userInfoStore.dispatch((state) => {
           return {
             userInfo: { ...state.userInfo, anonymousId: getUUID() },
           };

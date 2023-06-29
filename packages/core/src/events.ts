@@ -1,5 +1,3 @@
-import { getUUID } from './uuid';
-
 import {
   GroupEventType,
   GroupTraits,
@@ -10,7 +8,6 @@ import {
   UserTraits,
   AliasEventType,
   EventType,
-  SegmentEvent,
 } from './types';
 
 export const createTrackEvent = ({
@@ -74,14 +71,5 @@ export const createAliasEvent = ({
 }): AliasEventType => ({
   type: EventType.AliasEvent,
   userId: newUserId,
-  previousId: userId || anonymousId,
+  previousId: userId ?? anonymousId,
 });
-
-export const applyRawEventData = (event: SegmentEvent): SegmentEvent => {
-  return {
-    ...event,
-    messageId: getUUID(),
-    timestamp: new Date().toISOString(),
-    integrations: event.integrations ?? {},
-  };
-};

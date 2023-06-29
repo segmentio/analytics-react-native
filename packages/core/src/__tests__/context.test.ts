@@ -4,6 +4,7 @@ import type { Context, NativeContextInfo, UserTraits } from '../types';
 import packageJson from '../../package.json';
 
 import { getContext } from '../context';
+import type { AnalyticsReactNativeModule } from '../types';
 
 const UUID = 'uuid-uuid-very-unique';
 
@@ -71,7 +72,7 @@ describe('#getContext', () => {
 
   beforeEach(() => {
     NativeModules.AnalyticsReactNative = {
-      getContextInfo: jest.fn(async () => mockNativeContext),
+      getContextInfo: jest.fn().mockResolvedValue(mockNativeContext),
     };
   });
 
@@ -80,7 +81,9 @@ describe('#getContext', () => {
 
     const context = await getContext(undefined);
 
-    expect(AnalyticsReactNative.getContextInfo).toHaveBeenCalledTimes(1);
+    expect(
+      (AnalyticsReactNative as AnalyticsReactNativeModule).getContextInfo
+    ).toHaveBeenCalledTimes(1);
     expect(context).toEqual(contextResult);
   });
 
@@ -93,7 +96,9 @@ describe('#getContext', () => {
 
     const context = await getContext(userTraits);
 
-    expect(AnalyticsReactNative.getContextInfo).toHaveBeenCalledTimes(1);
+    expect(
+      (AnalyticsReactNative as AnalyticsReactNativeModule).getContextInfo
+    ).toHaveBeenCalledTimes(1);
     expect(context).toEqual({ ...contextResult, traits: userTraits });
   });
 
@@ -105,8 +110,12 @@ describe('#getContext', () => {
       flushPolicies: [], // Shouldn't get to native as this is RN specific
     });
 
-    expect(AnalyticsReactNative.getContextInfo).toHaveBeenCalledTimes(1);
-    expect(AnalyticsReactNative.getContextInfo).toHaveBeenCalledWith({
+    expect(
+      (AnalyticsReactNative as AnalyticsReactNativeModule).getContextInfo
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      (AnalyticsReactNative as AnalyticsReactNativeModule).getContextInfo
+    ).toHaveBeenCalledWith({
       collectDeviceId: true,
     });
   });

@@ -1,13 +1,4 @@
-/**
- * Checks if value is a dictionary like object
- * @param value unknown object
- * @returns typeguard, value is dicitonary
- */
-const isDictionary = (value: unknown): value is Record<string, unknown> =>
-  value !== null &&
-  value !== undefined &&
-  typeof value === 'object' &&
-  !Array.isArray(value);
+import { isObject } from './util';
 
 /**
  * Generates a mapTransform function from a keymap and a transform map.
@@ -20,7 +11,7 @@ const isDictionary = (value: unknown): value is Record<string, unknown> =>
  */
 export const generateMapTransform = (
   keyMap: { [key: string]: string },
-  transformMap: { [key: string]: (oldValue: any) => any }
+  transformMap: { [key: string]: (oldValue: unknown) => unknown }
 ) => {
   const mapTransform = (
     json: Record<string, unknown>
@@ -35,13 +26,13 @@ export const generateMapTransform = (
 
       if (Array.isArray(value)) {
         value = value.map((nestedValue) => {
-          if (isDictionary(nestedValue)) {
+          if (isObject(nestedValue)) {
             return mapTransform(nestedValue);
           }
-          return nestedValue;
+          return nestedValue as unknown;
         });
-      } else if (isDictionary(value)) {
-        value = mapTransform(value as Record<string, unknown>);
+      } else if (isObject(value)) {
+        value = mapTransform(value);
       }
 
       if (newKey in transformMap) {

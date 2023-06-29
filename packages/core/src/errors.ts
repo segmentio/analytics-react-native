@@ -12,6 +12,10 @@ export enum ErrorType {
   JsonUnknown,
 
   PluginError,
+
+  InitializationError,
+  ResetError,
+  FlushError,
 }
 
 /**

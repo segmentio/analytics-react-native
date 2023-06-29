@@ -59,7 +59,7 @@ export class ConsentManager extends Plugin {
     if (status === true) {
       this.consentStatus = true;
       this.sendQueued();
-      this.analytics?.track('Consent Authorized');
+      void this.analytics?.track('Consent Authorized');
     }
     if (status === false) {
       this.queuedEvents = [];
@@ -68,7 +68,7 @@ export class ConsentManager extends Plugin {
 
   sendQueued() {
     this.queuedEvents.forEach((event) => {
-      this.analytics?.process(event);
+      void this.analytics?.process(event);
     });
     this.queuedEvents = [];
   }

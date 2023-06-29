@@ -1,3 +1,25 @@
+## [@segment/sovran-react-native-v1.0.4](https://github.com/segmentio/analytics-react-native/compare/@segment/sovran-react-native-v1.0.3...@segment/sovran-react-native-v1.0.4) (2023-06-02)
+
+
+### Bug Fixes
+
+* queue storage fixes ([#836](https://github.com/segmentio/analytics-react-native/issues/836)) ([f5a6a86](https://github.com/segmentio/analytics-react-native/commit/f5a6a86817c72ae16caa760d168c01d8eff6d0fb))
+
+## [@segment/sovran-react-native-v1.0.3](https://github.com/segmentio/analytics-react-native/compare/@segment/sovran-react-native-v1.0.2...@segment/sovran-react-native-v1.0.3) (2023-05-04)
+
+
+### Bug Fixes
+
+* **async-storage-persistor:** Correctly import AsyncStorage ([#820](https://github.com/segmentio/analytics-react-native/issues/820)) ([4ef5883](https://github.com/segmentio/analytics-react-native/commit/4ef5883aa3934b55b7ae8a46759bf5530c1e6355))
+
+## [@segment/sovran-react-native-v1.0.2](https://github.com/segmentio/analytics-react-native/compare/@segment/sovran-react-native-v1.0.1...@segment/sovran-react-native-v1.0.2) (2023-04-18)
+
+
+### Bug Fixes
+
+* stricter linting, improved handling of plugin errrors ([#795](https://github.com/segmentio/analytics-react-native/issues/795)) ([1ddb4d5](https://github.com/segmentio/analytics-react-native/commit/1ddb4d571df794bc7eaa5c5302ed27b90faf9a73)), closes [#799](https://github.com/segmentio/analytics-react-native/issues/799) [#803](https://github.com/segmentio/analytics-react-native/issues/803) [#802](https://github.com/segmentio/analytics-react-native/issues/802)
+* upgrade shell-quote from 1.7.3 to 1.8.0 ([#808](https://github.com/segmentio/analytics-react-native/issues/808)) ([ce1f643](https://github.com/segmentio/analytics-react-native/commit/ce1f6436e60cd9c7053bfd58e32e699159d428c5))
+
 ## [@segment/sovran-react-native-v1.0.1](https://github.com/segmentio/analytics-react-native/compare/@segment/sovran-react-native-v1.0.0...@segment/sovran-react-native-v1.0.1) (2023-03-14)
 
 
