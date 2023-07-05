@@ -349,5 +349,6 @@ export interface GetContextConfig {
 }
 
 export type AnalyticsReactNativeModule = NativeModule & {
+  getAppName: () => Promise<string>;
   getContextInfo: (config: GetContextConfig) => Promise<NativeContextInfo>;
 };

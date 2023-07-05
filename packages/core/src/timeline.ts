@@ -2,6 +2,7 @@ import { PluginType, SegmentEvent, UpdateType } from './types';
 import type { DestinationPlugin, Plugin } from './plugin';
 import { getAllPlugins } from './util';
 import { ErrorType, SegmentError } from './errors';
+import { Inspector } from './inspector';
 
 type TimelinePlugins = {
   [key in PluginType]?: Plugin[];
@@ -76,6 +77,15 @@ export class Timeline {
       }
     }
 
+    Inspector.trace({
+      timestamp: new Date().toISOString(),
+      stage: 'delivered',
+      event: result as never,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      id: incomingEvent.messageId!,
+      destinations: [],
+    });
+
     return result;
   }
 
@@ -102,6 +112,21 @@ export class Timeline {
               }
             } else {
               await pluginResult;
+            }
+
+            if ([PluginType.before, PluginType.enrichment].includes(type)) {
+              Inspector.trace({
+                timestamp: new Date().toISOString(),
+                stage: 'enriched',
+                event: result as never,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                id: event.messageId!,
+                enricher: {
+                  // FIXME: Add the metadata
+                  // name: plugin.name
+                  type: PluginType[type],
+                },
+              });
             }
           } catch (error) {
             plugin.analytics?.reportInternalError(

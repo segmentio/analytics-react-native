@@ -12,19 +12,24 @@ enum ConnectionType: String {
 
 @objc(AnalyticsReactNative)
 public class AnalyticsReactNative: NSObject {
-    
+
     @objc
     static func requiresMainQueueSetup() -> Bool {
       return true
     }
 
-    func getAppName() -> String {
+    func getDisplayName() -> String {
         guard let displayName = Bundle.main.infoDictionary!["CFBundleDisplayName"] else {
             return Bundle.main.infoDictionary!["CFBundleName"] as! String
         }
         return displayName as! String
     }
-    
+
+    @objc(getAppName:rejecter:)
+    func getAppName(resolver resolve:RCTPromiseResolveBlock, rejecter reject:RCTPromiseRejectBlock) -> Void {
+      resolve(getDisplayName())
+    }
+
     func getDeviceModel() -> String {
         var systemInfo = utsname()
         uname(&systemInfo)
@@ -34,14 +39,14 @@ public class AnalyticsReactNative: NSObject {
             return identifier + String(UnicodeScalar(UInt8(value)))
         }
     }
-    
+
     func getDeviceId() -> String {
         guard let deviceId = UIDevice.current.identifierForVendor else {
             return "UNKNOWN_ID"
         }
         return deviceId.uuidString
     }
-    
+
     func getNetworkType() -> ConnectionType {
         guard let reachability = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, "google.com") else {
             return ConnectionType.unknown
@@ -82,7 +87,7 @@ public class AnalyticsReactNative: NSObject {
     func getContextInfo(config: NSDictionary, resolver resolve:RCTPromiseResolveBlock, rejecter reject:RCTPromiseRejectBlock) -> Void {
         let infoDictionary = Bundle.main.infoDictionary!
 
-        let appName = getAppName()
+        let appName = getDisplayName()
         let appVersion = infoDictionary["CFBundleShortVersionString"] as? String ?? ""
         let bundleId = Bundle.main.bundleIdentifier ?? ""
         let buildNumber = infoDictionary["CFBundleVersion"] as? String ?? ""
@@ -112,11 +117,11 @@ public class AnalyticsReactNative: NSObject {
             "deviceType": "ios",
             "manufacturer": "Apple",
             "model": getDeviceModel(),
- 
+
             "locale": locale,
             "networkType": "\(connectionType)",
             "timezone": timezone,
-            
+
             "osName": osName,
             "osVersion": osVersion,
 
@@ -125,7 +130,7 @@ public class AnalyticsReactNative: NSObject {
         ]
         resolve(context)
     }
-    
+
     @objc(trackDeepLink:withOptions:)
     public static func trackDeepLink(url: NSURL, options: Dictionary<UIApplication.OpenURLOptionsKey, Any>) -> Void {
         let urlString = url.absoluteString

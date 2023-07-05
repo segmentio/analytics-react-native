@@ -123,8 +123,13 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
   }
 
   @ReactMethod
+  fun getAppName() {
+    return reactApplicationContext.applicationInfo.loadLabel(reactApplicationContext.packageManager).toString()
+  }
+
+  @ReactMethod
   fun getContextInfo(config: ReadableMap, promise: Promise) {
-    val appName: String = reactApplicationContext.applicationInfo.loadLabel(reactApplicationContext.packageManager).toString()
+    val appName: String = getAppName()
     val appVersion: String = pInfo.versionName
     val buildNumber = getBuildNumber()
     val bundleId = reactApplicationContext.packageName
@@ -224,7 +229,7 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
       ?.getNativeModule(SovranModule::class.java)
     sovran?.dispatch("add-deepLink-data", properties)
 
-    
+
   }
 
   fun setAnonymousId(anonymousId: String) {

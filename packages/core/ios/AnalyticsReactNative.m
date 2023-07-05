@@ -3,5 +3,6 @@
 @interface RCT_EXTERN_MODULE(AnalyticsReactNative, NSObject)
 
 RCT_EXTERN_METHOD(getContextInfo: (NSDictionary)configuration resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getAppName: (RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 
 @end
