@@ -138,6 +138,7 @@ function createStoreGetter<
 export class SovranStorage implements Storage {
   private storeId: string;
   private storePersistor?: Persistor;
+  private storePersistorSaveDelay?: number;
   private readinessStore: Store<ReadinessStore>;
   private contextStore: Store<{ context: DeepPartial<Context> }>;
   private settingsStore: Store<{ settings: SegmentAPIIntegrations }>;
@@ -165,6 +166,7 @@ export class SovranStorage implements Storage {
   constructor(config: StorageConfig) {
     this.storeId = config.storeId;
     this.storePersistor = config.storePersistor;
+    this.storePersistorSaveDelay = config.storePersistorSaveDelay;
     this.readinessStore = createStore<ReadinessStore>({
       hasRestoredContext: false,
       hasRestoredSettings: false,
@@ -239,6 +241,7 @@ export class SovranStorage implements Storage {
         persist: {
           storeId: `${this.storeId}-settings`,
           persistor: this.storePersistor,
+          saveDelay: this.storePersistorSaveDelay,
           onInitialized: markAsReadyGenerator('hasRestoredSettings'),
         },
       }
@@ -274,6 +277,7 @@ export class SovranStorage implements Storage {
       persist: {
         storeId: `${this.storeId}-filters`,
         persistor: this.storePersistor,
+        saveDelay: this.storePersistorSaveDelay,
         onInitialized: markAsReadyGenerator('hasRestoredFilters'),
       },
     });
@@ -310,6 +314,7 @@ export class SovranStorage implements Storage {
         persist: {
           storeId: `${this.storeId}-userInfo`,
           persistor: this.storePersistor,
+          saveDelay: this.storePersistorSaveDelay,
           onInitialized: markAsReadyGenerator('hasRestoredUserInfo'),
         },
       }

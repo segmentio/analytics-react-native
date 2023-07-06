@@ -87,4 +87,5 @@ export type DeepLinkData = {
 export type StorageConfig = {
   storeId: string;
   storePersistor?: Persistor;
+  storePersistorSaveDelay?: number;
 };

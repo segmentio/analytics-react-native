@@ -42,7 +42,7 @@ export class QueueFlushingPlugin extends UtilityPlugin {
         persist: {
           storeId: `${config.writeKey}-${this.storeKey}`,
           persistor: config.storePersistor,
-          saveDelay: 0,
+          saveDelay: config.storePersistorSaveDelay ?? 0,
         },
       }
     );
