@@ -59,6 +59,7 @@ import {
   SegmentError,
   translateHTTPError,
 } from './errors';
+import { Inspector } from './inspector';
 
 type OnPluginAddedCallback = (plugin: Plugin) => void;
 
@@ -272,6 +273,8 @@ export class SegmentClient {
 
       // flush any stored events
       this.flushPolicyExecuter.manualFlush();
+
+      await Inspector.init();
     } catch (error) {
       this.reportInternalError(
         new SegmentError(
@@ -414,6 +417,14 @@ export class SegmentClient {
 
   async process(incomingEvent: SegmentEvent) {
     const event = await this.applyRawEventData(incomingEvent);
+
+    Inspector.trace({
+      timestamp: new Date().toISOString(),
+      stage: 'triggered',
+      event: event as never,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      id: event.messageId!,
+    });
 
     if (this.isReady.value) {
       this.flushPolicyExecuter.notify(event);
