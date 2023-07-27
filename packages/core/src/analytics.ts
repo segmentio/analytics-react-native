@@ -23,6 +23,7 @@ import {
   CountFlushPolicy,
   Observable,
   TimerFlushPolicy,
+  OnlineFlushPolicy,
 } from './flushPolicies';
 import { FlushPolicyExecuter } from './flushPolicies/flush-policy-executer';
 import type { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
@@ -730,6 +731,8 @@ export class SegmentClient {
         );
       }
     }
+
+    flushPolicies.push(new OnlineFlushPolicy());
 
     this.flushPolicyExecuter = new FlushPolicyExecuter(flushPolicies, () => {
       void this.flush();
