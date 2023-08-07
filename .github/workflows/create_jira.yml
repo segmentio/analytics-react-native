@@ -31,7 +31,11 @@ jobs:
           description: |
             Github Link: ${{ github.event.issue.html_url }}
             ${{ github.event.issue.body }}
-          fields: '{"customfield_10002": "LIBMOBILE-793"}'
+          # Parent and Epic Link fields (set to same)
+          fields: '{
+            "parent": {"key": "LIBMOBILE-793"},
+            "customfield_10002": "LIBMOBILE-793"
+            }'
 
       - name: Log created issue
         run: echo "Issue ${{ steps.create.outputs.issue }} was created"
