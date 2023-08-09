@@ -1,10 +1,7 @@
 {
   "extends": "../../tsconfig",
   "compilerOptions": {
-    "outDir": "lib/typescript",
-    "paths": {
-      "@segment/sovran-react-native": ["<rootDir>/../sovran/src/index"]
-    }
+    "outDir": "lib/typescript"
   },
   "references": [{ "path": "../sovran" }],
   "include": ["src/**/*", "package.json", "types.d.ts"]

@@ -45,12 +45,12 @@
   },
   "homepage": "https://github.com/segmentio/analytics-react-native#readme",
   "peerDependencies": {
-    "@segment/analytics-react-native": "*"
-  },
-  "dependencies": {
+    "@segment/analytics-react-native": "*",
     "clevertap-react-native": "^1.0.0"
   },
+  "dependencies": {},
   "devDependencies": {
+    "clevertap-react-native": "^1.0.0",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/commit-analyzer": "^9.0.2",
     "@semantic-release/git": "^10.0.1",
