@@ -47,6 +47,7 @@
   },
   "homepage": "https://github.com/segmentio/analytics-react-native#readme",
   "dependencies": {
+    "@segment/tsub": "^2",
     "@segment/sovran-react-native": "^1",
     "deepmerge": "^4.2.2",
     "js-base64": "^3.7.2",

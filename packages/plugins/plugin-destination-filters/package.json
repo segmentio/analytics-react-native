@@ -53,7 +53,7 @@
     "@segment/sovran-react-native": "*"
   },
   "dependencies": {
-    "@segment/tsub": "^0",
+    "@segment/tsub": "^2",
     "clone": "^2.1.2"
   },
   "devDependencies": {
