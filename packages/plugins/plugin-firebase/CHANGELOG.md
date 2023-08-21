@@ -1,3 +1,11 @@
+## [@segment/analytics-react-native-plugin-firebase-v0.3.9](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-firebase-v0.3.8...@segment/analytics-react-native-plugin-firebase-v0.3.9) (2023-08-21)
+
+
+### Bug Fixes
+
+* event name should contain 40 alphanumeric characters or underscores ([#842](https://github.com/segmentio/analytics-react-native/issues/842)) ([d1b94fc](https://github.com/segmentio/analytics-react-native/commit/d1b94fc31eb6082da9d527a40a9d6667f9ced2bb))
+* **FirebasePlugin:** can not read propertytoString of undefined error ([3f4f3bd](https://github.com/segmentio/analytics-react-native/commit/3f4f3bd3bceaabec70673b23afde8e516aba086f))
+
 ## [@segment/analytics-react-native-plugin-firebase-v0.3.8](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-firebase-v0.3.7...@segment/analytics-react-native-plugin-firebase-v0.3.8) (2023-04-18)
 
 
