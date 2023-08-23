@@ -1,6 +1,6 @@
 {
   "name": "@segment/analytics-react-native",
-  "version": "2.15.0",
+  "version": "2.16.0",
   "description": "The hassle-free way to add Segment analytics to your React-Native app.",
   "main": "lib/commonjs/index",
   "scripts": {

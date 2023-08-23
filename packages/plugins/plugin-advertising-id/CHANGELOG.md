@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-advertising-id-v1.2.4](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-advertising-id-v1.2.3...@segment/analytics-react-native-plugin-advertising-id-v1.2.4) (2023-08-21)
+
+
+### Bug Fixes
+
+* resolve potential build issues with RN 0.72 ([#841](https://github.com/segmentio/analytics-react-native/issues/841)) ([d287304](https://github.com/segmentio/analytics-react-native/commit/d287304383b22b7d0344d0f2c68fccce8aec76cb))
+
 ## [@segment/analytics-react-native-plugin-advertising-id-v1.2.3](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-advertising-id-v1.2.2...@segment/analytics-react-native-plugin-advertising-id-v1.2.3) (2023-04-18)
 
 

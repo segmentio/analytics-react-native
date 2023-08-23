@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-branch-v1.0.3](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-branch-v1.0.2...@segment/analytics-react-native-plugin-branch-v1.0.3) (2023-08-21)
+
+
+### Bug Fixes
+
+* package dependency fixes ([#869](https://github.com/segmentio/analytics-react-native/issues/869)) ([08d415e](https://github.com/segmentio/analytics-react-native/commit/08d415e3b1cfd8499f5f6984f2859a30a851da12))
+
 ## [@segment/analytics-react-native-plugin-branch-v1.0.2](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-branch-v1.0.1...@segment/analytics-react-native-plugin-branch-v1.0.2) (2023-04-18)
 
 
