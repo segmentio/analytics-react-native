@@ -15,6 +15,7 @@ const mapEventNames: { [key: string]: string } = {
   'Product Shared': 'share',
   'Cart Shared': 'share',
   'Products Searched': 'search',
+  'Cart Viewed': 'view_cart',
 };
 
 export const mapEventProps: { [key: string]: string } = {
