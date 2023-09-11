@@ -33,4 +33,14 @@ export const transformMap: { [key: string]: (value: unknown) => unknown } = {
     }
     return value;
   },
+  // LogTime in FBSDK accepts a Long or undefined
+  _logTime: (value: unknown): number | undefined => {
+    if (isString(value)) {
+      const date = Date.parse(value);
+      if (!isNaN(date)) {
+        return Math.floor(date / 1000);
+      }
+    }
+    return;
+  },
 };

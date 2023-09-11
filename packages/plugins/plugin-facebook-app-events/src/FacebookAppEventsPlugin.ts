@@ -12,7 +12,6 @@ import {
   SegmentClient,
   SegmentError,
   TrackEventType,
-  unknownToString,
   UpdateType,
 } from '@segment/analytics-react-native';
 import { AppEventsLogger, Settings } from 'react-native-fbsdk-next';
@@ -59,7 +58,6 @@ const sanitizeEvent = (
     ? properties.fb_num_items
     : products.length;
   const params: { [key: string]: string | number } = {};
-  const logTime = event.timestamp ?? undefined;
 
   for (const key of Object.keys(properties)) {
     if (Object.values(mapEventProps).includes(key)) {
@@ -70,10 +68,13 @@ const sanitizeEvent = (
     }
   }
 
+  if (isNumber(event._logTime)) {
+    params._logTime = event._logTime;
+  }
+
   return {
     ...params,
     fb_num_items: productCount,
-    _logTime: unknownToString(logTime) ?? '',
     _appVersion: (event.context as Context).app.version,
   };
 };
@@ -147,6 +148,7 @@ export class FacebookAppEventsPlugin extends DestinationPlugin {
     const safeEvent = mappedPropNames(
       event as unknown as Record<string, unknown>
     );
+    console.log(safeEvent);
     const convertedName = safeEvent.event as string;
     const safeName = this.sanitizeEventName(convertedName);
     const safeProps = sanitizeEvent(safeEvent);

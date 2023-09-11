@@ -136,7 +136,7 @@ describe('FacebookAppEventsPlugin', () => {
 
       const expected = {
         _appVersion: '1.0',
-        _logTime: '',
+        _logTime: 1636407752,
         fb_num_items: 0,
       };
 
@@ -166,7 +166,7 @@ describe('FacebookAppEventsPlugin', () => {
 
       const expected = {
         _appVersion: '1.0',
-        _logTime: '',
+        _logTime: 1636407752,
         fb_num_items: 0,
         _valueToSum: 10,
       };
@@ -199,7 +199,7 @@ describe('FacebookAppEventsPlugin', () => {
 
       const expected = {
         _appVersion: '1.0',
-        _logTime: '',
+        _logTime: 1636407752,
         fb_num_items: 0,
       };
 
@@ -209,6 +209,34 @@ describe('FacebookAppEventsPlugin', () => {
         'new_event',
         expected
       );
+    });
+
+    it('skips logTime when timestamp is not a date', () => {
+      const payload = {
+        type: 'track',
+        event: 'ACTION',
+        context: {
+          app: {
+            build: '1',
+            name: 'Analytics',
+            namespace: 'org.reactjs.native.AnalyticsReactNativeExample',
+            version: '1.0',
+          },
+        },
+        properties: {
+          foo: 'bar',
+        },
+        timestamp: 'not a date',
+      };
+
+      const expected = {
+        _appVersion: '1.0',
+        fb_num_items: 0,
+      };
+
+      plugin.track(payload as TrackEventType);
+
+      expect(AppEventsLogger.logEvent).toHaveBeenCalledWith('ACTION', expected);
     });
   });
 });
