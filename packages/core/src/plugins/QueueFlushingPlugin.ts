@@ -88,4 +88,15 @@ export class QueueFlushingPlugin extends UtilityPlugin {
       return { events: filteredEvents };
     });
   }
+
+  async clear() {
+    await this.queueStore?.dispatch(() => {
+      return { events: [] };
+    });
+  }
+
+  async length() {
+    const events = await this.queueStore?.getState(true);
+    return events?.events.length ?? 0;
+  }
 }

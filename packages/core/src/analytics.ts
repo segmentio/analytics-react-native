@@ -25,8 +25,11 @@ import {
   TimerFlushPolicy,
 } from './flushPolicies';
 import { FlushPolicyExecuter } from './flushPolicies/flush-policy-executer';
-import type { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
-import { SegmentDestination } from './plugins/SegmentDestination';
+import { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
+import {
+  SegmentDestination,
+  SEGMENT_DESTINATION_KEY,
+} from './plugins/SegmentDestination';
 import {
   createGetter,
   DeepLinkData,
@@ -50,7 +53,12 @@ import {
   UserInfoState,
   UserTraits,
 } from './types';
-import { allSettled, getPluginsWithFlush, getPluginsWithReset } from './util';
+import {
+  allSettled,
+  getPluginsWithFlush,
+  getPluginsWithReset,
+  getPluginsWithClear,
+} from './util';
 import { getUUID } from './uuid';
 import type { FlushPolicy } from './flushPolicies';
 import {
@@ -397,6 +405,21 @@ export class SegmentClient {
     }
   }
 
+  /**
+   * Convenience method for adding enrichment plugins.
+   * @param closure that receives an event and returns an event or undefined (to shorcircuit processing)
+   */
+  addEnrichment(closure: Plugin['execute']) {
+    class CustomEnrichment extends Plugin {
+      execute(
+        event: SegmentEvent
+      ): SegmentEvent | Promise<SegmentEvent | undefined> | undefined {
+        return closure(event);
+      }
+    }
+    this.add({ plugin: new CustomEnrichment() });
+  }
+
   private addPlugin(plugin: Plugin) {
     plugin.configure(this);
     this.timeline.add(plugin);
@@ -664,6 +687,15 @@ export class SegmentClient {
     this.appState = nextAppState;
   }
 
+  /**
+   * Resets the user info to a clean state.
+   * Traits, UserId and AnonymousId are reset.
+   * Also calls reset on every installed plugin.
+   *
+   * Useful when a user logs out
+   *
+   * @param resetAnonymousId If false it will preserve the anonymousId (default: true)
+   */
   async reset(resetAnonymousId = true) {
     try {
       const { anonymousId: currentId } = await this.store.userInfo.get(true);
@@ -685,6 +717,33 @@ export class SegmentClient {
         new SegmentError(ErrorType.ResetError, 'Error during reset', error)
       );
     }
+  }
+
+  /**
+   * Clears the upload pending events queue.
+   * All events waiting for upload will get dropped!
+   */
+  async clearQueue() {
+    try {
+      await allSettled(
+        getPluginsWithClear(this.timeline).map((p) => p.clear())
+      );
+    } catch (error) {
+      this.reportInternalError(
+        new SegmentError(ErrorType.ResetError, 'Error during clear', error)
+      );
+    }
+  }
+
+  /**
+   * Returns the pending count of events to upload to Segment
+   * @returns event count
+   */
+  async pendingCount() {
+    const segmentDestination = this.getPlugins(PluginType.destination).find(
+      (x) => (x as DestinationPlugin).key === SEGMENT_DESTINATION_KEY
+    );
+    return (segmentDestination as SegmentDestination).pendingCount() ?? 0;
   }
 
   /**

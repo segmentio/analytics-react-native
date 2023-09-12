@@ -11,6 +11,8 @@ export {
   isDate,
   objectToString,
   unknownToString,
+  enableIntegration,
+  disableIntegration,
 } from './util';
 export { SegmentClient } from './analytics';
 export { SegmentDestination } from './plugins/SegmentDestination';
