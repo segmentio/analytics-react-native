@@ -1,21 +1,21 @@
 name: CI
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
   workflow_dispatch:
 jobs:
   cancel_previous:
     runs-on: ubuntu-latest
     steps:
-    - uses: styfle/cancel-workflow-action@0.9.1
-      with:
-        workflow_id: ${{ github.event.workflow.id }}
+      - uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          workflow_id: ${{ github.event.workflow.id }}
   build-and-test:
     needs: cancel_previous
     runs-on: 'ubuntu-latest'
-    steps: 
+    steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
@@ -30,12 +30,11 @@ jobs:
         run: yarn lint
       - name: Test
         run: yarn test --coverage
-      
 
   run-e2e-ios:
     needs: cancel_previous
     runs-on: 'macos-12'
-    steps: 
+    steps:
       - uses: actions/checkout@v2
 
       - uses: actions/setup-node@v2
@@ -48,12 +47,15 @@ jobs:
           xcode-version: 14.1
 
       - name: Install applesimutils
-        run:  |
+        run: |
           HOMEBREW_NO_AUTO_UPDATE=1 brew tap wix/brew >/dev/null
           HOMEBREW_NO_AUTO_UPDATE=1 brew install applesimutils >/dev/null
 
       - name: Bootstrap
         run: yarn bootstrap
+
+      - name: Bundle Build
+        run: yarn build
 
       - name: Run Server (with mocks)
         run: yarn example start:e2e &
@@ -81,7 +83,7 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
           cache: 'gradle'
-        
+
       - name: Gradle cache
         uses: actions/cache@v2
         with:
@@ -119,6 +121,8 @@ jobs:
 
       - name: Bootstrap
         run: yarn install && yarn example install # No need to run bootstrap here since we don't need cocoapods
+      - name: Bundle build
+        run: yarn build
       - name: Run Server (with mocks)
         run: yarn example start:e2e &
       - name: Detox - Build
@@ -135,6 +139,3 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: yarn example test:android
-
-      
-
