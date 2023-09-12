@@ -416,7 +416,7 @@ export class SegmentClient {
     const event = this.applyRawEventData(incomingEvent);
 
     if (this.isReady.value) {
-      return this.startProcess(event);
+      return this.startTimelineProcessing(event);
     } else {
       this.pendingEvents.push(event);
       return event;
@@ -428,7 +428,7 @@ export class SegmentClient {
    * @param incomingEvent Segment Event
    * @returns Segment Event
    */
-  private async startProcess(
+  private async startTimelineProcessing(
     incomingEvent: SegmentEvent
   ): Promise<SegmentEvent | undefined> {
     const event = await this.applyContextData(incomingEvent);
@@ -485,7 +485,7 @@ export class SegmentClient {
 
     // Send all events in the queue
     for (const e of this.pendingEvents) {
-      await this.startProcess(e);
+      await this.startTimelineProcessing(e);
     }
     this.pendingEvents = [];
   }
