@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import type { SegmentClient } from './analytics';
 import { Timeline } from './timeline';
 import {
@@ -104,10 +106,6 @@ export class EventPlugin extends Plugin {
   }
 
   reset(): void | Promise<void> {
-    return;
-  }
-
-  clear(): void | Promise<void> {
     return;
   }
 }

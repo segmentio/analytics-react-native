@@ -16,7 +16,6 @@ export enum ErrorType {
   InitializationError,
   ResetError,
   FlushError,
-  ClearError,
 }
 
 /**

@@ -117,12 +117,4 @@ export class SegmentDestination extends DestinationPlugin {
   async flush() {
     return this.queuePlugin.flush();
   }
-
-  async clear() {
-    return this.queuePlugin.clear();
-  }
-
-  async pendingCount() {
-    return this.queuePlugin.length();
-  }
 }

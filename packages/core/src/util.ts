@@ -1,7 +1,6 @@
 import { NativeModule, NativeModules, Platform } from 'react-native';
 import type { EventPlugin } from './plugin';
 import type { Timeline } from './timeline';
-import type { SegmentEvent } from './types';
 
 const sizeOf = (obj: unknown): number => {
   const size = encodeURI(JSON.stringify(obj)).split(/%..|./).length - 1;
@@ -77,26 +76,15 @@ export const getPluginsWithFlush = (timeline: Timeline) => {
   return eventPlugins;
 };
 
-export const getPluginsWithFunction = (
-  timeline: Timeline,
-  fn: keyof EventPlugin
-) => {
+export const getPluginsWithReset = (timeline: Timeline) => {
   const allPlugins = getAllPlugins(timeline);
 
   // checking for the existence of .reset()
   const eventPlugins = allPlugins?.filter(
-    (f) => (f as EventPlugin)[fn] !== undefined
+    (f) => (f as EventPlugin).reset !== undefined
   ) as EventPlugin[];
 
   return eventPlugins;
-};
-
-export const getPluginsWithClear = (timeline: Timeline) => {
-  return getPluginsWithFunction(timeline, 'clear');
-};
-
-export const getPluginsWithReset = (timeline: Timeline) => {
-  return getPluginsWithFunction(timeline, 'reset');
 };
 
 type PromiseResult<T> =
@@ -209,65 +197,3 @@ export const isObject = (value: unknown): value is Record<string, unknown> =>
   value !== undefined &&
   typeof value === 'object' &&
   !Array.isArray(value);
-
-/**
- * Force enables an integration to execute for a particular event.
- *
- * Useful when a particular event should always go to a particular destination.
- *
- * For use inside a TimelinePlugin
- *
- * @param event Segment event
- * @param key integration key string e.g. Segment.io, Appboy, AppsFlyer
- * @returns The transformed event with the integration enabled context
- */
-export const enableIntegration = (
-  event: SegmentEvent,
-  key: string
-): SegmentEvent => {
-  if (
-    // If the integrations object is empty
-    event.integrations === undefined ||
-    event.integrations === null ||
-    // Or it does not contain this integration
-    event.integrations[key] === undefined ||
-    event.integrations[key] === null ||
-    // Or it is explicitely disabled
-    event.integrations[key] === false
-  ) {
-    return {
-      ...event,
-      integrations: {
-        ...event.integrations,
-        [key]: true,
-      },
-    };
-  }
-
-  // Everything other truthy value would mean it is already enabled
-  return event;
-};
-
-/**
- * Disables an integration from executing on this event.
- *
- * Useful for disabling particular destinations in the timeline execution.
- *
- * For use inside a TimelinePlugin
- *
- * @param event Segment event
- * @param key Integration Key string e.g. Segment.io, Appboy, AppsFlyer
- * @returns The transformed event with the integration skip context
- */
-export const disableIntegration = (
-  event: SegmentEvent,
-  key: string
-): SegmentEvent => {
-  return {
-    ...event,
-    integrations: {
-      ...event.integrations,
-      [key]: false,
-    },
-  };
-};
