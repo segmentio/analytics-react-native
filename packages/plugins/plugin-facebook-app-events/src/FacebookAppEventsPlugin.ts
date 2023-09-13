@@ -148,7 +148,6 @@ export class FacebookAppEventsPlugin extends DestinationPlugin {
     const safeEvent = mappedPropNames(
       event as unknown as Record<string, unknown>
     );
-    console.log(safeEvent);
     const convertedName = safeEvent.event as string;
     const safeName = this.sanitizeEventName(convertedName);
     const safeProps = sanitizeEvent(safeEvent);
