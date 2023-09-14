@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-firebase-v0.3.10](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-firebase-v0.3.9...@segment/analytics-react-native-plugin-firebase-v0.3.10) (2023-09-14)
+
+
+### Bug Fixes
+
+* add firebase view cart mapping ([#871](https://github.com/segmentio/analytics-react-native/issues/871)) ([ef0e02f](https://github.com/segmentio/analytics-react-native/commit/ef0e02fcc247e722c0119e3420812d855a2fe5c1))
+
 ## [@segment/analytics-react-native-plugin-firebase-v0.3.9](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-firebase-v0.3.8...@segment/analytics-react-native-plugin-firebase-v0.3.9) (2023-08-21)
 
 
