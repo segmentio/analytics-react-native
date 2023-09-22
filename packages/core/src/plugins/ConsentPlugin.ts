@@ -61,9 +61,12 @@ export class ConsentPlugin extends Plugin {
       return event;
     }
 
-    (event.context ??= {}).consent = {
-      categoryPreferences:
-        await this.consentCategoryProvider.getConsentStatus(),
+    event.context = {
+      ...event.context,
+      consent: {
+        categoryPreferences:
+          await this.consentCategoryProvider.getConsentStatus(),
+      },
     };
 
     return event;
