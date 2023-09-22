@@ -1,24 +1,5 @@
 import type { CategoryConsentStatusProvider } from '@segment/analytics-react-native';
 
-import {
-  Subject,
-  map,
-  Observable,
-  combineLatest,
-  tap,
-  switchMap,
-  takeUntil,
-  finalize,
-  firstValueFrom,
-  shareReplay,
-  from,
-  merge,
-  withLatestFrom,
-  scan,
-  take,
-  concat,
-} from 'rxjs';
-
 enum ConsentStatus {
   Granted = 1,
   Denied = 0,
@@ -41,81 +22,55 @@ export interface OTPublishersNativeSDK {
 export class OTCategoryConsentProvider
   implements CategoryConsentStatusProvider
 {
+  getConsentStatus!: () => Promise<Record<string, boolean>>;
   private onConsentChangeCallback!: OnConsentChangeCb;
-  private shutdown$ = new Subject<void>();
-  private categories$ = new Subject<string[]>();
-  private categoriesStatuses$!: Observable<Record<string, boolean>>;
 
-  constructor(oneTrust: OTPublishersNativeSDK) {
-    const initialCategoryStatuses$ = this.categories$.pipe(
-      switchMap((categories) => {
-        const statuses$: Observable<[string, boolean]>[] = categories.map(
-          (id) =>
-            from(oneTrust.getConsentStatusForCategory(id)).pipe(
-              map((status) => [id, status === ConsentStatus.Granted])
-            )
-        );
-
-        return combineLatest(statuses$).pipe(
-          map((statuses) => Object.fromEntries(statuses))
-        );
-      }),
-      shareReplay(1)
-    );
-
-    const dynamicCategoryStatuses$ = this.categories$.pipe(
-      tap((categories) => {
-        oneTrust.stopListeningForConsentChanges();
-        oneTrust.setBroadcastAllowedValues(categories);
-      }),
-      switchMap((categories) => {
-        const statusUpdates$: Observable<[string, boolean]>[] = categories.map(
-          (id) =>
-            new Observable<[string, boolean]>((subscriber) => {
-              oneTrust.listenForConsentChanges(id, (_, status) => {
-                subscriber.next([id, status === ConsentStatus.Granted]);
-              });
-            })
-        );
-
-        return merge(...statusUpdates$).pipe(
-          scan((acc, [id, updStatus]) => ({ ...acc, [id]: updStatus }), {}),
-          withLatestFrom(initialCategoryStatuses$),
-          map(([accruedUpdates, initialStatuses]) => ({
-            ...initialStatuses,
-            ...accruedUpdates,
-          }))
-        );
-      }),
-      finalize(() => oneTrust.stopListeningForConsentChanges()),
-      shareReplay(1)
-    );
-
-    dynamicCategoryStatuses$.pipe(takeUntil(this.shutdown$)).subscribe({
-      next: (updConsent) => this.onConsentChangeCallback(updConsent),
-    });
-
-    this.categoriesStatuses$ = concat(
-      initialCategoryStatuses$.pipe(take(1)),
-      dynamicCategoryStatuses$
-    ).pipe(shareReplay(1));
-
-    this.categoriesStatuses$.pipe(takeUntil(this.shutdown$)).subscribe();
-  }
-
-  getConsentStatus(): Promise<Record<string, boolean>> {
-    return firstValueFrom(this.categoriesStatuses$);
-  }
+  constructor(private oneTrust: OTPublishersNativeSDK) {}
 
   onConsentChange(cb: (updConsent: Record<string, boolean>) => void): void {
     this.onConsentChangeCallback = cb;
   }
 
   setApplicableCategories(categories: string[]): void {
-    this.categories$.next(categories);
+    const initialStatusesP = Promise.all(
+      categories.map((categoryId) =>
+        this.oneTrust
+          .getConsentStatusForCategory(categoryId)
+          .then<[string, boolean]>((status) => [
+            categoryId,
+            status === ConsentStatus.Granted,
+          ])
+      )
+    ).then((entries) => Object.fromEntries(entries));
+
+    let latestStatuses: Record<string, boolean> | null;
+
+    this.getConsentStatus = () =>
+      Promise.resolve(latestStatuses ?? initialStatusesP);
+
+    this.oneTrust.stopListeningForConsentChanges();
+    this.oneTrust.setBroadcastAllowedValues(categories);
+
+    categories.forEach((categoryId) => {
+      this.oneTrust.listenForConsentChanges(categoryId, (_, status) => {
+        initialStatusesP
+          .then((initialStatuses) => {
+            latestStatuses = {
+              ...initialStatuses,
+              ...latestStatuses,
+              [categoryId]: status === ConsentStatus.Granted,
+            };
+
+            this.onConsentChangeCallback(latestStatuses);
+          })
+          .catch((e) => {
+            throw e;
+          });
+      });
+    });
   }
 
   shutdown() {
-    this.shutdown$.next();
+    this.oneTrust.stopListeningForConsentChanges();
   }
 }

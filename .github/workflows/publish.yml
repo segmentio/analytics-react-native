@@ -21,13 +21,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with: 
+        with:
           persist-credentials: false
           token: ${{ secrets.GH_TOKEN }}
 
       - uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: '18'
           cache: 'yarn'
 
       - name: Config and Build
@@ -40,7 +40,7 @@ jobs:
 
       - name: Set Working Directory
         if: github.event.inputs.workspace != ''
-        env: 
+        env:
           IS_PLUGIN: ${{ startsWith(github.event.inputs.workspace, 'plugin-') }}
         run: |
           if ${IS_PLUGIN}; then
@@ -57,7 +57,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      
+
       - name: Publish (All)
         if: github.event.inputs.workspace == ''
         run: yarn workspaces run release

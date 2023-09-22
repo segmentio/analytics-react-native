@@ -6,9 +6,12 @@ import {
   PluginType,
   SegmentAPIIntegration,
   SegmentEvent,
+  TrackEventType,
 } from '..';
 
-const SEGMENT_PREF_UPDATE_EVENT = 'Segment Consent Preference';
+import { SEGMENT_DESTINATION_KEY } from './SegmentDestination';
+
+const CONSENT_PREF_UPDATE_EVENT = 'Segment Consent Preference';
 
 export interface CategoryConsentStatusProvider {
   setApplicableCategories(categories: string[]): void;
@@ -40,13 +43,21 @@ export class ConsentPlugin extends Plugin {
     analytics.getPlugins().forEach(this.injectConsentFilterIfApplicable);
     analytics.onPluginLoaded(this.injectConsentFilterIfApplicable);
     this.consentCategoryProvider.setApplicableCategories(this.categories);
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    this.consentCategoryProvider.onConsentChange(this.handleConsentChange);
+    this.consentCategoryProvider.onConsentChange((categoryPreferences) => {
+      this.analytics
+        ?.track(CONSENT_PREF_UPDATE_EVENT, {
+          consent: {
+            categoryPreferences,
+          },
+        })
+        .catch((e) => {
+          throw e;
+        });
+    });
   }
 
   async execute(event: SegmentEvent): Promise<SegmentEvent> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if ((event as any).event === 'Segment Consent Preference') {
+    if ((event as TrackEventType).event === CONSENT_PREF_UPDATE_EVENT) {
       return event;
     }
 
@@ -63,24 +74,20 @@ export class ConsentPlugin extends Plugin {
   }
 
   private injectConsentFilterIfApplicable = (plugin: Plugin) => {
-    if (this.isDestinationPlugin(plugin)) {
+    if (
+      this.isDestinationPlugin(plugin) &&
+      plugin.key !== SEGMENT_DESTINATION_KEY
+    ) {
       const settings = this.analytics?.settings.get()?.[plugin.key];
 
-      // FIXME: What stance should we take when this `if` block is false?
-      if (this.containsConsentSettings(settings)) {
-        plugin.add(
-          new ConsentFilterPlugin(settings.consentSettings.categories)
-        );
-      }
+      plugin.add(
+        new ConsentFilterPlugin(
+          this.containsConsentSettings(settings)
+            ? settings.consentSettings.categories
+            : []
+        )
+      );
     }
-  };
-
-  private handleConsentChange = async (updConsent: Record<string, boolean>) => {
-    await this.analytics?.track(SEGMENT_PREF_UPDATE_EVENT, {
-      consent: {
-        categoryPreferences: updConsent,
-      },
-    });
   };
 
   private isDestinationPlugin(plugin: Plugin): plugin is DestinationPlugin {
@@ -110,6 +117,11 @@ class ConsentFilterPlugin extends Plugin {
 
   execute(event: SegmentEvent): SegmentEvent | undefined {
     const preferences = event.context?.consent?.categoryPreferences;
+
+    // if consent plugin is active but the setup isn't properly configured - events are blocked by default
+    if (!preferences || this.categories.length === 0) {
+      return undefined;
+    }
 
     // all categories this destination is tagged with must be present, and allowed in consent preferences
     return this.categories.every((category) => preferences?.[category])

@@ -47,9 +47,6 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "dependencies": {
-    "rxjs": "^7.8.1"
-  },
   "peerDependencies": {
     "@segment/analytics-react-native": "*",
     "@segment/sovran-react-native": "*",

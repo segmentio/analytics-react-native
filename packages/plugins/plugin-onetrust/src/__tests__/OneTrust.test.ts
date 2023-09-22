@@ -169,6 +169,9 @@ describe('OneTrustPlugin', () => {
 
     mockOneTrust.mockConsentStatuses.C002 = 1;
 
+    // await one tick
+    await new Promise((res) => setTimeout(res, 0));
+
     // this is to make sure there are no unneccessary Consent Preference track calls
     expect(spy).toHaveBeenCalledTimes(2);
 
