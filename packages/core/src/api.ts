@@ -17,7 +17,7 @@ export const uploadEvents = async ({
       writeKey: writeKey,
     }),
     headers: {
-      'Content-Type': 'text/plain',
+      'Content-Type': 'application/json; charset=utf-8',
     },
   });
 };
