@@ -1,0 +1,1 @@
+export { OneTrustPlugin } from './OneTrust';

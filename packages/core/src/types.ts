@@ -213,6 +213,9 @@ export type Context = {
   timezone: string;
   traits: UserTraits;
   instanceId: string;
+  consent?: {
+    categoryPreferences: Record<string, boolean>;
+  };
 };
 
 /**
@@ -248,10 +251,13 @@ export type NativeContextInfo = {
   advertisingId?: string; // ios only
 };
 
-export type SegmentAPIIntegration = {
+export type SegmentAPIIntegration<T = object> = {
   apiKey: string;
   apiHost: string;
-};
+  consentSettings?: {
+    categories: string[];
+  };
+} & T;
 
 type SegmentAmplitudeIntegration = {
   session_id: number;
@@ -273,9 +279,8 @@ export type SegmentBrazeSettings = {
 
 export type IntegrationSettings =
   // Strongly typed known integration settings
-  | SegmentAPIIntegration
-  | SegmentAmplitudeIntegration
-  | SegmentAdjustSettings
+  | SegmentAPIIntegration<SegmentAmplitudeIntegration>
+  | SegmentAPIIntegration<SegmentAdjustSettings>
   // Support any kind of configuration in the future
   | Record<string, unknown>
   // enable/disable the integration at cloud level
