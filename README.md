@@ -597,6 +597,7 @@ Refer to the following table for Plugins you can use to meet your tracking needs
 | [Sprig](https://github.com/UserLeap/analytics-react-native-plugin-sprig)    | [`@sprig-technologies/analytics-react-native-plugin-sprig`](https://www.npmjs.com/package/@sprig-technologies/analytics-react-native-plugin-sprig) |
 | [Taplytics](https://github.com/taplytics/segment-react-native-plugin-taplytics)     | `@taplytics/segment-react-native-plugin-taplytics` |
 | [Android Advertising ID](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-advertising-id) | `@segment/analytics-react-native-plugin-advertising-id` |
+| [Survicate](https://github.com/Survicate/analytics-react-native-survicate) | `@survicate/analytics-react-native-survicate` |
   
   
 ## Controlling Upload With Flush Policies
