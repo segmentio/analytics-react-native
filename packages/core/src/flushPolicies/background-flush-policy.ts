@@ -18,7 +18,7 @@ export class BackgroundFlushPolicy extends FlushPolicyBase {
       'change',
       (nextAppState) => {
         if (
-          (this.appState === 'active' || 'unknown') &&
+          (this.appState === 'active' || this.appState === 'unknown') &&
           ['inactive', 'background'].includes(nextAppState)
         ) {
           // When the app goes into the background we will trigger a flush
