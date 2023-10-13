@@ -1,3 +1,23 @@
+## [@segment/analytics-react-native-v2.16.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.16.0...@segment/analytics-react-native-v2.16.1) (2023-09-14)
+
+
+### Bug Fixes
+
+* split userInfo/context stamping from raw event data ([#876](https://github.com/segmentio/analytics-react-native/issues/876)) ([c220376](https://github.com/segmentio/analytics-react-native/commit/c220376a393b2d89a3ebb91b572edeb21cdcd5a4))
+
+## [@segment/analytics-react-native-v2.16.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.15.0...@segment/analytics-react-native-v2.16.0) (2023-08-21)
+
+
+### Features
+
+* add saveDelay option for persistor ([#811](https://github.com/segmentio/analytics-react-native/issues/811)) ([11d5e87](https://github.com/segmentio/analytics-react-native/commit/11d5e87648938220732ea2e2c35d499789413b72))
+
+
+### Bug Fixes
+
+* package dependency fixes ([#869](https://github.com/segmentio/analytics-react-native/issues/869)) ([08d415e](https://github.com/segmentio/analytics-react-native/commit/08d415e3b1cfd8499f5f6984f2859a30a851da12))
+* resolve potential build issues with RN 0.72 ([#841](https://github.com/segmentio/analytics-react-native/issues/841)) ([d287304](https://github.com/segmentio/analytics-react-native/commit/d287304383b22b7d0344d0f2c68fccce8aec76cb))
+
 ## [@segment/analytics-react-native-v2.15.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.14.0...@segment/analytics-react-native-v2.15.0) (2023-06-02)
 
 

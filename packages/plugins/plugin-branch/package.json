@@ -1,6 +1,6 @@
 {
   "name": "@segment/analytics-react-native-plugin-branch",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "The hassle-free way to add Segment analytics to your React-Native app.",
   "main": "lib/commonjs/index",
   "scripts": {
@@ -45,11 +45,10 @@
   },
   "homepage": "https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-branch#readme",
   "peerDependencies": {
-    "@segment/analytics-react-native": "*"
-  },
-  "dependencies": {
+    "@segment/analytics-react-native": "*",
     "react-native-branch": "^5.6.0"
   },
+  "dependencies": {},
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/commit-analyzer": "^9.0.2",
@@ -59,6 +58,7 @@
     "@semantic-release/release-notes-generator": "^10.0.3",
     "@types/jest": "^27.0.3",
     "conventional-changelog-conventionalcommits": "^5.0.0",
+    "react-native-branch": "^5.6.0",
     "rimraf": "^3.0.2",
     "semantic-release": "^19.0.3",
     "semantic-release-monorepo": "^7.0.5",

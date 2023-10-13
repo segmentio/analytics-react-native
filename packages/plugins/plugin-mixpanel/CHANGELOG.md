@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-mixpanel-v0.3.4](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-mixpanel-v0.3.3...@segment/analytics-react-native-plugin-mixpanel-v0.3.4) (2023-09-14)
+
+
+### Bug Fixes
+
+* package dependency fixes ([#869](https://github.com/segmentio/analytics-react-native/issues/869)) ([08d415e](https://github.com/segmentio/analytics-react-native/commit/08d415e3b1cfd8499f5f6984f2859a30a851da12))
+
 ## [@segment/analytics-react-native-plugin-mixpanel-v0.3.3](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-mixpanel-v0.3.2...@segment/analytics-react-native-plugin-mixpanel-v0.3.3) (2023-06-02)
 
 

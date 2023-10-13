@@ -268,7 +268,7 @@ export class SegmentClient {
         this.trackDeepLinks(),
       ]);
 
-      this.onReady();
+      await this.onReady();
       this.isReady.value = true;
 
       // flush any stored events
@@ -414,15 +414,27 @@ export class SegmentClient {
   }
 
   async process(incomingEvent: SegmentEvent) {
-    const event = await this.applyRawEventData(incomingEvent);
+    const event = this.applyRawEventData(incomingEvent);
 
     if (this.isReady.value) {
-      this.flushPolicyExecuter.notify(event);
-      return this.timeline.process(event);
+      return this.startTimelineProcessing(event);
     } else {
       this.pendingEvents.push(event);
       return event;
     }
+  }
+
+  /**
+   * Starts timeline processing
+   * @param incomingEvent Segment Event
+   * @returns Segment Event
+   */
+  private async startTimelineProcessing(
+    incomingEvent: SegmentEvent
+  ): Promise<SegmentEvent | undefined> {
+    const event = await this.applyContextData(incomingEvent);
+    this.flushPolicyExecuter.notify(event);
+    return this.timeline.process(event);
   }
 
   private async trackDeepLinks() {
@@ -454,7 +466,7 @@ export class SegmentClient {
    * Executes when everything in the client is ready for sending events
    * @param isReady
    */
-  private onReady() {
+  private async onReady() {
     // Add all plugins awaiting store
     if (this.pluginsToAdd.length > 0 && !this.isAddingPlugins) {
       this.isAddingPlugins = true;
@@ -474,7 +486,7 @@ export class SegmentClient {
 
     // Send all events in the queue
     for (const e of this.pendingEvents) {
-      void this.timeline.process(e);
+      await this.startTimelineProcessing(e);
     }
     this.pendingEvents = [];
   }
@@ -778,12 +790,27 @@ export class SegmentClient {
   }
 
   /**
-   * Injects context and userInfo data into the event, sets the messageId and timestamp
-   * This is handled outside of the timeline to prevent concurrency issues between plugins
+   * Sets the messageId and timestamp
    * @param event Segment Event
    * @returns event with data injected
    */
-  private applyRawEventData = async (
+  private applyRawEventData = (event: SegmentEvent): SegmentEvent => {
+    return {
+      ...event,
+      messageId: getUUID(),
+      timestamp: new Date().toISOString(),
+      integrations: event.integrations ?? {},
+    } as SegmentEvent;
+  };
+
+  /**
+   * Injects context and userInfo data into the event
+   * This is handled outside of the timeline to prevent concurrency issues between plugins
+   * This is only added after the client is ready to let the client restore values from storage
+   * @param event Segment Event
+   * @returns event with data injected
+   */
+  private applyContextData = async (
     event: SegmentEvent
   ): Promise<SegmentEvent> => {
     const userInfo = await this.processUserInfo(event);
@@ -796,9 +823,6 @@ export class SegmentClient {
         ...event.context,
         ...context,
       },
-      messageId: getUUID(),
-      timestamp: new Date().toISOString(),
-      integrations: event.integrations ?? {},
     } as SegmentEvent;
   };
 

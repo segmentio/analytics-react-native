@@ -1,8 +1,25 @@
 {
-  "name": "@segment/analytics-react-native-plugin-firebase",
-  "version": "0.3.10",
-  "description": "The hassle-free way to add Segment analytics to your React-Native app.",
+  "name": "@segment/analytics-react-native-plugin-onetrust",
+  "version": "0.0.0",
+  "description": "Add OneTrust to Segment analytics in your React-Native app.",
   "main": "lib/commonjs/index",
+  "module": "lib/module/index",
+  "types": "lib/typescript/src/index.d.ts",
+  "react-native": "src/index",
+  "source": "src/index",
+  "files": [
+    "src",
+    "lib",
+    "android",
+    "ios",
+    "cpp",
+    "package.json",
+    "!android/build",
+    "!ios/build",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__"
+  ],
   "scripts": {
     "build": "bob build",
     "test": "jest",
@@ -16,42 +33,26 @@
     "ios",
     "android"
   ],
-  "module": "lib/module/index",
-  "types": "lib/typescript/src/index.d.ts",
-  "react-native": "src/index",
-  "source": "src/index",
-  "files": [
-    "src",
-    "lib",
-    "android",
-    "ios",
-    "cpp",
-    "segment-analytics-react-native.podspec",
-    "package.json",
-    "!src/**/*.e2e.mock.js",
-    "!**/__tests__",
-    "!**/__fixtures__",
-    "!**/__mocks__"
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/segmentio/analytics-react-native.git",
-    "directory": "packages/core"
+    "directory": "packages/plugins/plugin-onetrust"
   },
   "author": "Segment <hello@segment.com> (https://segment.com/)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/segmentio/analytics-react-native/issues"
   },
-  "homepage": "https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-firebase#readme",
+  "homepage": "https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-onetrust#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "peerDependencies": {
     "@segment/analytics-react-native": "*",
-    "@react-native-firebase/app": "^18.4.0",
-    "@react-native-firebase/analytics": "^18.4.0"
+    "@segment/sovran-react-native": "*",
+    "react-native-onetrust-cmp": "^202308.2.0"
   },
   "devDependencies": {
-    "@react-native-firebase/app": "^18.4.0",
-    "@react-native-firebase/analytics": "^18.4.0",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/commit-analyzer": "^9.0.2",
     "@semantic-release/git": "^10.0.1",
@@ -60,11 +61,17 @@
     "@semantic-release/release-notes-generator": "^10.0.3",
     "@types/jest": "^27.0.3",
     "conventional-changelog-conventionalcommits": "^5.0.0",
+    "on-change": "^3.0.2",
     "rimraf": "^3.0.2",
     "semantic-release": "^19.0.3",
     "semantic-release-monorepo": "^7.0.5",
     "ts-jest": "^27.0.7",
     "typescript": "^4.4.4"
+  },
+  "jest": {
+    "setupFiles": [
+      "<rootDir>/src/methods/__tests__/jest_setup.ts"
+    ]
   },
   "react-native-builder-bob": {
     "source": "src",
@@ -74,8 +81,5 @@
       "module",
       "typescript"
     ]
-  },
-  "engines": {
-    "node": ">=12"
   }
 }
