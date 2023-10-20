@@ -69,7 +69,7 @@ describe('#sendEvents', () => {
         writeKey: 'SEGMENT_KEY',
       }),
       headers: {
-        'Content-Type': 'text/plain',
+        'Content-Type': 'application/json; charset=utf-8',
       },
     });
   }
