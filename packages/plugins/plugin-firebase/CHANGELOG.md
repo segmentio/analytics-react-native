@@ -1,3 +1,10 @@
+## [@segment/analytics-react-native-plugin-firebase-v0.3.11](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-firebase-v0.3.10...@segment/analytics-react-native-plugin-firebase-v0.3.11) (2023-10-20)
+
+
+### Bug Fixes
+
+* update peer dependency to version 18 of Firebase ([#883](https://github.com/segmentio/analytics-react-native/issues/883)) ([8796020](https://github.com/segmentio/analytics-react-native/commit/87960204260bf3aa14ad5f7d777b2f7bbb42c018))
+
 ## [@segment/analytics-react-native-plugin-firebase-v0.3.10](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-firebase-v0.3.9...@segment/analytics-react-native-plugin-firebase-v0.3.10) (2023-09-14)
 
 

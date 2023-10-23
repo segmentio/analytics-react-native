@@ -13,12 +13,12 @@ export const startServer = async (mockServerListener) => {
   return new Promise((resolve) => {
     const app = express();
 
-    app.use(bodyParser.text());
+    app.use(bodyParser.json());
 
     // Handles batch events
     app.post('/events', (req, res) => {
       console.log(`➡️  Received request`);
-      const body = JSON.parse(req.body);
+      const body = req.body;
       mockServerListener(body);
 
       res.status(200).send({ mockSuccess: true });

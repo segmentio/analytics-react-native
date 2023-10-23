@@ -1,3 +1,16 @@
+## [@segment/analytics-react-native-v2.17.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.16.1...@segment/analytics-react-native-v2.17.0) (2023-10-20)
+
+
+### Features
+
+* add consent management and support for onetrust cmp ([#882](https://github.com/segmentio/analytics-react-native/issues/882)) ([375684f](https://github.com/segmentio/analytics-react-native/commit/375684f99ac4324d30c009924ad004098d9feb38))
+
+
+### Bug Fixes
+
+* add unknown option to current state ([#887](https://github.com/segmentio/analytics-react-native/issues/887)) ([a0a3b0d](https://github.com/segmentio/analytics-react-native/commit/a0a3b0df3269542fcbd836ae1d2d5d7a77157313))
+* change content type to json ([#885](https://github.com/segmentio/analytics-react-native/issues/885)) ([e8ddeb4](https://github.com/segmentio/analytics-react-native/commit/e8ddeb49a97e62ccd6150e88bfb16014ede1332e))
+
 ## [@segment/analytics-react-native-v2.16.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.16.0...@segment/analytics-react-native-v2.16.1) (2023-09-14)
 
 
