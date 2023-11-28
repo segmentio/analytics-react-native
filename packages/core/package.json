@@ -39,12 +39,13 @@
   ],
   "scripts": {
     "prebuild": "node constants-generator.js && eslint --fix ./src/info.ts",
-    "build": "bob build",
-    "clean": "rimraf lib node_modules",
+    "build": "yarn prebuild && bob build",
+    "clean": "rimraf lib node_modules ./src/info.ts",
     "release": "semantic-release",
     "test": "jest",
     "typescript": "tsc --noEmit",
-    "postversion": "yarn prebuild"
+    "postversion": "yarn prebuild",
+    "prepublish": "yarn prebuild"
   },
   "dependencies": {
     "@segment/tsub": "^2",
