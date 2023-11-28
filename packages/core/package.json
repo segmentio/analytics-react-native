@@ -55,6 +55,7 @@
   },
   "devDependencies": {
     "@types/uuid": "^9.0.7",
+    "jest": "^29.7.0",
     "semantic-release": "^22.0.8",
     "semantic-release-monorepo": "^7.0.5",
     "typescript": "^5.2.2"

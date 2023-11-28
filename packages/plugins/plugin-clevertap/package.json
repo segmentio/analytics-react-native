@@ -52,12 +52,12 @@
     "@segment/analytics-react-native": "workspace:*",
     "@segment/analytics-rn-shared": "workspace:*",
     "@segment/sovran-react-native": "workspace:*",
-    "@types/jest": "^29.5.8",
-    "@types/node": "^20.9.4",
     "clevertap-react-native": "^1.0.0",
+    "jest": "^29.7.0",
     "react-native-builder-bob": "^0.23.1",
     "rimraf": "^5.0.5",
-    "ts-jest": "^29.1.1",
+    "semantic-release": "^22.0.8",
+    "semantic-release-monorepo": "^7.0.5",
     "typescript": "^5.2.2"
   },
   "react-native-builder-bob": {

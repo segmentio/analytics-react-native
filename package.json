@@ -13,6 +13,7 @@
     "sovran": "yarn workspace @segment/sovran-react-native",
     "example": "yarn --cwd example",
     "build": " yarn workspaces foreach -A run build",
+    "testAll": " yarn workspaces foreach -A run test --passWithNoTests",
     "clean": " yarn workspaces foreach -A run clean",
     "typescript": "tsc --noEmit --composite false",
     "test": "jest",
