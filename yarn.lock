@@ -5749,6 +5749,52 @@ __metadata:
   languageName: node
   linkType: hard
 
+"analytics-react-native@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "analytics-react-native@workspace:."
+  dependencies:
+    "@babel/core": "npm:^7.23.3"
+    "@babel/runtime": "npm:^7.23.2"
+    "@changesets/cli": "npm:^2.26.2"
+    "@commitlint/config-conventional": "npm:^18.4.2"
+    "@react-native-async-storage/async-storage": "npm:^1.19"
+    "@react-native-community/eslint-config": "npm:^3.2.0"
+    "@segment/analytics-rn-shared": "workspace:*"
+    "@semantic-release/changelog": "npm:^6.0.3"
+    "@semantic-release/commit-analyzer": "npm:^11.1.0"
+    "@semantic-release/git": "npm:^10.0.1"
+    "@semantic-release/github": "npm:^9.2.3"
+    "@semantic-release/npm": "npm:^11.0.1"
+    "@semantic-release/release-notes-generator": "npm:^12.1.0"
+    "@types/jest": "npm:^29.5.8"
+    "@types/node": "npm:^20.9.1"
+    "@types/react": "npm:^18.2.37"
+    "@types/react-native": "npm:0.72.6"
+    "@types/uuid": "npm:^9.0.7"
+    "@typescript-eslint/eslint-plugin": "npm:^6.11.0"
+    "@typescript-eslint/parser": "npm:^6.11.0"
+    babel-jest: "npm:^29.7.0"
+    commitlint: "npm:^18.4.2"
+    conventional-changelog-conventionalcommits: "npm:^7.0.2"
+    eslint: "npm:^8.54.0"
+    eslint-config-prettier: "npm:^9.0.0"
+    eslint-plugin-jest: "npm:^27.6.0"
+    eslint-plugin-prettier: "npm:^5.0.1"
+    husky: "npm:^8.0.3"
+    jest: "npm:^29.7.0"
+    metro-react-native-babel-preset: "npm:^0.77.0"
+    prettier: "npm:^3.1.0"
+    react: "npm:18.2.0"
+    react-native: "npm:^0.72.7"
+    react-native-builder-bob: "npm:^0.23.1"
+    rimraf: "npm:^5.0.5"
+    semantic-release: "npm:^22.0.8"
+    semantic-release-monorepo: "npm:^7.0.5"
+    ts-jest: "npm:^29.1.1"
+    typescript: "npm:^5.2.2"
+  languageName: unknown
+  linkType: soft
+
 "anser@npm:^1.4.9":
   version: 1.4.10
   resolution: "anser@npm:1.4.10"
@@ -13216,52 +13262,6 @@ __metadata:
   checksum: 40c3ce4b7e6d4b8c3355479df77aeed46f81b279818ccdc500124e6a5ab882c0cc81ff7ea16384873a95a74c4570b01b120f287abbdd4c877931460eca6084b3
   languageName: node
   linkType: hard
-
-"project-sanity@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "project-sanity@workspace:."
-  dependencies:
-    "@babel/core": "npm:^7.23.3"
-    "@babel/runtime": "npm:^7.23.2"
-    "@changesets/cli": "npm:^2.26.2"
-    "@commitlint/config-conventional": "npm:^18.4.2"
-    "@react-native-async-storage/async-storage": "npm:^1.19"
-    "@react-native-community/eslint-config": "npm:^3.2.0"
-    "@segment/analytics-rn-shared": "workspace:*"
-    "@semantic-release/changelog": "npm:^6.0.3"
-    "@semantic-release/commit-analyzer": "npm:^11.1.0"
-    "@semantic-release/git": "npm:^10.0.1"
-    "@semantic-release/github": "npm:^9.2.3"
-    "@semantic-release/npm": "npm:^11.0.1"
-    "@semantic-release/release-notes-generator": "npm:^12.1.0"
-    "@types/jest": "npm:^29.5.8"
-    "@types/node": "npm:^20.9.1"
-    "@types/react": "npm:^18.2.37"
-    "@types/react-native": "npm:0.72.6"
-    "@types/uuid": "npm:^9.0.7"
-    "@typescript-eslint/eslint-plugin": "npm:^6.11.0"
-    "@typescript-eslint/parser": "npm:^6.11.0"
-    babel-jest: "npm:^29.7.0"
-    commitlint: "npm:^18.4.2"
-    conventional-changelog-conventionalcommits: "npm:^7.0.2"
-    eslint: "npm:^8.54.0"
-    eslint-config-prettier: "npm:^9.0.0"
-    eslint-plugin-jest: "npm:^27.6.0"
-    eslint-plugin-prettier: "npm:^5.0.1"
-    husky: "npm:^8.0.3"
-    jest: "npm:^29.7.0"
-    metro-react-native-babel-preset: "npm:^0.77.0"
-    prettier: "npm:^3.1.0"
-    react: "npm:18.2.0"
-    react-native: "npm:^0.72.7"
-    react-native-builder-bob: "npm:^0.23.1"
-    rimraf: "npm:^5.0.5"
-    semantic-release: "npm:^22.0.8"
-    semantic-release-monorepo: "npm:^7.0.5"
-    ts-jest: "npm:^29.1.1"
-    typescript: "npm:^5.2.2"
-  languageName: unknown
-  linkType: soft
 
 "promise-all-reject-late@npm:^1.0.0":
   version: 1.0.1

@@ -1,5 +1,5 @@
 {
-  "name": "project-sanity",
+  "name": "analytics-react-native",
   "private": true,
   "workspaces": [
     "packages/sovran",
