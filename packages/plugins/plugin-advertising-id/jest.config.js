@@ -1,16 +1,5 @@
-const { pathsToModuleNameMapper } = require('ts-jest/utils');
-const { compilerOptions } = require('./tsconfig');
+const baseConfig = require('@segment/analytics-rn-shared/jest.config.base');
 
 module.exports = {
-  preset: 'react-native',
-  roots: ['<rootDir>'],
-  setupFiles: ['../../core/src/__tests__/__helpers__/setup.ts'],
-  testPathIgnorePatterns: ['.../../core/src/__tests__/__helpers__/'],
-  modulePathIgnorePatterns: ['/lib/'],
-  transform: {
-    '^.+\\.tsx?$': 'ts-jest',
-  },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  modulePaths: [compilerOptions.baseUrl],
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
+  ...baseConfig,
 };

@@ -4,8 +4,6 @@ import { Config, PluginType, SegmentEvent } from '../../types';
 import { getMockLogger } from './mockLogger';
 import { MockSegmentStore, StoreData } from './mockSegmentStore';
 
-jest.mock('../../uuid');
-
 jest
   .spyOn(Date.prototype, 'toISOString')
   .mockReturnValue('2010-01-01T00:00:00.000Z');

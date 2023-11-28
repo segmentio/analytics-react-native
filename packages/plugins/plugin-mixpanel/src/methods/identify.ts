@@ -27,7 +27,7 @@ export default (
   const mixpanelTraits = mapTransform(event.traits ?? {});
 
   if (userId !== undefined) {
-    mixpanel.identify(userId);
+    void mixpanel.identify(userId);
   }
 
   if (settings.setAllTraitsByDefault === true) {

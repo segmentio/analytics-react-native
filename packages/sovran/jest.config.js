@@ -1,12 +1,5 @@
-const { compilerOptions } = require('./tsconfig');
+const baseConfig = require('@segment/analytics-rn-shared/jest.config.base');
 
 module.exports = {
-  preset: 'react-native',
-  roots: ['<rootDir>'],
-  modulePathIgnorePatterns: ['/lib/'],
-  transform: {
-    '^.+\\.tsx?$': 'ts-jest',
-  },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  modulePaths: [compilerOptions.baseUrl],
+  ...baseConfig,
 };

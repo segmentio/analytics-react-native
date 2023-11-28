@@ -6,8 +6,9 @@ import {
   SegmentError,
 } from '@segment/analytics-react-native';
 import { Platform } from 'react-native';
-import messaging from '@react-native-firebase/messaging';
-import type { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
+import messaging, {
+  FirebaseMessagingTypes,
+} from '@react-native-firebase/messaging';
 
 export class DeviceTokenPlugin extends PlatformPlugin {
   type = PluginType.enrichment;
@@ -19,7 +20,11 @@ export class DeviceTokenPlugin extends PlatformPlugin {
     try {
       const isAuthorized = await this.authStatus;
 
-      if (isAuthorized !== undefined && isAuthorized > 0) {
+      if (
+        isAuthorized !== undefined &&
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison -- enum comparison not working with Firebase types
+        isAuthorized > 0
+      ) {
         const token = await this.getDeviceToken();
 
         if (token !== undefined) {
@@ -65,7 +70,11 @@ export class DeviceTokenPlugin extends PlatformPlugin {
   async updatePermissionStatus() {
     const isAuthorized = await this.checkUserPermission();
 
-    if (isAuthorized !== undefined && isAuthorized > 0) {
+    if (
+      isAuthorized !== undefined &&
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison -- enum comparison not working with Firebase types
+      isAuthorized > 0
+    ) {
       const token = await this.getDeviceToken();
 
       if (token !== undefined) {

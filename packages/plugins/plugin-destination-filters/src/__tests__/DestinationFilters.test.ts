@@ -1,9 +1,13 @@
 import { DestinationFiltersPlugin } from '../DestinationFilters';
-import { createTestClient } from '../../../../core/src/__tests__/__helpers__/setupSegmentClient';
-import { DestinationPlugin } from '@segment/analytics-react-native';
+import {
+  DestinationPlugin,
+  SegmentClient,
+} from '@segment/analytics-react-native';
+import { createTestClient } from '@segment/analytics-rn-shared/__helpers__/setupSegmentClient';
 
 describe('DestinationFiltersPlugin', () => {
-  const { store, client } = createTestClient();
+  const { store, client: c } = createTestClient();
+  const client = c as unknown as SegmentClient;
   client.add({ plugin: new DestinationFiltersPlugin() });
 
   class MockDestination extends DestinationPlugin {

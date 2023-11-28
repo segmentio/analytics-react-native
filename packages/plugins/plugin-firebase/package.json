@@ -45,26 +45,21 @@
   },
   "homepage": "https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-firebase#readme",
   "peerDependencies": {
-    "@segment/analytics-react-native": "*",
+    "@react-native-firebase/analytics": "^18.4.0",
     "@react-native-firebase/app": "^18.4.0",
-    "@react-native-firebase/analytics": "^18.4.0"
+    "@segment/analytics-react-native": "*"
   },
   "devDependencies": {
-    "@react-native-firebase/app": "^18.4.0",
     "@react-native-firebase/analytics": "^18.4.0",
-    "@semantic-release/changelog": "^6.0.1",
-    "@semantic-release/commit-analyzer": "^9.0.2",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^8.0.4",
-    "@semantic-release/npm": "^9.0.1",
-    "@semantic-release/release-notes-generator": "^10.0.3",
-    "@types/jest": "^27.0.3",
-    "conventional-changelog-conventionalcommits": "^5.0.0",
-    "rimraf": "^3.0.2",
-    "semantic-release": "^19.0.3",
-    "semantic-release-monorepo": "^7.0.5",
-    "ts-jest": "^27.0.7",
-    "typescript": "^4.4.4"
+    "@react-native-firebase/app": "^18.4.0",
+    "@segment/analytics-react-native": "workspace:*",
+    "@segment/analytics-rn-shared": "workspace:*",
+    "@segment/sovran-react-native": "workspace:*",
+    "@types/jest": "^29.5.8",
+    "react-native-builder-bob": "^0.23.1",
+    "rimraf": "^5.0.5",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.2.2"
   },
   "react-native-builder-bob": {
     "source": "src",

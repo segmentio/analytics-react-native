@@ -143,6 +143,7 @@ export function isDate(value: unknown): value is Date {
 export function objectToString(value: object, json = true): string | undefined {
   // If the object has a custom toString we well use that
   if (value.toString !== Object.prototype.toString) {
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string
     return value.toString();
   }
   if (json) {

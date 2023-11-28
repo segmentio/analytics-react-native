@@ -7,7 +7,7 @@ import {
 import { OneTrustPlugin } from '../OneTrust';
 import onChange from 'on-change';
 import type { OTPublishersNativeSDK } from '../OTProvider';
-import { createTestClient } from '@segment/analytics-react-native/src/__tests__/__helpers__/setupSegmentClient';
+import { createTestClient } from '@segment/analytics-rn-shared/__helpers__/setupSegmentClient';
 
 class MockDestination extends DestinationPlugin {
   track = jest.fn();
@@ -70,7 +70,7 @@ describe('OneTrustPlugin', () => {
     const testClient = createTestClient();
     testClient.store.reset();
     jest.clearAllMocks();
-    client = testClient.client;
+    client = testClient.client as unknown as SegmentClient;
     mockOneTrust = new MockOneTrustSDK();
     client.add({
       plugin: new OneTrustPlugin(
@@ -170,7 +170,7 @@ describe('OneTrustPlugin', () => {
     mockOneTrust.mockConsentStatuses.C002 = 1;
 
     // await one tick
-    await new Promise((res) => setTimeout(res, 0));
+    await new Promise(process.nextTick);
 
     // this is to make sure there are no unneccessary Consent Preference track calls
     expect(spy).toHaveBeenCalledTimes(2);

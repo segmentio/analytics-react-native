@@ -282,7 +282,7 @@ describe('Sovran', () => {
 
     beforeEach(() => {
       // Using legacy fake timers cause the modern type have a conflict with async/await that we use everywhere here
-      jest.useFakeTimers('legacy');
+      jest.useFakeTimers({ legacyFakeTimers: true });
     });
 
     it('calls the persistor on init and after the delay', async () => {

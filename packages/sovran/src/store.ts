@@ -144,16 +144,19 @@ export const createStore = <T extends object>(
     if (saveTimeout !== undefined) {
       clearTimeout(saveTimeout);
     }
-    saveTimeout = setTimeout(() => {
-      void (async () => {
-        try {
-          saveTimeout = undefined;
-          await persistor.set(storeId, state);
-        } catch (error) {
-          console.warn(error);
-        }
-      })();
-    }, config.persist?.saveDelay ?? DEFAULT_SAVE_STATE_DELAY_IN_MS);
+    saveTimeout = setTimeout(
+      () => {
+        void (async () => {
+          try {
+            saveTimeout = undefined;
+            await persistor.set(storeId, state);
+          } catch (error) {
+            console.warn(error);
+          }
+        })();
+      },
+      config.persist?.saveDelay ?? DEFAULT_SAVE_STATE_DELAY_IN_MS
+    );
   };
 
   const observable = createObservable<T>();
