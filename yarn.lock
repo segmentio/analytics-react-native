@@ -3631,7 +3631,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native@workspace:packages/core"
   dependencies:
-    "@segment/sovran-react-native": "workspace:*"
+    "@segment/sovran-react-native": "workspace:^"
     "@segment/tsub": "npm:^2"
     "@types/uuid": "npm:^9.0.7"
     deepmerge: "npm:^4.3.1"
@@ -3667,7 +3667,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@segment/sovran-react-native@workspace:*, @segment/sovran-react-native@workspace:packages/sovran":
+"@segment/sovran-react-native@workspace:*, @segment/sovran-react-native@workspace:^, @segment/sovran-react-native@workspace:packages/sovran":
   version: 0.0.0-use.local
   resolution: "@segment/sovran-react-native@workspace:packages/sovran"
   dependencies:
