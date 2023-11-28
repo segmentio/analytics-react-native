@@ -8,7 +8,7 @@
     "packages/plugins/*"
   ],
   "scripts": {
-    "bootstrap": "yarn install && yarn example install && yarn example pods && husky install",
+    "bootstrap": "yarn install && yarn example install && husky install",
     "core": "yarn workspace @segment/analytics-react-native",
     "sovran": "yarn workspace @segment/sovran-react-native",
     "example": "yarn --cwd example",
