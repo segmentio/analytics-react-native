@@ -16,11 +16,20 @@ jobs:
     needs: cancel_previous
     runs-on: 'ubuntu-latest'
     steps:
+
+      # Workaround for corepack enable in node
+      # Source: (https://github.com/actions/setup-node/issues/899#issuecomment-1828798029)
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'yarn'
+          node-version: 20
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+      # End workaround
+
       - name: Install
         run: yarn install --frozen-lockfile
       - name: Build
@@ -37,10 +46,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/setup-node@v2
+      # Workaround for corepack enable in node
+      # Source: (https://github.com/actions/setup-node/issues/899#issuecomment-1828798029)
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'yarn'
+          node-version: 20
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+      # End workaround
 
       - uses: maxim-lobanov/setup-xcode@v1
         with:
@@ -114,10 +131,18 @@ jobs:
           disable-animations: false
           script: echo "Generated AVD snapshot for caching."
 
-      - uses: actions/setup-node@v2
+      # Workaround for corepack enable in node
+      # Source: (https://github.com/actions/setup-node/issues/899#issuecomment-1828798029)
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'yarn'
+          node-version: 20
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+      # End workaround
 
       - name: Bootstrap
         run: yarn install && yarn example install # No need to run bootstrap here since we don't need cocoapods
