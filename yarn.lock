@@ -3631,7 +3631,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native@workspace:packages/core"
   dependencies:
-    "@segment/sovran-react-native": "npm:^1"
+    "@segment/sovran-react-native": "workspace:*"
     "@segment/tsub": "npm:^2"
     "@types/uuid": "npm:^9.0.7"
     deepmerge: "npm:^4.3.1"
@@ -3643,6 +3643,7 @@ __metadata:
     uuid: "npm:^9.0.1"
   peerDependencies:
     "@react-native-async-storage/async-storage": 1.x
+    "@segment/sovran-react-native": 1.x
     react: "*"
     react-native: "*"
     react-native-get-random-values: 1.x
@@ -3666,7 +3667,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@segment/sovran-react-native@npm:^1, @segment/sovran-react-native@workspace:*, @segment/sovran-react-native@workspace:packages/sovran":
+"@segment/sovran-react-native@workspace:*, @segment/sovran-react-native@workspace:packages/sovran":
   version: 0.0.0-use.local
   resolution: "@segment/sovran-react-native@workspace:packages/sovran"
   dependencies:

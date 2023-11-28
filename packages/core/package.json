@@ -47,13 +47,13 @@
     "postversion": "yarn prebuild"
   },
   "dependencies": {
-    "@segment/sovran-react-native": "^1",
     "@segment/tsub": "^2",
     "deepmerge": "^4.3.1",
     "js-base64": "^3.7.5",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@segment/sovran-react-native": "workspace:^",
     "@types/uuid": "^9.0.7",
     "jest": "^29.7.0",
     "semantic-release": "^22.0.8",
@@ -62,6 +62,7 @@
   },
   "peerDependencies": {
     "@react-native-async-storage/async-storage": "1.x",
+    "@segment/sovran-react-native": "1.x",
     "react": "*",
     "react-native": "*",
     "react-native-get-random-values": "1.x"
