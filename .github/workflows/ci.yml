@@ -67,7 +67,7 @@ jobs:
       # End workaround
 
       - name: Bootstrap
-        run: yarn bootstrap
+        run: yarn install && yarn example install
 
       - name: Bundle Build
         run: yarn build
