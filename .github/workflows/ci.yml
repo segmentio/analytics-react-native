@@ -16,7 +16,6 @@ jobs:
     needs: cancel_previous
     runs-on: 'ubuntu-latest'
     steps:
-
       # Workaround for corepack enable in node
       # Source: (https://github.com/actions/setup-node/issues/899#issuecomment-1828798029)
       - uses: actions/checkout@v2
@@ -67,7 +66,7 @@ jobs:
       # End workaround
 
       - name: Bootstrap
-        run: yarn install && yarn example install
+        run: yarn install && yarn example install && yarn example pods
 
       - name: Bundle Build
         run: yarn build
