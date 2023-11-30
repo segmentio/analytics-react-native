@@ -2954,6 +2954,7 @@ __metadata:
     react-test-renderer: "npm:18.2.0"
     rimraf: "npm:^3.0.2"
     ts-jest: "npm:^29.0.3"
+    ts-retry-promise: "npm:^0.7.1"
     typescript: "npm:^5.2.2"
   languageName: unknown
   linkType: soft
@@ -10019,6 +10020,13 @@ __metadata:
   bin:
     ts-jest: cli.js
   checksum: 6c45e0aeeff9cc54a64f931c43e1b99f4a1f0ddf44786cc128e7e55603ab7473c8c8f62fd83bd7e51bfe83e3c0c683132152efaeb844516bf7c923f4e92d157d
+  languageName: node
+  linkType: hard
+
+"ts-retry-promise@npm:^0.7.1":
+  version: 0.7.1
+  resolution: "ts-retry-promise@npm:0.7.1"
+  checksum: 2288f3c45ddb43b55317d02567a1467f307910796b0b44dfc5f88223b5459a6aebf9dac9a67d8680175d6f279d560ad07eb7bed625fc64684db3093708882b91
   languageName: node
   linkType: hard
 

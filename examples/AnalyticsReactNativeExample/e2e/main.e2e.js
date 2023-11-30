@@ -2,6 +2,45 @@ const { element, by, device } = require('detox');
 
 import { startServer, stopServer } from './mockServer';
 import { setupMatchers } from './matchers';
+import { retry } from 'ts-retry-promise'
+
+const launchApp = async (
+  launchArgs = {
+    newInstance: true,
+    launchArgs: {
+      detoxPrintBusyIdleResources: 'YES',
+    },
+  }
+) => {
+  await retry(
+    async () => {
+      try {
+        await device.launchApp(launchArgs)
+      } catch (error) {
+        error.message = `Failed to launch app with error: ${error.message}`
+        throw error
+      }
+    },
+    { retries: 5, delay: 10 * 1000, timeout: 30 * 10000 }
+  ).then(async () => {
+    await device.setURLBlacklist(['.*blockchain-api-dot-celo-mobile-alfajores.*'])
+  })
+}
+
+const reloadReactNative = async () => {
+  await retry(
+    async () => {
+      try {
+        await device.reloadReactNative()
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to reload react native with error', error)
+        await launchApp()
+      }
+    },
+    { retries: 5, delay: 10 * 1000, timeout: 30 * 10000 }
+  )
+}
 
 describe('#mainTest', () => {
   const mockServerListener = jest.fn();
@@ -16,7 +55,7 @@ describe('#mainTest', () => {
 
   beforeAll(async () => {
     await startServer(mockServerListener);
-    await device.launchApp();
+    await launchApp();
     setupMatchers();
   });
 
@@ -29,7 +68,7 @@ describe('#mainTest', () => {
 
   beforeEach(async () => {
     mockServerListener.mockReset();
-    await device.reloadReactNative();
+    await reloadReactNative();
   });
 
   afterAll(async () => {
