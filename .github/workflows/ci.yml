@@ -74,12 +74,8 @@ jobs:
       - name: Detox - Build
         run: RCT_NO_LAUNCH_PACKAGER=1 yarn example build:ios
 
-        # Important to do this after build, as a build will kill any running metro server
-      - name: Run Server (with mocks)
-        run: yarn example start:e2e &
-
       - name: Detox - Test
-        run: yarn example test:ios
+        run: yarn example e2e:ios
 
   run-e2e-android:
     needs: cancel_previous
@@ -146,9 +142,6 @@ jobs:
       - name: Detox - Build
         run: RCT_NO_LAUNCH_PACKAGER=1 yarn example build:android
 
-      - name: Run Server (with mocks)
-        run: yarn example start:e2e &
-
       - name: Detox - Test
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -159,4 +152,4 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: yarn example test:android
+          script: yarn example e2e:android
