@@ -72,17 +72,14 @@ jobs:
         run: yarn build
 
       - name: Detox - Build
-        run: yarn example build:ios
+        run: RCT_NO_LAUNCH_PACKAGER=1 yarn example build:ios
 
         # Important to do this after build, as a build will kill any running metro server
       - name: Run Server (with mocks)
         run: yarn example start:e2e &
 
       - name: Detox - Test
-        run: |
-          yarn example detox clean-framework-cache
-          yarn example detox build-framework-cache
-          yarn example test:ios
+        run: yarn example test:ios
 
   run-e2e-android:
     needs: cancel_previous
@@ -147,7 +144,7 @@ jobs:
         run: yarn build
 
       - name: Detox - Build
-        run: yarn example build:android
+        run: RCT_NO_LAUNCH_PACKAGER=1 yarn example build:android
 
       - name: Run Server (with mocks)
         run: yarn example start:e2e &
