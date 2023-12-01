@@ -4,5 +4,5 @@
     "outDir": "lib/typescript"
   },
   "references": [{ "path": "../sovran" }],
-  "include": ["src/**/*", "package.json", "types.d.ts"]
+  "include": ["src/**/*", "package.json", "src/**/*.json", "types.d.ts"]
 }
