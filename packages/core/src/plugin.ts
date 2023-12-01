@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import type { SegmentClient } from './analytics';
 import { Timeline } from './timeline';
 import {

@@ -1,0 +1,105 @@
+{
+  "integrations": {
+    "DummyDest1": {
+      "versionSettings": {
+        "componentTypes": []
+      },
+      "consentSettings": {
+        "categories": [
+          "C0001"
+        ]
+      }
+    },
+    "DummyDest2": {
+      "versionSettings": {
+        "componentTypes": []
+      },
+      "consentSettings": {
+        "categories": [
+          "C0002"
+        ]
+      }
+    },
+    "DummyDest3": {
+      "versionSettings": {
+        "componentTypes": []
+      },
+      "consentSettings": {
+        "categories": [
+          "C0003"
+        ]
+      }
+    },
+    "DummyDest4": {
+      "versionSettings": {
+        "componentTypes": []
+      },
+      "consentSettings": {
+        "categories": [
+          "C0004"
+        ]
+      }
+    },
+    "DummyDest5": {
+      "versionSettings": {
+        "componentTypes": []
+      },
+      "consentSettings": {
+        "categories": [
+          "C0005"
+        ]
+      }
+    },
+    "Segment.io": {
+      "apiKey": "test",
+      "unbundledIntegrations": [],
+      "addBundledMetadata": true,
+      "maybeBundledConfigIds": {},
+      "versionSettings": {
+        "version": "4.4.7",
+        "componentTypes": [
+          "browser"
+        ]
+      },
+      "apiHost": "api.segment.io/v1"
+    }
+  },
+  "plan": {
+    "track": {
+      "__default": {
+        "enabled": true,
+        "integrations": {}
+      }
+    },
+    "identify": {
+      "__default": {
+        "enabled": true
+      }
+    },
+    "group": {
+      "__default": {
+        "enabled": true
+      }
+    }
+  },
+  "edgeFunction": {},
+  "analyticsNextEnabled": true,
+  "middlewareSettings": {},
+  "enabledMiddleware": {},
+  "metrics": {
+    "sampleRate": 0.1,
+    "host": "api.segment.io/v1"
+  },
+  "legacyVideoPluginsEnabled": false,
+  "remotePlugins": [],
+  "consentSettings": {
+    "allCategories": [
+      "C0001",
+      "C0002",
+      "C0003",
+      "C0004",
+      "C0005"
+    ]
+  }
+}
+
