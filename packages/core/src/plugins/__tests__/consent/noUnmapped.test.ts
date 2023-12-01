@@ -1,4 +1,4 @@
-import { createTestClient } from '@segment/analytics-react-native/src/__tests__/__helpers__/setupSegmentClient';
+import { createTestClient } from '../../../__tests__/__helpers__/setupSegmentClient';
 import { ConsentPlugin } from '../../ConsentPlugin';
 
 import { setupTestDestinations, createConsentProvider } from './utils';
