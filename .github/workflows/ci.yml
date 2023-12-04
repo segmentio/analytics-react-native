@@ -40,16 +40,11 @@ jobs:
         run: yarn test --coverage
 
   run-e2e-ios:
-    needs: cancel_previous
-    strategy:
-      matrix:
-        xcode: ['^14', '^15']
-        macos: ['macos-latest', 'macos-13', 'macos-12']
-    runs-on: ${{ matrix.macos }}
+    runs-on: 'macos-13'
     steps:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: ${{ matrix.xcode }}
+          xcode-version: 14.3.1
       - name: Install applesimutils
         run: |
           HOMEBREW_NO_AUTO_UPDATE=1 brew tap wix/brew >/dev/null
@@ -82,7 +77,6 @@ jobs:
         run: yarn example e2e:ios
 
   run-e2e-android:
-    needs: cancel_previous
     runs-on: 'macos-latest' # This is important, linux cannot run the emulator graphically for e2e tests
     strategy:
       matrix:
