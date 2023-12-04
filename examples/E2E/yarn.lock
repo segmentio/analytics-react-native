@@ -2938,9 +2938,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"AnalyticsReactNativeExample@workspace:.":
+"AnalyticsReactNativeE2E@workspace:.":
   version: 0.0.0-use.local
-  resolution: "AnalyticsReactNativeExample@workspace:."
+  resolution: "AnalyticsReactNativeE2E@workspace:."
   dependencies:
     "@babel/core": "npm:^7.23.3"
     "@babel/preset-env": "npm:^7.23.3"

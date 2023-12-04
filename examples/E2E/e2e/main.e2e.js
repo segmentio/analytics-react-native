@@ -22,7 +22,9 @@ const launchApp = async (
       }
     },
     { retries: 5, delay: 10 * 1000, timeout: 30 * 10000 }
-  )
+  ).then(async () => {
+    await device.setURLBlacklist(['.*blockchain-api-dot-celo-mobile-alfajores.*'])
+  })
 }
 
 const reloadReactNative = async () => {
@@ -182,7 +184,7 @@ describe('#mainTest', () => {
     const context = request.batch[0].context;
 
     expect(request.batch).toHaveLength(1);
-    expect(context.app.name).toBe('AnalyticsReactNativeExample');
+    expect(context.app.name).toBe('AnalyticsReactNativeE2E');
     expect(context.app.version).toBe('1.0');
     expect(context.library.name).toBe('@segment/analytics-react-native');
     expect(context.locale).toBe('en-US');

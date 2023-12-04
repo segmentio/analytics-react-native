@@ -8,10 +8,12 @@
     "packages/plugins/*"
   ],
   "scripts": {
-    "bootstrap": "yarn install && yarn example install && yarn example pods && husky install",
+    "bootstrap": "yarn install && yarn example install && yarn example pods && yarn e2e install && yarn e2e pods && husky install",
+    "bootstrap:ci": "yarn install && yarn e2e install && yarn e2e pods && husky install",
     "core": "yarn workspace @segment/analytics-react-native",
     "sovran": "yarn workspace @segment/sovran-react-native",
     "example": "yarn --cwd examples/AnalyticsReactNativeExample",
+    "e2e": "yarn --cwd examples/E2E",
     "build": " yarn workspaces foreach -A --topological-dev run build",
     "testAll": " yarn workspaces foreach -A -p run test --passWithNoTests",
     "clean": " yarn workspaces foreach -A -p run clean",
