@@ -74,7 +74,7 @@ jobs:
 
       - name: Detox - Test
         continue-on-error: true
-        run: yarn e2e e2e:ios
+        run: yarn e2e test:ios
 
   run-e2e-android:
     runs-on: 'macos-latest' # This is important, linux cannot run the emulator graphically for e2e tests
@@ -152,4 +152,4 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: yarn e2e e2e:android
+          script: yarn e2e test:android
