@@ -1,0 +1,71 @@
+{
+  "integrations": {
+    "DummyDest1": {
+      "versionSettings": {
+        "componentTypes": []
+      }
+    },
+    "DummyDest2": {
+      "versionSettings": {
+        "componentTypes": []
+      }
+    },
+    "DummyDest3": {
+      "versionSettings": {
+        "componentTypes": []
+      }
+    },
+    "DummyDest4": {
+      "versionSettings": {
+        "componentTypes": []
+      }
+    },
+    "DummyDest5": {
+      "versionSettings": {
+        "componentTypes": []
+      }
+    },
+    "Segment.io": {
+      "apiKey": "test",
+      "unbundledIntegrations": [],
+      "addBundledMetadata": true,
+      "maybeBundledConfigIds": {},
+      "versionSettings": {
+        "version": "4.4.7",
+        "componentTypes": [
+          "browser"
+        ]
+      },
+      "apiHost": "api.segment.io/v1"
+    }
+  },
+  "plan": {
+    "track": {
+      "__default": {
+        "enabled": true,
+        "integrations": {}
+      }
+    },
+    "identify": {
+      "__default": {
+        "enabled": true
+      }
+    },
+    "group": {
+      "__default": {
+        "enabled": true
+      }
+    }
+  },
+  "edgeFunction": {},
+  "analyticsNextEnabled": true,
+  "middlewareSettings": {},
+  "enabledMiddleware": {},
+  "metrics": {
+    "sampleRate": 0.1,
+    "host": "api.segment.io/v1"
+  },
+  "legacyVideoPluginsEnabled": false,
+  "remotePlugins": []
+}
+

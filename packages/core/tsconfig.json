@@ -5,6 +5,6 @@
     "rootDir": ".",
     "baseUrl": "."
   },
-  "include": ["src/**/*", "types.d.ts"],
-  "references": [{ "path": "../sovran" }] // Add refereneces to any packages you require
+  "references": [{ "path": "../sovran" }],
+  "include": ["src/**/*", "src/**/*.json", "types.d.ts"]
 }

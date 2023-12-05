@@ -57,7 +57,7 @@ export class ConsentPlugin extends Plugin {
   }
 
   async execute(event: SegmentEvent): Promise<SegmentEvent> {
-    if ((event as TrackEventType).event === CONSENT_PREF_UPDATE_EVENT) {
+    if (this.isConsentUpdateEvent(event)) {
       return event;
     }
 
@@ -77,18 +77,36 @@ export class ConsentPlugin extends Plugin {
   }
 
   private injectConsentFilterIfApplicable = (plugin: Plugin) => {
-    if (
-      this.isDestinationPlugin(plugin) &&
-      plugin.key !== SEGMENT_DESTINATION_KEY
-    ) {
-      const settings = this.analytics?.settings.get()?.[plugin.key];
-
+    if (this.isDestinationPlugin(plugin)) {
       plugin.add(
-        new ConsentFilterPlugin(
-          this.containsConsentSettings(settings)
-            ? settings.consentSettings.categories
-            : []
-        )
+        new ConsentFilterPlugin((event) => {
+          const settings = this.analytics?.settings.get() || {};
+          const preferences = event.context?.consent?.categoryPreferences || {};
+
+          if (plugin.key === SEGMENT_DESTINATION_KEY) {
+            return (
+              this.isConsentUpdateEvent(event) ||
+              !(
+                Object.values(preferences).every((consented) => !consented) &&
+                Object.entries(settings)
+                  .filter(([k]) => k !== SEGMENT_DESTINATION_KEY)
+                  .every(([_, v]) => this.containsConsentSettings(v))
+              )
+            );
+          }
+
+          const integrationSettings = settings?.[plugin.key];
+
+          if (this.containsConsentSettings(integrationSettings)) {
+            const categories = integrationSettings.consentSettings.categories;
+            return (
+              !this.isConsentUpdateEvent(event) &&
+              categories.every((category) => preferences?.[category])
+            );
+          }
+
+          return true;
+        })
       );
     }
   };
@@ -105,6 +123,10 @@ export class ConsentPlugin extends Plugin {
         ?.categories === 'object'
     );
   };
+
+  private isConsentUpdateEvent(event: SegmentEvent): boolean {
+    return (event as TrackEventType).event === CONSENT_PREF_UPDATE_EVENT;
+  }
 }
 
 /**
@@ -114,21 +136,11 @@ export class ConsentPlugin extends Plugin {
 class ConsentFilterPlugin extends Plugin {
   type = PluginType.before;
 
-  constructor(private categories: string[]) {
+  constructor(private shouldAllowEvent: (event: SegmentEvent) => boolean) {
     super();
   }
 
   execute(event: SegmentEvent): SegmentEvent | undefined {
-    const preferences = event.context?.consent?.categoryPreferences;
-
-    // if consent plugin is active but the setup isn't properly configured - events are blocked by default
-    if (!preferences || this.categories.length === 0) {
-      return undefined;
-    }
-
-    // all categories this destination is tagged with must be present, and allowed in consent preferences
-    return this.categories.every((category) => preferences?.[category])
-      ? event
-      : undefined;
+    return this.shouldAllowEvent(event) ? event : undefined;
   }
 }
