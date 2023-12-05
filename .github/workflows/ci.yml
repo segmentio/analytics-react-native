@@ -64,17 +64,17 @@ jobs:
       # End workaround
 
       - name: Bootstrap
-        run: yarn install && yarn example install && yarn example pods
+        run: yarn install && yarn e2e install && yarn e2e pods
 
       - name: Bundle Build
         run: yarn build
 
       - name: Detox - Build
-        run: RCT_NO_LAUNCH_PACKAGER=1 yarn example build:ios
+        run: RCT_NO_LAUNCH_PACKAGER=1 yarn e2e build:ios
 
       - name: Detox - Test
         continue-on-error: true
-        run: yarn example e2e:ios
+        run: yarn e2e e2e:ios
 
   run-e2e-android:
     runs-on: 'macos-latest' # This is important, linux cannot run the emulator graphically for e2e tests
@@ -133,12 +133,13 @@ jobs:
       # End workaround
 
       - name: Bootstrap
-        run: yarn install && yarn example install # No need to run bootstrap here since we don't need cocoapods
+        run: yarn install && yarn e2e install # No need to run bootstrap here since we don't need cocoapods
+
       - name: Bundle build
         run: yarn build
 
       - name: Detox - Build
-        run: RCT_NO_LAUNCH_PACKAGER=1 yarn example build:android
+        run: RCT_NO_LAUNCH_PACKAGER=1 yarn e2e build:android
 
       - name: Detox - Test
         continue-on-error: true
@@ -151,4 +152,4 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: yarn example e2e:android
+          script: yarn e2e e2e:android
