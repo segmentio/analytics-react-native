@@ -80,12 +80,14 @@ export class ConsentPlugin extends Plugin {
     if (this.isDestinationPlugin(plugin)) {
       plugin.add(
         new ConsentFilterPlugin((event) => {
+          const allCategories =
+            this.analytics?.consentSettings.get()?.allCategories || [];
           const settings = this.analytics?.settings.get() || {};
           const preferences = event.context?.consent?.categoryPreferences || {};
 
           if (plugin.key === SEGMENT_DESTINATION_KEY) {
-            const noneConsented = Object.values(preferences).every(
-              (consented) => !consented
+            const noneConsented = allCategories.every(
+              (category) => !preferences[category]
             );
 
             return (
