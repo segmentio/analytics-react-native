@@ -15,7 +15,7 @@ export {
 export { SegmentClient } from './analytics';
 export { SegmentDestination } from './plugins/SegmentDestination';
 export {
-  CategoryConsentStatusProvider,
+  type CategoryConsentStatusProvider,
   ConsentPlugin,
 } from './plugins/ConsentPlugin';
 export * from './flushPolicies';
