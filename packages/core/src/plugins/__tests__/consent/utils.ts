@@ -1,10 +1,10 @@
 import {
-  CategoryConsentStatusProvider,
   DestinationPlugin,
   PluginType,
   SegmentClient,
   UtilityPlugin,
 } from '@segment/analytics-react-native';
+import type { CategoryConsentStatusProvider } from '@segment/analytics-react-native';
 import { SegmentDestination } from '../../SegmentDestination';
 
 beforeEach(() => {
