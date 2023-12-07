@@ -3,9 +3,9 @@ const { pathsToModuleNameMapper } = require('ts-jest');
 const { compilerOptions } = require('../../tsconfig');
 
 
-Object.entries(compilerOptions.paths).map(([key, value]) => {
-  compilerOptions.paths[key] = value.map((p) => path.resolve(__dirname, '../../', p));
-})
+// Object.entries(compilerOptions.paths).map(([key, value]) => {
+//   compilerOptions.paths[key] = value.map((p) => path.resolve(__dirname, '../../', p));
+// })
 
 module.exports = {
   preset: 'react-native',
@@ -27,17 +27,14 @@ module.exports = {
   ],
   roots:[
     path.resolve(__dirname, '__mocks__'), // Include shared mocks
-    path.resolve(__dirname, '__helpers__'), // Include shared mocks
     '<rootDir>' // Include the source code of the current package
   ], 
   setupFiles: [
-    path.resolve(__dirname, '__helpers__/setup.ts')
+    path.resolve(__dirname, 'src/setup.ts')
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   modulePaths: [compilerOptions.baseUrl],
   // Not required to module map as the core packages are referenced as devDependencies inside the workspace, 
   // but keeping this around in case future packages need manual mapping 
-  // moduleNameMapper: {
-  //   ...pathsToModuleNameMapper( compilerOptions.paths)
-  // }
+  // moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' }),
 };

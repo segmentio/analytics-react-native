@@ -1,12 +1,11 @@
-import { createTestClient } from '../../../__tests__/__helpers__/setupSegmentClient';
+import { createTestClient } from '../../../test-helpers';
 import { ConsentPlugin } from '../../ConsentPlugin';
-
+import consentNotEnabledAtSegment from './mockSettings/ConsentNotEnabledAtSegment.json';
 import {
-  setupTestDestinations,
   createConsentProvider,
   createSegmentWatcher,
+  setupTestDestinations,
 } from './utils';
-import consentNotEnabledAtSegment from './mockSettings/ConsentNotEnabledAtSegment.json';
 
 describe('Consent not enabled at Segment', () => {
   const createClient = () =>

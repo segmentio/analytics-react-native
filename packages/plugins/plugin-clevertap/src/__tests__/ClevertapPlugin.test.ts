@@ -1,14 +1,17 @@
+import { SegmentClient } from '@segment/analytics-react-native';
+import {
+  getMockLogger,
+  MockSegmentStore,
+} from '@segment/analytics-react-native/src/test-helpers';
+import CleverTap from 'clevertap-react-native';
+
+import { ClevertapPlugin } from '../ClevertapPlugin';
+
 import type {
   IdentifyEventType,
   TrackEventType,
   ScreenEventType,
 } from '@segment/analytics-react-native';
-import { ClevertapPlugin } from '../ClevertapPlugin';
-import CleverTap from 'clevertap-react-native';
-import { MockSegmentStore } from '@segment/analytics-rn-shared/__helpers__/mockSegmentStore';
-import { SegmentClient } from '@segment/analytics-react-native';
-import { getMockLogger } from '@segment/analytics-rn-shared/__helpers__/mockLogger';
-
 jest.mock('clevertap-react-native');
 
 describe('ClevertapPlugin ', () => {

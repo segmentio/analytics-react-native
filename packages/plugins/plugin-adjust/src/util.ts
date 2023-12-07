@@ -1,4 +1,4 @@
-import type { SegmentAdjustSettings } from '../../../core/src/types';
+import type { SegmentAdjustSettings } from '@segment/analytics-react-native';
 
 export const mappedCustomEventToken = (
   eventName: string,

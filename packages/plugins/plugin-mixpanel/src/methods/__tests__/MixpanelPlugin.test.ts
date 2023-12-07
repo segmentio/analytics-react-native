@@ -1,6 +1,8 @@
 import { SegmentClient, UpdateType } from '@segment/analytics-react-native';
-import { getMockLogger } from '@segment/analytics-rn-shared/__helpers__/mockLogger';
-import { MockSegmentStore } from '@segment/analytics-rn-shared/__helpers__/mockSegmentStore';
+import {
+  getMockLogger,
+  MockSegmentStore,
+} from '@segment/analytics-react-native/src/test-helpers';
 
 import { EU_SERVER, MixpanelPlugin } from '../../MixpanelPlugin';
 import { initMock, setServerMock } from '../__mocks__/mixpanel-react-native';

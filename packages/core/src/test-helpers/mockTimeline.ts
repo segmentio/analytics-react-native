@@ -1,10 +1,9 @@
-import { Timeline } from '../../core/src/timeline';
+import { Timeline } from '../timeline';
 import { getMockDestinationPlugin } from './mockDestinationPlugin';
-import { DestinationPlugin } from '../../core/src/plugin';
 
 export const getMockTimeline = () => {
   const timeline = new Timeline();
-  const destinationPlugin: DestinationPlugin = getMockDestinationPlugin();
+  const destinationPlugin = getMockDestinationPlugin();
   timeline.add(destinationPlugin);
   return timeline;
 };

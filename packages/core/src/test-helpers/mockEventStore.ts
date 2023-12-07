@@ -1,6 +1,5 @@
-import type { SegmentEvent } from '../../types';
+import type { SegmentEvent } from '../types';
 import { createMockStoreGetter } from './mockSegmentStore';
-// import { createMockStoreGetter } from './mockSegmentStore';
 import { createCallbackManager } from './utils';
 
 export class MockEventStore {

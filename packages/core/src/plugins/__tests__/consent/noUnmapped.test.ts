@@ -1,8 +1,7 @@
-import { createTestClient } from '../../../__tests__/__helpers__/setupSegmentClient';
+import { createTestClient } from '../../../test-helpers';
 import { ConsentPlugin } from '../../ConsentPlugin';
-
-import { setupTestDestinations, createConsentProvider } from './utils';
 import noUnmappedDestinations from './mockSettings/NoUnmappedDestinations.json';
+import { createConsentProvider, setupTestDestinations } from './utils';
 
 describe('No unmapped destinations', () => {
   const createClient = () =>

@@ -1,4 +1,4 @@
-import { Logger } from '../../core/src/logger';
+import { Logger } from '../logger';
 
 export const getMockLogger = () => {
   const logger = new Logger();

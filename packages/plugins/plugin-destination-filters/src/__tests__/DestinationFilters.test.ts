@@ -1,9 +1,9 @@
+import { createTestClient } from '@segment/analytics-react-native/src/test-helpers';
 import { DestinationFiltersPlugin } from '../DestinationFilters';
 import {
   DestinationPlugin,
   SegmentClient,
 } from '@segment/analytics-react-native';
-import { createTestClient } from '@segment/analytics-rn-shared/__helpers__/setupSegmentClient';
 
 describe('DestinationFiltersPlugin', () => {
   const { store, client: c } = createTestClient();

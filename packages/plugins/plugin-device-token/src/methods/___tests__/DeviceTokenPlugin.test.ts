@@ -1,8 +1,11 @@
-import { DeviceTokenPlugin } from '../../DeviceTokenPlugin';
-import { Platform } from 'react-native';
-import { MockSegmentStore } from '@segment/analytics-rn-shared/__helpers__/mockSegmentStore';
-import { getMockLogger } from '@segment/analytics-rn-shared/__helpers__/mockLogger';
 import { SegmentClient } from '@segment/analytics-react-native';
+import {
+  getMockLogger,
+  MockSegmentStore,
+} from '@segment/analytics-react-native/src/test-helpers';
+import { Platform } from 'react-native';
+
+import { DeviceTokenPlugin } from '../../DeviceTokenPlugin';
 
 const mockRequestPermission = jest.fn().mockReturnValue(1);
 const mockGetAPNSToken = jest.fn().mockReturnValue('device-token');

@@ -1,13 +1,14 @@
 import { SegmentClient } from '@segment/analytics-react-native';
-import { getMockLogger } from '@segment/analytics-rn-shared/__helpers__/mockLogger';
-import { MockSegmentStore } from '@segment/analytics-rn-shared/__helpers__/mockSegmentStore';
+import {
+  getMockLogger,
+  MockSegmentStore,
+} from '@segment/analytics-react-native/src/test-helpers';
 
 import { MixpanelPlugin } from '../../MixpanelPlugin';
 import { Mixpanel } from '../__mocks__/mixpanel-react-native';
 import alias from '../alias';
 
 import type { AliasEventType } from '@segment/analytics-react-native';
-
 jest.mock('mixpanel-react-native');
 
 describe('#alias', () => {

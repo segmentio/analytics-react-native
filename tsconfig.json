@@ -31,6 +31,9 @@
   },
   "include": ["types.d.ts", "packages/**/*"],
   "exclude": [
+    "node_modules",
+    "lib",
+    "**/lib/**/*",
     "**/*.test.ts",
     "**/__mocks__/**/*",
     "**/__tests__/**/*",

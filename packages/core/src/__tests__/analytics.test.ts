@@ -3,8 +3,7 @@ import { AppState } from 'react-native';
 import { SegmentClient } from '../analytics';
 import { ErrorType, SegmentError } from '../errors';
 import { CountFlushPolicy, TimerFlushPolicy } from '../flushPolicies';
-import { getMockLogger } from './__helpers__/mockLogger';
-import { MockSegmentStore } from './__helpers__/mockSegmentStore';
+import { getMockLogger, MockSegmentStore } from '../test-helpers';
 
 jest.mock('../api');
 

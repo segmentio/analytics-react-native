@@ -1,11 +1,12 @@
-import { SegmentClient } from '../../analytics';
-import { getMockLogger } from '../__helpers__/mockLogger';
 import * as ReactNative from 'react-native';
-import { EventType } from '../../types';
+
+import { SegmentClient } from '../../analytics';
 import {
   createMockStoreGetter,
+  getMockLogger,
   MockSegmentStore,
-} from '../__helpers__/mockSegmentStore';
+} from '../../test-helpers';
+import { EventType } from '../../types';
 
 jest.mock('uuid');
 

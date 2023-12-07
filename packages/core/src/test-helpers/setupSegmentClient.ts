@@ -1,6 +1,6 @@
-import { SegmentClient } from '../../analytics';
-import { UtilityPlugin } from '../../plugin';
-import { Config, PluginType, SegmentEvent } from '../../types';
+import { SegmentClient } from '../analytics';
+import { UtilityPlugin } from '../plugin';
+import { Config, PluginType, SegmentEvent } from '../types';
 import { getMockLogger } from './mockLogger';
 import { MockSegmentStore, StoreData } from './mockSegmentStore';
 

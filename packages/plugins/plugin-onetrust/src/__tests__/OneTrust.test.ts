@@ -4,11 +4,12 @@ import {
   PluginType,
   SegmentClient,
 } from '@segment/analytics-react-native';
-import { OneTrustPlugin } from '../OneTrust';
+import { createTestClient } from '@segment/analytics-react-native/src/test-helpers';
 import onChange from 'on-change';
-import type { OTPublishersNativeSDK } from '../OTProvider';
-import { createTestClient } from '@segment/analytics-rn-shared/__helpers__/setupSegmentClient';
 
+import { OneTrustPlugin } from '../OneTrust';
+
+import type { OTPublishersNativeSDK } from '../OTProvider';
 class MockDestination extends DestinationPlugin {
   track = jest.fn();
 

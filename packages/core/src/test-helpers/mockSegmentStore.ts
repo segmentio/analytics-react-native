@@ -1,11 +1,11 @@
-import { SEGMENT_DESTINATION_KEY } from '../../plugins/SegmentDestination';
+import { SEGMENT_DESTINATION_KEY } from '../plugins/SegmentDestination';
 import type {
   DeepLinkData,
   Dictionary,
   Settable,
   Storage,
   Watchable,
-} from '../../storage';
+} from '../storage';
 import type {
   Context,
   DeepPartial,
@@ -14,9 +14,9 @@ import type {
   RoutingRule,
   SegmentAPIIntegrations,
   UserInfoState,
-} from '../../types';
+} from '../types';
 import { createCallbackManager } from './utils';
-import { createGetter } from '../../storage/helpers';
+import { createGetter } from '../storage/helpers';
 
 export type StoreData = {
   isReady: boolean;

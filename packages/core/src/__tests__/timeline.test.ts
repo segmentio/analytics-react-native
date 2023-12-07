@@ -1,9 +1,8 @@
 import { SegmentClient } from '../analytics';
 import { Plugin } from '../plugin';
+import { getMockLogger, MockSegmentStore } from '../test-helpers';
 import { Timeline } from '../timeline';
 import { EventType, PluginType, SegmentEvent, TrackEventType } from '../types';
-import { getMockLogger } from './__helpers__/mockLogger';
-import { MockSegmentStore } from './__helpers__/mockSegmentStore';
 
 jest.mock('uuid');
 

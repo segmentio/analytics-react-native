@@ -1,12 +1,11 @@
-import { createTestClient } from '../../../__tests__/__helpers__/setupSegmentClient';
+import { createTestClient } from '../../../test-helpers';
 import { ConsentPlugin } from '../../ConsentPlugin';
-
+import destinationsMultipleCategories from './mockSettings/DestinationsMultipleCategories.json';
 import {
-  setupTestDestinations,
   createConsentProvider,
   createSegmentWatcher,
+  setupTestDestinations,
 } from './utils';
-import destinationsMultipleCategories from './mockSettings/DestinationsMultipleCategories.json';
 
 describe('Destinations multiple categories', () => {
   const createClient = () =>
