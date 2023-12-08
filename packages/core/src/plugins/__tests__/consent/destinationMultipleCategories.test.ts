@@ -13,6 +13,7 @@ describe('Destinations multiple categories', () => {
     createTestClient(
       {
         settings: destinationsMultipleCategories.integrations,
+        consentSettings: destinationsMultipleCategories.consentSettings,
       },
       { autoAddSegmentDestination: true }
     );

@@ -59,6 +59,7 @@ import {
   SegmentError,
   translateHTTPError,
 } from './errors';
+import type { SegmentAPIConsentSettings } from '.';
 
 type OnPluginAddedCallback = (plugin: Plugin) => void;
 
@@ -115,6 +116,11 @@ export class SegmentClient {
    * Access or subscribe to integration settings
    */
   readonly settings: Watchable<SegmentAPIIntegrations | undefined>;
+
+  /**
+   * Access or subscribe to integration settings
+   */
+  readonly consentSettings: Watchable<SegmentAPIConsentSettings | undefined>;
 
   /**
    * Access or subscribe to destination filter settings
@@ -196,6 +202,11 @@ export class SegmentClient {
     this.settings = {
       get: this.store.settings.get,
       onChange: this.store.settings.onChange,
+    };
+
+    this.consentSettings = {
+      get: this.store.consentSettings.get,
+      onChange: this.store.consentSettings.onChange,
     };
 
     this.filters = {
@@ -305,12 +316,14 @@ export class SegmentClient {
       const resJson: SegmentAPISettings =
         (await res.json()) as SegmentAPISettings;
       const integrations = resJson.integrations;
+      const consentSettings = resJson.consentSettings;
       const filters = this.generateFiltersMap(
         resJson.middlewareSettings?.routingRules ?? []
       );
       this.logger.info(`Received settings from Segment succesfully.`);
       await Promise.all([
         this.store.settings.set(integrations),
+        this.store.consentSettings.set(consentSettings),
         this.store.filters.set(filters),
       ]);
     } catch (e) {

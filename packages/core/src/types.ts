@@ -290,6 +290,11 @@ export type SegmentAPIIntegrations = {
   [key: string]: IntegrationSettings;
 };
 
+export type SegmentAPIConsentSettings = {
+  allCategories: string[];
+  hasUnmappedDestinations: boolean;
+};
+
 export type RoutingRule = Rule;
 
 export interface MetricsOptions {
@@ -309,6 +314,7 @@ export type SegmentAPISettings = {
     routingRules: RoutingRule[];
   };
   metrics?: MetricsOptions;
+  consentSettings?: SegmentAPIConsentSettings;
 };
 
 export type DestinationMetadata = {

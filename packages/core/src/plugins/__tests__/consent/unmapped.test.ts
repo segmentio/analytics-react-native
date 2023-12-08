@@ -13,6 +13,7 @@ describe('Unmapped destinations', () => {
     createTestClient(
       {
         settings: unmappedDestinations.integrations,
+        consentSettings: unmappedDestinations.consentSettings,
       },
       { autoAddSegmentDestination: true }
     );
