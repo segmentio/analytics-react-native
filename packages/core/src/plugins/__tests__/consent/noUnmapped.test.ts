@@ -8,6 +8,7 @@ describe('No unmapped destinations', () => {
   const createClient = () =>
     createTestClient({
       settings: noUnmappedDestinations.integrations,
+      consentSettings: noUnmappedDestinations.consentSettings,
     });
 
   test('no to all', async () => {

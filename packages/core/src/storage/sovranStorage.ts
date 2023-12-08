@@ -14,6 +14,7 @@ import type {
   UserInfoState,
   RoutingRule,
   DestinationFilters,
+  SegmentAPIConsentSettings,
 } from '..';
 import { getUUID } from '../uuid';
 import { createGetter } from './helpers';
@@ -34,6 +35,7 @@ type Data = {
   eventsToRetry: SegmentEvent[];
   context: DeepPartial<Context>;
   settings: SegmentAPIIntegrations;
+  consentSettings: SegmentAPIConsentSettings | undefined;
   userInfo: UserInfoState;
   filters: DestinationFilters;
 };
@@ -43,6 +45,7 @@ const INITIAL_VALUES: Data = {
   eventsToRetry: [],
   context: {},
   settings: {},
+  consentSettings: undefined,
   filters: {},
   userInfo: {
     anonymousId: getUUID(),
@@ -141,6 +144,9 @@ export class SovranStorage implements Storage {
   private storePersistorSaveDelay?: number;
   private readinessStore: Store<ReadinessStore>;
   private contextStore: Store<{ context: DeepPartial<Context> }>;
+  private consentSettingsStore: Store<{
+    consentSettings: SegmentAPIConsentSettings | undefined;
+  }>;
   private settingsStore: Store<{ settings: SegmentAPIIntegrations }>;
   private userInfoStore: Store<{ userInfo: UserInfoState }>;
   private deepLinkStore: Store<DeepLinkData> = deepLinkStore;
@@ -154,6 +160,9 @@ export class SovranStorage implements Storage {
   readonly settings: Watchable<SegmentAPIIntegrations | undefined> &
     Settable<SegmentAPIIntegrations> &
     Dictionary<string, IntegrationSettings, SegmentAPIIntegrations>;
+
+  readonly consentSettings: Watchable<SegmentAPIConsentSettings | undefined> &
+    Settable<SegmentAPIConsentSettings | undefined>;
 
   readonly filters: Watchable<DestinationFilters | undefined> &
     Settable<DestinationFilters> &
@@ -268,6 +277,44 @@ export class SovranStorage implements Storage {
         return this.settingsStore.dispatch((state) => ({
           settings: { ...state.settings, [key]: value },
         }));
+      },
+    };
+
+    // Consent settings
+
+    this.consentSettingsStore = createStore(
+      { consentSettings: INITIAL_VALUES.consentSettings },
+      {
+        persist: {
+          storeId: `${this.storeId}-consentSettings`,
+          persistor: this.storePersistor,
+          saveDelay: this.storePersistorSaveDelay,
+          onInitialized: markAsReadyGenerator('hasRestoredSettings'),
+        },
+      }
+    );
+
+    this.consentSettings = {
+      get: createStoreGetter(this.consentSettingsStore, 'consentSettings'),
+      onChange: (
+        callback: (value?: SegmentAPIConsentSettings | undefined) => void
+      ) =>
+        this.consentSettingsStore.subscribe((store) =>
+          callback(store.consentSettings)
+        ),
+      set: async (value) => {
+        const { consentSettings } = await this.consentSettingsStore.dispatch(
+          (state) => {
+            let newState: typeof state.consentSettings;
+            if (value instanceof Function) {
+              newState = value(state.consentSettings);
+            } else {
+              newState = Object.assign({}, state.consentSettings, value);
+            }
+            return { consentSettings: newState };
+          }
+        );
+        return consentSettings;
       },
     };
 
