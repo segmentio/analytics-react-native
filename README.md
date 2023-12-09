@@ -51,12 +51,12 @@ The hassle-free way to add Segment analytics to your React-Native app.
 
 ## Installation
 
-Install `@segment/analytics-react-native`,  [`@segment/sovran-react-native`](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran) and [`react-native-get-random-values`](https://github.com/LinusU/react-native-get-random-values):
+Install `@segment/analytics-react-native`,  [`@segment/sovran-react-native`](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran), [`react-native-get-random-values`](https://github.com/LinusU/react-native-get-random-values) and [`@react-native-community/netinfo`](https://github.com/react-native-netinfo/react-native-netinfo):
 
 ```sh
-yarn add @segment/analytics-react-native @segment/sovran-react-native react-native-get-random-values
+yarn add @segment/analytics-react-native @segment/sovran-react-native react-native-get-random-values @react-native-community/netinfo
 # or
-npm install --save @segment/analytics-react-native @segment/sovran-react-native react-native-get-random-values
+npm install --save @segment/analytics-react-native @segment/sovran-react-native react-native-get-random-values @react-native-community/netinfo
 ```
 
 If you want to use the default persistor for the Segment Analytics client, you also have to install [`react-native-async-storage/async-storage`](https://github.com/react-native-async-storage/async-storage).
