@@ -1,3 +1,4 @@
+import NetInfo from '@react-native-community/netinfo';
 import { DestinationPlugin } from '../plugin';
 import {
   PluginType,
@@ -26,7 +27,7 @@ export class SegmentDestination extends DestinationPlugin {
   private isReady = false;
 
   private sendEvents = async (events: SegmentEvent[]): Promise<void> => {
-    if (!this.isReady) {
+    if (!this.isReady || (await NetInfo.fetch()).isConnected === false) {
       // We're not sending events until Segment has loaded all settings
       return Promise.resolve();
     }
