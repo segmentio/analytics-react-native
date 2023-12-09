@@ -7,7 +7,13 @@ import { SegmentClient } from './analytics';
 import { SovranStorage } from './storage';
 
 export const createClient = (config: Config) => {
-  const logger = config?.logger || createLogger();
+  const logger = config?.logger ?? createLogger();
+
+  if (typeof config?.enabled === 'boolean' && config.enabled === false) {
+    // do nothing if client is defined as disabled
+    return undefined;
+  }
+
   if (typeof config?.debug === 'boolean') {
     if (config.debug) {
       logger.enable();
@@ -58,7 +64,7 @@ export const useAnalytics = (): ClientMethods => {
   return React.useMemo(() => {
     if (!client) {
       console.error(
-        'Segment client not configured!',
+        'Segment client not configured or is disabled by defining client.enabled as false!',
         'To use the useAnalytics() hook, pass an initialized Segment client into the AnalyticsProvider'
       );
     }

@@ -10,18 +10,23 @@ describe('#createClient', () => {
     logger: getMockLogger(),
   };
 
-  let client: SegmentClient;
+  let client: SegmentClient | undefined;
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   afterEach(() => {
-    client.cleanup();
+    client?.cleanup();
   });
 
   it('creates the client with the provided logger', () => {
     client = createClient(config);
-    expect(client.logger).toBe(config.logger);
+    expect(client?.logger).toBe(config.logger);
+  });
+
+  it('returns undefined client if enabled is set as false', () => {
+    client = createClient({ enabled: false, ...config });
+    expect(client).toBeUndefined();
   });
 });

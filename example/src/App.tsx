@@ -50,27 +50,27 @@ const segmentClient = createClient({
 
 const LoggerPlugin = new Logger();
 
-segmentClient.add({ plugin: LoggerPlugin });
+segmentClient?.add({ plugin: LoggerPlugin });
 
 // To see an example Consent Manager uncomment the following
 // const ConsentManagerPlugin = new ConsentManager();
-// segmentClient.add({ plugin: ConsentManagerPlugin });
+// segmentClient?.add({ plugin: ConsentManagerPlugin });
 
 // To test the Firebase plugin make sure to add your own API_KEY in example/ios/GoogleService-Info.plist
-// segmentClient.add({ plugin: new FirebasePlugin() });
+// segmentClient?.add({ plugin: new FirebasePlugin() });
 
 // To test the Facebook App Events plugin make sure to add your Facebook App Id to Info.plist
 // segmentClient.add({ plugin: new FacebookAppEventsPlugin() });
 // const idfaPlugin = new IdfaPlugin();
-// segmentClient.add({ plugin: idfaPlugin });
+// segmentClient?.add({ plugin: idfaPlugin });
 
-segmentClient.add({ plugin: new AmplitudeSessionPlugin() });
+segmentClient?.add({ plugin: new AmplitudeSessionPlugin() });
 
-// segmentClient.add({ plugin: new BrazePlugin() });
+// segmentClient?.add({ plugin: new BrazePlugin() });
 
-// segmentClient.add({ plugin: new ClevertapPlugin() });
+// segmentClient?.add({ plugin: new ClevertapPlugin() });
 
-// segmentClient.add({
+// segmentClient?.add({
 //   plugin: new AdvertisingIdPlugin(),
 // });
 
@@ -133,7 +133,7 @@ const App = () => {
           const newRouteName = getActiveRouteName(state);
 
           if (routeName !== newRouteName) {
-            void segmentClient.screen(newRouteName);
+            void segmentClient?.screen(newRouteName);
 
             setRouteName(newRouteName);
           }
