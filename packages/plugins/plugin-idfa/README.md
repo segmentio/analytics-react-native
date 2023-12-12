@@ -36,6 +36,8 @@ const segmentClient = createClient({
 segmentClient.add({ plugin: new IdfaPlugin() });
 ```
 
+You will need to provide a [NSUserTrackingUsageDescription](https://developer.apple.com/documentation/bundleresources/information_property_list/nsusertrackingusagedescription) key in your `Info.plist` file, for why you wish to track IDFA. An IDFA value of `0000...` will be returned on an iOS simulator.
+
 ## Customize IDFA Plugin Initialization
 
 To delay the `IDFA Plugin` initialization (ie. to avoid race condition with push notification prompt) implement the following: 
