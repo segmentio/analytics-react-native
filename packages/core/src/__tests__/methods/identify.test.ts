@@ -77,7 +77,7 @@ describe('methods #identify', () => {
     });
   });
 
-  it.only('does not persist identity traits accross events', async () => {
+  it('does not persist identity traits accross events', async () => {
     await client.identify('new-user-id', { name: 'Mary', age: 30 });
 
     const expectedEvent: Partial<SegmentEvent> = {

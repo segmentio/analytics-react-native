@@ -3,11 +3,14 @@ module.exports = {
   testRunner: {
     args: {
       '$0': 'jest',
-      config: 'e2e/jest.config.js'
+      config: 'e2e/jest.config.js',
+      forceExit: process.env.CI ? true : undefined,
     },
     jest: {
       setupTimeout: 120000
-    }
+    },
+    detached: !!process.env.CI,
+    retries: 3
   },
   behavior: {
       init: {

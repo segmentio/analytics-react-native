@@ -44,7 +44,7 @@
     "@types/react-test-renderer": "^18.0.0",
     "babel-jest": "^29.6.3",
     "babel-plugin-module-resolver": "^5.0.0",
-    "detox": "^20.13.5",
+    "detox": "^20.14.1",
     "eslint": "^8.19.0",
     "express": "^4.17.1",
     "jest": "^29.7.0",
