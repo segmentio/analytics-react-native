@@ -1,9 +1,10 @@
-import { MockEventStore } from '../../__tests__/__helpers__/mockEventStore';
-import type { SegmentClient } from '../../analytics';
-import { QueueFlushingPlugin } from '../QueueFlushingPlugin';
-import { EventType, SegmentEvent } from '../../types';
 import { createStore } from '@segment/sovran-react-native';
 
+import { MockEventStore } from '../../test-helpers';
+import { EventType, SegmentEvent } from '../../types';
+import { QueueFlushingPlugin } from '../QueueFlushingPlugin';
+
+import type { SegmentClient } from '../../analytics';
 jest.mock('@segment/sovran-react-native');
 
 describe('QueueFlushingPlugin', () => {

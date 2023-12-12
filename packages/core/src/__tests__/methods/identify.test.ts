@@ -1,5 +1,5 @@
+import { createTestClient } from '../../test-helpers';
 import { EventType, SegmentEvent } from '../../types';
-import { createTestClient } from '../__helpers__/setupSegmentClient';
 
 describe('methods #identify', () => {
   const initialUserInfo = {

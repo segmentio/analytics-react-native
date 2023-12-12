@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "rootDir": ".",
     "baseUrl": ".",
     "paths": {
       "@segment/sovran-react-native": ["packages/sovran/src/index"],
@@ -9,7 +10,6 @@
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "esModuleInterop": true,
-    "importsNotUsedAsValues": "error",
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
     "lib": ["esnext"],
@@ -26,6 +26,19 @@
     "noImplicitAny": true,
     "strict": true,
     "target": "esnext",
-    "outDir": "lib/typescript"
-  }
+    "outDir": "lib/typescript",
+    "types": ["jest", "node"]
+  },
+  "include": ["types.d.ts", "packages/**/*"],
+  "exclude": [
+    "node_modules",
+    "lib",
+    "**/lib/**/*",
+    "**/*.test.ts",
+    "**/__mocks__/**/*",
+    "**/__tests__/**/*",
+    "**/__fixtures__/**/*",
+    "**/__snapshots__/**/*",
+    "**/__helpers__/**/*"
+  ]
 }

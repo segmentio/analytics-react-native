@@ -1,10 +1,11 @@
 import { AppState, AppStateStatus } from 'react-native';
+
+import { createTestClient } from '../../test-helpers';
+import { EventType, SegmentEvent } from '../../types';
+
 import type { SegmentClient } from '../../analytics';
 import type { UtilityPlugin } from '../../plugin';
-import { EventType, SegmentEvent } from '../../types';
-import type { MockSegmentStore } from '../__helpers__/mockSegmentStore';
-import { createTestClient } from '../__helpers__/setupSegmentClient';
-
+import type { MockSegmentStore } from '../../test-helpers';
 jest.mock('uuid');
 jest.mock('../../context');
 jest.mock('react-native');

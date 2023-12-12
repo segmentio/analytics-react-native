@@ -1,9 +1,9 @@
-import { SegmentClient } from '../../analytics';
-import { getMockLogger } from '../__helpers__/mockLogger';
-import * as context from '../../context';
-import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
-import { Context, EventType } from '../../types';
 import deepmerge from 'deepmerge';
+
+import { SegmentClient } from '../../analytics';
+import * as context from '../../context';
+import { getMockLogger, MockSegmentStore } from '../../test-helpers';
+import { Context, EventType } from '../../types';
 
 jest.mock('uuid');
 

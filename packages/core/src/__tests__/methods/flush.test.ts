@@ -1,10 +1,12 @@
 import { SegmentClient } from '../../analytics';
-import { getMockLogger } from '../__helpers__/mockLogger';
+import {
+  getMockLogger,
+  getMockTimeline,
+  MockSegmentStore,
+} from '../../test-helpers';
 import { PluginType } from '../../types';
-import { getMockTimeline } from '../__helpers__/mockTimeline';
-import type { DestinationPlugin } from '../../plugin';
-import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
 
+import type { DestinationPlugin } from '../../plugin';
 jest.mock('react-native');
 jest.mock('uuid');
 
@@ -23,7 +25,7 @@ describe('methods #flush', () => {
   };
 
   beforeEach(() => {
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers({ legacyFakeTimers: true });
   });
 
   afterEach(() => {

@@ -1,0 +1,36 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@segment/sovran-react-native": ["packages/sovran/src/index"],
+      "@segment/analytics-react-native": ["packages/core/src/index"]
+    },
+    "composite": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
+    "lib": ["esnext"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noImplicitUseStrict": false,
+    "noStrictGenericChecks": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "noImplicitAny": true,
+    "strict": true,
+    "target": "esnext",
+    "outDir": "lib/typescript",
+    "types": ["jest", "node"],
+    "noEmit": true
+  },
+  "include": ["packages/**/*", "types.d.ts"],
+  "exclude": ["**/__fixtures__/**/*", "**/__snapshots__/**/*", "examples/**/*"]
+}

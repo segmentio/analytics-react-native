@@ -1,8 +1,7 @@
-import { getMockLogger } from '../__helpers__/mockLogger';
 import { SegmentClient } from '../../analytics';
-import { MockSegmentStore } from '../__helpers__/mockSegmentStore';
-import { SEGMENT_DESTINATION_KEY } from '../../plugins/SegmentDestination';
 import { settingsCDN } from '../../constants';
+import { SEGMENT_DESTINATION_KEY } from '../../plugins/SegmentDestination';
+import { getMockLogger, MockSegmentStore } from '../../test-helpers';
 
 describe('internal #getSettings', () => {
   const defaultIntegrationSettings = {

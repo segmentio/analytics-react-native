@@ -116,8 +116,8 @@ export const translateHTTPError = (error: unknown): SegmentError => {
       error instanceof Error
         ? error.message
         : typeof error === 'string'
-        ? error
-        : 'Unknown error';
+          ? error
+          : 'Unknown error';
     return new NetworkError(-1, message, error);
   }
 };

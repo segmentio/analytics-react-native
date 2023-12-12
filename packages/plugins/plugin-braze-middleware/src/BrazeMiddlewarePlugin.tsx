@@ -3,6 +3,7 @@ import {
   PluginType,
   UserInfoState,
   SegmentEvent,
+  EventType,
 } from '@segment/analytics-react-native';
 
 export class BrazeMiddlewarePlugin extends Plugin {
@@ -13,7 +14,7 @@ export class BrazeMiddlewarePlugin extends Plugin {
   execute(event: SegmentEvent): SegmentEvent | undefined {
     //check to see if anything has changed
     //if it hasn't changed disable integration
-    if (event.type === 'identify') {
+    if (event.type === EventType.IdentifyEvent) {
       if (
         this.lastSeenTraits?.userId === event.userId &&
         this.lastSeenTraits?.anonymousId === event.anonymousId &&

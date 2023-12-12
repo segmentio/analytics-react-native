@@ -64,7 +64,8 @@ const onlyStrings = (value: unknown): string | undefined => {
   if (value === null || value === undefined) {
     return undefined;
   }
-  return `${value}`;
+  // eslint-disable-next-line @typescript-eslint/no-base-to-string
+  return `${value.toString()}`;
 };
 
 export const transformMap: { [key: string]: (value: unknown) => unknown } = {

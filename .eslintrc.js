@@ -40,11 +40,14 @@ module.exports = {
     },
     // Jest 
     {
-      files: ['**/__tests__/**', '**/__mocks__/**'],
+      files: ['**/__tests__/**', '**/__mocks__/**', '**/__helpers__/**'],
       plugins: ['jest'],
-
+      env: {
+        jest: true,
+      },
       rules: {
         "no-unused-vars": "off",
+        "@typescript-eslint/no-unsafe-call": "warn",
         "@typescript-eslint/no-unused-vars": ["error"],
         "@typescript-eslint/unbound-method": "warn",
         "@typescript-eslint/no-unsafe-assignment": "warn",
@@ -54,6 +57,6 @@ module.exports = {
     },
   ],
   parserOptions: {
-    project: ['./tsconfig.json'],
+    project: ['./tsconfig.linter.json'],
   },
 };

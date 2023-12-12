@@ -1,8 +1,11 @@
-import { DeviceTokenPlugin } from '../../DeviceTokenPlugin';
-import { MockSegmentStore } from '../../../../../core/src/__tests__/__helpers__/mockSegmentStore';
-import { getMockLogger } from '../../../../../core/src/__tests__/__helpers__/mockLogger';
-import { SegmentClient } from '../../../../../core/src/analytics';
+import { SegmentClient } from '@segment/analytics-react-native';
+import {
+  getMockLogger,
+  MockSegmentStore,
+} from '@segment/analytics-react-native/src/test-helpers';
 import { Platform } from 'react-native';
+
+import { DeviceTokenPlugin } from '../../DeviceTokenPlugin';
 
 const mockRequestPermission = jest.fn().mockReturnValue(1);
 const mockGetAPNSToken = jest.fn().mockReturnValue('device-token');
@@ -47,8 +50,8 @@ describe('DeviceTokenPlugin', () => {
   });
 
   it('retrieves the APNS value if authorized and OS is iOS', async () => {
-    const analytics = new SegmentClient(clientArgs);
     Platform.OS = 'ios';
+    const analytics = new SegmentClient(clientArgs);
     await plugin.configure(analytics);
 
     expect(mockRequestPermission).toHaveReturnedWith(1);
@@ -56,8 +59,8 @@ describe('DeviceTokenPlugin', () => {
   });
 
   it('retrieves the device token for Android builds', async () => {
-    const analytics = new SegmentClient(clientArgs);
     Platform.OS = 'android';
+    const analytics = new SegmentClient(clientArgs);
 
     await plugin.configure(analytics);
 

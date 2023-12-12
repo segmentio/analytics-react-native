@@ -54,20 +54,12 @@ The hassle-free way to add Segment analytics to your React-Native app.
 Install `@segment/analytics-react-native`,  [`@segment/sovran-react-native`](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran) and [`react-native-get-random-values`](https://github.com/LinusU/react-native-get-random-values):
 
 ```sh
-yarn add @segment/analytics-react-native @segment/sovran-react-native react-native-get-random-values
+yarn add @segment/analytics-react-native @segment/sovran-react-native react-native-get-random-values @react-native-async-storage/async-storage 
 # or
-npm install --save @segment/analytics-react-native @segment/sovran-react-native react-native-get-random-values
+npm install --save @segment/analytics-react-native @segment/sovran-react-native react-native-get-random-values @react-native-async-storage/async-storage 
 ```
 
-If you want to use the default persistor for the Segment Analytics client, you also have to install [`react-native-async-storage/async-storage`](https://github.com/react-native-async-storage/async-storage).
-
-```sh
-yarn add @react-native-async-storage/async-storage 
-# or
-npm install --save @react-native-async-storage/async-storage
-```
-
-*Note: If you wish to use your own persistence layer you can use the `storePersistor` option when initializing the client. Make sure you always have a persistor (either by having AsyncStorage package installed or by explicitly passing a value), else you might get unexpected sideeffects like multiple 'Application Installed' events. Read more [Client Options](#client-options)*
+*Note: `@react-native-async-storage/async-storage` is an optional dependency. If you wish to use your own persistence layer you can use the `storePersistor` option when initializing the client. Make sure you always have a persistor (either by having AsyncStorage package installed or by explicitly passing a value), else you might get unexpected side-effects like multiple 'Application Installed' events. Read more [Client Options](#client-options)*
 
 For iOS, install native modules with:
 

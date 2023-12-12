@@ -1,6 +1,8 @@
 import { onStoreAction, registerBridgeStore } from '../bridge';
 import { createStore } from '../store';
 
+type Event = Record<string, unknown>;
+
 describe('bridge', () => {
   it('should work', async () => {
     const sovran = createStore<{ events: Event[] }>({ events: [] });

@@ -47,24 +47,20 @@
   },
   "homepage": "https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-braze#readme",
   "peerDependencies": {
-    "@segment/analytics-react-native": "*",
-    "@braze/react-native-sdk": "^5.x"
+    "@braze/react-native-sdk": "^5.x",
+    "@segment/analytics-react-native": "*"
   },
   "devDependencies": {
-    "@semantic-release/changelog": "^6.0.1",
     "@braze/react-native-sdk": "^5.x",
-    "@semantic-release/commit-analyzer": "^9.0.2",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^8.0.4",
-    "@semantic-release/npm": "^9.0.1",
-    "@semantic-release/release-notes-generator": "^10.0.3",
-    "@types/jest": "^27.0.3",
-    "conventional-changelog-conventionalcommits": "^5.0.0",
-    "rimraf": "^3.0.2",
-    "semantic-release": "^19.0.3",
+    "@segment/analytics-react-native": "workspace:*",
+    "@segment/analytics-rn-shared": "workspace:*",
+    "@segment/sovran-react-native": "workspace:*",
+    "jest": "^29.7.0",
+    "react-native-builder-bob": "^0.23.1",
+    "rimraf": "^5.0.5",
+    "semantic-release": "^22.0.8",
     "semantic-release-monorepo": "^7.0.5",
-    "ts-jest": "^27.0.7",
-    "typescript": "^4.4.4"
+    "typescript": "^5.2.2"
   },
   "react-native-builder-bob": {
     "source": "src",

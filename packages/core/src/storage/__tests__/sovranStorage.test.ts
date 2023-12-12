@@ -1,12 +1,10 @@
-import type { Persistor } from '@segment/sovran-react-native';
 import deepmerge from 'deepmerge';
-import type { Context, DeepPartial } from '../../types';
-import { createCallbackManager as mockCreateCallbackManager } from '../../__tests__/__helpers__/utils';
+
+import { createCallbackManager as mockCreateCallbackManager } from '../../test-helpers/utils';
 import { SovranStorage } from '../sovranStorage';
 
-jest.mock('uuid');
-jest.mock('react-native-get-random-values');
-
+import type { Persistor } from '@segment/sovran-react-native';
+import type { Context, DeepPartial } from '../../types';
 jest.mock('@segment/sovran-react-native', () => ({
   registerBridgeStore: jest.fn(),
   createStore: <T extends object>(initialState: T) => {

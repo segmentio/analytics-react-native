@@ -30,12 +30,16 @@ export interface CategoryConsentStatusProvider {
  */
 export class ConsentPlugin extends Plugin {
   type = PluginType.before;
+  private consentCategoryProvider: CategoryConsentStatusProvider;
+  private categories: string[];
 
   constructor(
-    private consentCategoryProvider: CategoryConsentStatusProvider,
-    private categories: string[]
+    consentCategoryProvider: CategoryConsentStatusProvider,
+    categories: string[]
   ) {
     super();
+    this.consentCategoryProvider = consentCategoryProvider;
+    this.categories = categories;
   }
 
   configure(analytics: SegmentClient): void {
@@ -147,9 +151,11 @@ export class ConsentPlugin extends Plugin {
  */
 class ConsentFilterPlugin extends Plugin {
   type = PluginType.before;
+  private shouldAllowEvent: (event: SegmentEvent) => boolean;
 
-  constructor(private shouldAllowEvent: (event: SegmentEvent) => boolean) {
+  constructor(shouldAllowEvent: (event: SegmentEvent) => boolean) {
     super();
+    this.shouldAllowEvent = shouldAllowEvent;
   }
 
   execute(event: SegmentEvent): SegmentEvent | undefined {

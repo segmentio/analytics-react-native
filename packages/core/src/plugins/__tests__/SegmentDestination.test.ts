@@ -2,6 +2,11 @@ import { SegmentClient } from '../../analytics';
 import * as api from '../../api';
 import { defaultApiHost } from '../../constants';
 import {
+  createMockStoreGetter,
+  getMockLogger,
+  MockSegmentStore,
+} from '../../test-helpers';
+import {
   Config,
   EventType,
   SegmentAPIIntegration,
@@ -9,14 +14,9 @@ import {
   TrackEventType,
   UpdateType,
 } from '../../types';
-import { getMockLogger } from '../../__tests__/__helpers__/mockLogger';
 import {
-  createMockStoreGetter,
-  MockSegmentStore,
-} from '../../__tests__/__helpers__/mockSegmentStore';
-import {
-  SegmentDestination,
   SEGMENT_DESTINATION_KEY,
+  SegmentDestination,
 } from '../SegmentDestination';
 
 jest.mock('uuid');

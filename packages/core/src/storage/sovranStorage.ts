@@ -117,21 +117,21 @@ const addAnonymousId =
 function createStoreGetter<
   U extends Record<string, unknown>,
   Z extends keyof U | undefined = undefined,
-  V = undefined
+  V = undefined,
 >(store: Store<U>, key?: Z): getStateFunc<Z extends keyof U ? V : U> {
   type X = Z extends keyof U ? V : U;
   return createGetter(
     () => {
       const state = store.getState();
       if (key !== undefined) {
-        return state[key!] as unknown as X;
+        return state[key] as unknown as X;
       }
       return state as X;
     },
     async () => {
       const promise = await store.getState(true);
       if (key !== undefined) {
-        return promise[key!] as unknown as X;
+        return promise[key] as unknown as X;
       }
       return promise as unknown as X;
     }

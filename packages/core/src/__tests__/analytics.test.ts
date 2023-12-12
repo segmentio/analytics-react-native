@@ -3,11 +3,8 @@ import { AppState } from 'react-native';
 import { SegmentClient } from '../analytics';
 import { ErrorType, SegmentError } from '../errors';
 import { CountFlushPolicy, TimerFlushPolicy } from '../flushPolicies';
-import { getMockLogger } from './__helpers__/mockLogger';
-import { MockSegmentStore } from './__helpers__/mockSegmentStore';
+import { getMockLogger, MockSegmentStore } from '../test-helpers';
 
-jest.mock('react-native');
-jest.mock('../uuid');
 jest.mock('../api');
 
 describe('SegmentClient', () => {
@@ -42,7 +39,7 @@ describe('SegmentClient', () => {
   describe('#setupInterval', () => {
     beforeEach(() => {
       // Using the legacy timers of jest to track calls
-      jest.useFakeTimers('legacy');
+      jest.useFakeTimers({ legacyFakeTimers: true });
     });
 
     afterEach(() => {

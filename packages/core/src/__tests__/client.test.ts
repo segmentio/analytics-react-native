@@ -1,6 +1,6 @@
 import type { SegmentClient } from '../analytics';
 import { createClient } from '../client';
-import { getMockLogger } from './__helpers__/mockLogger';
+import { getMockLogger } from '../test-helpers';
 
 jest.mock('uuid');
 
