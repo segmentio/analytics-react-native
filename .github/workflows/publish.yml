@@ -25,10 +25,17 @@ jobs:
           persist-credentials: false
           token: ${{ secrets.GH_TOKEN }}
 
-      - uses: actions/setup-node@v2
+      # Workaround for corepack enable in node
+      # Source: (https://github.com/actions/setup-node/issues/899#issuecomment-1828798029)
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'yarn'
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+      # End workaround
 
       - name: Config and Build
         run: |
