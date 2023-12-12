@@ -89,6 +89,7 @@
   "legacyVideoPluginsEnabled": false,
   "remotePlugins": [],
   "consentSettings": {
+    "hasUnmappedDestinations": true,
     "allCategories": [
       "C0001",
       "C0002",
@@ -98,4 +99,3 @@
     ]
   }
 }
-

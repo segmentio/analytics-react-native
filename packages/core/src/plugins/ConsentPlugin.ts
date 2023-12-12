@@ -84,18 +84,20 @@ export class ConsentPlugin extends Plugin {
     if (this.isDestinationPlugin(plugin)) {
       plugin.add(
         new ConsentFilterPlugin((event) => {
+          const allCategories =
+            this.analytics?.consentSettings.get()?.allCategories || [];
           const settings = this.analytics?.settings.get() || {};
           const preferences = event.context?.consent?.categoryPreferences || {};
 
           if (plugin.key === SEGMENT_DESTINATION_KEY) {
+            const noneConsented = allCategories.every(
+              (category) => !preferences[category]
+            );
+
             return (
               this.isConsentUpdateEvent(event) ||
-              !(
-                Object.values(preferences).every((consented) => !consented) &&
-                Object.entries(settings)
-                  .filter(([k]) => k !== SEGMENT_DESTINATION_KEY)
-                  .every(([_, v]) => this.containsConsentSettings(v))
-              )
+              !this.isConsentFeatureSetup() ||
+              !(noneConsented && !this.hasUnmappedDestinations())
             );
           }
 
@@ -130,6 +132,16 @@ export class ConsentPlugin extends Plugin {
 
   private isConsentUpdateEvent(event: SegmentEvent): boolean {
     return (event as TrackEventType).event === CONSENT_PREF_UPDATE_EVENT;
+  }
+
+  private hasUnmappedDestinations(): boolean {
+    return (
+      this.analytics?.consentSettings.get()?.hasUnmappedDestinations === true
+    );
+  }
+
+  private isConsentFeatureSetup(): boolean {
+    return typeof this.analytics?.consentSettings.get() === 'object';
   }
 }
 

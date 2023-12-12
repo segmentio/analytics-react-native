@@ -12,6 +12,7 @@ import type {
   DestinationFilters,
   IntegrationSettings,
   RoutingRule,
+  SegmentAPIConsentSettings,
   SegmentAPIIntegrations,
   UserInfoState,
 } from '../types';
@@ -22,6 +23,7 @@ export type StoreData = {
   isReady: boolean;
   context?: DeepPartial<Context>;
   settings: SegmentAPIIntegrations;
+  consentSettings?: SegmentAPIConsentSettings;
   filters: DestinationFilters;
   userInfo: UserInfoState;
   deepLinkData: DeepLinkData;
@@ -33,6 +35,7 @@ const INITIAL_VALUES: StoreData = {
   settings: {
     [SEGMENT_DESTINATION_KEY]: {},
   },
+  consentSettings: undefined,
   filters: {},
   userInfo: {
     anonymousId: 'anonymousId',
@@ -71,6 +74,9 @@ export class MockSegmentStore implements Storage {
   private callbacks = {
     context: createCallbackManager<DeepPartial<Context> | undefined>(),
     settings: createCallbackManager<SegmentAPIIntegrations>(),
+    consentSettings: createCallbackManager<
+      SegmentAPIConsentSettings | undefined
+    >(),
     filters: createCallbackManager<DestinationFilters>(),
     userInfo: createCallbackManager<UserInfoState>(),
     deepLinkData: createCallbackManager<DeepLinkData>(),
@@ -120,6 +126,19 @@ export class MockSegmentStore implements Storage {
       this.data.settings[key] = value;
       this.callbacks.settings.run(this.data.settings);
       return Promise.resolve(this.data.settings);
+    },
+  };
+
+  readonly consentSettings: Watchable<SegmentAPIConsentSettings | undefined> &
+    Settable<SegmentAPIConsentSettings | undefined> = {
+    get: createMockStoreGetter(() => this.data.consentSettings),
+    onChange: (callback: (value?: SegmentAPIConsentSettings) => void) =>
+      this.callbacks.consentSettings.register(callback),
+    set: (value) => {
+      this.data.consentSettings =
+        value instanceof Function ? value(this.data.consentSettings) : value;
+      this.callbacks.consentSettings.run(this.data.consentSettings);
+      return this.data.consentSettings;
     },
   };
 
