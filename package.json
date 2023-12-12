@@ -59,7 +59,7 @@
     "react-native-builder-bob": "^0.23.1",
     "rimraf": "^5.0.5",
     "semantic-release": "^22.0.8",
-    "semantic-release-monorepo": "^7.0.5",
+    "semantic-release-monorepo-esm": "^1.0.12",
     "ts-jest": "^29.1.1",
     "typescript": "^5.2.2"
   },

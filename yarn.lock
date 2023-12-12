@@ -3342,7 +3342,7 @@ __metadata:
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     semantic-release: "npm:^22.0.8"
-    semantic-release-monorepo: "npm:^7.0.5"
+    semantic-release-monorepo-esm: "npm:^1.0.12"
     typescript: "npm:^5.2.2"
   peerDependencies:
     "@segment/analytics-react-native": "*"
@@ -3361,7 +3361,7 @@ __metadata:
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     semantic-release: "npm:^22.0.8"
-    semantic-release-monorepo: "npm:^7.0.5"
+    semantic-release-monorepo-esm: "npm:^1.0.12"
     typescript: "npm:^5.2.2"
   peerDependencies:
     "@segment/analytics-react-native": "*"
@@ -3396,7 +3396,7 @@ __metadata:
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     semantic-release: "npm:^22.0.8"
-    semantic-release-monorepo: "npm:^7.0.5"
+    semantic-release-monorepo-esm: "npm:^1.0.12"
     typescript: "npm:^5.2.2"
   peerDependencies:
     "@segment/analytics-react-native": "*"
@@ -3416,7 +3416,7 @@ __metadata:
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     semantic-release: "npm:^22.0.8"
-    semantic-release-monorepo: "npm:^7.0.5"
+    semantic-release-monorepo-esm: "npm:^1.0.12"
     typescript: "npm:^5.2.2"
   peerDependencies:
     "@segment/analytics-react-native": "*"
@@ -3435,7 +3435,7 @@ __metadata:
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     semantic-release: "npm:^22.0.8"
-    semantic-release-monorepo: "npm:^7.0.5"
+    semantic-release-monorepo-esm: "npm:^1.0.12"
     typescript: "npm:^5.2.2"
   peerDependencies:
     "@segment/analytics-react-native": "*"
@@ -3454,7 +3454,7 @@ __metadata:
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     semantic-release: "npm:^22.0.8"
-    semantic-release-monorepo: "npm:^7.0.5"
+    semantic-release-monorepo-esm: "npm:^1.0.12"
     typescript: "npm:^5.2.2"
   peerDependencies:
     "@braze/react-native-sdk": ^5.x
@@ -3474,7 +3474,7 @@ __metadata:
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     semantic-release: "npm:^22.0.8"
-    semantic-release-monorepo: "npm:^7.0.5"
+    semantic-release-monorepo-esm: "npm:^1.0.12"
     typescript: "npm:^5.2.2"
   peerDependencies:
     "@segment/analytics-react-native": "*"
@@ -3496,7 +3496,7 @@ __metadata:
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     semantic-release: "npm:^22.0.8"
-    semantic-release-monorepo: "npm:^7.0.5"
+    semantic-release-monorepo-esm: "npm:^1.0.12"
     typescript: "npm:^5.2.2"
   peerDependencies:
     "@segment/analytics-react-native": "*"
@@ -3517,7 +3517,7 @@ __metadata:
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     semantic-release: "npm:^22.0.8"
-    semantic-release-monorepo: "npm:^7.0.5"
+    semantic-release-monorepo-esm: "npm:^1.0.12"
     typescript: "npm:^5.2.2"
   peerDependencies:
     "@react-native-firebase/app": ^17.3.2
@@ -3538,7 +3538,7 @@ __metadata:
     react-native-fbsdk-next: "npm:^11"
     rimraf: "npm:^5.0.5"
     semantic-release: "npm:^22.0.8"
-    semantic-release-monorepo: "npm:^7.0.5"
+    semantic-release-monorepo-esm: "npm:^1.0.12"
     typescript: "npm:^5.2.2"
   peerDependencies:
     "@segment/analytics-react-native": "*"
@@ -3559,7 +3559,7 @@ __metadata:
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     semantic-release: "npm:^22.0.8"
-    semantic-release-monorepo: "npm:^7.0.5"
+    semantic-release-monorepo-esm: "npm:^1.0.12"
     typescript: "npm:^5.2.2"
   peerDependencies:
     "@react-native-firebase/analytics": ^18.4.0
@@ -3579,7 +3579,7 @@ __metadata:
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     semantic-release: "npm:^22.0.8"
-    semantic-release-monorepo: "npm:^7.0.5"
+    semantic-release-monorepo-esm: "npm:^1.0.12"
     typescript: "npm:^5.2.2"
   peerDependencies:
     "@segment/analytics-react-native": "*"
@@ -3598,7 +3598,7 @@ __metadata:
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     semantic-release: "npm:^22.0.8"
-    semantic-release-monorepo: "npm:^7.0.5"
+    semantic-release-monorepo-esm: "npm:^1.0.12"
     typescript: "npm:^5.2.2"
   peerDependencies:
     "@segment/analytics-react-native": "*"
@@ -3618,7 +3618,7 @@ __metadata:
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     semantic-release: "npm:^22.0.8"
-    semantic-release-monorepo: "npm:^7.0.5"
+    semantic-release-monorepo-esm: "npm:^1.0.12"
     typescript: "npm:^5.2.2"
   peerDependencies:
     "@segment/analytics-react-native": "*"
@@ -3638,7 +3638,7 @@ __metadata:
     jest: "npm:^29.7.0"
     js-base64: "npm:^3.7.5"
     semantic-release: "npm:^22.0.8"
-    semantic-release-monorepo: "npm:^7.0.5"
+    semantic-release-monorepo-esm: "npm:^1.0.12"
     typescript: "npm:^5.2.2"
     uuid: "npm:^9.0.1"
   peerDependencies:
@@ -3675,7 +3675,7 @@ __metadata:
     deepmerge: "npm:^4.2.2"
     jest: "npm:^29.7.0"
     semantic-release: "npm:^22.0.8"
-    semantic-release-monorepo: "npm:^7.0.5"
+    semantic-release-monorepo-esm: "npm:^1.0.12"
     shell-quote: "npm:1.8.0"
     typescript: "npm:^5.2.2"
   peerDependencies:
@@ -5798,7 +5798,7 @@ __metadata:
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     semantic-release: "npm:^22.0.8"
-    semantic-release-monorepo: "npm:^7.0.5"
+    semantic-release-monorepo-esm: "npm:^1.0.12"
     ts-jest: "npm:^29.1.1"
     typescript: "npm:^5.2.2"
   languageName: unknown
@@ -7197,7 +7197,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-spawn@npm:^5.0.1, cross-spawn@npm:^5.1.0":
+"cross-spawn@npm:^5.1.0":
   version: 5.1.0
   resolution: "cross-spawn@npm:5.1.0"
   dependencies:
@@ -7205,6 +7205,19 @@ __metadata:
     shebang-command: "npm:^1.2.0"
     which: "npm:^1.2.9"
   checksum: 1918621fddb9f8c61e02118b2dbf81f611ccd1544ceaca0d026525341832b8511ce2504c60f935dbc06b35e5ef156fe8c1e72708c27dd486f034e9c0e1e07201
+  languageName: node
+  linkType: hard
+
+"cross-spawn@npm:^6.0.5":
+  version: 6.0.5
+  resolution: "cross-spawn@npm:6.0.5"
+  dependencies:
+    nice-try: "npm:^1.0.4"
+    path-key: "npm:^2.0.1"
+    semver: "npm:^5.5.0"
+    shebang-command: "npm:^1.2.0"
+    which: "npm:^1.2.9"
+  checksum: e05544722e9d7189b4292c66e42b7abeb21db0d07c91b785f4ae5fefceb1f89e626da2703744657b287e86dcd4af57b54567cef75159957ff7a8a761d9055012
   languageName: node
   linkType: hard
 
@@ -7216,6 +7229,13 @@ __metadata:
     shebang-command: "npm:^2.0.0"
     which: "npm:^2.0.1"
   checksum: 5738c312387081c98d69c98e105b6327b069197f864a60593245d64c8089c8a0a744e16349281210d56835bb9274130d825a78b2ad6853ca13cfbeffc0c31750
+  languageName: node
+  linkType: hard
+
+"crypto-random-string@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "crypto-random-string@npm:2.0.0"
+  checksum: 288589b2484fe787f9e146f56c4be90b940018f17af1b152e4dde12309042ff5a2bf69e949aab8b8ac253948381529cc6f3e5a2427b73643a71ff177fa122b37
   languageName: node
   linkType: hard
 
@@ -7300,6 +7320,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"debug@npm:3.2.7":
+  version: 3.2.7
+  resolution: "debug@npm:3.2.7"
+  dependencies:
+    ms: "npm:^2.1.1"
+  checksum: 37d96ae42cbc71c14844d2ae3ba55adf462ec89fd3a999459dec3833944cd999af6007ff29c780f1c61153bcaaf2c842d1e4ce1ec621e4fc4923244942e4a02a
+  languageName: node
+  linkType: hard
+
 "debug@npm:4, debug@npm:^4.0.0, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.2, debug@npm:^4.3.4":
   version: 4.3.4
   resolution: "debug@npm:4.3.4"
@@ -7309,15 +7338,6 @@ __metadata:
     supports-color:
       optional: true
   checksum: cedbec45298dd5c501d01b92b119cd3faebe5438c3917ff11ae1bff86a6c722930ac9c8659792824013168ba6db7c4668225d845c633fbdafbbf902a6389f736
-  languageName: node
-  linkType: hard
-
-"debug@npm:^3.1.0":
-  version: 3.2.7
-  resolution: "debug@npm:3.2.7"
-  dependencies:
-    ms: "npm:^2.1.1"
-  checksum: 37d96ae42cbc71c14844d2ae3ba55adf462ec89fd3a999459dec3833944cd999af6007ff29c780f1c61153bcaaf2c842d1e4ce1ec621e4fc4923244942e4a02a
   languageName: node
   linkType: hard
 
@@ -7438,7 +7458,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"del@npm:^6.1.1":
+"del@npm:^6.0.0, del@npm:^6.1.1":
   version: 6.1.1
   resolution: "del@npm:6.1.1"
   dependencies:
@@ -8206,18 +8226,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"execa@npm:^0.8.0":
-  version: 0.8.0
-  resolution: "execa@npm:0.8.0"
+"execa@npm:2.0.0":
+  version: 2.0.0
+  resolution: "execa@npm:2.0.0"
   dependencies:
-    cross-spawn: "npm:^5.0.1"
-    get-stream: "npm:^3.0.0"
-    is-stream: "npm:^1.1.0"
-    npm-run-path: "npm:^2.0.0"
-    p-finally: "npm:^1.0.0"
-    signal-exit: "npm:^3.0.0"
-    strip-eof: "npm:^1.0.0"
-  checksum: e6c085687024cd5d348cad98a12213f6ebad2e962c7f3298ea8608fd5ed2daad8d1e27e79bfe7104bf60d8d80b56dd60267a0667006c29019e4297c96ecfe99d
+    cross-spawn: "npm:^6.0.5"
+    get-stream: "npm:^5.0.0"
+    is-stream: "npm:^2.0.0"
+    merge-stream: "npm:^2.0.0"
+    npm-run-path: "npm:^3.0.0"
+    p-finally: "npm:^2.0.0"
+    signal-exit: "npm:^3.0.2"
+    strip-final-newline: "npm:^2.0.0"
+  checksum: 0061a715df1996acb4285545d00bbb3fc5d7acbaeeaf3f535ba8ca57793469fdb1e7f41722ac0266c95e3b931c080e4cd41d9eec916ed51e9667e00be212bd95
   languageName: node
   linkType: hard
 
@@ -8461,6 +8482,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"file-url@npm:3.0.0":
+  version: 3.0.0
+  resolution: "file-url@npm:3.0.0"
+  checksum: 31c5f85711bda47a471fd8d4a7217330102b74fb3b4dbd3626dd9cbe8c9afc1bf4584da2877abd84db392e3b4c2ad6d61ba4830b45a273dfbfd1172b443d8bb9
+  languageName: node
+  linkType: hard
+
 "fill-range@npm:^7.0.1":
   version: 7.0.1
   resolution: "fill-range@npm:7.0.1"
@@ -8658,7 +8686,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fs-extra@npm:^10.1.0":
+"fs-extra@npm:10.1.0, fs-extra@npm:^10.1.0":
   version: 10.1.0
   resolution: "fs-extra@npm:10.1.0"
   dependencies:
@@ -8821,10 +8849,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-stream@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "get-stream@npm:3.0.0"
-  checksum: 003f5f3b8870da59c6aafdf6ed7e7b07b48c2f8629cd461bd3900726548b6b8cfa2e14d6b7814fbb08f07a42f4f738407fa70b989928b2783a76b278505bba22
+"get-stream@npm:6.0.1, get-stream@npm:^6.0.0, get-stream@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "get-stream@npm:6.0.1"
+  checksum: 49825d57d3fd6964228e6200a58169464b8e8970489b3acdc24906c782fb7f01f9f56f8e6653c4a50713771d6658f7cfe051e5eb8c12e334138c9c918b296341
   languageName: node
   linkType: hard
 
@@ -8834,13 +8862,6 @@ __metadata:
   dependencies:
     pump: "npm:^3.0.0"
   checksum: 43797ffd815fbb26685bf188c8cfebecb8af87b3925091dd7b9a9c915993293d78e3c9e1bce125928ff92f2d0796f3889b92b5ec6d58d1041b574682132e0a80
-  languageName: node
-  linkType: hard
-
-"get-stream@npm:^6.0.0, get-stream@npm:^6.0.1":
-  version: 6.0.1
-  resolution: "get-stream@npm:6.0.1"
-  checksum: 49825d57d3fd6964228e6200a58169464b8e8970489b3acdc24906c782fb7f01f9f56f8e6653c4a50713771d6658f7cfe051e5eb8c12e334138c9c918b296341
   languageName: node
   linkType: hard
 
@@ -8868,7 +8889,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"git-log-parser@npm:^1.2.0":
+"git-log-parser@npm:1.2.0, git-log-parser@npm:^1.2.0":
   version: 1.2.0
   resolution: "git-log-parser@npm:1.2.0"
   dependencies:
@@ -9863,13 +9884,6 @@ __metadata:
   dependencies:
     call-bind: "npm:^1.0.2"
   checksum: cfeee6f171f1b13e6cbc6f3b6cc44e192b93df39f3fcb31aa66ffb1d2df3b91e05664311659f9701baba62f5e98c83b0673c628e7adc30f55071c4874fcdccec
-  languageName: node
-  linkType: hard
-
-"is-stream@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "is-stream@npm:1.1.0"
-  checksum: b8ae7971e78d2e8488d15f804229c6eed7ed36a28f8807a1815938771f4adff0e705218b7dab968270433f67103e4fef98062a0beea55d64835f705ee72c7002
   languageName: node
   linkType: hard
 
@@ -12184,6 +12198,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nice-try@npm:^1.0.4":
+  version: 1.0.5
+  resolution: "nice-try@npm:1.0.5"
+  checksum: 95568c1b73e1d0d4069a3e3061a2102d854513d37bcfda73300015b7ba4868d3b27c198d1dbbd8ebdef4112fc2ed9e895d4a0f2e1cce0bd334f2a1346dc9205f
+  languageName: node
+  linkType: hard
+
 "nocache@npm:^3.0.1":
   version: 3.0.4
   resolution: "nocache@npm:3.0.4"
@@ -12425,12 +12446,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"npm-run-path@npm:^2.0.0":
-  version: 2.0.2
-  resolution: "npm-run-path@npm:2.0.2"
+"npm-run-path@npm:^3.0.0":
+  version: 3.1.0
+  resolution: "npm-run-path@npm:3.1.0"
   dependencies:
-    path-key: "npm:^2.0.0"
-  checksum: 95549a477886f48346568c97b08c4fda9cdbf7ce8a4fbc2213f36896d0d19249e32d68d7451bdcbca8041b5fba04a6b2c4a618beaf19849505c05b700740f1de
+    path-key: "npm:^3.0.0"
+  checksum: 8399f01239e9a5bf5a10bddbc71ecac97e0b7890e5b78abe9731fc759db48865b0686cc86ec079cd254a98ba119a3fa08f1b23f9de1a5428c19007bbc7b5a728
   languageName: node
   linkType: hard
 
@@ -12777,6 +12798,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"p-each-series@npm:2.2.0":
+  version: 2.2.0
+  resolution: "p-each-series@npm:2.2.0"
+  checksum: 32a7cce1312bf70f99079db2ff070fc3ee2ed6efe0fa0444616fa38f79730ad09b461d009127d25254c4c865c40b6664e2c656b1a7b2c4781756d9173c974269
+  languageName: node
+  linkType: hard
+
 "p-each-series@npm:^3.0.0":
   version: 3.0.0
   resolution: "p-each-series@npm:3.0.0"
@@ -12802,10 +12830,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-finally@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "p-finally@npm:1.0.0"
-  checksum: 6b8552339a71fe7bd424d01d8451eea92d379a711fc62f6b2fe64cad8a472c7259a236c9a22b4733abca0b5666ad503cb497792a0478c5af31ded793d00937e7
+"p-finally@npm:^2.0.0":
+  version: 2.0.1
+  resolution: "p-finally@npm:2.0.1"
+  checksum: a4ee34179f5e0eb5417462ca5afbca4b6b537b051ea87c8ec7649ffb2b60a8e82a06441792fe496ab0d0156c4060a3dfd707973915a1b8369b00f2531e3eab94
   languageName: node
   linkType: hard
 
@@ -12816,7 +12844,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-limit@npm:^1.1.0, p-limit@npm:^1.2.0":
+"p-limit@npm:1.3.0, p-limit@npm:^1.1.0":
   version: 1.3.0
   resolution: "p-limit@npm:1.3.0"
   dependencies:
@@ -13041,7 +13069,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-key@npm:^2.0.0":
+"path-key@npm:^2.0.1":
   version: 2.0.1
   resolution: "path-key@npm:2.0.1"
   checksum: dd2044f029a8e58ac31d2bf34c34b93c3095c1481942960e84dd2faa95bbb71b9b762a106aead0646695330936414b31ca0bd862bf488a937ad17c8c5d73b32b
@@ -13163,7 +13191,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pkg-up@npm:^2.0.0":
+"pkg-up@npm:2.0.0":
   version: 2.0.0
   resolution: "pkg-up@npm:2.0.0"
   dependencies:
@@ -13412,7 +13440,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ramda@npm:^0.25.0":
+"ramda@npm:0.25.0":
   version: 0.25.0
   resolution: "ramda@npm:0.25.0"
   checksum: 52ca5e17c18e607c9b928b99de661cd089c31812e42675252a59372f34278bca1622a2a56b3d107d28bfcbc7cf3d7e3b7d1eba5b617eebeab8110474365ec43c
@@ -13665,7 +13693,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"read-pkg@npm:^5.0.0, read-pkg@npm:^5.2.0":
+"read-pkg@npm:5.2.0, read-pkg@npm:^5.2.0":
   version: 5.2.0
   resolution: "read-pkg@npm:5.2.0"
   dependencies:
@@ -14140,29 +14168,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semantic-release-monorepo@npm:^7.0.5":
-  version: 7.0.5
-  resolution: "semantic-release-monorepo@npm:7.0.5"
+"semantic-release-monorepo-esm@npm:^1.0.12":
+  version: 1.0.12
+  resolution: "semantic-release-monorepo-esm@npm:1.0.12"
   dependencies:
-    debug: "npm:^3.1.0"
-    execa: "npm:^0.8.0"
-    p-limit: "npm:^1.2.0"
-    pkg-up: "npm:^2.0.0"
-    ramda: "npm:^0.25.0"
-    read-pkg: "npm:^5.0.0"
-    semantic-release-plugin-decorators: "npm:^3.0.0"
+    debug: "npm:3.2.7"
+    execa: "npm:2.0.0"
+    file-url: "npm:3.0.0"
+    fs-extra: "npm:10.1.0"
+    get-stream: "npm:6.0.1"
+    git-log-parser: "npm:1.2.0"
+    p-each-series: "npm:2.2.0"
+    p-limit: "npm:1.3.0"
+    pkg-up: "npm:2.0.0"
+    ramda: "npm:0.25.0"
+    read-pkg: "npm:5.2.0"
+    tempy: "npm:1.0.1"
   peerDependencies:
-    semantic-release: ">=15.11.x"
-  checksum: c17387d9a4c864ddc04b6faedd34080e995c85a4baff33f99e36076ff41d40861324975c5371896cfbd5ab7c79536f05e0820983f2e3e556dcc9efa64a44d5cf
-  languageName: node
-  linkType: hard
-
-"semantic-release-plugin-decorators@npm:^3.0.0":
-  version: 3.0.1
-  resolution: "semantic-release-plugin-decorators@npm:3.0.1"
-  peerDependencies:
-    semantic-release: ">=11"
-  checksum: 4957824f4dd51fd1e93c818d85268954f528599253055a4d1e11aa6d0a9754d30df510ceb16afe519975293267ef13945ead7337b877d35a0bdc392411c28e55
+    semantic-release: ">=22"
+  checksum: 342c3118ec826fef09c2c41826572e5245eb210f5c89b573aa45b175d9ff4b523d8aeef95ed42c704973fb1820e1521e5054955f563172d32851fe04c37fbbc2
   languageName: node
   linkType: hard
 
@@ -14221,7 +14245,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:2 || 3 || 4 || 5, semver@npm:^5.6.0":
+"semver@npm:2 || 3 || 4 || 5, semver@npm:^5.5.0, semver@npm:^5.6.0":
   version: 5.7.2
   resolution: "semver@npm:5.7.2"
   bin:
@@ -14404,7 +14428,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"signal-exit@npm:^3.0.0, signal-exit@npm:^3.0.2, signal-exit@npm:^3.0.3, signal-exit@npm:^3.0.7":
+"signal-exit@npm:^3.0.2, signal-exit@npm:^3.0.3, signal-exit@npm:^3.0.7":
   version: 3.0.7
   resolution: "signal-exit@npm:3.0.7"
   checksum: 25d272fa73e146048565e08f3309d5b942c1979a6f4a58a8c59d5fa299728e9c2fcd1a759ec870863b1fd38653670240cd420dad2ad9330c71f36608a6a1c912
@@ -14865,13 +14889,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strip-eof@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "strip-eof@npm:1.0.0"
-  checksum: f336beed8622f7c1dd02f2cbd8422da9208fae81daf184f73656332899978919d5c0ca84dc6cfc49ad1fc4dd7badcde5412a063cf4e0d7f8ed95a13a63f68f45
-  languageName: node
-  linkType: hard
-
 "strip-final-newline@npm:^2.0.0":
   version: 2.0.0
   resolution: "strip-final-newline@npm:2.0.0"
@@ -15008,6 +15025,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"temp-dir@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "temp-dir@npm:2.0.0"
+  checksum: b1df969e3f3f7903f3426861887ed76ba3b495f63f6d0c8e1ce22588679d9384d336df6064210fda14e640ed422e2a17d5c40d901f60e161c99482d723f4d309
+  languageName: node
+  linkType: hard
+
 "temp-dir@npm:^3.0.0":
   version: 3.0.0
   resolution: "temp-dir@npm:3.0.0"
@@ -15021,6 +15045,19 @@ __metadata:
   dependencies:
     rimraf: "npm:~2.6.2"
   checksum: 7f071c963031bfece37e13c5da11e9bb451e4ddfc4653e23e327a2f91594102dc826ef6a693648e09a6e0eb856f507967ec759ae55635e0878091eccf411db37
+  languageName: node
+  linkType: hard
+
+"tempy@npm:1.0.1":
+  version: 1.0.1
+  resolution: "tempy@npm:1.0.1"
+  dependencies:
+    del: "npm:^6.0.0"
+    is-stream: "npm:^2.0.0"
+    temp-dir: "npm:^2.0.0"
+    type-fest: "npm:^0.16.0"
+    unique-string: "npm:^2.0.0"
+  checksum: 864a1cf1b5536dc21e84ae45dbbc3ba4dd2c7ec1674d895f99c349cf209df959a53d797ca38d0b2cf69c7684d565fde5cfc67faaa63b7208ffb21d454b957472
   languageName: node
   linkType: hard
 
@@ -15321,6 +15358,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"type-fest@npm:^0.16.0":
+  version: 0.16.0
+  resolution: "type-fest@npm:0.16.0"
+  checksum: 6b4d846534e7bcb49a6160b068ffaed2b62570d989d909ac3f29df5ef1e993859f890a4242eebe023c9e923f96adbcb3b3e88a198c35a1ee9a731e147a6839c3
+  languageName: node
+  linkType: hard
+
 "type-fest@npm:^0.18.0":
   version: 0.18.1
   resolution: "type-fest@npm:0.18.1"
@@ -15572,6 +15616,15 @@ __metadata:
   dependencies:
     imurmurhash: "npm:^0.1.4"
   checksum: cb811d9d54eb5821b81b18205750be84cb015c20a4a44280794e915f5a0a70223ce39066781a354e872df3572e8155c228f43ff0cce94c7cbf4da2cc7cbdd635
+  languageName: node
+  linkType: hard
+
+"unique-string@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "unique-string@npm:2.0.0"
+  dependencies:
+    crypto-random-string: "npm:^2.0.0"
+  checksum: 11820db0a4ba069d174bedfa96c588fc2c96b083066fafa186851e563951d0de78181ac79c744c1ed28b51f9d82ac5b8196ff3e4560d0178046ef455d8c2244b
   languageName: node
   linkType: hard
 

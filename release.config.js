@@ -10,5 +10,5 @@ module.exports = {
     '@semantic-release/github',
     '@semantic-release/git',
   ],
-  extends: 'semantic-release-monorepo',
+  extends: 'semantic-release-monorepo-esm',
 };
