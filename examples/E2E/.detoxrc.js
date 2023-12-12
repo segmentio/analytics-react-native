@@ -7,7 +7,7 @@ module.exports = {
       forceExit: process.env.CI ? true : undefined,
     },
     jest: {
-      setupTimeout: 120000
+      setupTimeout: 240000
     },
     detached: !!process.env.CI,
     retries: 3
@@ -63,7 +63,7 @@ module.exports = {
     emulator: {
       type: 'android.emulator',
       device: {
-        avdName: 'Pixel_3a_API_32'
+        avdName: process.env.CI ? 'Pixel_API_21_AOSP': 'Pixel_3a_API_32'
       }
     }
   },

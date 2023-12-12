@@ -16,9 +16,9 @@ jobs:
     needs: cancel_previous
     runs-on: 'ubuntu-latest'
     steps:
+      - uses: actions/checkout@v2
       # Workaround for corepack enable in node
       # Source: (https://github.com/actions/setup-node/issues/899#issuecomment-1828798029)
-      - uses: actions/checkout@v2
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -50,9 +50,9 @@ jobs:
           HOMEBREW_NO_AUTO_UPDATE=1 brew tap wix/brew >/dev/null
           HOMEBREW_NO_AUTO_UPDATE=1 brew install applesimutils >/dev/null
 
+      - uses: actions/checkout@v2
       # Workaround for corepack enable in node
       # Source: (https://github.com/actions/setup-node/issues/899#issuecomment-1828798029)
-      - uses: actions/checkout@v2
       - uses: actions/setup-node@v4
         with:
           node-version: 20
