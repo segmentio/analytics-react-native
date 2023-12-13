@@ -63,6 +63,7 @@ class MockOneTrustSDK implements OTPublishersNativeSDK {
 
 describe('OneTrustPlugin', () => {
   let client: SegmentClient;
+  let expectEvent: (event) => void;
   let mockOneTrust: MockOneTrustSDK;
   const mockBraze = new MockDestination('Braze');
   const mockAmplitude = new MockDestination('Amplitude');
@@ -72,6 +73,7 @@ describe('OneTrustPlugin', () => {
     testClient.store.reset();
     jest.clearAllMocks();
     client = testClient.client as unknown as SegmentClient;
+    expectEvent = testClient.expectEvent;
     mockOneTrust = new MockOneTrustSDK();
     client.add({
       plugin: new OneTrustPlugin(
@@ -176,15 +178,20 @@ describe('OneTrustPlugin', () => {
     // this is to make sure there are no unneccessary Consent Preference track calls
     expect(spy).toHaveBeenCalledTimes(2);
 
-    expect(spy).toHaveBeenLastCalledWith('Segment Consent Preference', {
-      consent: {
-        categoryPreferences: {
-          C001: true,
-          C002: true,
-          C003: true,
-          C004: false,
+    expect(spy).toHaveBeenLastCalledWith('Segment Consent Preference');
+
+    expectEvent({
+      event: 'Segment Consent Preference',
+      context: expect.objectContaining({
+        consent: {
+          categoryPreferences: {
+            C001: true,
+            C002: true,
+            C003: true,
+            C004: false,
+          },
         },
-      },
+      }) as unknown,
     });
   });
 });
