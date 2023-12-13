@@ -53,15 +53,14 @@
     "react-native-onetrust-cmp": "^202308.2.0"
   },
   "devDependencies": {
-    "@segment/analytics-react-native": "workspace:*",
-    "@segment/analytics-rn-shared": "workspace:*",
-    "@segment/sovran-react-native": "workspace:*",
+    "@segment/analytics-react-native": "workspace:^",
+    "@segment/analytics-rn-shared": "workspace:^",
+    "@segment/sovran-react-native": "workspace:^",
     "jest": "^29.7.0",
     "on-change": "^3.0.2",
     "react-native-builder-bob": "^0.23.1",
     "rimraf": "^5.0.5",
     "semantic-release": "^22.0.8",
-    "semantic-release-monorepo-esm": "^1.0.12",
     "typescript": "^5.2.2"
   },
   "react-native-builder-bob": {

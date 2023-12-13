@@ -6,9 +6,15 @@ module.exports = {
       { preset: 'conventionalcommits' },
     ],
     '@semantic-release/changelog',
-    '@semantic-release/npm',
-    '@semantic-release/github',
-    '@semantic-release/git',
+    [
+      'semantic-release-yarn',
+      {
+        npmPublish: false,
+        tarballDir: "dist"
+      }
+    ],
+    // '@semantic-release/github',
+    // '@semantic-release/git',
   ],
-  extends: 'semantic-release-monorepo-esm',
+  debug: true,
 };

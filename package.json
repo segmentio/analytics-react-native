@@ -20,16 +20,17 @@
     "typescript": "tsc --noEmit --composite false",
     "test": "jest",
     "lint": "eslint .",
-    "release": " yarn workspaces foreach -A run release"
+    "release": " yarn multi-semantic-release"
   },
   "devDependencies": {
+    "@anolilab/multi-semantic-release": "^1.0.3",
     "@babel/core": "^7.23.3",
     "@babel/runtime": "^7.23.2",
     "@changesets/cli": "^2.26.2",
     "@commitlint/config-conventional": "^18.4.2",
     "@react-native-async-storage/async-storage": "^1.19",
     "@react-native-community/eslint-config": "^3.2.0",
-    "@segment/analytics-rn-shared": "workspace:*",
+    "@segment/analytics-rn-shared": "workspace:^",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^11.1.0",
     "@semantic-release/git": "^10.0.1",
@@ -58,8 +59,8 @@
     "react-native": "^0.72.7",
     "react-native-builder-bob": "^0.23.1",
     "rimraf": "^5.0.5",
-    "semantic-release": "^22.0.8",
-    "semantic-release-monorepo-esm": "^1.0.12",
+    "semantic-release": "^22.0.12",
+    "semantic-release-yarn": "^3.0.2",
     "ts-jest": "^29.1.1",
     "typescript": "^5.2.2"
   },

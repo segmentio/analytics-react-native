@@ -7,8 +7,7 @@
     "build": "bob build",
     "test": "jest",
     "typescript": "tsc --noEmit",
-    "clean": "rimraf lib node_modules",
-    "release": "semantic-release"
+    "clean": "rimraf lib node_modules"
   },
   "keywords": [
     "segment",
@@ -49,15 +48,13 @@
     "react-native-fbsdk-next": "^11"
   },
   "devDependencies": {
-    "@segment/analytics-react-native": "workspace:*",
-    "@segment/analytics-rn-shared": "workspace:*",
-    "@segment/sovran-react-native": "workspace:*",
+    "@segment/analytics-react-native": "workspace:^",
+    "@segment/analytics-rn-shared": "workspace:^",
+    "@segment/sovran-react-native": "workspace:^",
     "jest": "^29.7.0",
     "react-native-builder-bob": "^0.23.1",
     "react-native-fbsdk-next": "^11",
     "rimraf": "^5.0.5",
-    "semantic-release": "^22.0.8",
-    "semantic-release-monorepo-esm": "^1.0.12",
     "typescript": "^5.2.2"
   },
   "react-native-builder-bob": {

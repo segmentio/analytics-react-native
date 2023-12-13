@@ -48,9 +48,9 @@
     "@segment/analytics-react-native": "*"
   },
   "devDependencies": {
-    "@segment/analytics-react-native": "workspace:*",
-    "@segment/analytics-rn-shared": "workspace:*",
-    "@segment/sovran-react-native": "workspace:*",
+    "@segment/analytics-react-native": "workspace:^",
+    "@segment/analytics-rn-shared": "workspace:^",
+    "@segment/sovran-react-native": "workspace:^",
     "@types/jest": "^29.5.8",
     "rimraf": "^5.0.5",
     "ts-jest": "^29.1.1",

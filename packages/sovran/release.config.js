@@ -1,3 +1,3 @@
 module.exports = {
-  extends: ['../../release.config.js', 'semantic-release-monorepo-esm'],
+  extends: ['../../release.config.js'],
 };

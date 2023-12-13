@@ -41,7 +41,6 @@
     "prebuild": "node constants-generator.js && eslint --fix ./src/info.ts",
     "build": "yarn prebuild && bob build",
     "clean": "rimraf lib node_modules ./src/info.ts",
-    "release": "semantic-release",
     "test": "jest",
     "typescript": "tsc --noEmit",
     "postversion": "yarn prebuild",
@@ -57,8 +56,6 @@
     "@segment/sovran-react-native": "workspace:^",
     "@types/uuid": "^9.0.7",
     "jest": "^29.7.0",
-    "semantic-release": "^22.0.8",
-    "semantic-release-monorepo-esm": "^1.0.12",
     "typescript": "^5.2.2"
   },
   "peerDependencies": {
