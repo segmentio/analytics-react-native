@@ -1,5 +1,5 @@
 import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
-import { createTestClient } from '../../../__tests__/__helpers__/setupSegmentClient';
+import { createTestClient } from '../../../test-helpers';
 import { ConsentPlugin } from '../../ConsentPlugin';
 import { createConsentProvider } from './utils';
 import noUnmappedDestinations from './mockSettings/NoUnmappedDestinations.json';

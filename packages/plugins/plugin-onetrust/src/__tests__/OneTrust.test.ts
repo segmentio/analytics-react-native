@@ -3,6 +3,7 @@ import {
   Plugin,
   PluginType,
   SegmentClient,
+  SegmentEvent,
 } from '@segment/analytics-react-native';
 import { createTestClient } from '@segment/analytics-react-native/src/test-helpers';
 import onChange from 'on-change';
@@ -63,7 +64,7 @@ class MockOneTrustSDK implements OTPublishersNativeSDK {
 
 describe('OneTrustPlugin', () => {
   let client: SegmentClient;
-  let expectEvent: (event) => void;
+  let expectEvent: (event: Partial<SegmentEvent>) => void;
   let mockOneTrust: MockOneTrustSDK;
   const mockBraze = new MockDestination('Braze');
   const mockAmplitude = new MockDestination('Amplitude');
