@@ -54,7 +54,11 @@ export class ConsentPlugin extends Plugin {
     let lastDeviceAttrs = analytics.context.get()?.device;
     analytics.context.onChange((c) => {
       const newAttrs = c?.device;
-      if (JSON.stringify(lastDeviceAttrs) !== JSON.stringify(newAttrs)) {
+      if (
+        newAttrs?.adTrackingEnabled !== lastDeviceAttrs?.adTrackingEnabled ||
+        newAttrs?.advertisingId !== lastDeviceAttrs?.advertisingId ||
+        newAttrs?.trackingStatus !== lastDeviceAttrs?.trackingStatus
+      ) {
         this.notifyConsentChange();
       }
       lastDeviceAttrs = newAttrs;

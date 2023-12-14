@@ -1,4 +1,5 @@
 import {
+  Context,
   DestinationPlugin,
   Plugin,
   PluginType,
@@ -192,7 +193,7 @@ describe('OneTrustPlugin', () => {
             C004: false,
           },
         },
-      }) as unknown,
+      }) as unknown as Context,
     });
   });
 });
