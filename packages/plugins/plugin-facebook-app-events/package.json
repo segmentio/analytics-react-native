@@ -1,6 +1,6 @@
 {
   "name": "@segment/analytics-react-native-plugin-facebook-app-events",
-  "version": "0.5.4",
+  "version": "0.6.0-beta.1",
   "description": "The hassle-free way to add Segment analytics to your React-Native app.",
   "main": "lib/commonjs/index",
   "scripts": {
@@ -44,13 +44,13 @@
   },
   "homepage": "https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-facebook-app-events#readme",
   "peerDependencies": {
-    "@segment/analytics-react-native": "workspace:^",
+    "@segment/analytics-react-native": "^2.18.0-beta.1",
     "react-native-fbsdk-next": "^11"
   },
   "devDependencies": {
-    "@segment/analytics-react-native": "workspace:^",
+    "@segment/analytics-react-native": "^2.18.0-beta.1",
     "@segment/analytics-rn-shared": "workspace:^",
-    "@segment/sovran-react-native": "workspace:^",
+    "@segment/sovran-react-native": "^1.1.0-beta.1",
     "jest": "^29.7.0",
     "react-native-builder-bob": "^0.23.1",
     "react-native-fbsdk-next": "^11",
@@ -68,5 +68,6 @@
   },
   "engines": {
     "node": ">=12"
-  }
+  },
+  "stableVersion": "0.6.0-beta.1"
 }
