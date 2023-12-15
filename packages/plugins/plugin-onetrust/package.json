@@ -48,7 +48,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "peerDependencies": {
-    "@segment/analytics-react-native": "*",
+    "@segment/analytics-react-native": "workspace:^",
     "@segment/sovran-react-native": "*",
     "react-native-onetrust-cmp": "^202308.2.0"
   },

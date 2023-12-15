@@ -13,8 +13,7 @@ module.exports = {
         tarballDir: "dist"
       }
     ],
-    // '@semantic-release/github',
-    // '@semantic-release/git',
+    '@semantic-release/github',
+    '@semantic-release/git',
   ],
-  debug: true,
 };

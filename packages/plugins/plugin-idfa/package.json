@@ -44,7 +44,7 @@
   },
   "homepage": "https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-idfa#readme",
   "peerDependencies": {
-    "@segment/analytics-react-native": "*"
+    "@segment/analytics-react-native": "workspace:^"
   },
   "devDependencies": {
     "@segment/analytics-react-native": "workspace:^",

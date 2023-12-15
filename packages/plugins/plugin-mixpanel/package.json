@@ -44,7 +44,7 @@
   },
   "homepage": "https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-mixpanel#readme",
   "peerDependencies": {
-    "@segment/analytics-react-native": "*",
+    "@segment/analytics-react-native": "workspace:^",
     "mixpanel-react-native": "^2.1.0"
   },
   "devDependencies": {

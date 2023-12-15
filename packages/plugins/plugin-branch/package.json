@@ -45,7 +45,7 @@
   },
   "homepage": "https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-branch#readme",
   "peerDependencies": {
-    "@segment/analytics-react-native": "*",
+    "@segment/analytics-react-native": "workspace:^",
     "react-native-branch": "^5.6.0"
   },
   "devDependencies": {

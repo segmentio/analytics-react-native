@@ -43,8 +43,7 @@
     "clean": "rimraf lib node_modules ./src/info.ts",
     "test": "jest",
     "typescript": "tsc --noEmit",
-    "postversion": "yarn prebuild",
-    "prepublish": "yarn prebuild"
+    "prepack": "yarn prebuild"
   },
   "dependencies": {
     "@segment/tsub": "^2",
@@ -60,7 +59,7 @@
   },
   "peerDependencies": {
     "@react-native-async-storage/async-storage": "1.x",
-    "@segment/sovran-react-native": "1.x",
+    "@segment/sovran-react-native": "workspace:^",
     "react": "*",
     "react-native": "*",
     "react-native-get-random-values": "1.x"

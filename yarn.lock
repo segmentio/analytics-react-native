@@ -3370,16 +3370,16 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-adjust@workspace:packages/plugins/plugin-adjust"
   dependencies:
-    "@segment/analytics-react-native": "workspace:*"
-    "@segment/analytics-rn-shared": "workspace:*"
-    "@segment/sovran-react-native": "workspace:*"
+    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-rn-shared": "workspace:^"
+    "@segment/sovran-react-native": "workspace:^"
     jest: "npm:^29.7.0"
     react-native-adjust: "npm:^4.33.0"
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     typescript: "npm:^5.2.2"
   peerDependencies:
-    "@segment/analytics-react-native": "*"
+    "@segment/analytics-react-native": "workspace:^"
     react-native-adjust: ^4.33.0
   languageName: unknown
   linkType: soft
@@ -3388,15 +3388,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-advertising-id@workspace:packages/plugins/plugin-advertising-id"
   dependencies:
-    "@segment/analytics-react-native": "workspace:*"
-    "@segment/analytics-rn-shared": "workspace:*"
-    "@segment/sovran-react-native": "workspace:*"
+    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-rn-shared": "workspace:^"
+    "@segment/sovran-react-native": "workspace:^"
     jest: "npm:^29.7.0"
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     typescript: "npm:^5.2.2"
   peerDependencies:
-    "@segment/analytics-react-native": "*"
+    "@segment/analytics-react-native": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -3404,15 +3404,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-amplitude-session@workspace:packages/plugins/plugin-amplitudeSession"
   dependencies:
-    "@segment/analytics-react-native": "workspace:*"
-    "@segment/analytics-rn-shared": "workspace:*"
-    "@segment/sovran-react-native": "workspace:*"
+    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-rn-shared": "workspace:^"
+    "@segment/sovran-react-native": "workspace:^"
     "@types/jest": "npm:^29.5.8"
     rimraf: "npm:^5.0.5"
     ts-jest: "npm:^29.1.1"
     typescript: "npm:^5.2.2"
   peerDependencies:
-    "@segment/analytics-react-native": "*"
+    "@segment/analytics-react-native": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -3420,9 +3420,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-appsflyer@workspace:packages/plugins/plugin-appsflyer"
   dependencies:
-    "@segment/analytics-react-native": "workspace:*"
-    "@segment/analytics-rn-shared": "workspace:*"
-    "@segment/sovran-react-native": "workspace:*"
+    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-rn-shared": "workspace:^"
+    "@segment/sovran-react-native": "workspace:^"
     jest: "npm:^29.7.0"
     react-native-appsflyer: "npm:^6.9.4"
     react-native-builder-bob: "npm:^0.23.1"
@@ -3430,7 +3430,7 @@ __metadata:
     semantic-release: "npm:^22.0.8"
     typescript: "npm:^5.2.2"
   peerDependencies:
-    "@segment/analytics-react-native": "*"
+    "@segment/analytics-react-native": "workspace:^"
     react-native-appsflyer: ^6.9.4
   languageName: unknown
   linkType: soft
@@ -3439,9 +3439,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-branch@workspace:packages/plugins/plugin-branch"
   dependencies:
-    "@segment/analytics-react-native": "workspace:*"
-    "@segment/analytics-rn-shared": "workspace:*"
-    "@segment/sovran-react-native": "workspace:*"
+    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-rn-shared": "workspace:^"
+    "@segment/sovran-react-native": "workspace:^"
     jest: "npm:^29.7.0"
     react-native-branch: "npm:^5.6.0"
     react-native-builder-bob: "npm:^0.23.1"
@@ -3449,7 +3449,7 @@ __metadata:
     semantic-release: "npm:^22.0.8"
     typescript: "npm:^5.2.2"
   peerDependencies:
-    "@segment/analytics-react-native": "*"
+    "@segment/analytics-react-native": "workspace:^"
     react-native-branch: ^5.6.0
   languageName: unknown
   linkType: soft
@@ -3458,15 +3458,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-braze-middleware@workspace:packages/plugins/plugin-braze-middleware"
   dependencies:
-    "@segment/analytics-react-native": "workspace:*"
-    "@segment/analytics-rn-shared": "workspace:*"
-    "@segment/sovran-react-native": "workspace:*"
+    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-rn-shared": "workspace:^"
+    "@segment/sovran-react-native": "workspace:^"
     jest: "npm:^29.7.0"
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     typescript: "npm:^5.2.2"
   peerDependencies:
-    "@segment/analytics-react-native": "*"
+    "@segment/analytics-react-native": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -3475,16 +3475,16 @@ __metadata:
   resolution: "@segment/analytics-react-native-plugin-braze@workspace:packages/plugins/plugin-braze"
   dependencies:
     "@braze/react-native-sdk": "npm:^5.x"
-    "@segment/analytics-react-native": "workspace:*"
-    "@segment/analytics-rn-shared": "workspace:*"
-    "@segment/sovran-react-native": "workspace:*"
+    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-rn-shared": "workspace:^"
+    "@segment/sovran-react-native": "workspace:^"
     jest: "npm:^29.7.0"
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     typescript: "npm:^5.2.2"
   peerDependencies:
     "@braze/react-native-sdk": ^5.x
-    "@segment/analytics-react-native": "*"
+    "@segment/analytics-react-native": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -3492,16 +3492,16 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-clevertap@workspace:packages/plugins/plugin-clevertap"
   dependencies:
-    "@segment/analytics-react-native": "workspace:*"
-    "@segment/analytics-rn-shared": "workspace:*"
-    "@segment/sovran-react-native": "workspace:*"
+    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-rn-shared": "workspace:^"
+    "@segment/sovran-react-native": "workspace:^"
     clevertap-react-native: "npm:^1.0.0"
     jest: "npm:^29.7.0"
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     typescript: "npm:^5.2.2"
   peerDependencies:
-    "@segment/analytics-react-native": "*"
+    "@segment/analytics-react-native": "workspace:^"
     clevertap-react-native: ^1.0.0
   languageName: unknown
   linkType: soft
@@ -3510,9 +3510,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-destination-filters@workspace:packages/plugins/plugin-destination-filters"
   dependencies:
-    "@segment/analytics-react-native": "workspace:*"
-    "@segment/analytics-rn-shared": "workspace:*"
-    "@segment/sovran-react-native": "workspace:*"
+    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-rn-shared": "workspace:^"
+    "@segment/sovran-react-native": "workspace:^"
     "@segment/tsub": "npm:^2"
     "@types/clone": "npm:^2.1.1"
     clone: "npm:^2.1.2"
@@ -3521,7 +3521,7 @@ __metadata:
     rimraf: "npm:^5.0.5"
     typescript: "npm:^5.2.2"
   peerDependencies:
-    "@segment/analytics-react-native": "*"
+    "@segment/analytics-react-native": "workspace:^"
     "@segment/sovran-react-native": "*"
   languageName: unknown
   linkType: soft
@@ -3532,9 +3532,9 @@ __metadata:
   dependencies:
     "@react-native-firebase/app": "npm:^17.3.2"
     "@react-native-firebase/messaging": "npm:^17.3.2"
-    "@segment/analytics-react-native": "workspace:*"
-    "@segment/analytics-rn-shared": "workspace:*"
-    "@segment/sovran-react-native": "workspace:*"
+    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-rn-shared": "workspace:^"
+    "@segment/sovran-react-native": "workspace:^"
     jest: "npm:^29.7.0"
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
@@ -3543,7 +3543,7 @@ __metadata:
   peerDependencies:
     "@react-native-firebase/app": ^17.3.2
     "@react-native-firebase/messaging": ^17.3.2
-    "@segment/analytics-react-native": "*"
+    "@segment/analytics-react-native": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -3551,16 +3551,16 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-facebook-app-events@workspace:packages/plugins/plugin-facebook-app-events"
   dependencies:
-    "@segment/analytics-react-native": "workspace:*"
-    "@segment/analytics-rn-shared": "workspace:*"
-    "@segment/sovran-react-native": "workspace:*"
+    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-rn-shared": "workspace:^"
+    "@segment/sovran-react-native": "workspace:^"
     jest: "npm:^29.7.0"
     react-native-builder-bob: "npm:^0.23.1"
     react-native-fbsdk-next: "npm:^11"
     rimraf: "npm:^5.0.5"
     typescript: "npm:^5.2.2"
   peerDependencies:
-    "@segment/analytics-react-native": "*"
+    "@segment/analytics-react-native": "workspace:^"
     react-native-fbsdk-next: ^11
   languageName: unknown
   linkType: soft
@@ -3571,9 +3571,9 @@ __metadata:
   dependencies:
     "@react-native-firebase/analytics": "npm:^18.4.0"
     "@react-native-firebase/app": "npm:^18.4.0"
-    "@segment/analytics-react-native": "workspace:*"
-    "@segment/analytics-rn-shared": "workspace:*"
-    "@segment/sovran-react-native": "workspace:*"
+    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-rn-shared": "workspace:^"
+    "@segment/sovran-react-native": "workspace:^"
     jest: "npm:^29.7.0"
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
@@ -3581,7 +3581,7 @@ __metadata:
   peerDependencies:
     "@react-native-firebase/analytics": ^18.4.0
     "@react-native-firebase/app": ^18.4.0
-    "@segment/analytics-react-native": "*"
+    "@segment/analytics-react-native": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -3589,15 +3589,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-idfa@workspace:packages/plugins/plugin-idfa"
   dependencies:
-    "@segment/analytics-react-native": "workspace:*"
-    "@segment/analytics-rn-shared": "workspace:*"
-    "@segment/sovran-react-native": "workspace:*"
+    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-rn-shared": "workspace:^"
+    "@segment/sovran-react-native": "workspace:^"
     jest: "npm:^29.7.0"
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     typescript: "npm:^5.2.2"
   peerDependencies:
-    "@segment/analytics-react-native": "*"
+    "@segment/analytics-react-native": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -3605,16 +3605,16 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-mixpanel@workspace:packages/plugins/plugin-mixpanel"
   dependencies:
-    "@segment/analytics-react-native": "workspace:*"
-    "@segment/analytics-rn-shared": "workspace:*"
-    "@segment/sovran-react-native": "workspace:*"
+    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-rn-shared": "workspace:^"
+    "@segment/sovran-react-native": "workspace:^"
     jest: "npm:^29.7.0"
     mixpanel-react-native: "npm:^2.1.0"
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     typescript: "npm:^5.2.2"
   peerDependencies:
-    "@segment/analytics-react-native": "*"
+    "@segment/analytics-react-native": "workspace:^"
     mixpanel-react-native: ^2.1.0
   languageName: unknown
   linkType: soft
@@ -3623,9 +3623,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-onetrust@workspace:packages/plugins/plugin-onetrust"
   dependencies:
-    "@segment/analytics-react-native": "workspace:*"
-    "@segment/analytics-rn-shared": "workspace:*"
-    "@segment/sovran-react-native": "workspace:*"
+    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-rn-shared": "workspace:^"
+    "@segment/sovran-react-native": "workspace:^"
     jest: "npm:^29.7.0"
     on-change: "npm:^3.0.2"
     react-native-builder-bob: "npm:^0.23.1"
@@ -3633,17 +3633,17 @@ __metadata:
     semantic-release: "npm:^22.0.8"
     typescript: "npm:^5.2.2"
   peerDependencies:
-    "@segment/analytics-react-native": "*"
+    "@segment/analytics-react-native": "workspace:^"
     "@segment/sovran-react-native": "*"
     react-native-onetrust-cmp: ^202308.2.0
   languageName: unknown
   linkType: soft
 
-"@segment/analytics-react-native@workspace:*, @segment/analytics-react-native@workspace:packages/core":
+"@segment/analytics-react-native@workspace:^, @segment/analytics-react-native@workspace:packages/core":
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native@workspace:packages/core"
   dependencies:
-    "@segment/sovran-react-native": "workspace:*"
+    "@segment/sovran-react-native": "workspace:^"
     "@segment/tsub": "npm:^2"
     "@types/uuid": "npm:^9.0.7"
     deepmerge: "npm:^4.3.1"
@@ -3653,7 +3653,7 @@ __metadata:
     uuid: "npm:^9.0.1"
   peerDependencies:
     "@react-native-async-storage/async-storage": 1.x
-    "@segment/sovran-react-native": 1.x
+    "@segment/sovran-react-native": "workspace:^"
     react: "*"
     react-native: "*"
     react-native-get-random-values: 1.x
@@ -3663,7 +3663,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@segment/analytics-rn-shared@workspace:*, @segment/analytics-rn-shared@workspace:packages/shared":
+"@segment/analytics-rn-shared@workspace:^, @segment/analytics-rn-shared@workspace:packages/shared":
   version: 0.0.0-use.local
   resolution: "@segment/analytics-rn-shared@workspace:packages/shared"
   dependencies:
@@ -3677,7 +3677,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@segment/sovran-react-native@workspace:*, @segment/sovran-react-native@workspace:packages/sovran":
+"@segment/sovran-react-native@workspace:^, @segment/sovran-react-native@workspace:packages/sovran":
   version: 0.0.0-use.local
   resolution: "@segment/sovran-react-native@workspace:packages/sovran"
   dependencies:
@@ -5838,7 +5838,7 @@ __metadata:
     "@commitlint/config-conventional": "npm:^18.4.2"
     "@react-native-async-storage/async-storage": "npm:^1.19"
     "@react-native-community/eslint-config": "npm:^3.2.0"
-    "@segment/analytics-rn-shared": "workspace:*"
+    "@segment/analytics-rn-shared": "workspace:^"
     "@semantic-release/changelog": "npm:^6.0.3"
     "@semantic-release/commit-analyzer": "npm:^11.1.0"
     "@semantic-release/git": "npm:^10.0.1"

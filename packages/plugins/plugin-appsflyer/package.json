@@ -45,7 +45,7 @@
   },
   "homepage": "https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-appsflyer#readme",
   "peerDependencies": {
-    "@segment/analytics-react-native": "*",
+    "@segment/analytics-react-native": "workspace:^",
     "react-native-appsflyer": "^6.9.4"
   },
   "devDependencies": {

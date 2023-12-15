@@ -44,7 +44,7 @@
   },
   "homepage": "https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-facebook-app-events#readme",
   "peerDependencies": {
-    "@segment/analytics-react-native": "*",
+    "@segment/analytics-react-native": "workspace:^",
     "react-native-fbsdk-next": "^11"
   },
   "devDependencies": {

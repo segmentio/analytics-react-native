@@ -47,7 +47,7 @@
   "homepage": "https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-braze#readme",
   "peerDependencies": {
     "@braze/react-native-sdk": "^5.x",
-    "@segment/analytics-react-native": "*"
+    "@segment/analytics-react-native": "workspace:^"
   },
   "devDependencies": {
     "@braze/react-native-sdk": "^5.x",

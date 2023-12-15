@@ -44,7 +44,7 @@
   },
   "homepage": "https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-adjust#readme",
   "peerDependencies": {
-    "@segment/analytics-react-native": "*",
+    "@segment/analytics-react-native": "workspace:^",
     "react-native-adjust": "^4.33.0"
   },
   "devDependencies": {
