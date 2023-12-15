@@ -1,9 +1,9 @@
 name: CI
 on:
   push:
-    branches: [master, rnupgrade]
+    branches: [master, beta]
   pull_request:
-    branches: [master, rnupgrade]
+    branches: [master, beta]
   workflow_dispatch:
 jobs:
   cancel_previous:
