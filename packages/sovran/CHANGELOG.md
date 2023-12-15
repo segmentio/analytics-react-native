@@ -1,3 +1,10 @@
+## @segment/sovran-react-native [1.1.0-beta.1](https://github.com/segmentio/analytics-react-native/compare/@segment/sovran-react-native-v1.0.4...@segment/sovran-react-native-v1.1.0-beta.1) (2023-12-15)
+
+
+### Features
+
+* RN 0.72 Upgrade ([03f13a1](https://github.com/segmentio/analytics-react-native/commit/03f13a19c79d8aaad726639de5f0327c748fed1f))
+
 ## [@segment/sovran-react-native-v1.0.4](https://github.com/segmentio/analytics-react-native/compare/@segment/sovran-react-native-v1.0.3...@segment/sovran-react-native-v1.0.4) (2023-06-02)
 
 
