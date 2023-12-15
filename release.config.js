@@ -13,4 +13,5 @@ module.exports = {
     '@semantic-release/github',
     '@semantic-release/git',
   ],
+  debug: true
 };
