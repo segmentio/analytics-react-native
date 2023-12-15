@@ -1,3 +1,18 @@
+## @segment/analytics-react-native [2.18.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.17.0...@segment/analytics-react-native-v2.18.0) (2023-12-15)
+
+
+### Features
+
+* add support for hasUnmappedDestinations ([#905](https://github.com/segmentio/analytics-react-native/issues/905)) ([545d596](https://github.com/segmentio/analytics-react-native/commit/545d596e2b1fd5f83b229e7d3526ebf59ab62295))
+* consent plugin updates and test cases ([#894](https://github.com/segmentio/analytics-react-native/issues/894)) ([ff1d332](https://github.com/segmentio/analytics-react-native/commit/ff1d33213108199d9486592d8a0372191f17dc2e))
+* RN 0.72 Upgrade ([03f13a1](https://github.com/segmentio/analytics-react-native/commit/03f13a19c79d8aaad726639de5f0327c748fed1f))
+
+
+
+### Dependencies
+
+* **@segment/sovran-react-native:** upgraded to 1.1.0
+
 ## [@segment/analytics-react-native-v2.16.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-v2.16.0...@segment/analytics-react-native-v2.16.1) (2023-09-14)
 
 
