@@ -1,3 +1,17 @@
+## @segment/analytics-react-native-plugin-braze [0.6.0-beta.1](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-braze-v0.5.4...@segment/analytics-react-native-plugin-braze-v0.6.0-beta.1) (2023-12-15)
+
+
+### Features
+
+* RN 0.72 Upgrade ([03f13a1](https://github.com/segmentio/analytics-react-native/commit/03f13a19c79d8aaad726639de5f0327c748fed1f))
+
+
+
+### Dependencies
+
+* **@segment/analytics-react-native:** upgraded to 2.18.0-beta.1
+* **@segment/sovran-react-native:** upgraded to 1.1.0-beta.1
+
 ## [@segment/analytics-react-native-plugin-braze-v0.5.4](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-braze-v0.5.3...@segment/analytics-react-native-plugin-braze-v0.5.4) (2023-06-02)
 
 
