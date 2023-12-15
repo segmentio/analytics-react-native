@@ -1,3 +1,17 @@
+## @segment/analytics-react-native-plugin-adjust [0.7.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-adjust-v0.6.3...@segment/analytics-react-native-plugin-adjust-v0.7.0) (2023-12-15)
+
+
+### Features
+
+* RN 0.72 Upgrade ([03f13a1](https://github.com/segmentio/analytics-react-native/commit/03f13a19c79d8aaad726639de5f0327c748fed1f))
+
+
+
+### Dependencies
+
+* **@segment/analytics-react-native:** upgraded to 2.18.0
+* **@segment/sovran-react-native:** upgraded to 1.1.0
+
 ## [@segment/analytics-react-native-plugin-adjust-v0.6.3](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-adjust-v0.6.2...@segment/analytics-react-native-plugin-adjust-v0.6.3) (2023-08-21)
 
 
