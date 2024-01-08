@@ -3370,16 +3370,16 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-adjust@workspace:packages/plugins/plugin-adjust"
   dependencies:
-    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-react-native": "npm:^2.18.0"
     "@segment/analytics-rn-shared": "workspace:^"
-    "@segment/sovran-react-native": "workspace:^"
+    "@segment/sovran-react-native": "npm:^1.1.0"
     jest: "npm:^29.7.0"
     react-native-adjust: "npm:^4.33.0"
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     typescript: "npm:^5.2.2"
   peerDependencies:
-    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-react-native": ^2.18.0
     react-native-adjust: ^4.33.0
   languageName: unknown
   linkType: soft
@@ -3388,15 +3388,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-advertising-id@workspace:packages/plugins/plugin-advertising-id"
   dependencies:
-    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-react-native": "npm:^2.18.0"
     "@segment/analytics-rn-shared": "workspace:^"
-    "@segment/sovran-react-native": "workspace:^"
+    "@segment/sovran-react-native": "npm:^1.1.0"
     jest: "npm:^29.7.0"
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     typescript: "npm:^5.2.2"
   peerDependencies:
-    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-react-native": ^2.18.0
   languageName: unknown
   linkType: soft
 
@@ -3404,15 +3404,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-amplitude-session@workspace:packages/plugins/plugin-amplitudeSession"
   dependencies:
-    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-react-native": "npm:^2.18.0"
     "@segment/analytics-rn-shared": "workspace:^"
-    "@segment/sovran-react-native": "workspace:^"
+    "@segment/sovran-react-native": "npm:^1.1.0"
     "@types/jest": "npm:^29.5.8"
     rimraf: "npm:^5.0.5"
     ts-jest: "npm:^29.1.1"
     typescript: "npm:^5.2.2"
   peerDependencies:
-    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-react-native": ^2.18.0
   languageName: unknown
   linkType: soft
 
@@ -3420,9 +3420,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-appsflyer@workspace:packages/plugins/plugin-appsflyer"
   dependencies:
-    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-react-native": "npm:^2.18.0"
     "@segment/analytics-rn-shared": "workspace:^"
-    "@segment/sovran-react-native": "workspace:^"
+    "@segment/sovran-react-native": "npm:^1.1.0"
     jest: "npm:^29.7.0"
     react-native-appsflyer: "npm:^6.9.4"
     react-native-builder-bob: "npm:^0.23.1"
@@ -3430,7 +3430,7 @@ __metadata:
     semantic-release: "npm:^22.0.8"
     typescript: "npm:^5.2.2"
   peerDependencies:
-    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-react-native": ^2.18.0
     react-native-appsflyer: ^6.9.4
   languageName: unknown
   linkType: soft
@@ -3439,9 +3439,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-branch@workspace:packages/plugins/plugin-branch"
   dependencies:
-    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-react-native": "npm:^2.18.0"
     "@segment/analytics-rn-shared": "workspace:^"
-    "@segment/sovran-react-native": "workspace:^"
+    "@segment/sovran-react-native": "npm:^1.1.0"
     jest: "npm:^29.7.0"
     react-native-branch: "npm:^5.6.0"
     react-native-builder-bob: "npm:^0.23.1"
@@ -3449,7 +3449,7 @@ __metadata:
     semantic-release: "npm:^22.0.8"
     typescript: "npm:^5.2.2"
   peerDependencies:
-    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-react-native": ^2.18.0
     react-native-branch: ^5.6.0
   languageName: unknown
   linkType: soft
@@ -3458,15 +3458,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-braze-middleware@workspace:packages/plugins/plugin-braze-middleware"
   dependencies:
-    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-react-native": "npm:^2.18.0"
     "@segment/analytics-rn-shared": "workspace:^"
-    "@segment/sovran-react-native": "workspace:^"
+    "@segment/sovran-react-native": "npm:^1.1.0"
     jest: "npm:^29.7.0"
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     typescript: "npm:^5.2.2"
   peerDependencies:
-    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-react-native": ^2.18.0
   languageName: unknown
   linkType: soft
 
@@ -3475,16 +3475,16 @@ __metadata:
   resolution: "@segment/analytics-react-native-plugin-braze@workspace:packages/plugins/plugin-braze"
   dependencies:
     "@braze/react-native-sdk": "npm:^5.x"
-    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-react-native": "npm:^2.18.0"
     "@segment/analytics-rn-shared": "workspace:^"
-    "@segment/sovran-react-native": "workspace:^"
+    "@segment/sovran-react-native": "npm:^1.1.0"
     jest: "npm:^29.7.0"
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     typescript: "npm:^5.2.2"
   peerDependencies:
     "@braze/react-native-sdk": ^5.x
-    "@segment/analytics-react-native": "workspace:^"
+    "@segment/analytics-react-native": ^2.18.0
   languageName: unknown
   linkType: soft
 
@@ -3639,11 +3639,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@segment/analytics-react-native@workspace:^, @segment/analytics-react-native@workspace:packages/core":
+"@segment/analytics-react-native@npm:^2.18.0, @segment/analytics-react-native@workspace:^, @segment/analytics-react-native@workspace:packages/core":
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native@workspace:packages/core"
   dependencies:
-    "@segment/sovran-react-native": "workspace:^"
+    "@segment/sovran-react-native": "npm:^1.1.0"
     "@segment/tsub": "npm:^2"
     "@types/uuid": "npm:^9.0.7"
     deepmerge: "npm:^4.3.1"
@@ -3653,7 +3653,7 @@ __metadata:
     uuid: "npm:^9.0.1"
   peerDependencies:
     "@react-native-async-storage/async-storage": 1.x
-    "@segment/sovran-react-native": "workspace:^"
+    "@segment/sovran-react-native": ^1.1.0
     react: "*"
     react-native: "*"
     react-native-get-random-values: 1.x
@@ -3677,7 +3677,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@segment/sovran-react-native@workspace:^, @segment/sovran-react-native@workspace:packages/sovran":
+"@segment/sovran-react-native@npm:^1.1.0, @segment/sovran-react-native@workspace:^, @segment/sovran-react-native@workspace:packages/sovran":
   version: 0.0.0-use.local
   resolution: "@segment/sovran-react-native@workspace:packages/sovran"
   dependencies:
