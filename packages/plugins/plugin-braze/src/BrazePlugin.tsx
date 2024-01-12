@@ -85,7 +85,7 @@ export class BrazePlugin extends DestinationPlugin {
 
   identify(event: IdentifyEventType) {
     //check to see if anything has changed.
-    //if it hasn't changed don't send event
+    //if it hasn't changed don't send event to braze
     if (
       this.lastSeenTraits?.userId === event.userId &&
       this.lastSeenTraits?.anonymousId === event.anonymousId &&
