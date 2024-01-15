@@ -83,20 +83,20 @@ export class BrazePlugin extends DestinationPlugin {
     return undefined;
   };
 
-  private compareObjects(person1: any, person2: any): boolean {
-    for (let key in person2) {
-      if (person2.hasOwnProperty(key)) {
-        if (typeof person2[key] === 'object' && !Array.isArray(person2[key])) {
-          if (!this.compareObjects(person1[key], person2[key])) {
+  private compareObjects(oldTraits: any, newTraits: any): boolean {
+    for (let key in newTraits) {
+      if (newTraits.hasOwnProperty(key)) {
+        if (typeof newTraits[key] === 'object' && !Array.isArray(newTraits[key])) {
+          if (!this.compareObjects(oldTraits[key], newTraits[key])) {
             return false;
           }
-        } else if (Array.isArray(person2[key])) {
-          for (let i = 0; i < person2[key].length; i++) {
-            if (!this.compareObjects(person1[key][i], person2[key][i])) {
+        } else if (Array.isArray(newTraits[key])) {
+          for (let i = 0; i < newTraits[key].length; i++) {
+            if (!this.compareObjects(oldTraits[key][i], newTraits[key][i])) {
               return false;
             }
           }
-        } else if (person1[key] !== person2[key]) {
+        } else if (oldTraits[key] !== newTraits[key]) {
           return false;
         }
       }
@@ -107,7 +107,7 @@ export class BrazePlugin extends DestinationPlugin {
   identify(event: IdentifyEventType) {
     //check to see if anything has changed.
     //if it hasn't changed don't send event
-    let identical = this.compareObjects(this.lastSeenTraits?.traits, event.traits);
+    let identical =  typeof this.lastSeenTraits?.traits === 'undefined' ? false : this.compareObjects(this.lastSeenTraits?.traits, event.traits);
 
     if (
       this.lastSeenTraits?.userId === event.userId &&
