@@ -1,13 +1,13 @@
-import {
-  Plugin,
-  type SegmentClient,
-  type DestinationPlugin,
+import { Plugin } from '../plugin';
+import { PluginType } from '../types';
+import type {
   IntegrationSettings,
-  PluginType,
   SegmentAPIIntegration,
   SegmentEvent,
   TrackEventType,
-} from '..';
+} from '../types';
+import type { DestinationPlugin } from '../plugin';
+import type { SegmentClient } from '../analytics';
 
 import { SEGMENT_DESTINATION_KEY } from './SegmentDestination';
 
