@@ -1,3 +1,8 @@
+### Dependencies
+
+* **@segment/analytics-react-native:** upgraded to 2.18.0
+* **@segment/sovran-react-native:** upgraded to 1.1.0
+
 ## [@segment/analytics-react-native-plugin-facebook-app-events-v0.5.4](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-facebook-app-events-v0.5.3...@segment/analytics-react-native-plugin-facebook-app-events-v0.5.4) (2023-09-14)
 
 
