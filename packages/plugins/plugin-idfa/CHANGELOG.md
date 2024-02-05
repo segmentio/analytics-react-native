@@ -1,3 +1,8 @@
+### Dependencies
+
+* **@segment/analytics-react-native:** upgraded to 2.18.0
+* **@segment/sovran-react-native:** upgraded to 1.1.0
+
 ## [@segment/analytics-react-native-plugin-idfa-v0.6.2](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-idfa-v0.6.1...@segment/analytics-react-native-plugin-idfa-v0.6.2) (2023-04-18)
 
 
