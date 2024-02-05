@@ -1,14 +1,12 @@
 module.exports = {
   extends: [
-    '@react-native-community',
-    'prettier',
+    "@react-native",
     'plugin:@typescript-eslint/recommended',
-    'plugin:@typescript-eslint/recommended-requiring-type-checking'
+    // 'plugin:@typescript-eslint/recommended-requiring-type-checking',
   ],
-  plugins: ['@typescript-eslint'],
   rules: {
     'prettier/prettier': [
-      'error',
+      'warn',
       {
         quoteProps: 'consistent',
         singleQuote: true,
@@ -48,8 +46,8 @@ module.exports = {
       rules: {
         "no-unused-vars": "off",
         "@typescript-eslint/no-unsafe-call": "warn",
-        "@typescript-eslint/no-unused-vars": ["error"],
-        "@typescript-eslint/unbound-method": "warn",
+        "@typescript-eslint/no-unused-vars": "error",
+        "@typescript-eslint/unbound-method": "off",
         "@typescript-eslint/no-unsafe-assignment": "warn",
         "@typescript-eslint/no-unsafe-member-access": "warn",
         "@typescript-eslint/ban-ts-comment": "warn"

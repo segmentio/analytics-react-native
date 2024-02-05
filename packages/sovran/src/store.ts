@@ -144,19 +144,16 @@ export const createStore = <T extends object>(
     if (saveTimeout !== undefined) {
       clearTimeout(saveTimeout);
     }
-    saveTimeout = setTimeout(
-      () => {
-        void (async () => {
-          try {
-            saveTimeout = undefined;
-            await persistor.set(storeId, state);
-          } catch (error) {
-            console.warn(error);
-          }
-        })();
-      },
-      config.persist?.saveDelay ?? DEFAULT_SAVE_STATE_DELAY_IN_MS
-    );
+    saveTimeout = setTimeout(() => {
+      void (async () => {
+        try {
+          saveTimeout = undefined;
+          await persistor.set(storeId, state);
+        } catch (error) {
+          console.warn(error);
+        }
+      })();
+    }, config.persist?.saveDelay ?? DEFAULT_SAVE_STATE_DELAY_IN_MS);
   };
 
   const observable = createObservable<T>();
@@ -165,7 +162,9 @@ export const createStore = <T extends object>(
   function getState(): T;
   function getState(safe: true): Promise<T>;
   function getState(safe?: boolean): T | Promise<T> {
-    if (safe !== true) return { ...state };
+    if (safe !== true) {
+      return { ...state };
+    }
     return new Promise<T>((resolve) => {
       queue.push({
         call: (state) => {
@@ -188,7 +187,6 @@ export const createStore = <T extends object>(
   };
 
   const processQueue = async (): Promise<T> => {
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     queueObserve.unsubscribe(processQueue);
     while (queue.length > 0) {
       const action = queue.shift();
@@ -210,11 +208,11 @@ export const createStore = <T extends object>(
         action?.finally?.(state);
       }
     }
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+
     queueObserve.subscribe(processQueue);
     return state;
   };
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+
   queueObserve.subscribe(processQueue);
 
   const subscribe = (callback: Notify<T>) => {

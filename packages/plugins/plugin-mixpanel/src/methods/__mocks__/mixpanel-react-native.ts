@@ -42,6 +42,7 @@ export class Mixpanel {
   flush = jest.fn();
   getDeviceId = jest.fn();
   setFlushOnBackground = jest.fn();
+  setFlushBatchSize = jest.fn();
 }
 
 export class People {

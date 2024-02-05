@@ -30,7 +30,7 @@ jobs:
       # End workaround
 
       - name: Install
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
       - name: Build
         run: yarn build
         # Linter has to run after the build because it relies on TS types

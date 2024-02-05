@@ -34,7 +34,7 @@ jobs:
       - name: Config and Build
         run: |
           npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
-          yarn install --frozen-lockfile
+          yarn install --immutable
           yarn build
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -45,3 +45,17 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Update Apps
+        run: |
+          yarn install --no-immutable
+          yarn e2e install --no-immutable
+          yarn example install --no-immutable
+      
+      - name: Commit Updated App Locks
+        run: |
+          git add yarn.lock
+          git add examples/E2E/yarn.lock
+          git add examples/AnalyticsReactNativeExample/yarn.lock
+          git commit -m "chore(release): update lockfiles [skip ci]" --no-verify
+          git push 
