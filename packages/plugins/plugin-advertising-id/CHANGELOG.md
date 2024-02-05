@@ -1,3 +1,8 @@
+### Dependencies
+
+* **@segment/analytics-react-native:** upgraded to 2.18.0
+* **@segment/sovran-react-native:** upgraded to 1.1.0
+
 ## @segment/analytics-react-native-plugin-advertising-id [1.3.0](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-advertising-id-v1.2.4...@segment/analytics-react-native-plugin-advertising-id-v1.3.0) (2023-12-15)
 
 
