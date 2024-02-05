@@ -1,3 +1,8 @@
+### Dependencies
+
+* **@segment/analytics-react-native:** upgraded to 2.18.0
+* **@segment/sovran-react-native:** upgraded to 1.1.0
+
 ## @segment/analytics-react-native-plugin-onetrust-v1.0.0 (2023-10-20)
 
 
