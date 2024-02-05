@@ -1,6 +1,6 @@
 {
   "name": "@segment/analytics-react-native-plugin-destination-filters",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "The hassle-free way to add Segment analytics to your React-Native app.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -48,7 +48,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "peerDependencies": {
-    "@segment/analytics-react-native": "workspace:^",
+    "@segment/analytics-react-native": "^2.18.0",
     "@segment/sovran-react-native": "*"
   },
   "dependencies": {
@@ -56,9 +56,9 @@
     "clone": "^2.1.2"
   },
   "devDependencies": {
-    "@segment/analytics-react-native": "workspace:^",
+    "@segment/analytics-react-native": "^2.18.0",
     "@segment/analytics-rn-shared": "workspace:^",
-    "@segment/sovran-react-native": "workspace:^",
+    "@segment/sovran-react-native": "^1.1.0",
     "@types/clone": "^2.1.1",
     "jest": "^29.7.0",
     "react-native-builder-bob": "^0.23.1",

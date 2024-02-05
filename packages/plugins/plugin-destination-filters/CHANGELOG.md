@@ -1,3 +1,8 @@
+### Dependencies
+
+* **@segment/analytics-react-native:** upgraded to 2.18.0
+* **@segment/sovran-react-native:** upgraded to 1.1.0
+
 ## [@segment/analytics-react-native-plugin-destination-filters-v1.0.4](https://github.com/segmentio/analytics-react-native/compare/@segment/analytics-react-native-plugin-destination-filters-v1.0.3...@segment/analytics-react-native-plugin-destination-filters-v1.0.4) (2023-08-21)
 
 
