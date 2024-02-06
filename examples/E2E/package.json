@@ -45,7 +45,7 @@
     "babel-jest": "^29.2.1",
     "babel-plugin-module-resolver": "^5.0.0",
     "body-parser": "^1.20.0",
-    "detox": "^20.14.1",
+    "detox": "^20.17.0",
     "eslint": "^8.19.0",
     "express": "^4.17.1",
     "jest": "^29.7.0",

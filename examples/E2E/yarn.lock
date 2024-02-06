@@ -1711,6 +1711,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@flatten-js/interval-tree@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "@flatten-js/interval-tree@npm:1.1.2"
+  checksum: 10c0/543a3a460a8a5eeda5be5ffd22a5df2a3176298c0e52b5ea3266312b955ab30f2bdd991f1e9f1df22ca825c4432f283ee9e216e39bad54825de082e42268719d
+  languageName: node
+  linkType: hard
+
 "@hapi/hoek@npm:^9.0.0":
   version: 9.3.0
   resolution: "@hapi/hoek@npm:9.3.0"
@@ -2953,7 +2960,7 @@ __metadata:
     babel-jest: "npm:^29.2.1"
     babel-plugin-module-resolver: "npm:^5.0.0"
     body-parser: "npm:^1.20.0"
-    detox: "npm:^20.14.1"
+    detox: "npm:^20.17.0"
     eslint: "npm:^8.19.0"
     express: "npm:^4.17.1"
     jest: "npm:^29.7.0"
@@ -3660,6 +3667,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bunyamin@npm:^1.5.0":
+  version: 1.5.2
+  resolution: "bunyamin@npm:1.5.2"
+  dependencies:
+    "@flatten-js/interval-tree": "npm:^1.1.2"
+    multi-sort-stream: "npm:^1.0.4"
+    stream-json: "npm:^1.7.5"
+    trace-event-lib: "npm:^1.3.1"
+  peerDependencies:
+    "@types/bunyan": ^1.8.8
+    bunyan: ^1.8.15 || ^2.0.0
+  peerDependenciesMeta:
+    "@types/bunyan":
+      optional: true
+    bunyan:
+      optional: true
+  checksum: 10c0/ae0ffd05a818335e38ce8a11a835d7c39ef3ffc844ad1f455a8c091aa212d5f19bc2ae15be2939f838049d503848ff1970e6c211c3cf1363bebbbf4dbb8dbde2
+  languageName: node
+  linkType: hard
+
 "bunyan-debug-stream@npm:^3.1.0":
   version: 3.1.0
   resolution: "bunyan-debug-stream@npm:3.1.0"
@@ -3691,6 +3718,30 @@ __metadata:
   bin:
     bunyan: bin/bunyan
   checksum: 10c0/c7b3adc07a4db3256f857dcba42b97dd6c35ab054cb26766643aae2b90e1b614795cdf231774ddaf374572d952f52ef4f4205047e15414e155e478aa0672e041
+  languageName: node
+  linkType: hard
+
+"bunyan@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "bunyan@npm:2.0.5"
+  dependencies:
+    dtrace-provider: "npm:~0.8"
+    exeunt: "npm:1.1.0"
+    moment: "npm:^2.19.3"
+    mv: "npm:~2"
+    safe-json-stringify: "npm:~1"
+  dependenciesMeta:
+    dtrace-provider:
+      optional: true
+    moment:
+      optional: true
+    mv:
+      optional: true
+    safe-json-stringify:
+      optional: true
+  bin:
+    bunyan: bin/bunyan
+  checksum: 10c0/b3a2f0ccc4473c7a83d94f64805dd4ae70e4f7afff8658262a782a8a41ad71e062749e67ec7be57ab3ae724d3d199247ef4b6976ac6c0c67a114f442224977aa
   languageName: node
   linkType: hard
 
@@ -4335,9 +4386,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"detox@npm:^20.14.1":
-  version: 20.14.1
-  resolution: "detox@npm:20.14.1"
+"detox@npm:^20.17.0":
+  version: 20.17.0
+  resolution: "detox@npm:20.17.0"
   dependencies:
     ajv: "npm:^8.6.3"
     bunyan: "npm:^1.8.12"
@@ -4351,6 +4402,7 @@ __metadata:
     funpermaproxy: "npm:^1.1.0"
     glob: "npm:^8.0.3"
     ini: "npm:^1.3.4"
+    jest-environment-emit: "npm:^1.0.5"
     json-cycle: "npm:^1.3.0"
     lodash: "npm:^4.17.11"
     multi-sort-stream: "npm:^1.0.3"
@@ -4380,7 +4432,7 @@ __metadata:
       optional: true
   bin:
     detox: local-cli/cli.js
-  checksum: 10c0/17fa6c2917c095870997ddbcc81368476acbb5a011c2eb8e983e744025d34ffac112450d99724c211159b368cf9a5376c23c44a3fd45b930273690f204c3794b
+  checksum: 10c0/1195b56e8e613bd30c6d687ffde3db168261b4ad4985d974ff3c2f212866bdac928c3170ed65bed27834d4e2e45874af16b1f189d1c43fa0f657787b2678f886
   languageName: node
   linkType: hard
 
@@ -4986,6 +5038,13 @@ __metadata:
     signal-exit: "npm:^3.0.3"
     strip-final-newline: "npm:^2.0.0"
   checksum: 10c0/c8e615235e8de4c5addf2fa4c3da3e3aa59ce975a3e83533b4f6a71750fb816a2e79610dc5f1799b6e28976c9ae86747a36a606655bf8cb414a74d8d507b304f
+  languageName: node
+  linkType: hard
+
+"exeunt@npm:1.1.0":
+  version: 1.1.0
+  resolution: "exeunt@npm:1.1.0"
+  checksum: 10c0/dc2012d9016c01ec321e4d642d2f165ce7dc4a4d141c523a818416035bcfe11bd1d9abc142f6f608d6a7719824295131a1b8c89006eb308aafd3aba385bf40d2
   languageName: node
   linkType: hard
 
@@ -6476,6 +6535,39 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jest-environment-emit@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "jest-environment-emit@npm:1.0.5"
+  dependencies:
+    bunyamin: "npm:^1.5.0"
+    bunyan: "npm:^2.0.5"
+    bunyan-debug-stream: "npm:^3.1.0"
+    funpermaproxy: "npm:^1.1.0"
+    lodash.merge: "npm:^4.6.2"
+    node-ipc: "npm:9.2.1"
+    strip-ansi: "npm:^6.0.0"
+    tslib: "npm:^2.5.3"
+  peerDependencies:
+    "@jest/environment": ">=27.2.5"
+    "@jest/types": ">=27.2.5"
+    jest: ">=27.2.5"
+    jest-environment-jsdom: ">=27.2.5"
+    jest-environment-node: ">=27.2.5"
+  peerDependenciesMeta:
+    "@jest/environment":
+      optional: true
+    "@jest/types":
+      optional: true
+    jest:
+      optional: true
+    jest-environment-jsdom:
+      optional: true
+    jest-environment-node:
+      optional: true
+  checksum: 10c0/27732907806a788235c005d7a48b1054c3dec64cc2489422b37428dc789fb83fa6bee3fb8ddf65890e3d084f85be5a39deb02071baff2d86586455f96f7a9bd9
+  languageName: node
+  linkType: hard
+
 "jest-environment-node@npm:^29.2.1, jest-environment-node@npm:^29.7.0":
   version: 29.7.0
   resolution: "jest-environment-node@npm:29.7.0"
@@ -7842,7 +7934,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"multi-sort-stream@npm:^1.0.3":
+"multi-sort-stream@npm:^1.0.3, multi-sort-stream@npm:^1.0.4":
   version: 1.0.4
   resolution: "multi-sort-stream@npm:1.0.4"
   checksum: 10c0/74820fd8f4287798f56f5c0b390d52d0fa0efd46b22a880390c6182c4b2ff6bd608dc90974fe7b0981c9243ae4f857d3389e74ebf6d071d7465056c29772196d
@@ -9581,7 +9673,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stream-json@npm:^1.7.4":
+"stream-json@npm:^1.7.4, stream-json@npm:^1.7.5":
   version: 1.8.0
   resolution: "stream-json@npm:1.8.0"
   dependencies:
@@ -10000,7 +10092,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.1":
+"tslib@npm:^2.0.1, tslib@npm:^2.5.3":
   version: 2.6.2
   resolution: "tslib@npm:2.6.2"
   checksum: 10c0/e03a8a4271152c8b26604ed45535954c0a45296e32445b4b87f8a5abdb2421f40b59b4ca437c4346af0f28179780d604094eb64546bee2019d903d01c6c19bdb
