@@ -73,7 +73,6 @@ jobs:
         run: RCT_NO_LAUNCH_PACKAGER=1 yarn e2e build:ios
 
       - name: Detox - Test
-        continue-on-error: true
         run: yarn e2e test:ios
 
   run-e2e-android:
@@ -142,7 +141,6 @@ jobs:
         run: RCT_NO_LAUNCH_PACKAGER=1 yarn e2e build:android
 
       - name: Detox - Test
-        continue-on-error: true
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
