@@ -28,21 +28,19 @@ import type {
   Settable,
   Dictionary,
   ReadinessStore,
+  Queue,
 } from './types';
 
 type Data = {
-  events: SegmentEvent[];
-  eventsToRetry: SegmentEvent[];
   context: DeepPartial<Context>;
   settings: SegmentAPIIntegrations;
   consentSettings: SegmentAPIConsentSettings | undefined;
   userInfo: UserInfoState;
   filters: DestinationFilters;
+  pendingEvents: SegmentEvent[];
 };
 
 const INITIAL_VALUES: Data = {
-  events: [],
-  eventsToRetry: [],
   context: {},
   settings: {},
   consentSettings: undefined,
@@ -52,6 +50,7 @@ const INITIAL_VALUES: Data = {
     userId: undefined,
     traits: undefined,
   },
+  pendingEvents: []
 };
 
 const isEverythingReady = (state: ReadinessStore) =>
@@ -115,7 +114,7 @@ const addAnonymousId =
   };
 
 function createStoreGetter<
-  U extends Record<string, unknown>,
+  U extends object,
   Z extends keyof U | undefined = undefined,
   V = undefined,
 >(store: Store<U>, key?: Z): getStateFunc<Z extends keyof U ? V : U> {
@@ -151,6 +150,8 @@ export class SovranStorage implements Storage {
   private userInfoStore: Store<{ userInfo: UserInfoState }>;
   private deepLinkStore: Store<DeepLinkData> = deepLinkStore;
   private filtersStore: Store<DestinationFilters>;
+  private pendingStore: Store<SegmentEvent[]>;
+  
 
   readonly isReady: Watchable<boolean>;
 
@@ -172,6 +173,10 @@ export class SovranStorage implements Storage {
 
   readonly deepLinkData: Watchable<DeepLinkData>;
 
+  readonly pendingEvents: Watchable<SegmentEvent[]> & 
+    Settable<SegmentEvent[]> & 
+    Queue<SegmentEvent, SegmentEvent[]>;
+
   constructor(config: StorageConfig) {
     this.storeId = config.storeId;
     this.storePersistor = config.storePersistor;
@@ -181,6 +186,7 @@ export class SovranStorage implements Storage {
       hasRestoredSettings: false,
       hasRestoredUserInfo: false,
       hasRestoredFilters: false,
+      hasRestoredPendingEvents: false
     });
 
     const markAsReadyGenerator = (key: keyof ReadinessStore) => () => {
@@ -384,6 +390,47 @@ export class SovranStorage implements Storage {
         return userInfo;
       },
     };
+
+    // Pending Events
+    this.pendingStore = createStore<SegmentEvent[]>(
+      INITIAL_VALUES.pendingEvents,
+      {
+        persist: {
+          storeId: `${this.storeId}-pendingEvents`,
+          persistor: this.storePersistor,
+          saveDelay: this.storePersistorSaveDelay,
+          onInitialized: markAsReadyGenerator('hasRestoredPendingEvents')
+        }
+      }
+    )
+
+    this.pendingEvents = {
+      get: createStoreGetter(this.pendingStore),
+      onChange: (callback: (value: SegmentEvent[]) => void) =>
+        this.pendingStore.subscribe((store) => callback(store)),
+      set: async (value) => {
+        return await this.pendingStore.dispatch((state) => {
+          let newState: SegmentEvent[];
+          if (value instanceof Function) {
+            newState = value(state);
+          } else {
+            newState = [...value];
+          }
+          return newState
+        })
+      },
+      add: (event: SegmentEvent) => {
+        return this.pendingStore.dispatch((events) => ([
+          ...events,
+          event
+        ]))
+      },
+      remove: (event: SegmentEvent) => {
+        return this.pendingStore.dispatch((events) => 
+          events.filter((e) => e.messageId != event.messageId)
+        )
+      }
+    }
 
     registerBridgeStore({
       store: this.userInfoStore,

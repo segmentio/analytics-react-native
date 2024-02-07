@@ -4,15 +4,15 @@ import { createCallbackManager as mockCreateCallbackManager } from '../../test-h
 import { SovranStorage } from '../sovranStorage';
 
 import type { Persistor } from '@segment/sovran-react-native';
-import type { Context, DeepPartial } from '../../types';
+import { EventType, type Context, type DeepPartial, SegmentEvent } from '../../types';
 jest.mock('@segment/sovran-react-native', () => ({
   registerBridgeStore: jest.fn(),
   createStore: <T extends object>(initialState: T) => {
     const callbackManager = mockCreateCallbackManager<T>();
 
-    let store = {
-      ...initialState,
-    };
+    let store: T = Array.isArray(initialState) ? 
+      [...initialState] as T: 
+      {...initialState} as T;
 
     return {
       subscribe: jest
@@ -30,7 +30,9 @@ jest.mock('@segment/sovran-react-native', () => ({
             return store;
           }
         ),
-      getState: jest.fn().mockImplementation(() => ({ ...store })),
+      getState: jest.fn().mockImplementation(() => {
+        return Array.isArray(store) ? [...store] : { ...store }
+      }),
     };
   },
 }));
@@ -125,4 +127,23 @@ describe('sovranStorage', () => {
     });
     await commonAssertions(sovran);
   });
+
+  it('adds/removes pending events', async () => {
+    const sovran = new SovranStorage({ storeId: 'test' });
+    console.log(sovran.pendingEvents.get());
+
+    // expect(sovran.pendingEvents.get().length).toBe(0);
+
+    let event: SegmentEvent = {
+      messageId: '1',
+      type: EventType.TrackEvent,
+      event: "Track"
+    };
+    await sovran.pendingEvents.add(event);
+
+    expect(sovran.pendingEvents.get().length).toBe(1);
+
+    await sovran.pendingEvents.remove(event);
+    expect(sovran.pendingEvents.get().length).toBe(0);
+  })
 });

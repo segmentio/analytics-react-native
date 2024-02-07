@@ -2,6 +2,7 @@ import { SEGMENT_DESTINATION_KEY } from '../plugins/SegmentDestination';
 import type {
   DeepLinkData,
   Dictionary,
+  Queue,
   Settable,
   Storage,
   Watchable,
@@ -14,6 +15,7 @@ import type {
   RoutingRule,
   SegmentAPIConsentSettings,
   SegmentAPIIntegrations,
+  SegmentEvent,
   UserInfoState,
 } from '../types';
 import { createCallbackManager } from './utils';
@@ -27,6 +29,7 @@ export type StoreData = {
   filters: DestinationFilters;
   userInfo: UserInfoState;
   deepLinkData: DeepLinkData;
+  pendingEvents: SegmentEvent[];
 };
 
 const INITIAL_VALUES: StoreData = {
@@ -46,6 +49,7 @@ const INITIAL_VALUES: StoreData = {
     referring_application: '',
     url: '',
   },
+  pendingEvents: []
 };
 
 export function createMockStoreGetter<T>(fn: () => T) {
@@ -80,6 +84,7 @@ export class MockSegmentStore implements Storage {
     filters: createCallbackManager<DestinationFilters>(),
     userInfo: createCallbackManager<UserInfoState>(),
     deepLinkData: createCallbackManager<DeepLinkData>(),
+    pendingEvents: createCallbackManager<SegmentEvent[]>(),
   };
 
   readonly isReady = {
@@ -188,4 +193,30 @@ export class MockSegmentStore implements Storage {
     onChange: (callback: (value: DeepLinkData) => void) =>
       this.callbacks.deepLinkData.register(callback),
   };
+
+  readonly pendingEvents: Watchable<SegmentEvent[]> & Settable<SegmentEvent[]> & Queue<SegmentEvent, SegmentEvent[]> = {
+    get: createMockStoreGetter(() => {
+      return this.data.pendingEvents
+    }),
+    set: (value) => {
+      this.data.pendingEvents =
+        value instanceof Function
+          ? value(this.data.pendingEvents ?? [])
+          : [ ...value ];
+      this.callbacks.pendingEvents.run(this.data.pendingEvents)
+      return this.data.pendingEvents
+    },
+    add: (value: SegmentEvent) => {
+      this.data.pendingEvents.push(value);
+      this.callbacks.pendingEvents.run(this.data.pendingEvents);
+      return Promise.resolve(this.data.pendingEvents)
+    },
+    remove: (value: SegmentEvent) => {
+      this.data.pendingEvents = this.data.pendingEvents.filter((e) => e.messageId != value.messageId)
+      this.callbacks.pendingEvents.run(this.data.pendingEvents);
+      return Promise.resolve(this.data.pendingEvents)
+    },
+    onChange: (callback: (value: SegmentEvent[]) => void) => 
+      this.callbacks.pendingEvents.register(callback),
+  }
 }

@@ -86,8 +86,6 @@ export class SegmentClient {
 
   private timeline: Timeline;
 
-  private pendingEvents: SegmentEvent[] = [];
-
   private pluginsToAdd: Plugin[] = [];
 
   private flushPolicyExecuter!: FlushPolicyExecuter;
@@ -431,7 +429,7 @@ export class SegmentClient {
     if (this.isReady.value) {
       return this.startTimelineProcessing(event);
     } else {
-      this.pendingEvents.push(event);
+      this.store.pendingEvents.add(event);
       return event;
     }
   }
@@ -497,10 +495,12 @@ export class SegmentClient {
     }
 
     // Send all events in the queue
-    for (const e of this.pendingEvents) {
+    const pending = await this.store.pendingEvents.get(true);
+    for (const e of pending) {
       await this.startTimelineProcessing(e);
+      await this.store.pendingEvents.remove(e);
     }
-    this.pendingEvents = [];
+    // this.store.pendingEvents.set([]);
   }
 
   async flush(): Promise<void> {
