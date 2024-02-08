@@ -83,13 +83,36 @@ export class BrazePlugin extends DestinationPlugin {
     return undefined;
   };
 
+  private compareObjects(oldTraits: any, newTraits: any): boolean {
+    for (let key in newTraits) {
+      if (newTraits.hasOwnProperty(key)) {
+        if (typeof newTraits[key] === 'object' && !Array.isArray(newTraits[key])) {
+          if (!this.compareObjects(oldTraits[key], newTraits[key])) {
+            return false;
+          }
+        } else if (Array.isArray(newTraits[key])) {
+          for (let i = 0; i < newTraits[key].length; i++) {
+            if (!this.compareObjects(oldTraits[key][i], newTraits[key][i])) {
+              return false;
+            }
+          }
+        } else if (oldTraits[key] !== newTraits[key]) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   identify(event: IdentifyEventType) {
     //check to see if anything has changed.
     //if it hasn't changed don't send event
+    let identical =  typeof this.lastSeenTraits?.traits === 'undefined' ? false : this.compareObjects(this.lastSeenTraits?.traits, event.traits);
+
     if (
       this.lastSeenTraits?.userId === event.userId &&
       this.lastSeenTraits?.anonymousId === event.anonymousId &&
-      this.lastSeenTraits?.traits === event.traits
+      identical
     ) {
       return;
     } else {
