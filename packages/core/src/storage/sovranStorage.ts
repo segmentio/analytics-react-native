@@ -50,7 +50,7 @@ const INITIAL_VALUES: Data = {
     userId: undefined,
     traits: undefined,
   },
-  pendingEvents: []
+  pendingEvents: [],
 };
 
 const isEverythingReady = (state: ReadinessStore) =>
@@ -116,7 +116,7 @@ const addAnonymousId =
 function createStoreGetter<
   U extends object,
   Z extends keyof U | undefined = undefined,
-  V = undefined,
+  V = undefined
 >(store: Store<U>, key?: Z): getStateFunc<Z extends keyof U ? V : U> {
   type X = Z extends keyof U ? V : U;
   return createGetter(
@@ -151,7 +151,6 @@ export class SovranStorage implements Storage {
   private deepLinkStore: Store<DeepLinkData> = deepLinkStore;
   private filtersStore: Store<DestinationFilters>;
   private pendingStore: Store<SegmentEvent[]>;
-  
 
   readonly isReady: Watchable<boolean>;
 
@@ -173,8 +172,8 @@ export class SovranStorage implements Storage {
 
   readonly deepLinkData: Watchable<DeepLinkData>;
 
-  readonly pendingEvents: Watchable<SegmentEvent[]> & 
-    Settable<SegmentEvent[]> & 
+  readonly pendingEvents: Watchable<SegmentEvent[]> &
+    Settable<SegmentEvent[]> &
     Queue<SegmentEvent, SegmentEvent[]>;
 
   constructor(config: StorageConfig) {
@@ -186,7 +185,7 @@ export class SovranStorage implements Storage {
       hasRestoredSettings: false,
       hasRestoredUserInfo: false,
       hasRestoredFilters: false,
-      hasRestoredPendingEvents: false
+      hasRestoredPendingEvents: false,
     });
 
     const markAsReadyGenerator = (key: keyof ReadinessStore) => () => {
@@ -399,10 +398,10 @@ export class SovranStorage implements Storage {
           storeId: `${this.storeId}-pendingEvents`,
           persistor: this.storePersistor,
           saveDelay: this.storePersistorSaveDelay,
-          onInitialized: markAsReadyGenerator('hasRestoredPendingEvents')
-        }
+          onInitialized: markAsReadyGenerator('hasRestoredPendingEvents'),
+        },
       }
-    )
+    );
 
     this.pendingEvents = {
       get: createStoreGetter(this.pendingStore),
@@ -416,21 +415,18 @@ export class SovranStorage implements Storage {
           } else {
             newState = [...value];
           }
-          return newState
-        })
+          return newState;
+        });
       },
       add: (event: SegmentEvent) => {
-        return this.pendingStore.dispatch((events) => ([
-          ...events,
-          event
-        ]))
+        return this.pendingStore.dispatch((events) => [...events, event]);
       },
       remove: (event: SegmentEvent) => {
-        return this.pendingStore.dispatch((events) => 
+        return this.pendingStore.dispatch((events) =>
           events.filter((e) => e.messageId != event.messageId)
-        )
-      }
-    }
+        );
+      },
+    };
 
     registerBridgeStore({
       store: this.userInfoStore,

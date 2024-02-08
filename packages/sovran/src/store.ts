@@ -102,7 +102,9 @@ export const createStore = <T extends object>(
   initialState: T,
   config?: StoreConfig
 ): Store<T> => {
-  let state: T = Array.isArray(initialState) ? [...initialState] as T : {...initialState} as T;
+  let state: T = Array.isArray(initialState)
+    ? ([...initialState] as T)
+    : ({ ...initialState } as T);
   const queue: { call: Action<T>; finally?: (newState: T) => void }[] = [];
   const isPersisted = config?.persist !== undefined;
   let saveTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -163,7 +165,7 @@ export const createStore = <T extends object>(
   function getState(safe: true): Promise<T>;
   function getState(safe?: boolean): T | Promise<T> {
     if (safe !== true) {
-      return Array.isArray(state) ? [...state] as T: { ...state };
+      return Array.isArray(state) ? ([...state] as T) : { ...state };
     }
     return new Promise<T>((resolve) => {
       queue.push({

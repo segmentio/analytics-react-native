@@ -49,7 +49,7 @@ const INITIAL_VALUES: StoreData = {
     referring_application: '',
     url: '',
   },
-  pendingEvents: []
+  pendingEvents: [],
 };
 
 export function createMockStoreGetter<T>(fn: () => T) {
@@ -194,29 +194,33 @@ export class MockSegmentStore implements Storage {
       this.callbacks.deepLinkData.register(callback),
   };
 
-  readonly pendingEvents: Watchable<SegmentEvent[]> & Settable<SegmentEvent[]> & Queue<SegmentEvent, SegmentEvent[]> = {
+  readonly pendingEvents: Watchable<SegmentEvent[]> &
+    Settable<SegmentEvent[]> &
+    Queue<SegmentEvent, SegmentEvent[]> = {
     get: createMockStoreGetter(() => {
-      return this.data.pendingEvents
+      return this.data.pendingEvents;
     }),
     set: (value) => {
       this.data.pendingEvents =
         value instanceof Function
           ? value(this.data.pendingEvents ?? [])
-          : [ ...value ];
-      this.callbacks.pendingEvents.run(this.data.pendingEvents)
-      return this.data.pendingEvents
+          : [...value];
+      this.callbacks.pendingEvents.run(this.data.pendingEvents);
+      return this.data.pendingEvents;
     },
     add: (value: SegmentEvent) => {
       this.data.pendingEvents.push(value);
       this.callbacks.pendingEvents.run(this.data.pendingEvents);
-      return Promise.resolve(this.data.pendingEvents)
+      return Promise.resolve(this.data.pendingEvents);
     },
     remove: (value: SegmentEvent) => {
-      this.data.pendingEvents = this.data.pendingEvents.filter((e) => e.messageId != value.messageId)
+      this.data.pendingEvents = this.data.pendingEvents.filter(
+        (e) => e.messageId != value.messageId
+      );
       this.callbacks.pendingEvents.run(this.data.pendingEvents);
-      return Promise.resolve(this.data.pendingEvents)
+      return Promise.resolve(this.data.pendingEvents);
     },
-    onChange: (callback: (value: SegmentEvent[]) => void) => 
+    onChange: (callback: (value: SegmentEvent[]) => void) =>
       this.callbacks.pendingEvents.register(callback),
-  }
+  };
 }

@@ -10,14 +10,15 @@ import * as context from '../context';
 
 describe('#sendEvents', () => {
   beforeEach(() => {
-    jest.spyOn(context, 'getContext').mockImplementationOnce(
-      // eslint-disable-next-line @typescript-eslint/require-await
-      async (userTraits?: UserTraits): Promise<Context> => {
-        return {
-          traits: userTraits ?? {},
-        } as Context;
-      }
-    );
+    jest
+      .spyOn(context, 'getContext')
+      .mockImplementationOnce(
+        async (userTraits?: UserTraits): Promise<Context> => {
+          return {
+            traits: userTraits ?? {},
+          } as Context;
+        }
+      );
 
     jest
       .spyOn(Date.prototype, 'toISOString')
