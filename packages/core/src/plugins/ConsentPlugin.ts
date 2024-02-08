@@ -47,24 +47,25 @@ export class ConsentPlugin extends Plugin {
     analytics.getPlugins().forEach(this.injectConsentFilterIfApplicable);
     analytics.onPluginLoaded(this.injectConsentFilterIfApplicable);
     this.consentCategoryProvider.setApplicableCategories(this.categories);
-    this.consentCategoryProvider.onConsentChange((categoryPreferences) => {
-      this.analytics
-        ?.track(CONSENT_PREF_UPDATE_EVENT, {
-          consent: {
-            categoryPreferences,
-          },
-        })
-        .catch((e) => {
-          throw e;
-        });
+    this.consentCategoryProvider.onConsentChange(() => {
+      this.notifyConsentChange();
+    });
+
+    let lastDeviceAttrs = analytics.context.get()?.device;
+    analytics.context.onChange((c) => {
+      const newAttrs = c?.device;
+      if (
+        newAttrs?.adTrackingEnabled !== lastDeviceAttrs?.adTrackingEnabled ||
+        newAttrs?.advertisingId !== lastDeviceAttrs?.advertisingId ||
+        newAttrs?.trackingStatus !== lastDeviceAttrs?.trackingStatus
+      ) {
+        this.notifyConsentChange();
+      }
+      lastDeviceAttrs = newAttrs;
     });
   }
 
   async execute(event: SegmentEvent): Promise<SegmentEvent> {
-    if (this.isConsentUpdateEvent(event)) {
-      return event;
-    }
-
     event.context = {
       ...event.context,
       consent: {
@@ -142,6 +143,13 @@ export class ConsentPlugin extends Plugin {
 
   private isConsentFeatureSetup(): boolean {
     return typeof this.analytics?.consentSettings.get() === 'object';
+  }
+
+  private notifyConsentChange() {
+    // actual preferences will be attached in the execute method
+    this.analytics?.track(CONSENT_PREF_UPDATE_EVENT).catch((e) => {
+      throw e;
+    });
   }
 }
 
