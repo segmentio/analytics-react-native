@@ -9,7 +9,7 @@ const sizeOf = (obj: unknown): number => {
 
 export const warnMissingNativeModule = () => {
   const MISSING_NATIVE_MODULE_WARNING =
-    `The package 'analytics-react-native' can't access a custom native module. Make sure: \n\n` +
+    "The package 'analytics-react-native' can't access a custom native module. Make sure: \n\n" +
     Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
     '- You rebuilt the app after installing the package\n' +
     '- You are not using Expo managed workflow\n';
@@ -18,7 +18,9 @@ export const warnMissingNativeModule = () => {
 
 export const getNativeModule = (moduleName: string) => {
   const module = (NativeModules[moduleName] as NativeModule) ?? undefined;
-  if (module === undefined) warnMissingNativeModule();
+  if (module === undefined) {
+    warnMissingNativeModule();
+  }
   return module;
 };
 
@@ -143,7 +145,6 @@ export function isDate(value: unknown): value is Date {
 export function objectToString(value: object, json = true): string | undefined {
   // If the object has a custom toString we well use that
   if (value.toString !== Object.prototype.toString) {
-    // eslint-disable-next-line @typescript-eslint/no-base-to-string
     return value.toString();
   }
   if (json) {
@@ -198,3 +199,36 @@ export const isObject = (value: unknown): value is Record<string, unknown> =>
   value !== undefined &&
   typeof value === 'object' &&
   !Array.isArray(value);
+
+/**
+ * Utility to deeply compare 2 objects
+ * @param a unknown object
+ * @param b unknown object
+ * @returns true if both objects have the same keys and values
+ */
+export function deepCompare<T>(a: T, b: T): boolean {
+  // Shallow compare first, just in case
+  if (a === b) {
+    return true;
+  }
+
+  // If not objects then compare values directly
+  if (!isObject(a) || !isObject(b)) {
+    return a === b;
+  }
+
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+
+  if (keysA.length !== keysB.length) {
+    return false;
+  }
+
+  for (const key of keysA) {
+    if (!keysB.includes(key) || !deepCompare(a[key], b[key])) {
+      return false;
+    }
+  }
+
+  return true;
+}
