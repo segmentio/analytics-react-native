@@ -11,6 +11,7 @@ export {
   isDate,
   objectToString,
   unknownToString,
+  deepCompare,
 } from './util';
 export { SegmentClient } from './analytics';
 export { SegmentDestination } from './plugins/SegmentDestination';
