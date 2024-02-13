@@ -29,7 +29,9 @@ export class FlushPolicyExecuter {
   }
 
   removeIndex(index: number): boolean {
-    if (index < 0) return false;
+    if (index < 0) {
+      return false;
+    }
 
     const policy = this.policies[index];
 

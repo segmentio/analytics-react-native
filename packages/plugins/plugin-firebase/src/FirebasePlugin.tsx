@@ -38,8 +38,7 @@ export class FirebasePlugin extends DestinationPlugin {
             acc[trait] =
               typeof eventTraits[trait] === 'undefined'
                 ? ''
-                : // eslint-disable-next-line @typescript-eslint/no-base-to-string
-                  eventTraits[trait]!.toString();
+                : eventTraits[trait]!.toString();
           }
           return acc;
         },

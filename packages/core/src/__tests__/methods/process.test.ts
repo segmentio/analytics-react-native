@@ -35,7 +35,7 @@ describe('process', () => {
     jest.clearAllMocks();
   });
 
-  it('stamps basic data: timestamp and messageId for events when not ready', async () => {
+  it('stamps basic data: timestamp and messageId for pending events when not ready', async () => {
     const client = new SegmentClient(clientArgs);
     jest.spyOn(client.isReady, 'value', 'get').mockReturnValue(false);
     // @ts-ignore
@@ -54,7 +54,7 @@ describe('process', () => {
 
     // While not ready only timestamp and messageId should be defined
     // @ts-ignore
-    const pendingEvents = client.pendingEvents;
+    const pendingEvents = client.store.pendingEvents.get();
     expect(pendingEvents.length).toBe(1);
     const pendingEvent = pendingEvents[0];
     expect(pendingEvent).toMatchObject(expectedEvent);
@@ -76,7 +76,7 @@ describe('process', () => {
     };
 
     // @ts-ignore
-    expect(client.pendingEvents.length).toBe(0);
+    expect(client.store.pendingEvents.get().length).toBe(0);
 
     expect(timeline.process).toHaveBeenCalledWith(
       expect.objectContaining(expectedEvent)
@@ -105,7 +105,7 @@ describe('process', () => {
     } as SegmentEvent;
 
     // @ts-ignore
-    const pendingEvents = client.pendingEvents;
+    const pendingEvents = client.store.pendingEvents.get();
     expect(pendingEvents.length).toBe(0);
 
     expect(timeline.process).toHaveBeenCalledWith(

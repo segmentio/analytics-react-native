@@ -86,8 +86,6 @@ export class SegmentClient {
 
   private timeline: Timeline;
 
-  private pendingEvents: SegmentEvent[] = [];
-
   private pluginsToAdd: Plugin[] = [];
 
   private flushPolicyExecuter!: FlushPolicyExecuter;
@@ -320,7 +318,7 @@ export class SegmentClient {
       const filters = this.generateFiltersMap(
         resJson.middlewareSettings?.routingRules ?? []
       );
-      this.logger.info(`Received settings from Segment succesfully.`);
+      this.logger.info('Received settings from Segment succesfully.');
       await Promise.all([
         this.store.settings.set(integrations),
         this.store.consentSettings.set(consentSettings),
@@ -428,10 +426,12 @@ export class SegmentClient {
   async process(incomingEvent: SegmentEvent) {
     const event = this.applyRawEventData(incomingEvent);
 
+    console.log(`Process: ${this.isReady.value}`);
+
     if (this.isReady.value) {
       return this.startTimelineProcessing(event);
     } else {
-      this.pendingEvents.push(event);
+      this.store.pendingEvents.add(event);
       return event;
     }
   }
@@ -479,6 +479,9 @@ export class SegmentClient {
    * @param isReady
    */
   private async onReady() {
+    console.log(
+      `onReady, pendingEvents=${this.store.pendingEvents.get().length}`
+    );
     // Add all plugins awaiting store
     if (this.pluginsToAdd.length > 0 && !this.isAddingPlugins) {
       this.isAddingPlugins = true;
@@ -497,10 +500,12 @@ export class SegmentClient {
     }
 
     // Send all events in the queue
-    for (const e of this.pendingEvents) {
+    const pending = await this.store.pendingEvents.get(true);
+    for (const e of pending) {
       await this.startTimelineProcessing(e);
+      await this.store.pendingEvents.remove(e);
     }
-    this.pendingEvents = [];
+    // this.store.pendingEvents.set([]);
   }
 
   async flush(): Promise<void> {

@@ -28,9 +28,9 @@ export class IdfaPlugin extends Plugin {
     }
   }
 
-  /** `requestTrackingPermission()` will prompt the user for 
-tracking permission and returns a promise you can use to 
-make additional tracking decisions based on the user response 
+  /** `requestTrackingPermission()` will prompt the user for
+tracking permission and returns a promise you can use to
+make additional tracking decisions based on the user response
 */
   async requestTrackingPermission(): Promise<boolean> {
     try {

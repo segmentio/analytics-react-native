@@ -3,7 +3,9 @@ import branch, { BranchEvent } from 'react-native-branch';
 import { mapEventProps, Product, transformMap } from './parameterMapping';
 
 function toJSONString(value: unknown): string {
-  if (typeof value === 'string') return value;
+  if (typeof value === 'string') {
+    return value;
+  }
   return JSON.stringify(value);
 }
 
@@ -42,7 +44,9 @@ export async function createBranchEventWithProps(
     const customData = {} as { [key: string]: string };
     const branchData = {} as { [key: string]: unknown };
     for (const key in eventProps) {
-      if (key in mapEventProps) branchData[key] = eventProps[key];
+      if (key in mapEventProps) {
+        branchData[key] = eventProps[key];
+      }
       customData[key] = toJSONString(eventProps[key]);
     }
     eventProps = {

@@ -20,11 +20,7 @@ export class DeviceTokenPlugin extends PlatformPlugin {
     try {
       const isAuthorized = await this.authStatus;
 
-      if (
-        isAuthorized !== undefined &&
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison -- enum comparison not working with Firebase types
-        isAuthorized > 0
-      ) {
+      if (isAuthorized !== undefined && isAuthorized > 0) {
         const token = await this.getDeviceToken();
 
         if (token !== undefined) {
@@ -70,11 +66,7 @@ export class DeviceTokenPlugin extends PlatformPlugin {
   async updatePermissionStatus() {
     const isAuthorized = await this.checkUserPermission();
 
-    if (
-      isAuthorized !== undefined &&
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison -- enum comparison not working with Firebase types
-      isAuthorized > 0
-    ) {
+    if (isAuthorized !== undefined && isAuthorized > 0) {
       const token = await this.getDeviceToken();
 
       if (token !== undefined) {
