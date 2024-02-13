@@ -1,4 +1,8 @@
-# @segment/analytics-react-native
+# @segment/analytics-react-native'
+
+### 🎉 Flagship 🎉
+This library is one of Segment’s most popular Flagship libraries. It is actively maintained by Segment, benefitting from new feature releases and ongoing support.
+
 
 The hassle-free way to add Segment analytics to your React-Native app.
 
