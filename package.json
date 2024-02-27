@@ -3,7 +3,6 @@
   "private": true,
   "workspaces": [
     "packages/shared",
-    "packages/sovran",
     "packages/core",
     "packages/plugins/*"
   ],
@@ -11,7 +10,6 @@
     "bootstrap": "yarn install && yarn example install && yarn example pods && yarn e2e install && yarn e2e pods && husky install",
     "bootstrap:ci": "yarn install && yarn e2e install && yarn e2e pods && husky install",
     "core": "yarn workspace @segment/analytics-react-native",
-    "sovran": "yarn workspace @segment/sovran-react-native",
     "example": "yarn --cwd examples/AnalyticsReactNativeExample",
     "e2e": "yarn --cwd examples/E2E",
     "build": "yarn workspaces foreach -A --topological-dev run build",

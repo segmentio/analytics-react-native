@@ -17,7 +17,7 @@ module.exports = {
  * @property {Set} peerDeps - A set of unique peer dependencies names.
  * 
  * @example
- * const packagesToLink = ['core', 'sovran', 'plugins/plugin-idfa'];
+ * const packagesToLink = ['core', 'plugins/plugin-idfa'];
  * const linkedData = getLinkedData(packagesToLink);
  */
   getLinkedData(packagesToLink) {

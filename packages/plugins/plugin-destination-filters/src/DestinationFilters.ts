@@ -8,7 +8,7 @@ import {
   SegmentEvent,
   UtilityPlugin,
 } from '@segment/analytics-react-native';
-import type { Unsubscribe } from '@segment/sovran-react-native';
+import { Unsubscribe } from '@segment/analytics-react-native';
 import * as tsub from '@segment/tsub';
 import clone from 'clone';
 

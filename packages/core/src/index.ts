@@ -3,7 +3,6 @@ export * from './plugin';
 export * from './types';
 export * from './mapTransform';
 export {
-  getNativeModule,
   isNumber,
   isString,
   isObject,
@@ -13,6 +12,7 @@ export {
   unknownToString,
   deepCompare,
 } from './util';
+export { getNativeModule } from './native-module';
 export { SegmentClient } from './analytics';
 export { SegmentDestination } from './plugins/SegmentDestination';
 export {
@@ -21,3 +21,4 @@ export {
 } from './plugins/ConsentPlugin';
 export * from './flushPolicies';
 export * from './errors';
+export * from './state';

@@ -1,20 +1,20 @@
-import { createStore } from '@segment/sovran-react-native';
-
 import { MockEventStore } from '../../test-helpers';
 import { EventType, SegmentEvent } from '../../types';
 import { QueueFlushingPlugin } from '../QueueFlushingPlugin';
 
 import type { SegmentClient } from '../../analytics';
-jest.mock('@segment/sovran-react-native');
+import * as state from '../../state';
 
 describe('QueueFlushingPlugin', () => {
   function setupQueuePlugin(
     onFlush: (events: SegmentEvent[]) => Promise<void>,
     flushAt: number
   ) {
-    const queuePlugin = new QueueFlushingPlugin(onFlush);
     // We override the createStore before the queue plugin is initialized to use our own mocked event store
-    (createStore as jest.Mock).mockReturnValue(new MockEventStore());
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    jest.spyOn(state, 'createStore').mockReturnValue(new MockEventStore());
+    const queuePlugin = new QueueFlushingPlugin(onFlush);
     queuePlugin.configure({
       getConfig: () => ({
         writeKey: 'SEGMENT_KEY',

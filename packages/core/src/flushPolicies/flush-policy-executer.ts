@@ -1,4 +1,4 @@
-import type { Unsubscribe } from '@segment/sovran-react-native';
+import type { Unsubscribe } from '../state';
 import type { SegmentEvent } from '../types';
 import type { FlushPolicy } from './types';
 

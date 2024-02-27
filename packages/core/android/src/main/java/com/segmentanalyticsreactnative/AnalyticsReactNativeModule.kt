@@ -1,6 +1,5 @@
 package com.segmentanalyticsreactnative
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -13,11 +12,17 @@ import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.core.content.pm.PackageInfoCompat
-import com.facebook.react.ReactActivity
-import com.facebook.react.ReactApplication
-import com.facebook.react.bridge.*
+import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.ActivityEventListener
+import com.facebook.react.bridge.LifecycleEventListener
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.bridge.Promise
+import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.bridge.WritableMap
 import com.facebook.react.module.annotations.ReactModule
-import com.sovranreactnative.SovranModule
+import com.facebook.react.modules.core.DeviceEventManagerModule
 import java.lang.Exception
 import java.util.*
 import java.security.MessageDigest
@@ -27,6 +32,13 @@ import java.util.UUID
 enum class ConnectionType {
   Cellular, Unknown, Wifi
 }
+
+enum class EmitterEvent(val event: String) {
+  SET_ANONYMOUS_ID("add-anonymous-id"),
+  SET_DEEPLINK("add-deepLink-data")
+}
+
+data class Action(val event: EmitterEvent, val payload: Any?)
 
 @ReactModule(name="AnalyticsReactNative")
 class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventListener, LifecycleEventListener {
@@ -53,9 +65,14 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
       return "AnalyticsReactNative"
   }
 
+  override fun getConstants() = mapOf(
+      EmitterEvent.SET_ANONYMOUS_ID.name to EmitterEvent.SET_ANONYMOUS_ID.event,
+      EmitterEvent.SET_DEEPLINK.name to EmitterEvent.SET_DEEPLINK.event
+  )
+
   private fun getBuildNumber(): String {
-      return PackageInfoCompat.getLongVersionCode(pInfo).toString()
-    }
+    return PackageInfoCompat.getLongVersionCode(pInfo).toString()
+  }
 
   fun ByteArray.toHexString() = joinToString("") { "%02x".format(it) }
 
@@ -217,26 +234,13 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
     }
 
     Log.d(name, "Sending Deeplink data to store: uri=${uri}, referrer=${referrer}")
-    val sovran = (currentActivity?.application as ReactApplication)
-      ?.reactNativeHost
-      ?.reactInstanceManager
-      ?.currentReactContext
-      ?.getNativeModule(SovranModule::class.java)
-    sovran?.dispatch("add-deepLink-data", properties)
-
-    
+    sendEvent(EmitterEvent.SET_DEEPLINK.event, Arguments.makeNativeMap(properties as Map<String, Any>?))
   }
 
   fun setAnonymousId(anonymousId: String) {
     val properties = Hashtable<String, String>()
     properties["anonymousId"] = anonymousId
-
-    val currentContext = getReactApplicationContext()
-
-    if (currentContext != null) {
-      val sovran = currentContext.getNativeModule(SovranModule::class.java)
-      sovran?.dispatch("add-anonymous-id", properties)
-    }
+    sendEvent(EmitterEvent.SET_ANONYMOUS_ID.event, Arguments.makeNativeMap(properties as Map<String, Any>?))
   }
 
   override fun onActivityResult(activity: Activity?, requestCode: Int, resultCode: Int, data: Intent?) {
@@ -263,5 +267,23 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
   override fun onHostDestroy() {
     isColdLaunch = true
     // Do nothing
+  }
+
+  private fun sendEvent(eventName: String, params: WritableMap?) {
+    reactApplicationContext
+      .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+      .emit(eventName, params)
+  }
+
+  // Example method
+  // See https://reactnative.dev/docs/native-modules-android
+  @ReactMethod
+  fun addListener(eventName: String?) {
+    // Keep: Required for RN built in Event Emitter Calls.
+  }
+
+  @ReactMethod
+  fun removeListeners(count: Int?) {
+    // Keep: Required for RN built in Event Emitter Calls.
   }
 }

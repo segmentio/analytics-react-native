@@ -1,8 +1,7 @@
-import type { Persistor } from '@segment/sovran-react-native';
 import type { Rule } from '@segment/tsub/dist/store';
 import type { SegmentError } from './errors';
 import type { FlushPolicy } from './flushPolicies';
-import type { NativeModule } from 'react-native';
+import { Persistor } from './state';
 
 export type JsonValue =
   | boolean
@@ -353,13 +352,4 @@ export type UserInfoState = {
   anonymousId: string;
   userId?: string;
   traits?: UserTraits | GroupTraits;
-};
-
-// Native Module types
-export interface GetContextConfig {
-  collectDeviceId: boolean;
-}
-
-export type AnalyticsReactNativeModule = NativeModule & {
-  getContextInfo: (config: GetContextConfig) => Promise<NativeContextInfo>;
 };
