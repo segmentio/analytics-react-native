@@ -12,6 +12,7 @@ import {
   SegmentClient,
   SegmentError,
   TrackEventType,
+  unknownToString,
   UpdateType,
 } from '@segment/analytics-react-native';
 import { AppEventsLogger, Settings } from 'react-native-fbsdk-next';
@@ -75,6 +76,9 @@ const sanitizeEvent = (
   return {
     ...params,
     fb_num_items: productCount,
+    // Map messageId to event_id to support FB deduplication
+    // https://developers.facebook.com/docs/marketing-api/conversions-api/deduplicate-pixel-and-server-events#event-deduplication-options
+    event_id: unknownToString(event.messageId)!,
     _appVersion: (event.context as Context).app.version,
   };
 };
