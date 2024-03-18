@@ -247,5 +247,38 @@ describe('FacebookAppEventsPlugin', () => {
 
       expect(AppEventsLogger.logEvent).toHaveBeenCalledWith('ACTION', expected);
     });
+
+    it('logTime is converted to number', () => {
+      const time = new Date(1704267463 * 1000).toISOString();
+
+      const payload = {
+        messageId: '12345',
+        type: 'track',
+        event: 'ACTION',
+        context: {
+          app: {
+            build: '1',
+            name: 'Analytics',
+            namespace: 'org.reactjs.native.AnalyticsReactNativeExample',
+            version: '1.0',
+          },
+        },
+        properties: {
+          foo: 'bar',
+        },
+        timestamp: time,
+      };
+
+      const expected = {
+        _appVersion: '1.0',
+        _logTime: Math.floor(Date.parse(time) / 1000), // Unix timestamp
+        event_id: '12345',
+        fb_num_items: 0,
+      };
+
+      plugin.track(payload as TrackEventType);
+
+      expect(AppEventsLogger.logEvent).toHaveBeenCalledWith('ACTION', expected);
+    });
   });
 });
