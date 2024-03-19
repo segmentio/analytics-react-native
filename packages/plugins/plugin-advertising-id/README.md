@@ -12,7 +12,6 @@ yarn add @segment/analytics-react-native-plugin-advertising-id
 
 This plugin requires a `compileSdkVersion` of at least 19. 
 
-See [Google Play Services documentation](https://developers.google.com/admob/android/quick-start) for `advertisingId` setup
 ## Usage
 
 Follow the instructions for adding plugins on the main Analytics client:
