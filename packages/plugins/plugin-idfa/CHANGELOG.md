@@ -1,5 +1,9 @@
 ### Dependencies
 
+* **@segment/analytics-react-native:** upgraded to 2.19.1
+
+### Dependencies
+
 * **@segment/analytics-react-native:** upgraded to 2.19.0
 * **@segment/sovran-react-native:** upgraded to 1.1.1
 

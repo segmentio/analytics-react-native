@@ -2,10 +2,12 @@ import {
   ErrorType,
   Plugin,
   PluginType,
+  SegmentClient,
   SegmentError,
 } from '@segment/analytics-react-native';
 import type { IdfaData } from './types';
 import { AnalyticsReactNativePluginIdfa } from './AnalyticsReactNativePluginIdfa';
+import { Platform } from 'react-native';
 
 const { getTrackingAuthorizationStatus } = AnalyticsReactNativePluginIdfa;
 
@@ -20,10 +22,20 @@ const { getTrackingAuthorizationStatus } = AnalyticsReactNativePluginIdfa;
 export class IdfaPlugin extends Plugin {
   type = PluginType.enrichment;
 
+  private shouldAskPermission = true;
+
   constructor(shouldAskPermission = true) {
     super();
+    this.shouldAskPermission = shouldAskPermission;
+  }
 
-    if (shouldAskPermission === true) {
+  configure(analytics: SegmentClient): void {
+    this.analytics = analytics;
+    if (Platform.OS !== 'ios') {
+      return;
+    }
+
+    if (this.shouldAskPermission === true) {
       this.getTrackingStatus();
     }
   }

@@ -12,6 +12,7 @@ import {
   SegmentClient,
   SegmentError,
   TrackEventType,
+  unknownToString,
   UpdateType,
 } from '@segment/analytics-react-native';
 import { AppEventsLogger, Settings } from 'react-native-fbsdk-next';
@@ -70,6 +71,13 @@ const sanitizeEvent = (
 
   if (isNumber(event._logTime)) {
     params._logTime = event._logTime;
+  }
+
+  // Map messageId to event_id to support FB deduplication
+  // https://developers.facebook.com/docs/marketing-api/conversions-api/deduplicate-pixel-and-server-events#event-deduplication-options
+  const messageId = unknownToString(event.messageId);
+  if (messageId !== null && messageId !== undefined && messageId !== '') {
+    params.event_id = messageId;
   }
 
   return {
