@@ -11,7 +11,7 @@
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
   
-  [AnalyticsReactNative setAnonymousId: @"Test"];
+  [AnalyticsReactNative setAnonymousId: @"Native AnonymousID"];
 
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }

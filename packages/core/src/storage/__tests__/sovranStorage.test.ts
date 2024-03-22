@@ -103,9 +103,7 @@ describe('sovranStorage', () => {
 
   it('adds/removes pending events', async () => {
     const sovran = new SovranStorage({ storeId: 'test' });
-    console.log(sovran.pendingEvents.get());
-
-    // expect(sovran.pendingEvents.get().length).toBe(0);
+    expect(sovran.pendingEvents.get().length).toBe(0);
 
     const event: SegmentEvent = {
       messageId: '1',

@@ -55,8 +55,6 @@ export const AnalyticsReactNativeModuleEmitter =
     ? new NativeEventEmitter(AnalyticsReactNativeModule)
     : undefined;
 
-console.log('constants= ', AnalyticsReactNativeModule?.getConstants?.());
-
 export const AnalyticsReactNativeModuleEvents =
   (AnalyticsReactNativeModule?.getConstants?.() ?? {
     SET_ANONYMOUS_ID: 'add-anonymous-id',

@@ -20,8 +20,7 @@ class MainApplication : Application(), ReactApplication {
       object : DefaultReactNativeHost(this) {
         override fun getPackages(): List<ReactPackage> {
           // Packages that cannot be autolinked yet can be added manually here, for example:
-            val packages = PackageList(this).packages
-          return packages
+          return PackageList(this).packages
         }
 
         override fun getJSMainModuleName(): String = "index"
@@ -47,8 +46,7 @@ class MainApplication : Application(), ReactApplication {
         .find { it is AnalyticsReactNativePackage }
         as? AnalyticsReactNativePackage
 
-    analyticsPackage?.setAnonymousId("Hello World")
-    Log.d("App", "analyticsPackage is ${if (analyticsPackage != null) "not null" else "null"}")
+    analyticsPackage?.setAnonymousId("Native AnonymousID")
 
     ReactNativeFlipper.initializeFlipper(this, reactNativeHost.reactInstanceManager)
   }
