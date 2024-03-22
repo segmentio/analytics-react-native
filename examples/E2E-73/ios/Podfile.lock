@@ -1127,12 +1127,11 @@ PODS:
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - segment-analytics-react-native (2.16.1):
+  - segment-analytics-react-native (2.19.0):
+    - glog
+    - RCT-Folly (= 2022.05.16.00)
     - React-Core
-    - sovran-react-native
   - SocketRocket (0.6.1)
-  - sovran-react-native (1.0.4):
-    - React-Core
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -1215,7 +1214,6 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - segment-analytics-react-native (from `../../../packages/core`)
-  - sovran-react-native (from `../../../packages/sovran`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -1344,8 +1342,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-screens"
   segment-analytics-react-native:
     :path: "../../../packages/core"
-  sovran-react-native:
-    :path: "../../../packages/sovran"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -1415,10 +1411,9 @@ SPEC CHECKSUMS:
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNGestureHandler: 61bfdfc05db9b79dd61f894dcd29d3dcc6db3c02
   RNScreens: b582cb834dc4133307562e930e8fa914b8c04ef2
-  segment-analytics-react-native: 13d4ba325add2b2ed796ee58531e3b4cacfe692f
+  segment-analytics-react-native: 8829610e19044ceb74cbc689b34d88ff188d4a65
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
-  sovran-react-native: 791f2f726b4d57ece59676eda58d6da9dc95ad4e
-  Yoga: 20d6a900dcc8d61d5e3b799bbf627cc34474a8c4
+  Yoga: 44003f970aa541b79dfdd59cf236fda41bd5890f
 
 PODFILE CHECKSUM: a8b42a411ee5d548930e6e63e39d1b743067421d
 

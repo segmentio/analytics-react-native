@@ -3091,6 +3091,7 @@ __metadata:
     express: "npm:^4.17.1"
     jest: "npm:^29.7.0"
     jest-circus: "npm:^29.3.1"
+    pod-install: "npm:^0.1.39"
     prettier: "npm:2.8.8"
     react: "npm:18.2.0"
     react-native: "npm:0.73.0"
@@ -8574,6 +8575,15 @@ __metadata:
   dependencies:
     find-up: "npm:^3.0.0"
   checksum: 10c0/ecb60e1f8e1f611c0bdf1a0b6a474d6dfb51185567dc6f29cdef37c8d480ecba5362e006606bb290519bbb6f49526c403fabea93c3090c20368d98bb90c999ab
+  languageName: node
+  linkType: hard
+
+"pod-install@npm:^0.1.39":
+  version: 0.1.39
+  resolution: "pod-install@npm:0.1.39"
+  bin:
+    pod-install: build/index.js
+  checksum: 10c0/fc5d88a13b6bd58cb9c6336ae0d068f5b7c54d8449f649dd080672583caf701f48bce49a878705ef166b879aaa0068f0a1782061f4cb85c67fff7008dd4ae5fd
   languageName: node
   linkType: hard
 

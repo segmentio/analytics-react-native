@@ -90,7 +90,5 @@ dependencies {
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  // Requires sovran for communication
-  implementation project(path: ':segment_sovran-react-native')  
 }
 

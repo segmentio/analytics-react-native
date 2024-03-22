@@ -1,34 +1,33 @@
-import {
-  createStore,
-  registerBridgeStore,
-  Store,
-  Persistor,
-} from '@segment/sovran-react-native';
 import deepmerge from 'deepmerge';
 import type {
-  SegmentAPIIntegrations,
-  IntegrationSettings,
-  SegmentEvent,
-  DeepPartial,
   Context,
-  UserInfoState,
-  RoutingRule,
+  DeepPartial,
   DestinationFilters,
+  IntegrationSettings,
+  RoutingRule,
   SegmentAPIConsentSettings,
+  SegmentAPIIntegrations,
+  SegmentEvent,
+  UserInfoState,
 } from '..';
+import {
+  AnalyticsReactNativeModuleEmitter,
+  AnalyticsReactNativeModuleEvents,
+} from '../native-module';
+import { Persistor, Store, createStore } from '../state';
+import { isObject, isString } from '../util';
 import { getUUID } from '../uuid';
 import { createGetter } from './helpers';
-import { isObject, isString } from '../util';
 import type {
-  Storage,
-  StorageConfig,
   DeepLinkData,
-  getStateFunc,
-  Watchable,
-  Settable,
   Dictionary,
   ReadinessStore,
   Queue,
+  Settable,
+  Storage,
+  StorageConfig,
+  Watchable,
+  getStateFunc,
 } from './types';
 
 type Data = {
@@ -70,48 +69,26 @@ const deepLinkStore = createStore<DeepLinkData>({
  * Action to set the referring app and link url
  * @param deepLinkData referring app and link url
  */
-const addDeepLinkData = (deepLinkData: unknown) => (state: DeepLinkData) => {
+const addDeepLinkData = (deepLinkData: unknown) => {
   if (!isObject(deepLinkData)) {
-    return state;
+    return;
   }
 
-  return {
-    referring_application: deepLinkData.referring_application,
-    url: deepLinkData.url,
-  } as DeepLinkData;
+  deepLinkStore.dispatch((_state: DeepLinkData) => {
+    return {
+      referring_application: deepLinkData.referring_application,
+      url: deepLinkData.url,
+    } as DeepLinkData;
+  });
 };
 
 /**
  * Registers the deeplink store to listen to native events
  */
-registerBridgeStore({
-  store: deepLinkStore,
-  actions: {
-    'add-deepLink-data': addDeepLinkData,
-  },
-});
-
-/**
- * Action to set the anonymousId from native
- * @param anonymousId native anonymousId string
- */
-
-const addAnonymousId =
-  (payload: unknown) => (state: { userInfo: UserInfoState }) => {
-    if (isObject(payload)) {
-      const nativeAnonymousId = payload.anonymousId;
-
-      if (isString(nativeAnonymousId)) {
-        return {
-          userInfo: {
-            ...state.userInfo,
-            anonymousId: nativeAnonymousId,
-          },
-        };
-      }
-    }
-    return state;
-  };
+AnalyticsReactNativeModuleEmitter?.addListener(
+  AnalyticsReactNativeModuleEvents.SET_DEEPLINK,
+  addDeepLinkData
+);
 
 function createStoreGetter<
   U extends object,
@@ -428,12 +405,23 @@ export class SovranStorage implements Storage {
       },
     };
 
-    registerBridgeStore({
-      store: this.userInfoStore,
-      actions: {
-        'add-anonymous-id': addAnonymousId,
-      },
-    });
+    AnalyticsReactNativeModuleEmitter?.addListener(
+      AnalyticsReactNativeModuleEvents.SET_ANONYMOUS_ID,
+      (payload: unknown) => {
+        if (isObject(payload)) {
+          const nativeAnonymousId = payload.anonymousId;
+
+          if (isString(nativeAnonymousId)) {
+            this.userInfo.set((state) => {
+              return {
+                ...state,
+                anonymousId: nativeAnonymousId,
+              };
+            });
+          }
+        }
+      }
+    );
 
     this.deepLinkData = {
       get: createStoreGetter(this.deepLinkStore),

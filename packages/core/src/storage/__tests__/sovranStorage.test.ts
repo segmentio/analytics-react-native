@@ -1,46 +1,14 @@
 import deepmerge from 'deepmerge';
 
-import { createCallbackManager as mockCreateCallbackManager } from '../../test-helpers/utils';
 import { SovranStorage } from '../sovranStorage';
 
-import type { Persistor } from '@segment/sovran-react-native';
 import {
   EventType,
   type Context,
   type DeepPartial,
   SegmentEvent,
 } from '../../types';
-jest.mock('@segment/sovran-react-native', () => ({
-  registerBridgeStore: jest.fn(),
-  createStore: <T extends object>(initialState: T) => {
-    const callbackManager = mockCreateCallbackManager<T>();
-
-    let store: T = Array.isArray(initialState)
-      ? ([...initialState] as T)
-      : ({ ...initialState } as T);
-
-    return {
-      subscribe: jest
-        .fn()
-        .mockImplementation((callback: (state: T) => void) => {
-          callbackManager.register(callback);
-          return () => callbackManager.deregister(callback);
-        }),
-      dispatch: jest
-        .fn()
-        .mockImplementation(
-          async (action: (state: T) => T | Promise<T>): Promise<T> => {
-            store = await action(store);
-            callbackManager.run(store);
-            return store;
-          }
-        ),
-      getState: jest.fn().mockImplementation(() => {
-        return Array.isArray(store) ? [...store] : { ...store };
-      }),
-    };
-  },
-}));
+import { Persistor } from '../../state';
 
 describe('sovranStorage', () => {
   async function commonAssertions(sovran: SovranStorage) {
@@ -135,8 +103,7 @@ describe('sovranStorage', () => {
 
   it('adds/removes pending events', async () => {
     const sovran = new SovranStorage({ storeId: 'test' });
-
-    // expect(sovran.pendingEvents.get().length).toBe(0);
+    expect(sovran.pendingEvents.get().length).toBe(0);
 
     const event: SegmentEvent = {
       messageId: '1',
