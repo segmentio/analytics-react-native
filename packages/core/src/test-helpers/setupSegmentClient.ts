@@ -26,6 +26,7 @@ export const createTestClient = (
     },
     logger: getMockLogger(),
     store: store,
+    uuidProvider: () => 'mocked-uuid',
   };
 
   const client = new SegmentClient(clientArgs);

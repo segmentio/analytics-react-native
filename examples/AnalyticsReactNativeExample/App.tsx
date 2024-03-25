@@ -31,6 +31,8 @@ import {Logger} from './plugins/Logger';
 // import { ClevertapPlugin } from '@segment/analytics-react-native-plugin-clevertap';
 // import { BrazePlugin } from '@segment/analytics-react-native-plugin-braze';
 
+let startingUUID = 0;
+
 const segmentClient = createClient({
   writeKey: '<WRITE_KEY>',
   trackAppLifecycleEvents: true,
@@ -43,6 +45,32 @@ const segmentClient = createClient({
     // new TimerFlushPolicy(1000),
     // new StartupFlushPolicy(),
   ],
+  deviceInfoProvider: async config => {
+    return {
+      appName: 'Test Example',
+      appVersion: '0.1',
+      buildNumber: '1',
+      bundleId: 'com.segment.testing.custom.device.info',
+      locale: 'en_US',
+      networkType: 'wifi',
+      osName: 'iOS',
+      osVersion: '20.0',
+      screenHeight: 800,
+      screenWidth: 600,
+      screenDensity: 2.625,
+      timezone: 'Europe/London',
+      manufacturer: 'Apple',
+      model: 'x86_64',
+      deviceName: 'iPhone',
+      deviceId: '123-456-789',
+      deviceType: 'phone',
+    };
+  },
+  // uuidProvider: () => {
+  //   let next = startingUUID.toString();
+  //   startingUUID++;
+  //   return next;
+  // },
 });
 
 const LoggerPlugin = new Logger();

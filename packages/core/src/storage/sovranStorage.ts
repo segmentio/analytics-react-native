@@ -8,6 +8,7 @@ import type {
   SegmentAPIConsentSettings,
   SegmentAPIIntegrations,
   SegmentEvent,
+  UUIDProvider,
   UserInfoState,
 } from '..';
 import {
@@ -16,7 +17,6 @@ import {
 } from '../native-module';
 import { Persistor, Store, createStore } from '../state';
 import { isObject, isString } from '../util';
-import { getUUID } from '../uuid';
 import { createGetter } from './helpers';
 import type {
   DeepLinkData,
@@ -45,7 +45,7 @@ const INITIAL_VALUES: Data = {
   consentSettings: undefined,
   filters: {},
   userInfo: {
-    anonymousId: getUUID(),
+    anonymousId: '',
     userId: undefined,
     traits: undefined,
   },
@@ -153,10 +153,13 @@ export class SovranStorage implements Storage {
     Settable<SegmentEvent[]> &
     Queue<SegmentEvent, SegmentEvent[]>;
 
+  readonly uuidProvider: UUIDProvider;
+
   constructor(config: StorageConfig) {
     this.storeId = config.storeId;
     this.storePersistor = config.storePersistor;
     this.storePersistorSaveDelay = config.storePersistorSaveDelay;
+    this.uuidProvider = config.uuidProvider;
     this.readinessStore = createStore<ReadinessStore>({
       hasRestoredContext: false,
       hasRestoredSettings: false,
@@ -338,7 +341,12 @@ export class SovranStorage implements Storage {
     // User Info Store
 
     this.userInfoStore = createStore(
-      { userInfo: INITIAL_VALUES.userInfo },
+      {
+        userInfo: {
+          ...INITIAL_VALUES.userInfo,
+          anonymousId: this.uuidProvider(),
+        },
+      },
       {
         persist: {
           storeId: `${this.storeId}-userInfo`,
@@ -440,7 +448,7 @@ export class SovranStorage implements Storage {
       if (store.userInfo.anonymousId === 'anonymousId') {
         void this.userInfoStore.dispatch((state) => {
           return {
-            userInfo: { ...state.userInfo, anonymousId: getUUID() },
+            userInfo: { ...state.userInfo, anonymousId: this.uuidProvider() },
           };
         });
       }

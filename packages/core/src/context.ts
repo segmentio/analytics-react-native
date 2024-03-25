@@ -1,15 +1,14 @@
 import { libraryInfo } from './info';
-import { AnalyticsReactNativeModule, GetContextConfig } from './native-module';
 
 import type {
-  Config,
   Context,
   ContextDevice,
+  DeviceInfoProvider,
   NativeContextInfo,
-  UserTraits,
+  UUIDProvider,
 } from './types';
-import { getUUID } from './uuid';
-const defaultContext = {
+
+export const defaultContext = {
   appName: '',
   appVersion: '',
   buildNumber: '',
@@ -29,15 +28,11 @@ const defaultContext = {
   screenDensity: 0,
 };
 
-export const getContext = async (
-  userTraits: UserTraits = {},
-  config?: Config
-): Promise<Context> => {
-  // We need to remove all stuff from the config that is not actually required by the native module
-  const nativeConfig: GetContextConfig = {
-    collectDeviceId: config?.collectDeviceId ?? false,
-  };
-
+export const getContext = async (config: {
+  collectDeviceId: boolean;
+  deviceInfoProvider: DeviceInfoProvider;
+  uuidProvider: UUIDProvider;
+}): Promise<Context> => {
   const {
     appName,
     appVersion,
@@ -57,8 +52,9 @@ export const getContext = async (
     deviceType,
     screenDensity,
   }: NativeContextInfo =
-    (await AnalyticsReactNativeModule?.getContextInfo(nativeConfig)) ??
-    defaultContext;
+    (await config.deviceInfoProvider({
+      collectDeviceId: config.collectDeviceId,
+    })) ?? defaultContext;
 
   const device: ContextDevice = {
     id: deviceId,
@@ -95,7 +91,7 @@ export const getContext = async (
       density: screenDensity,
     },
     timezone,
-    traits: userTraits,
-    instanceId: getUUID(),
+    traits: {},
+    instanceId: config.uuidProvider(),
   };
 };

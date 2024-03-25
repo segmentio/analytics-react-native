@@ -8,6 +8,7 @@ import type {
   RoutingRule,
   SegmentAPIIntegrations,
   SegmentEvent,
+  UUIDProvider,
   UserInfoState,
 } from '../types';
 
@@ -98,4 +99,5 @@ export type StorageConfig = {
   storeId: string;
   storePersistor?: Persistor;
   storePersistorSaveDelay?: number;
+  uuidProvider: UUIDProvider;
 };

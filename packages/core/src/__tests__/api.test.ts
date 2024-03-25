@@ -1,25 +1,8 @@
-import {
-  Context,
-  EventType,
-  SegmentAPIIntegrations,
-  TrackEventType,
-  UserTraits,
-} from '../types';
 import { uploadEvents } from '../api';
-import * as context from '../context';
+import { EventType, TrackEventType } from '../types';
 
 describe('#sendEvents', () => {
   beforeEach(() => {
-    jest
-      .spyOn(context, 'getContext')
-      .mockImplementationOnce(
-        async (userTraits?: UserTraits): Promise<Context> => {
-          return {
-            traits: userTraits ?? {},
-          } as Context;
-        }
-      );
-
     jest
       .spyOn(Date.prototype, 'toISOString')
       .mockReturnValue('2001-01-01T00:00:00.000Z');
@@ -40,20 +23,8 @@ describe('#sendEvents', () => {
       messageId: '1d1744bf-5beb-41ac-ad7a-943eac33babc',
     };
 
-    // Context and Integration exist on SegmentEvents but are transmitted separately to avoid duplication
-    const additionalEventProperties: {
-      context: Context;
-      integrations: SegmentAPIIntegrations;
-    } = {
-      context: await context.getContext({ name: 'Hello' }),
-      integrations: {
-        Firebase: false,
-      },
-    };
-
     const event = {
       ...serializedEventProperties,
-      ...additionalEventProperties,
     };
 
     await uploadEvents({

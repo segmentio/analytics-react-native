@@ -79,7 +79,10 @@ describe('sovranStorage', () => {
   }
 
   it('works', async () => {
-    const sovran = new SovranStorage({ storeId: 'test' });
+    const sovran = new SovranStorage({
+      storeId: 'test',
+      uuidProvider: () => 'mocked-uuid',
+    });
     await commonAssertions(sovran);
   });
 
@@ -97,12 +100,17 @@ describe('sovranStorage', () => {
     const sovran = new SovranStorage({
       storeId: 'custom-persistor',
       storePersistor: CustomPersistor,
+      uuidProvider: () => 'mocked-uuid',
     });
     await commonAssertions(sovran);
   });
 
   it('adds/removes pending events', async () => {
-    const sovran = new SovranStorage({ storeId: 'test' });
+    const sovran = new SovranStorage({
+      storeId: 'test',
+      uuidProvider: () => 'mocked-uuid',
+    });
+
     expect(sovran.pendingEvents.get().length).toBe(0);
 
     const event: SegmentEvent = {

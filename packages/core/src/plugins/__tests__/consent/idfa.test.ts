@@ -49,7 +49,7 @@ describe('IDFA x Consent', () => {
 
     const idfaPlugin = new IdfaPlugin(false);
     client.add({
-      plugin: idfaPlugin,
+      plugin: idfaPlugin as Plugin,
     });
 
     await client.init();
