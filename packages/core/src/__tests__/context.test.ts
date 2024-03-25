@@ -1,5 +1,5 @@
 import { NativeModules } from 'react-native';
-import type { Context, NativeContextInfo, UserTraits } from '../types';
+import type { Context, NativeContextInfo } from '../types';
 
 import packageJson from '../../package.json';
 
@@ -78,34 +78,25 @@ describe('#getContext', () => {
   });
 
   it('gets the context', async () => {
-    const context = await getContext(undefined);
+    const context = await getContext({
+      collectDeviceId: false,
+      uuidProvider: () => UUID,
+      deviceInfoProvider: AnalyticsReactNativeModule!.getContextInfo,
+    });
 
     expect(AnalyticsReactNativeModule?.getContextInfo).toHaveBeenCalledTimes(1);
     expect(context).toEqual(contextResult);
   });
 
-  it('gets the context with Traits', async () => {
-    const userTraits: UserTraits = {
-      firstName: 'John',
-      lastName: 'Doe',
-    };
-
-    const context = await getContext(userTraits);
-
-    expect(AnalyticsReactNativeModule?.getContextInfo).toHaveBeenCalledTimes(1);
-    expect(context).toEqual({ ...contextResult, traits: userTraits });
-  });
-
-  it('strip non-required config from native calls', async () => {
-    await getContext(undefined, {
-      writeKey: 'notRequiredInNative',
-      collectDeviceId: true,
-      flushPolicies: [], // Shouldn't get to native as this is RN specific
+  it('supports custom implementations', async () => {
+    const customProvider = jest.fn().mockResolvedValue(mockNativeContext);
+    const context = await getContext({
+      collectDeviceId: false,
+      uuidProvider: () => UUID,
+      deviceInfoProvider: customProvider,
     });
 
-    expect(AnalyticsReactNativeModule?.getContextInfo).toHaveBeenCalledTimes(1);
-    expect(AnalyticsReactNativeModule?.getContextInfo).toHaveBeenCalledWith({
-      collectDeviceId: true,
-    });
+    expect(customProvider).toHaveBeenCalledTimes(1);
+    expect(context).toEqual(contextResult);
   });
 });

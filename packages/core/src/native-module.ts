@@ -1,4 +1,4 @@
-import { NativeContextInfo } from './types';
+import { DeviceInfoProvider } from './types';
 import {
   NativeEventEmitter,
   NativeModule,
@@ -26,10 +26,6 @@ export const getNativeModule = (moduleName: string) => {
 };
 
 // Native Module types
-export interface GetContextConfig {
-  collectDeviceId: boolean;
-}
-
 export interface AnalyticsReactNativeModuleConstants {
   SET_ANONYMOUS_ID: string;
   SET_DEEPLINK: string;
@@ -37,13 +33,16 @@ export interface AnalyticsReactNativeModuleConstants {
 
 export type AnalyticsReactNativeModuleType = NativeModule &
   TurboModule & {
-    getContextInfo: (config: GetContextConfig) => Promise<NativeContextInfo>;
+    getContextInfo: DeviceInfoProvider;
   };
 
 export const AnalyticsReactNativeModule = (() => {
   const nativeModule = getNativeModule('AnalyticsReactNative');
 
-  if (nativeModule === undefined) {
+  if (
+    nativeModule === undefined &&
+    (Platform.OS === 'android' || Platform.OS === 'ios')
+  ) {
     warnMissingNativeModule();
     return;
   }

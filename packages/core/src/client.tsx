@@ -16,17 +16,21 @@ export const createClient = (config: Config) => {
     }
   }
   const clientConfig = { ...defaultConfig, ...config };
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const uuidProvider = config.uuidProvider ?? require('./uuid').getUUID;
 
   const segmentStore = new SovranStorage({
     storeId: config.writeKey,
     storePersistor: config.storePersistor,
     storePersistorSaveDelay: config.storePersistorSaveDelay,
+    uuidProvider: uuidProvider,
   });
 
   const client = new SegmentClient({
     config: clientConfig,
     logger,
     store: segmentStore,
+    uuidProvider: uuidProvider,
   });
 
   // We don't await the client to be initialized to let the user start attaching plugins and queueing events
