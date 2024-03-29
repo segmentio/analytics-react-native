@@ -47,7 +47,7 @@
     "body-parser": "^1.20.0",
     "detox": "^20.17.0",
     "eslint": "^8.19.0",
-    "express": "^4.17.1",
+    "express": "^4.19.2",
     "jest": "^29.7.0",
     "jest-circus": "^29.3.1",
     "metro-react-native-babel-preset": "0.76.8",
