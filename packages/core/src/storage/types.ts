@@ -1,4 +1,4 @@
-import type { Unsubscribe, Persistor } from '@segment/sovran-react-native';
+import { Persistor, Unsubscribe } from '../state';
 import type { SegmentAPIConsentSettings } from '..';
 import type {
   Context,

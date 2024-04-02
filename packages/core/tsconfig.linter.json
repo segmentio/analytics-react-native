@@ -6,6 +6,5 @@
     "baseUrl": "."
   },
   "include": ["src/**/*", "types.d.ts"],
-  "exclude": ["**/__fixtures__/**/*", "**/__snapshots__/**/*"],
-  "references": [{ "path": "../sovran" }] // Add refereneces to any packages you require
+  "exclude": ["**/__fixtures__/**/*", "**/__snapshots__/**/*"]
 }

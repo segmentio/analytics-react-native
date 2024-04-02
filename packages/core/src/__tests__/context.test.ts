@@ -4,7 +4,7 @@ import type { Context, NativeContextInfo, UserTraits } from '../types';
 import packageJson from '../../package.json';
 
 import { getContext } from '../context';
-import type { AnalyticsReactNativeModule } from '../types';
+import { AnalyticsReactNativeModule } from '../native-module';
 
 const UUID = 'uuid-uuid-very-unique';
 
@@ -71,24 +71,20 @@ describe('#getContext', () => {
   };
 
   beforeEach(() => {
+    jest.clearAllMocks();
     NativeModules.AnalyticsReactNative = {
       getContextInfo: jest.fn().mockResolvedValue(mockNativeContext),
     };
   });
 
   it('gets the context', async () => {
-    const { AnalyticsReactNative } = NativeModules;
-
     const context = await getContext(undefined);
 
-    expect(
-      (AnalyticsReactNative as AnalyticsReactNativeModule).getContextInfo
-    ).toHaveBeenCalledTimes(1);
+    expect(AnalyticsReactNativeModule?.getContextInfo).toHaveBeenCalledTimes(1);
     expect(context).toEqual(contextResult);
   });
 
   it('gets the context with Traits', async () => {
-    const { AnalyticsReactNative } = NativeModules;
     const userTraits: UserTraits = {
       firstName: 'John',
       lastName: 'Doe',
@@ -96,26 +92,19 @@ describe('#getContext', () => {
 
     const context = await getContext(userTraits);
 
-    expect(
-      (AnalyticsReactNative as AnalyticsReactNativeModule).getContextInfo
-    ).toHaveBeenCalledTimes(1);
+    expect(AnalyticsReactNativeModule?.getContextInfo).toHaveBeenCalledTimes(1);
     expect(context).toEqual({ ...contextResult, traits: userTraits });
   });
 
   it('strip non-required config from native calls', async () => {
-    const { AnalyticsReactNative } = NativeModules;
     await getContext(undefined, {
       writeKey: 'notRequiredInNative',
       collectDeviceId: true,
       flushPolicies: [], // Shouldn't get to native as this is RN specific
     });
 
-    expect(
-      (AnalyticsReactNative as AnalyticsReactNativeModule).getContextInfo
-    ).toHaveBeenCalledTimes(1);
-    expect(
-      (AnalyticsReactNative as AnalyticsReactNativeModule).getContextInfo
-    ).toHaveBeenCalledWith({
+    expect(AnalyticsReactNativeModule?.getContextInfo).toHaveBeenCalledTimes(1);
+    expect(AnalyticsReactNativeModule?.getContextInfo).toHaveBeenCalledWith({
       collectDeviceId: true,
     });
   });

@@ -5,6 +5,5 @@
     "rootDir": ".",
     "baseUrl": "."
   },
-  "references": [{ "path": "../sovran" }],
   "include": ["src/**/*", "src/**/*.json", "types.d.ts"]
 }

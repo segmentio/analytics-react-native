@@ -33,11 +33,6 @@ export const NativeModules = {
       deviceType: 'phone',
     }),
   },
-  Sovran: {
-    getConstants: () => ({
-      ON_STORE_ACTION: 'ON_STORE_ACTION',
-    }),
-  },
 };
 
 export const Platform = {
