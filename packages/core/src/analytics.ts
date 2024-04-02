@@ -66,7 +66,6 @@ import {
   UserTraits,
 } from './types';
 import { allSettled, getPluginsWithFlush, getPluginsWithReset } from './util';
-import { getUUID } from './uuid';
 
 type OnPluginAddedCallback = (plugin: Plugin) => void;
 
