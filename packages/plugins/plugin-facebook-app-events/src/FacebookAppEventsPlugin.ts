@@ -168,6 +168,8 @@ export class FacebookAppEventsPlugin extends DestinationPlugin {
       const purchasePrice = safeProps._valueToSum as number;
 
       AppEventsLogger.logPurchase(purchasePrice, currency, safeProps);
+    } else if (typeof safeProps._valueToSum === "number") {
+      AppEventsLogger.logEvent(safeName, safeProps._valueToSum, safeProps);
     } else {
       AppEventsLogger.logEvent(safeName, safeProps);
     }
