@@ -5,13 +5,24 @@ import {
   AppStateStatus,
   NativeEventSubscription,
 } from 'react-native';
+import type {
+  DeviceInfoProvider,
+  SegmentAPIConsentSettings,
+  UUIDProvider,
+} from '.';
 import {
+  defaultFlushAt,
+  defaultFlushInterval,
   settingsCDN,
   workspaceDestinationFilterKey,
-  defaultFlushInterval,
-  defaultFlushAt,
 } from './constants';
-import { getContext } from './context';
+import { defaultContext, getContext } from './context';
+import {
+  ErrorType,
+  SegmentError,
+  checkResponseForErrors,
+  translateHTTPError,
+} from './errors';
 import {
   createAliasEvent,
   createGroupEvent,
@@ -19,47 +30,42 @@ import {
   createScreenEvent,
   createTrackEvent,
 } from './events';
+import type { FlushPolicy } from './flushPolicies';
 import {
   CountFlushPolicy,
   Observable,
   TimerFlushPolicy,
 } from './flushPolicies';
 import { FlushPolicyExecuter } from './flushPolicies/flush-policy-executer';
+import { AnalyticsReactNativeModule } from './native-module';
 import type { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
 import { SegmentDestination } from './plugins/SegmentDestination';
 import {
-  createGetter,
   DeepLinkData,
   Settable,
   Storage,
   Watchable,
+  createGetter,
 } from './storage';
 import { Timeline } from './timeline';
-import { DestinationFilters, EventType, SegmentAPISettings } from './types';
 import {
   Config,
   Context,
   DeepPartial,
+  DestinationFilters,
+  EventType,
   GroupTraits,
   IntegrationSettings,
   JsonMap,
   LoggerType,
   PluginType,
   SegmentAPIIntegrations,
+  SegmentAPISettings,
   SegmentEvent,
   UserInfoState,
   UserTraits,
 } from './types';
 import { allSettled, getPluginsWithFlush, getPluginsWithReset } from './util';
-import { getUUID } from './uuid';
-import type { FlushPolicy } from './flushPolicies';
-import {
-  checkResponseForErrors,
-  ErrorType,
-  SegmentError,
-  translateHTTPError,
-} from './errors';
-import type { SegmentAPIConsentSettings } from '.';
 
 type OnPluginAddedCallback = (plugin: Plugin) => void;
 
@@ -132,6 +138,8 @@ export class SegmentClient {
 
   readonly deepLinkData: Watchable<DeepLinkData>;
 
+  readonly deviceInfoProvider: DeviceInfoProvider;
+  readonly uuidProvider: UUIDProvider;
   // private telemetry?: Telemetry;
 
   /**
@@ -166,15 +174,25 @@ export class SegmentClient {
     config,
     logger,
     store,
+    uuidProvider,
   }: {
     config: Config;
     logger: LoggerType;
     store: Storage;
+    uuidProvider?: UUIDProvider;
   }) {
     this.logger = logger;
     this.config = config;
     this.store = store;
     this.timeline = new Timeline();
+
+    this.deviceInfoProvider =
+      this.config.deviceInfoProvider ??
+      AnalyticsReactNativeModule?.getContextInfo ??
+      (() => Promise.resolve({ ...defaultContext }));
+
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    this.uuidProvider = uuidProvider ?? require('./uuid').getUUID;
 
     // Initialize the watchables
     this.context = {
@@ -599,7 +617,11 @@ export class SegmentClient {
    * Application Opened - the previously detected version is same as the current version
    */
   private async checkInstalledVersion() {
-    const context = await getContext(undefined, this.config);
+    const context = await getContext({
+      collectDeviceId: this.config?.collectDeviceId ?? false,
+      deviceInfoProvider: this.deviceInfoProvider,
+      uuidProvider: this.uuidProvider,
+    });
 
     const previousContext = this.store.context.get();
 
@@ -692,7 +714,8 @@ export class SegmentClient {
   async reset(resetAnonymousId = true) {
     try {
       const { anonymousId: currentId } = await this.store.userInfo.get(true);
-      const anonymousId = resetAnonymousId === true ? getUUID() : currentId;
+      const anonymousId =
+        resetAnonymousId === true ? this.uuidProvider() : currentId;
 
       await this.store.userInfo.set({
         anonymousId,
@@ -807,7 +830,7 @@ export class SegmentClient {
   private applyRawEventData = (event: SegmentEvent): SegmentEvent => {
     return {
       ...event,
-      messageId: getUUID(),
+      messageId: this.uuidProvider(),
       timestamp: new Date().toISOString(),
       integrations: event.integrations ?? {},
     } as SegmentEvent;

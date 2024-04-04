@@ -49,6 +49,8 @@ describe('IDFA x Consent', () => {
 
     const idfaPlugin = new IdfaPlugin(false);
     client.add({
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       plugin: idfaPlugin,
     });
 

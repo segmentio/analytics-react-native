@@ -148,6 +148,16 @@ export type Config = {
   proxy?: string;
   cdnProxy?: string;
   errorHandler?: (error: SegmentError) => void;
+  /**
+   * DeviceInfoProvider lets you override the default device information provider that retrieves the device data like device id, device model, etc.
+   * This is useful for extending to new platforms or for testing purposes.
+   */
+  deviceInfoProvider?: DeviceInfoProvider;
+  /**
+   * UUIDProvider lets you override the default UUID provider that generates UUIDs
+   * UUIDs are used for anonymousId, messageId and instanceId.
+   */
+  uuidProvider?: UUIDProvider;
 };
 
 export type ClientMethods = {
@@ -353,3 +363,19 @@ export type UserInfoState = {
   userId?: string;
   traits?: UserTraits | GroupTraits;
 };
+
+export interface GetContextConfig {
+  collectDeviceId: boolean;
+}
+
+/**
+ * Provider that retrieves the device native information
+ */
+export type DeviceInfoProvider = (
+  config: GetContextConfig
+) => Promise<NativeContextInfo>;
+
+/**
+ * UUIDProvider generates the unique identifiers for messages and anonymousIDs
+ */
+export type UUIDProvider = () => string;

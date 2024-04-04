@@ -11,7 +11,7 @@ The hassle-free way to add Segment analytics to your React-Native app.
 ## Table of Contents
 
 - [@segment/analytics-react-native](#segmentanalytics-react-native)
-    - [🎉 Flagship 🎉](#-flagship-)
+  - [🎉 Flagship 🎉](#-flagship-)
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
     - [Expo](#expo)
@@ -48,6 +48,10 @@ The hassle-free way to add Segment analytics to your React-Native app.
     - [Creating your own flush policies](#creating-your-own-flush-policies)
   - [Handling errors](#handling-errors)
     - [Reporting errors from plugins](#reporting-errors-from-plugins)
+  - [Advanced Options](#advanced-options)
+    - [storagePersistor](#storagepersistor)
+    - [uuidProvider](#uuidprovider)
+    - [deviceInfoProvider](#deviceinfoprovider)
   - [Contributing](#contributing)
   - [Code of Conduct](#code-of-conduct)
   - [License](#license)
@@ -114,24 +118,26 @@ You must pass at least the `writeKey`. Additional configuration options are list
 
 ### Client Options
 
-| Name                        | Default   | Description                                                                                                                                                                                                                                          |
-| --------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `writeKey` **(REQUIRED)**   | ''        | Your Segment API key.                                                                                                                                                                                                                                |
-| `collectDeviceId`           | false     | Set to true to automatically collect the device Id.from the DRM API on Android devices.                                                                                                                                                              |
-| `debug`                     | true\*    | When set to false, it will not generate any logs.                                                                                                                                                                                                    |
-| `logger`                    | undefined | Custom logger instance to expose internal Segment client logging.                                                                                                                                                                                    |
-| `flushAt`                   | 20        | How many events to accumulate before sending events to the backend.                                                                                                                                                                                  |
-| `flushInterval`             | 30        | In seconds, how often to send events to the backend.                                                                                                                                                                                                 |
-| `flushPolicies`             | undefined | Add more granular control for when to flush, see [Adding or removing policies](#adding-or-removing-policies). **Mutually exclusive with flushAt/flushInterval**                                                                                      |
-| `maxBatchSize`              | 1000      | How many events to send to the API at once                                                                                                                                                                                                           |
-| `trackAppLifecycleEvents`   | false     | Enable automatic tracking for [app lifecycle events](https://segment.com/docs/connections/spec/mobile/#lifecycle-events): application installed, opened, updated, backgrounded)                                                                      |
-| `trackDeepLinks`            | false     | Enable automatic tracking for when the user opens the app via a deep link (Note: Requires additional setup on iOS, [see instructions](#ios-deep-link-tracking-setup))                                                                                |
-| `defaultSettings`           | undefined | Settings that will be used if the request to get the settings from Segment fails. Type: [SegmentAPISettings](https://github.com/segmentio/analytics-react-native/blob/c0a5895c0c57375f18dd20e492b7d984393b7bc4/packages/core/src/types.ts#L293-L299) |
-| `autoAddSegmentDestination` | true      | Set to false to skip adding the SegmentDestination plugin                                                                                                                                                                                            |
-| `storePersistor`            | undefined | A custom persistor for the store that `analytics-react-native` leverages. Must match [`Persistor`](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/state/persistor/persistor.ts#L1-L18) interface.                 |
-| `proxy`                     | undefined | `proxy` is a batch url to post to instead of 'https://api.segment.io/v1/b'.                                                                                                                                                                          |
-| `errorHandler`              | undefined | Create custom actions when errors happen, see [Handling errors](#handling-errors)                                                                                                                                                                    |
-| `cdnProxy`                  | undefined | Sets an alternative CDN host for settings retrieval                                                                                                                                                                                                  |
+| Name                        | Default                                                                                                                                                                                                         | Description                                                                                                                                                                                                                                          |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `writeKey` **(REQUIRED)**   | ''                                                                                                                                                                                                              | Your Segment API key.                                                                                                                                                                                                                                |
+| `collectDeviceId`           | false                                                                                                                                                                                                           | Set to true to automatically collect the device Id.from the DRM API on Android devices.                                                                                                                                                              |
+| `debug`                     | true\*                                                                                                                                                                                                          | When set to false, it will not generate any logs.                                                                                                                                                                                                    |
+| `logger`                    | undefined                                                                                                                                                                                                       | Custom logger instance to expose internal Segment client logging.                                                                                                                                                                                    |
+| `flushAt`                   | 20                                                                                                                                                                                                              | How many events to accumulate before sending events to the backend.                                                                                                                                                                                  |
+| `flushInterval`             | 30                                                                                                                                                                                                              | In seconds, how often to send events to the backend.                                                                                                                                                                                                 |
+| `flushPolicies`             | undefined                                                                                                                                                                                                       | Add more granular control for when to flush, see [Adding or removing policies](#adding-or-removing-policies). **Mutually exclusive with flushAt/flushInterval**                                                                                      |
+| `maxBatchSize`              | 1000                                                                                                                                                                                                            | How many events to send to the API at once                                                                                                                                                                                                           |
+| `trackAppLifecycleEvents`   | false                                                                                                                                                                                                           | Enable automatic tracking for [app lifecycle events](https://segment.com/docs/connections/spec/mobile/#lifecycle-events): application installed, opened, updated, backgrounded)                                                                      |
+| `trackDeepLinks`            | false                                                                                                                                                                                                           | Enable automatic tracking for when the user opens the app via a deep link (Note: Requires additional setup on iOS, [see instructions](#ios-deep-link-tracking-setup))                                                                                |
+| `defaultSettings`           | undefined                                                                                                                                                                                                       | Settings that will be used if the request to get the settings from Segment fails. Type: [SegmentAPISettings](https://github.com/segmentio/analytics-react-native/blob/c0a5895c0c57375f18dd20e492b7d984393b7bc4/packages/core/src/types.ts#L293-L299) |
+| `autoAddSegmentDestination` | true                                                                                                                                                                                                            | Set to false to skip adding the SegmentDestination plugin                                                                                                                                                                                            |
+| `storePersistor`            | undefined                                                                                                                                                                                                       | A custom persistor for the store that `analytics-react-native` leverages. Must match [`Persistor`](https://github.com/segmentio/analytics-react-native/blob/master/packages/core/src/state/persistor/persistor.ts#L1-L18) interface.                 |
+| `proxy`                     | undefined                                                                                                                                                                                                       | `proxy` is a batch url to post to instead of 'https://api.segment.io/v1/b'.                                                                                                                                                                          |
+| `errorHandler`              | undefined                                                                                                                                                                                                       | Create custom actions when errors happen, see [Handling errors](#handling-errors)                                                                                                                                                                    |
+| `cdnProxy`                  | undefined                                                                                                                                                                                                       | Sets an alternative CDN host for settings retrieval                                                                                                                                                                                                  |
+| `uuidProvider`              | Native generator using [`react-native-get-random-values`](https://github.com/LinusU/react-native-get-random-values)[`react-native-get-random-values`](https://github.com/LinusU/react-native-get-random-values) | Unique ID generator used for messageIDs and anonymousIDs. See the []()                                                                                                                                                                               |
+| `deviceInfoProvider`        | Native implementation for iOS & Android.                                                                                                                                                                        | Sets a provider for device context information. Useful for extending to new platforms. See []() for more details                                                                                                                                     |
 
 \* The default value of `debug` will be false in production.
 
@@ -734,6 +740,69 @@ try {
   analytics.logger.warn(e);
 }
 ```
+
+## Advanced Options
+
+These options let you supply your own replacements of some internals of the library. This can be helpful to simplify your app dependencies or extend this lib to other platforms: Expo, Web, Windows, etc.
+
+### storagePersistor
+
+```ts
+export interface Persistor {
+  /**
+   * Retrieves an item from Storage
+   * @param key storeId
+   * @returns State object or undefined if no state is in the storage
+   */
+  get: <T>(key: string) => Promise<T | undefined>;
+  /**
+   * Saves a state object to Storage
+   */
+  set: <T>(key: string, state: T) => Promise<void>;
+}
+```
+
+By default the lib uses [`@react-native-async-storage/async-storage`](https://github.com/react-native-async-storage/async-storage) if installed for persistence of events and data when offline, but you can override this option by supplying your own object complying to a `Persistor` interface.
+
+### uuidProvider
+
+```ts
+export type UUIDProvider = () => string;
+```
+
+Supplies a simple UUID generator. By default it will try to use `react-native-get-random-values` unless one specific provider is passed. If the dependency is not installed it will rely on JS random generators and log a warning
+
+### deviceInfoProvider
+
+```ts
+export type NativeContextInfo = {
+  appName: string;
+  appVersion: string;
+  buildNumber: string;
+  bundleId: string;
+  locale: string;
+  networkType: string;
+  osName: string;
+  osVersion: string;
+  screenHeight: number;
+  screenWidth: number;
+  screenDensity?: number; // android only
+  timezone: string;
+  manufacturer: string;
+  model: string;
+  deviceName: string;
+  deviceId?: string;
+  deviceType: string;
+  adTrackingEnabled?: boolean; // ios only
+  advertisingId?: string; // ios only
+};
+
+export type DeviceInfoProvider = (
+  config: GetContextConfig
+) => Promise<NativeContextInfo>;
+```
+
+A function that returns the device context information. By default we will use our own native module if there's one available for the platform (Android & iOS).
 
 ## Contributing
 
