@@ -232,3 +232,23 @@ export function deepCompare<T>(a: T, b: T): boolean {
 
   return true;
 }
+
+export const createPromise = <T>(
+  timeout: number | undefined = undefined
+): { promise: Promise<T>; resolve: (value: T) => void } => {
+  let resolver: (value: T) => void;
+  const promise = new Promise<T>((resolve, reject) => {
+    resolver = resolve;
+    if (timeout !== undefined) {
+      setTimeout(() => {
+        reject(new Error('Promise timed out'));
+      }, timeout);
+    }
+  });
+
+  return {
+    promise: promise,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    resolve: resolver!,
+  };
+};
