@@ -152,6 +152,20 @@ To track deep links in iOS you must add the following to your `AppDelegate.m` fi
   return YES;
 }
 ```
+
+If you are using Expo, you need to create an [AppDelegateSubscriber](https://docs.expo.dev/modules/appdelegate-subscribers/), make sure to include `segment_analytics_react_native` in your `podspec` file.
+The rest of the code looks like this:
+```swift
+    import segment_analytics_react_native
+
+    ...
+
+    open func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+       AnalyticsReactNative.trackDeepLink(url: url as NSURL, options: options)
+       return false
+   }
+```
+
 ### Native AnonymousId 
 
 If you need to generate an `anonymousId` either natively or before the Analytics React Native package is initialized, you can send the anonymousId value from native code. The value has to be generated and stored by the caller. For reference, you can find a working example in the app and reference the code below: 
