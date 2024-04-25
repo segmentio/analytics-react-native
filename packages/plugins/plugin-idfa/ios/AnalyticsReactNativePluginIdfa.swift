@@ -16,11 +16,11 @@ class AnalyticsReactNativePluginIdfa: NSObject {
     ) -> Void {
         if #available(iOS 14, *) {
             ATTrackingManager.requestTrackingAuthorization { status in
-                let idfa = status == .authorized ? ASIdentifierManager.shared().advertisingIdentifier.uuidString : nil
-                if let authorizedIDFA = idfa {
+            if status == .authorized {
+               let idfa = ASIdentifierManager.shared().advertisingIdentifier.uuidString
                     resolve([
                         "adTrackingEnabled": status == .authorized,
-                        "advertisingId": authorizedIDFA,
+                        "advertisingId": idfa,
                         "trackingStatus": self.statusToString(status)
                     ])
                 } else {
