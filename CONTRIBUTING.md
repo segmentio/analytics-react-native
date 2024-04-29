@@ -2,6 +2,17 @@
 
 We want this community to be friendly and respectful to each other. Please follow it in all your interactions with the project.
 
+## Prerequisites
+
+Follow the official guide for getting your [RN Environment setup](https://reactnative.dev/docs/0.72/environment-setup)
+
+React Native requires different versions of the tools/languages you might be using already. Even among RN releases there might be different versions required. We recommend using the following tools to manage your toolsets:
+
+- [Xcodes](https://github.com/XcodesOrg/XcodesApp)
+  - To manage different releases of Xcode. The latest release of RN is usually supported by the latest Xcode release but previous releases might not.
+- [Mise](https://mise.jdx.dev/dev-tools/) or [ASDF](https://asdf-vm.com/guide/getting-started.html) for everything else
+  - Node, Ruby and Java version support might change amongst RN releases. These version managers let you manage multiple versions of them.
+
 ## Development workflow
 
 To get started with the project, run `yarn bootstrap` in the root directory to install the required dependencies for each package:
@@ -11,7 +22,7 @@ yarn bootstrap
 ```
 
 While developing, you can run the [example app](/example/) to test your changes.
-
+code
 To start the packager:
 
 ```sh
@@ -52,16 +63,16 @@ yarn test
 The are also end-to-end tests. First you will have to build the app and then run the tests:
 
 ```
-# Start the server (*note there's a separate e2e command*
-yarn example start:e2e
+# Start the server (*note there's a separate e2e command*)
+yarn e2e start:e2e
 
 # iOS
-yarn example e2e:build:ios
-yarn example e2e:test:ios
+yarn e2e e2e:build:ios
+yarn e2e e2e:test:ios
 
 # Android
-yarn example e2e:build:android
-yarn example e2e:test:android
+yarn e2e e2e:build:android
+yarn e2e e2e:test:android
 ```
 
 To edit the Objective-C / Swift files, open `example/ios/AnalyticsReactNativeExample.xcworkspace` in XCode and find the source files at `Pods > Development Pods > @segment/analytics-react-native`.
@@ -100,12 +111,12 @@ The `package.json` file contains various scripts for common tasks:
 - `yarn example start`: start the Metro server for the example app.
 - `yarn example android`: run the example app on Android.
 - `yarn example ios`: run the example app on iOS.
-- `yarn example e2e:build:ios`: builds the example app using detox
-- `yarn example e2e:test:ios`: runs the e2e on a simulator(headless if not ran manually)
-- `yarn example e2e:build:android`: builds the example app using detox
-- `yarn example e2e:test:android`: runs the e2e on an emulator
-- `yarn example ios:deeplink`: opens the ios app via deep link (example app must already be installed)
-- `yarn example android:deeplink`: opens the Android app via deep link (example app must already be installed)
+- `yarn e2e e2e:build:ios`: builds the e2e app using detox
+- `yarn e2e e2e:test:ios`: runs the e2e on a simulator(headless if not ran manually)
+- `yarn e2e e2e:build:android`: builds the e2e app using detox
+- `yarn e2e e2e:test:android`: runs the e2e on an emulator
+- `yarn e2e ios:deeplink`: opens the ios app via deep link (example app must already be installed)
+- `yarn e2e android:deeplink`: opens the Android app via deep link (example app must already be installed)
 
 ### Sending a pull request
 
@@ -118,3 +129,13 @@ When you're sending a pull request:
 - Review the documentation to make sure it looks good.
 - Follow the pull request template when opening a pull request.
 - For pull requests that change the API or implementation, discuss with maintainers first by opening an issue.
+
+## Release
+
+Release is automated in GHA. By default `yarn release` won't let you trigger a release from your personal computer.
+
+To trigger a release go to Actions. Select the `Publish` workflow and trigger a new job.
+
+Automatically the workflow will analyze the commits, bump versions, create changesets, build and release to NPM the packages that need so.
+
+The CI/CD is automated using [semantic-release](https://github.com/semantic-release/semantic-release).

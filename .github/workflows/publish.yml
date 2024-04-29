@@ -55,13 +55,3 @@ jobs:
           yarn install --no-immutable
           yarn e2e install --no-immutable
           yarn example install --no-immutable
-      
-      - name: Commit Updated App Locks
-        run: |
-          git config user.email "no-reply@segment.com"
-          git config user.name "semantic-release-bot"
-          git add yarn.lock
-          git add examples/E2E/yarn.lock
-          git add examples/AnalyticsReactNativeExample/yarn.lock
-          git commit -m "chore(release): update lockfiles [skip ci]" --no-verify
-          git push 
