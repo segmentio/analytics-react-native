@@ -20,6 +20,7 @@ describe('Unmapped destinations', () => {
   test('no to all', async () => {
     const { client } = createClient();
     const testDestinations = setupTestDestinations(client);
+    await client.init();
     const mockConsentStatuses = {
       C0001: false,
       C0002: false,
