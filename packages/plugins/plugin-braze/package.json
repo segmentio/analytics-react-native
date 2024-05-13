@@ -46,11 +46,11 @@
   },
   "homepage": "https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-braze#readme",
   "peerDependencies": {
-    "@braze/react-native-sdk": "^8.x",
+    "@braze/react-native-sdk": "^10.x",
     "@segment/analytics-react-native": "^2.18.0"
   },
   "devDependencies": {
-    "@braze/react-native-sdk": "^8.x",
+    "@braze/react-native-sdk": "^10.x",
     "@segment/analytics-react-native": "^2.18.0",
     "@segment/analytics-rn-shared": "workspace:^",
     "@segment/sovran-react-native": "^1.1.0",
