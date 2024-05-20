@@ -14,6 +14,13 @@ import identify from './methods/identify';
 import track from './methods/track';
 
 export class AppsflyerPlugin extends DestinationPlugin {
+  constructor(props?: { timeToWaitForATTUserAuthorization: number }) {
+    super();
+    if (props != null) {
+      this.timeToWaitForATTUserAuthorization =
+        props.timeToWaitForATTUserAuthorization;
+    }
+  }
   type = PluginType.destination;
   key = 'AppsFlyer';
 
@@ -21,14 +28,14 @@ export class AppsflyerPlugin extends DestinationPlugin {
   private hasRegisteredInstallCallback = false;
   private hasRegisteredDeepLinkCallback = false;
   private hasInitialized = false;
+  timeToWaitForATTUserAuthorization = 60;
 
   async update(settings: SegmentAPISettings, _: UpdateType): Promise<void> {
     const defaultOpts = {
       isDebug: false,
-      timeToWaitForATTUserAuthorization: 60,
+      timeToWaitForATTUserAuthorization: this.timeToWaitForATTUserAuthorization,
       onInstallConversionDataListener: true,
     };
-
     const appsflyerSettings = settings.integrations[
       this.key
     ] as SegmentAppsflyerSettings;
