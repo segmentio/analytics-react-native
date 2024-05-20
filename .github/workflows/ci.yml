@@ -107,15 +107,16 @@ jobs:
 
       - name: create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@v2.25.0
         with:
-          api-level: ${{ matrix.api-level }}
-          avd-name: Pixel_API_29_AOSP
-          target: default
-          force-avd-creation: false
+          api-level: 29
+          arch: arm64-v8a
+          profile: pixel_5
+          force-avd-creation: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          channel: canary
           disable-animations: false
-          script: echo "Generated AVD snapshot for caching."
+          script: echo "Generated AVD snapshot"
 
       # Workaround for corepack enable in node
       # Source: (https://github.com/actions/setup-node/issues/899#issuecomment-1828798029)
