@@ -85,8 +85,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
-          distribution: 'adopt'
-          java-version: '11'
+          distribution: 'temurin'
+          java-version: '17'
           cache: 'gradle'
 
       - name: Gradle cache
@@ -112,7 +112,7 @@ jobs:
         with:
           api-level: ${{ matrix.api-level }}
           profile: ${{matrix.profile}}
-          name: Pixel_API_21_AOSP
+          avd-name: Pixel_API_21_AOSP
           target: default
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
