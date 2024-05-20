@@ -112,6 +112,7 @@ jobs:
           api-level: 29
           emulator-build: 7425822
           avd-name: Pixel_API_29_AOSP
+          arch: x86_64
           target: default
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
@@ -145,6 +146,7 @@ jobs:
         with:
           api-level: ${{ matrix.api-level }}
           emulator-build: 7425822
+          arch: x86_64
           avd-name: Pixel_API_29_AOSP
           target: default
           force-avd-creation: false
