@@ -111,7 +111,6 @@ jobs:
         with:
           api-level: 29
           emulator-build: 7425822
-          arch: arm64-v8a
           avd-name: Pixel_API_29_AOSP
           target: default
           force-avd-creation: false
@@ -146,7 +145,6 @@ jobs:
         with:
           api-level: ${{ matrix.api-level }}
           emulator-build: 7425822
-          arch: arm64-v8a
           avd-name: Pixel_API_29_AOSP
           target: default
           force-avd-creation: false
