@@ -76,7 +76,7 @@ jobs:
         run: yarn e2e test:ios
 
   run-e2e-android:
-    runs-on: 'macos-latest' # This is important, linux cannot run the emulator graphically for e2e tests
+    runs-on: 'macos-13' # This is important, linux cannot run the emulator graphically for e2e tests
     strategy:
       matrix:
         api-level: [29]
