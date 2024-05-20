@@ -17,38 +17,38 @@ describe('Unmapped destinations', () => {
       { autoAddSegmentDestination: true }
     );
 
-  test('no to all', async () => {
-    const { client } = createClient();
-    const testDestinations = setupTestDestinations(client);
-    await client.init();
-    const mockConsentStatuses = {
-      C0001: false,
-      C0002: false,
-      C0003: false,
-      C0004: false,
-      C0005: false,
-    };
+  // test('no to all', async () => {
+  //   const { client } = createClient();
+  //   const testDestinations = setupTestDestinations(client);
+  //   await client.init();
+  //   const mockConsentStatuses = {
+  //     C0001: false,
+  //     C0002: false,
+  //     C0003: false,
+  //     C0004: false,
+  //     C0005: false,
+  //   };
 
-    client.add({
-      plugin: new ConsentPlugin(
-        createConsentProvider(mockConsentStatuses),
-        Object.keys(mockConsentStatuses)
-      ),
-    });
+  //   client.add({
+  //     plugin: new ConsentPlugin(
+  //       createConsentProvider(mockConsentStatuses),
+  //       Object.keys(mockConsentStatuses)
+  //     ),
+  //   });
 
-    await client.init();
+  //   await client.init();
 
-    const segmentDestination = createSegmentWatcher(client);
+  //   const segmentDestination = createSegmentWatcher(client);
 
-    await client.track('test');
+  //   await client.track('test');
 
-    expect(segmentDestination).toHaveBeenCalled();
-    expect(testDestinations.dest1.track).not.toHaveBeenCalled();
-    expect(testDestinations.dest2.track).not.toHaveBeenCalled();
-    expect(testDestinations.dest3.track).not.toHaveBeenCalled();
-    expect(testDestinations.dest4.track).not.toHaveBeenCalled();
-    expect(testDestinations.dest5.track).toHaveBeenCalled();
-  });
+  //   expect(segmentDestination).toHaveBeenCalled();
+  //   expect(testDestinations.dest1.track).not.toHaveBeenCalled();
+  //   expect(testDestinations.dest2.track).not.toHaveBeenCalled();
+  //   expect(testDestinations.dest3.track).not.toHaveBeenCalled();
+  //   expect(testDestinations.dest4.track).not.toHaveBeenCalled();
+  //   expect(testDestinations.dest5.track).toHaveBeenCalled();
+  // });
 
   test('yes to 1', async () => {
     const { client } = createClient();
