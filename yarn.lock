@@ -3411,7 +3411,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@segment/analytics-react-native-plugin-branch@workspace:^, @segment/analytics-react-native-plugin-branch@workspace:packages/plugins/plugin-branch":
+"@segment/analytics-react-native-plugin-branch@workspace:packages/plugins/plugin-branch":
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-branch@workspace:packages/plugins/plugin-branch"
   dependencies:
