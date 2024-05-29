@@ -14,7 +14,7 @@ import reset from './methods/reset';
 
 export class BranchPlugin extends DestinationPlugin {
   type = PluginType.destination;
-  key = 'Branch';
+  key = 'Branch Metrics';
 
   identify(event: IdentifyEventType) {
     identify(event);
