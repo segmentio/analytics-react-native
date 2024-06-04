@@ -393,10 +393,12 @@ The reset method clears the internal state of the library for the current user a
 
 Note: Each time you call reset, a new AnonymousId is generated automatically.
 
+And when false is passed as an argument in reset method, it will skip resetting the anonymousId (but reset the rest of the user date).
+
 Method signature:
 
 ```js
-reset: () => void;
+reset: (resetAnonymousId = true) => void;
 ```
 
 Example usage:
@@ -405,6 +407,8 @@ Example usage:
 const { reset } = useAnalytics();
 
 reset();
+
+reset(resetAnonymousId = false);
 ```
 
 ### Flush
