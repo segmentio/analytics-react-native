@@ -14,20 +14,31 @@ import identify from './methods/identify';
 import track from './methods/track';
 
 export class AppsflyerPlugin extends DestinationPlugin {
-  constructor(props?: { timeToWaitForATTUserAuthorization: number }) {
+  constructor(props?: {
+    timeToWaitForATTUserAuthorization: number;
+    is_adset: boolean;
+    is_adset_id: boolean;
+    is_ad_id: boolean;
+  }) {
     super();
     if (props != null) {
       this.timeToWaitForATTUserAuthorization =
         props.timeToWaitForATTUserAuthorization;
+      this.is_adset = props.is_adset;
+      this.is_ad_id = props.is_ad_id;
+      this.is_adset_id = props.is_adset_id;
     }
   }
   type = PluginType.destination;
   key = 'AppsFlyer';
-
+  is_adset = false;
+  is_adset_id = false;
+  is_ad_id = false;
   private settings: SegmentAppsflyerSettings | null = null;
   private hasRegisteredInstallCallback = false;
   private hasRegisteredDeepLinkCallback = false;
   private hasInitialized = false;
+
   timeToWaitForATTUserAuthorization = 60;
 
   async update(settings: SegmentAPISettings, _: UpdateType): Promise<void> {
@@ -95,7 +106,15 @@ export class AppsflyerPlugin extends DestinationPlugin {
 
   registerConversionCallback = () => {
     appsFlyer.onInstallConversionData((res) => {
-      const { af_status, media_source, campaign, is_first_launch } = res?.data;
+      const {
+        af_status,
+        media_source,
+        campaign,
+        is_first_launch,
+        adset_id,
+        ad_id,
+        adset,
+      } = res?.data;
       const properties = {
         provider: this.key,
         campaign: {
@@ -103,7 +122,15 @@ export class AppsflyerPlugin extends DestinationPlugin {
           name: campaign,
         },
       };
-
+      if (this.is_adset_id) {
+        Object.assign(properties, { adset_id: adset_id });
+      }
+      if (this.is_ad_id) {
+        Object.assign(properties, { ad_id: ad_id });
+      }
+      if (this.is_adset) {
+        Object.assign(properties, { adset: adset });
+      }
       if (Boolean(is_first_launch) && JSON.parse(is_first_launch) === true) {
         if (af_status === 'Non-organic') {
           void this.analytics?.track('Install Attributed', properties);
