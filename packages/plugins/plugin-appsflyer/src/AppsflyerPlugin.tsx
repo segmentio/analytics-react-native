@@ -24,9 +24,10 @@ export class AppsflyerPlugin extends DestinationPlugin {
     if (props != null) {
       this.timeToWaitForATTUserAuthorization =
         props.timeToWaitForATTUserAuthorization;
-      this.is_adset = props.is_adset;
-      this.is_ad_id = props.is_ad_id;
-      this.is_adset_id = props.is_adset_id;
+      this.is_adset = props.is_adset === undefined ? false : props.is_adset;
+      this.is_ad_id = props.is_ad_id === undefined ? false : props.is_ad_id;
+      this.is_adset_id =
+        props.is_adset_id === undefined ? false : props.is_adset_id;
     }
   }
   type = PluginType.destination;
