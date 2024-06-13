@@ -29,10 +29,7 @@ describe('Destinations multiple categories', () => {
     };
 
     client.add({
-      plugin: new ConsentPlugin(
-        createConsentProvider(mockConsentStatuses),
-        Object.keys(mockConsentStatuses)
-      ),
+      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
     });
 
     await client.init();
@@ -58,10 +55,7 @@ describe('Destinations multiple categories', () => {
     };
 
     client.add({
-      plugin: new ConsentPlugin(
-        createConsentProvider(mockConsentStatuses),
-        Object.keys(mockConsentStatuses)
-      ),
+      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
     });
 
     await client.init();
@@ -87,10 +81,7 @@ describe('Destinations multiple categories', () => {
     };
 
     client.add({
-      plugin: new ConsentPlugin(
-        createConsentProvider(mockConsentStatuses),
-        Object.keys(mockConsentStatuses)
-      ),
+      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
     });
 
     await client.init();
@@ -116,10 +107,7 @@ describe('Destinations multiple categories', () => {
     };
 
     client.add({
-      plugin: new ConsentPlugin(
-        createConsentProvider(mockConsentStatuses),
-        Object.keys(mockConsentStatuses)
-      ),
+      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
     });
 
     await client.init();

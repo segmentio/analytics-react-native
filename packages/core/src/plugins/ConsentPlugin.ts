@@ -5,6 +5,8 @@ import type {
   SegmentAPIIntegration,
   SegmentEvent,
   TrackEventType,
+  UpdateType,
+  SegmentAPISettings,
 } from '../types';
 import type { DestinationPlugin } from '../plugin';
 import type { SegmentClient } from '../analytics';
@@ -31,15 +33,16 @@ export interface CategoryConsentStatusProvider {
 export class ConsentPlugin extends Plugin {
   type = PluginType.before;
   private consentCategoryProvider: CategoryConsentStatusProvider;
-  private categories: string[];
+  private categories: string[] = [];
 
-  constructor(
-    consentCategoryProvider: CategoryConsentStatusProvider,
-    categories: string[]
-  ) {
+  constructor(consentCategoryProvider: CategoryConsentStatusProvider) {
     super();
     this.consentCategoryProvider = consentCategoryProvider;
-    this.categories = categories;
+  }
+
+  update(_settings: SegmentAPISettings, _type: UpdateType): void {
+    const consentSettings = this.analytics?.consentSettings.get();
+    this.categories = consentSettings?.allCategories || [];
   }
 
   configure(analytics: SegmentClient): void {
@@ -103,7 +106,6 @@ export class ConsentPlugin extends Plugin {
           }
 
           const integrationSettings = settings?.[plugin.key];
-
           if (this.containsConsentSettings(integrationSettings)) {
             const categories = integrationSettings.consentSettings.categories;
             return (

@@ -19,9 +19,7 @@ export interface OTPublishersNativeSDK {
   stopListeningForConsentChanges(): void;
 }
 
-export class OTCategoryConsentProvider
-  implements CategoryConsentStatusProvider
-{
+export class OneTrustConsentProvider implements CategoryConsentStatusProvider {
   getConsentStatus!: () => Promise<Record<string, boolean>>;
   private onConsentChangeCallback!: OnConsentChangeCb;
 

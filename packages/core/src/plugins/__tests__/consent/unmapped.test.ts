@@ -62,10 +62,7 @@ describe('Unmapped destinations', () => {
     };
 
     client.add({
-      plugin: new ConsentPlugin(
-        createConsentProvider(mockConsentStatuses),
-        Object.keys(mockConsentStatuses)
-      ),
+      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
     });
 
     await client.init();
@@ -94,10 +91,7 @@ describe('Unmapped destinations', () => {
     };
 
     client.add({
-      plugin: new ConsentPlugin(
-        createConsentProvider(mockConsentStatuses),
-        Object.keys(mockConsentStatuses)
-      ),
+      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
     });
 
     await client.init();
@@ -126,10 +120,7 @@ describe('Unmapped destinations', () => {
     };
 
     client.add({
-      plugin: new ConsentPlugin(
-        createConsentProvider(mockConsentStatuses),
-        Object.keys(mockConsentStatuses)
-      ),
+      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
     });
 
     await client.init();
@@ -158,10 +149,7 @@ describe('Unmapped destinations', () => {
     };
 
     client.add({
-      plugin: new ConsentPlugin(
-        createConsentProvider(mockConsentStatuses),
-        Object.keys(mockConsentStatuses)
-      ),
+      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
     });
 
     await client.init();
@@ -190,10 +178,7 @@ describe('Unmapped destinations', () => {
     };
 
     client.add({
-      plugin: new ConsentPlugin(
-        createConsentProvider(mockConsentStatuses),
-        Object.keys(mockConsentStatuses)
-      ),
+      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
     });
 
     await client.init();
@@ -222,10 +207,7 @@ describe('Unmapped destinations', () => {
     };
 
     client.add({
-      plugin: new ConsentPlugin(
-        createConsentProvider(mockConsentStatuses),
-        Object.keys(mockConsentStatuses)
-      ),
+      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
     });
 
     await client.init();

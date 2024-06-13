@@ -41,14 +41,14 @@ describe('IDFA x Consent', () => {
     };
 
     client.add({
-      plugin: new ConsentPlugin(
-        createConsentProvider(mockConsentStatuses),
-        Object.keys(mockConsentStatuses)
-      ),
+      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
     });
 
     const idfaPlugin = new IdfaPlugin(false);
     client.add({
+      // type of segmentClient is different in idfaPlugin vs. mockClient used here
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       plugin: idfaPlugin,
     });
 
