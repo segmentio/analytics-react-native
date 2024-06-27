@@ -128,8 +128,7 @@ describe('SegmentClient', () => {
   describe('#reset', () => {
     it('resets all userInfo except anonymousId', async () => {
       client = new SegmentClient(clientArgs);
-      const setUserInfo = jest.spyOn(store.userInfo, 'set');
-
+      const setUserInfo = jest.spyOn(client.userInfo, 'set');
       await client.reset(false);
 
       expect(setUserInfo).toHaveBeenCalledWith({
@@ -141,8 +140,7 @@ describe('SegmentClient', () => {
 
     it('resets user data, identity, traits', async () => {
       client = new SegmentClient(clientArgs);
-      const setUserInfo = jest.spyOn(store.userInfo, 'set');
-
+      const setUserInfo = jest.spyOn(client.userInfo, 'set');
       await client.reset();
 
       expect(setUserInfo).toHaveBeenCalledWith({
