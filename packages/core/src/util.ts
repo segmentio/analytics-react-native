@@ -235,7 +235,9 @@ export function deepCompare<T>(a: T, b: T): boolean {
 
 export const createPromise = <T>(
   timeout: number | undefined = undefined,
-  _errorHandler:(err: Error) => void = () => {}
+  _errorHandler: (err: Error) => void = (_: Error) => {
+    //
+  }
 ): { promise: Promise<T>; resolve: (value: T) => void } => {
   let resolver: (value: T) => void;
   const promise = new Promise<T>((resolve, reject) => {
@@ -246,7 +248,7 @@ export const createPromise = <T>(
       }, timeout);
     }
   });
-  
+
   promise.catch(_errorHandler);
 
   return {
