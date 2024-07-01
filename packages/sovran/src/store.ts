@@ -205,7 +205,7 @@ export const createStore = <T extends object>(
           }
         }
       } catch {
-        console.warn('Promise not handled correctly');
+        console.log('Promise not handled correctly');
       } finally {
         action?.finally?.(state);
       }
