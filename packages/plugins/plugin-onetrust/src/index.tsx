@@ -1,1 +1,1 @@
-export { OneTrustPlugin } from './OneTrust';
+export { OneTrustConsentProvider } from './OneTrustProvider';
