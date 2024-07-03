@@ -5,7 +5,7 @@ import {
   AppStateStatus,
   NativeEventSubscription,
 } from 'react-native';
-import NetInfo from "@react-native-community/netinfo";
+import NetInfo, { NetInfoSubscription } from "@react-native-community/netinfo";
 import {
   settingsCDN,
   workspaceDestinationFilterKey,
@@ -78,7 +78,7 @@ export class SegmentClient {
   private appStateSubscription?: NativeEventSubscription;
   
   //subscription for net info
-  private netInfoListner?: any
+  private netInfoListner?: NetInfoSubscription
   private isOnline = false
   // logger
   public logger: LoggerType;
