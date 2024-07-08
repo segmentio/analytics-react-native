@@ -95,6 +95,8 @@ export type UserTraits = JsonMap & {
   title?: string;
   username?: string;
   website?: string;
+  first_name?: string;
+  last_name?: string;
 };
 
 export type GroupTraits = JsonMap & {
