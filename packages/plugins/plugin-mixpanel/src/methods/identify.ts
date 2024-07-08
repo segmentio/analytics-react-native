@@ -18,7 +18,7 @@ const traitMap: { [key: string]: string } = {
 
 const mapTransform = generateMapTransform(traitMap, {});
 
-export default (
+export default async (
   event: IdentifyEventType,
   mixpanel: Mixpanel,
   settings: SegmentMixpanelSettings
@@ -27,7 +27,7 @@ export default (
   const mixpanelTraits = mapTransform(event.traits ?? {});
 
   if (userId !== undefined) {
-    void mixpanel.identify(userId);
+    await mixpanel.identify(userId);
   }
 
   if (settings.setAllTraitsByDefault === true) {

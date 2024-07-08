@@ -23,13 +23,27 @@ import track from './methods/track';
 export const EU_SERVER = 'api.eu.mixpanel.com';
 export class MixpanelPlugin extends DestinationPlugin {
   type = PluginType.destination;
-  key = 'Mixpanel';
+  key = 'Mixpanel (Actions)';
   trackScreens = false;
   private mixpanel: Mixpanel | undefined;
   private settings: SegmentMixpanelSettings | undefined;
   private isInitialized = () =>
     this.mixpanel !== undefined && this.settings !== undefined;
 
+  constructor(props: { settings: SegmentMixpanelSettings }) {
+    super();
+    this.mixpanel = new Mixpanel(props.settings.token, false);
+    this.mixpanel.init().catch((error) => {
+      this.analytics?.reportInternalError(
+        new SegmentError(
+          ErrorType.PluginError,
+          'Error initializing Mixpanel',
+          error
+        )
+      );
+    });
+    this.settings = props.settings;
+  }
   update(settings: SegmentAPISettings, _: UpdateType) {
     const mixpanelSettings = settings.integrations[
       this.key
