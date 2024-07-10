@@ -74,6 +74,7 @@ describe('process', () => {
       userId: store.userInfo.get().userId,
       anonymousId: store.userInfo.get().anonymousId,
     };
+    await client.process(pendingEvent)
 
     // @ts-ignore
     expect(client.store.pendingEvents.get().length).toBe(0);
