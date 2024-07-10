@@ -5,7 +5,7 @@ import {
   AppStateStatus,
   NativeEventSubscription,
 } from 'react-native';
-import NetInfo, { NetInfoSubscription } from "@react-native-community/netinfo";
+import NetInfo from '@react-native-community/netinfo';
 import {
   settingsCDN,
   workspaceDestinationFilterKey,
@@ -76,10 +76,8 @@ export class SegmentClient {
 
   // subscription for propagating changes to appState
   private appStateSubscription?: NativeEventSubscription;
-  
-  //subscription for net info
-  private netInfoListner?: NetInfoSubscription
-  private isOnline = false
+
+  private isOnline = false;
   // logger
   public logger: LoggerType;
 
@@ -357,7 +355,6 @@ export class SegmentClient {
   cleanup() {
     this.flushPolicyExecuter.cleanup();
     this.appStateSubscription?.remove();
-    this.netInfoListner?.();
     this.destroyed = true;
   }
 
@@ -370,8 +367,8 @@ export class SegmentClient {
         this.handleAppStateChange(nextAppState);
       }
     );
-  
-    this.netInfoListner = NetInfo.addEventListener(state => {
+
+    NetInfo.addEventListener((state) => {
       if (!this.isOnline && state.isConnected) {
         this.handlePendingEvents();
       }
@@ -499,18 +496,16 @@ export class SegmentClient {
         // now that they're all added, clear the cache
         // this prevents this block running for every update
         this.pluginsToAdd = [];
-      } catch(ex) {
-        this.logger.warn("Unable to add plugins")
+      } catch (ex) {
+        this.logger.warn('Unable to add plugins');
       } finally {
         this.isAddingPlugins = false;
       }
     }
-
-   
   }
 
-  handlePendingEvents:() => void = async() => {
-     // Start flush policies
+  handlePendingEvents: () => void = async () => {
+    // Start flush policies
     // This should be done before any pending events are added to the queue so that any policies that rely on events queued can trigger accordingly
     this.setupFlushPolicies();
 
@@ -522,7 +517,7 @@ export class SegmentClient {
     }
 
     this.flushPolicyExecuter.manualFlush();
-  }
+  };
 
   async flush(): Promise<void> {
     try {
