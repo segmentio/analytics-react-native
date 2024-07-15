@@ -369,10 +369,10 @@ export class SegmentClient {
     );
 
     NetInfo.addEventListener((state) => {
-      if (!this.isOnline && state.isConnected) {
+      if (!this.isOnline && state.isConnected === true) {
         this.handlePendingEvents();
       }
-      this.isOnline = state.isConnected || false;
+      this.isOnline = state.isConnected === true || false;
     });
   }
 
