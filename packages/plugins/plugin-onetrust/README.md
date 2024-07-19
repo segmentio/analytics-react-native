@@ -2,7 +2,7 @@
 
 Plugin for adding support for [OneTrust](https://onetrust.com/) CMP to your React Native application.
 
-⚠️ The SDK version used must match the version of the JSON published from your OneTrust instance. This Provider was built using `202308.2.0`. This is not a "plugin" as defined by the SDK's [plugin-timeline architecture](https://github.com/segmentio/analytics-react-native/tree/master?tab=readme-ov-file#plugins--timeline-architecture). Instead, it must be used with the `ConsentPlugin` included in the core SDK. This is deliberate as it is impossible to support every possible version of the OneTrust SDK. Therefore, the `OneTrustConsentProvider` should serve as a reference/example for users on a different version. 
+⚠️ The SDK version used must match the version of the JSON published from your OneTrust instance. This Provider was built using `202405.1.0`. This is not a "plugin" as defined by the SDK's [plugin-timeline architecture](https://github.com/segmentio/analytics-react-native/tree/master?tab=readme-ov-file#plugins--timeline-architecture). Instead, it must be used with the `ConsentPlugin` included in the core SDK. This is deliberate as it is impossible to support every possible version of the OneTrust SDK. Therefore, the `OneTrustConsentProvider` should serve as a reference/example for users on a different version. 
 
 ## Installation
 
@@ -58,7 +58,7 @@ import { OTCategoryConsentProvider } from '@segment/analytics-react-native-plugi
 
 ...
 
- const oneTrustProvider = new OneTrustConsentProvider(OTPublisherNativeSDK)
+ const oneTrustProvider = new OneTrustConsentProvider(OTPublishersNativeSDK)
 ```
 
 3. Initialize a new `ConsentPlugin` and pass the `OneTrustConsentProvider` to it: 
@@ -70,7 +70,7 @@ import { OneTrustConsentProvider  } from '@segment/analytics-react-native-plugin
 ...
 
 const oneTrustProvider = new OneTrustConsentProvider(OTPublisherNativeSDK)
-const OneTrustPlugin = new ConsentPlugin(oneTrustProvider);
+const oneTrustPlugin = new ConsentPlugin(oneTrustProvider);
 ```
 
 4. Add `OneTrustPlugin` as a plugin, order doesn't matter, this plugin will apply to all device mode destinations you add before and after this plugin is added. Full example below:

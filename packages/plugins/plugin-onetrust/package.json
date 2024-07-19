@@ -50,7 +50,7 @@
   "peerDependencies": {
     "@segment/analytics-react-native": "^2.18.0",
     "@segment/sovran-react-native": "*",
-    "react-native-onetrust-cmp": "^202308.2.0"
+    "react-native-onetrust-cmp": "^202308.1.0"
   },
   "devDependencies": {
     "@segment/analytics-react-native": "^2.18.0",

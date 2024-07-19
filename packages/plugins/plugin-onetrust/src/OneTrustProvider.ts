@@ -40,15 +40,12 @@ export class OneTrustConsentProvider implements CategoryConsentStatusProvider {
           ])
       )
     ).then((entries) => Object.fromEntries(entries));
-
     let latestStatuses: Record<string, boolean> | null;
 
     this.getConsentStatus = () =>
       Promise.resolve(latestStatuses ?? initialStatusesP);
-
     this.oneTrust.stopListeningForConsentChanges();
     this.oneTrust.setBroadcastAllowedValues(categories);
-
     categories.forEach((categoryId) => {
       this.oneTrust.listenForConsentChanges(categoryId, (_, status) => {
         initialStatusesP

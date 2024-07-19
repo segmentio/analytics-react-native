@@ -43,13 +43,13 @@ export class ConsentPlugin extends Plugin {
   update(_settings: SegmentAPISettings, _type: UpdateType): void {
     const consentSettings = this.analytics?.consentSettings.get();
     this.categories = consentSettings?.allCategories || [];
+    this.consentCategoryProvider.setApplicableCategories(this.categories);
   }
 
   configure(analytics: SegmentClient): void {
     super.configure(analytics);
     analytics.getPlugins().forEach(this.injectConsentFilterIfApplicable);
     analytics.onPluginLoaded(this.injectConsentFilterIfApplicable);
-    this.consentCategoryProvider.setApplicableCategories(this.categories);
     this.consentCategoryProvider.onConsentChange(() => {
       this.notifyConsentChange();
     });
@@ -76,7 +76,6 @@ export class ConsentPlugin extends Plugin {
           await this.consentCategoryProvider.getConsentStatus(),
       },
     };
-
     return event;
   }
 
