@@ -27,9 +27,15 @@ describe('Consent not enabled at Segment', () => {
       C0005: false,
     };
 
+    const consentPlugin = new ConsentPlugin(
+      createConsentProvider(mockConsentStatuses)
+    );
+
     client.add({
-      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
+      plugin: consentPlugin,
     });
+
+    consentPlugin.start();
 
     await client.init();
 
@@ -56,9 +62,15 @@ describe('Consent not enabled at Segment', () => {
       C0005: true,
     };
 
+    const consentPlugin = new ConsentPlugin(
+      createConsentProvider(mockConsentStatuses)
+    );
+
     client.add({
-      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
+      plugin: consentPlugin,
     });
+
+    consentPlugin.start();
 
     await client.init();
 
@@ -85,9 +97,15 @@ describe('Consent not enabled at Segment', () => {
       C0005: true,
     };
 
+    const consentPlugin = new ConsentPlugin(
+      createConsentProvider(mockConsentStatuses)
+    );
+
     client.add({
-      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
+      plugin: consentPlugin,
     });
+
+    consentPlugin.start();
 
     await client.init();
 

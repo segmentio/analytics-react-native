@@ -21,11 +21,17 @@ describe('No unmapped destinations', () => {
       C0005: false,
     };
 
+    const consentPlugin = new ConsentPlugin(
+      createConsentProvider(mockConsentStatuses)
+    );
+
     client.add({
-      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
+      plugin: consentPlugin,
     });
 
     await client.init();
+
+    consentPlugin.start();
 
     await client.track('test');
 
@@ -45,9 +51,15 @@ describe('No unmapped destinations', () => {
       C0005: false,
     };
 
+    const consentPlugin = new ConsentPlugin(
+      createConsentProvider(mockConsentStatuses)
+    );
+
     client.add({
-      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
+      plugin: consentPlugin,
     });
+
+    consentPlugin.start();
 
     await client.init();
 
@@ -71,9 +83,15 @@ describe('No unmapped destinations', () => {
       C0005: false,
     };
 
+    const consentPlugin = new ConsentPlugin(
+      createConsentProvider(mockConsentStatuses)
+    );
+
     client.add({
-      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
+      plugin: consentPlugin,
     });
+
+    consentPlugin.start();
 
     await client.init();
 
@@ -97,9 +115,15 @@ describe('No unmapped destinations', () => {
       C0005: false,
     };
 
+    const consentPlugin = new ConsentPlugin(
+      createConsentProvider(mockConsentStatuses)
+    );
+
     client.add({
-      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
+      plugin: consentPlugin,
     });
+
+    consentPlugin.start();
 
     await client.init();
 
@@ -123,9 +147,15 @@ describe('No unmapped destinations', () => {
       C0005: false,
     };
 
+    const consentPlugin = new ConsentPlugin(
+      createConsentProvider(mockConsentStatuses)
+    );
+
     client.add({
-      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
+      plugin: consentPlugin,
     });
+
+    consentPlugin.start();
 
     await client.init();
 
@@ -149,9 +179,15 @@ describe('No unmapped destinations', () => {
       C0005: false,
     };
 
+    const consentPlugin = new ConsentPlugin(
+      createConsentProvider(mockConsentStatuses)
+    );
+
     client.add({
-      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
+      plugin: consentPlugin,
     });
+
+    consentPlugin.start();
 
     await client.init();
 
@@ -175,9 +211,15 @@ describe('No unmapped destinations', () => {
       C0005: true,
     };
 
+    const consentPlugin = new ConsentPlugin(
+      createConsentProvider(mockConsentStatuses)
+    );
+
     client.add({
-      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
+      plugin: consentPlugin,
     });
+
+    consentPlugin.start();
 
     await client.init();
 

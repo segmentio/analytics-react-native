@@ -34,6 +34,8 @@ export class ConsentPlugin extends Plugin {
   type = PluginType.before;
   private consentCategoryProvider: CategoryConsentStatusProvider;
   private categories: string[] = [];
+  queuedEvents: SegmentEvent[] = [];
+  consentStarted = false;
 
   constructor(consentCategoryProvider: CategoryConsentStatusProvider) {
     super();
@@ -68,15 +70,24 @@ export class ConsentPlugin extends Plugin {
     });
   }
 
-  async execute(event: SegmentEvent): Promise<SegmentEvent> {
-    event.context = {
-      ...event.context,
-      consent: {
-        categoryPreferences:
-          await this.consentCategoryProvider.getConsentStatus(),
-      },
-    };
-    return event;
+  async execute(event: SegmentEvent): Promise<SegmentEvent | undefined> {
+    if (this.consentStarted === true) {
+      event.context = {
+        ...event.context,
+        consent: {
+          categoryPreferences:
+            await this.consentCategoryProvider.getConsentStatus(),
+        },
+      };
+      return event;
+    }
+
+    if (this.consentStarted === false) {
+      this.queuedEvents.push(event);
+      console.log('Event queued', event);
+      return;
+    }
+    return;
   }
 
   shutdown(): void {
@@ -151,6 +162,19 @@ export class ConsentPlugin extends Plugin {
     this.analytics?.track(CONSENT_PREF_UPDATE_EVENT).catch((e) => {
       throw e;
     });
+  }
+
+  public start() {
+    this.consentStarted = true;
+
+    this.sendQueuedEvents();
+  }
+
+  sendQueuedEvents() {
+    this.queuedEvents.forEach((event) => {
+      this.analytics?.process(event);
+    });
+    this.queuedEvents = [];
   }
 }
 

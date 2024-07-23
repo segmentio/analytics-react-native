@@ -40,9 +40,15 @@ describe('IDFA x Consent', () => {
       C0005: false,
     };
 
+    const consentPlugin = new ConsentPlugin(
+      createConsentProvider(mockConsentStatuses)
+    );
+
     client.add({
-      plugin: new ConsentPlugin(createConsentProvider(mockConsentStatuses)),
+      plugin: consentPlugin,
     });
+
+    consentPlugin.start();
 
     const idfaPlugin = new IdfaPlugin(false);
     client.add({
