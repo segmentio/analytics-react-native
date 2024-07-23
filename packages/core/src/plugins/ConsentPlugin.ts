@@ -5,6 +5,8 @@ import type {
   SegmentAPIIntegration,
   SegmentEvent,
   TrackEventType,
+  UpdateType,
+  SegmentAPISettings,
 } from '../types';
 import type { DestinationPlugin } from '../plugin';
 import type { SegmentClient } from '../analytics';
@@ -31,22 +33,25 @@ export interface CategoryConsentStatusProvider {
 export class ConsentPlugin extends Plugin {
   type = PluginType.before;
   private consentCategoryProvider: CategoryConsentStatusProvider;
-  private categories: string[];
+  private categories: string[] = [];
+  queuedEvents: SegmentEvent[] = [];
+  consentStarted = false;
 
-  constructor(
-    consentCategoryProvider: CategoryConsentStatusProvider,
-    categories: string[]
-  ) {
+  constructor(consentCategoryProvider: CategoryConsentStatusProvider) {
     super();
     this.consentCategoryProvider = consentCategoryProvider;
-    this.categories = categories;
+  }
+
+  update(_settings: SegmentAPISettings, _type: UpdateType): void {
+    const consentSettings = this.analytics?.consentSettings.get();
+    this.categories = consentSettings?.allCategories || [];
+    this.consentCategoryProvider.setApplicableCategories(this.categories);
   }
 
   configure(analytics: SegmentClient): void {
     super.configure(analytics);
     analytics.getPlugins().forEach(this.injectConsentFilterIfApplicable);
     analytics.onPluginLoaded(this.injectConsentFilterIfApplicable);
-    this.consentCategoryProvider.setApplicableCategories(this.categories);
     this.consentCategoryProvider.onConsentChange(() => {
       this.notifyConsentChange();
     });
@@ -65,16 +70,27 @@ export class ConsentPlugin extends Plugin {
     });
   }
 
-  async execute(event: SegmentEvent): Promise<SegmentEvent> {
-    event.context = {
-      ...event.context,
-      consent: {
-        categoryPreferences:
-          await this.consentCategoryProvider.getConsentStatus(),
-      },
-    };
+  async execute(event: SegmentEvent): Promise<SegmentEvent | undefined> {
+    if (this.consentStarted === true) {
+      event.context = {
+        ...event.context,
+        consent: {
+          categoryPreferences:
+            await this.consentCategoryProvider.getConsentStatus(),
+        },
+      };
+      return event;
+    }
 
-    return event;
+    if (this.consentStarted === false) {
+      // constrain the queue to avoid running out of memory if consent is never started
+      if (this.queuedEvents.length <= 1000) {
+        this.queuedEvents.push(event);
+        return;
+      }
+      return;
+    }
+    return;
   }
 
   shutdown(): void {
@@ -103,7 +119,6 @@ export class ConsentPlugin extends Plugin {
           }
 
           const integrationSettings = settings?.[plugin.key];
-
           if (this.containsConsentSettings(integrationSettings)) {
             const categories = integrationSettings.consentSettings.categories;
             return (
@@ -150,6 +165,19 @@ export class ConsentPlugin extends Plugin {
     this.analytics?.track(CONSENT_PREF_UPDATE_EVENT).catch((e) => {
       throw e;
     });
+  }
+
+  public start() {
+    this.consentStarted = true;
+
+    this.sendQueuedEvents();
+  }
+
+  sendQueuedEvents() {
+    this.queuedEvents.forEach((event) => {
+      this.analytics?.process(event);
+    });
+    this.queuedEvents = [];
   }
 }
 

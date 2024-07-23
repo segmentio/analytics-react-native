@@ -19,9 +19,7 @@ export interface OTPublishersNativeSDK {
   stopListeningForConsentChanges(): void;
 }
 
-export class OTCategoryConsentProvider
-  implements CategoryConsentStatusProvider
-{
+export class OneTrustConsentProvider implements CategoryConsentStatusProvider {
   getConsentStatus!: () => Promise<Record<string, boolean>>;
   private onConsentChangeCallback!: OnConsentChangeCb;
 
@@ -42,15 +40,12 @@ export class OTCategoryConsentProvider
           ])
       )
     ).then((entries) => Object.fromEntries(entries));
-
     let latestStatuses: Record<string, boolean> | null;
 
     this.getConsentStatus = () =>
       Promise.resolve(latestStatuses ?? initialStatusesP);
-
     this.oneTrust.stopListeningForConsentChanges();
     this.oneTrust.setBroadcastAllowedValues(categories);
-
     categories.forEach((categoryId) => {
       this.oneTrust.listenForConsentChanges(categoryId, (_, status) => {
         initialStatusesP

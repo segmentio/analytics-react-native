@@ -28,12 +28,15 @@ describe('Destinations multiple categories', () => {
       C0005: false,
     };
 
+    const consentPlugin = new ConsentPlugin(
+      createConsentProvider(mockConsentStatuses)
+    );
+
     client.add({
-      plugin: new ConsentPlugin(
-        createConsentProvider(mockConsentStatuses),
-        Object.keys(mockConsentStatuses)
-      ),
+      plugin: consentPlugin,
     });
+
+    consentPlugin.start();
 
     await client.init();
 
@@ -57,12 +60,15 @@ describe('Destinations multiple categories', () => {
       C0005: false,
     };
 
+    const consentPlugin = new ConsentPlugin(
+      createConsentProvider(mockConsentStatuses)
+    );
+
     client.add({
-      plugin: new ConsentPlugin(
-        createConsentProvider(mockConsentStatuses),
-        Object.keys(mockConsentStatuses)
-      ),
+      plugin: consentPlugin,
     });
+
+    consentPlugin.start();
 
     await client.init();
 
@@ -86,14 +92,17 @@ describe('Destinations multiple categories', () => {
       C0005: false,
     };
 
+    const consentPlugin = new ConsentPlugin(
+      createConsentProvider(mockConsentStatuses)
+    );
+
     client.add({
-      plugin: new ConsentPlugin(
-        createConsentProvider(mockConsentStatuses),
-        Object.keys(mockConsentStatuses)
-      ),
+      plugin: consentPlugin,
     });
 
     await client.init();
+
+    consentPlugin.start();
 
     const segmentDestination = createSegmentWatcher(client);
 
@@ -115,14 +124,17 @@ describe('Destinations multiple categories', () => {
       C0005: true,
     };
 
+    const consentPlugin = new ConsentPlugin(
+      createConsentProvider(mockConsentStatuses)
+    );
+
     client.add({
-      plugin: new ConsentPlugin(
-        createConsentProvider(mockConsentStatuses),
-        Object.keys(mockConsentStatuses)
-      ),
+      plugin: consentPlugin,
     });
 
     await client.init();
+
+    consentPlugin.start();
 
     const segmentDestination = createSegmentWatcher(client);
 

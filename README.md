@@ -38,6 +38,12 @@ The hassle-free way to add Segment analytics to your React-Native app.
   - [Automatic screen tracking](#automatic-screen-tracking)
     - [React Navigation](#react-navigation)
     - [React Native Navigation](#react-native-navigation)
+  - [Consent Management](#consent-management)
+    - [Segment CMP](#segment-managed-cmp)
+    - [Event Stamping](#event-stamping)
+    - [Segment Consent Preference Updated Event](#segment-consent-preference-updated-event)
+    - [Event Flow](#event-flow)
+    - [Getting Started](#getting-started)
   - [Plugins + Timeline architecture](#plugins--timeline-architecture)
     - [Plugin Types](#plugin-types)
     - [Destination Plugins](#destination-plugins)
@@ -497,6 +503,164 @@ In order to setup automatic screen tracking while using [React Native Navigation
 Navigation.events().registerComponentDidAppearListener(({ componentName }) => {
   segmentClient.screen(componentName);
 });
+```
+
+## Consent Management
+
+Consent Management is the management of a user’s consent preferences related to privacy.  You might be familiar with the Privacy Pop-ups that have become mandated recently that ask the user if he or she consents to the use of certain category of cookies:
+
+![Sample CMP UI](imgs/cmp-sample.png?raw=true "Sample CMP UI")
+
+
+The Privacy pop-up asks the user if he or she will consent to the use of cookies and allows the user to customize their consent by turning on/off different categories of cookies.
+
+After the user selects “Allow All” or “Save Preferences” a callback is fired and the owner of the website is notified as to the consent preferences of a given user. The website owner must then store that consent preference and abide by it. Any rejected cookies must not be set or read to avoid large fines that can be handed down by government authorities.
+
+Additionally, besides the initial pop-up the website owner must give users a way to later change any preferences they originally selected. This is usually accomplished by providing a link to display the customization screen.
+
+
+### Segment managed CMP
+
+Segment provides a framework for users to integrate any CMP they choose and use the Segment web app to map consent categories to device mode destinations. This information is sent down the analytics-kotlin SDK and stored for later lookup.
+
+Every event that flows through the library will be stamped with the current status according to whatever configured CMP is used. Event stamping is handled by the ConsentManagementPlugin. 
+
+Using consent status stamped on the events and the mappings sent down from the Segment web app each event is evaluated and action is taken. Currently the supported actions are:
+
+- Blocking - This action is implemented by the ConsentBlockingPlugin
+
+### Event Stamping
+
+Event stamping is the process of adding the consent status information to an existing event. The information is added to the context object of every event. Below is a before and after example:
+
+Before
+
+```json
+{
+    "anonymousId": "23adfd82-aa0f-45a7-a756-24f2a7a4c895",
+    "type": "track",
+    "event": "MyEvent",
+    "userId": "u123",
+    "timestamp": "2023-01-01T00:00:00.000Z",
+    "context": {
+        "traits": {
+            "email": "peter@example.com",
+            "phone": "555-555-5555"
+        },
+        "device": {
+            "advertisingId": "7A3CBBA0-BDF5-11E4-8DFC-AA02A5B093DB"
+        }
+    }
+}
+```
+After
+
+```json
+{
+    "anonymousId": "23adfd82-aa0f-45a7-a756-24f2a7a4c895",
+    "type": "track",
+    "event": "MyEvent",
+    "userId": "u123",
+    "timestamp": "2023-01-01T00:00:00.000Z",
+    "context": {
+        "traits": {
+            "email": "peter@example.com",
+            "phone": "555-555-5555"
+        },
+        "device": {
+            "advertisingId": "7A3CBBA0-BDF5-11E4-8DFC-AA02A5B093DB"
+        },
+        "consent": {
+            "categoryPreferences": {
+                "Advertising": true,
+                "Analytics": false,
+                "Functional": true,
+                "DataSharing": false
+            }
+        }
+    }
+}
+```
+
+### Segment Consent Preference Updated Event
+
+When notified by the CMP SDK that consent has changed, a track event with name “Segment Consent Preference Updated” will be emitted. Below is example of what that event will look like:
+
+```json
+{
+    "anonymousId": "23adfd82-aa0f-45a7-a756-24f2a7a4c895",
+    "type": "track",
+    "event": "Segment Consent Preference Updated",
+    "userId": "u123",
+    "timestamp": "2023-01-01T00:00:00.000Z",
+    "context": {
+        "device": {
+            "advertisingId": "7A3CBEA0-BDF5-11E4-8DFC-AA07A5B093DB"
+        },
+        "consent": {
+            "categoryPreferences": {
+                "Advertising": true,
+                "Analytics": false,
+                "Functional": true,
+                "DataSharing": false
+            }
+        }
+    }
+}
+```
+
+### Event Flow
+
+
+![Shows how an event is stamped and later checked for consent](imgs/main-flow-diagram.png?raw=true "Event Flow Diagram")
+
+1. An event is dropped onto the timeline by some tracking call.
+2. The ConsentManagementPlugin consumes the event, stamps it, and returns it.
+3. The event is now stamped with consent information from this point forward.
+4. The event is copied. The copy is consumed by a Destination Plugin and continues down its internal timeline. The original event is returned and continues down the main timeline.
+   a. The stamped event is now on the timeline of the destination plugin.
+   b. The event reaches the ConsentBlockingPlugin which makes a decision as to whether or not to let the event continue down the timeline.
+   c. If the event has met the consent requirements it continues down the timeline.
+5. The event continues down the timeline.
+
+### Getting Started
+
+1. Since the Consent Management Plugin is built into the core `Analytics-React-Native` SDK, you can simply import it and begin using it without adding any additional Segment dependencies. 
+
+```
+import { createClient, ConsentPlugin} from '@segment/analytics-react-native';
+```
+2. From here, you will have to build an Consent Provider integration with your CMP. You can reference our example `OneTrust` [integration here](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-onetrust). It is not possible for Segment to support this as an active plugin as OneTrust requires you to use very specific versions of their SDK. However, the functionality is usually unchanged across versions so the example linked above should be almost copy/paste. If you build your own, it needs to imlpement the `CategoryConsentProvider` interface:
+
+```
+interface CategoryConsentStatusProvider {
+  setApplicableCategories(categories: string[]): void;
+  getConsentStatus(): Promise<Record<string, boolean>>;
+  onConsentChange(cb: (updConsent: Record<string, boolean>) => void): void;
+  shutdown?(): void;
+}
+```
+
+3. Add the Consent Provider to the `ConsentPlugin()` and add `ConsentPlugin()` to the `client`. A full example of this setup, including initializing the `OneTrust` SDK can be [found here](https://github.com/segmentio/analytics-react-native/blob/master/packages/plugins/plugin-onetrust/README.md).
+
+
+```
+const segment = createClient({
+  writeKey: 'SEGMENT_KEY',
+  ...<other config options>
+});
+
+
+const myCustomProvider = new MyCustomProvider(MyCMP)
+const consentPlugin = new ConsentPlugin(myCustomProvider);
+
+segment.add({ plugin: oneTrustPlugin });
+```
+
+4. Once the Segment Client and third-party CMP have been initialized, start processing queued events
+
+```
+consentPlugin.start()
 ```
 
 ## Plugins + Timeline architecture
