@@ -73,7 +73,11 @@ const oneTrustProvider = new OneTrustConsentProvider(OTPublisherNativeSDK)
 const oneTrustPlugin = new ConsentPlugin(oneTrustProvider);
 ```
 
-4. Add `OneTrustPlugin` as a plugin, order doesn't matter, this plugin will apply to all device mode destinations you add before and after this plugin is added. Full example below:
+4. Add `oneTrustPlugin` as a plugin, order doesn't matter, this plugin will apply to all device mode destinations you add before and after this plugin is added. 
+
+5. Call `oneTrustPlugin.start()` to start event flow.
+
+ Full example below:
 
 ```ts
 import { createClient, ConsentPlugin} from '@segment/analytics-react-native';
@@ -104,6 +108,11 @@ const oneTrustProvider = new OneTrustConsentProvider(OTPublisherNativeSDK)
 const oneTrustPlugin = new ConsentPlugin(oneTrustProvider);
 
 segment.add({ plugin: oneTrustPlugin });
+
+// NOTE: You might want to wait until CMP is ready before you call start()
+// so that events are held until the CMP is ready to provide the current consent status.
+onetrustPlugin.start()
+
 
 // device mode destinations
 segment.add({ plugin: new BrazePlugin() });
