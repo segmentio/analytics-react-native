@@ -83,7 +83,11 @@ export class ConsentPlugin extends Plugin {
     }
 
     if (this.consentStarted === false) {
-      this.queuedEvents.push(event);
+      // constrain the queue to avoid running out of memory if consent is never started
+      if (this.queuedEvents.length <= 1000) {
+        this.queuedEvents.push(event);
+        return;
+      }
       return;
     }
     return;
