@@ -2,6 +2,8 @@
 
 Plugin for adding support for [OneTrust](https://onetrust.com/) CMP to your React Native application.
 
+⚠️ version 1.2.0 and below are out of date and upgrading will require a re-implementation of the plugin configuration. 
+
 ⚠️ The SDK version used must match the version of the JSON published from your OneTrust instance. This Provider was built using `202405.1.0`. This is not a "plugin" as defined by the SDK's [plugin-timeline architecture](https://github.com/segmentio/analytics-react-native/tree/master?tab=readme-ov-file#plugins--timeline-architecture). Instead, it must be used with the `ConsentPlugin` included in the core SDK. This is deliberate as it is impossible to support every possible version of the OneTrust SDK. Therefore, the `OneTrustConsentProvider` should serve as a reference/example for users on a different version. 
 
 ## Installation
