@@ -84,7 +84,6 @@ export class ConsentPlugin extends Plugin {
 
     if (this.consentStarted === false) {
       this.queuedEvents.push(event);
-      console.log('Event queued', event);
       return;
     }
     return;
