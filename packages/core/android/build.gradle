@@ -75,6 +75,10 @@ android {
     sourceCompatibility JavaVersion.VERSION_11
     targetCompatibility JavaVersion.VERSION_11
   }
+
+  kotlinOptions {
+    jvmTarget = "11"
+  }
 }
 
 repositories {
@@ -91,6 +95,11 @@ dependencies {
   implementation "com.facebook.react:react-native:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   // Requires sovran for communication
-  implementation project(path: ':segment_sovran-react-native')  
+  implementation project(path: ':segment_sovran-react-native')
+
+    // Add Kotlin Coroutines and StateFlow dependencies
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.1"
 }
 

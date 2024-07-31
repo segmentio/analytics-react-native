@@ -8,6 +8,9 @@ import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.uimanager.ViewManager
 import com.facebook.react.bridge.JavaScriptModule
+import android.content.Context
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 
 class AnalyticsReactNativePackage : ReactPackage {
 
@@ -23,7 +26,11 @@ class AnalyticsReactNativePackage : ReactPackage {
                 module?.setAnonymousId(anonId)
             }
         }
-        return listOf(module as NativeModule)
+         val networkConnectionManager = NetworkConnectionManagerImpl(
+            reactContext.applicationContext,
+            CoroutineScope(Dispatchers.Default)
+        )
+        return listOf(module as NativeModule,NetInfoModule(reactContext, networkConnectionManager))
     }
 
     override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {

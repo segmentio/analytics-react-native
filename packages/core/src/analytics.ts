@@ -4,8 +4,10 @@ import {
   AppState,
   AppStateStatus,
   NativeEventSubscription,
+  NativeModules,
+  NativeEventEmitter,
 } from 'react-native';
-import NetInfo from '@react-native-community/netinfo';
+
 import {
   settingsCDN,
   workspaceDestinationFilterKey,
@@ -63,7 +65,12 @@ import {
 import type { SegmentAPIConsentSettings } from '.';
 
 type OnPluginAddedCallback = (plugin: Plugin) => void;
-
+interface NetworkState {
+  isConnected: boolean;
+  // Add other properties if needed
+}
+const { NetInfoModule } = NativeModules;
+const netInfoModuleEmitter = new NativeEventEmitter(NetInfoModule);
 export class SegmentClient {
   // the config parameters for the client - a merge of user provided and default options
   private config: Config;
@@ -77,7 +84,6 @@ export class SegmentClient {
   // subscription for propagating changes to appState
   private appStateSubscription?: NativeEventSubscription;
 
-  private isOnline = false;
   // logger
   public logger: LoggerType;
 
@@ -367,13 +373,15 @@ export class SegmentClient {
         this.handleAppStateChange(nextAppState);
       }
     );
-
-    NetInfo.addEventListener((state) => {
-      if (!this.isOnline && state.isConnected === true) {
-        this.handlePendingEvents();
+    NetInfoModule.startNetworkListening();
+    netInfoModuleEmitter.addListener(
+      'networkStatusChanged',
+      (state: NetworkState) => {
+        if (state.isConnected) {
+          this.addAllPlugings();
+        }
       }
-      this.isOnline = state.isConnected === true || false;
-    });
+    );
   }
 
   /**
@@ -433,7 +441,7 @@ export class SegmentClient {
   async process(incomingEvent: SegmentEvent) {
     const event = this.applyRawEventData(incomingEvent);
 
-    if (this.isReady.value && this.isOnline) {
+    if (this.isReady.value) {
       return this.startTimelineProcessing(event);
     } else {
       this.store.pendingEvents.add(event);
@@ -484,6 +492,11 @@ export class SegmentClient {
    * @param isReady
    */
   private async onReady() {
+    this.addAllPlugings();
+    this.handlePendingEvents();
+  }
+
+  addAllPlugings: () => void = () => {
     // Add all plugins awaiting store
     if (this.pluginsToAdd.length > 0 && !this.isAddingPlugins) {
       this.isAddingPlugins = true;
@@ -502,7 +515,7 @@ export class SegmentClient {
         this.isAddingPlugins = false;
       }
     }
-  }
+  };
 
   handlePendingEvents: () => void = async () => {
     // Start flush policies
