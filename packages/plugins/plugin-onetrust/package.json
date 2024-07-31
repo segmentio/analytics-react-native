@@ -1,6 +1,6 @@
 {
   "name": "@segment/analytics-react-native-plugin-onetrust",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Add OneTrust to Segment analytics in your React-Native app.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
