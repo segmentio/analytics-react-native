@@ -1,6 +1,6 @@
 {
   "name": "@segment/analytics-react-native-plugin-appsflyer",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "The hassle-free way to add Segment analytics to your React-Native app.",
   "main": "lib/commonjs/index",
   "scripts": {
