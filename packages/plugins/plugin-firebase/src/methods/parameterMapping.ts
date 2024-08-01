@@ -27,6 +27,12 @@ export const mapEventProps: { [key: string]: string } = {
   productId: 'item_id',
   category: 'item_category',
   query: 'search_term',
+  order_id: 'transaction_id',
+  quantity: 'quantity',
+  shipping: 'shipping',
+  tax: 'tax',
+  revenue: 'revenue',
+  currency: 'currency',
 };
 
 export const transformMap: { [key: string]: (value: unknown) => unknown } = {
