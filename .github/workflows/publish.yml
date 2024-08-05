@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       # Workaround for corepack enable in node
       # Source: (https://github.com/actions/setup-node/issues/899#issuecomment-1828798029)
@@ -47,7 +47,7 @@ jobs:
         if: github.event.inputs.workspace == ''
         run: yarn release
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Update Apps
