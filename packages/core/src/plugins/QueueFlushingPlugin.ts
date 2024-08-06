@@ -4,7 +4,6 @@ import { defaultConfig } from '../constants';
 import { UtilityPlugin } from '../plugin';
 import { PluginType, SegmentEvent } from '../types';
 import { createPromise } from '../util';
-import { ErrorType, SegmentError } from '../errors';
 
 /**
  * This plugin manages a queue where all events get added to after timeline processing.
@@ -30,7 +29,7 @@ export class QueueFlushingPlugin extends UtilityPlugin {
   constructor(
     onFlush: (events: SegmentEvent[]) => Promise<void>,
     storeKey = 'events',
-    restoreTimeout = 500
+    restoreTimeout = 1000
   ) {
     super();
     this.onFlush = onFlush;
@@ -78,12 +77,8 @@ export class QueueFlushingPlugin extends UtilityPlugin {
       await this.isRestored;
     } catch (e) {
       // If the queue is not restored before the timeout, we will notify but not block flushing events
-      this.analytics?.reportInternalError(
-        new SegmentError(
-          ErrorType.InitializationError,
-          'Queue timeout before completed restoration',
-          e
-        )
+      console.info(
+        'Flush triggered but queue restoration and settings loading not complete. Flush will be retried.'
       );
     }
     const events = (await this.queueStore?.getState(true))?.events ?? [];
