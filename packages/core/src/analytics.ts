@@ -167,6 +167,16 @@ export class SegmentClient {
     return { ...this.config };
   }
 
+  clearFlushQueue() {
+    const plugins = this.getPlugins();
+    plugins.forEach(async(plugin)=>{
+      if (plugin.type == PluginType.destination) {
+        await plugin?.clearFlushQueue()
+        this.flushPolicyExecuter.reset();
+      }
+    })
+  }
+
   constructor({
     config,
     logger,
