@@ -109,4 +109,22 @@ export class QueueFlushingPlugin extends UtilityPlugin {
       return { events: filteredEvents };
     });
   }
+
+  /**
+   * Clear all events from the queue
+   */
+  async clearQueue() {
+    await this.queueStore?.dispatch(() => {
+      return { events: [] };
+    });
+  }
+
+  /**
+   * Returns the count of items in the queue
+   */
+  async getQueueCount() {
+    const state = await this.queueStore?.getState();
+    const eventsCount = state?.events.length || 0;
+    return eventsCount;
+  }
 }
