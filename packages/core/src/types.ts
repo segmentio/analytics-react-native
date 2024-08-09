@@ -159,7 +159,8 @@ export type ClientMethods = {
   group: (groupId: string, groupTraits?: GroupTraits) => Promise<void>;
   alias: (newUserId: string) => Promise<void>;
   reset: (resetAnonymousId?: boolean) => Promise<void>;
-  clearFlushQueue: () => Promise <void>;
+  clearFlushQueue: () => Promise<void>;
+  getFlushQueueCount: () => Promise<number | undefined>;
 };
 
 type ContextApp = {

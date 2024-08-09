@@ -167,14 +167,32 @@ export class SegmentClient {
     return { ...this.config };
   }
 
+  /**
+   * Method for clearing flush queue.
+   */
   clearFlushQueue() {
     const plugins = this.getPlugins();
-    plugins.forEach(async(plugin)=>{
+    plugins.forEach(async (plugin) => {
       if (plugin.type == PluginType.destination) {
-        await plugin?.clearFlushQueue()
+        await plugin?.clearFlushQueue();
         this.flushPolicyExecuter.reset();
       }
-    })
+    });
+  }
+
+  /**
+   * Method to get count of events in flush queue.
+   */
+  async getFlushQueueCount() {
+    const plugins = this.getPlugins();
+    let totalEventsCount = 0;
+    for (let i = 0; i <= plugins.length; i++) {
+      if (plugins[i]?.type == PluginType.destination) {
+        const eventsCount = await plugins[i]?.getQueueCount();
+        totalEventsCount += eventsCount;
+      }
+    }
+    return totalEventsCount;
   }
 
   constructor({

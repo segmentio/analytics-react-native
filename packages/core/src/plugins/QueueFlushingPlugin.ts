@@ -120,7 +120,16 @@ export class QueueFlushingPlugin extends UtilityPlugin {
    */
   async clearQueue() {
     await this.queueStore?.dispatch(() => {
-      return { events: [] }
-    })
+      return { events: [] };
+    });
+  }
+
+  /**
+   * Returns the count of items in the queue
+   */
+  async getQueueCount() {
+    const state = await this.queueStore?.getState();
+    const eventsCount = state?.events.length || 0;
+    return eventsCount;
   }
 }
