@@ -3620,7 +3620,8 @@ __metadata:
   resolution: "@segment/analytics-react-native@workspace:packages/core"
   dependencies:
     "@segment/sovran-react-native": "npm:^1.1.0"
-    "@segment/tsub": "npm:^2"
+    "@segment/tsub": "npm:2.0.0"
+    "@stdlib/number-float64-base-normalize": "npm:0.0.8"
     "@types/uuid": "npm:^9.0.7"
     deepmerge: "npm:^4.3.1"
     jest: "npm:^29.7.0"
@@ -3675,7 +3676,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@segment/tsub@npm:^2":
+"@segment/tsub@npm:2.0.0, @segment/tsub@npm:^2":
   version: 2.0.0
   resolution: "@segment/tsub@npm:2.0.0"
   dependencies:
@@ -4750,6 +4751,21 @@ __metadata:
     "@stdlib/number-float64-base-to-words": "npm:^0.0.x"
     "@stdlib/utils-library-manifest": "npm:^0.0.x"
   checksum: 10c0/d8b749157d77300c59980b11d5f0ede34db33bbbe55435e8daaae52a9f93e44890e9d10c665f8fbc13d0dbf159b9dd5b466a47061870e5b9909641e88702e303
+  conditions: (os=aix | os=darwin | os=freebsd | os=linux | os=macos | os=openbsd | os=sunos | os=win32 | os=windows)
+  languageName: node
+  linkType: hard
+
+"@stdlib/number-float64-base-normalize@npm:0.0.8":
+  version: 0.0.8
+  resolution: "@stdlib/number-float64-base-normalize@npm:0.0.8"
+  dependencies:
+    "@stdlib/constants-float64-smallest-normal": "npm:^0.0.x"
+    "@stdlib/math-base-assert-is-infinite": "npm:^0.0.x"
+    "@stdlib/math-base-assert-is-nan": "npm:^0.0.x"
+    "@stdlib/math-base-special-abs": "npm:^0.0.x"
+    "@stdlib/types": "npm:^0.0.x"
+    "@stdlib/utils-define-nonenumerable-read-only-property": "npm:^0.0.x"
+  checksum: 10c0/8b0f4d9d4cb7ca66636d22799ebb157a7b682374f1595f1c9124bf432d628a34984fd98ab9d73224b52e6d64584f4d33589adf4dbd50c839cc4a9920536bc7a6
   conditions: (os=aix | os=darwin | os=freebsd | os=linux | os=macos | os=openbsd | os=sunos | os=win32 | os=windows)
   languageName: node
   linkType: hard

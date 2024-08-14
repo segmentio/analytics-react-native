@@ -46,7 +46,8 @@
     "prepack": "yarn prebuild"
   },
   "dependencies": {
-    "@segment/tsub": "^2",
+    "@segment/tsub": "2.0.0",
+    "@stdlib/number-float64-base-normalize": "0.0.8",
     "deepmerge": "^4.3.1",
     "js-base64": "^3.7.5",
     "uuid": "^9.0.1"
