@@ -3202,12 +3202,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-firebase/analytics@npm:^18.4.0":
-  version: 18.8.0
-  resolution: "@react-native-firebase/analytics@npm:18.8.0"
+"@react-native-firebase/analytics@npm:^19.1.1":
+  version: 19.3.0
+  resolution: "@react-native-firebase/analytics@npm:19.3.0"
   peerDependencies:
-    "@react-native-firebase/app": 18.8.0
-  checksum: 10c0/d82c043c6fc5fccc42d63be1a0d8d052c7e61be70cbab832c6cfe5d9e4fe5c1429cf7a5b8bc3a1232f3dd6a548787ed64a9d5dd2cf9023b211c51905c26c6af0
+    "@react-native-firebase/app": 19.3.0
+  checksum: 10c0/be618ab91d892148e02cd4ca9f093cf1d41ebad90622b9c9c6bf673f2eb779776ae9d46259105b8b229ad5db29c5468dfb32731290f1b00bc7b2a1b225a701c6
   languageName: node
   linkType: hard
 
@@ -3228,9 +3228,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-firebase/app@npm:^18.4.0":
-  version: 18.8.0
-  resolution: "@react-native-firebase/app@npm:18.8.0"
+"@react-native-firebase/app@npm:^19.1.1":
+  version: 19.3.0
+  resolution: "@react-native-firebase/app@npm:19.3.0"
   dependencies:
     opencollective-postinstall: "npm:^2.0.3"
     superstruct: "npm:^0.6.2"
@@ -3241,7 +3241,7 @@ __metadata:
   peerDependenciesMeta:
     expo:
       optional: true
-  checksum: 10c0/38a3551598d1c464f557cbe209bca34fd3fbb5a4784532d5786d7762b9bcc6698c0b55ea4c41dc53cdd925e9cb9d9ee924f5a886f7fcfb5d3ba2bdaa7bc0efd8
+  checksum: 10c0/3c20b94935ca03407aa1ad159938c8d7dc2e129f8bd2ebb6089698ff05431c6c286ee320d61b7c225c82eb89e9eb0b995399f01d181ac7e1e78150de32515214
   languageName: node
   linkType: hard
 
@@ -3545,8 +3545,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-firebase@workspace:packages/plugins/plugin-firebase"
   dependencies:
-    "@react-native-firebase/analytics": "npm:^18.4.0"
-    "@react-native-firebase/app": "npm:^18.4.0"
+    "@react-native-firebase/analytics": "npm:^19.1.1"
+    "@react-native-firebase/app": "npm:^19.1.1"
     "@segment/analytics-react-native": "npm:^2.18.0"
     "@segment/analytics-rn-shared": "workspace:^"
     "@segment/sovran-react-native": "npm:^1.1.0"
@@ -3555,8 +3555,8 @@ __metadata:
     rimraf: "npm:^5.0.5"
     typescript: "npm:^5.2.2"
   peerDependencies:
-    "@react-native-firebase/analytics": ^18.4.0
-    "@react-native-firebase/app": ^18.4.0
+    "@react-native-firebase/analytics": ^19.1.1
+    "@react-native-firebase/app": ^19.1.1
     "@segment/analytics-react-native": ^2.18.0
   languageName: unknown
   linkType: soft
