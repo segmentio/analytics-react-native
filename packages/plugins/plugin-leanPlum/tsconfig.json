@@ -1,0 +1,10 @@
+{
+    "extends": "../../../tsconfig.json",
+    "compilerOptions": {
+      "outDir": "lib/typescript",
+      "rootDir": ".",
+      "baseUrl": "."
+    },
+    "include": ["src/**/*", "types.d.ts"],
+    "references": [{ "path": "../../core" }]
+  }  
