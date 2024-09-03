@@ -3603,7 +3603,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native@workspace:packages/core"
   dependencies:
-    "@segment/tsub": "npm:^2"
+    "@segment/tsub": "npm:2.0.0"
+    "@stdlib/number-float64-base-normalize": "npm:0.0.8"
     "@types/uuid": "npm:^9.0.7"
     deepmerge: "npm:^4.3.1"
     jest: "npm:^29.7.0"
@@ -3635,7 +3636,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@segment/tsub@npm:^2":
+"@segment/tsub@npm:2.0.0, @segment/tsub@npm:^2":
   version: 2.0.0
   resolution: "@segment/tsub@npm:2.0.0"
   dependencies:
@@ -8042,13 +8043,6 @@ __metadata:
   bin:
     extract-zip: cli.js
   checksum: 10c0/333f1349ee678d47268315f264dbfcd7003747d25640441e186e87c66efd7129f171f1bcfe8ff1151a24da19d5f8602daff002ee24145dc65516bc9a8e40ee08
-  languageName: node
-  linkType: hard
-
-"fast-base64-decode@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "fast-base64-decode@npm:1.0.0"
-  checksum: 10c0/6d8feab513222a463d1cb58d24e04d2e04b0791ac6559861f99543daaa590e2636d040d611b40a50799bfb5c5304265d05e3658b5adf6b841a50ef6bf833d821
   languageName: node
   linkType: hard
 
@@ -13117,17 +13111,6 @@ __metadata:
     expo:
       optional: true
   checksum: 10c0/b9722c0936bc6373af330b7429be45c8b6d87600a8a863f367a581928133d4009b7802411440b8e64c36a42506c42f0f70dd3bf917c565b78d3af4f425cb442a
-  languageName: node
-  linkType: hard
-
-"react-native-get-random-values@npm:1.x":
-  version: 1.11.0
-  resolution: "react-native-get-random-values@npm:1.11.0"
-  dependencies:
-    fast-base64-decode: "npm:^1.0.0"
-  peerDependencies:
-    react-native: ">=0.56"
-  checksum: 10c0/2ce71f1ab7f5b36d4a9dd59cc80b4aa75526f047c6680a7f1a388fa8b9a62efdacaf7b7de3be593c73e882773b2eee74916b00f7c8b158e40b46388998218586
   languageName: node
   linkType: hard
 
