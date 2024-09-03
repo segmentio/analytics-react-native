@@ -16,21 +16,28 @@ class AnalyticsReactNativePluginIdfa: NSObject {
     ) -> Void {
         if #available(iOS 14, *) {
             ATTrackingManager.requestTrackingAuthorization { status in
-                let idfa = status == .authorized ? ASIdentifierManager.shared().advertisingIdentifier.uuidString : self.fallbackValue
-                resolve([
-                    "adTrackingEnabled": status == .authorized,
-                    "advertisingId": idfa!,
-                    "trackingStatus": self.statusToString(status)
-                ])
+            if status == .authorized {
+               let idfa = ASIdentifierManager.shared().advertisingIdentifier.uuidString
+                    resolve([
+                        "adTrackingEnabled": status == .authorized,
+                        "advertisingId": idfa,
+                        "trackingStatus": self.statusToString(status)
+                    ])
+                } else {
+                    resolve([
+                        "adTrackingEnabled": false,
+                        "trackingStatus": self.statusToString(status)
+                    ])
+                }
             }
         } else {
             let adTrackingEnabled: Bool = true
             let trackingStatus: String = "authorized"
-            let idfa = adTrackingEnabled ? ASIdentifierManager.shared().advertisingIdentifier.uuidString : fallbackValue
+            let idfa =  ASIdentifierManager.shared().advertisingIdentifier.uuidString
             
             let context: [String: Any] = [
                 "adTrackingEnabled": adTrackingEnabled,
-                "advertisingId": idfa!,
+                "advertisingId": idfa,
                 "trackingStatus": trackingStatus
             ]
             
@@ -40,14 +47,6 @@ class AnalyticsReactNativePluginIdfa: NSObject {
         }
     }
     
-    var fallbackValue: String? {
-        get {
-            // fallback to the IDFV value.
-            // this is also sent in event.context.device.id,
-            // feel free to use a value that is more useful to you.
-            return UIDevice.current.identifierForVendor?.uuidString
-        }
-    }
     
     @available(iOS 14, *)
     func statusToString(_ status: ATTrackingManager.AuthorizationStatus) -> String {

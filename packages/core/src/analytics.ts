@@ -94,7 +94,12 @@ export class SegmentClient {
 
   private pluginsToAdd: Plugin[] = [];
 
-  private flushPolicyExecuter!: FlushPolicyExecuter;
+  private flushPolicyExecuter: FlushPolicyExecuter = new FlushPolicyExecuter(
+    [],
+    () => {
+      void this.flush();
+    }
+  );
 
   private onPluginAddedObservers: OnPluginAddedCallback[] = [];
 
@@ -251,9 +256,6 @@ export class SegmentClient {
     // Setup platform specific plugins
     this.platformPlugins.forEach((plugin) => this.add({ plugin: plugin }));
 
-    // Start flush policies
-    this.setupFlushPolicies();
-
     // set up tracking for lifecycle events
     this.setupLifecycleEvents();
   }
@@ -296,9 +298,6 @@ export class SegmentClient {
 
       await this.onReady();
       this.isReady.value = true;
-
-      // flush any stored events
-      this.flushPolicyExecuter.manualFlush();
     } catch (error) {
       this.reportInternalError(
         new SegmentError(
@@ -512,13 +511,18 @@ export class SegmentClient {
       }
     }
 
+    // Start flush policies
+    // This should be done before any pending events are added to the queue so that any policies that rely on events queued can trigger accordingly
+    this.setupFlushPolicies();
+
     // Send all events in the queue
     const pending = await this.store.pendingEvents.get(true);
     for (const e of pending) {
       await this.startTimelineProcessing(e);
       await this.store.pendingEvents.remove(e);
     }
-    // this.store.pendingEvents.set([]);
+
+    this.flushPolicyExecuter.manualFlush();
   }
 
   async flush(): Promise<void> {
@@ -779,9 +783,9 @@ export class SegmentClient {
       }
     }
 
-    this.flushPolicyExecuter = new FlushPolicyExecuter(flushPolicies, () => {
-      void this.flush();
-    });
+    for (const fp of flushPolicies) {
+      this.flushPolicyExecuter.add(fp);
+    }
   }
 
   /**

@@ -1,6 +1,6 @@
 {
   "name": "@segment/analytics-react-native",
-  "version": "2.19.1",
+  "version": "2.19.4",
   "description": "The hassle-free way to add Segment analytics to your React-Native app.",
   "keywords": [
     "segment",
@@ -46,7 +46,8 @@
     "prepack": "yarn prebuild"
   },
   "dependencies": {
-    "@segment/tsub": "^2",
+    "@segment/tsub": "2.0.0",
+    "@stdlib/number-float64-base-normalize": "0.0.8",
     "deepmerge": "^4.3.1",
     "js-base64": "^3.7.5"
   },

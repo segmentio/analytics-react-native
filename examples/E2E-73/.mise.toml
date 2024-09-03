@@ -1,0 +1,5 @@
+[tools]
+java = "zulu-17"
+node = "18"
+ruby = '3.3.0'
+cocoapods = "latest"

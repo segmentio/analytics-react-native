@@ -89,12 +89,12 @@ export class FlushPolicyExecuter {
   }
 
   private startPolicy(policy: FlushPolicy) {
-    policy.start();
     const unsubscribe = policy.shouldFlush.onChange((shouldFlush) => {
       if (shouldFlush) {
         this.onFlush();
       }
     });
     this.observers.push(unsubscribe);
+    policy.start();
   }
 }

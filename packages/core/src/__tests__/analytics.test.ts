@@ -129,7 +129,6 @@ describe('SegmentClient', () => {
     it('resets all userInfo except anonymousId', async () => {
       client = new SegmentClient(clientArgs);
       const setUserInfo = jest.spyOn(store.userInfo, 'set');
-
       await client.reset(false);
 
       expect(setUserInfo).toHaveBeenCalledWith({
@@ -142,7 +141,6 @@ describe('SegmentClient', () => {
     it('resets user data, identity, traits', async () => {
       client = new SegmentClient(clientArgs);
       const setUserInfo = jest.spyOn(store.userInfo, 'set');
-
       await client.reset();
 
       expect(setUserInfo).toHaveBeenCalledWith({
@@ -172,7 +170,7 @@ describe('SegmentClient', () => {
   });
 
   describe('Flush Policies', () => {
-    it('creates the default flush policies when config is empty', () => {
+    it('creates the default flush policies when config is empty', async () => {
       client = new SegmentClient({
         ...clientArgs,
         config: {
@@ -181,11 +179,12 @@ describe('SegmentClient', () => {
           flushInterval: undefined,
         },
       });
+      await client.init();
       const flushPolicies = client.getFlushPolicies();
       expect(flushPolicies.length).toBe(2);
     });
 
-    it('setting flush policies is mutually exclusive with flushAt/Interval', () => {
+    it('setting flush policies is mutually exclusive with flushAt/Interval', async () => {
       client = new SegmentClient({
         ...clientArgs,
         config: {
@@ -195,11 +194,12 @@ describe('SegmentClient', () => {
           flushPolicies: [new CountFlushPolicy(1)],
         },
       });
+      await client.init();
       const flushPolicies = client.getFlushPolicies();
       expect(flushPolicies.length).toBe(1);
     });
 
-    it('setting flushAt/Interval to 0 should make the client have no uploads', () => {
+    it('setting flushAt/Interval to 0 should make the client have no uploads', async () => {
       client = new SegmentClient({
         ...clientArgs,
         config: {
@@ -208,11 +208,12 @@ describe('SegmentClient', () => {
           flushInterval: 0,
         },
       });
+      await client.init();
       const flushPolicies = client.getFlushPolicies();
       expect(flushPolicies.length).toBe(0);
     });
 
-    it('setting an empty array of policies should make the client have no uploads', () => {
+    it('setting an empty array of policies should make the client have no uploads', async () => {
       client = new SegmentClient({
         ...clientArgs,
         config: {
@@ -222,11 +223,12 @@ describe('SegmentClient', () => {
           flushPolicies: [],
         },
       });
+      await client.init();
       const flushPolicies = client.getFlushPolicies();
       expect(flushPolicies.length).toBe(0);
     });
 
-    it('can add and remove policies, does not mutate original array', () => {
+    it('can add and remove policies, does not mutate original array', async () => {
       const policies = [new CountFlushPolicy(1), new TimerFlushPolicy(200)];
       client = new SegmentClient({
         ...clientArgs,
@@ -237,6 +239,7 @@ describe('SegmentClient', () => {
           flushPolicies: policies,
         },
       });
+      await client.init();
       expect(client.getFlushPolicies().length).toBe(policies.length);
 
       client.removeFlushPolicy(...policies);

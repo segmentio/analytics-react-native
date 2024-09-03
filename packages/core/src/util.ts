@@ -214,3 +214,28 @@ export function deepCompare<T>(a: T, b: T): boolean {
 
   return true;
 }
+
+export const createPromise = <T>(
+  timeout: number | undefined = undefined,
+  _errorHandler: (err: Error) => void = (_: Error) => {
+    //
+  }
+): { promise: Promise<T>; resolve: (value: T) => void } => {
+  let resolver: (value: T) => void;
+  const promise = new Promise<T>((resolve, reject) => {
+    resolver = resolve;
+    if (timeout !== undefined) {
+      setTimeout(() => {
+        reject(new Error('Promise timed out'));
+      }, timeout);
+    }
+  });
+
+  promise.catch(_errorHandler);
+
+  return {
+    promise: promise,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    resolve: resolver!,
+  };
+};

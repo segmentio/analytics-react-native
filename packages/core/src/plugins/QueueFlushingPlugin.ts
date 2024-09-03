@@ -3,6 +3,7 @@ import type { SegmentClient } from '../analytics';
 import { defaultConfig } from '../constants';
 import { UtilityPlugin } from '../plugin';
 import { PluginType, SegmentEvent } from '../types';
+import { createPromise } from '../util';
 
 /**
  * This plugin manages a queue where all events get added to after timeline processing.
@@ -17,17 +18,25 @@ export class QueueFlushingPlugin extends UtilityPlugin {
   private isPendingUpload = false;
   private queueStore: Store<{ events: SegmentEvent[] }> | undefined;
   private onFlush: (events: SegmentEvent[]) => Promise<void>;
+  private isRestoredResolve: () => void;
+  private isRestored: Promise<void>;
 
   /**
    * @param onFlush callback to execute when the queue is flushed (either by reaching the limit or manually) e.g. code to upload events to your destination
+   * @param storeKey key to store the queue in the store. Must be unique per destination instance
+   * @param restoreTimeout time in ms to wait for the queue to be restored from the store before uploading events (default: 500ms)
    */
   constructor(
     onFlush: (events: SegmentEvent[]) => Promise<void>,
-    storeKey = 'events'
+    storeKey = 'events',
+    restoreTimeout = 1000
   ) {
     super();
     this.onFlush = onFlush;
     this.storeKey = storeKey;
+    const { promise, resolve } = createPromise<void>(restoreTimeout);
+    this.isRestored = promise;
+    this.isRestoredResolve = resolve;
   }
 
   configure(analytics: SegmentClient): void {
@@ -43,6 +52,9 @@ export class QueueFlushingPlugin extends UtilityPlugin {
           storeId: `${config.writeKey}-${this.storeKey}`,
           persistor: config.storePersistor,
           saveDelay: config.storePersistorSaveDelay ?? 0,
+          onInitialized: () => {
+            this.isRestoredResolve();
+          },
         },
       }
     );
@@ -60,6 +72,15 @@ export class QueueFlushingPlugin extends UtilityPlugin {
    * Calls the onFlush callback with the events in the queue
    */
   async flush() {
+    // Wait for the queue to be restored
+    try {
+      await this.isRestored;
+    } catch (e) {
+      // If the queue is not restored before the timeout, we will notify but not block flushing events
+      console.info(
+        'Flush triggered but queue restoration and settings loading not complete. Flush will be retried.'
+      );
+    }
     const events = (await this.queueStore?.getState(true))?.events ?? [];
     if (!this.isPendingUpload) {
       try {
