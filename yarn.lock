@@ -3001,14 +3001,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-async-storage/async-storage@npm:^1.19":
-  version: 1.21.0
-  resolution: "@react-native-async-storage/async-storage@npm:1.21.0"
+"@react-native-async-storage/async-storage@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@react-native-async-storage/async-storage@npm:2.0.0"
   dependencies:
     merge-options: "npm:^3.0.4"
   peerDependencies:
-    react-native: ^0.0.0-0 || >=0.60 <1.0
-  checksum: 10c0/6e399f72a76e55fc2f0898ce188616267ac857e7c8c002feb4a998fc5aa27026d39478681b0a443fbd0a5fb0646e4e25dfb0d98dea04051fdafd7040d1aea7dc
+    react-native: ^0.0.0-0 || >=0.65 <1.0
+  checksum: 10c0/e09c93aecd2e0509c8d58fa2435d2aaadc7025910102a8d7ed21b4b6ee74ec680f0b2d9eb1e5f0f5b524b48f4dc868cd12a71452686f88664c3deb35ea83f370
   languageName: node
   linkType: hard
 
@@ -3629,7 +3629,7 @@ __metadata:
     typescript: "npm:^5.2.2"
     uuid: "npm:^9.0.1"
   peerDependencies:
-    "@react-native-async-storage/async-storage": 1.x
+    "@react-native-async-storage/async-storage": 2.x
     "@segment/sovran-react-native": ^1.1.0
     react: "*"
     react-native: "*"
@@ -3667,7 +3667,7 @@ __metadata:
     typescript: "npm:^5.2.2"
     uuid: "npm:^9.0.1"
   peerDependencies:
-    "@react-native-async-storage/async-storage": 1.x
+    "@react-native-async-storage/async-storage": 2.x
     react: "*"
     react-native: "*"
   peerDependenciesMeta:
@@ -5650,7 +5650,7 @@ __metadata:
     "@babel/runtime": "npm:^7.23.2"
     "@changesets/cli": "npm:^2.26.2"
     "@commitlint/config-conventional": "npm:^18.4.2"
-    "@react-native-async-storage/async-storage": "npm:^1.19"
+    "@react-native-async-storage/async-storage": "npm:^2.0.0"
     "@react-native/eslint-config": "npm:^0.73.2"
     "@segment/analytics-rn-shared": "workspace:^"
     "@semantic-release/changelog": "npm:^6.0.3"
