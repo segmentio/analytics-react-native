@@ -499,7 +499,7 @@ PODS:
   - RNScreens (3.27.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
-  - segment-analytics-react-native (2.19.3):
+  - segment-analytics-react-native (2.19.4):
     - React-Core
     - sovran-react-native
   - SocketRocket (0.6.1)
@@ -752,7 +752,7 @@ SPEC CHECKSUMS:
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNGestureHandler: 32a01c29ecc9bb0b5bf7bc0a33547f61b4dc2741
   RNScreens: 3c2d122f5e08c192e254c510b212306da97d2581
-  segment-analytics-react-native: a803de6a9406f7b18928d352962c2f49663a0869
+  segment-analytics-react-native: 49ce29a68e86b38c084f1ce07b0c128273d169f9
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   sovran-react-native: 5f02bd2d111ffe226d00c7b0435290eae6f10934
   Yoga: eddf2bbe4a896454c248a8f23b4355891eb720a6
