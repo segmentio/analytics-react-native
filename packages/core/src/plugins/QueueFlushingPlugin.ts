@@ -76,6 +76,10 @@ export class QueueFlushingPlugin extends UtilityPlugin {
     // Wait for the queue to be restored
     try {
       await this.isRestored;
+
+      if (this.timeoutWarned === true) {
+        this.analytics?.logger.info('Flush triggered successfully.');
+      }
     } catch (e) {
       // If the queue is not restored before the timeout, we will notify but not block flushing events
       this.analytics?.reportInternalError(
