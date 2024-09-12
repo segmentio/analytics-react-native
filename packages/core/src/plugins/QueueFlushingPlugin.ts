@@ -4,7 +4,7 @@ import { defaultConfig } from '../constants';
 import { UtilityPlugin } from '../plugin';
 import { PluginType, SegmentEvent } from '../types';
 import { createPromise } from '../util';
-
+import { ErrorType, SegmentError } from '../errors';
 /**
  * This plugin manages a queue where all events get added to after timeline processing.
  * It takes a onFlush callback to trigger any action particular to your destination sending events.
@@ -20,6 +20,7 @@ export class QueueFlushingPlugin extends UtilityPlugin {
   private onFlush: (events: SegmentEvent[]) => Promise<void>;
   private isRestoredResolve: () => void;
   private isRestored: Promise<void>;
+  private timeoutWarned = false;
 
   /**
    * @param onFlush callback to execute when the queue is flushed (either by reaching the limit or manually) e.g. code to upload events to your destination
@@ -75,12 +76,32 @@ export class QueueFlushingPlugin extends UtilityPlugin {
     // Wait for the queue to be restored
     try {
       await this.isRestored;
+
+      if (this.timeoutWarned === true) {
+        this.analytics?.logger.info('Flush triggered successfully.');
+
+        this.timeoutWarned = false;
+      }
     } catch (e) {
       // If the queue is not restored before the timeout, we will notify but not block flushing events
-      console.info(
-        'Flush triggered but queue restoration and settings loading not complete. Flush will be retried.'
+      this.analytics?.reportInternalError(
+        new SegmentError(
+          ErrorType.InitializationError,
+          'Queue restoration timeout',
+          e
+        )
       );
+
+      if (this.timeoutWarned === false) {
+        this.analytics?.logger.warn(
+          'Flush triggered but queue restoration and settings loading not complete. Flush will be retried.',
+          e
+        );
+
+        this.timeoutWarned = true;
+      }
     }
+
     const events = (await this.queueStore?.getState(true))?.events ?? [];
     if (!this.isPendingUpload) {
       try {
