@@ -1328,14 +1328,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-async-storage/async-storage@npm:^1.0":
-  version: 1.19.8
-  resolution: "@react-native-async-storage/async-storage@npm:1.19.8"
+"@react-native-async-storage/async-storage@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@react-native-async-storage/async-storage@npm:2.0.0"
   dependencies:
     merge-options: "npm:^3.0.4"
   peerDependencies:
-    react-native: ^0.0.0-0 || >=0.60 <1.0
-  checksum: 10c0/baf040271e5ffe96ede124c8581140f816440f869e33f536d729708015e0859be49c67c22d6264ccbc8542551925b954af2fbb129d511fefc0d69d14470846fe
+    react-native: ^0.0.0-0 || >=0.65 <1.0
+  checksum: 10c0/e09c93aecd2e0509c8d58fa2435d2aaadc7025910102a8d7ed21b4b6ee74ec680f0b2d9eb1e5f0f5b524b48f4dc868cd12a71452686f88664c3deb35ea83f370
   languageName: node
   linkType: hard
 
@@ -2027,7 +2027,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "AnalyticsReactNativeExample@workspace:."
   dependencies:
-    "@react-native-async-storage/async-storage": "npm:^1.0"
+    "@react-native-async-storage/async-storage": "npm:^2.0.0"
     "@react-native-community/masked-view": "npm:^0.1.11"
     "@react-native/eslint-config": "npm:^0.72.2"
     "@react-native/metro-config": "npm:^0.72.11"

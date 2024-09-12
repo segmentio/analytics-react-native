@@ -28,7 +28,7 @@
     "@babel/runtime": "^7.23.2",
     "@changesets/cli": "^2.26.2",
     "@commitlint/config-conventional": "^18.4.2",
-    "@react-native-async-storage/async-storage": "^1.19",
+    "@react-native-async-storage/async-storage": "^2.0.0",
     "@react-native/eslint-config": "^0.73.2",
     "@segment/analytics-rn-shared": "workspace:^",
     "@semantic-release/changelog": "^6.0.3",
