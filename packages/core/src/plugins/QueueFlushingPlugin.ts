@@ -1,5 +1,5 @@
 import { createStore, Store } from '@segment/sovran-react-native';
-import { SegmentClient } from '../analytics';
+import type { SegmentClient } from '../analytics';
 import { defaultConfig } from '../constants';
 import { UtilityPlugin } from '../plugin';
 import { PluginType, SegmentEvent } from '../types';
