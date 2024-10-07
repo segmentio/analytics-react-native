@@ -217,8 +217,8 @@ export type Context = {
     categoryPreferences: Record<string, boolean>;
   };
   __eventOrigin?: {
-    type: string
-  }
+    type: string;
+  };
 };
 
 /**

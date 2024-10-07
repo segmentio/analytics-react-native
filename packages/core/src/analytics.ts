@@ -67,7 +67,7 @@ import {
 } from './errors';
 
 type OnPluginAddedCallback = (plugin: Plugin) => void;
-type EnrichmentClosure = (event: SegmentEvent) => SegmentEvent
+type EnrichmentClosure = (event: SegmentEvent) => SegmentEvent;
 
 export class SegmentClient {
   // the config parameters for the client - a merge of user provided and default options
@@ -445,7 +445,7 @@ export class SegmentClient {
   }
 
   async process(incomingEvent: SegmentEvent, enrichment?: EnrichmentClosure) {
-    var event = this.applyRawEventData(incomingEvent);
+    let event = this.applyRawEventData(incomingEvent);
     if (enrichment) {
       event = enrichment(event);
     }
@@ -561,7 +561,11 @@ export class SegmentClient {
     }
   }
 
-  async screen(name: string, options?: JsonMap, enrichment?: EnrichmentClosure) {
+  async screen(
+    name: string,
+    options?: JsonMap,
+    enrichment?: EnrichmentClosure
+  ) {
     const event = createScreenEvent({
       name,
       properties: options,
@@ -571,7 +575,11 @@ export class SegmentClient {
     this.logger.info('SCREEN event saved', event);
   }
 
-  async track(eventName: string, options?: JsonMap, enrichment?: EnrichmentClosure) {
+  async track(
+    eventName: string,
+    options?: JsonMap,
+    enrichment?: EnrichmentClosure
+  ) {
     const event = createTrackEvent({
       event: eventName,
       properties: options,
@@ -581,7 +589,11 @@ export class SegmentClient {
     this.logger.info('TRACK event saved', event);
   }
 
-  async identify(userId?: string, userTraits?: UserTraits, enrichment?: EnrichmentClosure) {
+  async identify(
+    userId?: string,
+    userTraits?: UserTraits,
+    enrichment?: EnrichmentClosure
+  ) {
     const event = createIdentifyEvent({
       userId: userId,
       userTraits: userTraits,
@@ -591,7 +603,11 @@ export class SegmentClient {
     this.logger.info('IDENTIFY event saved', event);
   }
 
-  async group(groupId: string, groupTraits?: GroupTraits, enrichment?: EnrichmentClosure) {
+  async group(
+    groupId: string,
+    groupTraits?: GroupTraits,
+    enrichment?: EnrichmentClosure
+  ) {
     const event = createGroupEvent({
       groupId,
       groupTraits,

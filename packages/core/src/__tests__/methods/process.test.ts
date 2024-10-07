@@ -121,14 +121,14 @@ describe('process', () => {
     const timeline = client.timeline;
     jest.spyOn(timeline, 'process');
 
-    await client.track('Some Event', { id: 1 }, event => {
+    await client.track('Some Event', { id: 1 }, (event) => {
       if (event.context == null) {
         event.context = {};
       }
       event.context.__eventOrigin = {
-        type: "signals"
+        type: 'signals',
       };
-      
+
       return event;
     });
 
@@ -138,11 +138,11 @@ describe('process', () => {
         id: 1,
       },
       type: EventType.TrackEvent,
-      context: { 
+      context: {
         __eventOrigin: {
-          type: "signals"
+          type: 'signals',
         },
-        ...store.context.get() 
+        ...store.context.get(),
       },
       userId: store.userInfo.get().userId,
       anonymousId: store.userInfo.get().anonymousId,

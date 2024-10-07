@@ -50,7 +50,8 @@ describe('internal #getSettings', () => {
     await client.fetchSettings();
 
     expect(fetch).toHaveBeenCalledWith(
-      `${settingsCDN}/${clientArgs.config.writeKey}/settings`, {
+      `${settingsCDN}/${clientArgs.config.writeKey}/settings`,
+      {
         headers: {
           'Cache-Control': 'no-cache',
         },
@@ -70,7 +71,8 @@ describe('internal #getSettings', () => {
     await client.fetchSettings();
 
     expect(fetch).toHaveBeenCalledWith(
-      `${settingsCDN}/${clientArgs.config.writeKey}/settings`, {
+      `${settingsCDN}/${clientArgs.config.writeKey}/settings`,
+      {
         headers: {
           'Cache-Control': 'no-cache',
         },
@@ -100,7 +102,8 @@ describe('internal #getSettings', () => {
     await anotherClient.fetchSettings();
 
     expect(fetch).toHaveBeenCalledWith(
-      `${settingsCDN}/${clientArgs.config.writeKey}/settings`, {
+      `${settingsCDN}/${clientArgs.config.writeKey}/settings`,
+      {
         headers: {
           'Cache-Control': 'no-cache',
         },
@@ -125,7 +128,8 @@ describe('internal #getSettings', () => {
     await anotherClient.fetchSettings();
 
     expect(fetch).toHaveBeenCalledWith(
-      `${settingsCDN}/${clientArgs.config.writeKey}/settings`, {
+      `${settingsCDN}/${clientArgs.config.writeKey}/settings`,
+      {
         headers: {
           'Cache-Control': 'no-cache',
         },

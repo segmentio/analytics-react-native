@@ -13,12 +13,12 @@ export {
   objectToString,
   unknownToString,
   deepCompare,
-  chunk
+  chunk,
 } from './util';
 export { SegmentClient } from './analytics';
-export { QueueFlushingPlugin } from './plugins/QueueFlushingPlugin'
-export { createTrackEvent } from './events'
-export { uploadEvents } from './api'
+export { QueueFlushingPlugin } from './plugins/QueueFlushingPlugin';
+export { createTrackEvent } from './events';
+export { uploadEvents } from './api';
 export { SegmentDestination } from './plugins/SegmentDestination';
 export {
   type CategoryConsentStatusProvider,

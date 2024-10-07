@@ -79,7 +79,7 @@ export interface Storage {
 
   readonly edgeFunctionSettings: Watchable<EdgeFunctionSettings | undefined> &
     Settable<EdgeFunctionSettings | undefined>;
-  
+
   readonly filters: Watchable<DestinationFilters | undefined> &
     Settable<DestinationFilters> &
     Dictionary<string, RoutingRule, DestinationFilters>;

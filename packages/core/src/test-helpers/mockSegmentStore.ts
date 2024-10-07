@@ -27,7 +27,7 @@ export type StoreData = {
   context?: DeepPartial<Context>;
   settings: SegmentAPIIntegrations;
   consentSettings?: SegmentAPIConsentSettings;
-  edgeFunctionSettings?: EdgeFunctionSettings
+  edgeFunctionSettings?: EdgeFunctionSettings;
   filters: DestinationFilters;
   userInfo: UserInfoState;
   deepLinkData: DeepLinkData;
@@ -84,7 +84,7 @@ export class MockSegmentStore implements Storage {
       SegmentAPIConsentSettings | undefined
     >(),
     edgeFunctionSettings: createCallbackManager<
-    EdgeFunctionSettings | undefined
+      EdgeFunctionSettings | undefined
     >(),
     filters: createCallbackManager<DestinationFilters>(),
     userInfo: createCallbackManager<UserInfoState>(),
@@ -159,12 +159,14 @@ export class MockSegmentStore implements Storage {
       this.callbacks.edgeFunctionSettings.register(callback),
     set: (value) => {
       this.data.edgeFunctionSettings =
-        value instanceof Function ? value(this.data.edgeFunctionSettings) : value;
+        value instanceof Function
+          ? value(this.data.edgeFunctionSettings)
+          : value;
       this.callbacks.edgeFunctionSettings.run(this.data.edgeFunctionSettings);
       return this.data.edgeFunctionSettings;
     },
   };
-  
+
   readonly filters: Watchable<DestinationFilters | undefined> &
     Settable<DestinationFilters> &
     Dictionary<string, RoutingRule, DestinationFilters> = {
