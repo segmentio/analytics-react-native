@@ -15,7 +15,12 @@ const PLUGIN_ORDER = [
 ];
 
 export class Timeline {
-  plugins: TimelinePlugins = {};
+  plugins: TimelinePlugins = {
+    before: [],
+    enrichment: [],
+    destination: [],
+    after: [],
+  };
 
   add(plugin: Plugin) {
     const { type } = plugin;

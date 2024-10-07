@@ -11,6 +11,7 @@ import type {
   Context,
   DeepPartial,
   DestinationFilters,
+  EdgeFunctionSettings,
   IntegrationSettings,
   RoutingRule,
   SegmentAPIConsentSettings,
@@ -26,6 +27,7 @@ export type StoreData = {
   context?: DeepPartial<Context>;
   settings: SegmentAPIIntegrations;
   consentSettings?: SegmentAPIConsentSettings;
+  edgeFunctionSettings?: EdgeFunctionSettings
   filters: DestinationFilters;
   userInfo: UserInfoState;
   deepLinkData: DeepLinkData;
@@ -80,6 +82,9 @@ export class MockSegmentStore implements Storage {
     settings: createCallbackManager<SegmentAPIIntegrations>(),
     consentSettings: createCallbackManager<
       SegmentAPIConsentSettings | undefined
+    >(),
+    edgeFunctionSettings: createCallbackManager<
+    EdgeFunctionSettings | undefined
     >(),
     filters: createCallbackManager<DestinationFilters>(),
     userInfo: createCallbackManager<UserInfoState>(),
@@ -147,6 +152,19 @@ export class MockSegmentStore implements Storage {
     },
   };
 
+  readonly edgeFunctionSettings: Watchable<EdgeFunctionSettings | undefined> &
+    Settable<EdgeFunctionSettings | undefined> = {
+    get: createMockStoreGetter(() => this.data.edgeFunctionSettings),
+    onChange: (callback: (value?: EdgeFunctionSettings) => void) =>
+      this.callbacks.edgeFunctionSettings.register(callback),
+    set: (value) => {
+      this.data.edgeFunctionSettings =
+        value instanceof Function ? value(this.data.edgeFunctionSettings) : value;
+      this.callbacks.edgeFunctionSettings.run(this.data.edgeFunctionSettings);
+      return this.data.edgeFunctionSettings;
+    },
+  };
+  
   readonly filters: Watchable<DestinationFilters | undefined> &
     Settable<DestinationFilters> &
     Dictionary<string, RoutingRule, DestinationFilters> = {

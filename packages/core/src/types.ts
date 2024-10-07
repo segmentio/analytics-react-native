@@ -216,6 +216,9 @@ export type Context = {
   consent?: {
     categoryPreferences: Record<string, boolean>;
   };
+  __eventOrigin?: {
+    type: string
+  }
 };
 
 /**
@@ -308,8 +311,14 @@ export interface DestinationFilters {
   [key: string]: RoutingRule;
 }
 
+export interface EdgeFunctionSettings {
+  downloadURL: string;
+  version: string;
+}
+
 export type SegmentAPISettings = {
   integrations: SegmentAPIIntegrations;
+  edgeFunction?: EdgeFunctionSettings;
   middlewareSettings?: {
     routingRules: RoutingRule[];
   };

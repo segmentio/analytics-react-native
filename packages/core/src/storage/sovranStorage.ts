@@ -15,6 +15,7 @@ import type {
   RoutingRule,
   DestinationFilters,
   SegmentAPIConsentSettings,
+  EdgeFunctionSettings,
 } from '..';
 import { getUUID } from '../uuid';
 import { createGetter } from './helpers';
@@ -35,6 +36,7 @@ type Data = {
   context: DeepPartial<Context>;
   settings: SegmentAPIIntegrations;
   consentSettings: SegmentAPIConsentSettings | undefined;
+  edgeFunctionSettings: EdgeFunctionSettings | undefined;
   userInfo: UserInfoState;
   filters: DestinationFilters;
   pendingEvents: SegmentEvent[];
@@ -44,6 +46,7 @@ const INITIAL_VALUES: Data = {
   context: {},
   settings: {},
   consentSettings: undefined,
+  edgeFunctionSettings: undefined,
   filters: {},
   userInfo: {
     anonymousId: getUUID(),
@@ -146,6 +149,9 @@ export class SovranStorage implements Storage {
   private consentSettingsStore: Store<{
     consentSettings: SegmentAPIConsentSettings | undefined;
   }>;
+  private edgeFunctionSettingsStore: Store<{
+    edgeFunctionSettings: EdgeFunctionSettings | undefined;
+  }>;
   private settingsStore: Store<{ settings: SegmentAPIIntegrations }>;
   private userInfoStore: Store<{ userInfo: UserInfoState }>;
   private deepLinkStore: Store<DeepLinkData> = deepLinkStore;
@@ -163,6 +169,9 @@ export class SovranStorage implements Storage {
 
   readonly consentSettings: Watchable<SegmentAPIConsentSettings | undefined> &
     Settable<SegmentAPIConsentSettings | undefined>;
+
+  readonly edgeFunctionSettings: Watchable<EdgeFunctionSettings | undefined> &
+    Settable<EdgeFunctionSettings | undefined>;
 
   readonly filters: Watchable<DestinationFilters | undefined> &
     Settable<DestinationFilters> &
@@ -320,6 +329,46 @@ export class SovranStorage implements Storage {
           }
         );
         return consentSettings;
+      },
+    };
+
+    // Edge function settings
+
+    this.edgeFunctionSettingsStore = createStore(
+      { edgeFunctionSettings: INITIAL_VALUES.edgeFunctionSettings },
+      {
+        persist: {
+          storeId: `${this.storeId}-edgeFunctionSettings`,
+          persistor: this.storePersistor,
+          saveDelay: this.storePersistorSaveDelay,
+          onInitialized: markAsReadyGenerator('hasRestoredSettings'),
+        },
+      }
+    );
+
+    this.edgeFunctionSettings = {
+      get: createStoreGetter(
+        this.edgeFunctionSettingsStore,
+        'edgeFunctionSettings'
+      ),
+      onChange: (
+        callback: (value?: EdgeFunctionSettings | undefined) => void
+      ) =>
+        this.edgeFunctionSettingsStore.subscribe((store) =>
+          callback(store.edgeFunctionSettings)
+        ),
+      set: async (value) => {
+        const { edgeFunctionSettings } =
+          await this.edgeFunctionSettingsStore.dispatch((state) => {
+            let newState: typeof state.edgeFunctionSettings;
+            if (value instanceof Function) {
+              newState = value(state.edgeFunctionSettings);
+            } else {
+              newState = Object.assign({}, state.edgeFunctionSettings, value);
+            }
+            return { edgeFunctionSettings: newState };
+          });
+        return edgeFunctionSettings;
       },
     };
 

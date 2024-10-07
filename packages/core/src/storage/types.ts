@@ -1,5 +1,5 @@
 import type { Unsubscribe, Persistor } from '@segment/sovran-react-native';
-import type { SegmentAPIConsentSettings } from '..';
+import type { SegmentAPIConsentSettings, EdgeFunctionSettings } from '..';
 import type {
   Context,
   DeepPartial,
@@ -77,6 +77,9 @@ export interface Storage {
   readonly consentSettings: Watchable<SegmentAPIConsentSettings | undefined> &
     Settable<SegmentAPIConsentSettings | undefined>;
 
+  readonly edgeFunctionSettings: Watchable<EdgeFunctionSettings | undefined> &
+    Settable<EdgeFunctionSettings | undefined>;
+  
   readonly filters: Watchable<DestinationFilters | undefined> &
     Settable<DestinationFilters> &
     Dictionary<string, RoutingRule, DestinationFilters>;
