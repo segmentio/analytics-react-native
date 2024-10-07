@@ -43,6 +43,6 @@ describe('methods #screen', () => {
     };
 
     expect(client.process).toHaveBeenCalledTimes(1);
-    expect(client.process).toHaveBeenCalledWith(expectedEvent);
+    expect(client.process).toHaveBeenCalledWith(expectedEvent, undefined);
   });
 });
