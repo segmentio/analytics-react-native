@@ -15,7 +15,12 @@ const PLUGIN_ORDER = [
 ];
 
 export class Timeline {
-  plugins: TimelinePlugins = {};
+  plugins: TimelinePlugins = {
+    before: [],
+    enrichment: [],
+    destination: [],
+    after: [],
+  };
 
   add(plugin: Plugin) {
     const { type } = plugin;
@@ -70,6 +75,8 @@ export class Timeline {
       if (key !== PluginType.destination) {
         if (result === undefined) {
           return;
+        } else if (key === PluginType.enrichment && pluginResult?.enrichment) {
+          result = pluginResult.enrichment(pluginResult);
         } else {
           result = pluginResult;
         }

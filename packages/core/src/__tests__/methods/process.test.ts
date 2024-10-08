@@ -112,4 +112,49 @@ describe('process', () => {
       expect.objectContaining(expectedEvent)
     );
   });
+
+  it('enrichment closure gets applied', async () => {
+    const client = new SegmentClient(clientArgs);
+    jest.spyOn(client.isReady, 'value', 'get').mockReturnValue(true);
+
+    // @ts-ignore
+    const timeline = client.timeline;
+    jest.spyOn(timeline, 'process');
+
+    await client.track('Some Event', { id: 1 }, (event) => {
+      if (event.context == null) {
+        event.context = {};
+      }
+      event.context.__eventOrigin = {
+        type: 'signals',
+      };
+      event.anonymousId = 'foo';
+
+      return event;
+    });
+
+    const expectedEvent = {
+      event: 'Some Event',
+      properties: {
+        id: 1,
+      },
+      type: EventType.TrackEvent,
+      context: {
+        __eventOrigin: {
+          type: 'signals',
+        },
+        ...store.context.get(),
+      },
+      userId: store.userInfo.get().userId,
+      anonymousId: 'foo',
+    } as SegmentEvent;
+
+    // @ts-ignore
+    const pendingEvents = client.store.pendingEvents.get();
+    expect(pendingEvents.length).toBe(0);
+
+    expect(timeline.process).toHaveBeenCalledWith(
+      expect.objectContaining(expectedEvent)
+    );
+  });
 });

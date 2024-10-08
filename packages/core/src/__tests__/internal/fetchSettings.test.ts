@@ -50,7 +50,12 @@ describe('internal #getSettings', () => {
     await client.fetchSettings();
 
     expect(fetch).toHaveBeenCalledWith(
-      `${settingsCDN}/${clientArgs.config.writeKey}/settings`
+      `${settingsCDN}/${clientArgs.config.writeKey}/settings`,
+      {
+        headers: {
+          'Cache-Control': 'no-cache',
+        },
+      }
     );
 
     expect(setSettingsSpy).toHaveBeenCalledWith(mockJSONResponse.integrations);
@@ -66,7 +71,12 @@ describe('internal #getSettings', () => {
     await client.fetchSettings();
 
     expect(fetch).toHaveBeenCalledWith(
-      `${settingsCDN}/${clientArgs.config.writeKey}/settings`
+      `${settingsCDN}/${clientArgs.config.writeKey}/settings`,
+      {
+        headers: {
+          'Cache-Control': 'no-cache',
+        },
+      }
     );
 
     expect(setSettingsSpy).toHaveBeenCalledWith(
@@ -92,7 +102,12 @@ describe('internal #getSettings', () => {
     await anotherClient.fetchSettings();
 
     expect(fetch).toHaveBeenCalledWith(
-      `${settingsCDN}/${clientArgs.config.writeKey}/settings`
+      `${settingsCDN}/${clientArgs.config.writeKey}/settings`,
+      {
+        headers: {
+          'Cache-Control': 'no-cache',
+        },
+      }
     );
     expect(setSettingsSpy).not.toHaveBeenCalled();
   });
@@ -113,7 +128,12 @@ describe('internal #getSettings', () => {
     await anotherClient.fetchSettings();
 
     expect(fetch).toHaveBeenCalledWith(
-      `${settingsCDN}/${clientArgs.config.writeKey}/settings`
+      `${settingsCDN}/${clientArgs.config.writeKey}/settings`,
+      {
+        headers: {
+          'Cache-Control': 'no-cache',
+        },
+      }
     );
     expect(setSettingsSpy).not.toHaveBeenCalled();
   });

@@ -35,7 +35,14 @@ import {
   Watchable,
 } from './storage';
 import { Timeline } from './timeline';
-import { DestinationFilters, EventType, SegmentAPISettings } from './types';
+import {
+  DestinationFilters,
+  EventType,
+  SegmentAPISettings,
+  SegmentAPIConsentSettings,
+  EdgeFunctionSettings,
+  EnrichmentClosure,
+} from './types';
 import {
   Config,
   Context,
@@ -59,7 +66,6 @@ import {
   SegmentError,
   translateHTTPError,
 } from './errors';
-import type { SegmentAPIConsentSettings } from '.';
 
 type OnPluginAddedCallback = (plugin: Plugin) => void;
 
@@ -124,6 +130,11 @@ export class SegmentClient {
    * Access or subscribe to integration settings
    */
   readonly consentSettings: Watchable<SegmentAPIConsentSettings | undefined>;
+
+  /**
+   * Access or subscribe to edge functions settings
+   */
+  readonly edgeFunctionSettings: Watchable<EdgeFunctionSettings | undefined>;
 
   /**
    * Access or subscribe to destination filter settings
@@ -210,6 +221,11 @@ export class SegmentClient {
     this.consentSettings = {
       get: this.store.consentSettings.get,
       onChange: this.store.consentSettings.onChange,
+    };
+
+    this.edgeFunctionSettings = {
+      get: this.store.edgeFunctionSettings.get,
+      onChange: this.store.edgeFunctionSettings.onChange,
     };
 
     this.filters = {
@@ -307,13 +323,18 @@ export class SegmentClient {
     const settingsEndpoint = `${settingsPrefix}/${this.config.writeKey}/settings`;
 
     try {
-      const res = await fetch(settingsEndpoint);
+      const res = await fetch(settingsEndpoint, {
+        headers: {
+          'Cache-Control': 'no-cache',
+        },
+      });
       checkResponseForErrors(res);
 
       const resJson: SegmentAPISettings =
         (await res.json()) as SegmentAPISettings;
       const integrations = resJson.integrations;
       const consentSettings = resJson.consentSettings;
+      const edgeFunctionSettings = resJson.edgeFunction;
       const filters = this.generateFiltersMap(
         resJson.middlewareSettings?.routingRules ?? []
       );
@@ -321,6 +342,7 @@ export class SegmentClient {
       await Promise.all([
         this.store.settings.set(integrations),
         this.store.consentSettings.set(consentSettings),
+        this.store.edgeFunctionSettings.set(edgeFunctionSettings),
         this.store.filters.set(filters),
       ]);
     } catch (e) {
@@ -422,8 +444,9 @@ export class SegmentClient {
     this.timeline.remove(plugin);
   }
 
-  async process(incomingEvent: SegmentEvent) {
+  async process(incomingEvent: SegmentEvent, enrichment?: EnrichmentClosure) {
     const event = this.applyRawEventData(incomingEvent);
+    event.enrichment = enrichment;
 
     if (this.isReady.value) {
       return this.startTimelineProcessing(event);
@@ -536,47 +559,63 @@ export class SegmentClient {
     }
   }
 
-  async screen(name: string, options?: JsonMap) {
+  async screen(
+    name: string,
+    options?: JsonMap,
+    enrichment?: EnrichmentClosure
+  ) {
     const event = createScreenEvent({
       name,
       properties: options,
     });
 
-    await this.process(event);
+    await this.process(event, enrichment);
     this.logger.info('SCREEN event saved', event);
   }
 
-  async track(eventName: string, options?: JsonMap) {
+  async track(
+    eventName: string,
+    options?: JsonMap,
+    enrichment?: EnrichmentClosure
+  ) {
     const event = createTrackEvent({
       event: eventName,
       properties: options,
     });
 
-    await this.process(event);
+    await this.process(event, enrichment);
     this.logger.info('TRACK event saved', event);
   }
 
-  async identify(userId?: string, userTraits?: UserTraits) {
+  async identify(
+    userId?: string,
+    userTraits?: UserTraits,
+    enrichment?: EnrichmentClosure
+  ) {
     const event = createIdentifyEvent({
       userId: userId,
       userTraits: userTraits,
     });
 
-    await this.process(event);
+    await this.process(event, enrichment);
     this.logger.info('IDENTIFY event saved', event);
   }
 
-  async group(groupId: string, groupTraits?: GroupTraits) {
+  async group(
+    groupId: string,
+    groupTraits?: GroupTraits,
+    enrichment?: EnrichmentClosure
+  ) {
     const event = createGroupEvent({
       groupId,
       groupTraits,
     });
 
-    await this.process(event);
+    await this.process(event, enrichment);
     this.logger.info('GROUP event saved', event);
   }
 
-  async alias(newUserId: string) {
+  async alias(newUserId: string, enrichment?: EnrichmentClosure) {
     // We don't use a concurrency safe version of get here as we don't want to lock the values yet,
     // we will update the values correctly when InjectUserInfo processes the change
     const { anonymousId, userId: previousUserId } = this.store.userInfo.get();
@@ -587,7 +626,7 @@ export class SegmentClient {
       newUserId,
     });
 
-    await this.process(event);
+    await this.process(event, enrichment);
     this.logger.info('ALIAS event saved', event);
   }
 
@@ -721,7 +760,11 @@ export class SegmentClient {
    * @param callback Function to call
    */
   onPluginLoaded(callback: OnPluginAddedCallback) {
-    this.onPluginAddedObservers.push(callback);
+    const i = this.onPluginAddedObservers.push(callback);
+
+    return () => {
+      this.onPluginAddedObservers.splice(i, 1);
+    };
   }
 
   private triggerOnPluginLoaded(plugin: Plugin) {

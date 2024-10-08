@@ -34,6 +34,7 @@ interface BaseEventType {
   context?: PartialContext;
   integrations?: SegmentAPIIntegrations;
   _metadata?: DestinationMetadata;
+  enrichment?: EnrichmentClosure;
 }
 
 export interface TrackEventType extends BaseEventType {
@@ -216,6 +217,10 @@ export type Context = {
   consent?: {
     categoryPreferences: Record<string, boolean>;
   };
+  __eventOrigin?: {
+    type: string;
+    version?: string;
+  };
 };
 
 /**
@@ -308,8 +313,14 @@ export interface DestinationFilters {
   [key: string]: RoutingRule;
 }
 
+export interface EdgeFunctionSettings {
+  downloadURL: string;
+  version: string;
+}
+
 export type SegmentAPISettings = {
   integrations: SegmentAPIIntegrations;
+  edgeFunction?: EdgeFunctionSettings;
   middlewareSettings?: {
     routingRules: RoutingRule[];
   };
@@ -363,3 +374,5 @@ export interface GetContextConfig {
 export type AnalyticsReactNativeModule = NativeModule & {
   getContextInfo: (config: GetContextConfig) => Promise<NativeContextInfo>;
 };
+
+export type EnrichmentClosure = (event: SegmentEvent) => SegmentEvent;

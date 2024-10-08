@@ -44,6 +44,6 @@ describe('methods #track', () => {
     };
 
     expect(client.process).toHaveBeenCalledTimes(1);
-    expect(client.process).toHaveBeenCalledWith(expectedEvent);
+    expect(client.process).toHaveBeenCalledWith(expectedEvent, undefined);
   });
 });
