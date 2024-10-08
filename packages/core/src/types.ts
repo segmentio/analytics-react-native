@@ -34,6 +34,7 @@ interface BaseEventType {
   context?: PartialContext;
   integrations?: SegmentAPIIntegrations;
   _metadata?: DestinationMetadata;
+  enrichment?: EnrichmentClosure;
 }
 
 export interface TrackEventType extends BaseEventType {
@@ -372,3 +373,5 @@ export interface GetContextConfig {
 export type AnalyticsReactNativeModule = NativeModule & {
   getContextInfo: (config: GetContextConfig) => Promise<NativeContextInfo>;
 };
+
+export type EnrichmentClosure = (event: SegmentEvent) => SegmentEvent;

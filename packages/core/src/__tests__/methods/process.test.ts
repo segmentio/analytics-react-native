@@ -128,6 +128,7 @@ describe('process', () => {
       event.context.__eventOrigin = {
         type: 'signals',
       };
+      event.anonymousId = 'foo';
 
       return event;
     });
@@ -145,7 +146,7 @@ describe('process', () => {
         ...store.context.get(),
       },
       userId: store.userInfo.get().userId,
-      anonymousId: store.userInfo.get().anonymousId,
+      anonymousId: 'foo',
     } as SegmentEvent;
 
     // @ts-ignore

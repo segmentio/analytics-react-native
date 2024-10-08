@@ -41,6 +41,7 @@ import {
   SegmentAPISettings,
   SegmentAPIConsentSettings,
   EdgeFunctionSettings,
+  EnrichmentClosure,
 } from './types';
 import {
   Config,
@@ -67,7 +68,6 @@ import {
 } from './errors';
 
 type OnPluginAddedCallback = (plugin: Plugin) => void;
-type EnrichmentClosure = (event: SegmentEvent) => SegmentEvent;
 
 export class SegmentClient {
   // the config parameters for the client - a merge of user provided and default options
@@ -446,9 +446,7 @@ export class SegmentClient {
 
   async process(incomingEvent: SegmentEvent, enrichment?: EnrichmentClosure) {
     let event = this.applyRawEventData(incomingEvent);
-    if (enrichment) {
-      event = enrichment(event);
-    }
+    event.enrichment = enrichment;
 
     if (this.isReady.value) {
       return this.startTimelineProcessing(event);
