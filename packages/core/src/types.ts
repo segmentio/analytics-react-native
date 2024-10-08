@@ -219,6 +219,7 @@ export type Context = {
   };
   __eventOrigin?: {
     type: string;
+    version?: string;
   };
 };
 
