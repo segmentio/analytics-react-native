@@ -445,7 +445,7 @@ export class SegmentClient {
   }
 
   async process(incomingEvent: SegmentEvent, enrichment?: EnrichmentClosure) {
-    let event = this.applyRawEventData(incomingEvent);
+    const event = this.applyRawEventData(incomingEvent);
     event.enrichment = enrichment;
 
     if (this.isReady.value) {
