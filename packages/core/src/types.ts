@@ -153,12 +153,12 @@ export type Config = {
 };
 
 export type ClientMethods = {
-  screen: (name: string, properties?: JsonMap) => Promise<void>;
-  track: (event: string, properties?: JsonMap) => Promise<void>;
-  identify: (userId?: string, userTraits?: UserTraits) => Promise<void>;
+  screen: (name: string, properties?: JsonMap, enrichment?: EnrichmentClosure) => Promise<void>;
+  track: (event: string, properties?: JsonMap, enrichment?: EnrichmentClosure) => Promise<void>;
+  identify: (userId?: string, userTraits?: UserTraits, enrichment?: EnrichmentClosure) => Promise<void>;
   flush: () => Promise<void>;
-  group: (groupId: string, groupTraits?: GroupTraits) => Promise<void>;
-  alias: (newUserId: string) => Promise<void>;
+  group: (groupId: string, groupTraits?: GroupTraits, enrichment?: EnrichmentClosure) => Promise<void>;
+  alias: (newUserId: string, enrichment?: EnrichmentClosure) => Promise<void>;
   reset: (resetAnonymousId?: boolean) => Promise<void>;
 };
 
