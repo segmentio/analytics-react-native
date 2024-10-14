@@ -167,7 +167,7 @@ export class SegmentClient {
         ...this.getPlugins(PluginType.utility),
         ...this.getPlugins(PluginType.destination),
         ...this.getPlugins(PluginType.after),
-      ] ?? []
+      ]
     );
   }
 
