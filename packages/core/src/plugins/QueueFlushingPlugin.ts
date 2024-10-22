@@ -84,15 +84,15 @@ export class QueueFlushingPlugin extends UtilityPlugin {
       }
     } catch (e) {
       // If the queue is not restored before the timeout, we will notify but not block flushing events
-      this.analytics?.reportInternalError(
-        new SegmentError(
-          ErrorType.InitializationError,
-          'Queue restoration timeout',
-          e
-        )
-      );
-
       if (this.timeoutWarned === false) {
+        this.analytics?.reportInternalError(
+          new SegmentError(
+            ErrorType.InitializationError,
+            'Queue restoration timeout',
+            e
+          )
+        );
+
         this.analytics?.logger.warn(
           'Flush triggered but queue restoration and settings loading not complete. Flush will be retried.',
           e
