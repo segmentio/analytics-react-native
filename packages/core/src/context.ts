@@ -83,7 +83,7 @@ export const getContext = async (
     },
     device,
     library: {
-      name: libraryInfo.name,
+      name: 'analytics-react-native',
       version: libraryInfo.version,
     },
     locale,

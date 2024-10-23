@@ -48,7 +48,7 @@ describe('#getContext', () => {
       type: 'phone',
     },
     library: {
-      name: packageJson.name,
+      name: 'analytics-react-native',
       version: packageJson.version,
     },
     locale: 'en_US',
