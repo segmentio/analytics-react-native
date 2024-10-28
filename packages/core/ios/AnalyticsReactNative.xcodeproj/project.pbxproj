@@ -7,11 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-
-
-		F4FF95D7245B92E800C19C63 /*  AnalyticsReactNative.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /*  AnalyticsReactNative.swift */; };
-
-		5E555C0D2413F4C50049A1A2 /* AnalyticsReactNative.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* AnalyticsReactNative.mm */; };
+		F4FF95D7245B92E800C19C63 /* AnalyticsReactNative.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /* AnalyticsReactNative.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,12 +24,10 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libAnalyticsReactNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libAnalyticsReactNative.a; sourceTree = BUILT_PRODUCTS_DIR; };
-
-
 		B3E7B5891CC2AC0600A0062D /* AnalyticsReactNative.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnalyticsReactNative.m; sourceTree = "<group>"; };
 		F4FF95D5245B92E700C19C63 /* AnalyticsReactNative-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AnalyticsReactNative-Bridging-Header.h"; sourceTree = "<group>"; };
 		F4FF95D6245B92E800C19C63 /* AnalyticsReactNative.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsReactNative.swift; sourceTree = "<group>"; };
-
+		F615F88C2CCF5F4C007645FE /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,12 +52,10 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-
-
+				F615F88C2CCF5F4C007645FE /* PrivacyInfo.xcprivacy */,
 				F4FF95D6245B92E800C19C63 /* AnalyticsReactNative.swift */,
 				B3E7B5891CC2AC0600A0062D /* AnalyticsReactNative.m */,
 				F4FF95D5245B92E700C19C63 /* AnalyticsReactNative-Bridging-Header.h */,
-
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -125,11 +117,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-
-
 				F4FF95D7245B92E800C19C63 /* AnalyticsReactNative.swift in Sources */,
-				B3E7B58A1CC2AC0600A0062D /* AnalyticsReactNative.m in Sources */,
-
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,11 +230,9 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = AnalyticsReactNative;
 				SKIP_INSTALL = YES;
-
 				SWIFT_OBJC_BRIDGING_HEADER = "AnalyticsReactNative-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-
 			};
 			name = Debug;
 		};
@@ -263,10 +249,8 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = AnalyticsReactNative;
 				SKIP_INSTALL = YES;
-
 				SWIFT_OBJC_BRIDGING_HEADER = "AnalyticsReactNative-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
-
 			};
 			name = Release;
 		};
