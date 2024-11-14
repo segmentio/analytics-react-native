@@ -18,42 +18,47 @@ class AnalyticsReactNativePluginAdvertisingIdModule(reactContext: ReactApplicati
       return "AnalyticsReactNativePluginAdvertisingId"
   }
 
-  @ReactMethod
+ @ReactMethod
   fun getAdvertisingId(promise: Promise) {
-    if (currentActivity?.application == null) {
-      promise.resolve(null)
-      return
-    } 
-
-    val reactContext = (currentActivity?.application as ReactApplication)
-    ?.reactNativeHost
-    ?.reactInstanceManager
-    ?.currentReactContext
-
-    if (reactContext == null) {
-      promise.resolve(null)
-      return
-    }
-    
-     try {
-      val advertisingInfo = AdvertisingIdClient.getAdvertisingIdInfo(reactContext)
-      val isLimitAdTrackingEnabled = advertisingInfo.isLimitAdTrackingEnabled
-      
-      if (isLimitAdTrackingEnabled) {
-       promise.resolve(null)
-      }
-
-     val id = advertisingInfo.id
-     val advertisingId = id.toString()
-     promise.resolve(advertisingId)
-     }
-     catch (e: GooglePlayServicesNotAvailableException) {
-      Log.d(name, e.toString())
-      promise.resolve(null)
-     }
-     catch ( e: IOException) {
-      Log.d(name, e.toString())
-      promise.resolve(null) 
-     }    
+    getAdvertisingIdInfo(promise) { advertisingInfo ->
+            val id = advertisingInfo.id
+            promise.resolve(id.toString())
+        }
  }
+
+ @ReactMethod
+  fun getIsLimitAdTrackingEnableStatus(promise: Promise) {
+    getAdvertisingIdInfo(promise) { advertisingInfo ->
+            val isLimitAdTrackingEnabled = advertisingInfo.isLimitAdTrackingEnabled
+            promise.resolve(isLimitAdTrackingEnabled)
+        }
+ }
+
+ private fun getAdvertisingIdInfo(promise: Promise, callback: (AdvertisingIdClient.Info) -> Unit) {
+        if (currentActivity?.application == null) {
+            promise.resolve(null)
+            return
+        }
+
+        val reactContext = (currentActivity?.application as ReactApplication)
+            ?.reactNativeHost
+            ?.reactInstanceManager
+            ?.currentReactContext
+
+        if (reactContext == null) {
+            promise.resolve(null)
+            return
+        }
+
+        try {
+            val advertisingInfo = AdvertisingIdClient.getAdvertisingIdInfo(reactContext)
+            callback(advertisingInfo)
+        } catch (e: GooglePlayServicesNotAvailableException) {
+            Log.d(name, e.toString())
+            promise.resolve(null)
+        } catch (e: IOException) {
+            Log.d(name, e.toString())
+            promise.resolve(null)
+        }
+    }
 }
