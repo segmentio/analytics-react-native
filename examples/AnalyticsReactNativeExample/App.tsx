@@ -32,7 +32,7 @@ import {useState} from 'react';
 // import { BrazePlugin } from '@segment/analytics-react-native-plugin-braze';
 
 const segmentClient = createClient({
-  writeKey: 'KDzygiYHVtaOeNDmSTzcGDH2KMkJCPTM',
+  writeKey: '<WRITE_KEY>',
   trackAppLifecycleEvents: true,
   collectDeviceId: true,
   debug: true,
