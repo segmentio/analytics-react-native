@@ -20,7 +20,7 @@ import Home from './Home';
 import SecondPage from './SecondPage';
 import Modal from './Modal';
 import {useState} from 'react';
-import {Logger} from './plugins/Logger';
+//import {Logger} from './plugins/Logger';
 
 // import {AmplitudeSessionPlugin} from '@segment/analytics-react-native-plugin-amplitude-session';
 // import { ConsentManager } from './plugins/ConsentManager';
@@ -32,7 +32,7 @@ import {Logger} from './plugins/Logger';
 // import { BrazePlugin } from '@segment/analytics-react-native-plugin-braze';
 
 const segmentClient = createClient({
-  writeKey: '<WRITE_KEY>',
+  writeKey: 'KDzygiYHVtaOeNDmSTzcGDH2KMkJCPTM',
   trackAppLifecycleEvents: true,
   collectDeviceId: true,
   debug: true,
@@ -45,9 +45,9 @@ const segmentClient = createClient({
   ],
 });
 
-const LoggerPlugin = new Logger();
+// const LoggerPlugin = new Logger();
 
-segmentClient.add({plugin: LoggerPlugin});
+// segmentClient.add({plugin: LoggerPlugin});
 
 // To see an example Consent Manager uncomment the following
 // const ConsentManagerPlugin = new ConsentManager();
