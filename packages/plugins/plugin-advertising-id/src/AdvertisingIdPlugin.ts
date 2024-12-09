@@ -6,6 +6,8 @@ import {
   ErrorType,
   SegmentError,
   SegmentEvent,
+  EventType,
+  TrackEventType,
 } from '@segment/analytics-react-native';
 
 import { Platform, NativeModule } from 'react-native';
@@ -18,46 +20,89 @@ type AdvertisingIDNativeModule = NativeModule & {
 export class AdvertisingIdPlugin extends Plugin {
   type = PluginType.enrichment;
   queuedEvents: SegmentEvent[] = [];
-  advertisingId?: string = undefined;
-  isLimitAdTracking?: boolean = false;
+  advertisingId: string | undefined | null = undefined;
+  isLimitAdTracking?: boolean = undefined;
 
   configure(analytics: SegmentClient): void {
+    console.log('configure');
     if (Platform.OS !== 'android') {
       return;
     }
 
     this.analytics = analytics;
-    // Create an array of promises for fetching advertising ID and limit ad tracking status
-    const advertisingIdPromise = this.fetchAdvertisingId();
-    const limitAdTrackingStatusPromise = this.fetchLimitAdTrackingStatus();
-    // Wait for both promises to resolve
-    Promise.all([advertisingIdPromise, limitAdTrackingStatusPromise])
-      .then(([id, status]) => {
-        //handle advertisingID
-        if (id === null) {
-          // Need to check this condition
-          void analytics.track(
-            'LimitAdTrackingEnabled (Google Play Services) is enabled'
-          );
-        } else {
-          this.advertisingId = id;
-        }
-        //handle isLimitAdTrackingEnableStatus
-        this.isLimitAdTracking = status;
-
-        // Call setContext after both values are available
-        void this.setContext(this.advertisingId, status);
+    this.fetchAdvertisingInfo()
+      .then(() => {
+        // Additional logic after the advertising info is fetched
+        this.sendQueued();
       })
-      .catch((error) => this.handleError(error));
+      .catch((error) => {
+        this.handleError(error);
+      });
   }
 
-  execute(event: SegmentEvent) {
+  async execute(event: SegmentEvent) {
+    // If advertisingId is not set, queue the event
     if (this.advertisingId === undefined) {
       this.queuedEvents.push(event);
     } else {
+      // Send event if advertisingId is available
+      const currentLimitAdTrackingStatus =
+        await this.fetchLimitAdTrackingStatus();
+      if (this.isLimitAdTracking === undefined) {
+        this.isLimitAdTracking = currentLimitAdTrackingStatus;
+      } else if (this.isLimitAdTracking !== currentLimitAdTrackingStatus) {
+        //Fetch the fresh advertising id
+        await this.fetchAdvertisingInfo()
+          .then(() => {
+            console.log(
+              'Advertising info fetched successfully when adTrackingStatus Changed.'
+            );
+            // Additional logic after the advertising info is fetched
+          })
+          .catch((error) => {
+            this.handleError(error);
+          });
+        this.queuedEvents.push(event);
+        this.isLimitAdTracking = currentLimitAdTrackingStatus;
+        this.sendQueued();
+        return;
+      }
       return event;
     }
+
     return;
+  }
+
+  isTrackEvent(event: SegmentEvent): event is TrackEventType {
+    return event.type === EventType.TrackEvent;
+  }
+
+  private async fetchAdvertisingInfo(): Promise<void> {
+    const advertisingIdPromise = this.fetchAdvertisingId();
+    const limitAdTrackingStatusPromise = this.fetchLimitAdTrackingStatus();
+
+    try {
+      // Await both promises to resolve simultaneously
+      const [id, status] = await Promise.all([
+        advertisingIdPromise,
+        limitAdTrackingStatusPromise,
+      ]);
+
+      // Handle advertisingID
+      if (id === null) {
+        void this.analytics?.track(
+          'LimitAdTrackingEnabled (Google Play Services) is enabled'
+        );
+        this.advertisingId = undefined; // Set to undefined if id is null
+      } else {
+        this.advertisingId = id;
+      }
+
+      // Set context after both values are available
+      await this.setContext(id as string, status);
+    } catch (error) {
+      this.handleError(error);
+    }
   }
 
   async setContext(
@@ -71,7 +116,6 @@ export class AdvertisingIdPlugin extends Plugin {
           adTrackingEnabled: !isLimitAdTrackingEnableStatus,
         },
       });
-      this.sendQueued();
     } catch (error) {
       const message = 'AdvertisingID failed to set context';
       this.analytics?.reportInternalError(
@@ -82,6 +126,7 @@ export class AdvertisingIdPlugin extends Plugin {
   }
 
   sendQueued() {
+    console.log('Sending queued events:', this.queuedEvents);
     this.queuedEvents.forEach((event) => {
       void this.analytics?.process(event);
     });
