@@ -55,7 +55,7 @@ const Home = ({navigation}: {navigation: any}) => {
         name: 'Alias',
         testID: 'BUTTON_ALIAS',
         onPress: () => {
-          void alias('new-id');
+         void alias('new-id');
         },
       },
     ];
@@ -75,7 +75,7 @@ const Home = ({navigation}: {navigation: any}) => {
       name: 'Reset',
       testID: 'BUTTON_RESET',
       onPress: () => {
-        void reset();
+       void reset();
       },
     },
   ];
