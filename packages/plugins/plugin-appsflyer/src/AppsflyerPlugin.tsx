@@ -134,11 +134,11 @@ export class AppsflyerPlugin extends DestinationPlugin {
       }
       if (Boolean(is_first_launch) && JSON.parse(is_first_launch) === true) {
         if (af_status === 'Non-organic') {
-          void this.analytics?.track('Install Attributed', properties);
+          this.analytics?.track('Install Attributed', properties).then(() => this.analytics?.logger.info("Sent Install Attributed event to Segment"));
         } else {
-          void this.analytics?.track('Organic Install', {
+          this.analytics?.track('Organic Install', {
             provider: 'AppsFlyer',
-          });
+          }).then(() => this.analytics?.logger.info("Sent Organic Install event to Segment"));
         }
       }
     });
