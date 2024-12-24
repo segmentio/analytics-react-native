@@ -1,3 +1,10 @@
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ *
+ * @format
+ */
+
 import 'react-native-gesture-handler';
 import * as React from 'react';
 // import RNBootSplash from 'react-native-bootsplash';
@@ -26,8 +33,8 @@ import {useState} from 'react';
 // import { ConsentManager } from './plugins/ConsentManager';
 // import { FirebasePlugin } from '@segment/analytics-react-native-plugin-firebase';
 // import { FacebookAppEventsPlugin } from '@segment/analytics-react-native-plugin-facebook-app-events';
-// import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
-// import { AdvertisingIdPlugin } from '@segment/analytics-react-native-plugin-advertising-id';
+//  import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
+//  import { AdvertisingIdPlugin } from '@segment/analytics-react-native-plugin-advertising-id';
 // import { ClevertapPlugin } from '@segment/analytics-react-native-plugin-clevertap';
 // import { BrazePlugin } from '@segment/analytics-react-native-plugin-braze';
 
@@ -162,3 +169,5 @@ const App = () => {
 };
 
 export default App;
+
+
