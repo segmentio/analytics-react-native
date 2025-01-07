@@ -1,10 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import 'react-native-gesture-handler';
 import * as React from 'react';
 // import RNBootSplash from 'react-native-bootsplash';
@@ -27,14 +20,14 @@ import Home from './Home';
 import SecondPage from './SecondPage';
 import Modal from './Modal';
 import {useState} from 'react';
-//import {Logger} from './plugins/Logger';
+import {Logger} from './plugins/Logger';
 
 // import {AmplitudeSessionPlugin} from '@segment/analytics-react-native-plugin-amplitude-session';
 // import { ConsentManager } from './plugins/ConsentManager';
 // import { FirebasePlugin } from '@segment/analytics-react-native-plugin-firebase';
 // import { FacebookAppEventsPlugin } from '@segment/analytics-react-native-plugin-facebook-app-events';
-//  import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
-//  import { AdvertisingIdPlugin } from '@segment/analytics-react-native-plugin-advertising-id';
+// import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
+// import { AdvertisingIdPlugin } from '@segment/analytics-react-native-plugin-advertising-id';
 // import { ClevertapPlugin } from '@segment/analytics-react-native-plugin-clevertap';
 // import { BrazePlugin } from '@segment/analytics-react-native-plugin-braze';
 
@@ -52,9 +45,9 @@ const segmentClient = createClient({
   ],
 });
 
-// const LoggerPlugin = new Logger();
+const LoggerPlugin = new Logger();
 
-// segmentClient.add({plugin: LoggerPlugin});
+segmentClient.add({plugin: LoggerPlugin});
 
 // To see an example Consent Manager uncomment the following
 // const ConsentManagerPlugin = new ConsentManager();
@@ -136,6 +129,7 @@ const App = () => {
           const newRouteName = getActiveRouteName(state);
 
           if (routeName !== newRouteName) {
+            // eslint-disable-next-line no-void
             void segmentClient.screen(newRouteName);
 
             setRouteName(newRouteName);
@@ -169,5 +163,3 @@ const App = () => {
 };
 
 export default App;
-
-
