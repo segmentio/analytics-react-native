@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "start": "react-native start",
     "android:deeplink": "adb shell am start -a android.intent.action.VIEW -d \"segmentreactnative://hello\" com.example.segmentanalyticsreactnative",
+    "ios:deeplink": "xcrun simctl openurl booted segmentreactnative://hello",
     "android:emulator": "./android/device_setup.sh",
     "clean": "yarn clean:ios && rimraf node_modules",
     "clean:ios": "rimraf ios/build ios/Pods",
