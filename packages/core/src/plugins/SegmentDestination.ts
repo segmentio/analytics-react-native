@@ -6,7 +6,7 @@ import {
   SegmentEvent,
   UpdateType,
 } from '../types';
-import { chunk, createPromise } from '../util';
+import { chunk, createPromise, getURL } from '../util';
 import { uploadEvents } from '../api';
 import type { SegmentClient } from '../analytics';
 import { DestinationMetadataEnrichment } from './DestinationMetadataEnrichment';
@@ -90,7 +90,7 @@ export class SegmentDestination extends DestinationPlugin {
 
   private getEndpoint(): string {
     const config = this.analytics?.getConfig();
-    return config?.proxy ?? this.apiHost ?? defaultApiHost;
+    return getURL(config?.proxy ?? this.apiHost ?? defaultApiHost, '/b');
   }
 
   configure(analytics: SegmentClient): void {

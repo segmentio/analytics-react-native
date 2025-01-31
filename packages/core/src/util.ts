@@ -257,3 +257,8 @@ export const createPromise = <T>(
     resolve: resolver!,
   };
 };
+
+export function getURL(host: string, path: string) {
+  const s = `https://${host}${path}`;
+  return s;
+}
