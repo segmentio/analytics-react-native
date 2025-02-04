@@ -2,6 +2,7 @@ import { SegmentClient } from '../../analytics';
 import { settingsCDN } from '../../constants';
 import { SEGMENT_DESTINATION_KEY } from '../../plugins/SegmentDestination';
 import { getMockLogger, MockSegmentStore } from '../../test-helpers';
+import { getURL } from '../../util';
 
 describe('internal #getSettings', () => {
   const defaultIntegrationSettings = {
@@ -50,7 +51,7 @@ describe('internal #getSettings', () => {
     await client.fetchSettings();
 
     expect(fetch).toHaveBeenCalledWith(
-      `${settingsCDN}/${clientArgs.config.writeKey}/settings`,
+      getURL(settingsCDN, `/projects/${clientArgs.config.writeKey}/settings`),
       {
         headers: {
           'Cache-Control': 'no-cache',
@@ -71,7 +72,8 @@ describe('internal #getSettings', () => {
     await client.fetchSettings();
 
     expect(fetch).toHaveBeenCalledWith(
-      `${settingsCDN}/${clientArgs.config.writeKey}/settings`,
+      getURL(settingsCDN, `/projects/${clientArgs.config.writeKey}/settings`),
+      //`${settingsCDN}/projects/${clientArgs.config.writeKey}/settings`,
       {
         headers: {
           'Cache-Control': 'no-cache',
@@ -102,7 +104,8 @@ describe('internal #getSettings', () => {
     await anotherClient.fetchSettings();
 
     expect(fetch).toHaveBeenCalledWith(
-      `${settingsCDN}/${clientArgs.config.writeKey}/settings`,
+      getURL(settingsCDN,`/projects/${clientArgs.config.writeKey}/settings`),
+      //`${settingsCDN}//${clientArgs.config.writeKey}/settings`,
       {
         headers: {
           'Cache-Control': 'no-cache',
@@ -128,7 +131,8 @@ describe('internal #getSettings', () => {
     await anotherClient.fetchSettings();
 
     expect(fetch).toHaveBeenCalledWith(
-      `${settingsCDN}/${clientArgs.config.writeKey}/settings`,
+      getURL(settingsCDN, `/projects/${clientArgs.config.writeKey}/settings`),
+      //`${settingsCDN}/projects/${clientArgs.config.writeKey}/settings`,
       {
         headers: {
           'Cache-Control': 'no-cache',

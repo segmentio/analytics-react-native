@@ -116,7 +116,8 @@ export class SegmentDestination extends DestinationPlugin {
       segmentSettings?.apiHost !== undefined &&
       segmentSettings?.apiHost !== null
     ) {
-      this.apiHost = `https://${segmentSettings.apiHost}/b`;
+      //assign the api host from segment settings (domain/v1)
+      this.apiHost = segmentSettings.apiHost;
     }
     this.settingsResolve();
   }

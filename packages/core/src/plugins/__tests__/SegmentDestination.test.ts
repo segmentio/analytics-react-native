@@ -18,6 +18,7 @@ import {
   SEGMENT_DESTINATION_KEY,
   SegmentDestination,
 } from '../SegmentDestination';
+import { getURL } from '../../util';
 
 jest.mock('uuid');
 
@@ -319,14 +320,14 @@ describe('SegmentDestination', () => {
 
       expect(sendEventsSpy).toHaveBeenCalledTimes(2);
       expect(sendEventsSpy).toHaveBeenCalledWith({
-        url: defaultApiHost,
+        url: getURL(defaultApiHost, '/b'),
         writeKey: '123-456',
         events: events.slice(0, 2).map((e) => ({
           ...e,
         })),
       });
       expect(sendEventsSpy).toHaveBeenCalledWith({
-        url: defaultApiHost,
+        url: getURL(defaultApiHost, '/b'),
         writeKey: '123-456',
         events: events.slice(2, 4).map((e) => ({
           ...e,
@@ -353,7 +354,7 @@ describe('SegmentDestination', () => {
 
       expect(sendEventsSpy).toHaveBeenCalledTimes(1);
       expect(sendEventsSpy).toHaveBeenCalledWith({
-        url: `https://${customEndpoint}/b`,
+        url: getURL(customEndpoint, '/b'),
         writeKey: '123-456',
         events: events.slice(0, 2).map((e) => ({
           ...e,
@@ -384,7 +385,7 @@ describe('SegmentDestination', () => {
 
       expect(sendEventsSpy).toHaveBeenCalledTimes(1);
       expect(sendEventsSpy).toHaveBeenCalledWith({
-        url: customEndpoint,
+        url: getURL(customEndpoint, '/b'),
         writeKey: '123-456',
         events: events.slice(0, 2).map((e) => ({
           ...e,

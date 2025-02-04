@@ -259,6 +259,12 @@ export const createPromise = <T>(
 };
 
 export function getURL(host: string, path: string) {
-  const s = `https://${host}${path}`;
+  if (path === '') {
+    path = '/'; // Ensure a trailing slash if path is empty
+  }
+  if (!host.startsWith('https://')) {
+    host = 'https://' + host;
+  }
+  const s = `${host}${path}`;
   return s;
 }

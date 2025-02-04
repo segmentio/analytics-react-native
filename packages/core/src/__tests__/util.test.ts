@@ -1,5 +1,5 @@
 import { UserTraits } from '../types';
-import { chunk, allSettled, deepCompare } from '../util';
+import { chunk, allSettled, deepCompare, getURL } from '../util';
 
 describe('#chunk', () => {
   it('handles empty array', () => {
@@ -157,5 +157,44 @@ describe('deepCompare', () => {
       },
     };
     expect(deepCompare(a, b)).toBe(false);
+  });
+});
+
+describe('getURL function', () => {
+  // Positive Test Cases
+  it('should return correct URL for valid host and path', () => {
+    expect(getURL('www.example.com', '/home')).toBe(
+      'https://www.example.com/home'
+    );
+    expect(getURL('blog.example.com', '/posts')).toBe(
+      'https://blog.example.com/posts'
+    );
+  });
+
+  it('should return the root URL when the path is empty', () => {
+    expect(getURL('www.example.com', '')).toBe('https://www.example.com/');
+  });
+
+  it('should handle query parameters correctly in the URL path', () => {
+    expect(getURL('www.example.com', '/search?q=test')).toBe(
+      'https://www.example.com/search?q=test'
+    );
+  });
+
+  it('should handle special characters in the URL path', () => {
+    expect(getURL('www.example.com', '/about#section1')).toBe(
+      'https://www.example.com/about#section1'
+    );
+  });
+
+  // Negative Test Cases
+  it('should handle empty host gracefully', () => {
+    expect(getURL('', '/home')).toBe('https:///home');
+  });
+
+  it('should handle invalid characters in the host', () => {
+    expect(getURL('invalid host.com', '/path')).toBe(
+      'https://invalid host.com/path'
+    );
   });
 });
