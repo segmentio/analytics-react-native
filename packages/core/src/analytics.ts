@@ -323,9 +323,15 @@ export class SegmentClient {
 
   async fetchSettings() {
     const settingsPrefix: string = this.config.cdnProxy ?? settingsCDN;
-    const settingsEndpoint = `/projects/${this.config.writeKey}/settings`;
+    const hasProxy = !!this.config?.cdnProxy;
+    const useSegmentEndpoints = !!this.config?.useSegmentEndpoints;
+    let settingsEndpoint: string = '';
+    if(hasProxy && useSegmentEndpoints){
+      settingsEndpoint = `/projects/${this.config.writeKey}/settings`;
+    }else {
+      settingsEndpoint = `/${this.config.writeKey}/settings`;
+    }
     const settingsURL = getURL(settingsPrefix, settingsEndpoint);
-
     try {
       const res = await fetch(settingsURL, {
         headers: {

@@ -29,10 +29,10 @@ import {useState} from 'react';
 // import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
 // import { AdvertisingIdPlugin } from '@segment/analytics-react-native-plugin-advertising-id';
 // import { ClevertapPlugin } from '@segment/analytics-react-native-plugin-clevertap';
-// import { BrazePlugin } from '@segment/analytics-react-native-plugin-braze';
+ import { BrazePlugin } from '@segment/analytics-react-native-plugin-braze';
 
 const segmentClient = createClient({
-  writeKey: '<WRITE_KEY>',
+  writeKey: 'KDzygiYHVtaOeNDmSTzcGDH2KMkJCPTM',
   trackAppLifecycleEvents: true,
   collectDeviceId: true,
   debug: true,
@@ -63,7 +63,7 @@ const segmentClient = createClient({
 
 // segmentClient.add({plugin: new AmplitudeSessionPlugin()});
 
-// segmentClient.add({ plugin: new BrazePlugin() });
+ segmentClient.add({ plugin: new BrazePlugin() });
 
 // segmentClient.add({ plugin: new ClevertapPlugin() });
 

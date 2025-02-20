@@ -149,6 +149,7 @@ export type Config = {
   storePersistorSaveDelay?: number;
   proxy?: string;
   cdnProxy?: string;
+  useSegmentEndpoints?: boolean; // Use if you want to use Segment endpoints
   errorHandler?: (error: SegmentError) => void;
 };
 

@@ -362,15 +362,15 @@ describe('SegmentDestination', () => {
       });
     });
 
-    it('lets user override apiHost with proxy', async () => {
+    it.each([true, false])('lets user override apiHost with proxy when useSegmentEndpoints is %s', async (useSegmentEndpoints) => {
       const customEndpoint = 'https://customproxy.com/batchEvents';
       const events = [
         { messageId: 'message-1' },
         { messageId: 'message-2' },
       ] as SegmentEvent[];
-
+    
       const { plugin, sendEventsSpy } = createTestWith({
-        events: events,
+        events,
         settings: {
           apiKey: '',
           apiHost: 'events.eu1.segmentapis.com',
@@ -378,19 +378,23 @@ describe('SegmentDestination', () => {
         config: {
           ...clientArgs.config,
           proxy: customEndpoint,
+          useSegmentEndpoints, // Pass the flag
         },
       });
-
+    
       await plugin.flush();
-
+    
+      const expectedUrl = useSegmentEndpoints ? getURL(customEndpoint, '/b') : getURL(customEndpoint, '');
+    
       expect(sendEventsSpy).toHaveBeenCalledTimes(1);
       expect(sendEventsSpy).toHaveBeenCalledWith({
-        url: getURL(customEndpoint, '/b'),
+        url: expectedUrl,
         writeKey: '123-456',
-        events: events.slice(0, 2).map((e) => ({
+        events: events.map((e) => ({
           ...e,
         })),
       });
     });
+    
   });
 });
