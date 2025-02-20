@@ -90,8 +90,8 @@ export class SegmentDestination extends DestinationPlugin {
 
   private getEndpoint(): string {
     const config = this.analytics?.getConfig();
-    const hasProxy = !!(config?.cdnProxy ?? ''); //!!config?.proxy;
-    const useSegmentEndpoints = Boolean(config?.useSegmentEndpoints); //!!config?.useSegmentEndpoints;
+    const hasProxy = !!(config?.proxy ?? '');
+    const useSegmentEndpoints = Boolean(config?.useSegmentEndpoints);
 
     let endpoint = '';
 
@@ -129,7 +129,6 @@ export class SegmentDestination extends DestinationPlugin {
     ) {
       //assign the api host from segment settings (domain/v1)
       this.apiHost = segmentSettings.apiHost;
-      console.log('api host value', this.apiHost);
     }
     this.settingsResolve();
   }

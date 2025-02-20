@@ -362,9 +362,14 @@ describe('SegmentDestination', () => {
       });
     });
 
-    it.each([true, false])(
-      'lets user override apiHost with proxy when useSegmentEndpoints is %s',
-      async (useSegmentEndpoints) => {
+    it.each([
+      [false, false], // No proxy, No segment endpoint
+      [false, true], // No proxy, Yes segment endpoint
+      [true, false], // Yes proxy, No segment endpoint
+      [true, true], // Yes proxy, Yes segment endpoint
+    ])(
+      'lets user override apiHost with proxy when hasProxy is %s and useSegmentEndpoints is %s',
+      async (hasProxy, useSegmentEndpoints) => {
         const customEndpoint = 'https://customproxy.com/batchEvents';
         const events = [
           { messageId: 'message-1' },
@@ -379,16 +384,29 @@ describe('SegmentDestination', () => {
           },
           config: {
             ...clientArgs.config,
-            proxy: customEndpoint,
-            useSegmentEndpoints, // Pass the flag
+            proxy: hasProxy ? customEndpoint : undefined, // Only set proxy when true
+            useSegmentEndpoints, // Pass the flag dynamically
           },
         });
 
-        await plugin.flush();
+        // Determine expected URL logic
+        let expectedUrl: string;
+        if (hasProxy) {
+          if (useSegmentEndpoints) {
+            expectedUrl = getURL(customEndpoint, '/b');
+          } else {
+            expectedUrl = getURL(customEndpoint, '');
+            console.log('expected URL---->', expectedUrl);
+          }
+        } else {
+          expectedUrl = getURL('events.eu1.segmentapis.com', '/b');
+        }
 
-        const expectedUrl = useSegmentEndpoints
-          ? getURL(customEndpoint, '/b')
-          : getURL(customEndpoint, '');
+        // let expectedUrl = hasProxy
+        //   ? getURL(customEndpoint, useSegmentEndpoints ? '/b' : '')
+        //   : getURL('events.eu1.segmentapis.com', '/b');
+
+        await plugin.flush();
 
         expect(sendEventsSpy).toHaveBeenCalledTimes(1);
         expect(sendEventsSpy).toHaveBeenCalledWith({
