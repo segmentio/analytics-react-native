@@ -1,7 +1,6 @@
 import type { Config } from './types';
 
 export const defaultApiHost = 'https://api.segment.io/v1/b';
-
 export const settingsCDN = 'https://cdn-settings.segment.com/v1/projects';
 
 export const defaultConfig: Config = {
@@ -10,6 +9,7 @@ export const defaultConfig: Config = {
   trackDeepLinks: false,
   trackAppLifecycleEvents: false,
   autoAddSegmentDestination: true,
+  useSegmentEndpoints: false,
 };
 
 export const workspaceDestinationFilterKey = '';

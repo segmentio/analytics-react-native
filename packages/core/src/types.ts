@@ -149,15 +149,32 @@ export type Config = {
   storePersistorSaveDelay?: number;
   proxy?: string;
   cdnProxy?: string;
+  useSegmentEndpoints?: boolean; // Use if you want to use Segment endpoints
   errorHandler?: (error: SegmentError) => void;
 };
 
 export type ClientMethods = {
-  screen: (name: string, properties?: JsonMap, enrichment?: EnrichmentClosure) => Promise<void>;
-  track: (event: string, properties?: JsonMap, enrichment?: EnrichmentClosure) => Promise<void>;
-  identify: (userId?: string, userTraits?: UserTraits, enrichment?: EnrichmentClosure) => Promise<void>;
+  screen: (
+    name: string,
+    properties?: JsonMap,
+    enrichment?: EnrichmentClosure
+  ) => Promise<void>;
+  track: (
+    event: string,
+    properties?: JsonMap,
+    enrichment?: EnrichmentClosure
+  ) => Promise<void>;
+  identify: (
+    userId?: string,
+    userTraits?: UserTraits,
+    enrichment?: EnrichmentClosure
+  ) => Promise<void>;
   flush: () => Promise<void>;
-  group: (groupId: string, groupTraits?: GroupTraits, enrichment?: EnrichmentClosure) => Promise<void>;
+  group: (
+    groupId: string,
+    groupTraits?: GroupTraits,
+    enrichment?: EnrichmentClosure
+  ) => Promise<void>;
   alias: (newUserId: string, enrichment?: EnrichmentClosure) => Promise<void>;
   reset: (resetAnonymousId?: boolean) => Promise<void>;
 };

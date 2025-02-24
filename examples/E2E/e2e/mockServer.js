@@ -14,9 +14,9 @@ export const startServer = async (mockServerListener) => {
     const app = express();
 
     app.use(bodyParser.json());
-
+    
     // Handles batch events
-    app.post('/events', (req, res) => {
+    app.post('/v1/b', (req, res) => {
       console.log(`➡️  Received request`);
       const body = req.body;
       mockServerListener(body);
@@ -25,7 +25,7 @@ export const startServer = async (mockServerListener) => {
     });
 
     // Handles settings calls
-    app.get('/settings/*', (req, res) => {
+    app.get('/v1/projects/yup/settings', (req, res) => {
       console.log(`➡️  Replying with Settings`);
       res.status(200).send({
         integrations: {

@@ -18,6 +18,7 @@ import {
   SEGMENT_DESTINATION_KEY,
   SegmentDestination,
 } from '../SegmentDestination';
+import { getURL } from '../../util';
 
 jest.mock('uuid');
 
@@ -319,14 +320,14 @@ describe('SegmentDestination', () => {
 
       expect(sendEventsSpy).toHaveBeenCalledTimes(2);
       expect(sendEventsSpy).toHaveBeenCalledWith({
-        url: defaultApiHost,
+        url: getURL(defaultApiHost, '/b'),
         writeKey: '123-456',
         events: events.slice(0, 2).map((e) => ({
           ...e,
         })),
       });
       expect(sendEventsSpy).toHaveBeenCalledWith({
-        url: defaultApiHost,
+        url: getURL(defaultApiHost, '/b'),
         writeKey: '123-456',
         events: events.slice(2, 4).map((e) => ({
           ...e,
@@ -353,7 +354,7 @@ describe('SegmentDestination', () => {
 
       expect(sendEventsSpy).toHaveBeenCalledTimes(1);
       expect(sendEventsSpy).toHaveBeenCalledWith({
-        url: `https://${customEndpoint}/b`,
+        url: getURL(customEndpoint, '/b'),
         writeKey: '123-456',
         events: events.slice(0, 2).map((e) => ({
           ...e,
@@ -361,35 +362,61 @@ describe('SegmentDestination', () => {
       });
     });
 
-    it('lets user override apiHost with proxy', async () => {
-      const customEndpoint = 'https://customproxy.com/batchEvents';
-      const events = [
-        { messageId: 'message-1' },
-        { messageId: 'message-2' },
-      ] as SegmentEvent[];
+    it.each([
+      [false, false], // No proxy, No segment endpoint
+      [false, true], // No proxy, Yes segment endpoint
+      [true, false], // Yes proxy, No segment endpoint
+      [true, true], // Yes proxy, Yes segment endpoint
+    ])(
+      'lets user override apiHost with proxy when hasProxy is %s and useSegmentEndpoints is %s',
+      async (hasProxy, useSegmentEndpoints) => {
+        const customEndpoint = 'https://customproxy.com/batchEvents';
+        const events = [
+          { messageId: 'message-1' },
+          { messageId: 'message-2' },
+        ] as SegmentEvent[];
 
-      const { plugin, sendEventsSpy } = createTestWith({
-        events: events,
-        settings: {
-          apiKey: '',
-          apiHost: 'events.eu1.segmentapis.com',
-        },
-        config: {
-          ...clientArgs.config,
-          proxy: customEndpoint,
-        },
-      });
+        const { plugin, sendEventsSpy } = createTestWith({
+          events,
+          settings: {
+            apiKey: '',
+            apiHost: 'events.eu1.segmentapis.com',
+          },
+          config: {
+            ...clientArgs.config,
+            proxy: hasProxy ? customEndpoint : undefined, // Only set proxy when true
+            useSegmentEndpoints, // Pass the flag dynamically
+          },
+        });
 
-      await plugin.flush();
+        // Determine expected URL logic
+        let expectedUrl: string;
+        if (hasProxy) {
+          if (useSegmentEndpoints) {
+            expectedUrl = getURL(customEndpoint, '/b');
+          } else {
+            expectedUrl = getURL(customEndpoint, '');
+            console.log('expected URL---->', expectedUrl);
+          }
+        } else {
+          expectedUrl = getURL('events.eu1.segmentapis.com', '/b');
+        }
 
-      expect(sendEventsSpy).toHaveBeenCalledTimes(1);
-      expect(sendEventsSpy).toHaveBeenCalledWith({
-        url: customEndpoint,
-        writeKey: '123-456',
-        events: events.slice(0, 2).map((e) => ({
-          ...e,
-        })),
-      });
-    });
+        // let expectedUrl = hasProxy
+        //   ? getURL(customEndpoint, useSegmentEndpoints ? '/b' : '')
+        //   : getURL('events.eu1.segmentapis.com', '/b');
+
+        await plugin.flush();
+
+        expect(sendEventsSpy).toHaveBeenCalledTimes(1);
+        expect(sendEventsSpy).toHaveBeenCalledWith({
+          url: expectedUrl,
+          writeKey: '123-456',
+          events: events.map((e) => ({
+            ...e,
+          })),
+        });
+      }
+    );
   });
 });

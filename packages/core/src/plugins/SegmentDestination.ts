@@ -6,7 +6,7 @@ import {
   SegmentEvent,
   UpdateType,
 } from '../types';
-import { chunk, createPromise } from '../util';
+import { chunk, createPromise, getURL } from '../util';
 import { uploadEvents } from '../api';
 import type { SegmentClient } from '../analytics';
 import { DestinationMetadataEnrichment } from './DestinationMetadataEnrichment';
@@ -90,9 +90,20 @@ export class SegmentDestination extends DestinationPlugin {
 
   private getEndpoint(): string {
     const config = this.analytics?.getConfig();
-    return config?.proxy ?? this.apiHost ?? defaultApiHost;
-  }
+    const hasProxy = !!(config?.proxy ?? '');
+    const useSegmentEndpoints = Boolean(config?.useSegmentEndpoints);
 
+    let endpoint = '';
+
+    if (hasProxy) {
+      endpoint = useSegmentEndpoints ? '/b' : '';
+    } else {
+      endpoint = '/b'; // If no proxy, always append '/b'
+    }
+
+    const baseURL = config?.proxy ?? this.apiHost ?? defaultApiHost;
+    return getURL(baseURL, endpoint);
+  }
   configure(analytics: SegmentClient): void {
     super.configure(analytics);
 
@@ -116,7 +127,8 @@ export class SegmentDestination extends DestinationPlugin {
       segmentSettings?.apiHost !== undefined &&
       segmentSettings?.apiHost !== null
     ) {
-      this.apiHost = `https://${segmentSettings.apiHost}/b`;
+      //assign the api host from segment settings (domain/v1)
+      this.apiHost = segmentSettings.apiHost;
     }
     this.settingsResolve();
   }

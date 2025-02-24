@@ -25,7 +25,7 @@ import {
   TimerFlushPolicy,
 } from './flushPolicies';
 import { FlushPolicyExecuter } from './flushPolicies/flush-policy-executer';
-import type { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
+import { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
 import { SegmentDestination } from './plugins/SegmentDestination';
 import {
   createGetter,
@@ -57,7 +57,12 @@ import {
   UserInfoState,
   UserTraits,
 } from './types';
-import { allSettled, getPluginsWithFlush, getPluginsWithReset } from './util';
+import {
+  allSettled,
+  getPluginsWithFlush,
+  getPluginsWithReset,
+  getURL,
+} from './util';
 import { getUUID } from './uuid';
 import type { FlushPolicy } from './flushPolicies';
 import {
@@ -160,15 +165,13 @@ export class SegmentClient {
     if (ofType !== undefined) {
       return [...(plugins[ofType] ?? [])];
     }
-    return (
-      [
-        ...this.getPlugins(PluginType.before),
-        ...this.getPlugins(PluginType.enrichment),
-        ...this.getPlugins(PluginType.utility),
-        ...this.getPlugins(PluginType.destination),
-        ...this.getPlugins(PluginType.after),
-      ]
-    );
+    return [
+      ...this.getPlugins(PluginType.before),
+      ...this.getPlugins(PluginType.enrichment),
+      ...this.getPlugins(PluginType.utility),
+      ...this.getPlugins(PluginType.destination),
+      ...this.getPlugins(PluginType.after),
+    ];
   }
 
   /**
@@ -320,10 +323,21 @@ export class SegmentClient {
 
   async fetchSettings() {
     const settingsPrefix: string = this.config.cdnProxy ?? settingsCDN;
-    const settingsEndpoint = `${settingsPrefix}/${this.config.writeKey}/settings`;
-
+    const hasProxy = !!(this.config?.cdnProxy ?? '');
+    const useSegmentEndpoints = Boolean(this.config?.useSegmentEndpoints);
+    let settingsEndpoint = '';
+    if (hasProxy) {
+      if (useSegmentEndpoints) {
+        settingsEndpoint = `/projects/${this.config.writeKey}/settings`;
+      } else {
+        settingsEndpoint = '';
+      }
+    } else {
+      settingsEndpoint = `/${this.config.writeKey}/settings`;
+    }
+    const settingsURL = getURL(settingsPrefix, settingsEndpoint);
     try {
-      const res = await fetch(settingsEndpoint, {
+      const res = await fetch(settingsURL, {
         headers: {
           'Cache-Control': 'no-cache',
         },

@@ -1534,6 +1534,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@braze/react-native-sdk@npm:^13.2.0":
+  version: 13.2.0
+  resolution: "@braze/react-native-sdk@npm:13.2.0"
+  checksum: 10c0/7626d50a620fc4a7efbe8c8a36171a822b43af8e5672f8caa719e2e5d904878515bf9ec28c1d692da3558902243052ccef092f2d8ac61d8ce5dddcacdf3c138b
+  languageName: node
+  linkType: hard
+
 "@egjs/hammerjs@npm:^2.0.17":
   version: 2.0.17
   resolution: "@egjs/hammerjs@npm:2.0.17"
@@ -2521,6 +2528,16 @@ __metadata:
     react-native-safe-area-context: ">= 3.0.0"
     react-native-screens: ">= 3.0.0"
   checksum: 10c0/6bc28e5e4e99161a538c1cb9752d70727704ca7b4137e71a44992dfe2ff6e0a3028353184424af1457ec59a4ea6ef9757fc99203280fd7339f36e61b80c9050a
+  languageName: node
+  linkType: hard
+
+"@segment/analytics-react-native-plugin-braze@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "@segment/analytics-react-native-plugin-braze@npm:0.7.0"
+  peerDependencies:
+    "@braze/react-native-sdk": ^10.x
+    "@segment/analytics-react-native": ^2.18.0
+  checksum: 10c0/dcff89d861655c65c548fcd53812c423d43bf730d8a6c3d5c21af7e1a165b95ef216465990c71be9bf24115afa83f49301ba8c5e0b13cbac26117fb4d02e7d51
   languageName: node
   linkType: hard
 
@@ -4195,6 +4212,7 @@ __metadata:
     "@babel/core": "npm:^7.25.2"
     "@babel/preset-env": "npm:^7.25.3"
     "@babel/runtime": "npm:^7.25.0"
+    "@braze/react-native-sdk": "npm:^13.2.0"
     "@react-native-async-storage/async-storage": "npm:^2.1.0"
     "@react-native-community/cli": "npm:15.0.0"
     "@react-native-community/cli-platform-android": "npm:15.0.0"
@@ -4206,6 +4224,7 @@ __metadata:
     "@react-navigation/native": "npm:^6.1.18"
     "@react-navigation/stack": "npm:^6.4.1"
     "@segment/analytics-react-native": "npm:^2.20.3"
+    "@segment/analytics-react-native-plugin-braze": "npm:^0.7.0"
     "@segment/sovran-react-native": "npm:^1.1.3"
     "@types/react": "npm:^18.2.6"
     "@types/react-test-renderer": "npm:^18.0.0"

@@ -257,3 +257,14 @@ export const createPromise = <T>(
     resolve: resolver!,
   };
 };
+
+export function getURL(host: string, path: string) {
+  if (path === '') {
+    path = '/'; // Ensure a trailing slash if path is empty
+  }
+  if (!host.startsWith('https://') && !host.startsWith('http://')) {
+    host = 'https://' + host;
+  }
+  const s = `${host}${path}`;
+  return s;
+}
