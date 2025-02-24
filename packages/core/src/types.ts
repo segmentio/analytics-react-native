@@ -271,11 +271,8 @@ type SegmentAmplitudeIntegration = {
 export type SegmentAdjustSettings = {
   appToken: string;
   setEnvironmentProduction?: boolean;
-  setEventBufferingEnabled?: boolean;
   trackAttributionData?: boolean;
-  setDelay?: boolean;
   customEvents?: { [key: string]: string };
-  delayTime?: number;
 };
 
 export type SegmentBrazeSettings = {
