@@ -25,7 +25,7 @@ import {
   TimerFlushPolicy,
 } from './flushPolicies';
 import { FlushPolicyExecuter } from './flushPolicies/flush-policy-executer';
-import type { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
+import { DestinationPlugin, PlatformPlugin, Plugin } from './plugin';
 import { SegmentDestination } from './plugins/SegmentDestination';
 import {
   createGetter,
@@ -326,8 +326,12 @@ export class SegmentClient {
     const hasProxy = !!(this.config?.cdnProxy ?? '');
     const useSegmentEndpoints = Boolean(this.config?.useSegmentEndpoints);
     let settingsEndpoint = '';
-    if (hasProxy && useSegmentEndpoints) {
-      settingsEndpoint = `/projects/${this.config.writeKey}/settings`;
+    if (hasProxy) {
+      if (useSegmentEndpoints) {
+        settingsEndpoint = `/projects/${this.config.writeKey}/settings`;
+      } else {
+        settingsEndpoint = '';
+      }
     } else {
       settingsEndpoint = `/${this.config.writeKey}/settings`;
     }

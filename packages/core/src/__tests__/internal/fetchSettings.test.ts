@@ -74,10 +74,16 @@ describe('internal #getSettings', () => {
 
       // Determine expected settings URL based on the logic
       const settingsPrefix = config.cdnProxy ?? settingsCDN;
-      const expectedSettingsPath =
-        hasProxy && useSegmentEndpoints
-          ? `/projects/${config.writeKey}/settings`
-          : `/${config.writeKey}/settings`;
+      let expectedSettingsPath = '';
+      if (hasProxy) {
+        if (useSegmentEndpoints) {
+          expectedSettingsPath = `/projects/${config.writeKey}/settings`;
+        } else {
+          expectedSettingsPath = '';
+        }
+      } else {
+        expectedSettingsPath = `/${config.writeKey}/settings`;
+      }
 
       expect(fetch).toHaveBeenCalledWith(
         getURL(settingsPrefix, expectedSettingsPath),
@@ -126,10 +132,16 @@ describe('internal #getSettings', () => {
 
       // Determine expected settings URL
       const settingsPrefix = config.cdnProxy ?? settingsCDN;
-      const expectedSettingsPath =
-        hasProxy && useSegmentEndpoints
-          ? `/projects/${config.writeKey}/settings`
-          : `/${config.writeKey}/settings`;
+      let expectedSettingsPath = '';
+      if (hasProxy) {
+        if (useSegmentEndpoints) {
+          expectedSettingsPath = `/projects/${config.writeKey}/settings`;
+        } else {
+          expectedSettingsPath = '';
+        }
+      } else {
+        expectedSettingsPath = `/${config.writeKey}/settings`;
+      }
 
       expect(fetch).toHaveBeenCalledWith(
         getURL(settingsPrefix, expectedSettingsPath),
@@ -184,10 +196,16 @@ describe('internal #getSettings', () => {
 
       // Determine expected settings URL
       const settingsPrefix = config.cdnProxy ?? settingsCDN;
-      const expectedSettingsPath =
-        hasProxy && useSegmentEndpoints
-          ? `/projects/${config.writeKey}/settings`
-          : `/${config.writeKey}/settings`;
+      let expectedSettingsPath = '';
+      if (hasProxy) {
+        if (useSegmentEndpoints) {
+          expectedSettingsPath = `/projects/${config.writeKey}/settings`;
+        } else {
+          expectedSettingsPath = '';
+        }
+      } else {
+        expectedSettingsPath = `/${config.writeKey}/settings`;
+      }
 
       expect(fetch).toHaveBeenCalledWith(
         getURL(settingsPrefix, expectedSettingsPath),
@@ -239,10 +257,16 @@ describe('internal #getSettings', () => {
 
       // Determine expected settings URL
       const settingsPrefix = config.cdnProxy ?? settingsCDN;
-      const expectedSettingsPath =
-        hasProxy && useSegmentEndpoints
-          ? `/projects/${config.writeKey}/settings`
-          : `/${config.writeKey}/settings`;
+      let expectedSettingsPath = '';
+      if (hasProxy) {
+        if (useSegmentEndpoints) {
+          expectedSettingsPath = `/projects/${config.writeKey}/settings`;
+        } else {
+          expectedSettingsPath = '';
+        }
+      } else {
+        expectedSettingsPath = `/${config.writeKey}/settings`;
+      }
 
       expect(fetch).toHaveBeenCalledWith(
         getURL(settingsPrefix, expectedSettingsPath),
