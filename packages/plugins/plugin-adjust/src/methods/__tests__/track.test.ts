@@ -28,7 +28,7 @@ describe('#track', () => {
 
     track(event as TrackEventType, settings);
 
-    expect(Adjust.addSessionPartnerParameter).toHaveBeenCalledWith(
+    expect(Adjust.addGlobalPartnerParameter).toHaveBeenCalledWith(
       'anonymous_id',
       'anon'
     );
@@ -54,7 +54,7 @@ describe('#track', () => {
 
     track(event as TrackEventType, settings);
 
-    expect(Adjust.addSessionPartnerParameter).toHaveBeenCalledWith(
+    expect(Adjust.addGlobalPartnerParameter).toHaveBeenCalledWith(
       'anonymous_id',
       'anon'
     );
@@ -85,7 +85,7 @@ describe('#track', () => {
 
     track(event as TrackEventType, settings);
 
-    expect(Adjust.addSessionPartnerParameter).toHaveBeenCalledWith(
+    expect(Adjust.addGlobalPartnerParameter).toHaveBeenCalledWith(
       'anonymous_id',
       'anon'
     );
@@ -114,7 +114,7 @@ describe('#track', () => {
 
     track(event as TrackEventType, settings);
 
-    expect(Adjust.addSessionPartnerParameter).toHaveBeenCalledWith(
+    expect(Adjust.addGlobalPartnerParameter).toHaveBeenCalledWith(
       'anonymous_id',
       'anon'
     );
