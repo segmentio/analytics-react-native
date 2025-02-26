@@ -1,8 +1,4 @@
-import {
-  AppState,
-  AppStateStatus,
-  NativeEventSubscription,
-} from 'react-native';
+import { NativeEventSubscription } from 'react-native';
 import type { SegmentEvent } from '../types';
 import { FlushPolicyBase } from './types';
 
@@ -11,25 +7,17 @@ import { FlushPolicyBase } from './types';
  */
 export class BackgroundFlushPolicy extends FlushPolicyBase {
   private appStateSubscription?: NativeEventSubscription;
-  private appState: AppStateStatus = AppState.currentState;
 
   start() {
-    this.appStateSubscription = AppState.addEventListener(
-      'change',
-      (nextAppState) => {
-        if (
-          this.appState === 'active' &&
-          ['inactive', 'background'].includes(nextAppState)
-        ) {
-          // When the app goes into the background we will trigger a flush
-          this.shouldFlush.value = true;
-        }
-      }
-    );
+    //no-op
   }
 
   onEvent(_event: SegmentEvent): void {
-    // Nothing to do
+    console.log('inside onEvent', _event);
+    if ('event' in _event && _event.event === 'Application Backgrounded') {
+      console.log({ _event }); // is logged properly on background
+      this.shouldFlush.value = true;
+    }
   }
 
   end(): void {
