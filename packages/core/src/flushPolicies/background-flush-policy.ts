@@ -21,7 +21,6 @@ export class BackgroundFlushPolicy extends FlushPolicyBase {
           ['active', 'inactive'].includes(this.appState) &&
           ['inactive', 'background'].includes(nextAppState)
         ) {
-          console.log('inside if condition');
           setTimeout(() => {
             this.shouldFlush.value = true;
           }, 2000);
