@@ -18,18 +18,24 @@ export class BackgroundFlushPolicy extends FlushPolicyBase {
       'change',
       (nextAppState) => {
         if (
-          this.appState === 'active' &&
+          ['active', 'inactive'].includes(this.appState) &&
           ['inactive', 'background'].includes(nextAppState)
         ) {
-          // When the app goes into the background we will trigger a flush
-          this.shouldFlush.value = true;
+          setTimeout(() => {
+            this.shouldFlush.value = true;
+          }, 2000);
         }
+        this.appState = nextAppState;
       }
     );
   }
 
   onEvent(_event: SegmentEvent): void {
-    // Nothing to do
+    //if ('event' in _event && _event.event === 'Application Backgrounded') {
+    // setTimeout(() => {
+    //   this.shouldFlush.value = true;
+    // }, 2000);
+    // }
   }
 
   end(): void {

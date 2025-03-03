@@ -163,7 +163,7 @@ describe('SegmentClient #handleAppStateChange', () => {
     // @ts-ignore
     expect(client.appState).toBe('background');
 
-    expect(mockPlugin.execute).not.toHaveBeenCalled();
+    expect(mockPlugin.execute).toHaveBeenCalledTimes(1);
   });
 
   it('sends an event when unknown => inactive', async () => {
@@ -173,6 +173,6 @@ describe('SegmentClient #handleAppStateChange', () => {
     // @ts-ignore
     expect(client.appState).toBe('inactive');
 
-    expect(mockPlugin.execute).not.toHaveBeenCalled();
+    expect(mockPlugin.execute).toHaveBeenCalledTimes(1);
   });
 });
