@@ -38,7 +38,7 @@ export class AdjustPlugin extends DestinationPlugin {
     const adjustConfig = new AdjustConfig(this.settings.appToken, environment);
 
     if (this.hasRegisteredCallback === false) {
-      adjustConfig.setAttributionCallbackListener((attribution) => {
+      adjustConfig.setAttributionCallback((attribution) => {
         const trackPayload = {
           provider: 'Adjust',
           trackerToken: attribution.trackerToken,
@@ -56,20 +56,7 @@ export class AdjustPlugin extends DestinationPlugin {
       this.hasRegisteredCallback = true;
     }
 
-    const bufferingEnabled = this.settings.setEventBufferingEnabled;
-    if (bufferingEnabled === true) {
-      adjustConfig.setEventBufferingEnabled(bufferingEnabled);
-    }
-
-    const useDelay = this.settings.setDelay;
-    if (useDelay === true) {
-      const delayTime = this.settings.delayTime;
-      if (delayTime !== null && delayTime !== undefined) {
-        adjustConfig.setDelayStart(delayTime);
-      }
-    }
-
-    Adjust.create(adjustConfig);
+    Adjust.initSdk(adjustConfig);
   }
   identify(event: IdentifyEventType) {
     identify(event);
