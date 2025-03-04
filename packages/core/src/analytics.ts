@@ -732,9 +732,10 @@ export class SegmentClient {
         void this.process(event);
         this.logger.info('TRACK (Application Opened) event saved', event);
       } else if (
-        this.appState === 'active' &&
+        (this.appState === 'active' || this.appState === 'unknown') && // Check if appState is 'active' or 'unknown'
         ['inactive', 'background'].includes(nextAppState)
       ) {
+        // Check if next app state is 'inactive' or 'background'
         const event = createTrackEvent({
           event: 'Application Backgrounded',
         });

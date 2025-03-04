@@ -172,7 +172,7 @@ describe('#mainTest', () => {
 
     const platform = device.getPlatform();
 
-    expect(events).toHaveLength(platform === 'android' ? 4 : 3); // Track + Identify + App Launch (+ Backgrounded on Android)
+    expect(events).toHaveLength(4); // Track + Identify + App Launch + Backgrounded on Android
     expect(events).toHaveEventWith({ type: 'identify', userId: 'user_2' });
     expect(events).toHaveEventWith({ type: 'track', userId: 'user_2' });
     expect(events).toHaveEventWith({
