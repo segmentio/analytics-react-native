@@ -1,35 +1,39 @@
-import { AppState, AppStateStatus } from 'react-native';
 import { BackgroundFlushPolicy } from '../background-flush-policy';
+import { FlushPolicyBase } from '../types';
+import { createTrackEvent } from '../../events';
 
 describe('BackgroundFlushPolicy', () => {
-  it('triggers a flush when reaching limit', () => {
-    let updateCallback = (_val: AppStateStatus) => {
-      return;
-    };
+  let policy: BackgroundFlushPolicy;
 
-    const addSpy = jest
-      .spyOn(AppState, 'addEventListener')
-      .mockImplementation((_action, callback) => {
-        updateCallback = callback;
-        return { remove: jest.fn() };
-      });
+  beforeEach(() => {
+    policy = new BackgroundFlushPolicy();
+  });
 
-    const policy = new BackgroundFlushPolicy();
-    policy.start();
-    const observer = jest.fn();
+  test('should be an instance of FlushPolicyBase', () => {
+    expect(policy).toBeInstanceOf(FlushPolicyBase);
+  });
 
-    policy.shouldFlush.onChange(observer);
+  test('start() should do nothing', () => {
+    expect(policy.start()).toBeUndefined();
+  });
 
-    expect(addSpy).toHaveBeenCalledTimes(1);
+  test('end() should do nothing', () => {
+    expect(policy.end()).toBeUndefined();
+  });
 
-    updateCallback('background');
-    expect(observer).toHaveBeenCalledWith(true);
-    observer.mockClear();
+  test('onEvent() should set shouldFlush to true for "Application Backgrounded" event', () => {
+    const event = createTrackEvent({
+      event: 'Application Backgrounded',
+    });
+    policy.onEvent(event);
+    expect(policy.shouldFlush.value).toBe(true);
+  });
 
-    updateCallback('active');
-    expect(observer).not.toHaveBeenCalled();
-
-    updateCallback('inactive');
-    expect(observer).toHaveBeenCalledWith(true);
+  test('onEvent() should not set shouldFlush for other events', () => {
+    const event = createTrackEvent({
+      event: 'Application Opened',
+    });
+    policy.onEvent(event);
+    expect(policy.shouldFlush.value).toBeFalsy();
   });
 });
