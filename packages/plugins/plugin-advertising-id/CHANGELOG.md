@@ -1,5 +1,9 @@
 ### Dependencies
 
+* **@segment/analytics-react-native:** upgraded to 2.20.4
+
+### Dependencies
+
 * **@segment/analytics-react-native:** upgraded to 2.20.2
 
 ### Dependencies
