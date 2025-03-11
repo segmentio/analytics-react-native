@@ -167,7 +167,13 @@ export class AppsflyerPlugin extends DestinationPlugin {
             source: media_source,
           },
         };
-        void this.analytics?.track('Deep Link Opened', properties);
+        this.analytics
+          ?.track('Deep Link Opened', properties)
+          .then(() =>
+            this.analytics?.logger.info(
+              'Sent Deep Link Opened event to Segment'
+            )
+          );
       }
     });
   };
@@ -183,7 +189,13 @@ export class AppsflyerPlugin extends DestinationPlugin {
             source: media_source,
           },
         };
-        void this.analytics?.track('Deep Link Opened', properties);
+        this.analytics
+          ?.track('Deep Link Opened', properties)
+          .then(() =>
+            this.analytics?.logger.info(
+              'Sent Deep Link Opened event to Segment'
+            )
+          );
       }
     });
   };
