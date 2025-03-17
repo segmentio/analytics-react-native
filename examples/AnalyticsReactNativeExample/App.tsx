@@ -11,6 +11,7 @@ import {
   createClient,
   AnalyticsProvider,
   CountFlushPolicy,
+  ConsentPlugin,
   // @ts-ignore unused for e2e tests
   // StartupFlushPolicy,
   // @ts-ignore unused for e2e tests
@@ -30,9 +31,27 @@ import {useState} from 'react';
 // import { AdvertisingIdPlugin } from '@segment/analytics-react-native-plugin-advertising-id';
 // import { ClevertapPlugin } from '@segment/analytics-react-native-plugin-clevertap';
 // import { BrazePlugin } from '@segment/analytics-react-native-plugin-braze';
+import OTPublishersNativeSDK from 'react-native-onetrust-cmp';
+import { OneTrustConsentProvider } from '@segment/analytics-react-native-plugin-onetrust'
+
+OTPublishersNativeSDK.startSDK(
+  'storageLocation',
+  'domainIdentifier',
+  'en',
+  {countryCode: 'us', regionCode:'ca'},
+  true,
+).then((responseObject) => {
+  console.info('Download status is ' + responseObject);
+  // get full JSON object from responseObject.responseString
+})
+.catch((error) => {
+  console.error(`OneTrust download failed with error ${error}`);
+});
+
+
 
 const segmentClient = createClient({
-  writeKey: '<write-key>',
+  writeKey: 'KDzygiYHVtaOeNDmSTzcGDH2KMkJCPTM',
   trackAppLifecycleEvents: true,
   collectDeviceId: true,
   debug: true,
@@ -44,6 +63,13 @@ const segmentClient = createClient({
     // new StartupFlushPolicy(),
   ],
 });
+
+const oneTrustProvider = new OneTrustConsentProvider(OTPublishersNativeSDK)
+const oneTrustPlugin = new ConsentPlugin(oneTrustProvider);
+
+segmentClient.add({ plugin: oneTrustPlugin });
+
+oneTrustPlugin.start()
 
 // const LoggerPlugin = new Logger();
 
