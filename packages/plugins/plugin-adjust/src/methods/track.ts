@@ -9,6 +9,7 @@ export default (event: TrackEventType, settings: SegmentAdjustSettings) => {
   const anonId = event.anonymousId;
   if (anonId !== undefined && anonId !== null && anonId.length > 0) {
     //addSessionPartnerParameter has been replaced with addGlobalPartnerParameter in v5
+    //TO DO : Remove commented lines in next release
     //Adjust.addSessionPartnerParameter('anonymous_id', anonId);
     Adjust.addGlobalPartnerParameter('anonymous_id', anonId);
   }
