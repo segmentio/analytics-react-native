@@ -1,5 +1,8 @@
 import { Adjust } from 'react-native-adjust';
 
 export default () => {
-  Adjust.resetSessionPartnerParameters();
+  //resetSessionPartnerParameters is replaced with removeGlobalPartnerParameters in v5
+  // Adjust.resetSessionPartnerParameters();
+  Adjust.removeGlobalPartnerParameters();
+
 };
