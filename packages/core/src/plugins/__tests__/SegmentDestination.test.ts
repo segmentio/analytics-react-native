@@ -396,7 +396,6 @@ describe('SegmentDestination', () => {
             expectedUrl = getURL(customEndpoint, '/b');
           } else {
             expectedUrl = getURL(customEndpoint, '');
-            console.log('expected URL---->', expectedUrl);
           }
         } else {
           expectedUrl = getURL('events.eu1.segmentapis.com', '/b');
@@ -418,5 +417,87 @@ describe('SegmentDestination', () => {
         });
       }
     );
+  });
+  describe('getEndpoint', () => {
+    it('should throw an error when proxy ends with "/" and useSegmentEndpoints is true', () => {
+      const plugin = new SegmentDestination();
+      // Set up config dynamically
+      const config = {
+        ...clientArgs.config,
+        useSegmentEndpoints: true,
+        proxy: 'example.com/v1/',
+      };
+      plugin.analytics = new SegmentClient({
+        ...clientArgs,
+        config,
+      });
+
+      // Create a spy for the private method
+      const spy = jest.spyOn(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        Object.getPrototypeOf(plugin) as any,
+        'getEndpoint'
+      );
+      // Expect the private method to throw an error
+      expect(() => plugin['getEndpoint']()).toThrow(
+        'Invalid proxy url has been passed'
+      );
+      // Ensure the spy was called
+      expect(spy).toHaveBeenCalled();
+    });
+  });
+  it('should throw an error when proxy contains a query parameter', () => {
+    const plugin = new SegmentDestination();
+    // Set up config dynamically
+    const config = {
+      ...clientArgs.config,
+      useSegmentEndpoints: false, // Irrelevant for this test
+      proxy: 'example.com/v1?query=1', // Invalid proxy (contains '?')
+    };
+    plugin.analytics = new SegmentClient({
+      ...clientArgs,
+      config,
+    });
+
+    // Create a spy for the private method
+    const spy = jest.spyOn(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      Object.getPrototypeOf(plugin) as any,
+      'getEndpoint'
+    );
+
+    // Expect the private method to throw an error
+    expect(() => plugin['getEndpoint']()).toThrow(
+      'Invalid proxy url has been passed'
+    );
+
+    // Ensure the spy was called
+    expect(spy).toHaveBeenCalled();
+  });
+  it('should append "/b" when proxy ends with "/b" and useSegmentEndpoints is true', () => {
+    const plugin = new SegmentDestination();
+    // Set up config dynamically
+    const config = {
+      ...clientArgs.config,
+      useSegmentEndpoints: true, // Should append "/b"
+      proxy: 'example.com/v1/b', // Already ends with "/b"
+    };
+    plugin.analytics = new SegmentClient({
+      ...clientArgs,
+      config,
+    });
+
+    // Spy on the private method
+    const spy = jest.spyOn(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      Object.getPrototypeOf(plugin) as any,
+      'getEndpoint'
+    );
+
+    // Expect the private method to return "example.com/v1/b/b"
+    expect(plugin['getEndpoint']()).toBe('https://example.com/v1/b/b');
+
+    // Ensure the spy was called
+    expect(spy).toHaveBeenCalled();
   });
 });

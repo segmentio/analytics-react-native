@@ -98,6 +98,9 @@ export class SegmentDestination extends DestinationPlugin {
     let endpoint = '';
 
     if (hasProxy) {
+      if (baseURL.endsWith('/') || baseURL.includes('?')) {
+        throw new Error('Invalid proxy url has been passed');
+      }
       endpoint = useSegmentEndpoints ? '/b' : '';
     } else {
       // Check if baseURL ends with '/b', if so, do not append '/b'
