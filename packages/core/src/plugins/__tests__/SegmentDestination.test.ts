@@ -320,14 +320,14 @@ describe('SegmentDestination', () => {
 
       expect(sendEventsSpy).toHaveBeenCalledTimes(2);
       expect(sendEventsSpy).toHaveBeenCalledWith({
-        url: getURL(defaultApiHost, '/b'),
+        url: getURL(defaultApiHost, ''), // default api already appended with '/b'
         writeKey: '123-456',
         events: events.slice(0, 2).map((e) => ({
           ...e,
         })),
       });
       expect(sendEventsSpy).toHaveBeenCalledWith({
-        url: getURL(defaultApiHost, '/b'),
+        url: getURL(defaultApiHost, ''), // default api already appended with '/b'
         writeKey: '123-456',
         events: events.slice(2, 4).map((e) => ({
           ...e,

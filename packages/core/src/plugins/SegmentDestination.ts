@@ -92,16 +92,26 @@ export class SegmentDestination extends DestinationPlugin {
     const config = this.analytics?.getConfig();
     const hasProxy = !!(config?.proxy ?? '');
     const useSegmentEndpoints = Boolean(config?.useSegmentEndpoints);
+    // Determine the base URL based on config or this.apiHost, defaulting to defaultApiHost
+    let baseURL = config?.proxy ?? this.apiHost ?? defaultApiHost;
+
+    // If baseURL is null or undefined, fallback to defaultApiHost
+    if (!baseURL) {
+      baseURL = defaultApiHost;
+    }
 
     let endpoint = '';
 
     if (hasProxy) {
       endpoint = useSegmentEndpoints ? '/b' : '';
     } else {
-      endpoint = '/b'; // If no proxy, always append '/b'
+      endpoint = baseURL === defaultApiHost ? '' : '/b';
     }
 
-    const baseURL = config?.proxy ?? this.apiHost ?? defaultApiHost;
+    console.log('proxy', config?.proxy);
+    console.log('apihost', this.apiHost);
+    console.log('dafault api host', defaultApiHost);
+
     return getURL(baseURL, endpoint);
   }
   configure(analytics: SegmentClient): void {
