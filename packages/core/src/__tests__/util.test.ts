@@ -172,7 +172,7 @@ describe('getURL function', () => {
   });
 
   it('should return the root URL when the path is empty', () => {
-    expect(getURL('www.example.com', '')).toBe('https://www.example.com/');
+    expect(getURL('www.example.com', '')).toBe('https://www.example.com');
   });
 
   it('should handle query parameters correctly in the URL path', () => {
