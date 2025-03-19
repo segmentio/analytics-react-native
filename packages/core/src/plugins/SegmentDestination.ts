@@ -93,19 +93,19 @@ export class SegmentDestination extends DestinationPlugin {
     const hasProxy = !!(config?.proxy ?? '');
     const useSegmentEndpoints = Boolean(config?.useSegmentEndpoints);
     // Determine the base URL based on config or this.apiHost, defaulting to defaultApiHost
-    let baseURL = config?.proxy ?? this.apiHost ?? defaultApiHost;
-
-    // If baseURL is null or undefined, fallback to defaultApiHost
-    if (!baseURL) {
-      baseURL = defaultApiHost;
-    }
+    const baseURL = config?.proxy ?? this.apiHost ?? defaultApiHost;
 
     let endpoint = '';
 
     if (hasProxy) {
       endpoint = useSegmentEndpoints ? '/b' : '';
     } else {
-      endpoint = baseURL === defaultApiHost ? '' : '/b';
+      // Check if baseURL ends with '/b', if so, do not append '/b'
+      if (baseURL.endsWith('/b')) {
+        endpoint = ''; // Don't append '/b'
+      } else {
+        endpoint = '/b'; // Append '/b'
+      }
     }
 
     return getURL(baseURL, endpoint);
