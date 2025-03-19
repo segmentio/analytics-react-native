@@ -108,10 +108,6 @@ export class SegmentDestination extends DestinationPlugin {
       endpoint = baseURL === defaultApiHost ? '' : '/b';
     }
 
-    console.log('proxy', config?.proxy);
-    console.log('apihost', this.apiHost);
-    console.log('dafault api host', defaultApiHost);
-
     return getURL(baseURL, endpoint);
   }
   configure(analytics: SegmentClient): void {
