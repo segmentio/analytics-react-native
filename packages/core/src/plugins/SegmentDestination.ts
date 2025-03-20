@@ -92,26 +92,31 @@ export class SegmentDestination extends DestinationPlugin {
     const config = this.analytics?.getConfig();
     const hasProxy = !!(config?.proxy ?? '');
     const useSegmentEndpoints = Boolean(config?.useSegmentEndpoints);
-    // Determine the base URL based on config or this.apiHost, defaulting to defaultApiHost
-    const baseURL = config?.proxy ?? this.apiHost ?? defaultApiHost;
-
+    let baseURL = '';
     let endpoint = '';
-
+    //baseURL is always config?.proxy if hasProxy
     if (hasProxy) {
-      if (baseURL.endsWith('/') || baseURL.includes('?')) {
-        throw new Error('Invalid proxy url has been passed');
-      }
-      endpoint = useSegmentEndpoints ? '/b' : '';
+      baseURL = config?.proxy ?? '';
     } else {
-      // Check if baseURL ends with '/b', if so, do not append '/b'
-      if (baseURL.endsWith('/b')) {
-        endpoint = ''; // Don't append '/b'
-      } else {
-        endpoint = '/b'; // Append '/b'
+      baseURL = this.apiHost ?? defaultApiHost;
+    }
+    if (hasProxy) {
+      if (useSegmentEndpoints) {
+        // if useSegmentEndpoints=true, append /b to it
+        // check if the proxy is already end with /, if so, only need to append b
+        if (config?.proxy != null && config.proxy.endsWith('/')) {
+          endpoint = 'b';
+        } else {
+          endpoint = '/b';
+        }
       }
     }
-
-    return getURL(baseURL, endpoint);
+    try {
+      return getURL(baseURL, endpoint);
+    } catch (error) {
+      console.log('Error in getEndpoint:', error);
+      throw new Error('Invalid proxy url has been passed');
+    }
   }
   configure(analytics: SegmentClient): void {
     super.configure(analytics);
@@ -137,7 +142,7 @@ export class SegmentDestination extends DestinationPlugin {
       segmentSettings?.apiHost !== null
     ) {
       //assign the api host from segment settings (domain/v1)
-      this.apiHost = segmentSettings.apiHost;
+      this.apiHost = `https://${segmentSettings.apiHost}/b`;
     }
     this.settingsResolve();
   }

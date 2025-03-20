@@ -263,5 +263,15 @@ export function getURL(host: string, path: string) {
     host = 'https://' + host;
   }
   const s = `${host}${path}`;
+  if (!validateURL(s)) {
+    throw new Error('Invalid URL has been passed');
+  }
+
   return s;
+}
+
+export function validateURL(url: string): boolean {
+  const urlRegex =
+    /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(:\d+)?(\/[\w-.]*)*(\?([\w-.]+=[\w-.%]+)(&[\w-.]+=[\w-.%]+)*)?(#.*)?$/;
+  return urlRegex.test(url);
 }

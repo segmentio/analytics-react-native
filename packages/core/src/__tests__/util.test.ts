@@ -188,13 +188,13 @@ describe('getURL function', () => {
   });
 
   // Negative Test Cases
-  it('should handle empty host gracefully', () => {
-    expect(getURL('', '/home')).toBe('https:///home');
+  it('should throw an error for empty host', () => {
+    expect(() => getURL('', '/home')).toThrow('Invalid URL has been passed');
   });
 
-  it('should handle invalid characters in the host', () => {
-    expect(getURL('invalid host.com', '/path')).toBe(
-      'https://invalid host.com/path'
+  it('should throw an error for invalid characters in the host', () => {
+    expect(() => getURL('invalid host.com', '/path')).toThrow(
+      'Invalid URL has been passed'
     );
   });
 });
