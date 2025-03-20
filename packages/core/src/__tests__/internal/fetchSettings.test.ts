@@ -379,8 +379,8 @@ describe('internal #getSettings', () => {
     );
     it.each([
       ['example.com/v1/', false],
-      ['example.com/b/', false],
-      ['example.com/b', false],
+      ['example.com/v1/projects/', false],
+      ['example.com/v1/projects', false],
       ['example.com/v1?params=xx', false],
     ])(
       'should always return identical result if proxy is provided and useSegmentEndpoints is false',
