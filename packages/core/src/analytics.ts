@@ -350,7 +350,7 @@ export class SegmentClient {
     try {
       return getURL(settingsPrefix, settingsEndpoint);
     } catch (error) {
-      console.log('Error in getEndpoint:', error);
+      console.log('Error in getEndpointForSettings:', error);
       throw new Error('Invalid cdn proxy url has been passed');
     }
   }
