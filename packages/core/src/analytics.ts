@@ -320,22 +320,43 @@ export class SegmentClient {
 
     return map;
   }
-
-  async fetchSettings() {
-    const settingsPrefix: string = this.config.cdnProxy ?? settingsCDN;
+  private getEndpointForSettings(): string {
+    let settingsPrefix = '';
+    let settingsEndpoint = '';
     const hasProxy = !!(this.config?.cdnProxy ?? '');
     const useSegmentEndpoints = Boolean(this.config?.useSegmentEndpoints);
-    let settingsEndpoint = '';
+
+    if (hasProxy) {
+      settingsPrefix = this.config.cdnProxy ?? '';
+    } else {
+      settingsPrefix = settingsCDN;
+    }
     if (hasProxy) {
       if (useSegmentEndpoints) {
-        settingsEndpoint = `/projects/${this.config.writeKey}/settings`;
+        if (
+          this.config?.cdnProxy != null &&
+          this.config.cdnProxy.endsWith('/')
+        ) {
+          settingsEndpoint = `projects/${this.config.writeKey}/settings`;
+        } else {
+          settingsEndpoint = `/projects/${this.config.writeKey}/settings`;
+        }
       } else {
         settingsEndpoint = '';
       }
     } else {
       settingsEndpoint = `/${this.config.writeKey}/settings`;
     }
-    const settingsURL = getURL(settingsPrefix, settingsEndpoint);
+    try {
+      return getURL(settingsPrefix, settingsEndpoint);
+    } catch (error) {
+      console.log('Error in getEndpoint:', error);
+      throw new Error('Invalid cdn proxy url has been passed');
+    }
+  }
+
+  async fetchSettings() {
+    const settingsURL = this.getEndpointForSettings();
     try {
       const res = await fetch(settingsURL, {
         headers: {

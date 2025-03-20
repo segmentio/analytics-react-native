@@ -281,4 +281,145 @@ describe('internal #getSettings', () => {
       expect(setSettingsSpy).not.toHaveBeenCalled();
     }
   );
+  describe('getEndpointForSettings', () => {
+    it.each([['example.com/v1/'], ['https://example.com/v1/']])(
+      'should append projects/key/settings if proxy end with / and useSegmentEndpoint is true',
+      (cdnProxy) => {
+        const config = {
+          ...clientArgs.config,
+          useSegmentEndpoints: true,
+          cdnProxy: cdnProxy,
+        };
+        const anotherClient = new SegmentClient({
+          ...clientArgs,
+          config,
+        });
+        const spy = jest.spyOn(
+          Object.getPrototypeOf(anotherClient),
+          'getEndpointForSettings'
+        );
+        expect(anotherClient['getEndpointForSettings']()).toBe(
+          `https://example.com/v1/projects/${config.writeKey}/settings`
+        );
+        expect(spy).toHaveBeenCalled();
+      }
+    );
+    it.each([
+      ['example.com/v1/projects/'],
+      ['https://example.com/v1/projects/'],
+    ])(
+      'should append projects/writeKey/settings if proxy ends with projects/ and useSegmentEndpoint is true',
+      (cdnProxy) => {
+        const config = {
+          ...clientArgs.config,
+          useSegmentEndpoints: true,
+          cdnProxy: cdnProxy,
+        };
+        const anotherClient = new SegmentClient({
+          ...clientArgs,
+          config,
+        });
+
+        const spy = jest.spyOn(
+          Object.getPrototypeOf(anotherClient),
+          'getEndpointForSettings'
+        );
+        expect(anotherClient['getEndpointForSettings']()).toBe(
+          `https://example.com/v1/projects/projects/${config.writeKey}/settings`
+        );
+        expect(spy).toHaveBeenCalled();
+      }
+    );
+    it.each(['example.com/v1/projects', 'https://example.com/v1/projects'])(
+      'should append /projects/writeKey/settings if proxy ends with /projects and useSegmentEndpoint is true',
+      (cdnProxy) => {
+        const config = {
+          ...clientArgs.config,
+          useSegmentEndpoints: true,
+          cdnProxy: cdnProxy,
+        };
+        const anotherClient = new SegmentClient({
+          ...clientArgs,
+          config,
+        });
+
+        const spy = jest.spyOn(
+          Object.getPrototypeOf(anotherClient),
+          'getEndpointForSettings'
+        );
+        expect(anotherClient['getEndpointForSettings']()).toBe(
+          `https://example.com/v1/projects/projects/${config.writeKey}/settings`
+        );
+        expect(spy).toHaveBeenCalled();
+      }
+    );
+    it.each(['example.com/v1?params=xx', 'https://example.com/v1?params=xx'])(
+      'should throw an error if proxy comes with query params and useSegmentEndpoint is true',
+      (cdnProxy) => {
+        const config = {
+          ...clientArgs.config,
+          useSegmentEndpoints: true,
+          cdnProxy: cdnProxy,
+        };
+        const anotherClient = new SegmentClient({
+          ...clientArgs,
+          config,
+        });
+
+        const spy = jest.spyOn(
+          Object.getPrototypeOf(anotherClient),
+          'getEndpointForSettings'
+        );
+        // Expect the private method to throw an error
+        expect(() => anotherClient['getEndpointForSettings']()).toThrow(
+          'Invalid cdn proxy url has been passed'
+        );
+        expect(spy).toHaveBeenCalled();
+      }
+    );
+    it.each([
+      ['example.com/v1/', false],
+      ['example.com/b/', false],
+      ['example.com/b', false],
+      ['example.com/v1?params=xx', false],
+    ])(
+      'should always return identical result if proxy is provided and useSegmentEndpoints is false',
+      (cdnProxy, useSegmentEndpoints) => {
+        const config = {
+          ...clientArgs.config,
+          useSegmentEndpoints: useSegmentEndpoints,
+          cdnProxy: cdnProxy,
+        };
+        const anotherClient = new SegmentClient({
+          ...clientArgs,
+          config,
+        });
+        const spy = jest.spyOn(
+          Object.getPrototypeOf(anotherClient),
+          'getEndpointForSettings'
+        );
+        const expected = `https://${cdnProxy}`;
+        expect(anotherClient['getEndpointForSettings']()).toBe(expected);
+        expect(spy).toHaveBeenCalled();
+      }
+    );
+    it('No cdn proxy provided, should return default settings CDN', () => {
+      const config = {
+        ...clientArgs.config,
+        useSegmentEndpoints: true, // No matter in this case
+      };
+      const anotherClient = new SegmentClient({
+        ...clientArgs,
+        config,
+      });
+      const spy = jest.spyOn(
+        Object.getPrototypeOf(anotherClient),
+        'getEndpointForSettings'
+      );
+      expect(anotherClient['getEndpointForSettings']()).toBe(
+        `${settingsCDN}/${config.writeKey}/settings`
+      );
+      expect(spy).toHaveBeenCalled();
+    });
+  });
 });
