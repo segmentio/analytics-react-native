@@ -100,17 +100,11 @@ export class SegmentDestination extends DestinationPlugin {
     } else {
       baseURL = this.apiHost ?? defaultApiHost;
     }
-    if (hasProxy) {
-      if (useSegmentEndpoints) {
-        // if useSegmentEndpoints=true, append /b to it
-        // check if the proxy is already end with /, if so, only need to append b
-        if (config?.proxy != null && config.proxy.endsWith('/')) {
-          endpoint = 'b';
-        } else {
-          endpoint = '/b';
-        }
-      }
+    if (hasProxy && useSegmentEndpoints) {
+      const isProxyEndsWithSlash = baseURL.endsWith('/');
+      endpoint = isProxyEndsWithSlash ? 'b' : '/b';
     }
+
     try {
       return getURL(baseURL, endpoint);
     } catch (error) {

@@ -282,9 +282,13 @@ describe('internal #getSettings', () => {
     }
   );
   describe('getEndpointForSettings', () => {
-    it.each([['example.com/v1/'], ['https://example.com/v1/']])(
+    it.each([
+      ['example.com/v1/', 'https://example.com/v1/'],
+      ['https://example.com/v1/', 'https://example.com/v1/'],
+      ['http://example.com/v1/', 'http://example.com/v1/'],
+    ])(
       'should append projects/key/settings if proxy end with / and useSegmentEndpoint is true',
-      (cdnProxy) => {
+      (cdnProxy, expectedBaseURL) => {
         const config = {
           ...clientArgs.config,
           useSegmentEndpoints: true,
@@ -299,17 +303,18 @@ describe('internal #getSettings', () => {
           'getEndpointForSettings'
         );
         expect(anotherClient['getEndpointForSettings']()).toBe(
-          `https://example.com/v1/projects/${config.writeKey}/settings`
+          `${expectedBaseURL}projects/${config.writeKey}/settings`
         );
         expect(spy).toHaveBeenCalled();
       }
     );
     it.each([
-      ['example.com/v1/projects/'],
-      ['https://example.com/v1/projects/'],
+      ['example.com/v1/projects/', 'https://example.com/v1/projects/'],
+      ['https://example.com/v1/projects/', 'https://example.com/v1/projects/'],
+      ['http://example.com/v1/projects/', 'http://example.com/v1/projects/'],
     ])(
       'should append projects/writeKey/settings if proxy ends with projects/ and useSegmentEndpoint is true',
-      (cdnProxy) => {
+      (cdnProxy, expectedBaseURL) => {
         const config = {
           ...clientArgs.config,
           useSegmentEndpoints: true,
@@ -325,14 +330,18 @@ describe('internal #getSettings', () => {
           'getEndpointForSettings'
         );
         expect(anotherClient['getEndpointForSettings']()).toBe(
-          `https://example.com/v1/projects/projects/${config.writeKey}/settings`
+          `${expectedBaseURL}projects/${config.writeKey}/settings`
         );
         expect(spy).toHaveBeenCalled();
       }
     );
-    it.each(['example.com/v1/projects', 'https://example.com/v1/projects'])(
+    it.each([
+      ['example.com/v1/projects', 'https://example.com/v1/projects'],
+      ['https://example.com/v1/projects', 'https://example.com/v1/projects'],
+      ['http://example.com/v1/projects', 'http://example.com/v1/projects'],
+    ])(
       'should append /projects/writeKey/settings if proxy ends with /projects and useSegmentEndpoint is true',
-      (cdnProxy) => {
+      (cdnProxy, expectedBaseURL) => {
         const config = {
           ...clientArgs.config,
           useSegmentEndpoints: true,
@@ -348,12 +357,16 @@ describe('internal #getSettings', () => {
           'getEndpointForSettings'
         );
         expect(anotherClient['getEndpointForSettings']()).toBe(
-          `https://example.com/v1/projects/projects/${config.writeKey}/settings`
+          `${expectedBaseURL}/projects/${config.writeKey}/settings`
         );
         expect(spy).toHaveBeenCalled();
       }
     );
-    it.each(['example.com/v1?params=xx', 'https://example.com/v1?params=xx'])(
+    it.each([
+      ['example.com/v1?params=xx'],
+      ['https://example.com/v1?params=xx'],
+      ['http://example.com/v1?params=xx'],
+    ])(
       'should throw an error if proxy comes with query params and useSegmentEndpoint is true',
       (cdnProxy) => {
         const config = {

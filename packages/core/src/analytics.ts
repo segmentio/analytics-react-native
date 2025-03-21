@@ -331,16 +331,13 @@ export class SegmentClient {
     } else {
       settingsPrefix = settingsCDN;
     }
+
     if (hasProxy) {
       if (useSegmentEndpoints) {
-        if (
-          this.config?.cdnProxy != null &&
-          this.config.cdnProxy.endsWith('/')
-        ) {
-          settingsEndpoint = `projects/${this.config.writeKey}/settings`;
-        } else {
-          settingsEndpoint = `/projects/${this.config.writeKey}/settings`;
-        }
+        const isCdnProxyEndsWithSlash = settingsPrefix.endsWith('/');
+        settingsEndpoint = isCdnProxyEndsWithSlash
+          ? `projects/${this.config.writeKey}/settings`
+          : `/projects/${this.config.writeKey}/settings`;
       } else {
         settingsEndpoint = '';
       }
