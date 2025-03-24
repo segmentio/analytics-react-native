@@ -264,10 +264,6 @@ export function getURL(host: string, path: string) {
   }
   const s = `${host}${path}`;
   if (!validateURL(s)) {
-    //   throw new Error('Invalid URL has been passed');
-    //log error message that Invalid url
-    // log the invalid URl
-    //throw a new error
     console.error('Invalid URL has been passed');
     console.log(`Invalid Url passed is ${s}`);
     throw new Error('Invalid URL has been passed');
