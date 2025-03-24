@@ -94,21 +94,20 @@ export class SegmentDestination extends DestinationPlugin {
     const useSegmentEndpoints = Boolean(config?.useSegmentEndpoints);
     let baseURL = '';
     let endpoint = '';
-    //baseURL is always config?.proxy if hasProxy
     if (hasProxy) {
+      //baseURL is always config?.proxy if hasProxy
       baseURL = config?.proxy ?? '';
+      if (useSegmentEndpoints) {
+        const isProxyEndsWithSlash = baseURL.endsWith('/');
+        endpoint = isProxyEndsWithSlash ? 'b' : '/b';
+      }
     } else {
       baseURL = this.apiHost ?? defaultApiHost;
     }
-    if (hasProxy && useSegmentEndpoints) {
-      const isProxyEndsWithSlash = baseURL.endsWith('/');
-      endpoint = isProxyEndsWithSlash ? 'b' : '/b';
-    }
-
     try {
       return getURL(baseURL, endpoint);
     } catch (error) {
-      console.log('Error in getEndpoint:', error);
+      console.error('Error in getEndpoint:', error);
       throw new Error('Invalid proxy url has been passed');
     }
   }

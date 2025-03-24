@@ -328,11 +328,6 @@ export class SegmentClient {
 
     if (hasProxy) {
       settingsPrefix = this.config.cdnProxy ?? '';
-    } else {
-      settingsPrefix = settingsCDN;
-    }
-
-    if (hasProxy) {
       if (useSegmentEndpoints) {
         const isCdnProxyEndsWithSlash = settingsPrefix.endsWith('/');
         settingsEndpoint = isCdnProxyEndsWithSlash
@@ -342,12 +337,13 @@ export class SegmentClient {
         settingsEndpoint = '';
       }
     } else {
+      settingsPrefix = settingsCDN;
       settingsEndpoint = `/${this.config.writeKey}/settings`;
     }
     try {
       return getURL(settingsPrefix, settingsEndpoint);
     } catch (error) {
-      console.log('Error in getEndpointForSettings:', error);
+      console.error('Error in getEndpointForSettings:', error);
       throw new Error('Invalid cdn proxy url has been passed');
     }
   }

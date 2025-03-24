@@ -264,6 +264,12 @@ export function getURL(host: string, path: string) {
   }
   const s = `${host}${path}`;
   if (!validateURL(s)) {
+    //   throw new Error('Invalid URL has been passed');
+    //log error message that Invalid url
+    // log the invalid URl
+    //throw a new error
+    console.error('Invalid URL has been passed');
+    console.log(`Invalid Url passed is ${s}`);
     throw new Error('Invalid URL has been passed');
   }
 
@@ -272,6 +278,6 @@ export function getURL(host: string, path: string) {
 
 export function validateURL(url: string): boolean {
   const urlRegex =
-    /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(:\d+)?(\/[\w-.]*)*(\?([\w-.]+=[\w-.%]+)(&[\w-.]+=[\w-.%]+)*)?(#.*)?$/;
+    /^(https?:\/\/)?((localhost|(\d{1,3}\.){3}\d{1,3})|([\w-]+(\.[\w-]+)+))(:\d+)?(\/[\w-.]*)*(\?([\w-.]+=[\w-.%]+)(&[\w-.]+=[\w-.%]+)*)?(#.*)?$/;
   return urlRegex.test(url);
 }
