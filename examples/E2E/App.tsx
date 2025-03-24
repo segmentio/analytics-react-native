@@ -33,7 +33,7 @@ import {Platform} from 'react-native';
 // import { BrazePlugin } from '@segment/analytics-react-native-plugin-braze';
 
 const segmentClient = createClient({
-  writeKey: 'KDzygiYHVtaOeNDmSTzcGDH2KMkJCPTM',
+  writeKey: 'yup',
   maxBatchSize: 1000,
   trackDeepLinks: true,
   trackAppLifecycleEvents: true,
@@ -47,14 +47,14 @@ const segmentClient = createClient({
     // new TimerFlushPolicy(1000),
     // new StartupFlushPolicy(),
   ],
-  // proxy: Platform.select({
-  //   ios: 'http://localhost:9091/v1',
-  //   android: 'http://10.0.2.2:9091/v1',
-  // }),
-  // cdnProxy: Platform.select({
-  //   ios: 'http://localhost:9091/v1',
-  //   android: 'http://10.0.2.2:9091/v1',
-  // }),
+  proxy: Platform.select({
+    ios: 'http://localhost:9091/v1',
+    android: 'http://10.0.2.2:9091/v1',
+  }),
+  cdnProxy: Platform.select({
+    ios: 'http://localhost:9091/v1',
+    android: 'http://10.0.2.2:9091/v1',
+  }),
 });
 
 const LoggerPlugin = new Logger();
