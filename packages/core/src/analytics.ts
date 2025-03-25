@@ -333,8 +333,6 @@ export class SegmentClient {
         settingsEndpoint = isCdnProxyEndsWithSlash
           ? `projects/${this.config.writeKey}/settings`
           : `/projects/${this.config.writeKey}/settings`;
-      } else {
-        settingsEndpoint = '';
       }
     } else {
       settingsPrefix = settingsCDN;
