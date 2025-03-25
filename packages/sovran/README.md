@@ -99,7 +99,7 @@ const messages = createStore<MessageQueue>({
 
 // Action to add new events
 const addMessage = (message: Message) => (state: MessageQueue) =>
-  { messages: [...state.messages, message] };
+  ({ messages: [...state.messages, message] });
 
 // Register the store to listen to native events
 registerBridgeStore({
