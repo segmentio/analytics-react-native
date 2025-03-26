@@ -107,8 +107,8 @@ export class SegmentDestination extends DestinationPlugin {
     try {
       return getURL(baseURL, endpoint);
     } catch (error) {
-      console.error('Error in getEndpoint:', error);
-      throw new Error('Invalid proxy url has been passed');
+      console.error('Error in getEndpoint:', `fallback to ${defaultApiHost}`);
+      return defaultApiHost;
     }
   }
   configure(analytics: SegmentClient): void {

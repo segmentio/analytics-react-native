@@ -10,6 +10,7 @@ import {
   workspaceDestinationFilterKey,
   defaultFlushInterval,
   defaultFlushAt,
+  defaultApiHost,
 } from './constants';
 import { getContext } from './context';
 import {
@@ -341,8 +342,11 @@ export class SegmentClient {
     try {
       return getURL(settingsPrefix, settingsEndpoint);
     } catch (error) {
-      console.error('Error in getEndpointForSettings:', error);
-      throw new Error('Invalid cdn proxy url has been passed');
+      console.error(
+        'Error in getEndpointForSettings:',
+        `fallback to ${settingsCDN}/${this.config.writeKey}/settings`
+      );
+      return `${settingsCDN}/${this.config.writeKey}/settings`;
     }
   }
 
