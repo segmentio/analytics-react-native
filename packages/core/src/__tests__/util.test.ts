@@ -172,7 +172,7 @@ describe('getURL function', () => {
   });
 
   it('should return the root URL when the path is empty', () => {
-    expect(getURL('www.example.com', '')).toBe('https://www.example.com/');
+    expect(getURL('www.example.com', '')).toBe('https://www.example.com');
   });
 
   it('should handle query parameters correctly in the URL path', () => {
@@ -188,13 +188,13 @@ describe('getURL function', () => {
   });
 
   // Negative Test Cases
-  it('should handle empty host gracefully', () => {
-    expect(getURL('', '/home')).toBe('https:///home');
+  it('should throw an error for empty host', () => {
+    expect(() => getURL('', '/home')).toThrow('Invalid URL has been passed');
   });
 
-  it('should handle invalid characters in the host', () => {
-    expect(getURL('invalid host.com', '/path')).toBe(
-      'https://invalid host.com/path'
+  it('should throw an error for invalid characters in the host', () => {
+    expect(() => getURL('invalid host.com', '/path')).toThrow(
+      'Invalid URL has been passed'
     );
   });
 });

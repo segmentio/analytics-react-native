@@ -259,12 +259,30 @@ export const createPromise = <T>(
 };
 
 export function getURL(host: string, path: string) {
-  if (path === '') {
-    path = '/'; // Ensure a trailing slash if path is empty
-  }
   if (!host.startsWith('https://') && !host.startsWith('http://')) {
     host = 'https://' + host;
   }
   const s = `${host}${path}`;
+  if (!validateURL(s)) {
+    console.error('Invalid URL has been passed');
+    console.log(`Invalid Url passed is ${s}`);
+    throw new Error('Invalid URL has been passed');
+  }
+
   return s;
+}
+
+export function validateURL(url: string): boolean {
+  const urlRegex = new RegExp(
+    '^(?:https?:\\/\\/)' + // Protocol (http or https)
+      '(?:\\S+(?::\\S*)?@)?' + // Optional user:pass@
+      '(?:(localhost|\\d{1,3}(?:\\.\\d{1,3}){3})|' + // Localhost or IP address
+      '(?:(?!-)[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*(?:\\.[a-zA-Z]{2,})))' + // Domain validation (supports hyphens)
+      '(?::\\d{2,5})?' + // Optional port
+      '(\\/[^\\s?#]*)?' + // Path (allows `/projects/yup/settings`)
+      '(\\?[a-zA-Z0-9_.-]+=[a-zA-Z0-9_.-]+(&[a-zA-Z0-9_.-]+=[a-zA-Z0-9_.-]+)*)?' + // Query params
+      '(#[^\\s]*)?$', // Fragment (optional)
+    'i' // Case-insensitive
+  );
+  return urlRegex.test(url);
 }

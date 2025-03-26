@@ -320,22 +320,37 @@ export class SegmentClient {
 
     return map;
   }
-
-  async fetchSettings() {
-    const settingsPrefix: string = this.config.cdnProxy ?? settingsCDN;
+  private getEndpointForSettings(): string {
+    let settingsPrefix = '';
+    let settingsEndpoint = '';
     const hasProxy = !!(this.config?.cdnProxy ?? '');
     const useSegmentEndpoints = Boolean(this.config?.useSegmentEndpoints);
-    let settingsEndpoint = '';
+
     if (hasProxy) {
+      settingsPrefix = this.config.cdnProxy ?? '';
       if (useSegmentEndpoints) {
-        settingsEndpoint = `/projects/${this.config.writeKey}/settings`;
-      } else {
-        settingsEndpoint = '';
+        const isCdnProxyEndsWithSlash = settingsPrefix.endsWith('/');
+        settingsEndpoint = isCdnProxyEndsWithSlash
+          ? `projects/${this.config.writeKey}/settings`
+          : `/projects/${this.config.writeKey}/settings`;
       }
     } else {
+      settingsPrefix = settingsCDN;
       settingsEndpoint = `/${this.config.writeKey}/settings`;
     }
-    const settingsURL = getURL(settingsPrefix, settingsEndpoint);
+    try {
+      return getURL(settingsPrefix, settingsEndpoint);
+    } catch (error) {
+      console.error(
+        'Error in getEndpointForSettings:',
+        `fallback to ${settingsCDN}/${this.config.writeKey}/settings`
+      );
+      return `${settingsCDN}/${this.config.writeKey}/settings`;
+    }
+  }
+
+  async fetchSettings() {
+    const settingsURL = this.getEndpointForSettings();
     try {
       const res = await fetch(settingsURL, {
         headers: {

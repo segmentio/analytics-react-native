@@ -320,14 +320,14 @@ describe('SegmentDestination', () => {
 
       expect(sendEventsSpy).toHaveBeenCalledTimes(2);
       expect(sendEventsSpy).toHaveBeenCalledWith({
-        url: getURL(defaultApiHost, '/b'),
+        url: getURL(defaultApiHost, ''), // default api already appended with '/b'
         writeKey: '123-456',
         events: events.slice(0, 2).map((e) => ({
           ...e,
         })),
       });
       expect(sendEventsSpy).toHaveBeenCalledWith({
-        url: getURL(defaultApiHost, '/b'),
+        url: getURL(defaultApiHost, ''), // default api already appended with '/b'
         writeKey: '123-456',
         events: events.slice(2, 4).map((e) => ({
           ...e,
@@ -396,15 +396,10 @@ describe('SegmentDestination', () => {
             expectedUrl = getURL(customEndpoint, '/b');
           } else {
             expectedUrl = getURL(customEndpoint, '');
-            console.log('expected URL---->', expectedUrl);
           }
         } else {
           expectedUrl = getURL('events.eu1.segmentapis.com', '/b');
         }
-
-        // let expectedUrl = hasProxy
-        //   ? getURL(customEndpoint, useSegmentEndpoints ? '/b' : '')
-        //   : getURL('events.eu1.segmentapis.com', '/b');
 
         await plugin.flush();
 
@@ -418,5 +413,137 @@ describe('SegmentDestination', () => {
         });
       }
     );
+  });
+  describe('getEndpoint', () => {
+    it.each([
+      ['example.com/v1/', 'https://example.com/v1/'],
+      ['https://example.com/v1/', 'https://example.com/v1/'],
+      ['http://example.com/v1/', 'http://example.com/v1/'],
+    ])(
+      'should append b if proxy end with / and useSegmentEndpoint is true',
+      (proxy, expectedBaseURL) => {
+        const plugin = new SegmentDestination();
+        const config = {
+          ...clientArgs.config,
+          useSegmentEndpoints: true,
+          proxy: proxy,
+        };
+        plugin.analytics = new SegmentClient({
+          ...clientArgs,
+          config,
+        });
+        const spy = jest.spyOn(Object.getPrototypeOf(plugin), 'getEndpoint');
+        expect(plugin['getEndpoint']()).toBe(`${expectedBaseURL}b`);
+        expect(spy).toHaveBeenCalled();
+      }
+    );
+    it.each([
+      ['example.com/v1/b/', 'https://example.com/v1/b/'],
+      ['https://example.com/v1/b/', 'https://example.com/v1/b/'],
+      ['http://example.com/v1/b/', 'http://example.com/v1/b/'],
+    ])(
+      'should append b if proxy ends with b/ and useSegmentEndpoint is true',
+      (proxy, expectedBaseURL) => {
+        const plugin = new SegmentDestination();
+        const config = {
+          ...clientArgs.config,
+          useSegmentEndpoints: true,
+          proxy: proxy,
+        };
+        plugin.analytics = new SegmentClient({
+          ...clientArgs,
+          config,
+        });
+
+        const spy = jest.spyOn(Object.getPrototypeOf(plugin), 'getEndpoint');
+        expect(plugin['getEndpoint']()).toBe(`${expectedBaseURL}b`);
+        expect(spy).toHaveBeenCalled();
+      }
+    );
+    it.each([
+      ['example.com/v1/b', 'https://example.com/v1/b'],
+      ['https://example.com/v1/b', 'https://example.com/v1/b'],
+      ['http://example.com/v1/b', 'http://example.com/v1/b'],
+    ])(
+      'should append /b if proxy ends with /b and useSegmentEndpoint is true',
+      (proxy, expectedBaseURL) => {
+        const plugin = new SegmentDestination();
+        const config = {
+          ...clientArgs.config,
+          useSegmentEndpoints: true,
+          proxy: proxy,
+        };
+        plugin.analytics = new SegmentClient({
+          ...clientArgs,
+          config,
+        });
+
+        const spy = jest.spyOn(Object.getPrototypeOf(plugin), 'getEndpoint');
+        expect(plugin['getEndpoint']()).toBe(`${expectedBaseURL}/b`);
+        expect(spy).toHaveBeenCalled();
+      }
+    );
+    it.each([
+      ['example.com/v1?params=xx'],
+      ['https://example.com/v1?params=xx'],
+      ['http://example.com/v1?params=xx'],
+    ])(
+      'should throw an error if proxy comes with query params and useSegmentEndpoint is true',
+      (proxy) => {
+        const plugin = new SegmentDestination();
+        const config = {
+          ...clientArgs.config,
+          useSegmentEndpoints: true,
+          proxy: proxy,
+        };
+        plugin.analytics = new SegmentClient({
+          ...clientArgs,
+          config,
+        });
+
+        const spy = jest.spyOn(Object.getPrototypeOf(plugin), 'getEndpoint');
+        // Expect the private method to throw an error
+        expect(plugin['getEndpoint']()).toBe(defaultApiHost);
+        expect(spy).toHaveBeenCalled();
+      }
+    );
+    it.each([
+      ['example.com/v1/', false],
+      ['example.com/b/', false],
+      ['example.com/b', false],
+      ['example.com/v1?params=xx', false],
+    ])(
+      'should always return identical result if proxy is provided and useSegmentEndpoints is false',
+      (proxy, useSegmentEndpoints) => {
+        const plugin = new SegmentDestination();
+        const config = {
+          ...clientArgs.config,
+          useSegmentEndpoints: useSegmentEndpoints,
+          proxy: proxy,
+        };
+        plugin.analytics = new SegmentClient({
+          ...clientArgs,
+          config,
+        });
+        const spy = jest.spyOn(Object.getPrototypeOf(plugin), 'getEndpoint');
+        const expected = `https://${proxy}`;
+        expect(plugin['getEndpoint']()).toBe(expected);
+        expect(spy).toHaveBeenCalled();
+      }
+    );
+    it('No proxy provided, should return default API host', () => {
+      const plugin = new SegmentDestination();
+      const config = {
+        ...clientArgs.config,
+        useSegmentEndpoints: true, // No matter in this case
+      };
+      plugin.analytics = new SegmentClient({
+        ...clientArgs,
+        config,
+      });
+      const spy = jest.spyOn(Object.getPrototypeOf(plugin), 'getEndpoint');
+      expect(plugin['getEndpoint']()).toBe(defaultApiHost);
+      expect(spy).toHaveBeenCalled();
+    });
   });
 });
