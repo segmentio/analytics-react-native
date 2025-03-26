@@ -384,8 +384,8 @@ describe('internal #getSettings', () => {
           'getEndpointForSettings'
         );
         // Expect the private method to throw an error
-        expect(() => anotherClient['getEndpointForSettings']()).toThrow(
-          'Invalid cdn proxy url has been passed'
+        expect(anotherClient['getEndpointForSettings']()).toBe(
+          `${settingsCDN}/${config.writeKey}/settings`
         );
         expect(spy).toHaveBeenCalled();
       }

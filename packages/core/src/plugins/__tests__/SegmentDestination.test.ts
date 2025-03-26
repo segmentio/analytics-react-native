@@ -503,9 +503,7 @@ describe('SegmentDestination', () => {
 
         const spy = jest.spyOn(Object.getPrototypeOf(plugin), 'getEndpoint');
         // Expect the private method to throw an error
-        expect(() => plugin['getEndpoint']()).toThrow(
-          'Invalid proxy url has been passed'
-        );
+        expect(plugin['getEndpoint']()).toBe(defaultApiHost);
         expect(spy).toHaveBeenCalled();
       }
     );

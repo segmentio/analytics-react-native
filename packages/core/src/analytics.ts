@@ -10,7 +10,6 @@ import {
   workspaceDestinationFilterKey,
   defaultFlushInterval,
   defaultFlushAt,
-  defaultApiHost,
 } from './constants';
 import { getContext } from './context';
 import {
