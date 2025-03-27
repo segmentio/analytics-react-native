@@ -1,6 +1,6 @@
 import identify from '../identify';
 import type { IdentifyEventType } from '@segment/analytics-react-native';
-import { addSessionPartnerParameter } from '../__mocks__/react-native-adjust';
+import { addGlobalPartnerParameter } from '../__mocks__/react-native-adjust';
 
 describe('#identify', () => {
   beforeEach(() => {
@@ -15,7 +15,7 @@ describe('#identify', () => {
 
     identify(payload as IdentifyEventType);
 
-    expect(addSessionPartnerParameter).toHaveBeenCalledWith('user_id', 'user');
+    expect(addGlobalPartnerParameter).toHaveBeenCalledWith('user_id', 'user');
   });
 
   it('sets the anonymous_id', () => {
@@ -26,7 +26,7 @@ describe('#identify', () => {
 
     identify(payload as IdentifyEventType);
 
-    expect(addSessionPartnerParameter).toHaveBeenCalledWith(
+    expect(addGlobalPartnerParameter).toHaveBeenCalledWith(
       'anonymous_id',
       'anon'
     );
