@@ -1,6 +1,6 @@
 {
   "name": "@segment/analytics-react-native-plugin-adjust",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "The hassle-free way to add Segment analytics to your React-Native app.",
   "main": "lib/commonjs/index",
   "scripts": {
@@ -45,14 +45,14 @@
   "homepage": "https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-adjust#readme",
   "peerDependencies": {
     "@segment/analytics-react-native": "^2.18.0",
-    "react-native-adjust": "^4.33.0"
+    "react-native-adjust": "^5.1.0"
   },
   "devDependencies": {
     "@segment/analytics-react-native": "^2.18.0",
     "@segment/analytics-rn-shared": "workspace:^",
     "@segment/sovran-react-native": "^1.1.0",
     "jest": "^29.7.0",
-    "react-native-adjust": "^4.33.0",
+    "react-native-adjust": "^5.1.0",
     "react-native-builder-bob": "^0.23.1",
     "rimraf": "^5.0.5",
     "typescript": "^5.2.2"
