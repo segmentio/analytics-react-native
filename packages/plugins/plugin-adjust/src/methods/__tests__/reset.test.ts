@@ -1,5 +1,5 @@
 import reset from '../reset';
-import { resetSessionPartnerParameters } from '../__mocks__/react-native-adjust';
+import { removeGlobalPartnerParameters } from '../__mocks__/react-native-adjust';
 
 describe('#reset', () => {
   beforeEach(() => {
@@ -9,7 +9,7 @@ describe('#reset', () => {
   it('calls resetSessionPartnerParameters', () => {
     reset();
 
-    expect(resetSessionPartnerParameters).toHaveBeenCalledTimes(1);
-    expect(resetSessionPartnerParameters).toHaveBeenCalledWith();
+    expect(removeGlobalPartnerParameters).toHaveBeenCalledTimes(1);
+    expect(removeGlobalPartnerParameters).toHaveBeenCalledWith();
   });
 });
