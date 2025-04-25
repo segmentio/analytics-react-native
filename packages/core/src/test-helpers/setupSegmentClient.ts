@@ -14,6 +14,7 @@ export const createTestClient = (
 ) => {
   const store = new MockSegmentStore({
     isReady: true,
+    enabled: true,
     ...storeData,
   });
 

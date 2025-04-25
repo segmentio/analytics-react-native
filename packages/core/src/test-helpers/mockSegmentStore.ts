@@ -24,6 +24,7 @@ import { createGetter } from '../storage/helpers';
 
 export type StoreData = {
   isReady: boolean;
+  enabled: boolean;
   context?: DeepPartial<Context>;
   settings: SegmentAPIIntegrations;
   consentSettings?: SegmentAPIConsentSettings;
@@ -36,6 +37,7 @@ export type StoreData = {
 
 const INITIAL_VALUES: StoreData = {
   isReady: true,
+  enabled: true,
   context: undefined,
   settings: {
     [SEGMENT_DESTINATION_KEY]: {},
@@ -90,6 +92,7 @@ export class MockSegmentStore implements Storage {
     userInfo: createCallbackManager<UserInfoState>(),
     deepLinkData: createCallbackManager<DeepLinkData>(),
     pendingEvents: createCallbackManager<SegmentEvent[]>(),
+    enabled: createCallbackManager<boolean>(),
   };
 
   readonly isReady = {
@@ -100,6 +103,23 @@ export class MockSegmentStore implements Storage {
       return () => {
         return;
       };
+    },
+  };
+
+  readonly enabled = {
+    get: createMockStoreGetter(() => {
+      return this.data.enabled;
+    }),
+    onChange: (_callback: (value: boolean) => void) => {
+      return () => {
+        return;
+      };
+    },
+    set: async (value: boolean | ((prev: boolean) => boolean)) => {
+      this.data.enabled =
+        value instanceof Function ? value(this.data.enabled ?? true) : value;
+      this.callbacks.enabled.run(this.data.enabled);
+      return this.data.enabled;
     },
   };
 

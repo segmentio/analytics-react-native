@@ -116,6 +116,10 @@ export class SegmentClient {
    */
   readonly isReady = new Observable<boolean>(false);
   /**
+   * Access or subscribe to client enabled
+   */
+  readonly enabled: Watchable<boolean> & Settable<boolean>;
+  /**
    * Access or subscribe to client context
    */
   readonly context: Watchable<DeepPartial<Context> | undefined> &
@@ -245,6 +249,12 @@ export class SegmentClient {
     this.deepLinkData = {
       get: this.store.deepLinkData.get,
       onChange: this.store.deepLinkData.onChange,
+    };
+
+    this.enabled = {
+      get: this.store.enabled.get,
+      set: this.store.enabled.set,
+      onChange: this.store.enabled.onChange,
     };
 
     // add segment destination plugin unless
@@ -476,12 +486,15 @@ export class SegmentClient {
   async process(incomingEvent: SegmentEvent, enrichment?: EnrichmentClosure) {
     const event = this.applyRawEventData(incomingEvent);
     event.enrichment = enrichment;
-
-    if (this.isReady.value) {
-      return this.startTimelineProcessing(event);
+    if (this.enabled.get() === true) {
+      if (this.isReady.value) {
+        return this.startTimelineProcessing(event);
+      } else {
+        this.store.pendingEvents.add(event);
+        return event;
+      }
     } else {
-      this.store.pendingEvents.add(event);
-      return event;
+      return;
     }
   }
 

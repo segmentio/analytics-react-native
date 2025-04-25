@@ -40,6 +40,7 @@ type Data = {
   userInfo: UserInfoState;
   filters: DestinationFilters;
   pendingEvents: SegmentEvent[];
+  enabled: boolean;
 };
 
 const INITIAL_VALUES: Data = {
@@ -54,6 +55,7 @@ const INITIAL_VALUES: Data = {
     traits: undefined,
   },
   pendingEvents: [],
+  enabled: true,
 };
 
 const isEverythingReady = (state: ReadinessStore) =>
@@ -185,6 +187,9 @@ export class SovranStorage implements Storage {
     Settable<SegmentEvent[]> &
     Queue<SegmentEvent, SegmentEvent[]>;
 
+  readonly enabledStore: Store<{ enabled: boolean }>; 
+  readonly enabled: Watchable<boolean> & Settable<boolean>;
+
   constructor(config: StorageConfig) {
     this.storeId = config.storeId;
     this.storePersistor = config.storePersistor;
@@ -195,6 +200,7 @@ export class SovranStorage implements Storage {
       hasRestoredUserInfo: false,
       hasRestoredFilters: false,
       hasRestoredPendingEvents: false,
+      hasRestoredEnabled: false,
     });
 
     const markAsReadyGenerator = (key: keyof ReadinessStore) => () => {
@@ -489,6 +495,47 @@ export class SovranStorage implements Storage {
       onChange: (callback: (value: DeepLinkData) => void) =>
         this.deepLinkStore.subscribe(callback),
     };
+
+    this.enabledStore = createStore(
+      { enabled: INITIAL_VALUES.enabled },
+      {
+        persist: {
+          storeId: `${this.storeId}-enabled`,
+          persistor: this.storePersistor,
+          saveDelay: this.storePersistorSaveDelay,
+          onInitialized: markAsReadyGenerator('hasRestoredEnabled'),
+        },
+      }
+    );
+    // Accessor object for enabled
+    this.enabled = {
+      get: createGetter(
+        () => {
+          const state = this.enabledStore.getState();
+          return state.enabled;
+        },
+        async () => {
+          const value = await this.enabledStore.getState(true);
+          return value.enabled;
+        }
+      ),
+
+      onChange: (callback: (value: boolean) => void) => {
+        return this.enabledStore.subscribe((store) => {
+          callback(store.enabled);
+        });
+      },
+
+      set: async (value: boolean | ((prev: boolean) => boolean)) => {
+        const { enabled } = await this.enabledStore.dispatch((state) => {
+          const newEnabled =
+            value instanceof Function ? value(state.enabled) : value;
+          return { enabled: newEnabled };
+        });
+        return enabled;
+      },
+    };
+
 
     this.fixAnonymousId();
   }
