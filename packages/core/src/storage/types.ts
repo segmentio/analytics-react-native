@@ -59,6 +59,7 @@ export interface ReadinessStore {
   hasRestoredUserInfo: boolean;
   hasRestoredFilters: boolean;
   hasRestoredPendingEvents: boolean;
+  hasRestoredEnabled: boolean;
 }
 
 /**
@@ -91,6 +92,8 @@ export interface Storage {
   readonly pendingEvents: Watchable<SegmentEvent[]> &
     Settable<SegmentEvent[]> &
     Queue<SegmentEvent, SegmentEvent[]>;
+    
+  readonly enabled: Watchable<boolean> & Settable<boolean>;
 }
 export type DeepLinkData = {
   referring_application: string;
