@@ -486,15 +486,14 @@ export class SegmentClient {
   async process(incomingEvent: SegmentEvent, enrichment?: EnrichmentClosure) {
     const event = this.applyRawEventData(incomingEvent);
     event.enrichment = enrichment;
-    if (this.enabled.get() === true) {
-      if (this.isReady.value) {
-        return this.startTimelineProcessing(event);
-      } else {
-        this.store.pendingEvents.add(event);
-        return event;
-      }
-    } else {
+    if (this.enabled.get() === false) {
       return;
+    }
+    if (this.isReady.value) {
+      return this.startTimelineProcessing(event);
+    } else {
+      this.store.pendingEvents.add(event);
+      return event;
     }
   }
 
