@@ -27,7 +27,7 @@ const MAX_CHARACTERS_EVENT_NAME = 40;
 const mappedPropNames = generateMapTransform(mapEventProps, transformMap);
 
 interface FBPluginSettings extends Record<string, unknown> {
-  trackScreenEvent?: boolean;
+  trackScreenEvents?: boolean;
   limitedDataUse?: boolean;
   appEvents?: { [key: string]: string };
 }
@@ -141,7 +141,7 @@ export class FacebookAppEventsPlugin extends DestinationPlugin {
     const fbSettings = settings.integrations[this.key];
 
     if (isFBPluginSettings(fbSettings)) {
-      this.trackScreens = fbSettings.trackScreenEvent ?? false;
+      this.trackScreens = fbSettings.trackScreenEvents ?? false;
       this.limitedDataUse = fbSettings.limitedDataUse ?? false;
       this.appEvents = fbSettings.appEvents ?? {};
 
