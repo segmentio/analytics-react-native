@@ -177,6 +177,8 @@ export type ClientMethods = {
   ) => Promise<void>;
   alias: (newUserId: string, enrichment?: EnrichmentClosure) => Promise<void>;
   reset: (resetAnonymousId?: boolean) => Promise<void>;
+  clearFlushQueue: () => Promise<void>;
+  getFlushQueueCount: () => Promise<number | undefined>;
 };
 
 type ContextApp = {
