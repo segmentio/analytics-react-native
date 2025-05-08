@@ -77,4 +77,67 @@ describe('QueueFlushingPlugin', () => {
     // @ts-ignore
     expect(queuePlugin.queueStore?.getState().events).toHaveLength(0);
   });
+  it('should clear all events from the queue', async () => {
+    const onFlush = jest.fn().mockResolvedValue(undefined);
+    const queuePlugin = setupQueuePlugin(onFlush, 10);
+    const event1: SegmentEvent = {
+      type: EventType.TrackEvent,
+      event: 'test1',
+      properties: {
+        test: 'test1',
+      },
+    };
+    const event2: SegmentEvent = {
+      type: EventType.TrackEvent,
+      event: 'test2',
+      properties: {
+        test: 'test2',
+      },
+    };
+    await queuePlugin.execute(event1);
+    await queuePlugin.execute(event2);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    expect(queuePlugin.queueStore?.getState().events).toHaveLength(2);
+    await queuePlugin.clearQueue();
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    expect(queuePlugin.queueStore?.getState().events).toHaveLength(0);
+  });
+  it('should return the count of items in the queue', async () => {
+    const onFlush = jest.fn().mockResolvedValue(undefined);
+    const queuePlugin = setupQueuePlugin(onFlush, 10);
+
+    const event1: SegmentEvent = {
+      type: EventType.TrackEvent,
+      event: 'test1',
+      properties: {
+        test: 'test1',
+      },
+    };
+
+    const event2: SegmentEvent = {
+      type: EventType.TrackEvent,
+      event: 'test2',
+      properties: {
+        test: 'test2',
+      },
+    };
+
+    await queuePlugin.execute(event1);
+    await queuePlugin.execute(event2);
+
+    let eventsCount = await queuePlugin.getQueueCount();
+    expect(eventsCount).toBe(2);
+
+    await queuePlugin.dequeue(event1);
+
+    eventsCount = await queuePlugin.getQueueCount();
+    expect(eventsCount).toBe(1);
+
+    await queuePlugin.clearQueue();
+
+    eventsCount = await queuePlugin.getQueueCount();
+    expect(eventsCount).toBe(0);
+  });
 });
