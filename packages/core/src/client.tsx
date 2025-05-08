@@ -71,6 +71,8 @@ export const useAnalytics = (): ClientMethods => {
       group: async (...args) => client?.group(...args),
       alias: async (...args) => client?.alias(...args),
       reset: async (...args) => client?.reset(...args),
+      clearFlushQueue: async () => client?.clearFlushQueue(),
+      getFlushQueueCount: async () => client?.getFlushQueueCount(),
     };
   }, [client]);
 };

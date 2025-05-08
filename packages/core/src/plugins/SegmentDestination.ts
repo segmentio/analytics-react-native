@@ -150,4 +150,13 @@ export class SegmentDestination extends DestinationPlugin {
     // Wait until the queue is done restoring before flushing
     return this.queuePlugin.flush();
   }
+  async clearFlushQueue() {
+    //Wait until clearing current Flush queue
+    return this.queuePlugin.clearQueue();
+  }
+  async getQueueCount() {
+    // Wait until getting the count of queue
+    const eventsCount = await this.queuePlugin.getQueueCount();
+    return eventsCount;
+  }
 }

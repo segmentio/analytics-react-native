@@ -36,6 +36,15 @@ export class Plugin {
   shutdown() {
     // do nothing by default, user can override.
   }
+
+  async clearFlushQueue() {
+    // Overridden in Segment Destination
+  }
+
+  async getQueueCount() {
+    // Overridden in Segment Destination
+    return 0;
+  }
 }
 
 export class EventPlugin extends Plugin {
