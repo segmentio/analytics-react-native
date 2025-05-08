@@ -118,25 +118,25 @@ You must pass at least the `writeKey`. Additional configuration options are list
   
 ### Client Options
 
-| **Name**                   | **Default**  | **Description**                                                                                                                                                                               |
-|----------------------------|--------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `writeKey` **(REQUIRED)**   | ''           | Your Segment API key.                                                                                                                                                                         |
-| `collectDeviceId`           | false        | Set to true to automatically collect the device Id from the DRM API on Android devices.                                                                                                      |
-| `debug`                     | true\*       | When set to false, it will not generate any logs.                                                                                                                                              |
-| `logger`                    | undefined    | Custom logger instance to expose internal Segment client logging.                                                                                                                            |
-| `flushAt`                   | 20           | How many events to accumulate before sending events to the backend.                                                                                                                            |
-| `flushInterval`             | 30           | In seconds, how often to send events to the backend.                                                                                                                                           |
-| `flushPolicies`             | undefined    | Add more granular control for when to flush, see [Adding or removing policies](#adding-or-removing-policies). **Mutually exclusive with flushAt/flushInterval**                               |
-| `maxBatchSize`              | 1000         | How many events to send to the API at once                                                                                                                                                      |
-| `trackAppLifecycleEvents`   | false        | Enable automatic tracking for [app lifecycle events](https://segment.com/docs/connections/spec/mobile/#lifecycle-events): application installed, opened, updated, backgrounded.               |
-| `trackDeepLinks`            | false        | Enable automatic tracking for when the user opens the app via a deep link (Note: Requires additional setup on iOS, [see instructions](#ios-deep-link-tracking-setup)).                       |
+| **Name**                   | **Default**  | **Description** |
+|----------------------------|--------------|------------------|
+| `writeKey` **(REQUIRED)**   | ''           | Your Segment API key. |
+| `collectDeviceId`           | false        | Set to true to automatically collect the device Id from the DRM API on Android devices. |
+| `debug`                     | true\*       | When set to false, it will not generate any logs. |
+| `logger`                    | undefined    | Custom logger instance to expose internal Segment client logging. |
+| `flushAt`                   | 20           | How many events to accumulate before sending events to the backend. |
+| `flushInterval`             | 30           | In seconds, how often to send events to the backend. |
+| `flushPolicies`             | undefined    | Add more granular control for when to flush, see [Adding or removing policies](#adding-or-removing-policies). **Mutually exclusive with flushAt/flushInterval** |
+| `maxBatchSize`              | 1000         | How many events to send to the API at once |
+| `trackAppLifecycleEvents`   | false        | Enable automatic tracking for [app lifecycle events](https://segment.com/docs/connections/spec/mobile/#lifecycle-events): application installed, opened, updated, backgrounded. |
+| `trackDeepLinks`            | false        | Enable automatic tracking for when the user opens the app via a deep link (Note: Requires additional setup on iOS, [see instructions](#ios-deep-link-tracking-setup)). |
 | `defaultSettings`           | undefined    | Settings that will be used if the request to get the settings from Segment fails. Type: [SegmentAPISettings](https://github.com/segmentio/analytics-react-native/blob/c0a5895c0c57375f18dd20e492b7d984393b7bc4/packages/core/src/types.ts#L293-L299) |
-| `autoAddSegmentDestination` | true         | Set to false to skip adding the SegmentDestination plugin.                                                                                                                                   |
+| `autoAddSegmentDestination` | true         | Set to false to skip adding the SegmentDestination plugin. |
 | `storePersistor`            | undefined    | A custom persistor for the store that `analytics-react-native` leverages. Must match [`Persistor`](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran/src/persistor/persistor.ts#L1-L18) interface exported from [sovran-react-native](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran). |
 | `proxy`                     | undefined    | `proxy` is a batch URL to post the events. Enable `useSegmentEndpoint` if proxy domain is provided and you want to append the Segment endpoints automatically. If you want to completely customize the proxy by providing a custom URL, disable `useSegmentEndpoint`. Default value is `false`. |
-| `errorHandler`              | undefined    | Create custom actions when errors happen, see [Handling errors](#handling-errors).                                                                                                            |
-| `cdnProxy`                  | undefined    | Sets an alternative CDN host for settings retrieval. Enable `useSegmentEndpoint` if cdnProxy domain is provided and you want to append the Segment endpoints automatically. Note - Prior to version 2.20.4, whatever was provided as the cdnProxy in the config was automatically appended with /write-key/settings. Starting from v2.20.4, this behavior has changed—now, the SDK will behave according to `useSegmentEndpoints` flag.              |
-| `useSegmentEndpoint`        | false        | Set to `true` to automatically append the Segment endpoints when using `proxy` or `cdnProxy` to send or fetch settings. This will enable automatic routing to the appropriate endpoints.      |
+| `errorHandler`              | undefined    | Create custom actions when errors happen, see [Handling errors](#handling-errors). |
+| `cdnProxy`                  | undefined    | Sets an alternative CDN host for settings retrieval. Enable `useSegmentEndpoint` if `cdnProxy` domain is provided and you want to append the Segment endpoints automatically. <br><br>⚠️ **IMPORTANT NOTE:** *Prior to version 2.20.4, any value provided for `cdnProxy` was automatically appended with `/write-key/settings`. **Starting from v2.20.4**, this behavior has **CHANGED**—the SDK will now behave based on the `useSegmentEndpoint` flag.* Please update your configuration accordingly to avoid unexpected issues. ⚠️ |
+| `useSegmentEndpoint`        | false        | Set to `true` to automatically append the Segment endpoints when using `proxy` or `cdnProxy` to send or fetch settings. This will enable automatic routing to the appropriate endpoints. |
 
 
 
