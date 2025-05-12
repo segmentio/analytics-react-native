@@ -37,11 +37,11 @@ export class Plugin {
     // do nothing by default, user can override.
   }
 
-  async clearFlushQueue() {
+  async clear() {
     // Overridden in Segment Destination
   }
 
-  async getQueueCount() {
+  async pendingEvents() {
     // Overridden in Segment Destination
     return 0;
   }

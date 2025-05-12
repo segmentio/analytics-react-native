@@ -92,7 +92,6 @@ export interface Storage {
   readonly pendingEvents: Watchable<SegmentEvent[]> &
     Settable<SegmentEvent[]> &
     Queue<SegmentEvent, SegmentEvent[]>;
-    
   readonly enabled: Watchable<boolean> & Settable<boolean>;
 }
 export type DeepLinkData = {
