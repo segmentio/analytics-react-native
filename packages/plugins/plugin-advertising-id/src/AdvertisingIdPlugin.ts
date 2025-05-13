@@ -40,37 +40,87 @@ export class AdvertisingIdPlugin extends Plugin {
       });
   }
 
+  // async execute(event: SegmentEvent) {
+  //   // If advertisingId is not set, queue the event
+  //   console.log('execute', event);
+  //   if (Platform.OS !== 'android') {
+  //     return event;
+  //   } else {
+  //     if (this.advertisingId === undefined) {
+  //       this.queuedEvents.push(event);
+  //     } else {
+  //       // Send event if advertisingId is available
+  //       const currentLimitAdTrackingStatus =
+  //         await this.fetchLimitAdTrackingStatus();
+  //       if (this.isLimitAdTracking === undefined) {
+  //         this.isLimitAdTracking = currentLimitAdTrackingStatus;
+  //       } else if (this.isLimitAdTracking !== currentLimitAdTrackingStatus) {
+  //         //Fetch the fresh advertising id
+  //         await this.fetchAdvertisingInfo()
+  //           .then(() => {
+  //             console.log(
+  //               'Advertising info fetched successfully when adTrackingStatus Changed.'
+  //             );
+  //             // Additional logic after the advertising info is fetched
+  //           })
+  //           .catch((error) => {
+  //             this.handleError(error);
+  //           });
+  //         this.queuedEvents.push(event);
+  //         this.isLimitAdTracking = currentLimitAdTrackingStatus;
+  //         this.sendQueued();
+  //         return;
+  //       }
+  //       return event;
+  //     }
+  //   }
+
+  //   return;
+  // }
+
   async execute(event: SegmentEvent) {
-    // If advertisingId is not set, queue the event
-    if (this.advertisingId === undefined) {
-      this.queuedEvents.push(event);
-    } else {
-      // Send event if advertisingId is available
-      const currentLimitAdTrackingStatus =
-        await this.fetchLimitAdTrackingStatus();
-      if (this.isLimitAdTracking === undefined) {
-        this.isLimitAdTracking = currentLimitAdTrackingStatus;
-      } else if (this.isLimitAdTracking !== currentLimitAdTrackingStatus) {
-        //Fetch the fresh advertising id
-        await this.fetchAdvertisingInfo()
-          .then(() => {
-            console.log(
-              'Advertising info fetched successfully when adTrackingStatus Changed.'
-            );
-            // Additional logic after the advertising info is fetched
-          })
-          .catch((error) => {
-            this.handleError(error);
-          });
-        this.queuedEvents.push(event);
-        this.isLimitAdTracking = currentLimitAdTrackingStatus;
-        this.sendQueued();
-        return;
-      }
+    console.log('execute', event);
+
+    // Exit early for non-Android platforms
+    if (Platform.OS !== 'android') {
       return event;
     }
 
-    return;
+    // If advertisingId is not set, queue the event
+    if (this.advertisingId === undefined) {
+      this.queuedEvents.push(event);
+      return;
+    }
+
+    // Check current Limit Ad Tracking status
+    const currentLimitAdTrackingStatus =
+      await this.fetchLimitAdTrackingStatus();
+
+    // Initialize tracking status if undefined
+    if (this.isLimitAdTracking === undefined) {
+      this.isLimitAdTracking = currentLimitAdTrackingStatus;
+      return event;
+    }
+
+    // If tracking status has changed, refresh ad info and queue event
+    if (this.isLimitAdTracking !== currentLimitAdTrackingStatus) {
+      try {
+        await this.fetchAdvertisingInfo();
+        console.log(
+          'Advertising info fetched successfully when adTrackingStatus Changed.'
+        );
+      } catch (error) {
+        this.handleError(error);
+      }
+
+      this.queuedEvents.push(event);
+      this.isLimitAdTracking = currentLimitAdTrackingStatus;
+      this.sendQueued();
+      return;
+    }
+
+    // Default return
+    return event;
   }
 
   isTrackEvent(event: SegmentEvent): event is TrackEventType {
