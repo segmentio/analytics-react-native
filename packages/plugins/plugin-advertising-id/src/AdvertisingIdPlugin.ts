@@ -24,7 +24,6 @@ export class AdvertisingIdPlugin extends Plugin {
   isLimitAdTracking?: boolean = undefined;
 
   configure(analytics: SegmentClient): void {
-    console.log('configure');
     if (Platform.OS !== 'android') {
       return;
     }
@@ -41,8 +40,6 @@ export class AdvertisingIdPlugin extends Plugin {
   }
 
   async execute(event: SegmentEvent) {
-    console.log('execute', event);
-
     // Exit early for non-Android platforms
     if (Platform.OS !== 'android') {
       return event;
