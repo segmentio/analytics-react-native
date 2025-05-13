@@ -99,7 +99,7 @@ describe('QueueFlushingPlugin', () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     expect(queuePlugin.queueStore?.getState().events).toHaveLength(2);
-    await queuePlugin.clearQueue();
+    await queuePlugin.dequeueEvents();
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     expect(queuePlugin.queueStore?.getState().events).toHaveLength(0);
@@ -127,17 +127,17 @@ describe('QueueFlushingPlugin', () => {
     await queuePlugin.execute(event1);
     await queuePlugin.execute(event2);
 
-    let eventsCount = await queuePlugin.getQueueCount();
+    let eventsCount = await queuePlugin.pendingEvents();
     expect(eventsCount).toBe(2);
 
     await queuePlugin.dequeue(event1);
 
-    eventsCount = await queuePlugin.getQueueCount();
+    eventsCount = await queuePlugin.pendingEvents();
     expect(eventsCount).toBe(1);
 
-    await queuePlugin.clearQueue();
+    await queuePlugin.dequeueEvents();
 
-    eventsCount = await queuePlugin.getQueueCount();
+    eventsCount = await queuePlugin.pendingEvents();
     expect(eventsCount).toBe(0);
   });
 });
