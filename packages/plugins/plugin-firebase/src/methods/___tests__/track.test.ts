@@ -1,13 +1,18 @@
-import { EventType, TrackEventType } from '@segment/analytics-react-native';
-import track from '../track';
-
-jest.mock('uuid');
-
 const mockLogEvent = jest.fn();
 
-jest.mock('@react-native-firebase/analytics', () => () => ({
-  logEvent: mockLogEvent,
+jest.mock('@react-native-firebase/analytics', () => ({
+  getAnalytics: jest.fn().mockImplementation(() => ({
+    logEvent: mockLogEvent,
+  })),
+  isString: (a: unknown) => typeof a === 'string',
 }));
+jest.mock('@react-native-firebase/app', () => ({
+  getApp: jest.fn(),
+}));
+jest.mock('uuid');
+
+import { EventType, TrackEventType } from '@segment/analytics-react-native';
+import track from '../track';
 
 describe('#track', () => {
   beforeEach(() => {

@@ -1,10 +1,16 @@
-import reset from '../reset';
-
 const mockReset = jest.fn();
 
-jest.mock('@react-native-firebase/analytics', () => () => ({
-  resetAnalyticsData: mockReset,
+jest.mock('@react-native-firebase/analytics', () => ({
+  getAnalytics: jest.fn().mockImplementation(() => ({
+    resetAnalyticsData: mockReset,
+  })),
 }));
+
+jest.mock('@react-native-firebase/app', () => ({
+  getApp: jest.fn(),
+}));
+
+import reset from '../reset';
 
 describe('#reset', () => {
   beforeEach(() => {
