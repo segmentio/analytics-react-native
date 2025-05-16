@@ -71,6 +71,7 @@ import {
   SegmentError,
   translateHTTPError,
 } from './errors';
+import { QueueFlushingPlugin } from './plugins/QueueFlushingPlugin';
 
 type OnPluginAddedCallback = (plugin: Plugin) => void;
 
@@ -982,4 +983,46 @@ export class SegmentClient {
       userId: userInfo.userId,
     };
   };
+  /* Method for clearing flush queue */
+  clear() {
+    const plugins = this.getPlugins();
+
+    plugins.forEach(async (plugin) => {
+      if (plugin instanceof SegmentDestination) {
+        const timelinePlugins = plugin.timeline?.plugins?.after ?? [];
+
+        for (const subPlugin of timelinePlugins) {
+          if (subPlugin instanceof QueueFlushingPlugin) {
+            await subPlugin.dequeueEvents();
+          }
+        }
+      }
+    });
+
+    this.flushPolicyExecuter.reset();
+  }
+
+  /**
+   * Method to get count of events in flush queue.
+   */
+  async pendingEvents() {
+    const plugins = this.getPlugins();
+    let totalEventsCount = 0;
+
+    for (const plugin of plugins) {
+      // We're looking inside SegmentDestination's `after` plugins
+      if (plugin instanceof SegmentDestination) {
+        const timelinePlugins = plugin.timeline?.plugins?.after ?? [];
+
+        for (const subPlugin of timelinePlugins) {
+          if (subPlugin instanceof QueueFlushingPlugin) {
+            const eventsCount = await subPlugin.pendingEvents();
+            totalEventsCount += eventsCount;
+          }
+        }
+      }
+    }
+
+    return totalEventsCount;
+  }
 }
