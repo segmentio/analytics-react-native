@@ -9,7 +9,11 @@ import {
   ErrorType,
 } from '@segment/analytics-react-native';
 import type { SegmentAppsflyerSettings } from './types';
-import appsFlyer from 'react-native-appsflyer';
+import appsFlyer, {
+  ConversionData,
+  OnAppOpenAttributionData,
+  UnifiedDeepLinkData,
+} from 'react-native-appsflyer';
 import identify from './methods/identify';
 import track from './methods/track';
 
@@ -19,6 +23,9 @@ export class AppsflyerPlugin extends DestinationPlugin {
     is_adset: boolean;
     is_adset_id: boolean;
     is_ad_id: boolean;
+    onDeepLink?: (data: UnifiedDeepLinkData) => void;
+    onInstallConversionData?: (data: ConversionData) => void;
+    onAppOpenAttribution?: (data: OnAppOpenAttributionData) => void;
   }) {
     super();
     if (props != null) {
@@ -28,6 +35,9 @@ export class AppsflyerPlugin extends DestinationPlugin {
       this.is_ad_id = props.is_ad_id === undefined ? false : props.is_ad_id;
       this.is_adset_id =
         props.is_adset_id === undefined ? false : props.is_adset_id;
+      this.onDeepLink = props.onDeepLink;
+      this.onInstallConversionData = props.onInstallConversionData;
+      this.onAppOpenAttribution = props.onAppOpenAttribution;
     }
   }
   type = PluginType.destination;
@@ -35,6 +45,9 @@ export class AppsflyerPlugin extends DestinationPlugin {
   is_adset = false;
   is_adset_id = false;
   is_ad_id = false;
+  onDeepLink?: (data: UnifiedDeepLinkData) => void;
+  onInstallConversionData?: (data: ConversionData) => void;
+  onAppOpenAttribution?: (data: OnAppOpenAttributionData) => void;
   private settings: SegmentAppsflyerSettings | null = null;
   private hasRegisteredInstallCallback = false;
   private hasRegisteredDeepLinkCallback = false;
@@ -153,6 +166,7 @@ export class AppsflyerPlugin extends DestinationPlugin {
             );
         }
       }
+      this.onInstallConversionData?.(res);
     });
   };
 
@@ -175,6 +189,7 @@ export class AppsflyerPlugin extends DestinationPlugin {
             )
           );
       }
+      this.onAppOpenAttribution?.(res);
     });
   };
 
@@ -197,6 +212,7 @@ export class AppsflyerPlugin extends DestinationPlugin {
             )
           );
       }
+      this.onDeepLink?.(res);
     });
   };
 }
