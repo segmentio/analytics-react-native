@@ -130,4 +130,20 @@ export class QueueFlushingPlugin extends UtilityPlugin {
       return { events: filteredEvents };
     });
   }
+  /**
+   * Clear all events from the queue
+   */
+  async dequeueEvents() {
+    await this.queueStore?.dispatch(() => {
+      return { events: [] };
+    });
+  }
+
+  /**
+   * * Returns the count of items in the queue
+   */
+  async pendingEvents() {
+    const events = (await this.queueStore?.getState(true))?.events ?? [];
+    return events.length;
+  }
 }
