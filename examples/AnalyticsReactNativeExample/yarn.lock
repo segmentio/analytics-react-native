@@ -4248,7 +4248,7 @@ __metadata:
     react-native: "npm:0.76.1"
     react-native-gesture-handler: "npm:^2.20.2"
     react-native-get-random-values: "npm:^1.11.0"
-    react-native-onetrust-cmp: "npm:^202503.1.0"
+    react-native-onetrust-cmp: "npm:202405.1.0"
     react-native-safe-area-context: "npm:^4.14.0"
     react-native-safe-area-view: "npm:^1.1.1"
     react-test-renderer: "npm:18.3.1"
@@ -9335,13 +9335,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-onetrust-cmp@npm:^202503.1.0":
-  version: 202503.1.0
-  resolution: "react-native-onetrust-cmp@npm:202503.1.0"
+"react-native-onetrust-cmp@npm:202405.1.0":
+  version: 202405.1.0
+  resolution: "react-native-onetrust-cmp@npm:202405.1.0"
   peerDependencies:
     react: ">=16.8.1"
     react-native: ">=0.60.0-rc.0 <1.0.x"
-  checksum: 10c0/fb54064929a09529be7d809133d534b849dd7c64dd3a4ef49c7254a852f8090b8c853126159b242fc57f921305a469b04a3cc68f7f62d904792f355b0c12658d
+  checksum: 10c0/3ded28a0fa274d151647811a50f38d674e7fa6176116f46484380560125b1cfd792390491fadaf2f08098a4c1a3e3b0345da6208da16a32d96e8aa0cedda6a1e
   languageName: node
   linkType: hard
 

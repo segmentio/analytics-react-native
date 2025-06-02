@@ -36,7 +36,7 @@ PODS:
   - hermes-engine (0.76.1):
     - hermes-engine/Pre-built (= 0.76.1)
   - hermes-engine/Pre-built (0.76.1)
-  - OneTrust-CMP-XCFramework (202503.1.0.0)
+  - OneTrust-CMP-XCFramework (202405.1.0.0)
   - RCT-Folly (2024.01.01.00):
     - boost
     - DoubleConversion
@@ -1274,9 +1274,9 @@ PODS:
     - Yoga
   - react-native-get-random-values (1.11.0):
     - React-Core
-  - react-native-onetrust-cmp (202503.1.0):
-    - OneTrust-CMP-tvOS-XCFramework (~> 202503.1.0.0)
-    - OneTrust-CMP-XCFramework (~> 202503.1.0.0)
+  - react-native-onetrust-cmp (202405.1.0):
+    - OneTrust-CMP-tvOS-XCFramework (~> 202405.1.0.0)
+    - OneTrust-CMP-XCFramework (~> 202405.1.0.0)
     - React
   - react-native-safe-area-context (4.14.0):
     - DoubleConversion
@@ -1900,7 +1900,7 @@ SPEC CHECKSUMS:
   fmt: 10c6e61f4be25dc963c36bd73fc7b1705fe975be
   glog: 08b301085f15bcbb6ff8632a8ebaf239aae04e6a
   hermes-engine: 46f1ffbf0297f4298862068dd4c274d4ac17a1fd
-  OneTrust-CMP-XCFramework: f29d7107ffc7abb3c6d36e73c86c3172b3e048dd
+  OneTrust-CMP-XCFramework: 97a06fe56c2d8501e1d8f97bfd7a1d603592fd26
   RCT-Folly: 84578c8756030547307e4572ab1947de1685c599
   RCTDeprecation: fde92935b3caa6cb65cbff9fbb7d3a9867ffb259
   RCTRequired: 75c6cee42d21c1530a6f204ba32ff57335d19007
@@ -1931,7 +1931,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 0d88ad9afa9e195dd7634424bde1d38e4129e646
   React-microtasksnativemodule: 17234f35d37e6ed388e18a6314210b3b9e051219
   react-native-get-random-values: d16467cf726c618e9c7a8c3c39c31faa2244bbba
-  react-native-onetrust-cmp: ed3f68ec14028daecb42428e788c60c928184a88
+  react-native-onetrust-cmp: 8ec522fad6d93fe9b0f733baecdaf78507258a28
   react-native-safe-area-context: 819935871d06a80e963546208027f839aa972a85
   React-nativeconfig: 93fe8c85a8c40820c57814e30f3e44b94c995a7b
   React-NativeModulesApple: a4457b73e63e983db66d66612160006bccb00ad5
