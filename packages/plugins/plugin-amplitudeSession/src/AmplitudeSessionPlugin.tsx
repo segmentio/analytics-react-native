@@ -15,7 +15,6 @@ import {
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppState } from 'react-native';
-//import { AppState } from 'react-native';
 
 const MAX_SESSION_TIME_IN_MS = 300000;
 const SESSION_ID_KEY = 'previous_session_id';
@@ -29,18 +28,12 @@ export class AmplitudeSessionPlugin extends EventPlugin {
   active = false;
   sessionId = -1;
   lastEventTime = -1;
-  sessionTimer: ReturnType<typeof setTimeout> | undefined;
 
-  configure(analytics: SegmentClient): void {
+  configure = async (analytics: SegmentClient): Promise<void> => {
     this.analytics = analytics;
+    await this.loadSessionData();
     AppState.addEventListener('change', this.handleAppStateChange);
-    this.loadSessionData();
-    if (this.sessionId === -1) {
-      this.startNewSession();
-    } else {
-      this.startNewSessionIfNecessary();
-    }
-  }
+  };
 
   update(settings: SegmentAPISettings, type: UpdateType) {
     if (type !== UpdateType.initial) {
@@ -53,13 +46,14 @@ export class AmplitudeSessionPlugin extends EventPlugin {
     if (!this.active) {
       return event;
     }
+
+    if (this.sessionId === -1 || this.lastEventTime === -1) {
+      await this.loadSessionData();
+    }
+
     await this.startNewSessionIfNecessary();
 
     let result = event;
-    if (result.type === EventType.TrackEvent) {
-      console.log(result.event);
-    }
-
     switch (result.type) {
       case EventType.IdentifyEvent:
         result = this.identify(result);
@@ -108,12 +102,14 @@ export class AmplitudeSessionPlugin extends EventPlugin {
     return this.insertSession(event) as AliasEventType;
   }
 
-  reset() {
-    //this.resetSession();
+  async reset() {
+    this.sessionId = -1;
+    this.lastEventTime = -1;
+    await AsyncStorage.removeItem(SESSION_ID_KEY);
+    await AsyncStorage.removeItem(LAST_EVENT_TIME_KEY);
   }
 
   private insertSession = (event: SegmentEvent) => {
-    const returnEvent = event;
     const integrations = event.integrations || {};
     const existingIntegration = integrations[this.key];
     const hasSessionId =
@@ -121,64 +117,67 @@ export class AmplitudeSessionPlugin extends EventPlugin {
       existingIntegration !== null &&
       'session_id' in existingIntegration;
 
-    // If session_id exists, return as is
     if (hasSessionId) {
-      return returnEvent;
+      return event;
     }
 
-    returnEvent.integrations = {
-      ...integrations,
-      [this.key]: {
-        session_id: this.sessionId,
+    return {
+      ...event,
+      integrations: {
+        ...integrations,
+        [this.key]: { session_id: this.sessionId },
       },
     };
-    return returnEvent;
   };
 
-  private onBackground() {
+  private onBackground = () => {
     this.lastEventTime = Date.now();
-
     this.saveSessionData();
-  }
+  };
 
-  private onForeground() {
+  private onForeground = () => {
     this.startNewSessionIfNecessary();
-  }
+  };
 
   private async startNewSessionIfNecessary() {
     const current = Date.now();
-    const withinSessionLimit =
-      current - this.lastEventTime < MAX_SESSION_TIME_IN_MS;
-    if (this.sessionId >= 0 && withinSessionLimit) {
+
+    const sessionExpired =
+      this.sessionId === -1 ||
+      this.lastEventTime === -1 ||
+      current - this.lastEventTime >= MAX_SESSION_TIME_IN_MS;
+
+    // Avoid loop: if session just started recently, skip restarting
+    if (!sessionExpired || current - this.sessionId < 1000) {
       return;
     }
-    this.lastEventTime = current;
+
     await this.endSession();
     await this.startNewSession();
   }
 
   private async startNewSession() {
     this.sessionId = Date.now();
-    const copy = this.sessionId;
-    if (this.analytics) {
-      this.analytics.track(AMP_SESSION_START_EVENT, {
-        integrations: {
-          [this.key]: { session_id: copy },
-        },
-      });
-    }
+    this.lastEventTime = this.sessionId;
     await this.saveSessionData();
+
+    this.analytics?.track(AMP_SESSION_START_EVENT, {
+      integrations: {
+        [this.key]: { session_id: this.sessionId },
+      },
+    });
   }
 
   private async endSession() {
-    const copy = this.sessionId;
-    if (this.analytics) {
-      this.analytics.track(AMP_SESSION_END_EVENT, {
-        integrations: {
-          [this.key]: { session_id: copy },
-        },
-      });
+    if (this.sessionId === -1) {
+      return;
     }
+
+    this.analytics?.track(AMP_SESSION_END_EVENT, {
+      integrations: {
+        [this.key]: { session_id: this.sessionId },
+      },
+    });
   }
 
   private async loadSessionData() {
