@@ -161,7 +161,7 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
 
     contextInfo.putString("timezone", timezone.id)
     contextInfo.putString("locale", locale)
-    contextInfo.putString("networkType", connectionType.toString().toLowerCase(currentLocale))
+    contextInfo.putString("networkType", connectionType.toString().lowercase(currentLocale))
 
     contextInfo.putString("osName", "Android")
     contextInfo.putString("osVersion", Build.VERSION.RELEASE)
@@ -239,11 +239,11 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
     }
   }
 
-  override fun onActivityResult(activity: Activity?, requestCode: Int, resultCode: Int, data: Intent?) {
+  override fun onActivityResult(activity: Activity, requestCode: Int, resultCode: Int, data: Intent?) {
     // Do nothing
   }
 
-  override fun onNewIntent(intent: Intent?) {
+  override fun onNewIntent(intent: Intent) {
     Log.d(name, "onNewIntent = ${intent}")
     trackDeepLinks(intent)
   }
