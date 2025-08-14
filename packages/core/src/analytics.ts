@@ -308,8 +308,9 @@ export class SegmentClient {
         this.trackDeepLinks(),
       ]);
 
-      await this.onReady();
+      // Set ready BEFORE processing pending events to prevent race condition
       this.isReady.value = true;
+      await this.onReady();
     } catch (error) {
       this.reportInternalError(
         new SegmentError(
