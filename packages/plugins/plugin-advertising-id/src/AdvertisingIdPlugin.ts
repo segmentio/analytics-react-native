@@ -91,24 +91,26 @@ export class AdvertisingIdPlugin extends Plugin {
     const limitAdTrackingStatusPromise = this.fetchLimitAdTrackingStatus();
 
     try {
-      // Await both promises to resolve simultaneously
-      const [id, status] = await Promise.all([
+      // eslint-disable-next-line prefer-const
+      let [id, status] = await Promise.all([
         advertisingIdPromise,
         limitAdTrackingStatusPromise,
       ]);
+      // Handle null status (e.g., native failure) by assuming enabled if id null
+      if (id === null && status === null) {
+        status = true; // Assume enabled on failure
+      }
 
-      // Handle advertisingID
       if (id === null) {
-        void this.analytics?.track(
-          'LimitAdTrackingEnabled (Google Play Services) is enabled'
-        );
-        this.advertisingId = undefined; // Set to undefined if id is null
+        this.advertisingId = null; // CHANGED: Use null for unavailable, not undefined
       } else {
         this.advertisingId = id;
       }
 
-      // Set context after both values are available
-      await this.setContext(id as string, status);
+      // NEW: Set isLimitAdTracking here to ensure initialization
+      this.isLimitAdTracking = status ?? true; // Default to true on null
+
+      await this.setContext(id ?? undefined, status ?? true); // CHANGED: Handle nulls safely
     } catch (error) {
       this.handleError(error);
     }
