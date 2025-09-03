@@ -43,7 +43,7 @@ export class BrazePlugin extends DestinationPlugin {
     const brazeSettings = settings.integrations[
       this.key
     ] as SegmentBrazeSettings;
-    if (brazeSettings.logPurchaseWhenRevenuePresent === true) {
+    if (brazeSettings?.logPurchaseWhenRevenuePresent === true) {
       this.revenueEnabled = true;
     }
   }
