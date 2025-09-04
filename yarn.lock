@@ -1702,10 +1702,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@braze/react-native-sdk@npm:^14.x":
-  version: 14.1.0
-  resolution: "@braze/react-native-sdk@npm:14.1.0"
-  checksum: 10c0/2a1edcb6aec17c6fdee5ff30b3b416b6fa40e1524059151b59acb200664d193acb30f1a9aabfab9017ecb1911a1fd5878245ff0d3fddfd33b246efed5fa6871b
+"@braze/react-native-sdk@npm:^16.x":
+  version: 16.0.0
+  resolution: "@braze/react-native-sdk@npm:16.0.0"
+  checksum: 10c0/096b038e983389df9d090fb425e462c818719f38b265644586718c084b5b11b405e0898f18509608981ade6f305455b9cb810c84dc1d62a7f2aa1abf5ec2f116
   languageName: node
   linkType: hard
 
@@ -3450,7 +3450,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-braze@workspace:packages/plugins/plugin-braze"
   dependencies:
-    "@braze/react-native-sdk": "npm:^14.x"
+    "@braze/react-native-sdk": "npm:^16.x"
     "@segment/analytics-react-native": "npm:^2.18.0"
     "@segment/analytics-rn-shared": "workspace:^"
     "@segment/sovran-react-native": "npm:^1.1.0"
@@ -3459,7 +3459,7 @@ __metadata:
     rimraf: "npm:^5.0.5"
     typescript: "npm:^5.2.2"
   peerDependencies:
-    "@braze/react-native-sdk": ^14.x
+    "@braze/react-native-sdk": ^16.x
     "@segment/analytics-react-native": ^2.18.0
   languageName: unknown
   linkType: soft
