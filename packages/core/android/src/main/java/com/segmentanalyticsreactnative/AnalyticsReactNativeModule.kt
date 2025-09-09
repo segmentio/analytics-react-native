@@ -189,12 +189,12 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
 
     val properties = Hashtable<String, String>()
 
-    if (currentActivity == null) {
+    if (reactApplicationContext.currentActivity == null) {
       Log.d(name, "No activity found")
       return
     }
 
-    val referrer = getReferrer(currentActivity!!)
+    val referrer = getReferrer(reactApplicationContext.currentActivity!!)
 
     if (referrer != null) {
       val referringApplication = referrer.toString()
@@ -217,14 +217,14 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
     }
 
     Log.d(name, "Sending Deeplink data to store: uri=${uri}, referrer=${referrer}")
-    val sovran = (currentActivity?.application as ReactApplication)
+    val sovran = (reactApplicationContext.currentActivity?.application as ReactApplication)
       ?.reactNativeHost
       ?.reactInstanceManager
       ?.currentReactContext
       ?.getNativeModule(SovranModule::class.java)
     sovran?.dispatch("add-deepLink-data", properties)
 
-    
+
   }
 
   fun setAnonymousId(anonymousId: String) {
@@ -249,10 +249,10 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
   }
 
   override fun onHostResume() {
-    if (currentActivity != null && isColdLaunch) {
+    if (reactApplicationContext.currentActivity != null && isColdLaunch) {
       isColdLaunch = false
-      Log.d(name, "onHostResume = ${currentActivity!!.intent}")
-      trackDeepLinks(currentActivity!!.intent)
+      Log.d(name, "onHostResume = ${reactApplicationContext.currentActivity!!.intent}")
+      trackDeepLinks(reactApplicationContext.currentActivity!!.intent)
     }
   }
 
