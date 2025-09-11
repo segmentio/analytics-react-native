@@ -249,4 +249,137 @@ describe('SegmentClient', () => {
       expect(client.getFlushPolicies().length).toBe(policies.length);
     });
   });
+
+  describe('Initialization order - race condition fix', () => {
+    /*jshint -W069 */
+    /* eslint-disable dot-notation */
+    it('sets isReady to true before executing onReady to prevent events being lost', async () => {
+      // This test verifies that the race condition fix works:
+      // isReady is set to true BEFORE onReady() executes,
+      // so events tracked during onReady() go directly to the queue
+      // instead of being incorrectly saved as pending events.
+
+      client = new SegmentClient(clientArgs);
+
+      // Track the value of isReady when onReady is called
+      let isReadyValueInOnReady: boolean | undefined;
+
+      // Mock onReady to capture the isReady state
+      const originalOnReady = client['onReady'].bind(client);
+      client['onReady'] = jest.fn(async () => {
+        // Capture isReady value at the start of onReady
+        isReadyValueInOnReady = client['isReady'].value;
+        // Call the original onReady
+        return originalOnReady();
+      });
+
+      // Initialize the client
+      await client.init();
+
+      // Verify that isReady was true when onReady was called
+      // This is the key fix - isReady is set BEFORE onReady runs
+      expect(isReadyValueInOnReady).toBe(true);
+
+      // Verify onReady was called
+      expect(client['onReady']).toHaveBeenCalledTimes(1);
+    });
+
+    it('ensures correct operation order: isReady -> onReady -> processing', async () => {
+      client = new SegmentClient(clientArgs);
+
+      // Track the order of operations
+      const operationOrder: string[] = [];
+
+      // Mock isReady setter
+      const isReadyDescriptor = Object.getOwnPropertyDescriptor(
+        client['isReady'],
+        'value'
+      );
+      Object.defineProperty(client['isReady'], 'value', {
+        ...isReadyDescriptor,
+        set: function (value: boolean) {
+          if (value === true) {
+            operationOrder.push('isReady-set-true');
+          }
+          isReadyDescriptor?.set?.call(this, value);
+        },
+      });
+
+      // Mock onReady to track when it's called
+      const originalOnReady = client['onReady'].bind(client);
+      client['onReady'] = jest.fn(async () => {
+        operationOrder.push('onReady-start');
+        await originalOnReady();
+        operationOrder.push('onReady-end');
+      });
+
+      // Initialize the client
+      await client.init();
+
+      // Verify the correct order: isReady is set true BEFORE onReady starts
+      // The expected order should be:
+      // 1. isReady-set-true
+      // 2. onReady-start
+      // 3. onReady-end
+      expect(operationOrder).toEqual([
+        'isReady-set-true',
+        'onReady-start',
+        'onReady-end',
+      ]);
+    });
+
+    it('does not drop events tracked during onReady processing', async () => {
+      // This test verifies that events tracked during onReady() processing
+      // are not lost when the fix is applied (isReady set before onReady)
+
+      client = new SegmentClient(clientArgs);
+
+      // Track how many events are added as pending
+      const eventsAddedAsPending: string[] = [];
+      const originalAddPending = client['store'].pendingEvents.add.bind(
+        client['store'].pendingEvents
+      );
+      /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/strict-boolean-expressions, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment */
+      client['store'].pendingEvents.add = jest.fn(async (event: any) => {
+        const eventName: string = event.event || event.type;
+        // Only count track events we explicitly send (not auto-tracked events)
+        if (eventName?.includes('Event')) {
+          eventsAddedAsPending.push(eventName);
+        }
+        return originalAddPending(event);
+      });
+      /* eslint-enable @typescript-eslint/no-explicit-any, @typescript-eslint/strict-boolean-expressions, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment */
+
+      // Mock onReady to track events during its execution
+      const originalOnReady = client['onReady'].bind(client);
+      client['onReady'] = jest.fn(async () => {
+        // Track events DURING onReady processing
+        // With the fix: these go directly to processing (NOT pending)
+        // Without fix: these become pending and never get sent
+        await client.track('Event During OnReady 1');
+        await client.track('Event During OnReady 2');
+
+        // Call original onReady to process initial pending events
+        await originalOnReady();
+      });
+
+      // Track an event before initialization (this SHOULD always be pending)
+      await client.track('Event Before Init');
+
+      // Initialize the client
+      await client.init();
+
+      // CRITICAL ASSERTION:
+      // With the fix (isReady = true BEFORE onReady):
+      //   - Only "Event Before Init" is added as pending (count = 1)
+      //   - Events during onReady go directly to processing
+      // Without the fix (isReady = true AFTER onReady):
+      //   - All 3 events are added as pending (count = 3)
+      //   - Events during onReady become stuck pending events
+
+      expect(eventsAddedAsPending).toEqual(['Event Before Init']);
+    });
+  });
+  /*jshint +W069 */
+  /* eslint-enable dot-notation */
 });
