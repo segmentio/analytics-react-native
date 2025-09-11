@@ -1,5 +1,5 @@
-import firebaseAnalytics from '@react-native-firebase/analytics';
+import { firebaseAnalytics } from '../firebaseAnalytics';
 
 export default async () => {
-  await firebaseAnalytics().resetAnalyticsData();
+  await firebaseAnalytics.resetAnalyticsData();
 };
