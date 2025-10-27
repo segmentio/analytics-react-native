@@ -307,9 +307,8 @@ export class SegmentClient {
         // check if the app was opened from a deep link
         this.trackDeepLinks(),
       ]);
-
-      await this.onReady();
       this.isReady.value = true;
+      await this.onReady();
     } catch (error) {
       this.reportInternalError(
         new SegmentError(
