@@ -38,14 +38,16 @@ export class AmplitudeSessionPlugin extends EventPlugin {
   };
 
   update(settings: SegmentAPISettings, type: UpdateType) {
-
-    if (type !== UpdateType.initial) return;
+    if (type !== UpdateType.initial) {
+      return;
+    }
     this.active = settings.integrations?.hasOwnProperty(this.key) ?? false;
   }
 
   async execute(event: SegmentEvent) {
-
-    if (!this.active) return event;
+    if (!this.active) {
+      return event;
+    }
 
     if (this.sessionId === -1 || this.lastEventTime === -1) {
       await this.loadSessionData();
@@ -163,74 +165,76 @@ export class AmplitudeSessionPlugin extends EventPlugin {
   };
 
   private async startNewSessionIfNecessary() {
-  if (this.eventSessionId === -1) {
-    this.eventSessionId = this.sessionId;
+    if (this.eventSessionId === -1) {
+      this.eventSessionId = this.sessionId;
+    }
+
+    if (this.resetPending) {
+      return;
+    }
+
+    const current = Date.now();
+    const withinSessionLimit = this.withinMinSessionTime(current);
+
+    const isSessionExpired =
+      this.sessionId === -1 || this.lastEventTime === -1 || !withinSessionLimit;
+
+    if (this.sessionId >= 0 && !isSessionExpired) {
+      // Continue current session
+      this.lastEventTime = current;
+
+      await this.saveSessionData();
+      return;
+    }
+
+    // End old session and start a new one
+    await this.startNewSession();
   }
 
-  if (this.resetPending) return;
+  /**
+   * Handles the entire process of starting a new session.
+   * Can be called directly or from startNewSessionIfNecessary()
+   */
+  private async startNewSession() {
+    if (this.resetPending) {
+      return;
+    }
 
-  const current = Date.now();
-  const withinSessionLimit = this.withinMinSessionTime(current);
+    this.resetPending = true;
 
-  const isSessionExpired =
-    this.sessionId === -1 ||
-    this.lastEventTime === -1 ||
-    !withinSessionLimit;
+    const oldSessionId = this.sessionId;
+    if (oldSessionId >= 0) {
+      await this.endSession(oldSessionId);
+    }
 
-  this.lastEventTime = current;
+    const newSessionId = Date.now();
+    this.sessionId = newSessionId;
+    this.eventSessionId =
+      this.eventSessionId === -1 ? newSessionId : this.eventSessionId;
+    this.lastEventTime = newSessionId;
 
-  if (this.sessionId >= 0 && !isSessionExpired) {
-    // Continue current session
-    
     await this.saveSessionData();
-    return;
+
+    console.log(`[AmplitudeSession] startNewSession -> ${newSessionId}`);
+
+    await this.trackSessionStart(newSessionId);
   }
 
-  // End old session and start a new one
-  await this.startNewSession();
-}
-
-/**
- * Handles the entire process of starting a new session.
- * Can be called directly or from startNewSessionIfNecessary()
- */
-private async startNewSession() {
-  if (this.resetPending) return;
-
-  this.resetPending = true;
-
-  const oldSessionId = this.sessionId;
-  if (oldSessionId >= 0) {
-    await this.endSession(oldSessionId);
+  /**
+   * Extracted analytics tracking into its own method
+   */
+  private async trackSessionStart(sessionId: number) {
+    this.analytics?.track(AMP_SESSION_START_EVENT, {
+      integrations: {
+        [this.key]: { session_id: sessionId },
+      },
+    });
   }
-
-  const newSessionId = Date.now();
-  this.sessionId = newSessionId;
-  this.eventSessionId = this.eventSessionId === -1 ? newSessionId : this.eventSessionId;
-  this.lastEventTime = newSessionId;
-
-  await this.saveSessionData();
-
-  console.log(`[AmplitudeSession] startNewSession -> ${newSessionId}`);
-
-  await this.trackSessionStart(newSessionId);
-
-}
-
-/**
- * Extracted analytics tracking into its own method
- */
-private async trackSessionStart(sessionId: number) {
-  this.analytics?.track(AMP_SESSION_START_EVENT, {
-    integrations: {
-      [this.key]: { session_id: sessionId },
-    },
-  });
-}
-
 
   private async endSession(sessionId: number) {
-    if (this.sessionId === -1) return;
+    if (this.sessionId === -1) {
+      return;
+    }
 
     console.log(`[AmplitudeSession] endSession -> ${this.sessionId}`);
 
@@ -257,9 +261,13 @@ private async trackSessionStart(sessionId: number) {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private disableAllIntegrations(integrations?: Record<string, any>) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result: Record<string, any> = {};
-    if (!integrations) return result;
+    if (!integrations) {
+      return result;
+    }
     for (const key of Object.keys(integrations)) {
       result[key] = false;
     }
@@ -268,7 +276,7 @@ private async trackSessionStart(sessionId: number) {
 
   private withinMinSessionTime(timestamp: number): boolean {
     const timeDelta = timestamp - this.lastEventTime;
-    return timeDelta < MAX_SESSION_TIME_IN_MS ;
+    return timeDelta < MAX_SESSION_TIME_IN_MS;
   }
 
   private handleAppStateChange = (nextAppState: string) => {
@@ -279,4 +287,3 @@ private async trackSessionStart(sessionId: number) {
     }
   };
 }
-
