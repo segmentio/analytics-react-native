@@ -16,7 +16,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppState } from 'react-native';
 
-const MAX_SESSION_TIME_IN_MS = 60000;
+const MAX_SESSION_TIME_IN_MS = 300000;
 const SESSION_ID_KEY = 'previous_session_id';
 const LAST_EVENT_TIME_KEY = 'last_event_time';
 const AMP_SESSION_START_EVENT = 'session_start';
@@ -30,43 +30,33 @@ export class AmplitudeSessionPlugin extends EventPlugin {
   lastEventTime = -1;
   eventSessionId = -1;
   resetPending = false;
-//private sessionCreationInProgress = false;
 
   configure = async (analytics: SegmentClient): Promise<void> => {
-    console.log('configure');
     this.analytics = analytics;
     await this.loadSessionData();
     AppState.addEventListener('change', this.handleAppStateChange);
   };
 
   update(settings: SegmentAPISettings, type: UpdateType) {
-     console.log('update');
 
     if (type !== UpdateType.initial) return;
     this.active = settings.integrations?.hasOwnProperty(this.key) ?? false;
   }
 
   async execute(event: SegmentEvent) {
-    console.log('execute');
 
     if (!this.active) return event;
 
     if (this.sessionId === -1 || this.lastEventTime === -1) {
-      console.log('execute loadSessionData');
       await this.loadSessionData();
     }
-    console.log('execute startNewSessionIfNecessary');
     await this.startNewSessionIfNecessary();
-
-    
-
     let result = event;
     switch (result.type) {
       case EventType.IdentifyEvent:
         result = this.identify(result);
         break;
       case EventType.TrackEvent:
-        console.log('EventType.TrackEvent');
         result = this.track(result);
         break;
       case EventType.ScreenEvent:
@@ -81,8 +71,6 @@ export class AmplitudeSessionPlugin extends EventPlugin {
     }
 
     this.lastEventTime = Date.now();
-    console.log('execute saveSessionData');
-
     await this.saveSessionData();
     return result;
   }
@@ -93,13 +81,10 @@ export class AmplitudeSessionPlugin extends EventPlugin {
 
   track(event: TrackEventType) {
     const eventName = event.event;
-    console.log('event',eventName);
 
     if (eventName === AMP_SESSION_START_EVENT) {
-      console.log('track  Session_Start');
       this.resetPending = false;
       this.eventSessionId = this.sessionId;
-      console.log(`[AmplitudeSession] NewSession = ${this.eventSessionId}`);
     }
 
     if (eventName === AMP_SESSION_END_EVENT) {
@@ -177,54 +162,6 @@ export class AmplitudeSessionPlugin extends EventPlugin {
     this.startNewSessionIfNecessary();
   };
 
-  // private async startNewSessionIfNecessary() {
-  //   if (this.eventSessionId === -1) {
-  //     this.eventSessionId = this.sessionId;
-  //   }
-
-  //   if (this.resetPending) return;
-
-  //   const current = Date.now();
-  //   const withinSessionLimit = this.withinMinSessionTime(current);
-  //   console.log('withinSessionLimit', withinSessionLimit);
-  //   const isSessionExpired = this.sessionId === -1 || this.lastEventTime === -1 || !withinSessionLimit;
-  //   console.log('isSessionExpired', isSessionExpired);
-
-  //   if (this.sessionId >= 0 && !isSessionExpired) {
-  //     this.lastEventTime = current;
-  //     await this.saveSessionData();
-  //     return; // same session, nothing to do
-  //   }
-  //   const oldSessionId = this.sessionId;
-  //    await this.endSession(oldSessionId);
-  //   this.lastEventTime = current;
-  //   await this.saveSessionData();
-
-   
-  //   await this.startNewSession();
-  // }
-
-  // private async startNewSession() {
-  //   if (this.resetPending) return;
-
-  //   this.resetPending = true;
-  //   this.sessionId = Date.now();
-
-  //   if (this.eventSessionId === -1) {
-  //     this.eventSessionId = this.sessionId;
-  //   }
-
-  //   this.lastEventTime = this.sessionId;
-  //   await this.saveSessionData();
-
-  //   console.log(`[AmplitudeSession] startNewSession -> ${this.sessionId}`);
-  //   this.analytics?.track(AMP_SESSION_START_EVENT, {
-  //      integrations: {
-  //        [this.key]: { session_id: this.sessionId },
-  //      },
-  //    });
-  // }
-
   private async startNewSessionIfNecessary() {
   if (this.eventSessionId === -1) {
     this.eventSessionId = this.sessionId;
@@ -234,14 +171,12 @@ export class AmplitudeSessionPlugin extends EventPlugin {
 
   const current = Date.now();
   const withinSessionLimit = this.withinMinSessionTime(current);
-  console.log('withinSessionLimit', withinSessionLimit);
 
   const isSessionExpired =
     this.sessionId === -1 ||
     this.lastEventTime === -1 ||
     !withinSessionLimit;
 
-  console.log('isSessionExpired', isSessionExpired);
   this.lastEventTime = current;
 
   if (this.sessionId >= 0 && !isSessionExpired) {
@@ -280,7 +215,6 @@ private async startNewSession() {
 
   await this.trackSessionStart(newSessionId);
 
-  //this.resetPending = false;
 }
 
 /**
