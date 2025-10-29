@@ -664,7 +664,7 @@ describe('AmplitudeSessionPlugin', () => {
       await plugin.execute(mockEvent);
 
       expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
-        'previous_session_id',
+        'event_session_id',
         plugin.sessionId.toString()
       );
       expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
@@ -680,12 +680,12 @@ describe('AmplitudeSessionPlugin', () => {
 
       expect(plugin.sessionId).toBe(-1);
       expect(plugin.lastEventTime).toBe(-1);
-      expect(mockAsyncStorage.removeItem).toHaveBeenCalledWith(
-        'previous_session_id'
-      );
-      expect(mockAsyncStorage.removeItem).toHaveBeenCalledWith(
-        'last_event_time'
-      );
+      expect(plugin.eventSessionId).toBe(-1);
+      expect(mockAsyncStorage.multiRemove).toHaveBeenCalledWith([
+        'previous_session_id',
+        'event_session_id',
+        'last_event_time',
+      ]);
     });
   });
 

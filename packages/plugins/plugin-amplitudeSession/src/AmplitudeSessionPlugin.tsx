@@ -18,6 +18,7 @@ import { AppState } from 'react-native';
 
 const MAX_SESSION_TIME_IN_MS = 300000;
 const SESSION_ID_KEY = 'previous_session_id';
+const EVENT_SESSION_ID_KEY = 'event_session_id';
 const LAST_EVENT_TIME_KEY = 'last_event_time';
 const AMP_SESSION_START_EVENT = 'session_start';
 const AMP_SESSION_END_EVENT = 'session_end';
@@ -27,9 +28,40 @@ export class AmplitudeSessionPlugin extends EventPlugin {
   key = 'Actions Amplitude';
   active = false;
   sessionId = -1;
-  lastEventTime = -1;
-  eventSessionId = -1;
+  private _eventSessionId = -1;
+  private _lastEventTime = -1;
   resetPending = false;
+
+  get eventSessionId() {
+    return this._eventSessionId;
+  }
+  set eventSessionId(value: number) {
+    this._eventSessionId = value;
+    if (value !== -1) {
+      AsyncStorage.setItem(EVENT_SESSION_ID_KEY, value.toString()).catch(
+        (err) =>
+          console.warn(
+            '[AmplitudeSessionPlugin] Failed to persist eventSessionId:',
+            err
+          )
+      );
+    }
+  }
+
+  get lastEventTime() {
+    return this._lastEventTime;
+  }
+  set lastEventTime(value: number) {
+    this._lastEventTime = value;
+    if (value !== -1) {
+      AsyncStorage.setItem(LAST_EVENT_TIME_KEY, value.toString()).catch((err) =>
+        console.warn(
+          '[AmplitudeSessionPlugin] Failed to persist lastEventTime:',
+          err
+        )
+      );
+    }
+  }
 
   configure = async (analytics: SegmentClient): Promise<void> => {
     this.analytics = analytics;
@@ -73,7 +105,7 @@ export class AmplitudeSessionPlugin extends EventPlugin {
     }
 
     this.lastEventTime = Date.now();
-    await this.saveSessionData();
+    //await this.saveSessionData();
     return result;
   }
 
@@ -129,9 +161,13 @@ export class AmplitudeSessionPlugin extends EventPlugin {
 
   async reset() {
     this.sessionId = -1;
+    this.eventSessionId = -1;
     this.lastEventTime = -1;
-    await AsyncStorage.removeItem(SESSION_ID_KEY);
-    await AsyncStorage.removeItem(LAST_EVENT_TIME_KEY);
+    await AsyncStorage.multiRemove([
+      SESSION_ID_KEY,
+      EVENT_SESSION_ID_KEY,
+      LAST_EVENT_TIME_KEY,
+    ]);
   }
 
   private insertSession = (event: SegmentEvent) => {
@@ -157,7 +193,7 @@ export class AmplitudeSessionPlugin extends EventPlugin {
 
   private onBackground = () => {
     this.lastEventTime = Date.now();
-    this.saveSessionData();
+    //this.saveSessionData();
   };
 
   private onForeground = () => {
@@ -180,10 +216,6 @@ export class AmplitudeSessionPlugin extends EventPlugin {
       this.sessionId === -1 || this.lastEventTime === -1 || !withinSessionLimit;
 
     if (this.sessionId >= 0 && !isSessionExpired) {
-      // Continue current session
-      this.lastEventTime = current;
-
-      await this.saveSessionData();
       return;
     }
 
@@ -213,7 +245,7 @@ export class AmplitudeSessionPlugin extends EventPlugin {
       this.eventSessionId === -1 ? newSessionId : this.eventSessionId;
     this.lastEventTime = newSessionId;
 
-    await this.saveSessionData();
+    //await this.saveSessionData();
 
     console.log(`[AmplitudeSession] startNewSession -> ${newSessionId}`);
 
@@ -248,18 +280,24 @@ export class AmplitudeSessionPlugin extends EventPlugin {
   private async loadSessionData() {
     const storedSessionId = await AsyncStorage.getItem(SESSION_ID_KEY);
     const storedLastEventTime = await AsyncStorage.getItem(LAST_EVENT_TIME_KEY);
+    const storedEventSessionId = await AsyncStorage.getItem(
+      EVENT_SESSION_ID_KEY
+    );
+
     this.sessionId = storedSessionId != null ? Number(storedSessionId) : -1;
     this.lastEventTime =
       storedLastEventTime != null ? Number(storedLastEventTime) : -1;
+    this.eventSessionId =
+      storedEventSessionId != null ? Number(storedEventSessionId) : -1;
   }
 
-  private async saveSessionData() {
-    await AsyncStorage.setItem(SESSION_ID_KEY, this.sessionId.toString());
-    await AsyncStorage.setItem(
-      LAST_EVENT_TIME_KEY,
-      this.lastEventTime.toString()
-    );
-  }
+  // private async saveSessionData() {
+  //   await AsyncStorage.setItem(SESSION_ID_KEY, this.sessionId.toString());
+  //   await AsyncStorage.setItem(
+  //     LAST_EVENT_TIME_KEY,
+  //     this.lastEventTime.toString()
+  //   );
+  // }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private disableAllIntegrations(integrations?: Record<string, any>) {
