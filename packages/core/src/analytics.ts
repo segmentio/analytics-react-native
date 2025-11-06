@@ -307,8 +307,13 @@ export class SegmentClient {
         // check if the app was opened from a deep link
         this.trackDeepLinks(),
       ]);
-      this.isReady.value = true;
       await this.onReady();
+      this.isReady.value = true;
+
+      // Process all pending events
+      await this.processPendingEvents();
+      // Trigger manual flush
+      this.flushPolicyExecuter.manualFlush();
     } catch (error) {
       this.reportInternalError(
         new SegmentError(
@@ -560,15 +565,13 @@ export class SegmentClient {
     // Start flush policies
     // This should be done before any pending events are added to the queue so that any policies that rely on events queued can trigger accordingly
     this.setupFlushPolicies();
-
-    // Send all events in the queue
+  }
+  private async processPendingEvents() {
     const pending = await this.store.pendingEvents.get(true);
-    for (const e of pending) {
-      await this.startTimelineProcessing(e);
-      await this.store.pendingEvents.remove(e);
+    for (const event of pending) {
+      await this.startTimelineProcessing(event);
+      await this.store.pendingEvents.remove(event);
     }
-
-    this.flushPolicyExecuter.manualFlush();
   }
 
   async flush(): Promise<void> {
