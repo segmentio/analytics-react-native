@@ -681,11 +681,9 @@ describe('AmplitudeSessionPlugin', () => {
       expect(plugin.sessionId).toBe(-1);
       expect(plugin.lastEventTime).toBe(-1);
       expect(plugin.eventSessionId).toBe(-1);
-      expect(mockAsyncStorage.multiRemove).toHaveBeenCalledWith([
-        'previous_session_id',
-        'event_session_id',
-        'last_event_time',
-      ]);
+      expect(mockAsyncStorage.removeItem).toHaveBeenCalledWith(
+        'previous_session_id'
+      );
     });
   });
 

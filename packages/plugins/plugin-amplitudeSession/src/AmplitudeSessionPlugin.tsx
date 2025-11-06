@@ -163,11 +163,7 @@ export class AmplitudeSessionPlugin extends EventPlugin {
     this.sessionId = -1;
     this.eventSessionId = -1;
     this.lastEventTime = -1;
-    await AsyncStorage.multiRemove([
-      SESSION_ID_KEY,
-      EVENT_SESSION_ID_KEY,
-      LAST_EVENT_TIME_KEY,
-    ]);
+    await AsyncStorage.removeItem(SESSION_ID_KEY);
   }
 
   private insertSession = (event: SegmentEvent) => {
@@ -193,7 +189,6 @@ export class AmplitudeSessionPlugin extends EventPlugin {
 
   private onBackground = () => {
     this.lastEventTime = Date.now();
-    //this.saveSessionData();
   };
 
   private onForeground = () => {
@@ -245,8 +240,6 @@ export class AmplitudeSessionPlugin extends EventPlugin {
       this.eventSessionId === -1 ? newSessionId : this.eventSessionId;
     this.lastEventTime = newSessionId;
 
-    //await this.saveSessionData();
-
     console.log(`[AmplitudeSession] startNewSession -> ${newSessionId}`);
 
     await this.trackSessionStart(newSessionId);
@@ -290,14 +283,6 @@ export class AmplitudeSessionPlugin extends EventPlugin {
     this.eventSessionId =
       storedEventSessionId != null ? Number(storedEventSessionId) : -1;
   }
-
-  // private async saveSessionData() {
-  //   await AsyncStorage.setItem(SESSION_ID_KEY, this.sessionId.toString());
-  //   await AsyncStorage.setItem(
-  //     LAST_EVENT_TIME_KEY,
-  //     this.lastEventTime.toString()
-  //   );
-  // }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private disableAllIntegrations(integrations?: Record<string, any>) {
