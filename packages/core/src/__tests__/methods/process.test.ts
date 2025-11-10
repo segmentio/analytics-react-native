@@ -68,6 +68,8 @@ describe('process', () => {
     jest.spyOn(client.isReady, 'value', 'get').mockReturnValue(true);
     // @ts-ignore
     await client.onReady();
+    // @ts-ignore
+    await client.processPendingEvents();
     expectedEvent = {
       ...expectedEvent,
       context: { ...store.context.get() },
