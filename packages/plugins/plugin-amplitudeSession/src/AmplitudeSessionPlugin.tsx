@@ -27,7 +27,7 @@ export class AmplitudeSessionPlugin extends EventPlugin {
   type = PluginType.enrichment;
   key = 'Actions Amplitude';
   active = false;
-  sessionId = -1;
+  private _sessionId = -1;
   private _eventSessionId = -1;
   private _lastEventTime = -1;
   resetPending = false;
@@ -57,6 +57,21 @@ export class AmplitudeSessionPlugin extends EventPlugin {
       AsyncStorage.setItem(LAST_EVENT_TIME_KEY, value.toString()).catch((err) =>
         console.warn(
           '[AmplitudeSessionPlugin] Failed to persist lastEventTime:',
+          err
+        )
+      );
+    }
+  }
+
+  get sessionId() {
+    return this._sessionId;
+  }
+  set sessionId(value: number) {
+    this._sessionId = value;
+    if (value !== -1) {
+      AsyncStorage.setItem(SESSION_ID_KEY, value.toString()).catch((err) =>
+        console.warn(
+          '[AmplitudeSessionPlugin] Failed to persist sessionId:',
           err
         )
       );
