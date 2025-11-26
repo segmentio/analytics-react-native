@@ -72,6 +72,7 @@ import {
   translateHTTPError,
 } from './errors';
 import { QueueFlushingPlugin } from './plugins/QueueFlushingPlugin';
+import { WaitingPlugin } from './plugins/Waiting';
 
 type OnPluginAddedCallback = (plugin: Plugin) => void;
 
@@ -97,6 +98,11 @@ export class SegmentClient {
   private isAddingPlugins = false;
 
   private timeline: Timeline;
+  // running state (matches Kotlin's running flag)
+  private isRunning = true;
+
+  // Waiting plugin instance (buffers events while paused)
+  private waitingPlugin?: WaitingPlugin;
 
   private pluginsToAdd: Plugin[] = [];
 
@@ -200,6 +206,18 @@ export class SegmentClient {
     this.store = store;
     this.timeline = new Timeline();
 
+    // create and add waiting plugin immediately so early events get buffered.
+    try {
+      this.waitingPlugin = new WaitingPlugin();
+      // add directly to timeline via addPlugin to ensure configure() is called immediately
+      this.addPlugin(this.waitingPlugin);
+      // initial running state false until init completes (mirrors Kotlin semantics)
+      this.isRunning = false;
+    } catch (e) {
+      // if WaitingPlugin instantiation or add fails, fallback to running=true
+      this.isRunning = true;
+    }
+
     // Initialize the watchables
     this.context = {
       get: this.store.context.get,
@@ -296,6 +314,9 @@ export class SegmentClient {
         await this.storageReady();
       }
 
+      // Pause pipeline at init start (buffer events until init completes)
+      this.pauseEventProcessing();
+
       // Get new settings from segment
       // It's important to run this before checkInstalledVersion and trackDeeplinks to give time for destination plugins
       // which make use of the settings object to initialize
@@ -309,7 +330,8 @@ export class SegmentClient {
       ]);
       await this.onReady();
       this.isReady.value = true;
-
+      // Resume pipeline before processing pending events so WaitingPlugin flushes
+      await this.resumeEventProcessing();
       // Process all pending events
       await this.processPendingEvents();
       // Trigger manual flush
@@ -1026,5 +1048,46 @@ export class SegmentClient {
     }
 
     return totalEventsCount;
+  }
+  /*
+   * Running / pause/resume helpers (Kotlin parity)
+   */
+
+  public running() {
+    return this.isRunning;
+  }
+  /**
+   * Pause event processing globally. Events will be buffered into pendingEvents and WaitingPlugin.
+   * An auto-resume will be scheduled after `timeout` ms.
+   */
+  public pauseEventProcessing(timeout = 30000) {
+    if (!this.isRunning) {
+      return;
+    }
+
+    this.isRunning = false;
+    try {
+      this.waitingPlugin?.pause();
+    } catch {
+      // ignore if plugin not present
+    }
+
+    // auto-resume after timeout to avoid permanent blocking
+    setTimeout(() => {
+      void this.resumeEventProcessing();
+    }, timeout);
+  }
+  public async resumeEventProcessing() {
+    if (this.isRunning) {
+      return;
+    }
+
+    this.isRunning = true;
+
+    try {
+      await this.waitingPlugin?.resume();
+    } catch {
+      // ignore plugin errors during resume
+    }
   }
 }
