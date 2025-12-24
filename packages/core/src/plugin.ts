@@ -115,12 +115,14 @@ export class DestinationPlugin extends EventPlugin {
   key = '';
 
   timeline = new Timeline();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  store: any;
 
   private hasSettings() {
     return this.analytics?.settings.get()?.[this.key] !== undefined;
   }
 
-  private isEnabled(event: SegmentEvent): boolean {
+  protected isEnabled(event: SegmentEvent): boolean {
     let customerDisabled = false;
     if (event.integrations?.[this.key] === false) {
       customerDisabled = true;
@@ -139,6 +141,10 @@ export class DestinationPlugin extends EventPlugin {
     const analytics = this.analytics;
     if (analytics) {
       plugin.configure(analytics);
+    }
+
+    if (analytics && plugin instanceof WaitingPlugin) {
+      analytics.pauseEventProcessingForPlugin(plugin);
     }
     this.timeline.add(plugin);
     return plugin;
@@ -179,7 +185,6 @@ export class DestinationPlugin extends EventPlugin {
       type: PluginType.before,
       event,
     });
-
     if (beforeResult === undefined) {
       return;
     }
@@ -210,3 +215,27 @@ export class UtilityPlugin extends EventPlugin {}
 
 // For internal platform-specific bits
 export class PlatformPlugin extends Plugin {}
+
+export { PluginType };
+
+/**
+ * WaitingPlugin
+ * Buffers events when paused and releases them when resumed.
+ */
+export class WaitingPlugin extends Plugin {
+  constructor() {
+    super();
+  }
+
+  configure(analytics: SegmentClient) {
+    super.configure(analytics);
+  }
+
+  pause() {
+    this.analytics?.pauseEventProcessingForPlugin(this);
+  }
+
+  async resume() {
+    await this.analytics?.resumeEventProcessingForPlugin(this);
+  }
+}
