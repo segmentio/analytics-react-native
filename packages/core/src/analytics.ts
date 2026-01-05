@@ -72,6 +72,7 @@ import {
   translateHTTPError,
 } from './errors';
 import { QueueFlushingPlugin } from './plugins/QueueFlushingPlugin';
+import { WaitingPlugin } from './plugin';
 
 type OnPluginAddedCallback = (plugin: Plugin) => void;
 
@@ -200,6 +201,18 @@ export class SegmentClient {
     this.store = store;
     this.timeline = new Timeline();
 
+    // // create and add waiting plugin immediately so early events get buffered.
+    // try {
+    //   this.waitingPlugin = new WaitingPlugin();
+    //   // add directly to timeline via addPlugin to ensure configure() is called immediately
+    //   this.addPlugin(this.waitingPlugin);
+    //   // initial running state false until init completes (mirrors Kotlin semantics)
+    //   this.isRunning = false;
+    // } catch (e) {
+    //   // if WaitingPlugin instantiation or add fails, fallback to running=true
+    //   this.isRunning = true;
+    // }
+
     // Initialize the watchables
     this.context = {
       get: this.store.context.get,
@@ -295,7 +308,6 @@ export class SegmentClient {
       if ((await this.store.isReady.get(true)) === false) {
         await this.storageReady();
       }
-
       // Get new settings from segment
       // It's important to run this before checkInstalledVersion and trackDeeplinks to give time for destination plugins
       // which make use of the settings object to initialize
@@ -309,7 +321,6 @@ export class SegmentClient {
       ]);
       await this.onReady();
       this.isReady.value = true;
-
       // Process all pending events
       await this.processPendingEvents();
       // Trigger manual flush
@@ -465,10 +476,11 @@ export class SegmentClient {
         settings
       );
     }
-
-    if (!this.isReady.value) {
+    console.log('!this.isReady.value', !this.isReady.value);
+    if (!this.isReady.value && !(plugin instanceof WaitingPlugin)) {
       this.pluginsToAdd.push(plugin);
     } else {
+      console.log('this.addPlugin');
       this.addPlugin(plugin);
     }
   }
@@ -476,6 +488,12 @@ export class SegmentClient {
   private addPlugin(plugin: Plugin) {
     plugin.configure(this);
     this.timeline.add(plugin);
+    //check for waiting plugin here
+    if (plugin instanceof WaitingPlugin) {
+      console.log('add plugin');
+      this.pauseEventProcessingForPlugin(plugin);
+    }
+
     this.triggerOnPluginLoaded(plugin);
   }
 
@@ -512,7 +530,7 @@ export class SegmentClient {
   ): Promise<SegmentEvent | undefined> {
     const event = await this.applyContextData(incomingEvent);
     this.flushPolicyExecuter.notify(event);
-    return this.timeline.process(event);
+    return await this.timeline.process(event);
   }
 
   private async trackDeepLinks() {
@@ -1026,5 +1044,59 @@ export class SegmentClient {
     }
 
     return totalEventsCount;
+  }
+  private resumeTimeoutId?: ReturnType<typeof setTimeout>;
+  private waitingPlugins = new Set<WaitingPlugin>();
+
+  /**
+   * Pause event processing globally. Events will be buffered into pendingEvents and WaitingPlugin.
+   * An auto-resume will be scheduled after `timeout` ms.
+   */
+  pauseEventProcessingForPlugin(plugin?: WaitingPlugin) {
+    if (plugin) {
+      this.waitingPlugins.add(plugin);
+    }
+    this.pauseEventProcessing();
+  }
+  async resumeEventProcessingForPlugin(plugin?: WaitingPlugin) {
+    if (plugin) {
+      this.waitingPlugins.delete(plugin);
+    }
+    if (this.waitingPlugins.size > 0) {
+      return; // still blocked
+    }
+
+    await this.resumeEventProcessing();
+  }
+
+  pauseEventProcessing(timeout = 30000) {
+    // IMPORTANT: ignore repeated pauses
+    if (!this.isReady.value) {
+      return;
+    }
+
+    this.isReady.value = false;
+
+    // clear previous timeout if any
+    if (this.resumeTimeoutId) {
+      clearTimeout(this.resumeTimeoutId);
+    }
+
+    this.resumeTimeoutId = setTimeout(async () => {
+      await this.resumeEventProcessing();
+    }, timeout);
+  }
+  async resumeEventProcessing() {
+    if (this.isReady.value) {
+      return;
+    }
+
+    if (this.resumeTimeoutId) {
+      clearTimeout(this.resumeTimeoutId);
+      this.resumeTimeoutId = undefined;
+    }
+    // this.waitingPlugins.clear();
+    this.isReady.value = true;
+    await this.processPendingEvents();
   }
 }
