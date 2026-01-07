@@ -77,19 +77,8 @@ jobs:
       - name: Bundle Build
         run: yarn build
 
-      - name: Detox - Build (arm64, no Flipper)
-        run: |
-         cd examples/E2E
-         RCT_NO_LAUNCH_PACKAGER=1 \
-         NO_FLIPPER=1 \
-         xcodebuild \
-         -workspace ios/AnalyticsReactNativeE2E.xcworkspace \
-         -scheme AnalyticsReactNativeE2E \
-         -configuration Release \
-         -sdk iphonesimulator \
-         -destination 'generic/platform=iOS Simulator' \
-         -arch arm64 \
-         -derivedDataPath ios/build
+      - name: Detox - Build
+        run: RCT_NO_LAUNCH_PACKAGER=1 yarn e2e build:ios
 
 
       - name: Detox - Test
