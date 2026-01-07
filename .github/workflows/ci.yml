@@ -119,7 +119,6 @@ jobs:
           profile: ${{matrix.profile}}
           avd-name: Pixel_API_21_AOSP
           target: default
-          arch: arm64-v8a
           force-avd-creation: false
           emulator-options: >
             -no-window
@@ -159,7 +158,6 @@ jobs:
           profile: ${{matrix.profile}}
           avd-name: Pixel_API_21_AOSP
           target: default
-          arch: arm64-v8a
           force-avd-creation: false
           emulator-options: >
             -no-window
