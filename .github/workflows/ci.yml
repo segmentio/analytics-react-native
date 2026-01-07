@@ -78,7 +78,11 @@ jobs:
         run: yarn build
 
       - name: Detox - Build
-        run: RCT_NO_LAUNCH_PACKAGER=1 yarn e2e build:ios
+        run: |
+          RCT_NO_LAUNCH_PACKAGER=1 \
+          EXCLUDED_ARCHS=x86_64 \
+          ONLY_ACTIVE_ARCH=YES \
+          yarn e2e build:ios
 
 
       - name: Detox - Test
