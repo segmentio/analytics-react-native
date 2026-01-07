@@ -66,14 +66,31 @@ jobs:
           cache: yarn
       # End workaround
 
-      - name: Bootstrap
-        run: yarn install && yarn e2e install && yarn e2e pods
+      - name: Bootstrap (NO_FLIPPER)
+        run: |
+         yarn install
+         yarn e2e install
+         cd examples/E2E/ios
+         rm -rf Pods Podfile.lock
+         NO_FLIPPER=1 pod install --repo-update
 
       - name: Bundle Build
         run: yarn build
 
-      - name: Detox - Build
-        run: RCT_NO_LAUNCH_PACKAGER=1 yarn e2e build:ios
+      - name: Detox - Build (arm64, no Flipper)
+        run: |
+         cd examples/E2E
+         RCT_NO_LAUNCH_PACKAGER=1 \
+         NO_FLIPPER=1 \
+         xcodebuild \
+         -workspace ios/AnalyticsReactNativeE2E.xcworkspace \
+         -scheme AnalyticsReactNativeE2E \
+         -configuration Release \
+         -sdk iphonesimulator \
+         -destination 'generic/platform=iOS Simulator' \
+         -arch arm64 \
+         -derivedDataPath ios/build
+
 
       - name: Detox - Test
         run: yarn e2e test:ios
