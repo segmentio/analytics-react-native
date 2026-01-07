@@ -165,5 +165,6 @@ jobs:
             -noaudio
             -no-boot-anim
             -camera-back none
-            -accel off          disable-animations: true
+            -accel off          
+          disable-animations: true
           script: yarn e2e test:android
