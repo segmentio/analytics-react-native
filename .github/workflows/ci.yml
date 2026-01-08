@@ -167,16 +167,14 @@ jobs:
           api-level: ${{ matrix.api-level }}
           profile: ${{matrix.profile}}
           avd-name: Pixel_3a_API_30
-          target: default
-          force-avd-creation: false
+          target: google_apis
+          force-avd-creation: true
           emulator-options: >
             -no-window
             -gpu swiftshader_indirect
             -noaudio
             -no-boot-anim
             -camera-back none
-            -accel off          
           disable-animations: true
           script: |
-            yarn e2e build:android
             yarn e2e test:android
