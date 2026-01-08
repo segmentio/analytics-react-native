@@ -1,11 +1,11 @@
 {
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.16.0/.schema/devbox.schema.json",
-  "packages": [
-    "yarn-berry@latest",
-    "nodejs@latest",
-    "act@latest",
-    "git@latest"
-  ],
+  "packages": {
+    "yarn-berry": "latest",
+    "nodejs":     "latest",
+    "act":        "latest",
+    "git":        "latest"
+  },
   "shell": {
     "init_hook": [
       "echo 'Welcome to devbox!' > /dev/null"
