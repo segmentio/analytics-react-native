@@ -183,4 +183,5 @@ jobs:
           script: |
             export CI=true
             export DETOX_CONFIGURATION=android.att.debug
+            export DETOX_DISABLE_PERMISSIONS=1
             yarn e2e test:android
