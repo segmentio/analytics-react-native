@@ -128,7 +128,8 @@ jobs:
           api-level: ${{ matrix.api-level }}
           profile: ${{matrix.profile}}
           avd-name: Pixel_3a_API_30
-          target: default
+          target: google_apis
+          arch: x86
           force-avd-creation: false
           emulator-options: >
             -no-window
@@ -168,6 +169,7 @@ jobs:
           profile: ${{matrix.profile}}
           avd-name: Pixel_3a_API_30
           target: google_apis
+          arch: x86
           force-avd-creation: true
           emulator-boot-timeout: 900
           emulator-options: >
