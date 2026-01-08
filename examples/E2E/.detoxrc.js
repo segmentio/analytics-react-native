@@ -63,7 +63,7 @@ module.exports = {
     emulator: {
       type: 'android.emulator',
       device: {
-        avdName: process.env.CI ? 'Pixel_API_21_AOSP' : 'Medium_Phone_API_36.1'
+        avdName: process.env.CI ? 'Pixel_3a_API_30' : 'Medium_Phone_API_36.1'
       }
     }
   },

@@ -92,8 +92,8 @@ jobs:
     runs-on: 'macos-15-intel' # This is important, linux cannot run the emulator graphically for e2e tests
     strategy:
       matrix:
-        api-level: [21]
-        profile: ['pixel_xl']
+        api-level: [30]
+        profile: ['pixel_3a']
     env:
       YARN_ENABLE_HARDENED_MODE: 0
     steps:
@@ -127,7 +127,7 @@ jobs:
         with:
           api-level: ${{ matrix.api-level }}
           profile: ${{matrix.profile}}
-          avd-name: Pixel_API_21_AOSP
+          avd-name: Pixel_3a_API_30
           target: default
           force-avd-creation: false
           emulator-options: >
@@ -166,7 +166,7 @@ jobs:
         with:
           api-level: ${{ matrix.api-level }}
           profile: ${{matrix.profile}}
-          avd-name: Pixel_API_21_AOSP
+          avd-name: Pixel_3a_API_30
           target: default
           force-avd-creation: false
           emulator-options: >
