@@ -57,7 +57,8 @@ module.exports = {
     attached: {
       type: 'android.attached',
       device: {
-        adbName: '.*'
+        adbName: '.*',
+        disablePermissions: true
       }
     },
     emulator: {
