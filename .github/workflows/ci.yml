@@ -89,7 +89,7 @@ jobs:
         run: yarn e2e test:ios
 
   run-e2e-android:
-    runs-on: 'macos-latest' # This is important, linux cannot run the emulator graphically for e2e tests
+    runs-on: 'ubuntu-latest'
     strategy:
       matrix:
         api-level: [21]
@@ -156,7 +156,7 @@ jobs:
         run: RCT_NO_LAUNCH_PACKAGER=1 yarn e2e build:android
 
       - name: Detox - Test
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: ReactiveCircus/android-emulator-runner@v2.35.0
         with:
           api-level: ${{ matrix.api-level }}
           profile: ${{matrix.profile}}
