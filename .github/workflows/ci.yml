@@ -169,12 +169,22 @@ jobs:
           avd-name: Pixel_3a_API_30
           target: google_apis
           force-avd-creation: true
+          emulator-boot-timeout: 900
           emulator-options: >
             -no-window
             -gpu swiftshader_indirect
             -noaudio
             -no-boot-anim
             -camera-back none
+            -wipe-data
+            -no-snapshot-load
+            -no-snapshot-save
           disable-animations: true
           script: |
-            yarn e2e test:android
+           echo "Waiting for Android system services..."
+           adb wait-for-device
+           adb shell 'until service list | grep -q package; do sleep 2; done'
+           adb shell settings put global window_animation_scale 0
+           adb shell settings put global transition_animation_scale 0
+           adb shell settings put global animator_duration_scale 0
+           yarn e2e test:android
