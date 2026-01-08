@@ -181,19 +181,6 @@ jobs:
             -no-snapshot-save
           disable-animations: true
           script: |
-            echo "Waiting for Android framework services..."
-
-            adb wait-for-device
-
-            echo "Waiting for package service..."
-            adb shell 'until service list | grep -q package; do sleep 2; done'
-
-            echo "Waiting for settings service..."
-            adb shell 'until service list | grep -q settings; do sleep 2; done'
-
-            echo "Disabling animations (best effort)..."
-            adb shell settings put global window_animation_scale 0 || true
-            adb shell settings put global transition_animation_scale 0 || true
-            adb shell settings put global animator_duration_scale 0 || true
-
+            export CI=true
+            export DETOX_CONFIGURATION=android.att.debug
             yarn e2e test:android
