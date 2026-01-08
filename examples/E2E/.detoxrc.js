@@ -51,19 +51,21 @@ module.exports = {
     simulator: {
       type: 'ios.simulator',
       device: {
-        type: 'iPhone 14'
+        type: 'iPhone 16'
       }
     },
     attached: {
       type: 'android.attached',
       device: {
-        adbName: '.*'
+        adbName: '.*',
+        disablePermissions: true
       }
     },
     emulator: {
       type: 'android.emulator',
       device: {
-        avdName: process.env.CI ? 'Pixel_API_21_AOSP': 'Pixel_3a_API_32'
+        avdName: process.env.CI ? 'Pixel_3a_API_30' : 'Medium_Phone_API_36.1',
+        disablePermissions: true
       }
     }
   },

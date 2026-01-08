@@ -41,13 +41,13 @@ jobs:
         run: yarn test --coverage
 
   run-e2e-ios:
-    runs-on: 'macos-13'
+    runs-on: 'macos-15'
     env:
       YARN_ENABLE_HARDENED_MODE: 0
     steps:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest-stable
+          xcode-version: '16.4'
       - name: Install applesimutils
         run: |
           HOMEBREW_NO_AUTO_UPDATE=1 brew tap wix/brew >/dev/null
@@ -66,24 +66,34 @@ jobs:
           cache: yarn
       # End workaround
 
-      - name: Bootstrap
-        run: yarn install && yarn e2e install && yarn e2e pods
+      - name: Bootstrap (NO_FLIPPER)
+        run: |
+         yarn install
+         yarn e2e install
+         cd examples/E2E/ios
+         rm -rf Pods Podfile.lock
+         NO_FLIPPER=1 pod install --repo-update
 
       - name: Bundle Build
         run: yarn build
 
       - name: Detox - Build
-        run: RCT_NO_LAUNCH_PACKAGER=1 yarn e2e build:ios
+        run: |
+          RCT_NO_LAUNCH_PACKAGER=1 \
+          EXCLUDED_ARCHS=x86_64 \
+          ONLY_ACTIVE_ARCH=YES \
+          yarn e2e build:ios
+
 
       - name: Detox - Test
         run: yarn e2e test:ios
 
   run-e2e-android:
-    runs-on: 'macos-13' # This is important, linux cannot run the emulator graphically for e2e tests
+    runs-on: 'macos-15-intel' # This is important, linux cannot run the emulator graphically for e2e tests
     strategy:
       matrix:
-        api-level: [21]
-        profile: ['pixel_xl']
+        api-level: [30]
+        profile: ['pixel_3a']
     env:
       YARN_ENABLE_HARDENED_MODE: 0
     steps:
@@ -102,27 +112,34 @@ jobs:
             ~/.gradle/wrapper
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/buildSrc/**/*.kt') }}
 
-      - name: AVD cache
-        uses: actions/cache@v4
-        id: avd-cache
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-${{ matrix.api-level }}-${{matrix.profile}}
+      # - name: AVD cache
+      #   uses: actions/cache@v4
+      #   id: avd-cache
+      #   with:
+      #     path: |
+      #       ~/.android/avd/*
+      #       ~/.android/adb*
+      #     key: avd-${{ matrix.api-level }}-${{matrix.profile}}
 
-      - name: create AVD and generate snapshot for caching
-        if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ matrix.api-level }}
-          profile: ${{matrix.profile}}
-          avd-name: Pixel_API_21_AOSP
-          target: default
-          force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: false
-          script: echo "Generated AVD snapshot for caching."
+      # - name: create AVD and generate snapshot for caching
+      #   if: steps.avd-cache.outputs.cache-hit != 'true'
+      #   uses: reactivecircus/android-emulator-runner@v2
+      #   with:
+      #     api-level: ${{ matrix.api-level }}
+      #     profile: ${{matrix.profile}}
+      #     avd-name: Pixel_3a_API_30
+      #     target: google_apis
+      #     arch: x86
+      #     force-avd-creation: false
+      #     emulator-options: >
+      #       -no-window
+      #       -gpu swiftshader_indirect
+      #       -noaudio
+      #       -no-boot-anim
+      #       -camera-back none
+      #       -accel off
+      #     disable-animations: false
+      #     script: echo "Generated AVD snapshot for caching."
 
       # Workaround for corepack enable in node
       # Source: (https://github.com/actions/setup-node/issues/899#issuecomment-1828798029)
@@ -150,9 +167,19 @@ jobs:
         with:
           api-level: ${{ matrix.api-level }}
           profile: ${{matrix.profile}}
-          avd-name: Pixel_API_21_AOSP
-          target: default
-          force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          avd-name: Pixel_3a_API_30
+          target: google_apis
+          arch: x86
+          force-avd-creation: true
+          emulator-boot-timeout: 900
+          emulator-options: >
+            -no-window
+            -gpu swiftshader_indirect
+            -noaudio
+            -no-boot-anim
+            -camera-back none
           disable-animations: true
-          script: yarn e2e test:android
+          script: |
+            adb wait-for-device
+            adb shell getprop sys.boot_completed
+            yarn e2e test:android
