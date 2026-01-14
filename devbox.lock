@@ -30,8 +30,8 @@
       }
     },
     "github:NixOS/nixpkgs/nixpkgs-unstable": {
-      "last_modified": "2026-01-13T11:13:53Z",
-      "resolved": "github:NixOS/nixpkgs/61db79b0c6b838d9894923920b612048e1201926?lastModified=1768302833"
+      "last_modified": "2026-01-14T04:14:06Z",
+      "resolved": "github:NixOS/nixpkgs/ea30586ee015f37f38783006a9bc9e4aa64d7d61?lastModified=1768364046"
     },
     "gradle@latest": {
       "last_modified": "2025-12-31T03:27:36Z",

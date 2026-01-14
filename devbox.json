@@ -9,16 +9,24 @@
     "jdk17":             "latest",
     "gradle":            "latest",
     "jq":                "latest",
-    "./nix#android-sdk": "",
+    "path:./nix#android-sdk": "",
+  },
+  "nix_config": {
+    "extra-experimental-features": "nix-command flakes"
   },
   "shell": {
     "init_hook": [
       "echo 'Welcome to analytics-react-native devbox!' > /dev/null",
-      "OS_NAME=$(uname -s)",
-      "if [ \"$OS_NAME\" = \"Darwin\" ]; then SDK_ROOT_DEFAULT=\"$HOME/Library/Android/sdk\"; else SDK_ROOT_DEFAULT=\"$HOME/Android/Sdk\"; fi",
-      "export ANDROID_SDK_ROOT=\"${ANDROID_SDK_ROOT:-$SDK_ROOT_DEFAULT}\"",
-      "export ANDROID_HOME=\"$ANDROID_SDK_ROOT\"",
-      "export PATH=\"$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH\"",
+      "sdk_source=\"\"",
+      "if [ -n \"${ANDROID_SDK_ROOT:-}\" ]; then sdk_source=\"user-defined ANDROID_SDK_ROOT\"; fi",
+      "if [ -z \"$sdk_source\" ] && [ -n \"${ANDROID_HOME:-}\" ]; then ANDROID_SDK_ROOT=\"$ANDROID_HOME\"; sdk_source=\"user-defined ANDROID_HOME\"; fi",
+      "if [ -z \"$sdk_source\" ]; then SM=\"\"; for CAND in $(command -v -a sdkmanager 2>/dev/null || true); do if echo \"$CAND\" | grep -q '^/nix/store/'; then SM=\"$CAND\"; break; fi; done; if [ -n \"$SM\" ]; then SM=$(readlink -f \"$SM\" 2>/dev/null || echo \"$SM\"); for C in \"$(dirname \"$SM\")/..\" \"$(dirname \"$SM\")/../share/android-sdk\" \"$(dirname \"$SM\")/../libexec/android-sdk\" \"$(dirname \"$SM\")/../..\"; do if [ -d \"$C/platform-tools\" ] || [ -d \"$C/platforms\" ] || [ -d \"$C/system-images\" ]; then ANDROID_SDK_ROOT=\"$C\"; sdk_source=\"nix sdkmanager\"; break; fi; done; fi; fi",
+      "if [ -z \"$sdk_source\" ]; then if [ \"$(uname -s)\" = \"Darwin\" ]; then ANDROID_SDK_ROOT=\"$HOME/Library/Android/sdk\"; else ANDROID_SDK_ROOT=\"$HOME/Android/Sdk\"; fi; sdk_source=\"OS default\"; fi",
+      "export ANDROID_SDK_ROOT",
+      "if [ -z \"${ANDROID_HOME:-}\" ]; then export ANDROID_HOME=\"$ANDROID_SDK_ROOT\"; fi",
+      "if [ -n \"${ANDROID_SDK_ROOT:-}\" ]; then export PATH=\"$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH\"; fi",
+      "echo \"Using Android SDK: $ANDROID_SDK_ROOT (source: $sdk_source)\"",
+      "if [ \"$sdk_source\" = \"OS default\" ]; then echo \"Note: Nix flake android-sdk not detected; run 'devbox install' (or 'devbox add path:./nix#android-sdk') to ensure the flake SDK is pulled.\"; fi",
     ],
     "scripts": {
       "clean": [
