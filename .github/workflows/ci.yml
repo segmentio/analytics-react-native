@@ -52,7 +52,7 @@ jobs:
     strategy:
       matrix:
         api-level: [21]
-        profile: ['Pixel']
+        profile: ['pixel']
     steps:
       - uses: actions/checkout@v4
       - name: devbox installer
