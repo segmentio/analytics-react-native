@@ -5,14 +5,20 @@
       "version":   "latest",
       "platforms": ["x86_64-darwin", "aarch64-darwin"],
     },
-    "yarn-berry": "latest",
-    "jdk17":      "latest",
-    "gradle":     "latest",
-    "jq":         "latest",
+    "android-tools":                                           "flake:./nix#android-sdk",
+    "yarn-berry":                                              "latest",
+    "jdk17":                                                   "latest",
+    "gradle":                                                  "latest",
+    "jq":                                                      "latest",
   },
   "shell": {
     "init_hook": [
       "echo 'Welcome to analytics-react-native devbox!' > /dev/null",
+      "OS_NAME=$(uname -s)",
+      "if [ \"$OS_NAME\" = \"Darwin\" ]; then SDK_ROOT_DEFAULT=\"$HOME/Library/Android/sdk\"; else SDK_ROOT_DEFAULT=\"$HOME/Android/Sdk\"; fi",
+      "export ANDROID_SDK_ROOT=\"${ANDROID_SDK_ROOT:-$SDK_ROOT_DEFAULT}\"",
+      "export ANDROID_HOME=\"$ANDROID_SDK_ROOT\"",
+      "export PATH=\"$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH\"",
     ],
     "scripts": {
       "clean": [
@@ -27,15 +33,6 @@
         "yarn build",
         "yarn lint",
         "yarn test --coverage",
-      ],
-      "setup-ios-devices": [
-        "IOS_RUNTIME=$(xcrun simctl list runtimes --json | jq -r '.runtimes[0] | .identifier')",
-        "xcodebuild -downloadPlatform iOS",
-        "xcrun simctl list devicetypes",
-        "xcrun simctl list runtimes",
-        "xcrun simctl create 'iPhone 14' 'iPhone 14' $IOS_RUNTIME",
-        "xcrun simctl create 'iPhone 17' 'iPhone 17' $IOS_RUNTIME",
-        "xcrun simctl list devices"
       ],
       "test-android": [
         "yarn install",
@@ -52,9 +49,15 @@
         "yarn e2e build:ios",
         "yarn e2e test:ios",
       ],
+      "setup-android": [
+        "bash $DEVBOX_PROJECT_ROOT/scripts/setup-android.sh",
+      ],
+      "setup-ios": [
+        "bash $DEVBOX_PROJECT_ROOT/scripts/setup-ios.sh",
+      ],
       "test": [
         "devbox run test-android",
-        "devbox run test-ios --omit-nix-env",
+        "devbox run test-ios",
       ],
     },
   },
