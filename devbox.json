@@ -31,8 +31,6 @@
       "setup-ios-devices": [
         "xcrun simctl list devicetypes",
         "xcrun simctl list runtimes",
-        "xcrun simctl delete 'iPhone 14'",
-        "xcrun simctl delete 'iPhone 17'",
         "xcrun simctl create 'iPhone 14' 'iPhone 14' $IOS_RUNTIME",
         "xcrun simctl create 'iPhone 17' 'iPhone 17' $IOS_RUNTIME",
         "xcrun simctl list devices"

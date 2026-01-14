@@ -52,7 +52,7 @@ jobs:
     strategy:
       matrix:
         api-level: [24]
-        profile: ['medium_phone']
+        profile: ['Medium_Phone']
     steps:
       - uses: actions/checkout@v4
       - name: devbox installer
