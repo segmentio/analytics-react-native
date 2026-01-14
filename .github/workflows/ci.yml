@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
 jobs:
   cancel_previous:
+    if: ${{ !env.ACT }}
     runs-on: ubuntu-latest
     steps:
       - uses: styfle/cancel-workflow-action@0.12.1
@@ -88,16 +89,15 @@ jobs:
 
   run-e2e-android:
     runs-on: 'ubuntu-22.04'
-    env:
-      # Default to both minsdk and latest; override ANDROID_MATRIX env to narrow/expand if needed.
-      ANDROID_MATRIX: >
-        [
-          {"name":"android-min","avd-name":"pixel_API21_x86_64","start-script":"start-android-minsdk"},
-          {"name":"android-latest","avd-name":"medium_phone_API33_x86_64","start-script":"start-android-latest"}
-        ]
     strategy:
       matrix:
-        include: ${{ fromJson(env.ANDROID_MATRIX) }}
+        include:
+          - name: android-min
+            avd-name: pixel_API21_x86_64
+            start-script: start-android-minsdk
+          - name: android-latest
+            avd-name: medium_phone_API33_x86_64
+            start-script: start-android-latest
     steps:
       - uses: actions/checkout@v4
       - name: Yarn cache
