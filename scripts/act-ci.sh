@@ -20,6 +20,7 @@ done
 CMD=(act)
 CMD+=(--pull=false)
 CMD+=(--platform "${PLATFORM}")
+CMD+=(--input ACT=true)
 if [[ -n "$JOB" ]]; then
   CMD+=(--job "$JOB")
 fi
