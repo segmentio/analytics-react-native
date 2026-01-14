@@ -11,22 +11,11 @@
     "jq":                "latest",
     "path:./nix#android-sdk": "",
   },
-  "nix_config": {
-    "extra-experimental-features": "nix-command flakes"
-  },
   "shell": {
     "init_hook": [
       "echo 'Welcome to analytics-react-native devbox!' > /dev/null",
-      "sdk_source=\"\"",
-      "if [ -n \"${ANDROID_SDK_ROOT:-}\" ]; then sdk_source=\"user-defined ANDROID_SDK_ROOT\"; fi",
-      "if [ -z \"$sdk_source\" ] && [ -n \"${ANDROID_HOME:-}\" ]; then ANDROID_SDK_ROOT=\"$ANDROID_HOME\"; sdk_source=\"user-defined ANDROID_HOME\"; fi",
-      "if [ -z \"$sdk_source\" ]; then SM=\"\"; for CAND in $(command -v -a sdkmanager 2>/dev/null || true); do if echo \"$CAND\" | grep -q '^/nix/store/'; then SM=\"$CAND\"; break; fi; done; if [ -n \"$SM\" ]; then SM=$(readlink -f \"$SM\" 2>/dev/null || echo \"$SM\"); for C in \"$(dirname \"$SM\")/..\" \"$(dirname \"$SM\")/../share/android-sdk\" \"$(dirname \"$SM\")/../libexec/android-sdk\" \"$(dirname \"$SM\")/../..\"; do if [ -d \"$C/platform-tools\" ] || [ -d \"$C/platforms\" ] || [ -d \"$C/system-images\" ]; then ANDROID_SDK_ROOT=\"$C\"; sdk_source=\"nix sdkmanager\"; break; fi; done; fi; fi",
-      "if [ -z \"$sdk_source\" ]; then if [ \"$(uname -s)\" = \"Darwin\" ]; then ANDROID_SDK_ROOT=\"$HOME/Library/Android/sdk\"; else ANDROID_SDK_ROOT=\"$HOME/Android/Sdk\"; fi; sdk_source=\"OS default\"; fi",
-      "export ANDROID_SDK_ROOT",
-      "if [ -z \"${ANDROID_HOME:-}\" ]; then export ANDROID_HOME=\"$ANDROID_SDK_ROOT\"; fi",
-      "if [ -n \"${ANDROID_SDK_ROOT:-}\" ]; then export PATH=\"$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH\"; fi",
-      "echo \"Using Android SDK: $ANDROID_SDK_ROOT (source: $sdk_source)\"",
-      "if [ \"$sdk_source\" = \"OS default\" ]; then echo \"Note: Nix flake android-sdk not detected; run 'devbox install' (or 'devbox add path:./nix#android-sdk') to ensure the flake SDK is pulled.\"; fi",
+      "source \"$DEVBOX_PROJECT_ROOT/scripts/android-env.sh\"",
+      "echo 'Android SDK env configured (details: wiki/devbox.md#devbox-android).'",
     ],
     "scripts": {
       "clean": [
@@ -43,6 +32,7 @@
         "yarn test --coverage",
       ],
       "test-android": [
+        "devbox run setup-android",
         "yarn install",
         "yarn e2e install",
         "yarn build",
@@ -50,6 +40,7 @@
         "yarn e2e test:android",
       ],
       "test-ios": [
+        "devbox run setup-ios",
         "yarn install",
         "yarn e2e install",
         "yarn e2e pods",
@@ -58,10 +49,74 @@
         "yarn e2e test:ios",
       ],
       "setup-android": [
-        "bash $DEVBOX_PROJECT_ROOT/scripts/setup-android.sh",
+        "bash $DEVBOX_PROJECT_ROOT/scripts/android-setup.sh",
       ],
       "setup-ios": [
-        "bash $DEVBOX_PROJECT_ROOT/scripts/setup-ios.sh",
+        "bash $DEVBOX_PROJECT_ROOT/scripts/ios-setup.sh",
+      ],
+      "start-emulator": [
+        "bash $DEVBOX_PROJECT_ROOT/scripts/android-manager.sh start"
+      ],
+      "start-ios": [
+        "bash $DEVBOX_PROJECT_ROOT/scripts/ios-manager.sh start"
+      ],
+      "start-android-minsdk": [
+        "bash $DEVBOX_PROJECT_ROOT/scripts/android-manager.sh start"
+      ],
+      "start-android-latest": [
+        "AVD_FLAVOR=latest bash $DEVBOX_PROJECT_ROOT/scripts/android-manager.sh start"
+      ],
+      "start-android": [
+        "bash $DEVBOX_PROJECT_ROOT/scripts/android-manager.sh start"
+      ],
+      "release": [
+        "npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}",
+        "yarn install --immutable",
+        "yarn build",
+        "yarn release"
+      ],
+      "reset-android": [
+        "rm -rf ~/.android/avd",
+        "rm -f ~/.android/adbkey*",
+        "echo \"AVDs and adb keys removed. Recreate via devbox run start-android* as needed.\""
+      ],
+      "reset-ios": [
+        "xcrun simctl shutdown all || true",
+        "xcrun simctl erase all || true",
+        "rm -rf ~/Library/Developer/CoreSimulator/Devices",
+        "echo \"Simulators reset. Recreate via devbox run start-ios.\""
+      ],
+      "stop-android": [
+        "if command -v adb >/dev/null 2>&1; then",
+        "  devices=$(adb devices -l 2>/dev/null | tail -n +2 | awk '{print $1}' | tr '\\n' ' ');",
+        "  if [[ -n \"$devices\" ]]; then",
+        "    echo \"Stopping Android emulators: $devices\";",
+        "    for d in $devices; do adb -s \"$d\" emu kill >/dev/null 2>&1 || true; done;",
+        "  else",
+        "    echo \"No Android emulators detected via adb.\";",
+        "  fi;",
+        "else",
+        "  echo \"adb not found; skipping Android emulator shutdown.\";",
+        "fi",
+        "pkill -f \"emulator@\" >/dev/null 2>&1 || true",
+        "echo \"Android emulators stopped (if any were running).\""
+      ],
+      "stop-ios": [
+        "if command -v xcrun >/dev/null 2>&1 && xcrun -f simctl >/dev/null 2>&1; then",
+        "  if xcrun simctl list devices booted | grep -q \"Booted\"; then",
+          "    echo \"Shutting down booted iOS simulators...\";",
+          "    xcrun simctl shutdown all >/dev/null 2>&1 || true;",
+        "  else",
+          "    echo \"No booted iOS simulators detected.\";",
+        "  fi;",
+        "else",
+        "  echo \"simctl not available; skipping iOS shutdown.\";",
+        "fi",
+        "echo \"iOS simulators shutdown (if any were running).\""
+      ],
+      "stop": [
+        "devbox run stop-android",
+        "devbox run stop-ios"
       ],
       "test": [
         "devbox run test-android",

@@ -30,7 +30,10 @@
           };
 
           androidPkgs = pkgs.androidenv.composeAndroidPackages {
-            platformVersions = ["21"];
+            # Keep API 21 images for the AVD and add API 33 for React Native builds.
+            platformVersions = [ "21" "33" ];
+            buildToolsVersions = [ "30.0.3" "33.0.0" "latest" ];
+            cmdLineToolsVersion = "19.0";
             includeEmulator = true;
             includeSystemImages = true;
             includeNDK = true;
@@ -38,6 +41,7 @@
         in
         {
           android-sdk = androidPkgs.androidsdk;
+          default = androidPkgs.androidsdk;
         });
     };
 }

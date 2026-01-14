@@ -35,18 +35,15 @@ jobs:
           cache: yarn
       # End workaround
 
-      - name: Config and Build
-        run: |
-          npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
-          yarn install --immutable
-          yarn build
+      - name: devbox installer
+        uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          enable-cache: 'true'
+
+      - name: Config, Build, Release
+        run: devbox run release
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Publish (All)
-        if: github.event.inputs.workspace == ''
-        run: yarn release
-        env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 

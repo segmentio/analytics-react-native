@@ -27,40 +27,92 @@ jobs:
         run: devbox run build
 
   run-e2e-ios:
-    runs-on: ['macos-15', 'macos-15-intel' ]
+    runs-on: ['macos-15' ]
     env:
       YARN_ENABLE_HARDENED_MODE: 0
+      XCODE_VERSION: '26.1.1'
+    strategy:
+      matrix:
+        include:
+          - name: ios-min
+            ios-device: "iPhone 14"
+            ios-runtime: "18.5"
+          - name: ios-latest
+            ios-device: "iPhone 17"
+            ios-runtime: "26.1"
     steps:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '26.1.1'
       - uses: actions/checkout@v4
+      - name: CocoaPods cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/CocoaPods
+          key: cocoapods-${{ runner.os }}-${{ env.XCODE_VERSION }}-${{ hashFiles('examples/E2E/ios/Podfile.lock') }}
+          restore-keys: |
+            cocoapods-${{ runner.os }}-${{ env.XCODE_VERSION }}-
+            cocoapods-${{ runner.os }}-
+      - name: DerivedData cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+          key: derived-${{ runner.os }}-${{ env.XCODE_VERSION }}-${{ hashFiles('examples/E2E/ios/Podfile.lock') }}
+          restore-keys: |
+            derived-${{ runner.os }}-${{ env.XCODE_VERSION }}-
+            derived-${{ runner.os }}-
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
           enable-cache: 'true'
         # --omit-nix-env is important to use the macos system c toolchain instead of the nix toolchain
-      - name: devbox shell
-        run: devbox shell --omit-nix-env
-      - name: setup ios devices
-        run: devbox run setup-ios-devices
-      - name: IOS E2E Tests
-        run: devbox run test-ios
+      - name: iOS setup (simulators, pods)
+        env:
+          IOS_DEVICE_NAMES: ${{ matrix.ios-device }}
+          IOS_RUNTIME: ${{ matrix.ios-runtime }}
+        run: |
+          set -euo pipefail
+          devbox shell --omit-nix-env --command "devbox run setup-ios && yarn install && yarn e2e install && yarn e2e pods"
+      - name: iOS build
+        run: |
+          set -euo pipefail
+          devbox shell --omit-nix-env --command "yarn build && yarn e2e build:ios"
+      - name: iOS E2E Tests
+        env:
+          DETOX_IOS_DEVICE: ${{ matrix.ios-device }}
+        run: |
+          set -euo pipefail
+          devbox shell --omit-nix-env --command "DETOX_IOS_DEVICE='${{ matrix.ios-device }}' yarn e2e test:ios"
 
   run-e2e-android:
     runs-on: 'ubuntu-22.04'
+    env:
+      # Default to both minsdk and latest; override ANDROID_MATRIX env to narrow/expand if needed.
+      ANDROID_MATRIX: >
+        [
+          {"name":"android-min","avd-name":"pixel_API21_x86_64","start-script":"start-android-minsdk"},
+          {"name":"android-latest","avd-name":"medium_phone_API33_x86_64","start-script":"start-android-latest"}
+        ]
     strategy:
       matrix:
-        api-level: [21]
-        profile: ['pixel']
+        include: ${{ fromJson(env.ANDROID_MATRIX) }}
     steps:
       - uses: actions/checkout@v4
+      - name: Yarn cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/yarn
+            .yarn/cache
+          key: yarn-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            yarn-${{ runner.os }}-
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
           enable-cache: 'true'
-      - name: devbox shell
-        run: devbox shell
       - name: Gradle cache
         uses: actions/cache@v4
         with:
@@ -75,28 +127,28 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-${{ matrix.api-level }}-${{matrix.profile}}
+          key: avd-${{ matrix.avd-name }}
 
-      - name: create AVD and generate snapshot for caching
-        if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ matrix.api-level }}
-          profile: ${{matrix.profile}}
-          avd-name: Pixel_API_21
-          target: default
-          force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: false
-          script: echo "Generated AVD snapshot for caching."
-      - name: Detox - Test
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ matrix.api-level }}
-          profile: ${{matrix.profile}}
-          avd-name: Pixel_API_21
-          target: default
-          force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: true
-          script: devbox run test-android
+      - name: Android setup (AVD + deps)
+        env:
+          DETOX_AVD: ${{ matrix.avd-name }}
+          EMU_HEADLESS: "1"
+          AVD_FLAVOR: ${{ startsWith(matrix.avd-name, 'pixel') && 'minsdk' || 'latest' }}
+        run: |
+          set -euo pipefail
+          devbox run ${{ matrix.start-script }}
+          devbox run setup-android
+          yarn install
+          yarn e2e install
+
+      - name: Android build
+        run: |
+          set -euo pipefail
+          devbox run setup-android
+          yarn build
+          yarn e2e build:android
+
+      - name: Android E2E Tests
+        env:
+          DETOX_AVD: ${{ matrix.avd-name }}
+        run: devbox run test-android

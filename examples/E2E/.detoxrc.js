@@ -51,7 +51,8 @@ module.exports = {
     simulator: {
       type: 'ios.simulator',
       device: {
-        type: 'iPhone 17'
+        // Allow CI/local override; defaults to iPhone 17 on latest runtime.
+        type: process.env.DETOX_IOS_DEVICE || 'iPhone 17'
       }
     },
     attached: {
@@ -63,7 +64,12 @@ module.exports = {
     emulator: {
       type: 'android.emulator',
       device: {
-        avdName: process.env.CI ? 'Pixel_API_21_AOSP': 'Medium_Phone_API_24'
+        // Default to latest AVD name (arch-aware); override via DETOX_AVD. For minsdk testing, set DETOX_AVD to an API 21 AVD.
+        avdName: (() => {
+          if (process.env.DETOX_AVD) return process.env.DETOX_AVD;
+          const arch = require('os').arch();
+          return arch === 'arm64' ? 'medium_phone_API33_arm64_v8a' : 'medium_phone_API33_x86_64';
+        })()
       }
     }
   },
