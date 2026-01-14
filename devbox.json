@@ -13,7 +13,6 @@
   "shell": {
     "init_hook": [
       "echo 'Welcome to analytics-react-native devbox!' > /dev/null",
-      "export IOS_RUNTIME=$(xcrun simctl list runtimes --json | jq -r '.runtimes[0] | .identifier')",
     ],
     "scripts": {
       "clean": [
@@ -30,12 +29,13 @@
         "yarn test --coverage",
       ],
       "setup-ios-devices": [
+        "IOS_RUNTIME=$(xcrun simctl list runtimes --json | jq -r '.runtimes[0] | .identifier')",
         "xcodebuild -downloadPlatform iOS",
         "xcrun simctl list devicetypes",
         "xcrun simctl list runtimes",
         "xcrun simctl create 'iPhone 14' 'iPhone 14' $IOS_RUNTIME",
         "xcrun simctl create 'iPhone 17' 'iPhone 17' $IOS_RUNTIME",
-        "xcrun simctl list devices",
+        "xcrun simctl list devices"
       ],
       "test-android": [
         "yarn install",
