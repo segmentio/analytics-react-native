@@ -5,11 +5,11 @@
       "version":   "latest",
       "platforms": ["x86_64-darwin", "aarch64-darwin"],
     },
-    "android-tools":                                           "flake:./nix#android-sdk",
-    "yarn-berry":                                              "latest",
-    "jdk17":                                                   "latest",
-    "gradle":                                                  "latest",
-    "jq":                                                      "latest",
+    "yarn-berry":        "latest",
+    "jdk17":             "latest",
+    "gradle":            "latest",
+    "jq":                "latest",
+    "./nix#android-sdk": "",
   },
   "shell": {
     "init_hook": [
