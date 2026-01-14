@@ -1,0 +1,162 @@
+{
+  "lockfile_version": "1",
+  "packages": {
+    "cocoapods@latest": {
+      "last_modified": "2025-12-31T03:27:36Z",
+      "resolved": "github:NixOS/nixpkgs/f665af0cdb70ed27e1bd8f9fdfecaf451260fc55#cocoapods",
+      "source": "devbox-search",
+      "version": "1.16.2",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/av5g6hfp0yiir3iavg72js70ian8hxyf-cocoapods-1.16.2",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/av5g6hfp0yiir3iavg72js70ian8hxyf-cocoapods-1.16.2"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/har71589bwmh6h6skisd20b3c6lrwmz7-cocoapods-1.16.2",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/har71589bwmh6h6skisd20b3c6lrwmz7-cocoapods-1.16.2"
+        }
+      }
+    },
+    "github:NixOS/nixpkgs/nixpkgs-unstable": {
+      "last_modified": "2026-01-12T00:44:08Z",
+      "resolved": "github:NixOS/nixpkgs/3fbab70c6e69c87ea2b6e48aa6629da2aa6a23b0?lastModified=1768178648"
+    },
+    "gradle@latest": {
+      "last_modified": "2025-12-31T03:27:36Z",
+      "plugin_version": "0.0.1",
+      "resolved": "github:NixOS/nixpkgs/f665af0cdb70ed27e1bd8f9fdfecaf451260fc55#gradle",
+      "source": "devbox-search",
+      "version": "8.14.3",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/v2xbkgrvn0b4g4qq7j5x60va0d4gf0kw-gradle-8.14.3",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/v2xbkgrvn0b4g4qq7j5x60va0d4gf0kw-gradle-8.14.3"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/mvs8d5c60yyx3sxpppg1r67yjvlrrhhh-gradle-8.14.3",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/mvs8d5c60yyx3sxpppg1r67yjvlrrhhh-gradle-8.14.3"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/jy3fpkvcymjaglzi9z2gbpzcyqypgfxh-gradle-8.14.3",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/jy3fpkvcymjaglzi9z2gbpzcyqypgfxh-gradle-8.14.3"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/80fgl9ffaxlxl9s4i1jb37krcljx669g-gradle-8.14.3",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/80fgl9ffaxlxl9s4i1jb37krcljx669g-gradle-8.14.3"
+        }
+      }
+    },
+    "jdk17@latest": {
+      "last_modified": "2025-10-22T20:59:19Z",
+      "resolved": "github:NixOS/nixpkgs/01b6809f7f9d1183a2b3e081f0a1e6f8f415cb09#jdk17",
+      "source": "devbox-search",
+      "version": "17.0.12",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/hlm8a8cnp4hm8xkg0a2yy4kv7cq44jii-zulu-ca-jdk-17.0.12",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/hlm8a8cnp4hm8xkg0a2yy4kv7cq44jii-zulu-ca-jdk-17.0.12"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/i4zgq9685y6284hbf5a7ac9ysb88dvlz-zulu-ca-jdk-17.0.12",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/i4zgq9685y6284hbf5a7ac9ysb88dvlz-zulu-ca-jdk-17.0.12"
+        }
+      }
+    },
+    "yarn-berry@latest": {
+      "last_modified": "2025-12-31T03:27:36Z",
+      "resolved": "github:NixOS/nixpkgs/f665af0cdb70ed27e1bd8f9fdfecaf451260fc55#yarn-berry",
+      "source": "devbox-search",
+      "version": "4.12.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/2l7sbyyqardvrzr35zkrw67gbng5gb8y-yarn-berry-4.12.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/2l7sbyyqardvrzr35zkrw67gbng5gb8y-yarn-berry-4.12.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/klx9ndw1djgx0zhhyrkcn9an094rmmwv-yarn-berry-4.12.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/klx9ndw1djgx0zhhyrkcn9an094rmmwv-yarn-berry-4.12.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/m6cwiya6hrbwnlprh2cbnmz6c7mkylrf-yarn-berry-4.12.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/m6cwiya6hrbwnlprh2cbnmz6c7mkylrf-yarn-berry-4.12.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/q1gys3zgijcciiafbh9nfawkx5wj8179-yarn-berry-4.12.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/q1gys3zgijcciiafbh9nfawkx5wj8179-yarn-berry-4.12.0"
+        }
+      }
+    }
+  }
+}

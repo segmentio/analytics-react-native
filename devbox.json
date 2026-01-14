@@ -1,0 +1,61 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.2/.schema/devbox.schema.json",
+  "packages": {
+    "cocoapods": {
+      "version":   "latest",
+      "platforms": ["x86_64-darwin", "aarch64-darwin"]
+    },
+    "yarn-berry": "latest",
+    "jdk17":      "latest",
+    "gradle":     "latest"
+  },
+  "shell": {
+    "init_hook": [
+      "echo 'Welcome to analytics-react-native devbox!' > /dev/null",
+      "export IOS_RUNTIME=$(xcrun simctl list runtimes --json | jq -r '.runtimes[0] | .identifier')"
+    ],
+    "scripts": {
+      "clean": [
+        "rm -rf $DEVBOX_PROJECT_ROOT/examples/E2E/ios/Podfile.lock",
+        "rm -rf $DEVBOX_PROJECT_ROOT/examples/E2E/ios/Pods",
+        "cd $DEVBOX_PROJECT_DIR/examples/E2E/android && gradle clean",
+        "yarn cache clean",
+        "find $DEVBOX_PROJECT_DIR -type d -name node_modules -exec rmdir {} \\;",
+      ],
+      "build": [
+        "yarn install --immutable",
+        "yarn build",
+        "yarn lint",
+        "yarn test --coverage"
+      ],
+      "setup-ios-devices": [
+        "xcrun simctl list devicetypes",
+        "xcrun simctl list runtimes",
+        "xcrun simctl delete 'iPhone 14'",
+        "xcrun simctl delete 'iPhone 17'",
+        "xcrun simctl create 'iPhone 14' 'iPhone 14' $IOS_RUNTIME",
+        "xcrun simctl create 'iPhone 17' 'iPhone 17' $IOS_RUNTIME",
+        "xcrun simctl list devices"
+      ],
+      "test-android": [
+        "yarn install",
+        "yarn e2e install",
+        "yarn build",
+        "yarn e2e build:android",
+        "yarn e2e test:android"
+      ],
+      "test-ios": [
+        "yarn install",
+        "yarn e2e install",
+        "yarn e2e pods",
+        "yarn build",
+        "yarn e2e build:ios",
+        "yarn e2e test:ios"
+      ],
+      "test": [
+        "devbox run test-android",
+        "devbox run test-ios --omit-nix-env"
+      ]
+    }
+  }
+}

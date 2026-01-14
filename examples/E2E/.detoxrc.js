@@ -51,7 +51,7 @@ module.exports = {
     simulator: {
       type: 'ios.simulator',
       device: {
-        type: 'iPhone 14'
+        type: 'iPhone 17'
       }
     },
     attached: {
@@ -63,7 +63,7 @@ module.exports = {
     emulator: {
       type: 'android.emulator',
       device: {
-        avdName: process.env.CI ? 'Pixel_API_21_AOSP': 'Pixel_3a_API_32'
+        avdName: process.env.CI ? 'Pixel_API_21_AOSP': 'Medium_Phone_API_24'
       }
     }
   },
