@@ -51,8 +51,8 @@ jobs:
     runs-on: 'ubuntu-22.04'
     strategy:
       matrix:
-        api-level: [24]
-        profile: ['Medium_Phone']
+        api-level: [21]
+        profile: ['Pixel']
     steps:
       - uses: actions/checkout@v4
       - name: devbox installer
@@ -83,7 +83,7 @@ jobs:
         with:
           api-level: ${{ matrix.api-level }}
           profile: ${{matrix.profile}}
-          avd-name: Medium_Phone_API_24
+          avd-name: Pixel_API_21
           target: default
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
@@ -94,7 +94,7 @@ jobs:
         with:
           api-level: ${{ matrix.api-level }}
           profile: ${{matrix.profile}}
-          avd-name: Medium_Phone_API_24
+          avd-name: Pixel_API_21
           target: default
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none

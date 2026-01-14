@@ -29,6 +29,7 @@
         "yarn test --coverage"
       ],
       "setup-ios-devices": [
+        "xcodebuild -downloadPlatform",
         "xcrun simctl list devicetypes",
         "xcrun simctl list runtimes",
         "xcrun simctl create 'iPhone 14' 'iPhone 14' $IOS_RUNTIME",
