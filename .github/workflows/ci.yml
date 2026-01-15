@@ -18,6 +18,10 @@ jobs:
     runs-on: 'ubuntu-latest'
     steps:
       - uses: actions/checkout@v4
+      - name: Disk space (start)
+        run: |
+          df -h
+          df -h /nix/store || true
       # Workaround for corepack enable in node
       # Source: (https://github.com/actions/setup-node/issues/899#issuecomment-1828798029)
       - name: devbox installer
@@ -46,6 +50,10 @@ jobs:
         with:
           xcode-version: '26.1.1'
       - uses: actions/checkout@v4
+      - name: Disk space (start)
+        run: |
+          df -h
+          df -h /nix/store || true
       - name: CocoaPods cache
         uses: actions/cache@v4
         with:
@@ -113,6 +121,10 @@ jobs:
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
           enable-cache: 'true'
+      - name: Disk space (start)
+        run: |
+          df -h
+          df -h /nix/store || true
       - name: Gradle cache
         uses: actions/cache@v4
         with:
