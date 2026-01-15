@@ -18,16 +18,16 @@ jobs:
     runs-on: 'ubuntu-latest'
     steps:
       - uses: actions/checkout@v4
-      - name: Disk space (start)
-        run: |
-          df -h
-          df -h /nix/store || true
-      # Workaround for corepack enable in node
-      # Source: (https://github.com/actions/setup-node/issues/899#issuecomment-1828798029)
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@v1.3.1
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
           enable-cache: 'true'
+      - name: Nix GC (pre-build)
+        run: |
+          nix-collect-garbage -d || true
+          du -sh /nix/store || true
       - name: build
         run: devbox run build
 
@@ -46,14 +46,16 @@ jobs:
             ios-device: "iPhone 17"
             ios-runtime: "26.1"
     steps:
+      - uses: actions/checkout@v4
+      - name: Free Disk Space
+        run: | 
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '26.1.1'
-      - uses: actions/checkout@v4
-      - name: Disk space (start)
-        run: |
-          df -h
-          df -h /nix/store || true
       - name: CocoaPods cache
         uses: actions/cache@v4
         with:
@@ -121,6 +123,10 @@ jobs:
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
           enable-cache: 'true'
+      - name: Nix GC (pre-build)
+        run: |
+          nix-collect-garbage -d || true
+          du -sh /nix/store || true
       - name: Disk space (start)
         run: |
           df -h
