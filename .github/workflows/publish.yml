@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          persist-credentials: false
+          fetch-depth: 0
           token: ${{ secrets.GH_TOKEN }}
 
       # Workaround for corepack enable in node

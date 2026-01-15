@@ -20,7 +20,7 @@
     "typescript": "tsc --noEmit --composite false",
     "test": "jest",
     "lint": "eslint .",
-    "release": " yarn multi-semantic-release"
+    "release": "yarn multi-semantic-release"
   },
   "devDependencies": {
     "@anolilab/multi-semantic-release": "^1.0.3",
