@@ -1,3 +1,81 @@
+const { execSync } = require('child_process');
+
+const defaultIOSDeviceCandidates = (() => {
+  const fromEnv = (process.env.IOS_DEVICE_NAMES || 'iPhone 14')
+    .split(',')
+    .map((name) => name.trim())
+    .filter(Boolean);
+  return Array.from(new Set(['iPhone 17', ...fromEnv, 'iPhone 14']));
+})();
+
+const safeParseJSON = (cmd) => {
+  try {
+    return JSON.parse(
+      execSync(cmd, { stdio: ['ignore', 'pipe', 'ignore'] }).toString()
+    );
+  } catch (_) {
+    return null;
+  }
+};
+
+const listAvailableDevices = () => {
+  const parsed = safeParseJSON('xcrun simctl list devices -j');
+  if (!parsed || !parsed.devices) return [];
+  const devices = [];
+  Object.values(parsed.devices).forEach((group) => {
+    (group || []).forEach((device) => {
+      if (device.isAvailable || device.availability === '(available)') {
+        devices.push(device);
+      }
+    });
+  });
+  return devices;
+};
+
+const listAvailableDeviceTypes = () => {
+  const parsed = safeParseJSON('xcrun simctl list devicetypes -j');
+  if (!parsed || !parsed.devicetypes) return new Set();
+  return new Set(parsed.devicetypes.map((dt) => dt.name.toLowerCase()));
+};
+
+const baseName = (name) => name.split(' (')[0].trim().toLowerCase();
+
+const detectIOSDevice = () => {
+  if (process.env.DETOX_IOS_DEVICE) {
+    return { type: process.env.DETOX_IOS_DEVICE };
+  }
+
+  const devices = listAvailableDevices();
+  const preferredDevice = defaultIOSDeviceCandidates.find((candidate) =>
+    devices.some((d) => baseName(d.name) === candidate.toLowerCase())
+  );
+  if (preferredDevice) {
+    const found = devices.find(
+      (d) => baseName(d.name) === preferredDevice.toLowerCase()
+    );
+    if (found) return { name: found.name };
+  }
+  const anyIphoneDevice = devices.find((d) =>
+    d.name.toLowerCase().includes('iphone')
+  );
+  if (anyIphoneDevice) return { name: anyIphoneDevice.name };
+
+  const availableTypes = listAvailableDeviceTypes();
+  const preferredType = defaultIOSDeviceCandidates.find((candidate) =>
+    availableTypes.has(candidate.toLowerCase())
+  );
+  if (preferredType) return { type: preferredType };
+
+  const anyIphoneType = Array.from(availableTypes).find((t) =>
+    t.includes('iphone')
+  );
+  if (anyIphoneType) return { type: anyIphoneType };
+
+  return { type: defaultIOSDeviceCandidates[0] };
+};
+
+const iosDevice = detectIOSDevice();
+
 /** @type {Detox.DetoxConfig} */
 module.exports = {
   testRunner: {
@@ -51,8 +129,8 @@ module.exports = {
     simulator: {
       type: 'ios.simulator',
       device: {
-        // Allow CI/local override; defaults to iPhone 17 on latest runtime.
-        type: process.env.DETOX_IOS_DEVICE || 'iPhone 17'
+        // Allow CI/local override; defaults to an available simulator by name (or type fallback).
+        ...iosDevice
       }
     },
     attached: {

@@ -87,8 +87,10 @@
       "reset-ios": [
         "xcrun simctl shutdown all || true",
         "xcrun simctl erase all || true",
-        "rm -rf ~/Library/Developer/CoreSimulator/Devices",
-        "echo \"Simulators reset. Recreate via devbox run start-ios.\"",
+        "xcrun simctl delete all || true",
+        "xcrun simctl delete unavailable || true",
+        "killall -9 com.apple.CoreSimulatorService 2>/dev/null || true",
+        "echo \"Simulators reset via simctl. Recreate via devbox run start-ios.\"",
       ],
       "stop-android": [
         "if command -v adb >/dev/null 2>&1; then",

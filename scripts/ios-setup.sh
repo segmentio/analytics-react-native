@@ -56,6 +56,31 @@ EOF
 
 ensure_simctl
 
+ensure_core_sim_service() {
+  local output status
+  output="$(xcrun simctl list devices -j 2>&1)" || status=$?
+  if [[ -n "${status:-}" ]]; then
+    echo "simctl failed while listing devices (status ${status}). CoreSimulatorService may be unhealthy." >&2
+    echo "Try restarting it:" >&2
+    echo "  killall -9 com.apple.CoreSimulatorService 2>/dev/null || true" >&2
+    echo "  launchctl kickstart -k gui/$UID/com.apple.CoreSimulatorService" >&2
+    echo "Then open Simulator once and rerun devbox run setup-ios." >&2
+    echo "simctl error output:" >&2
+    echo "$output" >&2
+    return 1
+  fi
+
+  if echo "$output" | grep -q "CoreSimulatorService connection became invalid"; then
+    echo "CoreSimulatorService is not healthy. Try restarting it:" >&2
+    echo "  killall -9 com.apple.CoreSimulatorService 2>/dev/null || true" >&2
+    echo "  launchctl kickstart -k gui/$UID/com.apple.CoreSimulatorService" >&2
+    echo "Then open Simulator once and rerun devbox run setup-ios." >&2
+    echo "simctl error output:" >&2
+    echo "$output" >&2
+    return 1
+  fi
+}
+
 pick_runtime() {
   local preferred="$1"
   local json choice
@@ -95,6 +120,13 @@ existing_device_udid_any_runtime() {
   xcrun simctl list devices -j | jq -r --arg name "$name" '.devices[]?[]? | select(.name == $name) | .udid' | head -n1
 }
 
+device_data_dir_exists() {
+  local udid="${1:-}"
+  [[ -n "$udid" ]] || return 1
+  local dir="$HOME/Library/Developer/CoreSimulator/Devices/$udid"
+  [[ -d "$dir" ]]
+}
+
 devicetype_id_for_name() {
   local name="$1"
   xcrun simctl list devicetypes -j | jq -r --arg name "$name" '.devicetypes[] | select((.name|ascii_downcase) == ($name|ascii_downcase)) | .identifier' | head -n1
@@ -105,8 +137,12 @@ ensure_device() {
 
   # If a device with this name already exists anywhere, reuse it.
   if existing_udid=$(existing_device_udid_any_runtime "$base_name"); [[ -n "${existing_udid}" ]]; then
-    echo "Found existing ${base_name}: ${existing_udid}"
-    return 0
+    if device_data_dir_exists "$existing_udid"; then
+      echo "Found existing ${base_name}: ${existing_udid}"
+      return 0
+    fi
+    echo "Existing ${base_name} (${existing_udid}) is missing its data directory. Deleting stale simulator..."
+    xcrun simctl delete "$existing_udid" || true
   fi
 
   local choice runtime_id runtime_name
@@ -126,8 +162,12 @@ ensure_device() {
 
   # Also check for an existing device with the runtime-qualified display name.
   if existing_udid=$(existing_device_udid_any_runtime "$display_name"); [[ -n "${existing_udid}" ]]; then
-    echo "Found existing ${display_name}: ${existing_udid}"
-    return 0
+    if device_data_dir_exists "$existing_udid"; then
+      echo "Found existing ${display_name}: ${existing_udid}"
+      return 0
+    fi
+    echo "Existing ${display_name} (${existing_udid}) is missing its data directory. Deleting stale simulator..."
+    xcrun simctl delete "$existing_udid" || true
   fi
 
   echo "Creating ${display_name}..."
@@ -136,6 +176,7 @@ ensure_device() {
 }
 
 main() {
+  ensure_core_sim_service || return 1
   IFS=',' read -r -a devices <<<"${IOS_DEVICE_NAMES:-iPhone 14,iPhone 17}"
   local runtime="${IOS_RUNTIME:-18.5}"
   for device in "${devices[@]}"; do
