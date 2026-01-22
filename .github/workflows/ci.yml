@@ -22,7 +22,7 @@ jobs:
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
-          enable-cache: 'true'
+          enable-cache: 'false'
       - name: Nix GC (pre-build)
         run: |
           nix-collect-garbage -d || true
@@ -31,7 +31,7 @@ jobs:
         run: devbox run build
 
   run-e2e-ios:
-    if: false
+    if: true
     runs-on: ['macos-15' ]
     env:
       YARN_ENABLE_HARDENED_MODE: 0
@@ -56,38 +56,18 @@ jobs:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '26.1.1'
-      - name: CocoaPods cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/Library/Caches/CocoaPods
-          key: cocoapods-${{ runner.os }}-${{ env.XCODE_VERSION }}-${{ hashFiles('examples/E2E/ios/Podfile.lock') }}
-          restore-keys: |
-            cocoapods-${{ runner.os }}-${{ env.XCODE_VERSION }}-
-            cocoapods-${{ runner.os }}-
-      - name: DerivedData cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/Library/Developer/Xcode/DerivedData
-          key: derived-${{ runner.os }}-${{ env.XCODE_VERSION }}-${{ hashFiles('examples/E2E/ios/Podfile.lock') }}
-          restore-keys: |
-            derived-${{ runner.os }}-${{ env.XCODE_VERSION }}-
-            derived-${{ runner.os }}-
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
-          enable-cache: 'true'
+          enable-cache: 'false'
         # --omit-nix-env is important to use the macos system c toolchain instead of the nix toolchain
       - name: iOS E2E Tests
         env:
           DETOX_IOS_DEVICE: ${{ matrix.ios-device }}
-        run: |
-          set -euo pipefail
-          devbox shell --omit-nix-env --command "devbox run test-ios"
+        run: devbox shell --omit-nix-env --command "devbox run test-ios"
 
   run-e2e-android:
-    if: false
+    if: true
     continue-on-error: true
     runs-on: 'ubuntu-22.04'
     strategy:
@@ -101,19 +81,10 @@ jobs:
             start-script: start-android-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Yarn cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/yarn
-            .yarn/cache
-          key: yarn-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            yarn-${{ runner.os }}-
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
-          enable-cache: 'true'
+          enable-cache: 'false'
       - name: Nix GC (pre-build)
         run: |
           nix-collect-garbage -d || true
@@ -122,21 +93,6 @@ jobs:
         run: |
           df -h
           df -h /nix/store || true
-      - name: Gradle cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/buildSrc/**/*.kt') }}
-      - name: AVD cache
-        uses: actions/cache@v4
-        id: avd-cache
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-${{ matrix.avd-name }}
       - name: Android E2E Tests
         env:
           DETOX_AVD: ${{ matrix.avd-name }}
