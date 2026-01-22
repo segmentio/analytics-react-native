@@ -71,7 +71,7 @@ jobs:
       - name: iOS E2E Tests
         env:
           DETOX_IOS_DEVICE: ${{ matrix.ios-device }}
-        run: devbox shell --omit-nix-env --command "devbox run test-ios"
+        run: devbox shell --omit-nix-env -- devbox run test-ios
 
   run-e2e-android:
     if: true
