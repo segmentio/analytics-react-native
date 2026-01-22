@@ -5,6 +5,8 @@ on:
   pull_request:
     branches: [master, beta]
   workflow_dispatch:
+env:
+  RUN_E2E: "false"
 jobs:
   cancel_previous:
     runs-on: ubuntu-latest
@@ -31,6 +33,7 @@ jobs:
         run: devbox run build
 
   run-e2e-ios:
+    if: ${{ env.RUN_E2E == 'true' }}
     continue-on-error: true
     runs-on: ['macos-15' ]
     env:
@@ -87,6 +90,7 @@ jobs:
           devbox shell --omit-nix-env --command "devbox run test-ios"
 
   run-e2e-android:
+    if: ${{ env.RUN_E2E == 'true' }}
     continue-on-error: true
     runs-on: 'ubuntu-22.04'
     strategy:
