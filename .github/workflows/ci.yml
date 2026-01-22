@@ -33,8 +33,7 @@ jobs:
         run: devbox run build
 
   run-e2e-ios:
-    if: ${{ env.RUN_E2E == 'true' }}
-    continue-on-error: true
+    if: ${{ RUN_E2E == 'true' }}
     runs-on: ['macos-15' ]
     env:
       YARN_ENABLE_HARDENED_MODE: 0
@@ -90,7 +89,7 @@ jobs:
           devbox shell --omit-nix-env --command "devbox run test-ios"
 
   run-e2e-android:
-    if: ${{ env.RUN_E2E == 'true' }}
+    if: ${{ RUN_E2E == 'true' }}
     continue-on-error: true
     runs-on: 'ubuntu-22.04'
     strategy:
