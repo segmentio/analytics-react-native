@@ -88,11 +88,9 @@ jobs:
         run: |
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /opt/ghc
-          sudo rm -rf "/usr/local/share/boost"
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
           sudo rm -rf /Applications/Android\ Studio.app
           sudo rm -rf /usr/local/share/miniconda
-          sudo rm -rf /opt/homebrew
           sudo rm -rf "$HOME/Library/Android"
           sudo rm -rf "$HOME/.gradle"
           sudo rm -rf "$HOME/Library/Developer/CoreSimulator/Devices"
@@ -158,16 +156,19 @@ jobs:
             avd-name: pixel_API21_x86_64
             start-script: start-android-minsdk
             skip-secondary: true
+            devbox-config: devbox/profiles/devbox.android.min.json
           - name: android-latest
             avd-name: medium_phone_API33_x86_64
             start-script: start-android-latest
             skip-primary: true
+            devbox-config: devbox/profiles/devbox.android.json
     steps:
       - uses: actions/checkout@v4
       - name: Set AVD selection
         run: |
           echo "AVD_SKIP_PRIMARY=${{ matrix.skip-primary || 'false' }}" >> "$GITHUB_ENV"
           echo "AVD_SKIP_SECONDARY=${{ matrix.skip-secondary || 'false' }}" >> "$GITHUB_ENV"
+          echo "DEVBOX_CONFIG=${{ matrix.devbox-config }}" >> "$GITHUB_ENV"
       - name: Yarn cache
         uses: actions/cache@v4
         with:
