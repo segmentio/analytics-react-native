@@ -1,0 +1,12 @@
+version = 1
+[install]
+[vars]
+[hook]
+[profile]
+[services]
+[include]
+environments = [
+    { dir = "../../common" }
+]
+[build]
+[options]

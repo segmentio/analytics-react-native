@@ -1,0 +1,159 @@
+{
+  "lockfile-version": 1,
+  "manifest": {
+    "version": 1,
+    "install": {
+      "android-sdk": {
+        "flake": "path:."
+      }
+    },
+    "hook": {
+      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n "
+    },
+    "profile": {},
+    "options": {}
+  },
+  "packages": [
+    {
+      "install_id": "android-sdk",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/min?lastModified=1769115785&narHash=sha256-aOtixzceapfQcKoJzbjmheyI52CQ2o34lFb%2BVABP9Qo%3D",
+      "flake-description": "Slim Android SDK tools for Devbox via flakes",
+      "locked-flake-attr-path": "packages.aarch64-darwin.default",
+      "derivation": "/nix/store/a975aqvkln4zx6zgjzz93wq5a3jhj3yv-androidsdk.drv",
+      "outputs": {
+        "out": "/nix/store/5p579l1a0s1divnq6iahv2p5ck25sb5n-androidsdk"
+      },
+      "output-names": [
+        "out"
+      ],
+      "outputs-to-install": [
+        "out"
+      ],
+      "requested-outputs-to-install": [],
+      "package-system": "aarch64-darwin",
+      "system": "aarch64-darwin",
+      "name": "androidsdk",
+      "pname": "android-sdk-cmdline-tools",
+      "version": "19.0",
+      "description": "Android SDK tools, packaged in Nixpkgs",
+      "broken": false,
+      "unfree": true,
+      "priority": 5
+    },
+    {
+      "install_id": "android-sdk",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/min?lastModified=1769115785&narHash=sha256-aOtixzceapfQcKoJzbjmheyI52CQ2o34lFb%2BVABP9Qo%3D",
+      "flake-description": "Slim Android SDK tools for Devbox via flakes",
+      "locked-flake-attr-path": "packages.aarch64-linux.default",
+      "derivation": "/nix/store/vg95dbcha84zbd84r2149fm2dyjwnsgw-androidsdk.drv",
+      "outputs": {
+        "out": "/nix/store/6wd8vbym24z6wyr4hg8c9lqimnfhg8pf-androidsdk"
+      },
+      "output-names": [
+        "out"
+      ],
+      "outputs-to-install": [
+        "out"
+      ],
+      "requested-outputs-to-install": [],
+      "package-system": "aarch64-linux",
+      "system": "aarch64-linux",
+      "name": "androidsdk",
+      "pname": "android-sdk-cmdline-tools",
+      "version": "19.0",
+      "description": "Android SDK tools, packaged in Nixpkgs",
+      "broken": false,
+      "unfree": true,
+      "priority": 5
+    },
+    {
+      "install_id": "android-sdk",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/min?lastModified=1769115785&narHash=sha256-aOtixzceapfQcKoJzbjmheyI52CQ2o34lFb%2BVABP9Qo%3D",
+      "flake-description": "Slim Android SDK tools for Devbox via flakes",
+      "locked-flake-attr-path": "packages.x86_64-darwin.default",
+      "derivation": "/nix/store/0jpl5vczlv92prp66l8lqngjnlh7fchp-androidsdk.drv",
+      "outputs": {
+        "out": "/nix/store/bdbaq164zvljbl06x6dp7av24vdga62w-androidsdk"
+      },
+      "output-names": [
+        "out"
+      ],
+      "outputs-to-install": [
+        "out"
+      ],
+      "requested-outputs-to-install": [],
+      "package-system": "x86_64-darwin",
+      "system": "x86_64-darwin",
+      "name": "androidsdk",
+      "pname": "android-sdk-cmdline-tools",
+      "version": "19.0",
+      "description": "Android SDK tools, packaged in Nixpkgs",
+      "broken": false,
+      "unfree": true,
+      "priority": 5
+    },
+    {
+      "install_id": "android-sdk",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/min?lastModified=1769115785&narHash=sha256-aOtixzceapfQcKoJzbjmheyI52CQ2o34lFb%2BVABP9Qo%3D",
+      "flake-description": "Slim Android SDK tools for Devbox via flakes",
+      "locked-flake-attr-path": "packages.x86_64-linux.default",
+      "derivation": "/nix/store/dyfpvp4722pd0w73idw65d8f4n3i992k-androidsdk.drv",
+      "outputs": {
+        "out": "/nix/store/1dmy86901px6dn4nschxb57pw73kmw7r-androidsdk"
+      },
+      "output-names": [
+        "out"
+      ],
+      "outputs-to-install": [
+        "out"
+      ],
+      "requested-outputs-to-install": [],
+      "package-system": "x86_64-linux",
+      "system": "x86_64-linux",
+      "name": "androidsdk",
+      "pname": "android-sdk-cmdline-tools",
+      "version": "19.0",
+      "description": "Android SDK tools, packaged in Nixpkgs",
+      "broken": false,
+      "unfree": true,
+      "priority": 5
+    }
+  ],
+  "compose": {
+    "composer": {
+      "version": 1,
+      "install": {
+        "android-sdk": {
+          "flake": "path:."
+        }
+      },
+      "hook": {},
+      "profile": {},
+      "options": {},
+      "include": {
+        "environments": [
+          {
+            "dir": "../android-common"
+          }
+        ]
+      }
+    },
+    "include": [
+      {
+        "manifest": {
+          "version": 1,
+          "hook": {
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n "
+          },
+          "profile": {},
+          "options": {}
+        },
+        "name": "android-common",
+        "descriptor": {
+          "dir": "../android-common"
+        }
+      }
+    ],
+    "warnings": []
+  }
+}

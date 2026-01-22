@@ -1,0 +1,78 @@
+{
+  "lockfile-version": 1,
+  "manifest": {
+    "version": 1,
+    "hook": {
+      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n "
+    },
+    "profile": {},
+    "options": {}
+  },
+  "packages": [],
+  "compose": {
+    "composer": {
+      "version": 1,
+      "hook": {},
+      "profile": {},
+      "options": {},
+      "include": {
+        "environments": [
+          {
+            "dir": "./android-common"
+          },
+          {
+            "dir": "./latest"
+          },
+          {
+            "dir": "./min"
+          }
+        ]
+      }
+    },
+    "include": [
+      {
+        "manifest": {
+          "version": 1,
+          "hook": {
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n "
+          },
+          "profile": {},
+          "options": {}
+        },
+        "name": "android-common",
+        "descriptor": {
+          "dir": "./android-common"
+        }
+      },
+      {
+        "manifest": {
+          "version": 1,
+          "hook": {
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n "
+          },
+          "profile": {},
+          "options": {}
+        },
+        "name": "latest",
+        "descriptor": {
+          "dir": "./latest"
+        }
+      },
+      {
+        "manifest": {
+          "version": 1,
+          "hook": {
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n "
+          },
+          "profile": {},
+          "options": {}
+        },
+        "name": "min",
+        "descriptor": {
+          "dir": "./min"
+        }
+      }
+    ],
+    "warnings": []
+  }
+}

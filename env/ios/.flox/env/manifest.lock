@@ -1,0 +1,264 @@
+{
+  "lockfile-version": 1,
+  "manifest": {
+    "version": 1,
+    "install": {
+      "cocoapods": {
+        "pkg-path": "cocoapods",
+        "systems": [
+          "x86_64-darwin",
+          "aarch64-darwin"
+        ]
+      },
+      "yarn": {
+        "pkg-path": "yarn-berry",
+        "version": "4.12.0"
+      }
+    },
+    "hook": {
+      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n "
+    },
+    "profile": {},
+    "options": {}
+  },
+  "packages": [
+    {
+      "attr_path": "cocoapods",
+      "broken": false,
+      "derivation": "/nix/store/256rcn7cqsimacisbfw0am6p9k3c1bg4-cocoapods-1.16.2.drv",
+      "description": "Manages dependencies for your Xcode projects",
+      "install_id": "cocoapods",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "cocoapods-1.16.2",
+      "pname": "cocoapods",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T04:27:53.946649Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.16.2",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/av5g6hfp0yiir3iavg72js70ian8hxyf-cocoapods-1.16.2"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "cocoapods",
+      "broken": false,
+      "derivation": "/nix/store/ksmn2n54sby6rxxs3j515hz68j7s7x8x-cocoapods-1.16.2.drv",
+      "description": "Manages dependencies for your Xcode projects",
+      "install_id": "cocoapods",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "cocoapods-1.16.2",
+      "pname": "cocoapods",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:34:05.777201Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.16.2",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/har71589bwmh6h6skisd20b3c6lrwmz7-cocoapods-1.16.2"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "yarn-berry",
+      "broken": false,
+      "derivation": "/nix/store/sy0jbfhah2dkmxf9ngd4j5wpymj61s8z-yarn-berry-4.12.0.drv",
+      "description": "Fast, reliable, and secure dependency management",
+      "install_id": "yarn",
+      "license": "BSD-2-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "yarn-berry-4.12.0",
+      "pname": "yarn-berry",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T04:30:38.337965Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.12.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/2l7sbyyqardvrzr35zkrw67gbng5gb8y-yarn-berry-4.12.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "yarn-berry",
+      "broken": false,
+      "derivation": "/nix/store/jzxis6qs5mb2lc9lx7xndv5vqmkx10x0-yarn-berry-4.12.0.drv",
+      "description": "Fast, reliable, and secure dependency management",
+      "install_id": "yarn",
+      "license": "BSD-2-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "yarn-berry-4.12.0",
+      "pname": "yarn-berry",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:05:45.606272Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.12.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/klx9ndw1djgx0zhhyrkcn9an094rmmwv-yarn-berry-4.12.0"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "yarn-berry",
+      "broken": false,
+      "derivation": "/nix/store/pjdps1mpblxfbmppb8b5wds8mzzjar2m-yarn-berry-4.12.0.drv",
+      "description": "Fast, reliable, and secure dependency management",
+      "install_id": "yarn",
+      "license": "BSD-2-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "yarn-berry-4.12.0",
+      "pname": "yarn-berry",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:36:38.743524Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.12.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/m6cwiya6hrbwnlprh2cbnmz6c7mkylrf-yarn-berry-4.12.0"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "yarn-berry",
+      "broken": false,
+      "derivation": "/nix/store/v5xk5ivmrak80ppdcz4jpindj21xy6va-yarn-berry-4.12.0.drv",
+      "description": "Fast, reliable, and secure dependency management",
+      "install_id": "yarn",
+      "license": "BSD-2-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "yarn-berry-4.12.0",
+      "pname": "yarn-berry",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T06:24:08.258012Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.12.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/q1gys3zgijcciiafbh9nfawkx5wj8179-yarn-berry-4.12.0"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    }
+  ],
+  "compose": {
+    "composer": {
+      "version": 1,
+      "install": {
+        "cocoapods": {
+          "pkg-path": "cocoapods",
+          "systems": [
+            "x86_64-darwin",
+            "aarch64-darwin"
+          ]
+        }
+      },
+      "hook": {},
+      "profile": {},
+      "options": {},
+      "include": {
+        "environments": [
+          {
+            "dir": "../common"
+          },
+          {
+            "dir": "../nodejs"
+          }
+        ]
+      }
+    },
+    "include": [
+      {
+        "manifest": {
+          "version": 1,
+          "hook": {
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n "
+          },
+          "profile": {},
+          "options": {}
+        },
+        "name": "common",
+        "descriptor": {
+          "dir": "../common"
+        }
+      },
+      {
+        "manifest": {
+          "version": 1,
+          "install": {
+            "yarn": {
+              "pkg-path": "yarn-berry",
+              "version": "4.12.0"
+            }
+          },
+          "hook": {
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n "
+          },
+          "profile": {},
+          "options": {}
+        },
+        "name": "nodejs",
+        "descriptor": {
+          "dir": "../nodejs"
+        }
+      }
+    ],
+    "warnings": []
+  }
+}

@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 - Yarn workspaces live under `packages`: `core` (SDK runtime), `sovran` (state store), `shared` (cross-package utilities), and `plugins/*` (destination and helper plugins). Native iOS/Android sources reside in each package’s `ios` and `android` folders.
-- Example apps sit in `examples/AnalyticsReactNativeExample` (manual QA) and `examples/E2E` (Detox). Scripts are in `scripts/`; configuration lives alongside packages (e.g., `tsconfig.json`, `babel.config.js`, `jest.config.js`).
+- Example apps sit in `examples/AnalyticsReactNativeExample` (manual QA) and `examples/E2E` (Detox). Scripts live in `flox/scripts`; configuration lives alongside packages (e.g., `tsconfig.json`, `babel.config.js`, `jest.config.js`).
 
 ## Build, Test, and Development Commands
 - `yarn bootstrap`: install root + workspace deps and pod install for example/e2e apps.

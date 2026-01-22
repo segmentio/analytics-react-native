@@ -35,13 +35,13 @@ jobs:
           cache: yarn
       # End workaround
 
-      - name: devbox installer
-        uses: jetify-com/devbox-install-action@v0.14.0
-        with:
-          enable-cache: 'true'
+      - name: Install flox
+        run: |
+          curl -L https://get.flox.dev/install.sh | bash
+          echo "$HOME/.flox/bin" >> "$GITHUB_PATH"
 
       - name: Config, Build, Release
-        run: devbox run release
+        run: flox activate . --devshell default -- bash flox/scripts/release.sh
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}

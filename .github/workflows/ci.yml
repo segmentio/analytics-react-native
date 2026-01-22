@@ -15,8 +15,6 @@ jobs:
   build-and-test:
     needs: cancel_previous
     runs-on: 'ubuntu-latest'
-    env:
-      DEVBOX_CONFIG: devbox/profiles/devbox.build.json
     steps:
       - uses: actions/checkout@v4
       - name: Yarn cache
@@ -34,16 +32,12 @@ jobs:
         uses: jlumbroso/free-disk-space@v1.3.1
       - name: disk check
         run: df -H
-      - name: devbox installer
-        uses: jetify-com/devbox-install-action@v0.14.0
-        with:
-          enable-cache: 'true'
-      - name: devbox install (build profile)
-        run: devbox install
-      - name: disk check
-        run: df -H
+      - name: Install flox
+        run: |
+          curl -L https://get.flox.dev/install.sh | bash
+          echo "$HOME/.flox/bin" >> "$GITHUB_PATH"
       - name: build
-        run: devbox run build
+        run: flox activate . --devshell default -- bash flox/scripts/build.sh
 
   run-e2e-ios:
     if: true
@@ -51,7 +45,6 @@ jobs:
     env:
       YARN_ENABLE_HARDENED_MODE: 0
       XCODE_VERSION: '26.1.1'
-      DEVBOX_CONFIG: devbox/profiles/devbox.ios.json
     strategy:
       matrix:
         include:
@@ -117,46 +110,38 @@ jobs:
           restore-keys: |
             derived-${{ runner.os }}-${{ env.XCODE_VERSION }}-
             derived-${{ runner.os }}-
-      - name: devbox installer
-        uses: jetify-com/devbox-install-action@v0.14.0
-        with:
-          enable-cache: 'true'
-        # --omit-nix-env is important to use the macos system c toolchain instead of the nix toolchain
-      - name: devbox install (iOS profile)
-        run: devbox install
+      - name: Install flox
+        run: |
+          curl -L https://get.flox.dev/install.sh | bash
+          echo "$HOME/.flox/bin" >> "$GITHUB_PATH"
       - name: disk check
         run: df -H
       - name: iOS E2E Tests
         env:
           DETOX_IOS_DEVICE: ${{ matrix.ios-device }}
-        run: devbox shell --omit-nix-env -- devbox run test-ios
+        run: flox activate . --devshell ci-ios -- bash flox/scripts/ios/test.sh
 
   run-e2e-android:
     if: true
     continue-on-error: true
     runs-on: 'ubuntu-22.04'
-    env:
-      DEVBOX_CONFIG: devbox/profiles/devbox.android.json
     strategy:
       matrix:
         include:
           - name: android-min
             avd-name: pixel_API21_x86_64
-            start-script: start-android-minsdk
+            skip-primary: false
             skip-secondary: true
-            devbox-config: devbox/profiles/devbox.android.min.json
           - name: android-latest
             avd-name: medium_phone_API33_x86_64
-            start-script: start-android-latest
             skip-primary: true
-            devbox-config: devbox/profiles/devbox.android.json
+            skip-secondary: false
     steps:
       - uses: actions/checkout@v4
       - name: Set AVD selection
         run: |
           echo "AVD_SKIP_PRIMARY=${{ matrix.skip-primary || 'false' }}" >> "$GITHUB_ENV"
           echo "AVD_SKIP_SECONDARY=${{ matrix.skip-secondary || 'false' }}" >> "$GITHUB_ENV"
-          echo "DEVBOX_CONFIG=${{ matrix.devbox-config }}" >> "$GITHUB_ENV"
       - name: Yarn cache
         uses: actions/cache@v4
         with:
@@ -170,12 +155,10 @@ jobs:
         uses: jlumbroso/free-disk-space@v1.3.1
       - name: disk check
         run: df -H
-      - name: devbox installer
-        uses: jetify-com/devbox-install-action@v0.14.0
-        with:
-          enable-cache: 'true'
-      - name: devbox install (Android profile)
-        run: devbox install
+      - name: Install flox
+        run: |
+          curl -L https://get.flox.dev/install.sh | bash
+          echo "$HOME/.flox/bin" >> "$GITHUB_PATH"
       - name: Gradle cache
         uses: actions/cache@v4
         with:
@@ -190,6 +173,7 @@ jobs:
       - name: Android E2E Tests
         env:
           DETOX_AVD: ${{ matrix.avd-name }}
-        run: devbox run test-android
+          EMU_HEADLESS: 1
+        run: flox activate . --devshell ci-android -- bash flox/scripts/android/test.sh
       - name: disk check
         run: df -H

@@ -1,0 +1,13 @@
+version = 1
+[install]
+android-sdk.flake = "path:."
+[vars]
+[hook]
+[profile]
+[services]
+[include]
+environments = [
+    { dir = "../android-common" }
+]
+[build]
+[options]

@@ -1,0 +1,12 @@
+{
+  "lockfile-version": 1,
+  "manifest": {
+    "version": 1,
+    "hook": {
+      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n "
+    },
+    "profile": {},
+    "options": {}
+  },
+  "packages": []
+}

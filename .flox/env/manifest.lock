@@ -1,0 +1,824 @@
+{
+  "lockfile-version": 1,
+  "manifest": {
+    "version": 1,
+    "install": {
+      "android-sdk": {
+        "flake": "path:env/nix#android-sdk"
+      },
+      "cocoapods": {
+        "pkg-path": "cocoapods",
+        "systems": [
+          "x86_64-darwin",
+          "aarch64-darwin"
+        ]
+      },
+      "gradle": {
+        "pkg-path": "gradle"
+      },
+      "jdk17": {
+        "pkg-path": "jdk17"
+      },
+      "nixd": {
+        "pkg-path": "nixd"
+      },
+      "yarn": {
+        "pkg-path": "yarn-berry",
+        "version": "4.12.0"
+      }
+    },
+    "hook": {
+      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n "
+    },
+    "profile": {},
+    "options": {}
+  },
+  "packages": [
+    {
+      "attr_path": "cocoapods",
+      "broken": false,
+      "derivation": "/nix/store/256rcn7cqsimacisbfw0am6p9k3c1bg4-cocoapods-1.16.2.drv",
+      "description": "Manages dependencies for your Xcode projects",
+      "install_id": "cocoapods",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "cocoapods-1.16.2",
+      "pname": "cocoapods",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T04:27:53.946649Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.16.2",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/av5g6hfp0yiir3iavg72js70ian8hxyf-cocoapods-1.16.2"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "cocoapods",
+      "broken": false,
+      "derivation": "/nix/store/ksmn2n54sby6rxxs3j515hz68j7s7x8x-cocoapods-1.16.2.drv",
+      "description": "Manages dependencies for your Xcode projects",
+      "install_id": "cocoapods",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "cocoapods-1.16.2",
+      "pname": "cocoapods",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:34:05.777201Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.16.2",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/har71589bwmh6h6skisd20b3c6lrwmz7-cocoapods-1.16.2"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "gradle",
+      "broken": false,
+      "derivation": "/nix/store/byb838v8rcxdql3w6cx153f9353x79hi-gradle-8.14.3.drv",
+      "description": "Enterprise-grade build system",
+      "install_id": "gradle",
+      "license": "Apache-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "gradle-8.14.3",
+      "pname": "gradle",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T04:27:54.942580Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "8.14.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/v2xbkgrvn0b4g4qq7j5x60va0d4gf0kw-gradle-8.14.3"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "gradle",
+      "broken": false,
+      "derivation": "/nix/store/vvq6pjywqyxdk8zdbb217chzahg3iyck-gradle-8.14.3.drv",
+      "description": "Enterprise-grade build system",
+      "install_id": "gradle",
+      "license": "Apache-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "gradle-8.14.3",
+      "pname": "gradle",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:02:21.362203Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "8.14.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/mvs8d5c60yyx3sxpppg1r67yjvlrrhhh-gradle-8.14.3"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "gradle",
+      "broken": false,
+      "derivation": "/nix/store/imj8fv0d6x3knhjh4sdw4hp5ax8ramhs-gradle-8.14.3.drv",
+      "description": "Enterprise-grade build system",
+      "install_id": "gradle",
+      "license": "Apache-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "gradle-8.14.3",
+      "pname": "gradle",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:34:06.784996Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "8.14.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/jy3fpkvcymjaglzi9z2gbpzcyqypgfxh-gradle-8.14.3"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "gradle",
+      "broken": false,
+      "derivation": "/nix/store/hszbdb4bbpl6qw5li8wyrhf96vvfk2m4-gradle-8.14.3.drv",
+      "description": "Enterprise-grade build system",
+      "install_id": "gradle",
+      "license": "Apache-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "gradle-8.14.3",
+      "pname": "gradle",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T06:20:21.844293Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "8.14.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/80fgl9ffaxlxl9s4i1jb37krcljx669g-gradle-8.14.3"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "jdk17",
+      "broken": false,
+      "derivation": "/nix/store/87rnl1qkmwrkkzmk0xhnzwak8h9mxdsr-zulu-ca-jdk-17.0.12.drv",
+      "description": "Certified builds of OpenJDK",
+      "install_id": "jdk17",
+      "license": "GPL-2.0-only",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "zulu-ca-jdk-17.0.12",
+      "pname": "jdk17",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T04:28:09.553266Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "17.0.12",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/s9nq23qm9animys49h7g7w660jz4ccwz-zulu-ca-jdk-17.0.12"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "jdk17",
+      "broken": false,
+      "derivation": "/nix/store/sxpzi41bvnl26cy79j9zk3vvlslpbxnx-openjdk-17.0.17+10.drv",
+      "description": "Open-source Java Development Kit",
+      "install_id": "jdk17",
+      "license": "GPL-2.0-only",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "openjdk-17.0.17+10",
+      "pname": "jdk17",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:02:38.984999Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "17.0.17+10",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "debug": "/nix/store/x61h0zs6dawi6i6946c30p9qmn8r45q8-openjdk-17.0.17+10-debug",
+        "out": "/nix/store/qkzq9lxji4zs1dgdlxwwwknaggij5lag-openjdk-17.0.17+10"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "jdk17",
+      "broken": false,
+      "derivation": "/nix/store/rq1jxlr68pjj9ws31zazwgam60s3smn0-zulu-ca-jdk-17.0.12.drv",
+      "description": "Certified builds of OpenJDK",
+      "install_id": "jdk17",
+      "license": "GPL-2.0-only",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "zulu-ca-jdk-17.0.12",
+      "pname": "jdk17",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:34:21.121887Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "17.0.12",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/n1rp0ay6dp66yvr2dzwn840hcnpk8010-zulu-ca-jdk-17.0.12"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "jdk17",
+      "broken": false,
+      "derivation": "/nix/store/p4fc4qy06b89x4yg2kfch2fypfl73iz1-openjdk-17.0.17+10.drv",
+      "description": "Open-source Java Development Kit",
+      "install_id": "jdk17",
+      "license": "GPL-2.0-only",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "openjdk-17.0.17+10",
+      "pname": "jdk17",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T06:20:40.942126Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "17.0.17+10",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "debug": "/nix/store/7hk6cjcmfgml2nq293g7cdsx8nrab3ir-openjdk-17.0.17+10-debug",
+        "out": "/nix/store/4xlra07s99b60kj0md6drgh0qmrkdpby-openjdk-17.0.17+10"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "nixd",
+      "broken": false,
+      "derivation": "/nix/store/adghf422zirb9fjv2kiylfsymks35ji4-nixd-2.8.2.drv",
+      "description": "Feature-rich Nix language server interoperating with C++ nix",
+      "install_id": "nixd",
+      "license": "LGPL-3.0-or-later",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "nixd-2.8.2",
+      "pname": "nixd",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T04:28:16.347179Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.8.2",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/0a5jirwm929lxp126lhsaivlcjzj56dl-nixd-2.8.2"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "nixd",
+      "broken": false,
+      "derivation": "/nix/store/7m4iv8z4i4a9553s2sqfa2zvcmg9l2lb-nixd-2.8.2.drv",
+      "description": "Feature-rich Nix language server interoperating with C++ nix",
+      "install_id": "nixd",
+      "license": "LGPL-3.0-or-later",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "nixd-2.8.2",
+      "pname": "nixd",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:02:53.369471Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.8.2",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/jj6w5446cayxq423ay8njsm2x7s2xb3m-nixd-2.8.2"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "nixd",
+      "broken": false,
+      "derivation": "/nix/store/ws78fvx84zp9cyfay5xnssbdbn6js2r6-nixd-2.8.2.drv",
+      "description": "Feature-rich Nix language server interoperating with C++ nix",
+      "install_id": "nixd",
+      "license": "LGPL-3.0-or-later",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "nixd-2.8.2",
+      "pname": "nixd",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:34:27.672785Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.8.2",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/g3hi7ry7z8z721452kyrlh2845b2a94b-nixd-2.8.2"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "nixd",
+      "broken": false,
+      "derivation": "/nix/store/5nzwdm5f1vqx0pfdi3llxwif67grb61n-nixd-2.8.2.drv",
+      "description": "Feature-rich Nix language server interoperating with C++ nix",
+      "install_id": "nixd",
+      "license": "LGPL-3.0-or-later",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "nixd-2.8.2",
+      "pname": "nixd",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T06:20:58.268611Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.8.2",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/674dpk4xr58fz0c3jwr3hyhdmj93b12a-nixd-2.8.2"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "yarn-berry",
+      "broken": false,
+      "derivation": "/nix/store/sy0jbfhah2dkmxf9ngd4j5wpymj61s8z-yarn-berry-4.12.0.drv",
+      "description": "Fast, reliable, and secure dependency management",
+      "install_id": "yarn",
+      "license": "BSD-2-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "yarn-berry-4.12.0",
+      "pname": "yarn-berry",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T04:30:38.337965Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.12.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/2l7sbyyqardvrzr35zkrw67gbng5gb8y-yarn-berry-4.12.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "yarn-berry",
+      "broken": false,
+      "derivation": "/nix/store/jzxis6qs5mb2lc9lx7xndv5vqmkx10x0-yarn-berry-4.12.0.drv",
+      "description": "Fast, reliable, and secure dependency management",
+      "install_id": "yarn",
+      "license": "BSD-2-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "yarn-berry-4.12.0",
+      "pname": "yarn-berry",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:05:45.606272Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.12.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/klx9ndw1djgx0zhhyrkcn9an094rmmwv-yarn-berry-4.12.0"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "yarn-berry",
+      "broken": false,
+      "derivation": "/nix/store/pjdps1mpblxfbmppb8b5wds8mzzjar2m-yarn-berry-4.12.0.drv",
+      "description": "Fast, reliable, and secure dependency management",
+      "install_id": "yarn",
+      "license": "BSD-2-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "yarn-berry-4.12.0",
+      "pname": "yarn-berry",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:36:38.743524Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.12.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/m6cwiya6hrbwnlprh2cbnmz6c7mkylrf-yarn-berry-4.12.0"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "yarn-berry",
+      "broken": false,
+      "derivation": "/nix/store/v5xk5ivmrak80ppdcz4jpindj21xy6va-yarn-berry-4.12.0.drv",
+      "description": "Fast, reliable, and secure dependency management",
+      "install_id": "yarn",
+      "license": "BSD-2-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "yarn-berry-4.12.0",
+      "pname": "yarn-berry",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T06:24:08.258012Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.12.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/q1gys3zgijcciiafbh9nfawkx5wj8179-yarn-berry-4.12.0"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "install_id": "android-sdk",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/nix?lastModified=1769112770&narHash=sha256-a0%2BUp20UVzs5QHdmMRICu68qE5QmqdYYiEXeswhkB6o%3D",
+      "flake-description": "Slim Android SDK tools for Devbox via flakes",
+      "locked-flake-attr-path": "packages.aarch64-darwin.android-sdk",
+      "derivation": "/nix/store/z1s53qqxd64afkrzf35rfxn9biykv390-androidsdk.drv",
+      "outputs": {
+        "out": "/nix/store/y7y0hrm1fl1g08d8q1v4f0c0p8ksl08x-androidsdk"
+      },
+      "output-names": [
+        "out"
+      ],
+      "outputs-to-install": [
+        "out"
+      ],
+      "requested-outputs-to-install": [],
+      "package-system": "aarch64-darwin",
+      "system": "aarch64-darwin",
+      "name": "androidsdk",
+      "pname": "android-sdk-cmdline-tools",
+      "version": "19.0",
+      "description": "Android SDK tools, packaged in Nixpkgs",
+      "broken": false,
+      "unfree": true,
+      "priority": 5
+    },
+    {
+      "install_id": "android-sdk",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/nix?lastModified=1769112770&narHash=sha256-a0%2BUp20UVzs5QHdmMRICu68qE5QmqdYYiEXeswhkB6o%3D",
+      "flake-description": "Slim Android SDK tools for Devbox via flakes",
+      "locked-flake-attr-path": "packages.aarch64-linux.android-sdk",
+      "derivation": "/nix/store/1cscvada1vrjkfw2vmpcf0a4iqaf0la2-androidsdk.drv",
+      "outputs": {
+        "out": "/nix/store/p3h35kpk3w34a5afssm9q5ab4i2zq0bh-androidsdk"
+      },
+      "output-names": [
+        "out"
+      ],
+      "outputs-to-install": [
+        "out"
+      ],
+      "requested-outputs-to-install": [],
+      "package-system": "aarch64-linux",
+      "system": "aarch64-linux",
+      "name": "androidsdk",
+      "pname": "android-sdk-cmdline-tools",
+      "version": "19.0",
+      "description": "Android SDK tools, packaged in Nixpkgs",
+      "broken": false,
+      "unfree": true,
+      "priority": 5
+    },
+    {
+      "install_id": "android-sdk",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/nix?lastModified=1769112770&narHash=sha256-a0%2BUp20UVzs5QHdmMRICu68qE5QmqdYYiEXeswhkB6o%3D",
+      "flake-description": "Slim Android SDK tools for Devbox via flakes",
+      "locked-flake-attr-path": "packages.x86_64-darwin.android-sdk",
+      "derivation": "/nix/store/j2rnrlp6y1mfvp6w7nrbziax1h4gx213-androidsdk.drv",
+      "outputs": {
+        "out": "/nix/store/5jnhmcf7w6vpxn27dg4yycfadcp6gv3l-androidsdk"
+      },
+      "output-names": [
+        "out"
+      ],
+      "outputs-to-install": [
+        "out"
+      ],
+      "requested-outputs-to-install": [],
+      "package-system": "x86_64-darwin",
+      "system": "x86_64-darwin",
+      "name": "androidsdk",
+      "pname": "android-sdk-cmdline-tools",
+      "version": "19.0",
+      "description": "Android SDK tools, packaged in Nixpkgs",
+      "broken": false,
+      "unfree": true,
+      "priority": 5
+    },
+    {
+      "install_id": "android-sdk",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/nix?lastModified=1769112770&narHash=sha256-a0%2BUp20UVzs5QHdmMRICu68qE5QmqdYYiEXeswhkB6o%3D",
+      "flake-description": "Slim Android SDK tools for Devbox via flakes",
+      "locked-flake-attr-path": "packages.x86_64-linux.android-sdk",
+      "derivation": "/nix/store/j7gpgpsd0yddr4nb315c8vs7k05a6hss-androidsdk.drv",
+      "outputs": {
+        "out": "/nix/store/x6bzlhb39zsfscihxqzj603x21r7wqad-androidsdk"
+      },
+      "output-names": [
+        "out"
+      ],
+      "outputs-to-install": [
+        "out"
+      ],
+      "requested-outputs-to-install": [],
+      "package-system": "x86_64-linux",
+      "system": "x86_64-linux",
+      "name": "androidsdk",
+      "pname": "android-sdk-cmdline-tools",
+      "version": "19.0",
+      "description": "Android SDK tools, packaged in Nixpkgs",
+      "broken": false,
+      "unfree": true,
+      "priority": 5
+    }
+  ],
+  "compose": {
+    "composer": {
+      "version": 1,
+      "hook": {},
+      "profile": {},
+      "options": {},
+      "include": {
+        "environments": [
+          {
+            "dir": "env/common"
+          },
+          {
+            "dir": "env/nodejs"
+          },
+          {
+            "dir": "env/android"
+          },
+          {
+            "dir": "env/ios"
+          },
+          {
+            "dir": "env/nix"
+          }
+        ]
+      }
+    },
+    "include": [
+      {
+        "manifest": {
+          "version": 1,
+          "hook": {
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n "
+          },
+          "profile": {},
+          "options": {}
+        },
+        "name": "common",
+        "descriptor": {
+          "dir": "env/common"
+        }
+      },
+      {
+        "manifest": {
+          "version": 1,
+          "install": {
+            "yarn": {
+              "pkg-path": "yarn-berry",
+              "version": "4.12.0"
+            }
+          },
+          "hook": {
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n "
+          },
+          "profile": {},
+          "options": {}
+        },
+        "name": "nodejs",
+        "descriptor": {
+          "dir": "env/nodejs"
+        }
+      },
+      {
+        "manifest": {
+          "version": 1,
+          "install": {
+            "android-sdk": {
+              "flake": "path:env/nix#android-sdk"
+            },
+            "gradle": {
+              "pkg-path": "gradle"
+            },
+            "jdk17": {
+              "pkg-path": "jdk17"
+            },
+            "yarn": {
+              "pkg-path": "yarn-berry",
+              "version": "4.12.0"
+            }
+          },
+          "hook": {
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n "
+          },
+          "profile": {},
+          "options": {}
+        },
+        "name": "android",
+        "descriptor": {
+          "dir": "env/android"
+        }
+      },
+      {
+        "manifest": {
+          "version": 1,
+          "install": {
+            "cocoapods": {
+              "pkg-path": "cocoapods",
+              "systems": [
+                "x86_64-darwin",
+                "aarch64-darwin"
+              ]
+            },
+            "yarn": {
+              "pkg-path": "yarn-berry",
+              "version": "4.12.0"
+            }
+          },
+          "hook": {
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n "
+          },
+          "profile": {},
+          "options": {}
+        },
+        "name": "ios",
+        "descriptor": {
+          "dir": "env/ios"
+        }
+      },
+      {
+        "manifest": {
+          "version": 1,
+          "install": {
+            "nixd": {
+              "pkg-path": "nixd"
+            }
+          },
+          "hook": {
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n "
+          },
+          "profile": {},
+          "options": {}
+        },
+        "name": "nix",
+        "descriptor": {
+          "dir": "env/nix"
+        }
+      }
+    ],
+    "warnings": [
+      {
+        "warning": {
+          "Overriding": [
+            "install",
+            "yarn"
+          ]
+        },
+        "higher_priority_name": "android"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "install",
+            "yarn"
+          ]
+        },
+        "higher_priority_name": "ios"
+      }
+    ]
+  }
+}

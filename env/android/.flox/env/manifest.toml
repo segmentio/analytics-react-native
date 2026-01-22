@@ -1,0 +1,15 @@
+version = 1
+
+[install]
+[vars]
+[hook]
+[profile]
+[services]
+[include]
+environments = [
+    { dir = "./android-common" },
+    { dir = "./latest" },
+    { dir = "./min" },
+]
+[build]
+[options]

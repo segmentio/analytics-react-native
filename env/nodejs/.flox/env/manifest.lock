@@ -1,0 +1,175 @@
+{
+  "lockfile-version": 1,
+  "manifest": {
+    "version": 1,
+    "install": {
+      "yarn": {
+        "pkg-path": "yarn-berry",
+        "version": "4.12.0"
+      }
+    },
+    "hook": {
+      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n "
+    },
+    "profile": {},
+    "options": {}
+  },
+  "packages": [
+    {
+      "attr_path": "yarn-berry",
+      "broken": false,
+      "derivation": "/nix/store/sy0jbfhah2dkmxf9ngd4j5wpymj61s8z-yarn-berry-4.12.0.drv",
+      "description": "Fast, reliable, and secure dependency management",
+      "install_id": "yarn",
+      "license": "BSD-2-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "yarn-berry-4.12.0",
+      "pname": "yarn-berry",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T04:30:38.337965Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.12.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/2l7sbyyqardvrzr35zkrw67gbng5gb8y-yarn-berry-4.12.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "yarn-berry",
+      "broken": false,
+      "derivation": "/nix/store/jzxis6qs5mb2lc9lx7xndv5vqmkx10x0-yarn-berry-4.12.0.drv",
+      "description": "Fast, reliable, and secure dependency management",
+      "install_id": "yarn",
+      "license": "BSD-2-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "yarn-berry-4.12.0",
+      "pname": "yarn-berry",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:05:45.606272Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.12.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/klx9ndw1djgx0zhhyrkcn9an094rmmwv-yarn-berry-4.12.0"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "yarn-berry",
+      "broken": false,
+      "derivation": "/nix/store/pjdps1mpblxfbmppb8b5wds8mzzjar2m-yarn-berry-4.12.0.drv",
+      "description": "Fast, reliable, and secure dependency management",
+      "install_id": "yarn",
+      "license": "BSD-2-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "yarn-berry-4.12.0",
+      "pname": "yarn-berry",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:36:38.743524Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.12.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/m6cwiya6hrbwnlprh2cbnmz6c7mkylrf-yarn-berry-4.12.0"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "yarn-berry",
+      "broken": false,
+      "derivation": "/nix/store/v5xk5ivmrak80ppdcz4jpindj21xy6va-yarn-berry-4.12.0.drv",
+      "description": "Fast, reliable, and secure dependency management",
+      "install_id": "yarn",
+      "license": "BSD-2-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "yarn-berry-4.12.0",
+      "pname": "yarn-berry",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T06:24:08.258012Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.12.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/q1gys3zgijcciiafbh9nfawkx5wj8179-yarn-berry-4.12.0"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    }
+  ],
+  "compose": {
+    "composer": {
+      "version": 1,
+      "install": {
+        "yarn": {
+          "pkg-path": "yarn-berry",
+          "version": "4.12.0"
+        }
+      },
+      "hook": {
+        "on-activate": "    yarn\n "
+      },
+      "profile": {},
+      "options": {},
+      "include": {
+        "environments": [
+          {
+            "dir": "../common"
+          }
+        ]
+      }
+    },
+    "include": [
+      {
+        "manifest": {
+          "version": 1,
+          "hook": {
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n "
+          },
+          "profile": {},
+          "options": {}
+        },
+        "name": "common",
+        "descriptor": {
+          "dir": "../common"
+        }
+      }
+    ],
+    "warnings": []
+  }
+}
