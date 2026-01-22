@@ -5,8 +5,6 @@ on:
   pull_request:
     branches: [master, beta]
   workflow_dispatch:
-env:
-  RUN_E2E: "false"
 jobs:
   cancel_previous:
     runs-on: ubuntu-latest
@@ -33,7 +31,7 @@ jobs:
         run: devbox run build
 
   run-e2e-ios:
-    if: ${{ RUN_E2E == 'true' }}
+    if: false
     runs-on: ['macos-15' ]
     env:
       YARN_ENABLE_HARDENED_MODE: 0
@@ -89,7 +87,7 @@ jobs:
           devbox shell --omit-nix-env --command "devbox run test-ios"
 
   run-e2e-android:
-    if: ${{ RUN_E2E == 'true' }}
+    if: false
     continue-on-error: true
     runs-on: 'ubuntu-22.04'
     strategy:
