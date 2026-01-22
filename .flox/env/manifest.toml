@@ -4,6 +4,11 @@ version = 1
 
 [vars]
 [hook]
+ on-activate = '''
+  set -euo pipefail
+  project_root="${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+  export PROJECT_ROOT="$project_root"
+ '''
 [profile]
 
 [services]

@@ -5,6 +5,41 @@ android-sdk.flake = "path:env/android/min"
 [hook]
 [profile]
 [services]
+android-emulator-min.command = """
+bash -lc '
+set -euo pipefail
+
+avd_name="${ANDROID_AVD:-${ANDROID_AVD_MIN:-pixel_API21_x86_64}}"
+system_image="${ANDROID_SYSTEM_IMAGE:-${ANDROID_SYSTEM_IMAGE_MIN:-system-images;android-21;google_apis;x86_64}}"
+sdk_root="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+emulator_bin="${ANDROID_EMULATOR_BIN:-${sdk_root}/emulator/emulator}"
+avdmanager_bin="${AVDMANAGER_BIN:-${sdk_root}/cmdline-tools/latest/bin/avdmanager}"
+
+if [ -z "$sdk_root" ] || [ ! -x "$emulator_bin" ]; then
+  echo "Android SDK not available; activate the environment first." >&2
+  exit 1
+fi
+
+if [ ! -x "$avdmanager_bin" ] && command -v avdmanager >/dev/null 2>&1; then
+  avdmanager_bin="$(command -v avdmanager)"
+fi
+
+mkdir -p "${ANDROID_AVD_HOME:-$HOME/.android/avd}"
+
+if ! "$emulator_bin" -list-avds | grep -q "^${avd_name}$"; then
+  if [ -z "$avdmanager_bin" ] || [ ! -x "$avdmanager_bin" ]; then
+    echo "avdmanager not found; cannot create ${avd_name}" >&2
+    exit 1
+  fi
+  yes "" | "$avdmanager_bin" create avd -n "$avd_name" -k "$system_image" --force >/dev/null
+fi
+
+emu_flags="${ANDROID_EMULATOR_FLAGS:-"-no-boot-anim -netdelay none -netspeed full -no-snapshot"}"
+headless_flags="${ANDROID_EMULATOR_HEADLESS_FLAGS:-}"
+
+exec "$emulator_bin" -avd "$avd_name" $emu_flags $headless_flags
+'
+"""
 [include]
 environments = [
     { dir = "../android-common" }

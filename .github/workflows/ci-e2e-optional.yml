@@ -38,6 +38,7 @@ jobs:
             ios-runtime: "26.1"
             simulator-service: ios-simulator-latest
             xcode-version: "26.1.1"
+            device-target: "ios-latest"
     steps:
       - uses: actions/checkout@v4
       - name: Yarn cache
@@ -102,12 +103,12 @@ jobs:
           echo "IOS_SIM_RUNTIME=${{ matrix.ios-runtime }}" >> "$GITHUB_ENV"
           echo "DETOX_IOS_DEVICE=${{ matrix.ios-device }}" >> "$GITHUB_ENV"
       - name: Start simulator via flox
-        run: flox services start ${{ matrix.simulator-service }}
+        run: bash scripts/devices.sh start ${{ matrix.device-target }}
       - name: disk check
         run: df -H
       - name: iOS E2E Tests
         run: |
-          flox activate . --devshell default -- bash -lc "yarn install --immutable && yarn e2e install && yarn e2e pods && yarn build && yarn e2e build:ios && yarn e2e test:ios"
+          flox activate . --devshell default -- bash -lc "yarn install --immutable && yarn e2e:ios"
 
   run-e2e-android:
     if: env.RUN_E2E == 'true' && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == '' || github.event.inputs.platforms == 'android' || github.event.inputs.platforms == null)
@@ -120,6 +121,7 @@ jobs:
             avd-name: medium_phone_API33_x86_64
             system-image: "system-images;android-33;google_apis;x86_64"
             emulator-service: android-emulator-latest
+            device-target: "android-latest"
     steps:
       - uses: actions/checkout@v4
       - name: Yarn cache
@@ -155,12 +157,12 @@ jobs:
       - name: disk check
         run: df -H
       - name: Start emulator via flox
-        run: flox services start ${{ matrix.emulator-service }}
+        run: bash scripts/devices.sh start ${{ matrix.device-target }}
       - name: Wait for emulator
         run: |
           flox activate . --devshell default -- bash -lc "adb wait-for-device && timeout 180s bash -c 'until adb shell getprop sys.boot_completed 2>/dev/null | grep -q 1; do sleep 5; done'"
       - name: Android E2E Tests
         run: |
-          flox activate . --devshell default -- bash -lc "yarn install --immutable && yarn e2e install && yarn build && yarn e2e build:android && yarn e2e test:android"
+          flox activate . --devshell default -- bash -lc "yarn install --immutable && yarn e2e:android"
       - name: disk check
         run: df -H

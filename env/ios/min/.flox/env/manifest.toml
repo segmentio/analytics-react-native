@@ -7,6 +7,72 @@ IOS_SIM_RUNTIME = "18.5"
 [hook]
 [profile]
 [services]
+ios-simulator-min.command = """
+bash -lc '
+set -euo pipefail
+
+device_name="${IOS_SIM_DEVICE:-iPhone 14}"
+runtime="${IOS_SIM_RUNTIME:-18.5}"
+runtime_id="$runtime"
+
+if [[ "$runtime_id" =~ ^[0-9] ]]; then
+  runtime_id="com.apple.CoreSimulator.SimRuntime.iOS-${runtime_id//./-}"
+fi
+
+export IOS_DEVICE_NAME="$device_name"
+export IOS_RUNTIME_ID="$runtime_id"
+
+udid=$(IOS_DEVICE_NAME="$device_name" IOS_RUNTIME_ID="$runtime_id" python3 - <<\"PY\"
+import json, os, subprocess, sys
+
+device_name = os.environ["IOS_DEVICE_NAME"]
+runtime_id = os.environ["IOS_RUNTIME_ID"]
+
+def run_json(cmd):
+    return json.loads(subprocess.check_output(cmd).decode())
+
+def first_available_device():
+    for runtime, devs in run_json(["xcrun", "simctl", "list", "devices", "-j"]).get("devices", {}).items():
+        for dev in devs or []:
+            if not dev.get("isAvailable"):
+                continue
+            if dev.get("name") == device_name and (not runtime_id or runtime == runtime_id):
+                return dev.get("udid") or ""
+    return ""
+
+def resolve_device_type():
+    for entry in run_json(["xcrun", "simctl", "list", "devicetypes", "-j"]).get("devicetypes", []):
+        if entry.get("name") == device_name:
+            return entry.get("identifier")
+    return None
+
+udid = first_available_device()
+if not udid:
+    device_type = resolve_device_type()
+    if not device_type:
+        print(f"Device type not found for {device_name}", file=sys.stderr)
+        sys.exit(1)
+    udid = subprocess.check_output(["xcrun", "simctl", "create", device_name, device_type, runtime_id]).decode().strip()
+
+print(udid)
+PY
+)
+
+if [ -z "$udid" ]; then
+  echo "Failed to resolve simulator UDID for ${device_name} (${runtime_id})" >&2
+  exit 1
+fi
+
+xcrun simctl boot "$udid" || true
+xcrun simctl bootstatus "$udid" -b
+
+if [ -z "${DETOX_IOS_DEVICE:-}" ]; then
+  export DETOX_IOS_DEVICE="$device_name"
+fi
+
+exec tail -f /dev/null
+'
+"""
 [include]
 environments = [
     { dir = ".." }

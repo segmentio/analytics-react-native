@@ -3,6 +3,9 @@
   "manifest": {
     "version": 1,
     "install": {
+      "android-sdk": {
+        "flake": "path:env/android/latest"
+      },
       "cocoapods": {
         "pkg-path": "cocoapods",
         "systems": [
@@ -16,13 +19,36 @@
       "jdk17": {
         "pkg-path": "jdk17"
       },
+      "nixfmt": {
+        "pkg-path": "nixfmt-rfc-style"
+      },
+      "shfmt": {
+        "pkg-path": "shfmt"
+      },
+      "treefmt": {
+        "pkg-path": "treefmt"
+      },
       "yarn": {
         "pkg-path": "yarn-berry",
         "version": "4.12.0"
       }
     },
+    "vars": {
+      "ANDROID_AVD_LATEST_ARM": "medium_phone_API33_arm64_v8a",
+      "ANDROID_AVD_LATEST_X86": "medium_phone_API33_x86_64",
+      "ANDROID_AVD_MIN": "pixel_API21_x86_64",
+      "ANDROID_EMULATOR_FLAGS": "-no-boot-anim -netdelay none -netspeed full -no-snapshot",
+      "ANDROID_EMULATOR_HEADLESS_FLAGS": "-no-window -no-audio -gpu swiftshader_indirect",
+      "ANDROID_SYSTEM_IMAGE_LATEST_ARM": "system-images;android-33;google_apis;arm64-v8a",
+      "ANDROID_SYSTEM_IMAGE_LATEST_X86": "system-images;android-33;google_apis;x86_64",
+      "ANDROID_SYSTEM_IMAGE_MIN": "system-images;android-21;google_apis;x86_64",
+      "IOS_SIM_DEVICE": "iPhone 17",
+      "IOS_SIM_LATEST_DEVICE": "iPhone 17",
+      "IOS_SIM_LATEST_RUNTIME": "26.1",
+      "IOS_SIM_RUNTIME": "26.1"
+    },
     "hook": {
-      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n "
+      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n  set -euo pipefail\n  source \"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")\" && pwd)/setup.sh\"\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n  set -euo pipefail\n  source \"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")\" && pwd)/setup.sh\"\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n \n  set -euo pipefail\n  source \"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/..\" && pwd)/setup.sh\"\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n \n  set -euo pipefail\n  source \"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/..\" && pwd)/setup.sh\"\n \n  set -euo pipefail\n  project_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n  export PROJECT_ROOT=\"$project_root\"\n "
     },
     "profile": {},
     "options": {},
@@ -341,6 +367,354 @@
       "priority": 5
     },
     {
+      "attr_path": "nixfmt-rfc-style",
+      "broken": false,
+      "derivation": "/nix/store/awh5fy1i2xnh52pxkzj8mghxaqd7skx3-nixfmt-1.2.0.drv",
+      "description": "Official formatter for Nix code",
+      "install_id": "nixfmt",
+      "license": "MPL-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "nixfmt-1.2.0",
+      "pname": "nixfmt-rfc-style",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T04:28:16.356813Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.2.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/4jzq73b6bax62245z5a5ag8xdazfw4fg-nixfmt-1.2.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "nixfmt-rfc-style",
+      "broken": false,
+      "derivation": "/nix/store/pjy6lhz46m791bxjfzvvkr0cgm7mm0bg-nixfmt-1.2.0.drv",
+      "description": "Official formatter for Nix code",
+      "install_id": "nixfmt",
+      "license": "MPL-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "nixfmt-1.2.0",
+      "pname": "nixfmt-rfc-style",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:02:53.381263Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.2.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/as7f2yrlqgv130vdiw2xi7rhlgd1yk8v-nixfmt-1.2.0"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "nixfmt-rfc-style",
+      "broken": false,
+      "derivation": "/nix/store/nyfwismzwk7b3hlkbcvssgikl4n4z3gx-nixfmt-1.2.0.drv",
+      "description": "Official formatter for Nix code",
+      "install_id": "nixfmt",
+      "license": "MPL-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "nixfmt-1.2.0",
+      "pname": "nixfmt-rfc-style",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:34:27.681985Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.2.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/qmas80hmzqbm7n5h9is2im9gjzxsl04a-nixfmt-1.2.0"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "nixfmt-rfc-style",
+      "broken": false,
+      "derivation": "/nix/store/vanb0cqaybyiq2315nk59c92mbksyf32-nixfmt-1.2.0.drv",
+      "description": "Official formatter for Nix code",
+      "install_id": "nixfmt",
+      "license": "MPL-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "nixfmt-1.2.0",
+      "pname": "nixfmt-rfc-style",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T06:20:58.281533Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.2.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/yx338k689yp9hpnl6h5y22f7vbmi5pky-nixfmt-1.2.0"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "shfmt",
+      "broken": false,
+      "derivation": "/nix/store/92637k27nqb44f4h7clw1kdqw8rar5hx-shfmt-3.12.0.drv",
+      "description": "Shell parser and formatter",
+      "install_id": "shfmt",
+      "license": "BSD-3-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "shfmt-3.12.0",
+      "pname": "shfmt",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T04:29:40.815428Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "3.12.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/dwz5z2wp95pkv6gsmz74w01qrihvhl1h-shfmt-3.12.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "shfmt",
+      "broken": false,
+      "derivation": "/nix/store/g50gkqd9lwgpfwr7jcg582dw1nw614rv-shfmt-3.12.0.drv",
+      "description": "Shell parser and formatter",
+      "install_id": "shfmt",
+      "license": "BSD-3-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "shfmt-3.12.0",
+      "pname": "shfmt",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:04:32.072948Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "3.12.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/6gqqharpvjfzm1wzny6a0zgf1v0aj53a-shfmt-3.12.0"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "shfmt",
+      "broken": false,
+      "derivation": "/nix/store/9piagmiq56gsz4fj4jfd465xg7lff27x-shfmt-3.12.0.drv",
+      "description": "Shell parser and formatter",
+      "install_id": "shfmt",
+      "license": "BSD-3-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "shfmt-3.12.0",
+      "pname": "shfmt",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:35:46.086711Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "3.12.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/98fwma9rxd04pxj9jrsgvf9xs76f9hlf-shfmt-3.12.0"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "shfmt",
+      "broken": false,
+      "derivation": "/nix/store/i58i9fgshxnqyjhin1zjqwg51cf5x6v1-shfmt-3.12.0.drv",
+      "description": "Shell parser and formatter",
+      "install_id": "shfmt",
+      "license": "BSD-3-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "shfmt-3.12.0",
+      "pname": "shfmt",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T06:22:48.977965Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "3.12.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/c3bgrcwq2735ybl5zw68n9nqgwaa0yrj-shfmt-3.12.0"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "treefmt",
+      "broken": false,
+      "derivation": "/nix/store/mms0hjzhldcg5a5jl3x17y7i359c8776-treefmt-2.4.0.drv",
+      "description": "One CLI to format the code tree",
+      "install_id": "treefmt",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "treefmt-2.4.0",
+      "pname": "treefmt",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T04:30:06.303007Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.4.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/48r10kj61pjhz8alfscs8vgrdmlfnqx9-treefmt-2.4.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "treefmt",
+      "broken": false,
+      "derivation": "/nix/store/mjzjj0nz5h89bmfk38m24drghiw8ksbz-treefmt-2.4.0.drv",
+      "description": "One CLI to format the code tree",
+      "install_id": "treefmt",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "treefmt-2.4.0",
+      "pname": "treefmt",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:05:08.050718Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.4.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/d46fscf82k9ay6s8a3qxk3682ycqalds-treefmt-2.4.0"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "treefmt",
+      "broken": false,
+      "derivation": "/nix/store/mwp0vfbz5937vcp9ngcj2caza8bjfzmj-treefmt-2.4.0.drv",
+      "description": "One CLI to format the code tree",
+      "install_id": "treefmt",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "treefmt-2.4.0",
+      "pname": "treefmt",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:36:09.420552Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.4.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/yllw5b2js10ia8v0z8x3crbakhal0cs7-treefmt-2.4.0"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "treefmt",
+      "broken": false,
+      "derivation": "/nix/store/6jm0r48c7bfs81mvwc1ydbgn5s978f0b-treefmt-2.4.0.drv",
+      "description": "One CLI to format the code tree",
+      "install_id": "treefmt",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "treefmt-2.4.0",
+      "pname": "treefmt",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T06:23:26.245521Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.4.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/1pdwlp9d1rrm3xp4s5rhhk7mkmx9cmv2-treefmt-2.4.0"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
       "attr_path": "yarn-berry",
       "broken": false,
       "derivation": "/nix/store/sy0jbfhah2dkmxf9ngd4j5wpymj61s8z-yarn-berry-4.12.0.drv",
@@ -455,12 +829,118 @@
       "system": "x86_64-linux",
       "group": "toplevel",
       "priority": 5
+    },
+    {
+      "install_id": "android-sdk",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/latest?lastModified=1769123175&narHash=sha256-txYbb/zieDC3n3ujtEtQfSMT6BDlDE9UYPTGedz%2BDf8%3D",
+      "flake-description": "Android SDK (API 33) for flox",
+      "locked-flake-attr-path": "packages.aarch64-darwin.default",
+      "derivation": "/nix/store/g6xfs9ryqwq0ng0igml13272v5wbxn9f-androidsdk.drv",
+      "outputs": {
+        "out": "/nix/store/gdlxackvpc805gw0609a4k3vc6wkymj9-androidsdk"
+      },
+      "output-names": [
+        "out"
+      ],
+      "outputs-to-install": [
+        "out"
+      ],
+      "requested-outputs-to-install": [],
+      "package-system": "aarch64-darwin",
+      "system": "aarch64-darwin",
+      "name": "androidsdk",
+      "pname": "android-sdk-cmdline-tools",
+      "version": "19.0",
+      "description": "Android SDK tools, packaged in Nixpkgs",
+      "broken": false,
+      "unfree": true,
+      "priority": 5
+    },
+    {
+      "install_id": "android-sdk",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/latest?lastModified=1769123175&narHash=sha256-txYbb/zieDC3n3ujtEtQfSMT6BDlDE9UYPTGedz%2BDf8%3D",
+      "flake-description": "Android SDK (API 33) for flox",
+      "locked-flake-attr-path": "packages.aarch64-linux.default",
+      "derivation": "/nix/store/fg6nkfv5aqj2a0nd37g0bmzxplf7mc7n-androidsdk.drv",
+      "outputs": {
+        "out": "/nix/store/p8d1cyy81sngsxpa74n83hk178lkjx63-androidsdk"
+      },
+      "output-names": [
+        "out"
+      ],
+      "outputs-to-install": [
+        "out"
+      ],
+      "requested-outputs-to-install": [],
+      "package-system": "aarch64-linux",
+      "system": "aarch64-linux",
+      "name": "androidsdk",
+      "pname": "android-sdk-cmdline-tools",
+      "version": "19.0",
+      "description": "Android SDK tools, packaged in Nixpkgs",
+      "broken": false,
+      "unfree": true,
+      "priority": 5
+    },
+    {
+      "install_id": "android-sdk",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/latest?lastModified=1769123175&narHash=sha256-txYbb/zieDC3n3ujtEtQfSMT6BDlDE9UYPTGedz%2BDf8%3D",
+      "flake-description": "Android SDK (API 33) for flox",
+      "locked-flake-attr-path": "packages.x86_64-darwin.default",
+      "derivation": "/nix/store/x6qgpdf3izz2dsnq0jqasxx1paigyjr8-androidsdk.drv",
+      "outputs": {
+        "out": "/nix/store/bwv6dgrf8wqscw4iwwp5933xr4bikyxq-androidsdk"
+      },
+      "output-names": [
+        "out"
+      ],
+      "outputs-to-install": [
+        "out"
+      ],
+      "requested-outputs-to-install": [],
+      "package-system": "x86_64-darwin",
+      "system": "x86_64-darwin",
+      "name": "androidsdk",
+      "pname": "android-sdk-cmdline-tools",
+      "version": "19.0",
+      "description": "Android SDK tools, packaged in Nixpkgs",
+      "broken": false,
+      "unfree": true,
+      "priority": 5
+    },
+    {
+      "install_id": "android-sdk",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/latest?lastModified=1769123175&narHash=sha256-txYbb/zieDC3n3ujtEtQfSMT6BDlDE9UYPTGedz%2BDf8%3D",
+      "flake-description": "Android SDK (API 33) for flox",
+      "locked-flake-attr-path": "packages.x86_64-linux.default",
+      "derivation": "/nix/store/l0z1dcbb140kjzbamn50bgwlid4brh7p-androidsdk.drv",
+      "outputs": {
+        "out": "/nix/store/482h0f3gbyly10hra7zg70l22sn7zpm7-androidsdk"
+      },
+      "output-names": [
+        "out"
+      ],
+      "outputs-to-install": [
+        "out"
+      ],
+      "requested-outputs-to-install": [],
+      "package-system": "x86_64-linux",
+      "system": "x86_64-linux",
+      "name": "androidsdk",
+      "pname": "android-sdk-cmdline-tools",
+      "version": "19.0",
+      "description": "Android SDK tools, packaged in Nixpkgs",
+      "broken": false,
+      "unfree": true,
+      "priority": 5
     }
   ],
   "compose": {
     "composer": {
       "version": 1,
-      "hook": {},
+      "hook": {
+        "on-activate": "  set -euo pipefail\n  project_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n  export PROJECT_ROOT=\"$project_root\"\n "
+      },
       "profile": {},
       "options": {},
       "services": {
@@ -486,22 +966,28 @@
       "include": {
         "environments": [
           {
-            "dir": "env/common"
+            "dir": "env/common",
+            "name": "common"
           },
           {
-            "dir": "env/nodejs"
+            "dir": "env/nodejs",
+            "name": "nodejs"
           },
           {
-            "dir": "env/android/min"
+            "dir": "env/android/min",
+            "name": "android-min"
           },
           {
-            "dir": "env/android/latest"
+            "dir": "env/android/latest",
+            "name": "android-latest"
           },
           {
-            "dir": "env/ios/min"
+            "dir": "env/ios/min",
+            "name": "ios-min"
           },
           {
-            "dir": "env/ios/latest"
+            "dir": "env/ios/latest",
+            "name": "ios-latest"
           }
         ]
       }
@@ -510,20 +996,27 @@
       {
         "manifest": {
           "version": 1,
-          "install": {},
-          "vars": {},
+          "install": {
+            "nixfmt": {
+              "pkg-path": "nixfmt-rfc-style"
+            },
+            "shfmt": {
+              "pkg-path": "shfmt"
+            },
+            "treefmt": {
+              "pkg-path": "treefmt"
+            }
+          },
           "hook": {
             "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n "
           },
           "profile": {},
-          "services": {},
-          "include": {},
-          "build": {},
           "options": {}
         },
         "name": "common",
         "descriptor": {
-          "dir": "env/common"
+          "dir": "env/common",
+          "name": "common"
         }
       },
       {
@@ -535,25 +1028,16 @@
               "version": "4.12.0"
             }
           },
-          "vars": {},
           "hook": {
-            "on-activate": "    yarn\n "
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n "
           },
           "profile": {},
-          "services": {},
-          "include": {
-            "environments": [
-              {
-                "dir": "../common"
-              }
-            ]
-          },
-          "build": {},
           "options": {}
         },
         "name": "nodejs",
         "descriptor": {
-          "dir": "env/nodejs"
+          "dir": "env/nodejs",
+          "name": "nodejs"
         }
       },
       {
@@ -561,26 +1045,40 @@
           "version": 1,
           "install": {
             "android-sdk": {
-              "flake": "path:."
+              "flake": "path:env/android/min"
+            },
+            "gradle": {
+              "pkg-path": "gradle"
+            },
+            "jdk17": {
+              "pkg-path": "jdk17"
             }
           },
-          "vars": {},
-          "hook": {},
-          "profile": {},
-          "services": {},
-          "include": {
-            "environments": [
-              {
-                "dir": "../android-common"
-              }
-            ]
+          "vars": {
+            "ANDROID_AVD_LATEST_ARM": "medium_phone_API33_arm64_v8a",
+            "ANDROID_AVD_LATEST_X86": "medium_phone_API33_x86_64",
+            "ANDROID_AVD_MIN": "pixel_API21_x86_64",
+            "ANDROID_EMULATOR_FLAGS": "-no-boot-anim -netdelay none -netspeed full -no-snapshot",
+            "ANDROID_EMULATOR_HEADLESS_FLAGS": "-no-window -no-audio -gpu swiftshader_indirect",
+            "ANDROID_SYSTEM_IMAGE_LATEST_ARM": "system-images;android-33;google_apis;arm64-v8a",
+            "ANDROID_SYSTEM_IMAGE_LATEST_X86": "system-images;android-33;google_apis;x86_64",
+            "ANDROID_SYSTEM_IMAGE_MIN": "system-images;android-21;google_apis;x86_64"
           },
-          "build": {},
-          "options": {}
+          "hook": {
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n  set -euo pipefail\n  source \"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")\" && pwd)/setup.sh\"\n "
+          },
+          "profile": {},
+          "options": {},
+          "services": {
+            "android-emulator-min": {
+              "command": "bash -lc '\nset -euo pipefail\n\navd_name=\"${ANDROID_AVD:-${ANDROID_AVD_MIN:-pixel_API21_x86_64}}\"\nsystem_image=\"${ANDROID_SYSTEM_IMAGE:-${ANDROID_SYSTEM_IMAGE_MIN:-system-images;android-21;google_apis;x86_64}}\"\nsdk_root=\"${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}\"\nemulator_bin=\"${ANDROID_EMULATOR_BIN:-${sdk_root}/emulator/emulator}\"\navdmanager_bin=\"${AVDMANAGER_BIN:-${sdk_root}/cmdline-tools/latest/bin/avdmanager}\"\n\nif [ -z \"$sdk_root\" ] || [ ! -x \"$emulator_bin\" ]; then\n  echo \"Android SDK not available; activate the environment first.\" >&2\n  exit 1\nfi\n\nif [ ! -x \"$avdmanager_bin\" ] && command -v avdmanager >/dev/null 2>&1; then\n  avdmanager_bin=\"$(command -v avdmanager)\"\nfi\n\nmkdir -p \"${ANDROID_AVD_HOME:-$HOME/.android/avd}\"\n\nif ! \"$emulator_bin\" -list-avds | grep -q \"^${avd_name}$\"; then\n  if [ -z \"$avdmanager_bin\" ] || [ ! -x \"$avdmanager_bin\" ]; then\n    echo \"avdmanager not found; cannot create ${avd_name}\" >&2\n    exit 1\n  fi\n  yes \"\" | \"$avdmanager_bin\" create avd -n \"$avd_name\" -k \"$system_image\" --force >/dev/null\nfi\n\nemu_flags=\"${ANDROID_EMULATOR_FLAGS:-\"-no-boot-anim -netdelay none -netspeed full -no-snapshot\"}\"\nheadless_flags=\"${ANDROID_EMULATOR_HEADLESS_FLAGS:-}\"\n\nexec \"$emulator_bin\" -avd \"$avd_name\" $emu_flags $headless_flags\n'\n"
+            }
+          }
         },
         "name": "android-min",
         "descriptor": {
-          "dir": "env/android/min"
+          "dir": "env/android/min",
+          "name": "android-min"
         }
       },
       {
@@ -588,78 +1086,126 @@
           "version": 1,
           "install": {
             "android-sdk": {
-              "flake": "path:."
+              "flake": "path:env/android/latest"
+            },
+            "gradle": {
+              "pkg-path": "gradle"
+            },
+            "jdk17": {
+              "pkg-path": "jdk17"
             }
           },
-          "vars": {},
-          "hook": {},
-          "profile": {},
-          "services": {},
-          "include": {
-            "environments": [
-              {
-                "dir": "../android-common"
-              }
-            ]
+          "vars": {
+            "ANDROID_AVD_LATEST_ARM": "medium_phone_API33_arm64_v8a",
+            "ANDROID_AVD_LATEST_X86": "medium_phone_API33_x86_64",
+            "ANDROID_AVD_MIN": "pixel_API21_x86_64",
+            "ANDROID_EMULATOR_FLAGS": "-no-boot-anim -netdelay none -netspeed full -no-snapshot",
+            "ANDROID_EMULATOR_HEADLESS_FLAGS": "-no-window -no-audio -gpu swiftshader_indirect",
+            "ANDROID_SYSTEM_IMAGE_LATEST_ARM": "system-images;android-33;google_apis;arm64-v8a",
+            "ANDROID_SYSTEM_IMAGE_LATEST_X86": "system-images;android-33;google_apis;x86_64",
+            "ANDROID_SYSTEM_IMAGE_MIN": "system-images;android-21;google_apis;x86_64"
           },
-          "build": {},
+          "hook": {
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n  set -euo pipefail\n  source \"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")\" && pwd)/setup.sh\"\n "
+          },
+          "profile": {},
           "options": {}
         },
         "name": "android-latest",
         "descriptor": {
-          "dir": "env/android/latest"
+          "dir": "env/android/latest",
+          "name": "android-latest"
         }
       },
       {
         "manifest": {
           "version": 1,
-          "install": {},
+          "install": {
+            "cocoapods": {
+              "pkg-path": "cocoapods",
+              "systems": [
+                "x86_64-darwin",
+                "aarch64-darwin"
+              ]
+            },
+            "nixfmt": {
+              "pkg-path": "nixfmt-rfc-style"
+            },
+            "shfmt": {
+              "pkg-path": "shfmt"
+            },
+            "treefmt": {
+              "pkg-path": "treefmt"
+            },
+            "yarn": {
+              "pkg-path": "yarn-berry",
+              "version": "4.12.0"
+            }
+          },
           "vars": {
             "IOS_SIM_DEVICE": "iPhone 14",
+            "IOS_SIM_LATEST_DEVICE": "iPhone 17",
+            "IOS_SIM_LATEST_RUNTIME": "26.1",
             "IOS_SIM_RUNTIME": "18.5"
           },
-          "hook": {},
-          "profile": {},
-          "services": {},
-          "include": {
-            "environments": [
-              {
-                "dir": ".."
-              }
-            ]
+          "hook": {
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n \n  set -euo pipefail\n  source \"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/..\" && pwd)/setup.sh\"\n "
           },
-          "build": {},
-          "options": {}
+          "profile": {},
+          "options": {},
+          "services": {
+            "ios-simulator-min": {
+              "command": "bash -lc '\nset -euo pipefail\n\ndevice_name=\"${IOS_SIM_DEVICE:-iPhone 14}\"\nruntime=\"${IOS_SIM_RUNTIME:-18.5}\"\nruntime_id=\"$runtime\"\n\nif [[ \"$runtime_id\" =~ ^[0-9] ]]; then\n  runtime_id=\"com.apple.CoreSimulator.SimRuntime.iOS-${runtime_id//./-}\"\nfi\n\nexport IOS_DEVICE_NAME=\"$device_name\"\nexport IOS_RUNTIME_ID=\"$runtime_id\"\n\nudid=$(IOS_DEVICE_NAME=\"$device_name\" IOS_RUNTIME_ID=\"$runtime_id\" python3 - <<\"PY\"\nimport json, os, subprocess, sys\n\ndevice_name = os.environ[\"IOS_DEVICE_NAME\"]\nruntime_id = os.environ[\"IOS_RUNTIME_ID\"]\n\ndef run_json(cmd):\n    return json.loads(subprocess.check_output(cmd).decode())\n\ndef first_available_device():\n    for runtime, devs in run_json([\"xcrun\", \"simctl\", \"list\", \"devices\", \"-j\"]).get(\"devices\", {}).items():\n        for dev in devs or []:\n            if not dev.get(\"isAvailable\"):\n                continue\n            if dev.get(\"name\") == device_name and (not runtime_id or runtime == runtime_id):\n                return dev.get(\"udid\") or \"\"\n    return \"\"\n\ndef resolve_device_type():\n    for entry in run_json([\"xcrun\", \"simctl\", \"list\", \"devicetypes\", \"-j\"]).get(\"devicetypes\", []):\n        if entry.get(\"name\") == device_name:\n            return entry.get(\"identifier\")\n    return None\n\nudid = first_available_device()\nif not udid:\n    device_type = resolve_device_type()\n    if not device_type:\n        print(f\"Device type not found for {device_name}\", file=sys.stderr)\n        sys.exit(1)\n    udid = subprocess.check_output([\"xcrun\", \"simctl\", \"create\", device_name, device_type, runtime_id]).decode().strip()\n\nprint(udid)\nPY\n)\n\nif [ -z \"$udid\" ]; then\n  echo \"Failed to resolve simulator UDID for ${device_name} (${runtime_id})\" >&2\n  exit 1\nfi\n\nxcrun simctl boot \"$udid\" || true\nxcrun simctl bootstatus \"$udid\" -b\n\nif [ -z \"${DETOX_IOS_DEVICE:-}\" ]; then\n  export DETOX_IOS_DEVICE=\"$device_name\"\nfi\n\nexec tail -f /dev/null\n'\n"
+            }
+          }
         },
         "name": "ios-min",
         "descriptor": {
-          "dir": "env/ios/min"
+          "dir": "env/ios/min",
+          "name": "ios-min"
         }
       },
       {
         "manifest": {
           "version": 1,
-          "install": {},
+          "install": {
+            "cocoapods": {
+              "pkg-path": "cocoapods",
+              "systems": [
+                "x86_64-darwin",
+                "aarch64-darwin"
+              ]
+            },
+            "nixfmt": {
+              "pkg-path": "nixfmt-rfc-style"
+            },
+            "shfmt": {
+              "pkg-path": "shfmt"
+            },
+            "treefmt": {
+              "pkg-path": "treefmt"
+            },
+            "yarn": {
+              "pkg-path": "yarn-berry",
+              "version": "4.12.0"
+            }
+          },
           "vars": {
             "IOS_SIM_DEVICE": "iPhone 17",
+            "IOS_SIM_LATEST_DEVICE": "iPhone 17",
+            "IOS_SIM_LATEST_RUNTIME": "26.1",
             "IOS_SIM_RUNTIME": "26.1"
           },
-          "hook": {},
-          "profile": {},
-          "services": {},
-          "include": {
-            "environments": [
-              {
-                "dir": ".."
-              }
-            ]
+          "hook": {
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n \n  set -euo pipefail\n  source \"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/..\" && pwd)/setup.sh\"\n "
           },
-          "build": {},
+          "profile": {},
           "options": {}
         },
         "name": "ios-latest",
         "descriptor": {
-          "dir": "env/ios/latest"
+          "dir": "env/ios/latest",
+          "name": "ios-latest"
         }
       }
     ],
@@ -668,10 +1214,127 @@
         "warning": {
           "Overriding": [
             "install",
-            "yarn"
+            "android-sdk"
           ]
         },
-        "higher_priority_name": "android"
+        "higher_priority_name": "android-latest"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "install",
+            "gradle"
+          ]
+        },
+        "higher_priority_name": "android-latest"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "install",
+            "jdk17"
+          ]
+        },
+        "higher_priority_name": "android-latest"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "vars",
+            "ANDROID_AVD_LATEST_ARM"
+          ]
+        },
+        "higher_priority_name": "android-latest"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "vars",
+            "ANDROID_AVD_LATEST_X86"
+          ]
+        },
+        "higher_priority_name": "android-latest"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "vars",
+            "ANDROID_AVD_MIN"
+          ]
+        },
+        "higher_priority_name": "android-latest"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "vars",
+            "ANDROID_EMULATOR_FLAGS"
+          ]
+        },
+        "higher_priority_name": "android-latest"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "vars",
+            "ANDROID_EMULATOR_HEADLESS_FLAGS"
+          ]
+        },
+        "higher_priority_name": "android-latest"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "vars",
+            "ANDROID_SYSTEM_IMAGE_LATEST_ARM"
+          ]
+        },
+        "higher_priority_name": "android-latest"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "vars",
+            "ANDROID_SYSTEM_IMAGE_LATEST_X86"
+          ]
+        },
+        "higher_priority_name": "android-latest"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "vars",
+            "ANDROID_SYSTEM_IMAGE_MIN"
+          ]
+        },
+        "higher_priority_name": "android-latest"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "install",
+            "nixfmt"
+          ]
+        },
+        "higher_priority_name": "ios-min"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "install",
+            "shfmt"
+          ]
+        },
+        "higher_priority_name": "ios-min"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "install",
+            "treefmt"
+          ]
+        },
+        "higher_priority_name": "ios-min"
       },
       {
         "warning": {
@@ -680,7 +1343,106 @@
             "yarn"
           ]
         },
-        "higher_priority_name": "ios"
+        "higher_priority_name": "ios-min"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "install",
+            "cocoapods"
+          ]
+        },
+        "higher_priority_name": "ios-latest"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "install",
+            "nixfmt"
+          ]
+        },
+        "higher_priority_name": "ios-latest"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "install",
+            "shfmt"
+          ]
+        },
+        "higher_priority_name": "ios-latest"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "install",
+            "treefmt"
+          ]
+        },
+        "higher_priority_name": "ios-latest"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "install",
+            "yarn"
+          ]
+        },
+        "higher_priority_name": "ios-latest"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "vars",
+            "IOS_SIM_DEVICE"
+          ]
+        },
+        "higher_priority_name": "ios-latest"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "vars",
+            "IOS_SIM_LATEST_DEVICE"
+          ]
+        },
+        "higher_priority_name": "ios-latest"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "vars",
+            "IOS_SIM_LATEST_RUNTIME"
+          ]
+        },
+        "higher_priority_name": "ios-latest"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "vars",
+            "IOS_SIM_RUNTIME"
+          ]
+        },
+        "higher_priority_name": "ios-latest"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "services",
+            "android-emulator-min"
+          ]
+        },
+        "higher_priority_name": "Current manifest"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "services",
+            "ios-simulator-min"
+          ]
+        },
+        "higher_priority_name": "Current manifest"
       }
     ]
   }

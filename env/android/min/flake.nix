@@ -1,5 +1,5 @@
 {
-  description = "Android SDK (API 21) for flox/devbox";
+  description = "Android SDK (API 21) for flox";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 

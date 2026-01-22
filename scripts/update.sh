@@ -1,32 +1,74 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Regenerate flox lockfiles in dependency-safe order.
-# Ensures flake path resolution and Nix flake features are available.
-
+target="${1:-all}"
 export NIX_CONFIG="${NIX_CONFIG:-experimental-features = nix-command flakes}"
 
-project_root="${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+project_root="${PROJECT_ROOT:-}"
+if [ -z "$project_root" ]; then
+  project_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+fi
+cd "$project_root"
 
-update_env() {
-  local dir="$1"
-  echo "Updating flox environment: $dir"
-  if ! flox include upgrade -d "$dir"; then
-    echo "include upgrade failed for $dir; trying flox list to resync lock..."
-    flox list -d "$dir" >/dev/null
-    flox include upgrade -d "$dir"
+update_flox_envs() {
+  update_env() {
+    local dir="$1"
+    local abs="$project_root/$dir"
+    echo "Updating flox environment: $abs"
+    flox update -d "$abs" || true
+    if ! flox include upgrade -d "$abs"; then
+      flox list -d "$abs" >/dev/null || true
+      flox include upgrade -d "$abs"
+    fi
+  }
+
+  update_env "env/android/min"
+  update_env "env/android/latest"
+  update_env "env/ios"
+  update_env "env/ios/min"
+  update_env "env/ios/latest"
+  update_env "."
+}
+
+update_yarn() {
+  yarn install --immutable || yarn install --check-cache
+}
+
+update_gradle() {
+  if [ -d examples/E2E/android ]; then
+    (cd examples/E2E/android && ./gradlew --refresh-dependencies) || true
   fi
 }
 
-pushd "$project_root" >/dev/null
+update_pods() {
+  if [ -d examples/E2E ]; then
+    (cd examples/E2E && yarn e2e pods) || true
+  fi
+}
 
-update_env "env/android/min"
-update_env "env/android/latest"
-update_env "env/ios"
-update_env "env/ios/min"
-update_env "env/ios/latest"
-update_env "."
+update_nix() {
+  nix --extra-experimental-features "nix-command flakes" flake update env/android/min || true
+  nix --extra-experimental-features "nix-command flakes" flake update env/android/latest || true
+}
 
-popd >/dev/null
+case "$target" in
+  flox) update_flox_envs ;;
+  yarn) update_yarn ;;
+  gradle) update_gradle ;;
+  pods|cocoapods) update_pods ;;
+  nix) update_nix ;;
+  all)
+    update_flox_envs
+    update_yarn
+    update_gradle
+    update_pods
+    update_nix
+    ;;
+  *)
+    echo "Unknown update target: $target"
+    echo "Valid targets: all, flox, yarn, gradle, pods, nix"
+    exit 1
+    ;;
+esac
 
-echo "Flox lockfiles refreshed."
+echo "Update ($target) complete."

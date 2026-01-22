@@ -3,7 +3,6 @@ version = 1
 
 [install]
 treefmt.pkg-path = "treefmt"
-taplo.pkg-path = "taplo-cli"
 nixfmt.pkg-path = "nixfmt-rfc-style"
 shfmt.pkg-path = "shfmt"
 

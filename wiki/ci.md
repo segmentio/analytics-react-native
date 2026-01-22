@@ -14,6 +14,8 @@ Tips:
 - `yarn test:fast`: lint + typecheck + unit tests.
 - `yarn test:full`: lint + typecheck + workspace builds + all workspace tests.
 - `yarn format` / `yarn format:check`: treefmt (prettier + nixfmt-rfc-style + taplo + shfmt) for JS/TS/MD/YAML/JSON/Nix/TOML/shell.
+- Updates: `yarn update:yarn` (deps), `yarn update:gradle`, `yarn update:pods`, `yarn update:nix` (flake inputs), `yarn update:flox` (flox locks + package managers).
+- Cleans: `yarn clean:all` (workspaces + Android emulator reset + Gradle caches + iOS sim/DerivedData + nix gc + flox gc); targeted variants (`clean:workspaces`, `clean:android`, `clean:ios`, `clean:nix`, `clean:flox`).
 - `yarn lint:fix`: eslint with auto-fix.
 - `yarn e2e:android` / `yarn e2e:ios`: run platform E2E flows (assumes flox env provides emulator/simulator).
 - `yarn update:flox`: regenerate flox lockfiles in dependency-safe order (requires Nix flake support).

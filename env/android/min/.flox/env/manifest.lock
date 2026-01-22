@@ -4,24 +4,279 @@
     "version": 1,
     "install": {
       "android-sdk": {
-        "flake": "path:."
+        "flake": "path:env/android/min"
+      },
+      "gradle": {
+        "pkg-path": "gradle"
+      },
+      "jdk17": {
+        "pkg-path": "jdk17"
       }
     },
+    "vars": {
+      "ANDROID_AVD_LATEST_ARM": "medium_phone_API33_arm64_v8a",
+      "ANDROID_AVD_LATEST_X86": "medium_phone_API33_x86_64",
+      "ANDROID_AVD_MIN": "pixel_API21_x86_64",
+      "ANDROID_EMULATOR_FLAGS": "-no-boot-anim -netdelay none -netspeed full -no-snapshot",
+      "ANDROID_EMULATOR_HEADLESS_FLAGS": "-no-window -no-audio -gpu swiftshader_indirect",
+      "ANDROID_SYSTEM_IMAGE_LATEST_ARM": "system-images;android-33;google_apis;arm64-v8a",
+      "ANDROID_SYSTEM_IMAGE_LATEST_X86": "system-images;android-33;google_apis;x86_64",
+      "ANDROID_SYSTEM_IMAGE_MIN": "system-images;android-21;google_apis;x86_64"
+    },
     "hook": {
-      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n "
+      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n  set -euo pipefail\n  source \"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")\" && pwd)/setup.sh\"\n "
     },
     "profile": {},
-    "options": {}
+    "options": {},
+    "services": {
+      "android-emulator-min": {
+        "command": "bash -lc '\nset -euo pipefail\n\navd_name=\"${ANDROID_AVD:-${ANDROID_AVD_MIN:-pixel_API21_x86_64}}\"\nsystem_image=\"${ANDROID_SYSTEM_IMAGE:-${ANDROID_SYSTEM_IMAGE_MIN:-system-images;android-21;google_apis;x86_64}}\"\nsdk_root=\"${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}\"\nemulator_bin=\"${ANDROID_EMULATOR_BIN:-${sdk_root}/emulator/emulator}\"\navdmanager_bin=\"${AVDMANAGER_BIN:-${sdk_root}/cmdline-tools/latest/bin/avdmanager}\"\n\nif [ -z \"$sdk_root\" ] || [ ! -x \"$emulator_bin\" ]; then\n  echo \"Android SDK not available; activate the environment first.\" >&2\n  exit 1\nfi\n\nif [ ! -x \"$avdmanager_bin\" ] && command -v avdmanager >/dev/null 2>&1; then\n  avdmanager_bin=\"$(command -v avdmanager)\"\nfi\n\nmkdir -p \"${ANDROID_AVD_HOME:-$HOME/.android/avd}\"\n\nif ! \"$emulator_bin\" -list-avds | grep -q \"^${avd_name}$\"; then\n  if [ -z \"$avdmanager_bin\" ] || [ ! -x \"$avdmanager_bin\" ]; then\n    echo \"avdmanager not found; cannot create ${avd_name}\" >&2\n    exit 1\n  fi\n  yes \"\" | \"$avdmanager_bin\" create avd -n \"$avd_name\" -k \"$system_image\" --force >/dev/null\nfi\n\nemu_flags=\"${ANDROID_EMULATOR_FLAGS:-\"-no-boot-anim -netdelay none -netspeed full -no-snapshot\"}\"\nheadless_flags=\"${ANDROID_EMULATOR_HEADLESS_FLAGS:-}\"\n\nexec \"$emulator_bin\" -avd \"$avd_name\" $emu_flags $headless_flags\n'\n"
+      }
+    }
   },
   "packages": [
     {
-      "install_id": "android-sdk",
-      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/min?lastModified=1769115785&narHash=sha256-aOtixzceapfQcKoJzbjmheyI52CQ2o34lFb%2BVABP9Qo%3D",
-      "flake-description": "Slim Android SDK tools for Devbox via flakes",
-      "locked-flake-attr-path": "packages.aarch64-darwin.default",
-      "derivation": "/nix/store/a975aqvkln4zx6zgjzz93wq5a3jhj3yv-androidsdk.drv",
+      "attr_path": "gradle",
+      "broken": false,
+      "derivation": "/nix/store/byb838v8rcxdql3w6cx153f9353x79hi-gradle-8.14.3.drv",
+      "description": "Enterprise-grade build system",
+      "install_id": "gradle",
+      "license": "Apache-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "gradle-8.14.3",
+      "pname": "gradle",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T04:27:54.942580Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "8.14.3",
+      "outputs_to_install": [
+        "out"
+      ],
       "outputs": {
-        "out": "/nix/store/5p579l1a0s1divnq6iahv2p5ck25sb5n-androidsdk"
+        "out": "/nix/store/v2xbkgrvn0b4g4qq7j5x60va0d4gf0kw-gradle-8.14.3"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "gradle",
+      "broken": false,
+      "derivation": "/nix/store/vvq6pjywqyxdk8zdbb217chzahg3iyck-gradle-8.14.3.drv",
+      "description": "Enterprise-grade build system",
+      "install_id": "gradle",
+      "license": "Apache-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "gradle-8.14.3",
+      "pname": "gradle",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:02:21.362203Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "8.14.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/mvs8d5c60yyx3sxpppg1r67yjvlrrhhh-gradle-8.14.3"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "gradle",
+      "broken": false,
+      "derivation": "/nix/store/imj8fv0d6x3knhjh4sdw4hp5ax8ramhs-gradle-8.14.3.drv",
+      "description": "Enterprise-grade build system",
+      "install_id": "gradle",
+      "license": "Apache-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "gradle-8.14.3",
+      "pname": "gradle",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:34:06.784996Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "8.14.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/jy3fpkvcymjaglzi9z2gbpzcyqypgfxh-gradle-8.14.3"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "gradle",
+      "broken": false,
+      "derivation": "/nix/store/hszbdb4bbpl6qw5li8wyrhf96vvfk2m4-gradle-8.14.3.drv",
+      "description": "Enterprise-grade build system",
+      "install_id": "gradle",
+      "license": "Apache-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "gradle-8.14.3",
+      "pname": "gradle",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T06:20:21.844293Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "8.14.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/80fgl9ffaxlxl9s4i1jb37krcljx669g-gradle-8.14.3"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "jdk17",
+      "broken": false,
+      "derivation": "/nix/store/87rnl1qkmwrkkzmk0xhnzwak8h9mxdsr-zulu-ca-jdk-17.0.12.drv",
+      "description": "Certified builds of OpenJDK",
+      "install_id": "jdk17",
+      "license": "GPL-2.0-only",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "zulu-ca-jdk-17.0.12",
+      "pname": "jdk17",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T04:28:09.553266Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "17.0.12",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/s9nq23qm9animys49h7g7w660jz4ccwz-zulu-ca-jdk-17.0.12"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "jdk17",
+      "broken": false,
+      "derivation": "/nix/store/sxpzi41bvnl26cy79j9zk3vvlslpbxnx-openjdk-17.0.17+10.drv",
+      "description": "Open-source Java Development Kit",
+      "install_id": "jdk17",
+      "license": "GPL-2.0-only",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "openjdk-17.0.17+10",
+      "pname": "jdk17",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:02:38.984999Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "17.0.17+10",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "debug": "/nix/store/x61h0zs6dawi6i6946c30p9qmn8r45q8-openjdk-17.0.17+10-debug",
+        "out": "/nix/store/qkzq9lxji4zs1dgdlxwwwknaggij5lag-openjdk-17.0.17+10"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "jdk17",
+      "broken": false,
+      "derivation": "/nix/store/rq1jxlr68pjj9ws31zazwgam60s3smn0-zulu-ca-jdk-17.0.12.drv",
+      "description": "Certified builds of OpenJDK",
+      "install_id": "jdk17",
+      "license": "GPL-2.0-only",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "zulu-ca-jdk-17.0.12",
+      "pname": "jdk17",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:34:21.121887Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "17.0.12",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/n1rp0ay6dp66yvr2dzwn840hcnpk8010-zulu-ca-jdk-17.0.12"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "jdk17",
+      "broken": false,
+      "derivation": "/nix/store/p4fc4qy06b89x4yg2kfch2fypfl73iz1-openjdk-17.0.17+10.drv",
+      "description": "Open-source Java Development Kit",
+      "install_id": "jdk17",
+      "license": "GPL-2.0-only",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "openjdk-17.0.17+10",
+      "pname": "jdk17",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T06:20:40.942126Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "17.0.17+10",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "debug": "/nix/store/7hk6cjcmfgml2nq293g7cdsx8nrab3ir-openjdk-17.0.17+10-debug",
+        "out": "/nix/store/4xlra07s99b60kj0md6drgh0qmrkdpby-openjdk-17.0.17+10"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "install_id": "android-sdk",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/min?lastModified=1769122819&narHash=sha256-UXkvfdMrs/7uJRZ8uFtN0IEG2ipBsBuL2D18PSuaz5M%3D",
+      "flake-description": "Android SDK (API 21) for flox",
+      "locked-flake-attr-path": "packages.aarch64-darwin.default",
+      "derivation": "/nix/store/fgkdi47hp8g83k376gjwvpfmc357fc90-androidsdk.drv",
+      "outputs": {
+        "out": "/nix/store/bb822lspb5vqjmfg4g103mkcfn0j32hp-androidsdk"
       },
       "output-names": [
         "out"
@@ -42,12 +297,12 @@
     },
     {
       "install_id": "android-sdk",
-      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/min?lastModified=1769115785&narHash=sha256-aOtixzceapfQcKoJzbjmheyI52CQ2o34lFb%2BVABP9Qo%3D",
-      "flake-description": "Slim Android SDK tools for Devbox via flakes",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/min?lastModified=1769122819&narHash=sha256-UXkvfdMrs/7uJRZ8uFtN0IEG2ipBsBuL2D18PSuaz5M%3D",
+      "flake-description": "Android SDK (API 21) for flox",
       "locked-flake-attr-path": "packages.aarch64-linux.default",
-      "derivation": "/nix/store/vg95dbcha84zbd84r2149fm2dyjwnsgw-androidsdk.drv",
+      "derivation": "/nix/store/4cikx66wgz3cv041b7848dmf3x8rdzvl-androidsdk.drv",
       "outputs": {
-        "out": "/nix/store/6wd8vbym24z6wyr4hg8c9lqimnfhg8pf-androidsdk"
+        "out": "/nix/store/ia0b0bp1i8mkyzc2jn26m1dajmgc8kcw-androidsdk"
       },
       "output-names": [
         "out"
@@ -68,12 +323,12 @@
     },
     {
       "install_id": "android-sdk",
-      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/min?lastModified=1769115785&narHash=sha256-aOtixzceapfQcKoJzbjmheyI52CQ2o34lFb%2BVABP9Qo%3D",
-      "flake-description": "Slim Android SDK tools for Devbox via flakes",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/min?lastModified=1769122819&narHash=sha256-UXkvfdMrs/7uJRZ8uFtN0IEG2ipBsBuL2D18PSuaz5M%3D",
+      "flake-description": "Android SDK (API 21) for flox",
       "locked-flake-attr-path": "packages.x86_64-darwin.default",
-      "derivation": "/nix/store/0jpl5vczlv92prp66l8lqngjnlh7fchp-androidsdk.drv",
+      "derivation": "/nix/store/1n5111imc6aiaqvq2ri8ywmk4arfncxs-androidsdk.drv",
       "outputs": {
-        "out": "/nix/store/bdbaq164zvljbl06x6dp7av24vdga62w-androidsdk"
+        "out": "/nix/store/snjscbghhz17svlva3jqflrvhm2r4swc-androidsdk"
       },
       "output-names": [
         "out"
@@ -94,12 +349,12 @@
     },
     {
       "install_id": "android-sdk",
-      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/min?lastModified=1769115785&narHash=sha256-aOtixzceapfQcKoJzbjmheyI52CQ2o34lFb%2BVABP9Qo%3D",
-      "flake-description": "Slim Android SDK tools for Devbox via flakes",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/min?lastModified=1769122819&narHash=sha256-UXkvfdMrs/7uJRZ8uFtN0IEG2ipBsBuL2D18PSuaz5M%3D",
+      "flake-description": "Android SDK (API 21) for flox",
       "locked-flake-attr-path": "packages.x86_64-linux.default",
-      "derivation": "/nix/store/dyfpvp4722pd0w73idw65d8f4n3i992k-androidsdk.drv",
+      "derivation": "/nix/store/dxld1kpxp5xpq8pv2bl62f2ylxygmzzg-androidsdk.drv",
       "outputs": {
-        "out": "/nix/store/1dmy86901px6dn4nschxb57pw73kmw7r-androidsdk"
+        "out": "/nix/store/g1mqc22l4b6d3c9azs0pk8mbk0ghmi9c-androidsdk"
       },
       "output-names": [
         "out"
@@ -124,12 +379,17 @@
       "version": 1,
       "install": {
         "android-sdk": {
-          "flake": "path:."
+          "flake": "path:env/android/min"
         }
       },
       "hook": {},
       "profile": {},
       "options": {},
+      "services": {
+        "android-emulator-min": {
+          "command": "bash -lc '\nset -euo pipefail\n\navd_name=\"${ANDROID_AVD:-${ANDROID_AVD_MIN:-pixel_API21_x86_64}}\"\nsystem_image=\"${ANDROID_SYSTEM_IMAGE:-${ANDROID_SYSTEM_IMAGE_MIN:-system-images;android-21;google_apis;x86_64}}\"\nsdk_root=\"${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}\"\nemulator_bin=\"${ANDROID_EMULATOR_BIN:-${sdk_root}/emulator/emulator}\"\navdmanager_bin=\"${AVDMANAGER_BIN:-${sdk_root}/cmdline-tools/latest/bin/avdmanager}\"\n\nif [ -z \"$sdk_root\" ] || [ ! -x \"$emulator_bin\" ]; then\n  echo \"Android SDK not available; activate the environment first.\" >&2\n  exit 1\nfi\n\nif [ ! -x \"$avdmanager_bin\" ] && command -v avdmanager >/dev/null 2>&1; then\n  avdmanager_bin=\"$(command -v avdmanager)\"\nfi\n\nmkdir -p \"${ANDROID_AVD_HOME:-$HOME/.android/avd}\"\n\nif ! \"$emulator_bin\" -list-avds | grep -q \"^${avd_name}$\"; then\n  if [ -z \"$avdmanager_bin\" ] || [ ! -x \"$avdmanager_bin\" ]; then\n    echo \"avdmanager not found; cannot create ${avd_name}\" >&2\n    exit 1\n  fi\n  yes \"\" | \"$avdmanager_bin\" create avd -n \"$avd_name\" -k \"$system_image\" --force >/dev/null\nfi\n\nemu_flags=\"${ANDROID_EMULATOR_FLAGS:-\"-no-boot-anim -netdelay none -netspeed full -no-snapshot\"}\"\nheadless_flags=\"${ANDROID_EMULATOR_HEADLESS_FLAGS:-}\"\n\nexec \"$emulator_bin\" -avd \"$avd_name\" $emu_flags $headless_flags\n'\n"
+        }
+      },
       "include": {
         "environments": [
           {
@@ -142,8 +402,26 @@
       {
         "manifest": {
           "version": 1,
+          "install": {
+            "gradle": {
+              "pkg-path": "gradle"
+            },
+            "jdk17": {
+              "pkg-path": "jdk17"
+            }
+          },
+          "vars": {
+            "ANDROID_AVD_LATEST_ARM": "medium_phone_API33_arm64_v8a",
+            "ANDROID_AVD_LATEST_X86": "medium_phone_API33_x86_64",
+            "ANDROID_AVD_MIN": "pixel_API21_x86_64",
+            "ANDROID_EMULATOR_FLAGS": "-no-boot-anim -netdelay none -netspeed full -no-snapshot",
+            "ANDROID_EMULATOR_HEADLESS_FLAGS": "-no-window -no-audio -gpu swiftshader_indirect",
+            "ANDROID_SYSTEM_IMAGE_LATEST_ARM": "system-images;android-33;google_apis;arm64-v8a",
+            "ANDROID_SYSTEM_IMAGE_LATEST_X86": "system-images;android-33;google_apis;x86_64",
+            "ANDROID_SYSTEM_IMAGE_MIN": "system-images;android-21;google_apis;x86_64"
+          },
           "hook": {
-            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n "
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n  set -euo pipefail\n  source \"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")\" && pwd)/setup.sh\"\n "
           },
           "profile": {},
           "options": {}
