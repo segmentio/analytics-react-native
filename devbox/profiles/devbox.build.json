@@ -1,11 +1,9 @@
 {
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.2/.schema/devbox.schema.json",
   "packages": {
-    "yarn-berry":             "latest",
-    "jdk17":                  "latest",
-    "gradle":                 "latest",
-    "jq":                     "latest",
-    "path:./devbox/nix#android-sdk-latest": ""
+    "yarn-berry": "latest",
+    "jq":         "latest",
+    "jdk17":      "latest"
   },
   "shell": {
     "init_hook": [
@@ -15,14 +13,21 @@
       "clean": ["bash $DEVBOX_PROJECT_ROOT/devbox/scripts/clean.sh"],
       "build": ["bash $DEVBOX_PROJECT_ROOT/devbox/scripts/build.sh"],
       "test-android": ["bash $DEVBOX_PROJECT_ROOT/devbox/scripts/android/test.sh"],
+      "test-ios": ["bash $DEVBOX_PROJECT_ROOT/devbox/scripts/ios/test.sh"],
       "act-ci": [
         "bash $DEVBOX_PROJECT_ROOT/scripts/act-ci.sh --platform ubuntu-latest=node:20-bullseye"
       ],
       "setup-android": [
         "bash $DEVBOX_PROJECT_ROOT/scripts/android-setup.sh",
       ],
+      "setup-ios": [
+        "bash $DEVBOX_PROJECT_ROOT/scripts/ios-setup.sh",
+      ],
       "start-emulator": [
         "bash $DEVBOX_PROJECT_ROOT/scripts/android-manager.sh start",
+      ],
+      "start-ios": [
+        "bash $DEVBOX_PROJECT_ROOT/scripts/ios-manager.sh start",
       ],
       "start-android-minsdk": [
         "bash $DEVBOX_PROJECT_ROOT/scripts/android-manager.sh start",
@@ -35,7 +40,11 @@
       ],
       "release": ["bash $DEVBOX_PROJECT_ROOT/devbox/scripts/release.sh"],
       "reset-android": ["bash $DEVBOX_PROJECT_ROOT/devbox/scripts/android/reset.sh"],
+      "reset-ios": ["bash $DEVBOX_PROJECT_ROOT/devbox/scripts/ios/reset.sh"],
       "stop-android": ["bash $DEVBOX_PROJECT_ROOT/devbox/scripts/android/stop.sh"],
+      "stop-ios": ["bash $DEVBOX_PROJECT_ROOT/devbox/scripts/ios/stop.sh"],
+      "stop": ["bash $DEVBOX_PROJECT_ROOT/devbox/scripts/stop.sh"],
+      "test": ["bash $DEVBOX_PROJECT_ROOT/devbox/scripts/test.sh"],
     },
   },
 }

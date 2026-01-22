@@ -15,6 +15,8 @@ jobs:
   build-and-test:
     needs: cancel_previous
     runs-on: 'ubuntu-latest'
+    env:
+      DEVBOX_CONFIG: devbox/profiles/devbox.build.json
     steps:
       - uses: actions/checkout@v4
       - name: Aggressive disk cleanup (Ubuntu)
@@ -52,6 +54,8 @@ jobs:
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
           enable-cache: 'true'
+      - name: devbox install (build profile)
+        run: devbox install
       - name: disk check
         run: df -H
       - name: build
