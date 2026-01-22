@@ -13,7 +13,7 @@ Enter the environment with `devbox shell`. The init hook wires `ANDROID_SDK_ROOT
 
 ## Android
 
-By default, Devbox uses the flake-pinned SDK (`path:./nix#android-sdk`). It sets `ANDROID_SDK_ROOT`/`ANDROID_HOME` and adds emulator/platform-tools/cmdline-tools to `PATH` via `scripts/android-env.sh`. To use a local SDK instead, launch with `ANDROID_HOME="$HOME/Library/Android/sdk" devbox shell` (or set `ANDROID_SDK_ROOT`). Clear both env vars to return to the Nix SDK. Inspect the active SDK with `echo "$ANDROID_SDK_ROOT"` and `which sdkmanager` inside the shell. Create/boot AVDs via `devbox run start-android*` (uses `scripts/android-setup.sh` + `scripts/android-manager.sh`).
+By default, Devbox uses the flake-pinned SDK (`path:./devbox/nix#android-sdk`). It sets `ANDROID_SDK_ROOT`/`ANDROID_HOME` and adds emulator/platform-tools/cmdline-tools to `PATH` via `scripts/android-env.sh`. To use a local SDK instead, launch with `ANDROID_HOME="$HOME/Library/Android/sdk" devbox shell` (or set `ANDROID_SDK_ROOT`). Clear both env vars to return to the Nix SDK. Inspect the active SDK with `echo "$ANDROID_SDK_ROOT"` and `which sdkmanager` inside the shell. Create/boot AVDs via `devbox run start-android*` (uses `scripts/android-setup.sh` + `scripts/android-manager.sh`).
 
 ### Emulator/AVD scripts
 
@@ -32,7 +32,7 @@ By default, Devbox uses the flake-pinned SDK (`path:./nix#android-sdk`). It sets
 
 ### Updating Android min/latest versions
 
-- Bump pinned SDKs in `nix/flake.nix` (platformVersions/buildToolsVersions/cmdLineToolsVersion). Rebuild devbox (`devbox shell --rebuild`) so everyone gets the new SDK.
+- Bump pinned SDKs in `devbox/nix/flake.nix` (platformVersions/buildToolsVersions/cmdLineToolsVersion). Rebuild devbox (`devbox shell --rebuild`) so everyone gets the new SDK.
 - Update AVD defaults/names if you change API levels:
   - `devbox.json` (`start-android-*` scripts) for default AVD names.
   - `examples/E2E/.detoxrc.js` for the default `DETOX_AVD`.

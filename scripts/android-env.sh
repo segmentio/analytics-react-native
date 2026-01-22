@@ -5,6 +5,8 @@
 if [ -z "${ANDROID_SDK_ROOT:-}" ] && [ -z "${ANDROID_HOME:-}" ]; then
   DEVBOX_SDK_OUT=$(
     nix --extra-experimental-features 'nix-command flakes' \
+      eval --raw "path:${DEVBOX_PROJECT_ROOT}/devbox/nix#android-sdk.outPath" 2>/dev/null || \
+    nix --extra-experimental-features 'nix-command flakes' \
       eval --raw "path:${DEVBOX_PROJECT_ROOT}/nix#android-sdk.outPath" 2>/dev/null || true
   )
   if [ -n "${DEVBOX_SDK_OUT:-}" ] && [ -d "$DEVBOX_SDK_OUT/libexec/android-sdk" ]; then

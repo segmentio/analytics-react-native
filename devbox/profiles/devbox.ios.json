@@ -5,15 +5,14 @@
       "version":   "latest",
       "platforms": ["x86_64-darwin", "aarch64-darwin"],
     },
-    "yarn-berry":             "latest",
-    "jdk17":                  "latest",
-    "gradle":                 "latest",
-    "jq":                     "latest",
-    "path:./devbox/nix#android-sdk": "",
+    "yarn-berry": "latest",
+    "jdk17":      "latest",
+    "gradle":     "latest",
+    "jq":         "latest"
   },
   "shell": {
     "init_hook": [
-      ". ${DEVBOX_PROJECT_ROOT:-$PWD}/devbox/scripts/init.sh"
+      ". \"${DEVBOX_PROJECT_ROOT:-$PWD}/devbox/scripts/init.sh\""
     ],
     "scripts": {
       "clean": ["bash $DEVBOX_PROJECT_ROOT/devbox/scripts/clean.sh"],

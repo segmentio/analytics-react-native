@@ -122,10 +122,20 @@ main() {
   local secondary_device="${AVD_SECONDARY_DEVICE:-medium_phone}"
   local secondary_preferred_abi="${AVD_SECONDARY_ABI:-}"
 
-  local targets=(
-    "$primary_api|$primary_tag|$primary_device|$primary_preferred_abi|${AVD_NAME:-}"
-    "$secondary_api|$secondary_tag|$secondary_device|$secondary_preferred_abi|${AVD_SECONDARY_NAME:-}"
-  )
+  local targets=()
+  case "${AVD_SKIP_PRIMARY:-}" in
+    1|true|yes|on) ;; # skip primary
+    *) targets+=("$primary_api|$primary_tag|$primary_device|$primary_preferred_abi|${AVD_NAME:-}") ;;
+  esac
+  case "${AVD_SKIP_SECONDARY:-}" in
+    1|true|yes|on) ;; # skip secondary
+    *) targets+=("$secondary_api|$secondary_tag|$secondary_device|$secondary_preferred_abi|${AVD_SECONDARY_NAME:-}") ;;
+  esac
+
+  if [[ "${#targets[@]}" -eq 0 ]]; then
+    echo "No AVD targets selected (AVD_SKIP_PRIMARY/AVD_SKIP_SECONDARY both set). Nothing to do."
+    return 0
+  fi
 
   for target in "${targets[@]}"; do
     IFS="|" read -r api tag device preferred_abi name_override <<<"$target"

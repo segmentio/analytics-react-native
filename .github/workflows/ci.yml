@@ -63,6 +63,7 @@ jobs:
     env:
       YARN_ENABLE_HARDENED_MODE: 0
       XCODE_VERSION: '26.1.1'
+      DEVBOX_CONFIG: devbox/profiles/devbox.ios.json
     strategy:
       matrix:
         include:
@@ -135,6 +136,8 @@ jobs:
         with:
           enable-cache: 'true'
         # --omit-nix-env is important to use the macos system c toolchain instead of the nix toolchain
+      - name: devbox install (iOS profile)
+        run: devbox install
       - name: disk check
         run: df -H
       - name: iOS E2E Tests
@@ -146,17 +149,25 @@ jobs:
     if: true
     continue-on-error: true
     runs-on: 'ubuntu-22.04'
+    env:
+      DEVBOX_CONFIG: devbox/profiles/devbox.android.json
     strategy:
       matrix:
         include:
           - name: android-min
             avd-name: pixel_API21_x86_64
             start-script: start-android-minsdk
+            skip-secondary: true
           - name: android-latest
             avd-name: medium_phone_API33_x86_64
             start-script: start-android-latest
+            skip-primary: true
     steps:
       - uses: actions/checkout@v4
+      - name: Set AVD selection
+        run: |
+          echo "AVD_SKIP_PRIMARY=${{ matrix.skip-primary || 'false' }}" >> "$GITHUB_ENV"
+          echo "AVD_SKIP_SECONDARY=${{ matrix.skip-secondary || 'false' }}" >> "$GITHUB_ENV"
       - name: Yarn cache
         uses: actions/cache@v4
         with:
@@ -188,6 +199,8 @@ jobs:
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
           enable-cache: 'true'
+      - name: devbox install (Android profile)
+        run: devbox install
       - name: Gradle cache
         uses: actions/cache@v4
         with:
