@@ -2,17 +2,290 @@
   "lockfile-version": 1,
   "manifest": {
     "version": 1,
+    "install": {
+      "gradle": {
+        "pkg-path": "gradle"
+      },
+      "jdk17": {
+        "pkg-path": "jdk17"
+      }
+    },
+    "vars": {
+      "ANDROID_AVD_LATEST_ARM": "medium_phone_API33_arm64_v8a",
+      "ANDROID_AVD_LATEST_X86": "medium_phone_API33_x86_64",
+      "ANDROID_AVD_MIN": "pixel_API21_x86_64",
+      "ANDROID_EMULATOR_FLAGS": "-no-boot-anim -netdelay none -netspeed full -no-snapshot",
+      "ANDROID_EMULATOR_HEADLESS_FLAGS": "-no-window -no-audio -gpu swiftshader_indirect",
+      "ANDROID_SYSTEM_IMAGE_LATEST_ARM": "system-images;android-33;google_apis;arm64-v8a",
+      "ANDROID_SYSTEM_IMAGE_LATEST_X86": "system-images;android-33;google_apis;x86_64",
+      "ANDROID_SYSTEM_IMAGE_MIN": "system-images;android-21;google_apis;x86_64"
+    },
     "hook": {
-      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n "
+      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n  set -euo pipefail\n\n  project_root=\"${PROJECT_ROOT:-}\"\n  if [ -z \"$project_root\" ] && command -v git >/dev/null 2>&1; then\n    project_root=\"$(git rev-parse --show-toplevel 2>/dev/null || true)\"\n  fi\n  if [ -z \"$project_root\" ]; then\n    project_root=\"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/../../..\" && pwd)\"\n  fi\n  export PROJECT_ROOT=\"$project_root\"\n\n  if [ -z \"${ANDROID_SDK_ROOT:-}\" ] && [ -z \"${ANDROID_HOME:-}\" ]; then\n    for target in \\\n      \"path:${project_root}/env/android/latest#android-sdk-latest.outPath\" \\\n      \"path:${project_root}/env/android/min#android-sdk-min.outPath\"\n    do\n      sdk_out=$(nix --extra-experimental-features \"nix-command flakes\" eval --raw \"$target\" 2>/dev/null || true)\n      if [ -n \"${sdk_out:-}\" ] && [ -d \"$sdk_out/libexec/android-sdk\" ]; then\n        export ANDROID_SDK_ROOT=\"$sdk_out/libexec/android-sdk\"\n        export ANDROID_HOME=\"$ANDROID_SDK_ROOT\"\n        break\n      fi\n    done\n  fi\n\n  if [ -z \"${ANDROID_SDK_ROOT:-}\" ] && [ -n \"${ANDROID_HOME:-}\" ]; then\n    export ANDROID_SDK_ROOT=\"$ANDROID_HOME\"\n  fi\n\n  if [ -n \"${ANDROID_SDK_ROOT:-}\" ] && [ -z \"${ANDROID_HOME:-}\" ]; then\n    export ANDROID_HOME=\"$ANDROID_SDK_ROOT\"\n  fi\n\n  if [ -n \"${ANDROID_SDK_ROOT:-}\" ]; then\n    cmdline_tools_bin=\"\"\n    if [ -d \"$ANDROID_SDK_ROOT/cmdline-tools/latest/bin\" ]; then\n      cmdline_tools_bin=\"$ANDROID_SDK_ROOT/cmdline-tools/latest/bin\"\n    else\n      cmdline_tools_dir=$(find \"$ANDROID_SDK_ROOT/cmdline-tools\" -maxdepth 1 -mindepth 1 -type d -not -name latest 2>/dev/null | sort -V | tail -n 1)\n      if [ -n \"${cmdline_tools_dir:-}\" ] && [ -d \"$cmdline_tools_dir/bin\" ]; then\n        cmdline_tools_bin=\"$cmdline_tools_dir/bin\"\n      fi\n    fi\n\n    new_path=\"$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/platform-tools\"\n\n    if [ -n \"${cmdline_tools_bin:-}\" ]; then\n      new_path=\"$new_path:$cmdline_tools_bin\"\n    fi\n\n    new_path=\"$new_path:$ANDROID_SDK_ROOT/tools/bin:$PATH\"\n    export PATH=\"$new_path\"\n\n    if [ -z \"${ANDROID_EMULATOR_BIN:-}\" ]; then\n      export ANDROID_EMULATOR_BIN=\"$ANDROID_SDK_ROOT/emulator/emulator\"\n    fi\n    if [ -z \"${AVDMANAGER_BIN:-}\" ] && [ -n \"${cmdline_tools_bin:-}\" ]; then\n      export AVDMANAGER_BIN=\"$cmdline_tools_bin/avdmanager\"\n    fi\n    if [ -z \"${SDKMANAGER_BIN:-}\" ] && [ -n \"${cmdline_tools_bin:-}\" ]; then\n      export SDKMANAGER_BIN=\"$cmdline_tools_bin/sdkmanager\"\n    fi\n\n    if [ -z \"${ANDROID_AVD_HOME:-}\" ]; then\n      avd_home=\"${FLOX_ENV_CACHE:-$HOME/.flox/cache}/android/avd\"\n      mkdir -p \"$avd_home\"\n      export ANDROID_AVD_HOME=\"$avd_home\"\n    fi\n    if [ -z \"${ANDROID_USER_HOME:-}\" ]; then\n      export ANDROID_USER_HOME=\"${ANDROID_AVD_HOME:-$HOME/.android}\"\n    fi\n  fi\n\n  if [ -z \"${DETOX_AVD:-}\" ]; then\n    arch=\"$(uname -m)\"\n    if [ \"$arch\" = \"arm64\" ] || [ \"$arch\" = \"aarch64\" ]; then\n      export DETOX_AVD=\"${ANDROID_AVD_LATEST_ARM:-medium_phone_API33_arm64_v8a}\"\n    else\n      export DETOX_AVD=\"${ANDROID_AVD_LATEST_X86:-medium_phone_API33_x86_64}\"\n    fi\n  fi\n "
     },
     "profile": {},
     "options": {}
   },
-  "packages": [],
+  "packages": [
+    {
+      "attr_path": "gradle",
+      "broken": false,
+      "derivation": "/nix/store/byb838v8rcxdql3w6cx153f9353x79hi-gradle-8.14.3.drv",
+      "description": "Enterprise-grade build system",
+      "install_id": "gradle",
+      "license": "Apache-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "gradle-8.14.3",
+      "pname": "gradle",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T04:27:54.942580Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "8.14.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/v2xbkgrvn0b4g4qq7j5x60va0d4gf0kw-gradle-8.14.3"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "gradle",
+      "broken": false,
+      "derivation": "/nix/store/vvq6pjywqyxdk8zdbb217chzahg3iyck-gradle-8.14.3.drv",
+      "description": "Enterprise-grade build system",
+      "install_id": "gradle",
+      "license": "Apache-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "gradle-8.14.3",
+      "pname": "gradle",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:02:21.362203Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "8.14.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/mvs8d5c60yyx3sxpppg1r67yjvlrrhhh-gradle-8.14.3"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "gradle",
+      "broken": false,
+      "derivation": "/nix/store/imj8fv0d6x3knhjh4sdw4hp5ax8ramhs-gradle-8.14.3.drv",
+      "description": "Enterprise-grade build system",
+      "install_id": "gradle",
+      "license": "Apache-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "gradle-8.14.3",
+      "pname": "gradle",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:34:06.784996Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "8.14.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/jy3fpkvcymjaglzi9z2gbpzcyqypgfxh-gradle-8.14.3"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "gradle",
+      "broken": false,
+      "derivation": "/nix/store/hszbdb4bbpl6qw5li8wyrhf96vvfk2m4-gradle-8.14.3.drv",
+      "description": "Enterprise-grade build system",
+      "install_id": "gradle",
+      "license": "Apache-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "gradle-8.14.3",
+      "pname": "gradle",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T06:20:21.844293Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "8.14.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/80fgl9ffaxlxl9s4i1jb37krcljx669g-gradle-8.14.3"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "jdk17",
+      "broken": false,
+      "derivation": "/nix/store/87rnl1qkmwrkkzmk0xhnzwak8h9mxdsr-zulu-ca-jdk-17.0.12.drv",
+      "description": "Certified builds of OpenJDK",
+      "install_id": "jdk17",
+      "license": "GPL-2.0-only",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "zulu-ca-jdk-17.0.12",
+      "pname": "jdk17",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T04:28:09.553266Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "17.0.12",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/s9nq23qm9animys49h7g7w660jz4ccwz-zulu-ca-jdk-17.0.12"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "jdk17",
+      "broken": false,
+      "derivation": "/nix/store/sxpzi41bvnl26cy79j9zk3vvlslpbxnx-openjdk-17.0.17+10.drv",
+      "description": "Open-source Java Development Kit",
+      "install_id": "jdk17",
+      "license": "GPL-2.0-only",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "openjdk-17.0.17+10",
+      "pname": "jdk17",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:02:38.984999Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "17.0.17+10",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "debug": "/nix/store/x61h0zs6dawi6i6946c30p9qmn8r45q8-openjdk-17.0.17+10-debug",
+        "out": "/nix/store/qkzq9lxji4zs1dgdlxwwwknaggij5lag-openjdk-17.0.17+10"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "jdk17",
+      "broken": false,
+      "derivation": "/nix/store/rq1jxlr68pjj9ws31zazwgam60s3smn0-zulu-ca-jdk-17.0.12.drv",
+      "description": "Certified builds of OpenJDK",
+      "install_id": "jdk17",
+      "license": "GPL-2.0-only",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "zulu-ca-jdk-17.0.12",
+      "pname": "jdk17",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:34:21.121887Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "17.0.12",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/n1rp0ay6dp66yvr2dzwn840hcnpk8010-zulu-ca-jdk-17.0.12"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "jdk17",
+      "broken": false,
+      "derivation": "/nix/store/p4fc4qy06b89x4yg2kfch2fypfl73iz1-openjdk-17.0.17+10.drv",
+      "description": "Open-source Java Development Kit",
+      "install_id": "jdk17",
+      "license": "GPL-2.0-only",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "openjdk-17.0.17+10",
+      "pname": "jdk17",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T06:20:40.942126Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "17.0.17+10",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "debug": "/nix/store/7hk6cjcmfgml2nq293g7cdsx8nrab3ir-openjdk-17.0.17+10-debug",
+        "out": "/nix/store/4xlra07s99b60kj0md6drgh0qmrkdpby-openjdk-17.0.17+10"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    }
+  ],
   "compose": {
     "composer": {
       "version": 1,
-      "hook": {},
+      "install": {
+        "gradle": {
+          "pkg-path": "gradle"
+        },
+        "jdk17": {
+          "pkg-path": "jdk17"
+        }
+      },
+      "vars": {
+        "ANDROID_AVD_LATEST_ARM": "medium_phone_API33_arm64_v8a",
+        "ANDROID_AVD_LATEST_X86": "medium_phone_API33_x86_64",
+        "ANDROID_AVD_MIN": "pixel_API21_x86_64",
+        "ANDROID_EMULATOR_FLAGS": "-no-boot-anim -netdelay none -netspeed full -no-snapshot",
+        "ANDROID_EMULATOR_HEADLESS_FLAGS": "-no-window -no-audio -gpu swiftshader_indirect",
+        "ANDROID_SYSTEM_IMAGE_LATEST_ARM": "system-images;android-33;google_apis;arm64-v8a",
+        "ANDROID_SYSTEM_IMAGE_LATEST_X86": "system-images;android-33;google_apis;x86_64",
+        "ANDROID_SYSTEM_IMAGE_MIN": "system-images;android-21;google_apis;x86_64"
+      },
+      "hook": {
+        "on-activate": "  set -euo pipefail\n\n  project_root=\"${PROJECT_ROOT:-}\"\n  if [ -z \"$project_root\" ] && command -v git >/dev/null 2>&1; then\n    project_root=\"$(git rev-parse --show-toplevel 2>/dev/null || true)\"\n  fi\n  if [ -z \"$project_root\" ]; then\n    project_root=\"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/../../..\" && pwd)\"\n  fi\n  export PROJECT_ROOT=\"$project_root\"\n\n  if [ -z \"${ANDROID_SDK_ROOT:-}\" ] && [ -z \"${ANDROID_HOME:-}\" ]; then\n    for target in \\\n      \"path:${project_root}/env/android/latest#android-sdk-latest.outPath\" \\\n      \"path:${project_root}/env/android/min#android-sdk-min.outPath\"\n    do\n      sdk_out=$(nix --extra-experimental-features \"nix-command flakes\" eval --raw \"$target\" 2>/dev/null || true)\n      if [ -n \"${sdk_out:-}\" ] && [ -d \"$sdk_out/libexec/android-sdk\" ]; then\n        export ANDROID_SDK_ROOT=\"$sdk_out/libexec/android-sdk\"\n        export ANDROID_HOME=\"$ANDROID_SDK_ROOT\"\n        break\n      fi\n    done\n  fi\n\n  if [ -z \"${ANDROID_SDK_ROOT:-}\" ] && [ -n \"${ANDROID_HOME:-}\" ]; then\n    export ANDROID_SDK_ROOT=\"$ANDROID_HOME\"\n  fi\n\n  if [ -n \"${ANDROID_SDK_ROOT:-}\" ] && [ -z \"${ANDROID_HOME:-}\" ]; then\n    export ANDROID_HOME=\"$ANDROID_SDK_ROOT\"\n  fi\n\n  if [ -n \"${ANDROID_SDK_ROOT:-}\" ]; then\n    cmdline_tools_bin=\"\"\n    if [ -d \"$ANDROID_SDK_ROOT/cmdline-tools/latest/bin\" ]; then\n      cmdline_tools_bin=\"$ANDROID_SDK_ROOT/cmdline-tools/latest/bin\"\n    else\n      cmdline_tools_dir=$(find \"$ANDROID_SDK_ROOT/cmdline-tools\" -maxdepth 1 -mindepth 1 -type d -not -name latest 2>/dev/null | sort -V | tail -n 1)\n      if [ -n \"${cmdline_tools_dir:-}\" ] && [ -d \"$cmdline_tools_dir/bin\" ]; then\n        cmdline_tools_bin=\"$cmdline_tools_dir/bin\"\n      fi\n    fi\n\n    new_path=\"$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/platform-tools\"\n\n    if [ -n \"${cmdline_tools_bin:-}\" ]; then\n      new_path=\"$new_path:$cmdline_tools_bin\"\n    fi\n\n    new_path=\"$new_path:$ANDROID_SDK_ROOT/tools/bin:$PATH\"\n    export PATH=\"$new_path\"\n\n    if [ -z \"${ANDROID_EMULATOR_BIN:-}\" ]; then\n      export ANDROID_EMULATOR_BIN=\"$ANDROID_SDK_ROOT/emulator/emulator\"\n    fi\n    if [ -z \"${AVDMANAGER_BIN:-}\" ] && [ -n \"${cmdline_tools_bin:-}\" ]; then\n      export AVDMANAGER_BIN=\"$cmdline_tools_bin/avdmanager\"\n    fi\n    if [ -z \"${SDKMANAGER_BIN:-}\" ] && [ -n \"${cmdline_tools_bin:-}\" ]; then\n      export SDKMANAGER_BIN=\"$cmdline_tools_bin/sdkmanager\"\n    fi\n\n    if [ -z \"${ANDROID_AVD_HOME:-}\" ]; then\n      avd_home=\"${FLOX_ENV_CACHE:-$HOME/.flox/cache}/android/avd\"\n      mkdir -p \"$avd_home\"\n      export ANDROID_AVD_HOME=\"$avd_home\"\n    fi\n    if [ -z \"${ANDROID_USER_HOME:-}\" ]; then\n      export ANDROID_USER_HOME=\"${ANDROID_AVD_HOME:-$HOME/.android}\"\n    fi\n  fi\n\n  if [ -z \"${DETOX_AVD:-}\" ]; then\n    arch=\"$(uname -m)\"\n    if [ \"$arch\" = \"arm64\" ] || [ \"$arch\" = \"aarch64\" ]; then\n      export DETOX_AVD=\"${ANDROID_AVD_LATEST_ARM:-medium_phone_API33_arm64_v8a}\"\n    else\n      export DETOX_AVD=\"${ANDROID_AVD_LATEST_X86:-medium_phone_API33_x86_64}\"\n    fi\n  fi\n "
+      },
       "profile": {},
       "options": {},
       "include": {

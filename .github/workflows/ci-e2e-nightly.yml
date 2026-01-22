@@ -1,59 +1,34 @@
-name: CI
-on:
-  push:
-    branches: [master, beta, ci2]
-  pull_request:
-    branches: [master, beta]
-  workflow_dispatch:
-jobs:
-  cancel_previous:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          workflow_id: ${{ github.event.workflow.id }}
-  build-and-test:
-    needs: cancel_previous
-    runs-on: 'ubuntu-latest'
-    steps:
-      - uses: actions/checkout@v4
-      - name: Yarn cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/yarn
-            .yarn/cache
-          key: yarn-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            yarn-${{ runner.os }}-
-      - name: disk check
-        run: df -H
-      - name: Free Disk Space (Ubuntu)
-        uses: jlumbroso/free-disk-space@v1.3.1
-      - name: disk check
-        run: df -H
-      - name: Install flox
-        run: |
-          curl -L https://get.flox.dev/install.sh | bash
-          echo "$HOME/.flox/bin" >> "$GITHUB_PATH"
-      - name: build
-        run: flox activate . --devshell default -- bash flox/scripts/build.sh
+name: E2E (Nightly)
 
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+  push:
+    branches: [ci2]
+
+concurrency:
+  group: e2e-nightly-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
   run-e2e-ios:
-    if: true
-    runs-on: ['macos-15' ]
+    runs-on: macos-15
     env:
       YARN_ENABLE_HARDENED_MODE: 0
-      XCODE_VERSION: '26.1.1'
     strategy:
       matrix:
         include:
           - name: ios-min
             ios-device: "iPhone 14"
             ios-runtime: "18.5"
+            simulator-service: ios-simulator-min
+            xcode-version: "16.1"
           - name: ios-latest
             ios-device: "iPhone 17"
             ios-runtime: "26.1"
+            simulator-service: ios-simulator-latest
+            xcode-version: "26.1.1"
     steps:
       - uses: actions/checkout@v4
       - name: Yarn cache
@@ -80,7 +55,7 @@ jobs:
       - name: disk check
         run: df -H
       - name: Free Disk Space
-        run: | 
+        run: |
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /opt/ghc
           sudo rm -rf "/usr/local/share/boost"
@@ -89,7 +64,7 @@ jobs:
         run: df -H
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '26.1.1'
+          xcode-version: ${{ matrix.xcode-version }}
       - name: disk check
         run: df -H
       - name: CocoaPods cache
@@ -97,51 +72,50 @@ jobs:
         with:
           path: |
             ~/Library/Caches/CocoaPods
-          key: cocoapods-${{ runner.os }}-${{ env.XCODE_VERSION }}-${{ hashFiles('examples/E2E/ios/Podfile.lock') }}
+          key: cocoapods-${{ runner.os }}-${{ matrix.xcode-version }}-${{ hashFiles('examples/E2E/ios/Podfile.lock') }}
           restore-keys: |
-            cocoapods-${{ runner.os }}-${{ env.XCODE_VERSION }}-
+            cocoapods-${{ runner.os }}-${{ matrix.xcode-version }}-
             cocoapods-${{ runner.os }}-
       - name: DerivedData cache
         uses: actions/cache@v4
         with:
           path: |
             ~/Library/Developer/Xcode/DerivedData
-          key: derived-${{ runner.os }}-${{ env.XCODE_VERSION }}-${{ hashFiles('examples/E2E/ios/Podfile.lock') }}
+          key: derived-${{ runner.os }}-${{ matrix.xcode-version }}-${{ hashFiles('examples/E2E/ios/Podfile.lock') }}
           restore-keys: |
-            derived-${{ runner.os }}-${{ env.XCODE_VERSION }}-
+            derived-${{ runner.os }}-${{ matrix.xcode-version }}-
             derived-${{ runner.os }}-
       - name: Install flox
+        uses: flox/install-flox-action@v2.2.0
+      - name: Configure simulator target
         run: |
-          curl -L https://get.flox.dev/install.sh | bash
-          echo "$HOME/.flox/bin" >> "$GITHUB_PATH"
+          echo "IOS_SIM_DEVICE=${{ matrix.ios-device }}" >> "$GITHUB_ENV"
+          echo "IOS_SIM_RUNTIME=${{ matrix.ios-runtime }}" >> "$GITHUB_ENV"
+          echo "DETOX_IOS_DEVICE=${{ matrix.ios-device }}" >> "$GITHUB_ENV"
+      - name: Start simulator via flox
+        run: flox services start ${{ matrix.simulator-service }}
       - name: disk check
         run: df -H
       - name: iOS E2E Tests
-        env:
-          DETOX_IOS_DEVICE: ${{ matrix.ios-device }}
-        run: flox activate . --devshell ci-ios -- bash flox/scripts/ios/test.sh
+        run: |
+          flox activate . --devshell default -- bash -lc "yarn install --immutable && yarn e2e install && yarn e2e pods && yarn build && yarn e2e build:ios && yarn e2e test:ios"
 
   run-e2e-android:
-    if: true
     continue-on-error: true
-    runs-on: 'ubuntu-22.04'
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         include:
           - name: android-min
             avd-name: pixel_API21_x86_64
-            skip-primary: false
-            skip-secondary: true
+            system-image: "system-images;android-21;google_apis;x86_64"
+            emulator-service: android-emulator-min
           - name: android-latest
             avd-name: medium_phone_API33_x86_64
-            skip-primary: true
-            skip-secondary: false
+            system-image: "system-images;android-33;google_apis;x86_64"
+            emulator-service: android-emulator-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set AVD selection
-        run: |
-          echo "AVD_SKIP_PRIMARY=${{ matrix.skip-primary || 'false' }}" >> "$GITHUB_ENV"
-          echo "AVD_SKIP_SECONDARY=${{ matrix.skip-secondary || 'false' }}" >> "$GITHUB_ENV"
       - name: Yarn cache
         uses: actions/cache@v4
         with:
@@ -156,9 +130,13 @@ jobs:
       - name: disk check
         run: df -H
       - name: Install flox
+        uses: flox/install-flox-action@v2.2.0
+      - name: Configure emulator target
         run: |
-          curl -L https://get.flox.dev/install.sh | bash
-          echo "$HOME/.flox/bin" >> "$GITHUB_PATH"
+          echo "ANDROID_AVD=${{ matrix.avd-name }}" >> "$GITHUB_ENV"
+          echo "ANDROID_SYSTEM_IMAGE=${{ matrix.system-image }}" >> "$GITHUB_ENV"
+          echo "DETOX_AVD=${{ matrix.avd-name }}" >> "$GITHUB_ENV"
+          echo "EMU_HEADLESS=1" >> "$GITHUB_ENV"
       - name: Gradle cache
         uses: actions/cache@v4
         with:
@@ -170,10 +148,13 @@ jobs:
             gradle-${{ runner.os }}-
       - name: disk check
         run: df -H
+      - name: Start emulator via flox
+        run: flox services start ${{ matrix.emulator-service }}
+      - name: Wait for emulator
+        run: |
+          flox activate . --devshell default -- bash -lc "adb wait-for-device && timeout 180s bash -c 'until adb shell getprop sys.boot_completed 2>/dev/null | grep -q 1; do sleep 5; done'"
       - name: Android E2E Tests
-        env:
-          DETOX_AVD: ${{ matrix.avd-name }}
-          EMU_HEADLESS: 1
-        run: flox activate . --devshell ci-android -- bash flox/scripts/android/test.sh
+        run: |
+          flox activate . --devshell default -- bash -lc "yarn install --immutable && yarn e2e install && yarn build && yarn e2e build:android && yarn e2e test:android"
       - name: disk check
         run: df -H

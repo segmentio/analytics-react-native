@@ -1,5 +1,5 @@
 {
-  description = "Slim Android SDK tools for Devbox via flakes";
+  description = "Android SDK (API 33) for flox/devbox";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
@@ -29,25 +29,20 @@
             };
           };
 
-          mkSdk = platformVersions:
-            pkgs.androidenv.composeAndroidPackages {
-              platformVersions = platformVersions;
-              buildToolsVersions = [ "30.0.3" "33.0.0" "latest" ];
-              cmdLineToolsVersion = "19.0";
-              includeEmulator = true;
-              includeSystemImages = true;
-              includeNDK = true;
-              abiVersions = [ "x86_64" "arm64-v8a" ];
-              systemImageTypes = [ "google_apis" ];
-            };
-
-          sdkMin = mkSdk [ "21" ];
-          sdkLatest = mkSdk [ "33" ];
-          sdkFull = mkSdk [ "21" "33" ];
+          sdk = pkgs.androidenv.composeAndroidPackages {
+            platformVersions = [ "33" ];
+            buildToolsVersions = [ "33.0.0" ];
+            cmdLineToolsVersion = "19.0";
+            includeEmulator = true;
+            includeSystemImages = true;
+            includeNDK = true;
+            abiVersions = [ "x86_64" ];
+            systemImageTypes = [ "google_apis" ];
+          };
         in
         {
-          android-sdk-latest = sdkLatest.androidsdk;
-          default = sdkLatest.androidsdk;
+          android-sdk-latest = sdk.androidsdk;
+          default = sdk.androidsdk;
         });
     };
 }

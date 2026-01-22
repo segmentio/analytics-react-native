@@ -1,0 +1,166 @@
+name: E2E (On-Demand)
+
+on:
+  push:
+    branches: [ci2]
+  workflow_dispatch:
+    inputs:
+      platforms:
+        description: "Platforms to run (android, ios, all)"
+        required: false
+        default: "all"
+  pull_request:
+    branches: [master, beta]
+    types: [opened, synchronize, reopened, labeled]
+    paths-ignore:
+      - 'docs/**'
+      - 'wiki/**'
+      - '**/*.md'
+
+concurrency:
+  group: e2e-optional-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  RUN_E2E: ${{ github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-e2e') || github.event_name == 'push' }}
+
+jobs:
+  run-e2e-ios:
+    if: env.RUN_E2E == 'true' && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == '' || github.event.inputs.platforms == 'ios' || github.event.inputs.platforms == null)
+    runs-on: macos-15
+    env:
+      YARN_ENABLE_HARDENED_MODE: 0
+    strategy:
+      matrix:
+        include:
+          - name: ios-latest
+            ios-device: "iPhone 17"
+            ios-runtime: "26.1"
+            simulator-service: ios-simulator-latest
+            xcode-version: "26.1.1"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Yarn cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/yarn
+            .yarn/cache
+          key: yarn-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            yarn-${{ runner.os }}-
+      - name: Aggressive disk cleanup (macOS)
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          sudo rm -rf /Applications/Android\ Studio.app
+          sudo rm -rf /usr/local/share/miniconda
+          sudo rm -rf "$HOME/Library/Android"
+          sudo rm -rf "$HOME/.gradle"
+          sudo rm -rf "$HOME/Library/Developer/CoreSimulator/Devices"
+          sudo rm -rf "$HOME/Library/Developer/Xcode/DerivedData"
+          df -H
+      - name: disk check
+        run: df -H
+      - name: Free Disk Space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+      - name: disk check
+        run: df -H
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ matrix.xcode-version }}
+      - name: disk check
+        run: df -H
+      - name: CocoaPods cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/CocoaPods
+          key: cocoapods-${{ runner.os }}-${{ matrix.xcode-version }}-${{ hashFiles('examples/E2E/ios/Podfile.lock') }}
+          restore-keys: |
+            cocoapods-${{ runner.os }}-${{ matrix.xcode-version }}-
+            cocoapods-${{ runner.os }}-
+      - name: DerivedData cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+          key: derived-${{ runner.os }}-${{ matrix.xcode-version }}-${{ hashFiles('examples/E2E/ios/Podfile.lock') }}
+          restore-keys: |
+            derived-${{ runner.os }}-${{ matrix.xcode-version }}-
+            derived-${{ runner.os }}-
+      - name: Install flox
+        uses: flox/install-flox-action@v2.2.0
+      - name: Configure simulator target
+        run: |
+          echo "IOS_SIM_DEVICE=${{ matrix.ios-device }}" >> "$GITHUB_ENV"
+          echo "IOS_SIM_RUNTIME=${{ matrix.ios-runtime }}" >> "$GITHUB_ENV"
+          echo "DETOX_IOS_DEVICE=${{ matrix.ios-device }}" >> "$GITHUB_ENV"
+      - name: Start simulator via flox
+        run: flox services start ${{ matrix.simulator-service }}
+      - name: disk check
+        run: df -H
+      - name: iOS E2E Tests
+        run: |
+          flox activate . --devshell default -- bash -lc "yarn install --immutable && yarn e2e install && yarn e2e pods && yarn build && yarn e2e build:ios && yarn e2e test:ios"
+
+  run-e2e-android:
+    if: env.RUN_E2E == 'true' && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == '' || github.event.inputs.platforms == 'android' || github.event.inputs.platforms == null)
+    continue-on-error: true
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        include:
+          - name: android-latest
+            avd-name: medium_phone_API33_x86_64
+            system-image: "system-images;android-33;google_apis;x86_64"
+            emulator-service: android-emulator-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Yarn cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/yarn
+            .yarn/cache
+          key: yarn-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            yarn-${{ runner.os }}-
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@v1.3.1
+      - name: disk check
+        run: df -H
+      - name: Install flox
+        uses: flox/install-flox-action@v2.2.0
+      - name: Configure emulator target
+        run: |
+          echo "ANDROID_AVD=${{ matrix.avd-name }}" >> "$GITHUB_ENV"
+          echo "ANDROID_SYSTEM_IMAGE=${{ matrix.system-image }}" >> "$GITHUB_ENV"
+          echo "DETOX_AVD=${{ matrix.avd-name }}" >> "$GITHUB_ENV"
+          echo "EMU_HEADLESS=1" >> "$GITHUB_ENV"
+      - name: Gradle cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/buildSrc/**/*.kt') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+      - name: disk check
+        run: df -H
+      - name: Start emulator via flox
+        run: flox services start ${{ matrix.emulator-service }}
+      - name: Wait for emulator
+        run: |
+          flox activate . --devshell default -- bash -lc "adb wait-for-device && timeout 180s bash -c 'until adb shell getprop sys.boot_completed 2>/dev/null | grep -q 1; do sleep 5; done'"
+      - name: Android E2E Tests
+        run: |
+          flox activate . --devshell default -- bash -lc "yarn install --immutable && yarn e2e install && yarn build && yarn e2e build:android && yarn e2e test:android"
+      - name: disk check
+        run: df -H

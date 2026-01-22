@@ -1,90 +1,271 @@
-## Flox Environment Manifest -----------------------------------------
-##
-##   _Everything_ you need to know about the _manifest_ is here:
-##
-##   https://flox.dev/docs/reference/command-reference/manifest.toml/
-##
-## -------------------------------------------------------------------
-# Flox manifest version managed by Flox CLI
 version = 1
 
-
-## Install Packages --------------------------------------------------
-##  $ flox install gum  <- puts a package in [install] section below
-##  $ flox search gum   <- search for a package
-##  $ flox show gum     <- show all versions of a package
-## -------------------------------------------------------------------
 [install]
 
-## Environment Variables ---------------------------------------------
-##  ... available for use in the activated environment
-##      as well as [hook], [profile] scripts and [services] below.
-## -------------------------------------------------------------------
 [vars]
-# INTRO_MESSAGE = "It's gettin' Flox in here"
-
-
-## Activation Hook ---------------------------------------------------
-##  ... run by _bash_ shell when you run 'flox activate'.
-## -------------------------------------------------------------------
 [hook]
-
-
-## Profile script ----------------------------------------------------
-## ... sourced by _your shell_ when you run 'flox activate'.
-## -------------------------------------------------------------------
 [profile]
-## Shell-specific customizations such as setting aliases go here:
-# bash = ...
-# zsh  = ...
-# fish = ...
 
-
-## Services ---------------------------------------------------------
-##  $ flox services start             <- Starts all services
-##  $ flox services status            <- Status of running services
-##  $ flox activate --start-services  <- Activates & starts all
-## ------------------------------------------------------------------
 [services]
-# myservice.command = "python3 -m http.server"
+android-emulator-min.command = """
+bash -lc '
+set -euo pipefail
 
+avd_name="${ANDROID_AVD:-${ANDROID_AVD_MIN:-pixel_API21_x86_64}}"
+system_image="${ANDROID_SYSTEM_IMAGE:-${ANDROID_SYSTEM_IMAGE_MIN:-system-images;android-21;google_apis;x86_64}}"
+sdk_root="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+emulator_bin="${ANDROID_EMULATOR_BIN:-${sdk_root}/emulator/emulator}"
+avdmanager_bin="${AVDMANAGER_BIN:-${sdk_root}/cmdline-tools/latest/bin/avdmanager}"
 
-## Include ----------------------------------------------------------
-## ... environments to create a composed environment
-## ------------------------------------------------------------------
+if [ -z "$sdk_root" ] || [ ! -x "$emulator_bin" ]; then
+  echo "Android SDK not available; activate the environment first." >&2
+  exit 1
+fi
+
+if [ ! -x "$avdmanager_bin" ] && command -v avdmanager >/dev/null 2>&1; then
+  avdmanager_bin="$(command -v avdmanager)"
+fi
+
+mkdir -p "${ANDROID_AVD_HOME:-$HOME/.android/avd}"
+
+if ! "$emulator_bin" -list-avds | grep -q "^${avd_name}$"; then
+  if [ -z "$avdmanager_bin" ] || [ ! -x "$avdmanager_bin" ]; then
+    echo "avdmanager not found; cannot create ${avd_name}" >&2
+    exit 1
+  fi
+  yes "" | "$avdmanager_bin" create avd -n "$avd_name" -k "$system_image" --force >/dev/null
+fi
+
+emu_flags="${ANDROID_EMULATOR_FLAGS:-"-no-boot-anim -netdelay none -netspeed full -no-snapshot"}"
+headless_flags="${ANDROID_EMULATOR_HEADLESS_FLAGS:-}"
+
+exec "$emulator_bin" -avd "$avd_name" $emu_flags $headless_flags
+'
+"""
+
+android-emulator-latest.command = """
+bash -lc '
+set -euo pipefail
+
+sdk_root="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+emulator_bin="${ANDROID_EMULATOR_BIN:-${sdk_root}/emulator/emulator}"
+avdmanager_bin="${AVDMANAGER_BIN:-${sdk_root}/cmdline-tools/latest/bin/avdmanager}"
+arch="$(uname -m)"
+
+avd_name="${ANDROID_AVD:-}"
+system_image="${ANDROID_SYSTEM_IMAGE:-}"
+
+if [ -z "$avd_name" ]; then
+  if [ "$arch" = "arm64" ] || [ "$arch" = "aarch64" ]; then
+    avd_name="${ANDROID_AVD_LATEST_ARM:-medium_phone_API33_arm64_v8a}"
+  else
+    avd_name="${ANDROID_AVD_LATEST_X86:-medium_phone_API33_x86_64}"
+  fi
+fi
+
+if [ -z "$system_image" ]; then
+  if [ "$arch" = "arm64" ] || [ "$arch" = "aarch64" ]; then
+    system_image="${ANDROID_SYSTEM_IMAGE_LATEST_ARM:-system-images;android-33;google_apis;arm64-v8a}"
+  else
+    system_image="${ANDROID_SYSTEM_IMAGE_LATEST_X86:-system-images;android-33;google_apis;x86_64}"
+  fi
+fi
+
+if [ -z "$sdk_root" ] || [ ! -x "$emulator_bin" ]; then
+  echo "Android SDK not available; activate the environment first." >&2
+  exit 1
+fi
+
+if [ ! -x "$avdmanager_bin" ] && command -v avdmanager >/dev/null 2>&1; then
+  avdmanager_bin="$(command -v avdmanager)"
+fi
+
+mkdir -p "${ANDROID_AVD_HOME:-$HOME/.android/avd}"
+
+if ! "$emulator_bin" -list-avds | grep -q "^${avd_name}$"; then
+  if [ -z "$avdmanager_bin" ] || [ ! -x "$avdmanager_bin" ]; then
+    echo "avdmanager not found; cannot create ${avd_name}" >&2
+    exit 1
+  fi
+  yes "" | "$avdmanager_bin" create avd -n "$avd_name" -k "$system_image" --force >/dev/null
+fi
+
+emu_flags="${ANDROID_EMULATOR_FLAGS:-"-no-boot-anim -netdelay none -netspeed full -no-snapshot"}"
+headless_flags="${ANDROID_EMULATOR_HEADLESS_FLAGS:-}"
+
+exec "$emulator_bin" -avd "$avd_name" $emu_flags $headless_flags
+'
+"""
+
+ios-simulator-min.command = """
+bash -lc '
+set -euo pipefail
+
+device_name="${IOS_SIM_DEVICE:-${IOS_SIM_MIN_DEVICE:-iPhone 14}}"
+runtime="${IOS_SIM_RUNTIME:-${IOS_SIM_MIN_RUNTIME:-18.5}}"
+runtime_id="$runtime"
+
+if [[ "$runtime_id" =~ ^[0-9] ]]; then
+  runtime_id="com.apple.CoreSimulator.SimRuntime.iOS-${runtime_id//./-}"
+fi
+
+export IOS_DEVICE_NAME="$device_name"
+export IOS_RUNTIME_ID="$runtime_id"
+
+udid=$(IOS_DEVICE_NAME="$device_name" IOS_RUNTIME_ID="$runtime_id" python3 - <<\"PY\"
+import json, os, subprocess, sys
+
+device_name = os.environ["IOS_DEVICE_NAME"]
+runtime_id = os.environ["IOS_RUNTIME_ID"]
+
+def run_json(cmd):
+    return json.loads(subprocess.check_output(cmd).decode())
+
+def first_available_device():
+    for runtime, devs in run_json(["xcrun", "simctl", "list", "devices", "-j"]).get("devices", {}).items():
+        for dev in devs or []:
+            if not dev.get("isAvailable"):
+                continue
+            if dev.get("name") == device_name and (not runtime_id or runtime == runtime_id):
+                return dev.get("udid") or ""
+    return ""
+
+def resolve_device_type():
+    for entry in run_json(["xcrun", "simctl", "list", "devicetypes", "-j"]).get("devicetypes", []):
+        if entry.get("name") == device_name:
+            return entry.get("identifier")
+    return None
+
+udid = first_available_device()
+if not udid:
+    device_type = resolve_device_type()
+    if not device_type:
+        print(f"Device type not found for {device_name}", file=sys.stderr)
+        sys.exit(1)
+    udid = subprocess.check_output(["xcrun", "simctl", "create", device_name, device_type, runtime_id]).decode().strip()
+
+print(udid)
+PY
+)
+
+if [ -z "$udid" ]; then
+  echo "Failed to resolve simulator UDID for ${device_name} (${runtime_id})" >&2
+  exit 1
+fi
+
+xcrun simctl boot "$udid" || true
+xcrun simctl bootstatus "$udid" -b
+
+if [ -z "${DETOX_IOS_DEVICE:-}" ]; then
+  export DETOX_IOS_DEVICE="$device_name"
+fi
+
+exec tail -f /dev/null
+'
+"""
+
+ios-simulator-latest.command = """
+bash -lc '
+set -euo pipefail
+
+device_name="${IOS_SIM_DEVICE:-${IOS_SIM_LATEST_DEVICE:-iPhone 17}}"
+runtime="${IOS_SIM_RUNTIME:-${IOS_SIM_LATEST_RUNTIME:-26.1}}"
+runtime_id="$runtime"
+
+if [[ "$runtime_id" =~ ^[0-9] ]]; then
+  runtime_id="com.apple.CoreSimulator.SimRuntime.iOS-${runtime_id//./-}"
+fi
+
+export IOS_DEVICE_NAME="$device_name"
+export IOS_RUNTIME_ID="$runtime_id"
+
+udid=$(IOS_DEVICE_NAME="$device_name" IOS_RUNTIME_ID="$runtime_id" python3 - <<\"PY\"
+import json, os, subprocess, sys
+
+device_name = os.environ["IOS_DEVICE_NAME"]
+runtime_id = os.environ["IOS_RUNTIME_ID"]
+
+def run_json(cmd):
+    return json.loads(subprocess.check_output(cmd).decode())
+
+def first_available_device():
+    for runtime, devs in run_json(["xcrun", "simctl", "list", "devices", "-j"]).get("devices", {}).items():
+        for dev in devs or []:
+            if not dev.get("isAvailable"):
+                continue
+            if dev.get("name") == device_name and (not runtime_id or runtime == runtime_id):
+                return dev.get("udid") or ""
+    return ""
+
+def resolve_device_type():
+    for entry in run_json(["xcrun", "simctl", "list", "devicetypes", "-j"]).get("devicetypes", []):
+        if entry.get("name") == device_name:
+            return entry.get("identifier")
+    return None
+
+udid = first_available_device()
+if not udid:
+    device_type = resolve_device_type()
+    if not device_type:
+        print(f"Device type not found for {device_name}", file=sys.stderr)
+        sys.exit(1)
+    udid = subprocess.check_output(["xcrun", "simctl", "create", device_name, device_type, runtime_id]).decode().strip()
+
+print(udid)
+PY
+)
+
+if [ -z "$udid" ]; then
+  echo "Failed to resolve simulator UDID for ${device_name} (${runtime_id})" >&2
+  exit 1
+fi
+
+xcrun simctl boot "$udid" || true
+xcrun simctl bootstatus "$udid" -b
+
+if [ -z "${DETOX_IOS_DEVICE:-}" ]; then
+  export DETOX_IOS_DEVICE="$device_name"
+fi
+
+exec tail -f /dev/null
+'
+"""
+
 [include]
  environments = [
-     { dir = "env/common" },
-     { dir = "env/nodejs" },
-     { dir = "env/android" },
-     { dir = "env/ios" },
-     { dir = "env/nix" }
+     { dir = "env/common", name = "common" },
+     { dir = "env/nodejs", name = "nodejs" },
+     { dir = "env/android/min", name = "android-min" },
+     { dir = "env/android/latest", name = "android-latest" },
+     { dir = "env/ios/min", name = "ios-min" },
+     { dir = "env/ios/latest", name = "ios-latest" }
  ]
 
 
-## Build and publish your own packages ------------------------------
-##  $ flox build
-##  $ flox publish
-## ------------------------------------------------------------------
 [build]
-# [build.myproject]
-# description = "The coolest project ever"
-# version = "0.0.1"
-# command = """
-#   mkdir -p $out/bin
-#   cargo build --release
-#   cp target/release/myproject $out/bin/myproject
-# """
-
-
-## Other Environment Options -----------------------------------------
+[build.analytics-react-native]
+description = "Yarn install, build, lint, and test the monorepo"
+command = """
+  set -euo pipefail
+  project_root="${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+  cd "$project_root"
+  yarn install --immutable
+  yarn build
+  yarn lint
+  yarn test --coverage
+  out_dir="${out:-${OUT:-}}"
+  if [ -n "${out_dir:-}" ]; then
+    mkdir -p "$out_dir/artifacts"
+    for pkg in packages/core packages/sovran packages/shared packages/plugins/*; do
+      if [ -d "$pkg/lib" ]; then
+        dest="$out_dir/artifacts/$(basename "$pkg")"
+        mkdir -p "$dest"
+        cp -R "$pkg/lib" "$dest/"
+      fi
+    done
+    if [ -d coverage ]; then
+      cp -R coverage "$out_dir/coverage"
+    fi
+  fi
+"""
 [options]
-# Systems that environment is compatible with
-# systems = [
-#   "aarch64-darwin",
-#   "aarch64-linux",
-#   "x86_64-darwin",
-#   "x86_64-linux",
-# ]
-# Uncomment to disable CUDA detection.
-# cuda-detection = false

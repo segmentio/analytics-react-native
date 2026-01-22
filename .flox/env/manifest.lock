@@ -3,9 +3,6 @@
   "manifest": {
     "version": 1,
     "install": {
-      "android-sdk": {
-        "flake": "path:env/nix#android-sdk"
-      },
       "cocoapods": {
         "pkg-path": "cocoapods",
         "systems": [
@@ -19,19 +16,36 @@
       "jdk17": {
         "pkg-path": "jdk17"
       },
-      "nixd": {
-        "pkg-path": "nixd"
-      },
       "yarn": {
         "pkg-path": "yarn-berry",
         "version": "4.12.0"
       }
     },
     "hook": {
-      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n "
+      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n "
     },
     "profile": {},
-    "options": {}
+    "options": {},
+    "services": {
+      "android-emulator-latest": {
+        "command": "bash -lc '\nset -euo pipefail\n\nsdk_root=\"${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}\"\nemulator_bin=\"${ANDROID_EMULATOR_BIN:-${sdk_root}/emulator/emulator}\"\navdmanager_bin=\"${AVDMANAGER_BIN:-${sdk_root}/cmdline-tools/latest/bin/avdmanager}\"\narch=\"$(uname -m)\"\n\navd_name=\"${ANDROID_AVD:-}\"\nsystem_image=\"${ANDROID_SYSTEM_IMAGE:-}\"\n\nif [ -z \"$avd_name\" ]; then\n  if [ \"$arch\" = \"arm64\" ] || [ \"$arch\" = \"aarch64\" ]; then\n    avd_name=\"${ANDROID_AVD_LATEST_ARM:-medium_phone_API33_arm64_v8a}\"\n  else\n    avd_name=\"${ANDROID_AVD_LATEST_X86:-medium_phone_API33_x86_64}\"\n  fi\nfi\n\nif [ -z \"$system_image\" ]; then\n  if [ \"$arch\" = \"arm64\" ] || [ \"$arch\" = \"aarch64\" ]; then\n    system_image=\"${ANDROID_SYSTEM_IMAGE_LATEST_ARM:-system-images;android-33;google_apis;arm64-v8a}\"\n  else\n    system_image=\"${ANDROID_SYSTEM_IMAGE_LATEST_X86:-system-images;android-33;google_apis;x86_64}\"\n  fi\nfi\n\nif [ -z \"$sdk_root\" ] || [ ! -x \"$emulator_bin\" ]; then\n  echo \"Android SDK not available; activate the environment first.\" >&2\n  exit 1\nfi\n\nif [ ! -x \"$avdmanager_bin\" ] && command -v avdmanager >/dev/null 2>&1; then\n  avdmanager_bin=\"$(command -v avdmanager)\"\nfi\n\nmkdir -p \"${ANDROID_AVD_HOME:-$HOME/.android/avd}\"\n\nif ! \"$emulator_bin\" -list-avds | grep -q \"^${avd_name}$\"; then\n  if [ -z \"$avdmanager_bin\" ] || [ ! -x \"$avdmanager_bin\" ]; then\n    echo \"avdmanager not found; cannot create ${avd_name}\" >&2\n    exit 1\n  fi\n  yes \"\" | \"$avdmanager_bin\" create avd -n \"$avd_name\" -k \"$system_image\" --force >/dev/null\nfi\n\nemu_flags=\"${ANDROID_EMULATOR_FLAGS:-\"-no-boot-anim -netdelay none -netspeed full -no-snapshot\"}\"\nheadless_flags=\"${ANDROID_EMULATOR_HEADLESS_FLAGS:-}\"\n\nexec \"$emulator_bin\" -avd \"$avd_name\" $emu_flags $headless_flags\n'\n"
+      },
+      "android-emulator-min": {
+        "command": "bash -lc '\nset -euo pipefail\n\navd_name=\"${ANDROID_AVD:-${ANDROID_AVD_MIN:-pixel_API21_x86_64}}\"\nsystem_image=\"${ANDROID_SYSTEM_IMAGE:-${ANDROID_SYSTEM_IMAGE_MIN:-system-images;android-21;google_apis;x86_64}}\"\nsdk_root=\"${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}\"\nemulator_bin=\"${ANDROID_EMULATOR_BIN:-${sdk_root}/emulator/emulator}\"\navdmanager_bin=\"${AVDMANAGER_BIN:-${sdk_root}/cmdline-tools/latest/bin/avdmanager}\"\n\nif [ -z \"$sdk_root\" ] || [ ! -x \"$emulator_bin\" ]; then\n  echo \"Android SDK not available; activate the environment first.\" >&2\n  exit 1\nfi\n\nif [ ! -x \"$avdmanager_bin\" ] && command -v avdmanager >/dev/null 2>&1; then\n  avdmanager_bin=\"$(command -v avdmanager)\"\nfi\n\nmkdir -p \"${ANDROID_AVD_HOME:-$HOME/.android/avd}\"\n\nif ! \"$emulator_bin\" -list-avds | grep -q \"^${avd_name}$\"; then\n  if [ -z \"$avdmanager_bin\" ] || [ ! -x \"$avdmanager_bin\" ]; then\n    echo \"avdmanager not found; cannot create ${avd_name}\" >&2\n    exit 1\n  fi\n  yes \"\" | \"$avdmanager_bin\" create avd -n \"$avd_name\" -k \"$system_image\" --force >/dev/null\nfi\n\nemu_flags=\"${ANDROID_EMULATOR_FLAGS:-\"-no-boot-anim -netdelay none -netspeed full -no-snapshot\"}\"\nheadless_flags=\"${ANDROID_EMULATOR_HEADLESS_FLAGS:-}\"\n\nexec \"$emulator_bin\" -avd \"$avd_name\" $emu_flags $headless_flags\n'\n"
+      },
+      "ios-simulator-latest": {
+        "command": "bash -lc '\nset -euo pipefail\n\ndevice_name=\"${IOS_SIM_DEVICE:-${IOS_SIM_LATEST_DEVICE:-iPhone 17}}\"\nruntime=\"${IOS_SIM_RUNTIME:-${IOS_SIM_LATEST_RUNTIME:-26.1}}\"\nruntime_id=\"$runtime\"\n\nif [[ \"$runtime_id\" =~ ^[0-9] ]]; then\n  runtime_id=\"com.apple.CoreSimulator.SimRuntime.iOS-${runtime_id//./-}\"\nfi\n\nexport IOS_DEVICE_NAME=\"$device_name\"\nexport IOS_RUNTIME_ID=\"$runtime_id\"\n\nudid=$(IOS_DEVICE_NAME=\"$device_name\" IOS_RUNTIME_ID=\"$runtime_id\" python3 - <<\"PY\"\nimport json, os, subprocess, sys\n\ndevice_name = os.environ[\"IOS_DEVICE_NAME\"]\nruntime_id = os.environ[\"IOS_RUNTIME_ID\"]\n\ndef run_json(cmd):\n    return json.loads(subprocess.check_output(cmd).decode())\n\ndef first_available_device():\n    for runtime, devs in run_json([\"xcrun\", \"simctl\", \"list\", \"devices\", \"-j\"]).get(\"devices\", {}).items():\n        for dev in devs or []:\n            if not dev.get(\"isAvailable\"):\n                continue\n            if dev.get(\"name\") == device_name and (not runtime_id or runtime == runtime_id):\n                return dev.get(\"udid\") or \"\"\n    return \"\"\n\ndef resolve_device_type():\n    for entry in run_json([\"xcrun\", \"simctl\", \"list\", \"devicetypes\", \"-j\"]).get(\"devicetypes\", []):\n        if entry.get(\"name\") == device_name:\n            return entry.get(\"identifier\")\n    return None\n\nudid = first_available_device()\nif not udid:\n    device_type = resolve_device_type()\n    if not device_type:\n        print(f\"Device type not found for {device_name}\", file=sys.stderr)\n        sys.exit(1)\n    udid = subprocess.check_output([\"xcrun\", \"simctl\", \"create\", device_name, device_type, runtime_id]).decode().strip()\n\nprint(udid)\nPY\n)\n\nif [ -z \"$udid\" ]; then\n  echo \"Failed to resolve simulator UDID for ${device_name} (${runtime_id})\" >&2\n  exit 1\nfi\n\nxcrun simctl boot \"$udid\" || true\nxcrun simctl bootstatus \"$udid\" -b\n\nif [ -z \"${DETOX_IOS_DEVICE:-}\" ]; then\n  export DETOX_IOS_DEVICE=\"$device_name\"\nfi\n\nexec tail -f /dev/null\n'\n"
+      },
+      "ios-simulator-min": {
+        "command": "bash -lc '\nset -euo pipefail\n\ndevice_name=\"${IOS_SIM_DEVICE:-${IOS_SIM_MIN_DEVICE:-iPhone 14}}\"\nruntime=\"${IOS_SIM_RUNTIME:-${IOS_SIM_MIN_RUNTIME:-18.5}}\"\nruntime_id=\"$runtime\"\n\nif [[ \"$runtime_id\" =~ ^[0-9] ]]; then\n  runtime_id=\"com.apple.CoreSimulator.SimRuntime.iOS-${runtime_id//./-}\"\nfi\n\nexport IOS_DEVICE_NAME=\"$device_name\"\nexport IOS_RUNTIME_ID=\"$runtime_id\"\n\nudid=$(IOS_DEVICE_NAME=\"$device_name\" IOS_RUNTIME_ID=\"$runtime_id\" python3 - <<\"PY\"\nimport json, os, subprocess, sys\n\ndevice_name = os.environ[\"IOS_DEVICE_NAME\"]\nruntime_id = os.environ[\"IOS_RUNTIME_ID\"]\n\ndef run_json(cmd):\n    return json.loads(subprocess.check_output(cmd).decode())\n\ndef first_available_device():\n    for runtime, devs in run_json([\"xcrun\", \"simctl\", \"list\", \"devices\", \"-j\"]).get(\"devices\", {}).items():\n        for dev in devs or []:\n            if not dev.get(\"isAvailable\"):\n                continue\n            if dev.get(\"name\") == device_name and (not runtime_id or runtime == runtime_id):\n                return dev.get(\"udid\") or \"\"\n    return \"\"\n\ndef resolve_device_type():\n    for entry in run_json([\"xcrun\", \"simctl\", \"list\", \"devicetypes\", \"-j\"]).get(\"devicetypes\", []):\n        if entry.get(\"name\") == device_name:\n            return entry.get(\"identifier\")\n    return None\n\nudid = first_available_device()\nif not udid:\n    device_type = resolve_device_type()\n    if not device_type:\n        print(f\"Device type not found for {device_name}\", file=sys.stderr)\n        sys.exit(1)\n    udid = subprocess.check_output([\"xcrun\", \"simctl\", \"create\", device_name, device_type, runtime_id]).decode().strip()\n\nprint(udid)\nPY\n)\n\nif [ -z \"$udid\" ]; then\n  echo \"Failed to resolve simulator UDID for ${device_name} (${runtime_id})\" >&2\n  exit 1\nfi\n\nxcrun simctl boot \"$udid\" || true\nxcrun simctl bootstatus \"$udid\" -b\n\nif [ -z \"${DETOX_IOS_DEVICE:-}\" ]; then\n  export DETOX_IOS_DEVICE=\"$device_name\"\nfi\n\nexec tail -f /dev/null\n'\n"
+      }
+    },
+    "build": {
+      "analytics-react-native": {
+        "command": "  set -euo pipefail\n  project_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n  cd \"$project_root\"\n  yarn install --immutable\n  yarn build\n  yarn lint\n  yarn test --coverage\n  out_dir=\"${out:-${OUT:-}}\"\n  if [ -n \"${out_dir:-}\" ]; then\n    mkdir -p \"$out_dir/artifacts\"\n    for pkg in packages/core packages/sovran packages/shared packages/plugins/*; do\n      if [ -d \"$pkg/lib\" ]; then\n        dest=\"$out_dir/artifacts/$(basename \"$pkg\")\"\n        mkdir -p \"$dest\"\n        cp -R \"$pkg/lib\" \"$dest/\"\n      fi\n    done\n    if [ -d coverage ]; then\n      cp -R coverage \"$out_dir/coverage\"\n    fi\n  fi\n",
+        "description": "Yarn install, build, lint, and test the monorepo"
+      }
+    }
   },
   "packages": [
     {
@@ -327,122 +341,6 @@
       "priority": 5
     },
     {
-      "attr_path": "nixd",
-      "broken": false,
-      "derivation": "/nix/store/adghf422zirb9fjv2kiylfsymks35ji4-nixd-2.8.2.drv",
-      "description": "Feature-rich Nix language server interoperating with C++ nix",
-      "install_id": "nixd",
-      "license": "LGPL-3.0-or-later",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "name": "nixd-2.8.2",
-      "pname": "nixd",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T04:28:16.347179Z",
-      "stabilities": [
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "2.8.2",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/0a5jirwm929lxp126lhsaivlcjzj56dl-nixd-2.8.2"
-      },
-      "system": "aarch64-darwin",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "nixd",
-      "broken": false,
-      "derivation": "/nix/store/7m4iv8z4i4a9553s2sqfa2zvcmg9l2lb-nixd-2.8.2.drv",
-      "description": "Feature-rich Nix language server interoperating with C++ nix",
-      "install_id": "nixd",
-      "license": "LGPL-3.0-or-later",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "name": "nixd-2.8.2",
-      "pname": "nixd",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T05:02:53.369471Z",
-      "stabilities": [
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "2.8.2",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/jj6w5446cayxq423ay8njsm2x7s2xb3m-nixd-2.8.2"
-      },
-      "system": "aarch64-linux",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "nixd",
-      "broken": false,
-      "derivation": "/nix/store/ws78fvx84zp9cyfay5xnssbdbn6js2r6-nixd-2.8.2.drv",
-      "description": "Feature-rich Nix language server interoperating with C++ nix",
-      "install_id": "nixd",
-      "license": "LGPL-3.0-or-later",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "name": "nixd-2.8.2",
-      "pname": "nixd",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T05:34:27.672785Z",
-      "stabilities": [
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "2.8.2",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/g3hi7ry7z8z721452kyrlh2845b2a94b-nixd-2.8.2"
-      },
-      "system": "x86_64-darwin",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "nixd",
-      "broken": false,
-      "derivation": "/nix/store/5nzwdm5f1vqx0pfdi3llxwif67grb61n-nixd-2.8.2.drv",
-      "description": "Feature-rich Nix language server interoperating with C++ nix",
-      "install_id": "nixd",
-      "license": "LGPL-3.0-or-later",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "name": "nixd-2.8.2",
-      "pname": "nixd",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T06:20:58.268611Z",
-      "stabilities": [
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "2.8.2",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/674dpk4xr58fz0c3jwr3hyhdmj93b12a-nixd-2.8.2"
-      },
-      "system": "x86_64-linux",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
       "attr_path": "yarn-berry",
       "broken": false,
       "derivation": "/nix/store/sy0jbfhah2dkmxf9ngd4j5wpymj61s8z-yarn-berry-4.12.0.drv",
@@ -557,110 +455,6 @@
       "system": "x86_64-linux",
       "group": "toplevel",
       "priority": 5
-    },
-    {
-      "install_id": "android-sdk",
-      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/nix?lastModified=1769112770&narHash=sha256-a0%2BUp20UVzs5QHdmMRICu68qE5QmqdYYiEXeswhkB6o%3D",
-      "flake-description": "Slim Android SDK tools for Devbox via flakes",
-      "locked-flake-attr-path": "packages.aarch64-darwin.android-sdk",
-      "derivation": "/nix/store/z1s53qqxd64afkrzf35rfxn9biykv390-androidsdk.drv",
-      "outputs": {
-        "out": "/nix/store/y7y0hrm1fl1g08d8q1v4f0c0p8ksl08x-androidsdk"
-      },
-      "output-names": [
-        "out"
-      ],
-      "outputs-to-install": [
-        "out"
-      ],
-      "requested-outputs-to-install": [],
-      "package-system": "aarch64-darwin",
-      "system": "aarch64-darwin",
-      "name": "androidsdk",
-      "pname": "android-sdk-cmdline-tools",
-      "version": "19.0",
-      "description": "Android SDK tools, packaged in Nixpkgs",
-      "broken": false,
-      "unfree": true,
-      "priority": 5
-    },
-    {
-      "install_id": "android-sdk",
-      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/nix?lastModified=1769112770&narHash=sha256-a0%2BUp20UVzs5QHdmMRICu68qE5QmqdYYiEXeswhkB6o%3D",
-      "flake-description": "Slim Android SDK tools for Devbox via flakes",
-      "locked-flake-attr-path": "packages.aarch64-linux.android-sdk",
-      "derivation": "/nix/store/1cscvada1vrjkfw2vmpcf0a4iqaf0la2-androidsdk.drv",
-      "outputs": {
-        "out": "/nix/store/p3h35kpk3w34a5afssm9q5ab4i2zq0bh-androidsdk"
-      },
-      "output-names": [
-        "out"
-      ],
-      "outputs-to-install": [
-        "out"
-      ],
-      "requested-outputs-to-install": [],
-      "package-system": "aarch64-linux",
-      "system": "aarch64-linux",
-      "name": "androidsdk",
-      "pname": "android-sdk-cmdline-tools",
-      "version": "19.0",
-      "description": "Android SDK tools, packaged in Nixpkgs",
-      "broken": false,
-      "unfree": true,
-      "priority": 5
-    },
-    {
-      "install_id": "android-sdk",
-      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/nix?lastModified=1769112770&narHash=sha256-a0%2BUp20UVzs5QHdmMRICu68qE5QmqdYYiEXeswhkB6o%3D",
-      "flake-description": "Slim Android SDK tools for Devbox via flakes",
-      "locked-flake-attr-path": "packages.x86_64-darwin.android-sdk",
-      "derivation": "/nix/store/j2rnrlp6y1mfvp6w7nrbziax1h4gx213-androidsdk.drv",
-      "outputs": {
-        "out": "/nix/store/5jnhmcf7w6vpxn27dg4yycfadcp6gv3l-androidsdk"
-      },
-      "output-names": [
-        "out"
-      ],
-      "outputs-to-install": [
-        "out"
-      ],
-      "requested-outputs-to-install": [],
-      "package-system": "x86_64-darwin",
-      "system": "x86_64-darwin",
-      "name": "androidsdk",
-      "pname": "android-sdk-cmdline-tools",
-      "version": "19.0",
-      "description": "Android SDK tools, packaged in Nixpkgs",
-      "broken": false,
-      "unfree": true,
-      "priority": 5
-    },
-    {
-      "install_id": "android-sdk",
-      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/nix?lastModified=1769112770&narHash=sha256-a0%2BUp20UVzs5QHdmMRICu68qE5QmqdYYiEXeswhkB6o%3D",
-      "flake-description": "Slim Android SDK tools for Devbox via flakes",
-      "locked-flake-attr-path": "packages.x86_64-linux.android-sdk",
-      "derivation": "/nix/store/j7gpgpsd0yddr4nb315c8vs7k05a6hss-androidsdk.drv",
-      "outputs": {
-        "out": "/nix/store/x6bzlhb39zsfscihxqzj603x21r7wqad-androidsdk"
-      },
-      "output-names": [
-        "out"
-      ],
-      "outputs-to-install": [
-        "out"
-      ],
-      "requested-outputs-to-install": [],
-      "package-system": "x86_64-linux",
-      "system": "x86_64-linux",
-      "name": "androidsdk",
-      "pname": "android-sdk-cmdline-tools",
-      "version": "19.0",
-      "description": "Android SDK tools, packaged in Nixpkgs",
-      "broken": false,
-      "unfree": true,
-      "priority": 5
     }
   ],
   "compose": {
@@ -669,6 +463,26 @@
       "hook": {},
       "profile": {},
       "options": {},
+      "services": {
+        "android-emulator-latest": {
+          "command": "bash -lc '\nset -euo pipefail\n\nsdk_root=\"${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}\"\nemulator_bin=\"${ANDROID_EMULATOR_BIN:-${sdk_root}/emulator/emulator}\"\navdmanager_bin=\"${AVDMANAGER_BIN:-${sdk_root}/cmdline-tools/latest/bin/avdmanager}\"\narch=\"$(uname -m)\"\n\navd_name=\"${ANDROID_AVD:-}\"\nsystem_image=\"${ANDROID_SYSTEM_IMAGE:-}\"\n\nif [ -z \"$avd_name\" ]; then\n  if [ \"$arch\" = \"arm64\" ] || [ \"$arch\" = \"aarch64\" ]; then\n    avd_name=\"${ANDROID_AVD_LATEST_ARM:-medium_phone_API33_arm64_v8a}\"\n  else\n    avd_name=\"${ANDROID_AVD_LATEST_X86:-medium_phone_API33_x86_64}\"\n  fi\nfi\n\nif [ -z \"$system_image\" ]; then\n  if [ \"$arch\" = \"arm64\" ] || [ \"$arch\" = \"aarch64\" ]; then\n    system_image=\"${ANDROID_SYSTEM_IMAGE_LATEST_ARM:-system-images;android-33;google_apis;arm64-v8a}\"\n  else\n    system_image=\"${ANDROID_SYSTEM_IMAGE_LATEST_X86:-system-images;android-33;google_apis;x86_64}\"\n  fi\nfi\n\nif [ -z \"$sdk_root\" ] || [ ! -x \"$emulator_bin\" ]; then\n  echo \"Android SDK not available; activate the environment first.\" >&2\n  exit 1\nfi\n\nif [ ! -x \"$avdmanager_bin\" ] && command -v avdmanager >/dev/null 2>&1; then\n  avdmanager_bin=\"$(command -v avdmanager)\"\nfi\n\nmkdir -p \"${ANDROID_AVD_HOME:-$HOME/.android/avd}\"\n\nif ! \"$emulator_bin\" -list-avds | grep -q \"^${avd_name}$\"; then\n  if [ -z \"$avdmanager_bin\" ] || [ ! -x \"$avdmanager_bin\" ]; then\n    echo \"avdmanager not found; cannot create ${avd_name}\" >&2\n    exit 1\n  fi\n  yes \"\" | \"$avdmanager_bin\" create avd -n \"$avd_name\" -k \"$system_image\" --force >/dev/null\nfi\n\nemu_flags=\"${ANDROID_EMULATOR_FLAGS:-\"-no-boot-anim -netdelay none -netspeed full -no-snapshot\"}\"\nheadless_flags=\"${ANDROID_EMULATOR_HEADLESS_FLAGS:-}\"\n\nexec \"$emulator_bin\" -avd \"$avd_name\" $emu_flags $headless_flags\n'\n"
+        },
+        "android-emulator-min": {
+          "command": "bash -lc '\nset -euo pipefail\n\navd_name=\"${ANDROID_AVD:-${ANDROID_AVD_MIN:-pixel_API21_x86_64}}\"\nsystem_image=\"${ANDROID_SYSTEM_IMAGE:-${ANDROID_SYSTEM_IMAGE_MIN:-system-images;android-21;google_apis;x86_64}}\"\nsdk_root=\"${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}\"\nemulator_bin=\"${ANDROID_EMULATOR_BIN:-${sdk_root}/emulator/emulator}\"\navdmanager_bin=\"${AVDMANAGER_BIN:-${sdk_root}/cmdline-tools/latest/bin/avdmanager}\"\n\nif [ -z \"$sdk_root\" ] || [ ! -x \"$emulator_bin\" ]; then\n  echo \"Android SDK not available; activate the environment first.\" >&2\n  exit 1\nfi\n\nif [ ! -x \"$avdmanager_bin\" ] && command -v avdmanager >/dev/null 2>&1; then\n  avdmanager_bin=\"$(command -v avdmanager)\"\nfi\n\nmkdir -p \"${ANDROID_AVD_HOME:-$HOME/.android/avd}\"\n\nif ! \"$emulator_bin\" -list-avds | grep -q \"^${avd_name}$\"; then\n  if [ -z \"$avdmanager_bin\" ] || [ ! -x \"$avdmanager_bin\" ]; then\n    echo \"avdmanager not found; cannot create ${avd_name}\" >&2\n    exit 1\n  fi\n  yes \"\" | \"$avdmanager_bin\" create avd -n \"$avd_name\" -k \"$system_image\" --force >/dev/null\nfi\n\nemu_flags=\"${ANDROID_EMULATOR_FLAGS:-\"-no-boot-anim -netdelay none -netspeed full -no-snapshot\"}\"\nheadless_flags=\"${ANDROID_EMULATOR_HEADLESS_FLAGS:-}\"\n\nexec \"$emulator_bin\" -avd \"$avd_name\" $emu_flags $headless_flags\n'\n"
+        },
+        "ios-simulator-latest": {
+          "command": "bash -lc '\nset -euo pipefail\n\ndevice_name=\"${IOS_SIM_DEVICE:-${IOS_SIM_LATEST_DEVICE:-iPhone 17}}\"\nruntime=\"${IOS_SIM_RUNTIME:-${IOS_SIM_LATEST_RUNTIME:-26.1}}\"\nruntime_id=\"$runtime\"\n\nif [[ \"$runtime_id\" =~ ^[0-9] ]]; then\n  runtime_id=\"com.apple.CoreSimulator.SimRuntime.iOS-${runtime_id//./-}\"\nfi\n\nexport IOS_DEVICE_NAME=\"$device_name\"\nexport IOS_RUNTIME_ID=\"$runtime_id\"\n\nudid=$(IOS_DEVICE_NAME=\"$device_name\" IOS_RUNTIME_ID=\"$runtime_id\" python3 - <<\"PY\"\nimport json, os, subprocess, sys\n\ndevice_name = os.environ[\"IOS_DEVICE_NAME\"]\nruntime_id = os.environ[\"IOS_RUNTIME_ID\"]\n\ndef run_json(cmd):\n    return json.loads(subprocess.check_output(cmd).decode())\n\ndef first_available_device():\n    for runtime, devs in run_json([\"xcrun\", \"simctl\", \"list\", \"devices\", \"-j\"]).get(\"devices\", {}).items():\n        for dev in devs or []:\n            if not dev.get(\"isAvailable\"):\n                continue\n            if dev.get(\"name\") == device_name and (not runtime_id or runtime == runtime_id):\n                return dev.get(\"udid\") or \"\"\n    return \"\"\n\ndef resolve_device_type():\n    for entry in run_json([\"xcrun\", \"simctl\", \"list\", \"devicetypes\", \"-j\"]).get(\"devicetypes\", []):\n        if entry.get(\"name\") == device_name:\n            return entry.get(\"identifier\")\n    return None\n\nudid = first_available_device()\nif not udid:\n    device_type = resolve_device_type()\n    if not device_type:\n        print(f\"Device type not found for {device_name}\", file=sys.stderr)\n        sys.exit(1)\n    udid = subprocess.check_output([\"xcrun\", \"simctl\", \"create\", device_name, device_type, runtime_id]).decode().strip()\n\nprint(udid)\nPY\n)\n\nif [ -z \"$udid\" ]; then\n  echo \"Failed to resolve simulator UDID for ${device_name} (${runtime_id})\" >&2\n  exit 1\nfi\n\nxcrun simctl boot \"$udid\" || true\nxcrun simctl bootstatus \"$udid\" -b\n\nif [ -z \"${DETOX_IOS_DEVICE:-}\" ]; then\n  export DETOX_IOS_DEVICE=\"$device_name\"\nfi\n\nexec tail -f /dev/null\n'\n"
+        },
+        "ios-simulator-min": {
+          "command": "bash -lc '\nset -euo pipefail\n\ndevice_name=\"${IOS_SIM_DEVICE:-${IOS_SIM_MIN_DEVICE:-iPhone 14}}\"\nruntime=\"${IOS_SIM_RUNTIME:-${IOS_SIM_MIN_RUNTIME:-18.5}}\"\nruntime_id=\"$runtime\"\n\nif [[ \"$runtime_id\" =~ ^[0-9] ]]; then\n  runtime_id=\"com.apple.CoreSimulator.SimRuntime.iOS-${runtime_id//./-}\"\nfi\n\nexport IOS_DEVICE_NAME=\"$device_name\"\nexport IOS_RUNTIME_ID=\"$runtime_id\"\n\nudid=$(IOS_DEVICE_NAME=\"$device_name\" IOS_RUNTIME_ID=\"$runtime_id\" python3 - <<\"PY\"\nimport json, os, subprocess, sys\n\ndevice_name = os.environ[\"IOS_DEVICE_NAME\"]\nruntime_id = os.environ[\"IOS_RUNTIME_ID\"]\n\ndef run_json(cmd):\n    return json.loads(subprocess.check_output(cmd).decode())\n\ndef first_available_device():\n    for runtime, devs in run_json([\"xcrun\", \"simctl\", \"list\", \"devices\", \"-j\"]).get(\"devices\", {}).items():\n        for dev in devs or []:\n            if not dev.get(\"isAvailable\"):\n                continue\n            if dev.get(\"name\") == device_name and (not runtime_id or runtime == runtime_id):\n                return dev.get(\"udid\") or \"\"\n    return \"\"\n\ndef resolve_device_type():\n    for entry in run_json([\"xcrun\", \"simctl\", \"list\", \"devicetypes\", \"-j\"]).get(\"devicetypes\", []):\n        if entry.get(\"name\") == device_name:\n            return entry.get(\"identifier\")\n    return None\n\nudid = first_available_device()\nif not udid:\n    device_type = resolve_device_type()\n    if not device_type:\n        print(f\"Device type not found for {device_name}\", file=sys.stderr)\n        sys.exit(1)\n    udid = subprocess.check_output([\"xcrun\", \"simctl\", \"create\", device_name, device_type, runtime_id]).decode().strip()\n\nprint(udid)\nPY\n)\n\nif [ -z \"$udid\" ]; then\n  echo \"Failed to resolve simulator UDID for ${device_name} (${runtime_id})\" >&2\n  exit 1\nfi\n\nxcrun simctl boot \"$udid\" || true\nxcrun simctl bootstatus \"$udid\" -b\n\nif [ -z \"${DETOX_IOS_DEVICE:-}\" ]; then\n  export DETOX_IOS_DEVICE=\"$device_name\"\nfi\n\nexec tail -f /dev/null\n'\n"
+        }
+      },
+      "build": {
+        "analytics-react-native": {
+          "command": "  set -euo pipefail\n  project_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n  cd \"$project_root\"\n  yarn install --immutable\n  yarn build\n  yarn lint\n  yarn test --coverage\n  out_dir=\"${out:-${OUT:-}}\"\n  if [ -n \"${out_dir:-}\" ]; then\n    mkdir -p \"$out_dir/artifacts\"\n    for pkg in packages/core packages/sovran packages/shared packages/plugins/*; do\n      if [ -d \"$pkg/lib\" ]; then\n        dest=\"$out_dir/artifacts/$(basename \"$pkg\")\"\n        mkdir -p \"$dest\"\n        cp -R \"$pkg/lib\" \"$dest/\"\n      fi\n    done\n    if [ -d coverage ]; then\n      cp -R coverage \"$out_dir/coverage\"\n    fi\n  fi\n",
+          "description": "Yarn install, build, lint, and test the monorepo"
+        }
+      },
       "include": {
         "environments": [
           {
@@ -678,13 +492,16 @@
             "dir": "env/nodejs"
           },
           {
-            "dir": "env/android"
+            "dir": "env/android/min"
           },
           {
-            "dir": "env/ios"
+            "dir": "env/android/latest"
           },
           {
-            "dir": "env/nix"
+            "dir": "env/ios/min"
+          },
+          {
+            "dir": "env/ios/latest"
           }
         ]
       }
@@ -693,10 +510,15 @@
       {
         "manifest": {
           "version": 1,
+          "install": {},
+          "vars": {},
           "hook": {
             "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n "
           },
           "profile": {},
+          "services": {},
+          "include": {},
+          "build": {},
           "options": {}
         },
         "name": "common",
@@ -713,10 +535,20 @@
               "version": "4.12.0"
             }
           },
+          "vars": {},
           "hook": {
-            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n "
+            "on-activate": "    yarn\n "
           },
           "profile": {},
+          "services": {},
+          "include": {
+            "environments": [
+              {
+                "dir": "../common"
+              }
+            ]
+          },
+          "build": {},
           "options": {}
         },
         "name": "nodejs",
@@ -729,74 +561,105 @@
           "version": 1,
           "install": {
             "android-sdk": {
-              "flake": "path:env/nix#android-sdk"
-            },
-            "gradle": {
-              "pkg-path": "gradle"
-            },
-            "jdk17": {
-              "pkg-path": "jdk17"
-            },
-            "yarn": {
-              "pkg-path": "yarn-berry",
-              "version": "4.12.0"
+              "flake": "path:."
             }
           },
-          "hook": {
-            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n "
-          },
+          "vars": {},
+          "hook": {},
           "profile": {},
+          "services": {},
+          "include": {
+            "environments": [
+              {
+                "dir": "../android-common"
+              }
+            ]
+          },
+          "build": {},
           "options": {}
         },
-        "name": "android",
+        "name": "android-min",
         "descriptor": {
-          "dir": "env/android"
+          "dir": "env/android/min"
         }
       },
       {
         "manifest": {
           "version": 1,
           "install": {
-            "cocoapods": {
-              "pkg-path": "cocoapods",
-              "systems": [
-                "x86_64-darwin",
-                "aarch64-darwin"
-              ]
-            },
-            "yarn": {
-              "pkg-path": "yarn-berry",
-              "version": "4.12.0"
+            "android-sdk": {
+              "flake": "path:."
             }
           },
-          "hook": {
-            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n "
-          },
+          "vars": {},
+          "hook": {},
           "profile": {},
+          "services": {},
+          "include": {
+            "environments": [
+              {
+                "dir": "../android-common"
+              }
+            ]
+          },
+          "build": {},
           "options": {}
         },
-        "name": "ios",
+        "name": "android-latest",
         "descriptor": {
-          "dir": "env/ios"
+          "dir": "env/android/latest"
         }
       },
       {
         "manifest": {
           "version": 1,
-          "install": {
-            "nixd": {
-              "pkg-path": "nixd"
-            }
+          "install": {},
+          "vars": {
+            "IOS_SIM_DEVICE": "iPhone 14",
+            "IOS_SIM_RUNTIME": "18.5"
           },
-          "hook": {
-            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n "
-          },
+          "hook": {},
           "profile": {},
+          "services": {},
+          "include": {
+            "environments": [
+              {
+                "dir": ".."
+              }
+            ]
+          },
+          "build": {},
           "options": {}
         },
-        "name": "nix",
+        "name": "ios-min",
         "descriptor": {
-          "dir": "env/nix"
+          "dir": "env/ios/min"
+        }
+      },
+      {
+        "manifest": {
+          "version": 1,
+          "install": {},
+          "vars": {
+            "IOS_SIM_DEVICE": "iPhone 17",
+            "IOS_SIM_RUNTIME": "26.1"
+          },
+          "hook": {},
+          "profile": {},
+          "services": {},
+          "include": {
+            "environments": [
+              {
+                "dir": ".."
+              }
+            ]
+          },
+          "build": {},
+          "options": {}
+        },
+        "name": "ios-latest",
+        "descriptor": {
+          "dir": "env/ios/latest"
         }
       }
     ],

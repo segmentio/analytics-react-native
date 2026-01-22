@@ -1,13 +1,15 @@
 version = 1
+
 [install]
-android-sdk.flake = "path:env/android/min"
 [vars]
+IOS_SIM_DEVICE = "iPhone 14"
+IOS_SIM_RUNTIME = "18.5"
 [hook]
 [profile]
 [services]
 [include]
 environments = [
-    { dir = "../android-common" }
+    { dir = ".." }
 ]
 [build]
 [options]

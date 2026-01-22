@@ -1,7 +1,100 @@
 version = 1
 [install]
+gradle.pkg-path = "gradle"
+jdk17.pkg-path = "jdk17"
 [vars]
+ANDROID_AVD_MIN = "pixel_API21_x86_64"
+ANDROID_SYSTEM_IMAGE_MIN = "system-images;android-21;google_apis;x86_64"
+ANDROID_AVD_LATEST_X86 = "medium_phone_API33_x86_64"
+ANDROID_SYSTEM_IMAGE_LATEST_X86 = "system-images;android-33;google_apis;x86_64"
+ANDROID_AVD_LATEST_ARM = "medium_phone_API33_arm64_v8a"
+ANDROID_SYSTEM_IMAGE_LATEST_ARM = "system-images;android-33;google_apis;arm64-v8a"
+ANDROID_EMULATOR_FLAGS = "-no-boot-anim -netdelay none -netspeed full -no-snapshot"
+ANDROID_EMULATOR_HEADLESS_FLAGS = "-no-window -no-audio -gpu swiftshader_indirect"
 [hook]
+ on-activate = '''
+  set -euo pipefail
+
+  project_root="${PROJECT_ROOT:-}"
+  if [ -z "$project_root" ] && command -v git >/dev/null 2>&1; then
+    project_root="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+  fi
+  if [ -z "$project_root" ]; then
+    project_root="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/../../.." && pwd)"
+  fi
+  export PROJECT_ROOT="$project_root"
+
+  if [ -z "${ANDROID_SDK_ROOT:-}" ] && [ -z "${ANDROID_HOME:-}" ]; then
+    for target in \
+      "path:${project_root}/env/android/latest#android-sdk-latest.outPath" \
+      "path:${project_root}/env/android/min#android-sdk-min.outPath"
+    do
+      sdk_out=$(nix --extra-experimental-features "nix-command flakes" eval --raw "$target" 2>/dev/null || true)
+      if [ -n "${sdk_out:-}" ] && [ -d "$sdk_out/libexec/android-sdk" ]; then
+        export ANDROID_SDK_ROOT="$sdk_out/libexec/android-sdk"
+        export ANDROID_HOME="$ANDROID_SDK_ROOT"
+        break
+      fi
+    done
+  fi
+
+  if [ -z "${ANDROID_SDK_ROOT:-}" ] && [ -n "${ANDROID_HOME:-}" ]; then
+    export ANDROID_SDK_ROOT="$ANDROID_HOME"
+  fi
+
+  if [ -n "${ANDROID_SDK_ROOT:-}" ] && [ -z "${ANDROID_HOME:-}" ]; then
+    export ANDROID_HOME="$ANDROID_SDK_ROOT"
+  fi
+
+  if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
+    cmdline_tools_bin=""
+    if [ -d "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" ]; then
+      cmdline_tools_bin="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin"
+    else
+      cmdline_tools_dir=$(find "$ANDROID_SDK_ROOT/cmdline-tools" -maxdepth 1 -mindepth 1 -type d -not -name latest 2>/dev/null | sort -V | tail -n 1)
+      if [ -n "${cmdline_tools_dir:-}" ] && [ -d "$cmdline_tools_dir/bin" ]; then
+        cmdline_tools_bin="$cmdline_tools_dir/bin"
+      fi
+    fi
+
+    new_path="$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/platform-tools"
+
+    if [ -n "${cmdline_tools_bin:-}" ]; then
+      new_path="$new_path:$cmdline_tools_bin"
+    fi
+
+    new_path="$new_path:$ANDROID_SDK_ROOT/tools/bin:$PATH"
+    export PATH="$new_path"
+
+    if [ -z "${ANDROID_EMULATOR_BIN:-}" ]; then
+      export ANDROID_EMULATOR_BIN="$ANDROID_SDK_ROOT/emulator/emulator"
+    fi
+    if [ -z "${AVDMANAGER_BIN:-}" ] && [ -n "${cmdline_tools_bin:-}" ]; then
+      export AVDMANAGER_BIN="$cmdline_tools_bin/avdmanager"
+    fi
+    if [ -z "${SDKMANAGER_BIN:-}" ] && [ -n "${cmdline_tools_bin:-}" ]; then
+      export SDKMANAGER_BIN="$cmdline_tools_bin/sdkmanager"
+    fi
+
+    if [ -z "${ANDROID_AVD_HOME:-}" ]; then
+      avd_home="${FLOX_ENV_CACHE:-$HOME/.flox/cache}/android/avd"
+      mkdir -p "$avd_home"
+      export ANDROID_AVD_HOME="$avd_home"
+    fi
+    if [ -z "${ANDROID_USER_HOME:-}" ]; then
+      export ANDROID_USER_HOME="${ANDROID_AVD_HOME:-$HOME/.android}"
+    fi
+  fi
+
+  if [ -z "${DETOX_AVD:-}" ]; then
+    arch="$(uname -m)"
+    if [ "$arch" = "arm64" ] || [ "$arch" = "aarch64" ]; then
+      export DETOX_AVD="${ANDROID_AVD_LATEST_ARM:-medium_phone_API33_arm64_v8a}"
+    else
+      export DETOX_AVD="${ANDROID_AVD_LATEST_X86:-medium_phone_API33_x86_64}"
+    fi
+  fi
+ '''
 [profile]
 [services]
 [include]

@@ -1,0 +1,18 @@
+formatter nix
+  command = "nixfmt"
+  includes = ["*.nix"]
+
+formatter taplo
+  command = "taplo"
+  options = ["format"]
+  includes = ["*.toml"]
+
+formatter prettier
+  command = "prettier"
+  options = ["--write"]
+  includes = ["*.js", "*.jsx", "*.ts", "*.tsx", "*.md", "*.yml", "*.yaml", "*.json"]
+
+formatter shfmt
+  command = "shfmt"
+  options = ["-w", "-s", "-i", "2"]
+  includes = ["*.sh"]

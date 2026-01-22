@@ -1,6 +1,6 @@
 version = 1
 [install]
-android-sdk.flake = "path:."
+android-sdk.flake = "path:env/android/latest"
 [vars]
 [hook]
 [profile]

@@ -16,8 +16,10 @@
       }
     },
     "vars": {
+      "IOS_SIM_DEVICE": "iPhone 14",
       "IOS_SIM_LATEST_DEVICE": "iPhone 17",
-      "IOS_SIM_LATEST_RUNTIME": "26.1"
+      "IOS_SIM_LATEST_RUNTIME": "26.1",
+      "IOS_SIM_RUNTIME": "18.5"
     },
     "hook": {
       "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n \n  set -euo pipefail\n\n  project_root=\"${PROJECT_ROOT:-}\"\n  if [ -z \"$project_root\" ] && command -v git >/dev/null 2>&1; then\n    project_root=\"$(git rev-parse --show-toplevel 2>/dev/null || true)\"\n  fi\n  if [ -z \"$project_root\" ]; then\n    project_root=\"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/../..\" && pwd)\"\n  fi\n  export PROJECT_ROOT=\"$project_root\"\n\n  if [ -z \"${DETOX_IOS_DEVICE:-}\" ]; then\n    export DETOX_IOS_DEVICE=\"${IOS_SIM_DEVICE:-${IOS_SIM_LATEST_DEVICE:-iPhone 17}}\"\n  fi\n "
@@ -204,31 +206,17 @@
   "compose": {
     "composer": {
       "version": 1,
-      "install": {
-        "cocoapods": {
-          "pkg-path": "cocoapods",
-          "systems": [
-            "x86_64-darwin",
-            "aarch64-darwin"
-          ]
-        }
-      },
       "vars": {
-        "IOS_SIM_LATEST_DEVICE": "iPhone 17",
-        "IOS_SIM_LATEST_RUNTIME": "26.1"
+        "IOS_SIM_DEVICE": "iPhone 14",
+        "IOS_SIM_RUNTIME": "18.5"
       },
-      "hook": {
-        "on-activate": "  set -euo pipefail\n\n  project_root=\"${PROJECT_ROOT:-}\"\n  if [ -z \"$project_root\" ] && command -v git >/dev/null 2>&1; then\n    project_root=\"$(git rev-parse --show-toplevel 2>/dev/null || true)\"\n  fi\n  if [ -z \"$project_root\" ]; then\n    project_root=\"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/../..\" && pwd)\"\n  fi\n  export PROJECT_ROOT=\"$project_root\"\n\n  if [ -z \"${DETOX_IOS_DEVICE:-}\" ]; then\n    export DETOX_IOS_DEVICE=\"${IOS_SIM_DEVICE:-${IOS_SIM_LATEST_DEVICE:-iPhone 17}}\"\n  fi\n "
-      },
+      "hook": {},
       "profile": {},
       "options": {},
       "include": {
         "environments": [
           {
-            "dir": "../common"
-          },
-          {
-            "dir": "../nodejs"
+            "dir": ".."
           }
         ]
       }
@@ -237,35 +225,32 @@
       {
         "manifest": {
           "version": 1,
-          "hook": {
-            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n "
-          },
-          "profile": {},
-          "options": {}
-        },
-        "name": "common",
-        "descriptor": {
-          "dir": "../common"
-        }
-      },
-      {
-        "manifest": {
-          "version": 1,
           "install": {
+            "cocoapods": {
+              "pkg-path": "cocoapods",
+              "systems": [
+                "x86_64-darwin",
+                "aarch64-darwin"
+              ]
+            },
             "yarn": {
               "pkg-path": "yarn-berry",
               "version": "4.12.0"
             }
           },
+          "vars": {
+            "IOS_SIM_LATEST_DEVICE": "iPhone 17",
+            "IOS_SIM_LATEST_RUNTIME": "26.1"
+          },
           "hook": {
-            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n "
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    yarn\n \n  set -euo pipefail\n\n  project_root=\"${PROJECT_ROOT:-}\"\n  if [ -z \"$project_root\" ] && command -v git >/dev/null 2>&1; then\n    project_root=\"$(git rev-parse --show-toplevel 2>/dev/null || true)\"\n  fi\n  if [ -z \"$project_root\" ]; then\n    project_root=\"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/../..\" && pwd)\"\n  fi\n  export PROJECT_ROOT=\"$project_root\"\n\n  if [ -z \"${DETOX_IOS_DEVICE:-}\" ]; then\n    export DETOX_IOS_DEVICE=\"${IOS_SIM_DEVICE:-${IOS_SIM_LATEST_DEVICE:-iPhone 17}}\"\n  fi\n "
           },
           "profile": {},
           "options": {}
         },
-        "name": "nodejs",
+        "name": "ios",
         "descriptor": {
-          "dir": "../nodejs"
+          "dir": ".."
         }
       }
     ],

@@ -2,8 +2,18 @@
   "lockfile-version": 1,
   "manifest": {
     "version": 1,
+    "vars": {
+      "ANDROID_AVD_LATEST_ARM": "medium_phone_API33_arm64_v8a",
+      "ANDROID_AVD_LATEST_X86": "medium_phone_API33_x86_64",
+      "ANDROID_AVD_MIN": "pixel_API21_x86_64",
+      "ANDROID_EMULATOR_FLAGS": "-no-boot-anim -netdelay none -netspeed full -no-snapshot",
+      "ANDROID_EMULATOR_HEADLESS_FLAGS": "-no-window -no-audio -gpu swiftshader_indirect",
+      "ANDROID_SYSTEM_IMAGE_LATEST_ARM": "system-images;android-33;google_apis;arm64-v8a",
+      "ANDROID_SYSTEM_IMAGE_LATEST_X86": "system-images;android-33;google_apis;x86_64",
+      "ANDROID_SYSTEM_IMAGE_MIN": "system-images;android-21;google_apis;x86_64"
+    },
     "hook": {
-      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n "
+      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n  set -euo pipefail\n\n  if [ -z \"${DETOX_AVD:-}\" ]; then\n    arch=\"$(uname -m)\"\n    if [ \"$arch\" = \"arm64\" ] || [ \"$arch\" = \"aarch64\" ]; then\n      export DETOX_AVD=\"${ANDROID_AVD_LATEST_ARM:-medium_phone_API33_arm64_v8a}\"\n    else\n      export DETOX_AVD=\"${ANDROID_AVD_LATEST_X86:-medium_phone_API33_x86_64}\"\n    fi\n  fi\n "
     },
     "profile": {},
     "options": {}
@@ -12,7 +22,19 @@
   "compose": {
     "composer": {
       "version": 1,
-      "hook": {},
+      "vars": {
+        "ANDROID_AVD_LATEST_ARM": "medium_phone_API33_arm64_v8a",
+        "ANDROID_AVD_LATEST_X86": "medium_phone_API33_x86_64",
+        "ANDROID_AVD_MIN": "pixel_API21_x86_64",
+        "ANDROID_EMULATOR_FLAGS": "-no-boot-anim -netdelay none -netspeed full -no-snapshot",
+        "ANDROID_EMULATOR_HEADLESS_FLAGS": "-no-window -no-audio -gpu swiftshader_indirect",
+        "ANDROID_SYSTEM_IMAGE_LATEST_ARM": "system-images;android-33;google_apis;arm64-v8a",
+        "ANDROID_SYSTEM_IMAGE_LATEST_X86": "system-images;android-33;google_apis;x86_64",
+        "ANDROID_SYSTEM_IMAGE_MIN": "system-images;android-21;google_apis;x86_64"
+      },
+      "hook": {
+        "on-activate": "  set -euo pipefail\n\n  if [ -z \"${DETOX_AVD:-}\" ]; then\n    arch=\"$(uname -m)\"\n    if [ \"$arch\" = \"arm64\" ] || [ \"$arch\" = \"aarch64\" ]; then\n      export DETOX_AVD=\"${ANDROID_AVD_LATEST_ARM:-medium_phone_API33_arm64_v8a}\"\n    else\n      export DETOX_AVD=\"${ANDROID_AVD_LATEST_X86:-medium_phone_API33_x86_64}\"\n    fi\n  fi\n "
+      },
       "profile": {},
       "options": {},
       "include": {
