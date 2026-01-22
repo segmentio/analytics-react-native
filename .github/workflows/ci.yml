@@ -17,6 +17,31 @@ jobs:
     runs-on: 'ubuntu-latest'
     steps:
       - uses: actions/checkout@v4
+      - name: Aggressive disk cleanup (Ubuntu)
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/local/lib/node_modules
+          sudo rm -rf /usr/local/share/boost
+          sudo rm -rf /usr/local/share/chromium
+          sudo rm -rf /usr/local/share/powershell
+          sudo rm -rf /usr/local/share/edge_driver
+          sudo rm -rf /usr/local/share/gecko_driver
+          sudo rm -rf /usr/local/share/phantomjs
+          sudo rm -rf "$HOME/.cache"
+          df -H
+      - name: Yarn cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/yarn
+            .yarn/cache
+          key: yarn-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            yarn-${{ runner.os }}-
       - name: disk check
         run: df -H
       - name: Free Disk Space (Ubuntu)
@@ -25,6 +50,8 @@ jobs:
         run: df -H
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          enable-cache: 'true'
       - name: disk check
         run: df -H
       - name: build
@@ -47,7 +74,29 @@ jobs:
             ios-runtime: "26.1"
     steps:
       - uses: actions/checkout@v4
-
+      - name: Yarn cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/yarn
+            .yarn/cache
+          key: yarn-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            yarn-${{ runner.os }}-
+      - name: Aggressive disk cleanup (macOS)
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          sudo rm -rf /Applications/Android\ Studio.app
+          sudo rm -rf /usr/local/share/miniconda
+          sudo rm -rf /opt/homebrew
+          sudo rm -rf "$HOME/Library/Android"
+          sudo rm -rf "$HOME/.gradle"
+          sudo rm -rf "$HOME/Library/Developer/CoreSimulator/Devices"
+          sudo rm -rf "$HOME/Library/Developer/Xcode/DerivedData"
+          df -H
       - name: disk check
         run: df -H
       - name: Free Disk Space
@@ -63,8 +112,28 @@ jobs:
           xcode-version: '26.1.1'
       - name: disk check
         run: df -H
+      - name: CocoaPods cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/CocoaPods
+          key: cocoapods-${{ runner.os }}-${{ env.XCODE_VERSION }}-${{ hashFiles('examples/E2E/ios/Podfile.lock') }}
+          restore-keys: |
+            cocoapods-${{ runner.os }}-${{ env.XCODE_VERSION }}-
+            cocoapods-${{ runner.os }}-
+      - name: DerivedData cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+          key: derived-${{ runner.os }}-${{ env.XCODE_VERSION }}-${{ hashFiles('examples/E2E/ios/Podfile.lock') }}
+          restore-keys: |
+            derived-${{ runner.os }}-${{ env.XCODE_VERSION }}-
+            derived-${{ runner.os }}-
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          enable-cache: 'true'
         # --omit-nix-env is important to use the macos system c toolchain instead of the nix toolchain
       - name: disk check
         run: df -H
@@ -88,10 +157,46 @@ jobs:
             start-script: start-android-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Yarn cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/yarn
+            .yarn/cache
+          key: yarn-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            yarn-${{ runner.os }}-
+      - name: Aggressive disk cleanup (Ubuntu)
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/local/lib/node_modules
+          sudo rm -rf /usr/local/share/boost
+          sudo rm -rf /usr/local/share/chromium
+          sudo rm -rf /usr/local/share/powershell
+          sudo rm -rf /usr/local/share/edge_driver
+          sudo rm -rf /usr/local/share/gecko_driver
+          sudo rm -rf /usr/local/share/phantomjs
+          sudo rm -rf "$HOME/.cache"
+          df -H
       - name: disk check
         run: df -H
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          enable-cache: 'true'
+      - name: Gradle cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/buildSrc/**/*.kt') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
       - name: disk check
         run: df -H
       - name: Android E2E Tests
