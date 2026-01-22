@@ -1,7 +1,7 @@
 name: CI
 on:
   push:
-    branches: [master, beta, ci2]
+    branches: [master, beta]
   pull_request:
     branches: [master, beta]
   workflow_dispatch:
@@ -79,23 +79,12 @@ jobs:
         with:
           enable-cache: 'true'
         # --omit-nix-env is important to use the macos system c toolchain instead of the nix toolchain
-      - name: iOS setup (simulators, pods)
-        env:
-          IOS_DEVICE_NAMES: ${{ matrix.ios-device }}
-          IOS_RUNTIME: ${{ matrix.ios-runtime }}
-        run: |
-          set -euo pipefail
-          devbox shell --omit-nix-env --command "devbox run setup-ios && yarn install && yarn e2e install && yarn e2e pods"
-      - name: iOS build
-        run: |
-          set -euo pipefail
-          devbox shell --omit-nix-env --command "yarn build && yarn e2e build:ios"
       - name: iOS E2E Tests
         env:
           DETOX_IOS_DEVICE: ${{ matrix.ios-device }}
         run: |
           set -euo pipefail
-          devbox shell --omit-nix-env --command "DETOX_IOS_DEVICE='${{ matrix.ios-device }}' yarn e2e test:ios"
+          devbox shell --omit-nix-env --command "devbox run test-ios"
 
   run-e2e-android:
     continue-on-error: true
@@ -147,26 +136,6 @@ jobs:
             ~/.android/avd/*
             ~/.android/adb*
           key: avd-${{ matrix.avd-name }}
-
-      - name: Android setup (AVD + deps)
-        env:
-          DETOX_AVD: ${{ matrix.avd-name }}
-          EMU_HEADLESS: "1"
-          AVD_FLAVOR: ${{ startsWith(matrix.avd-name, 'pixel') && 'minsdk' || 'latest' }}
-        run: |
-          set -euo pipefail
-          devbox run ${{ matrix.start-script }}
-          devbox run setup-android
-          yarn install
-          yarn e2e install
-
-      - name: Android build
-        run: |
-          set -euo pipefail
-          devbox run setup-android
-          yarn build
-          yarn e2e build:android
-
       - name: Android E2E Tests
         env:
           DETOX_AVD: ${{ matrix.avd-name }}
