@@ -9,6 +9,7 @@
     "jdk17":                  "latest",
     "gradle":                 "latest",
     "jq":                     "latest",
+    "path:./nix#android-sdk": "",
   },
   "shell": {
     "init_hook": [
