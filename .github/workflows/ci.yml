@@ -25,8 +25,6 @@ jobs:
         run: df -H
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
-        with:
-          enable-cache: 'false'
       - name: disk check
         run: df -H
       - name: build
@@ -67,8 +65,6 @@ jobs:
         run: df -H
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
-        with:
-          enable-cache: 'false'
         # --omit-nix-env is important to use the macos system c toolchain instead of the nix toolchain
       - name: disk check
         run: df -H
@@ -96,8 +92,6 @@ jobs:
         run: df -H
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
-        with:
-          enable-cache: 'false'
       - name: disk check
         run: df -H
       - name: Android E2E Tests
