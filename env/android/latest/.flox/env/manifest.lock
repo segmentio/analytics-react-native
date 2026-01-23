@@ -628,7 +628,7 @@
     },
     {
       "install_id": "android-sdk",
-      "locked-url": "path:env/android/latest?lastModified=1769136139&narHash=sha256-sb2uOGr899aqmvUI4iP/2Ce2BKCRkP7guAdd/dkKTuw%3D",
+      "locked-url": "path:env/android/latest",
       "flake-description": "Android SDK (API 33) for flox",
       "locked-flake-attr-path": "packages.aarch64-darwin.default",
       "derivation": "/nix/store/0l95fy1ffhir9i3bc58gsi8mnpcz5py2-androidsdk.drv",
@@ -654,7 +654,7 @@
     },
     {
       "install_id": "android-sdk",
-      "locked-url": "path:env/android/latest?lastModified=1769136139&narHash=sha256-sb2uOGr899aqmvUI4iP/2Ce2BKCRkP7guAdd/dkKTuw%3D",
+      "locked-url": "path:env/android/latest",
       "flake-description": "Android SDK (API 33) for flox",
       "locked-flake-attr-path": "packages.aarch64-linux.default",
       "derivation": "/nix/store/6w6v5wwvmpjbxciw00jqywnnnmsxfvh2-androidsdk.drv",
@@ -680,7 +680,7 @@
     },
     {
       "install_id": "android-sdk",
-      "locked-url": "path:env/android/latest?lastModified=1769136139&narHash=sha256-sb2uOGr899aqmvUI4iP/2Ce2BKCRkP7guAdd/dkKTuw%3D",
+      "locked-url": "path:env/android/latest",
       "flake-description": "Android SDK (API 33) for flox",
       "locked-flake-attr-path": "packages.x86_64-darwin.default",
       "derivation": "/nix/store/d3gwnrkzsk0179m6w13pm0n0k7j7a3ri-androidsdk.drv",
@@ -706,7 +706,7 @@
     },
     {
       "install_id": "android-sdk",
-      "locked-url": "path:env/android/latest?lastModified=1769136139&narHash=sha256-sb2uOGr899aqmvUI4iP/2Ce2BKCRkP7guAdd/dkKTuw%3D",
+      "locked-url": "path:env/android/latest",
       "flake-description": "Android SDK (API 33) for flox",
       "locked-flake-attr-path": "packages.x86_64-linux.default",
       "derivation": "/nix/store/pm23dkchhl3fyzp08bymifcrci3y6ji4-androidsdk.drv",
