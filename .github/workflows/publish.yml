@@ -23,23 +23,16 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GH_TOKEN }}
 
-      # Workaround for corepack enable in node
-      # Source: (https://github.com/actions/setup-node/issues/899#issuecomment-1828798029)
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: corepack enable
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: yarn
-      # End workaround
 
       - name: Install flox
         uses: flox/install-flox-action@v2.2.0
 
       - name: Config, Build, Release
-        run: flox activate -d . -- bash flox/scripts/release.sh
+        run: flox activate -d . -- bash -lc "bash flox/scripts/release.sh"
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -47,6 +40,4 @@ jobs:
 
       - name: Update Apps
         run: |
-          yarn install --no-immutable
-          yarn e2e install --no-immutable
-          yarn example install --no-immutable
+          flox activate -d env/nodejs -- bash -lc "yarn install --no-immutable && yarn e2e install --no-immutable && yarn example install --no-immutable"

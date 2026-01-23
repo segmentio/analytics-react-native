@@ -93,7 +93,7 @@ jobs:
         run: df -H
       - name: iOS E2E Tests
         run: |
-          flox activate -d env/ios/latest -- bash -lc "yarn install --immutable && yarn e2e:ios"
+          flox activate -d env/ios/latest -- bash -lc "yarn e2e:ios"
 
   run-e2e-android:
     continue-on-error: true
@@ -141,6 +141,6 @@ jobs:
         run: df -H
       - name: Android E2E Tests
         run: |
-          flox activate -d env/android/latest -- bash -lc "yarn install --immutable && yarn e2e:android"
+          flox activate -d env/android/latest -- bash -lc "yarn e2e:android"
       - name: disk check
         run: df -H
