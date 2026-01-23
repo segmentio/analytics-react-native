@@ -36,6 +36,24 @@ jobs:
             device-target: "ios-latest"
     steps:
       - uses: actions/checkout@v4
+      - name: Yarn cache (E2E)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/yarn
+            examples/E2E/.yarn/cache
+          key: e2e-yarn-${{ runner.os }}-${{ hashFiles('examples/E2E/yarn.lock') }}
+          restore-keys: |
+            e2e-yarn-${{ runner.os }}-
+      - name: CocoaPods cache (E2E)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/CocoaPods
+            examples/E2E/ios/Pods
+          key: e2e-pods-${{ runner.os }}-${{ hashFiles('examples/E2E/ios/Podfile.lock') }}
+          restore-keys: |
+            e2e-pods-${{ runner.os }}-
       - name: Aggressive disk cleanup (macOS)
         run: |
           sudo rm -rf /usr/share/dotnet

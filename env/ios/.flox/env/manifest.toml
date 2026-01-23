@@ -13,6 +13,10 @@ IOS_SIM_LATEST_DEVICE = "iPhone 17"
 [hook]
  on-activate = '''
   set -euo pipefail
+
+  # Prefer system toolchains for iOS builds; avoid Nix C toolchain flags leaking into xcodebuild.
+  unset NIX_CFLAGS_COMPILE NIX_LDFLAGS NIX_CFLAGS_LINK LIBRARY_PATH
+
   project_root="${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
   if [ ! -d "$project_root/env/ios" ]; then
     project_root="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/../../../../.." && pwd)"
