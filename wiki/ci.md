@@ -19,3 +19,4 @@ Tips:
 - `yarn lint:fix`: eslint with auto-fix.
 - `yarn e2e:android` / `yarn e2e:ios`: run platform E2E flows (assumes flox env provides emulator/simulator).
 - `yarn update:flox`: regenerate flox lockfiles in dependency-safe order (requires Nix flake support).
+
