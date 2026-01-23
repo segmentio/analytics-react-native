@@ -108,12 +108,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: android-min
+          - name: android-minsdk
             emulator-service: android-emulator-min
             env-dir: env/android/min
             device-target: "android-min"
             avd-flavor: "minsdk"
-          - name: android-max
+          - name: android-maxsdk
             emulator-service: android-emulator-max
             env-dir: env/android/max
             device-target: "android-max"
@@ -124,7 +124,7 @@ jobs:
         id: android_targets
         run: |
           profile="android-max"
-          if [ "${{ matrix.name }}" = "android-min" ]; then profile="android-min"; fi
+          if [ "${{ matrix.name }}" = "android-minsdk" ]; then profile="android-min"; fi
           eval "$(scripts/targets.sh profile "$profile")"
           {
             echo "ANDROID_API=${ANDROID_API}"

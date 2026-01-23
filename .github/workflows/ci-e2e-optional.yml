@@ -106,7 +106,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: android-max
+          - name: android-maxsdk
             emulator-service: android-emulator-max
             env-dir: env/android/max
             avd-flavor: "max"
