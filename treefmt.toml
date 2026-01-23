@@ -1,13 +1,13 @@
-formatter nix
-  command = "nixfmt"
-  includes = ["*.nix"]
+[formatter.nix]
+command = "nixfmt"
+includes = ["*.nix"]
 
-formatter prettier
-  command = "prettier"
-  options = ["--write"]
-  includes = ["*.js", "*.jsx", "*.ts", "*.tsx", "*.md", "*.yml", "*.yaml", "*.json"]
+[formatter.prettier]
+command = "prettier"
+options = ["--write"]
+includes = ["*.js", "*.jsx", "*.ts", "*.tsx", "*.md", "*.yml", "*.yaml", "*.json"]
 
-formatter shfmt
-  command = "shfmt"
-  options = ["-w", "-s", "-i", "2"]
-  includes = ["*.sh"]
+[formatter.shfmt]
+command = "shfmt"
+options = ["-w", "-s", "-i", "2"]
+includes = ["*.sh"]

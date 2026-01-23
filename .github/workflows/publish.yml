@@ -36,9 +36,7 @@ jobs:
       # End workaround
 
       - name: Install flox
-        run: |
-          curl -L https://get.flox.dev/install.sh | bash
-          echo "$HOME/.flox/bin" >> "$GITHUB_PATH"
+        uses: flox/install-flox-action@v2.2.0
 
       - name: Config, Build, Release
         run: flox activate -d . -- bash flox/scripts/release.sh
