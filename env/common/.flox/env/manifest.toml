@@ -28,8 +28,9 @@ shfmt.pkg-path = "shfmt"
       "$path" "$@"
     }
     if command -v corepack >/dev/null 2>&1; then
-      corepack enable --install-directory "$HOME/.local/bin" >/dev/null 2>&1 || true
       export PATH="$HOME/.local/bin:$PATH"
+      corepack enable --install-directory "$HOME/.local/bin" >/dev/null 2>&1 || true
+      corepack prepare "yarn@4.12.0" --activate --install-directory "$HOME/.local/bin" >/dev/null 2>&1 || true
     fi
  '''
 

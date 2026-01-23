@@ -33,36 +33,21 @@ jobs:
             device-target: "ios-latest"
     steps:
       - uses: actions/checkout@v4
-      - name: Yarn cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/yarn
-            .yarn/cache
-          key: yarn-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            yarn-${{ runner.os }}-
+      - name: Aggressive disk cleanup (macOS)
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          sudo rm -rf /Applications/Android\ Studio.app
+          sudo rm -rf /usr/local/share/miniconda
+          sudo rm -rf "$HOME/Library/Android"
+          sudo rm -rf "$HOME/.gradle"
+          sudo rm -rf "$HOME/Library/Developer/CoreSimulator/Devices"
+          sudo rm -rf "$HOME/Library/Developer/Xcode/DerivedData"
+          df -H
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: ${{ matrix.xcode-version }}
-      - name: CocoaPods cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/Library/Caches/CocoaPods
-          key: cocoapods-${{ runner.os }}-${{ matrix.xcode-version }}-${{ hashFiles('examples/E2E/ios/Podfile.lock') }}
-          restore-keys: |
-            cocoapods-${{ runner.os }}-${{ matrix.xcode-version }}-
-            cocoapods-${{ runner.os }}-
-      - name: DerivedData cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/Library/Developer/Xcode/DerivedData
-          key: derived-${{ runner.os }}-${{ matrix.xcode-version }}-${{ hashFiles('examples/E2E/ios/Podfile.lock') }}
-          restore-keys: |
-            derived-${{ runner.os }}-${{ matrix.xcode-version }}-
-            derived-${{ runner.os }}-
       - name: Install flox
         uses: flox/install-flox-action@v2.2.0
       - name: Yarn debug (iOS env)
@@ -90,26 +75,10 @@ jobs:
             device-target: "android-latest"
     steps:
       - uses: actions/checkout@v4
-      - name: Yarn cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/yarn
-            .yarn/cache
-          key: yarn-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            yarn-${{ runner.os }}-
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@v1.3.1
       - name: Install flox
         uses: flox/install-flox-action@v2.2.0
-      - name: Gradle cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/buildSrc/**/*.kt') }}
-          restore-keys: |
-            gradle-${{ runner.os }}-
       - name: Android E2E Tests
         run: |
           flox activate -d env/android/latest -- bash -lc "yarn e2e:android"
