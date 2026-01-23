@@ -53,23 +53,9 @@ jobs:
           xcode-version: ${{ matrix.xcode-version }}
       - name: Install flox
         uses: flox/install-flox-action@v2.2.0
-      - name: Yarn debug (iOS env)
-        run: |
-          CLEAN_PATH=$(printf "%s" "$PATH" | tr ':' '\n' | grep -v '/.yarn/bin' | awk '!seen[$0]++' | paste -sd ':' -)
-          PATH="$CLEAN_PATH" flox activate -d env/ios/latest -- bash -lc '
-            echo PATH=$PATH
-            ls -l /Users/runner/.local/bin || true
-            command -v yarn
-            yarn --version
-            node -v
-            command -v corepack && corepack --version
-          '
       - name: iOS E2E Tests
         run: |
-          CLEAN_PATH=$(printf "%s" "$PATH" | tr ':' '\n' | grep -v '/.yarn/bin' | awk '!seen[$0]++' | paste -sd ':' -)
-          PATH="$CLEAN_PATH" flox activate -d env/ios/latest -- bash -lc '
-            yarn e2e:ios
-          '
+          flox activate -d env/ios/latest -- bash -lc "yarn e2e:ios"
 
   run-e2e-android:
     if: (github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-e2e') || github.event_name == 'push') && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == '' || github.event.inputs.platforms == 'android' || github.event.inputs.platforms == null)
@@ -89,6 +75,8 @@ jobs:
         uses: jlumbroso/free-disk-space@v1.3.1
       - name: Install flox
         uses: flox/install-flox-action@v2.2.0
+      - name: Start Android emulator
+        run: flox services start ${{ matrix.emulator-service }}
       - name: Android E2E Tests
         run: |
-          flox activate -d env/android/latest -- bash -lc "yarn e2e:android"
+          flox activate -d env/android/latest -- bash -lc "set -euo pipefail; yarn e2e:android"

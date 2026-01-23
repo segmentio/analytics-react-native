@@ -10,9 +10,7 @@ yarn.version = "4.12.0"
 [vars]
 
 [hook]
- on-activate = '''
-    yarn
- '''
+ on-activate = ''
 
 
 [profile]
