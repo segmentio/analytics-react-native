@@ -18,7 +18,8 @@ IOS_MANAGER_FOREGROUND=1 IOS_FLAVOR=minsdk bash "$project_root/scripts/ios.sh" s
 """
 [include]
 environments = [
-    { dir = ".." }
+    { dir = ".." },
+    { dir = "../../nodejs" },
 ]
 [build]
 [options]

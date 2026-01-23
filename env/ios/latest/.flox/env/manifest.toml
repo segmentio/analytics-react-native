@@ -19,7 +19,8 @@ IOS_MANAGER_FOREGROUND=1 IOS_FLAVOR=latest IOS_DOWNLOAD_RUNTIME=1 bash "$project
 """
 [include]
 environments = [
-    { dir = ".." }
+    { dir = ".." },
+    { dir = "../../nodejs" },
 ]
 [build]
 [options]
