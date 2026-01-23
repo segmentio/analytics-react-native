@@ -22,6 +22,11 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.GH_TOKEN }}
+      - name: Checkout templates
+        uses: actions/checkout@v4
+        with:
+          repository: segment-integrations/templates
+          path: templates
 
       - uses: actions/setup-node@v4
         with:
@@ -40,4 +45,5 @@ jobs:
 
       - name: Update Apps
         run: |
-          flox activate -d env/nodejs -- bash -lc "yarn install --no-immutable && yarn e2e install --no-immutable && yarn example install --no-immutable"
+          env_dir="$(TEMPLATES_DIR="$GITHUB_WORKSPACE/templates" scripts/ci-env.sh fast)"
+          flox activate -d "$env_dir" -- bash -lc "yarn install --no-immutable && yarn e2e install --no-immutable && yarn example install --no-immutable"

@@ -35,6 +35,11 @@ jobs:
             device-target: "ios-max"
     steps:
       - uses: actions/checkout@v4
+      - name: Checkout templates
+        uses: actions/checkout@v4
+        with:
+          repository: segment-integrations/templates
+          path: templates
       - name: Resolve platform targets
         id: targets
         run: |
@@ -89,18 +94,14 @@ jobs:
           xcode-version: ${{ matrix.xcode-version }}
       - name: Install flox
         uses: flox/install-flox-action@v2.2.0
-      - name: Prepare iOS runtime (no boot)
-        run: |
-          env_dir="${{ matrix.env-dir }}"
-          flox activate -d "$env_dir" -- bash -lc 'IOS_DOWNLOAD_RUNTIME=1 bash scripts/devices.sh setup ios'
       - name: iOS E2E Build
         run: |
-          env_dir="${{ matrix.env-dir }}"
+          env_dir="$(TEMPLATES_DIR="$GITHUB_WORKSPACE/templates" scripts/ci-env.sh ${{ matrix.name }})"
           flox activate -d "$env_dir" -- bash -lc "yarn --cwd examples/E2E build:ios"
       - name: iOS E2E Tests
         run: |
-          env_dir="${{ matrix.env-dir }}"
-          flox activate -d "$env_dir" -- bash -lc "yarn --cwd examples/E2E test:ios"
+          env_dir="$(TEMPLATES_DIR="$GITHUB_WORKSPACE/templates" scripts/ci-env.sh ${{ matrix.name }})"
+          flox activate -d "$env_dir" -- bash -lc "IOS_DOWNLOAD_RUNTIME=1 flox services start ${{ matrix.simulator-service }}; sleep 10; yarn --cwd examples/E2E test:ios"
 
   run-e2e-android:
     continue-on-error: true
@@ -120,6 +121,11 @@ jobs:
             avd-flavor: "max"
     steps:
       - uses: actions/checkout@v4
+      - name: Checkout templates
+        uses: actions/checkout@v4
+        with:
+          repository: segment-integrations/templates
+          path: templates
       - name: Resolve platform targets
         id: android_targets
         run: |
@@ -129,6 +135,8 @@ jobs:
           {
             echo "ANDROID_API=${ANDROID_API}"
             echo "DETOX_AVD=${DETOX_AVD}"
+            echo "ANDROID_AVD_NAME=${DETOX_AVD}"
+            echo "ANDROID_SYSTEM_IMAGE=${ANDROID_SYSTEM_IMAGE}"
             echo "AVD_FLAVOR=${AVD_FLAVOR}"
             echo "ANDROID_TARGET=${ANDROID_TARGET}"
           } >> "$GITHUB_ENV"
@@ -142,15 +150,11 @@ jobs:
         uses: jlumbroso/free-disk-space@v1.3.1
       - name: Install flox
         uses: flox/install-flox-action@v2.2.0
-      - name: Prepare Android image (no boot)
-        run: |
-          env_dir="${{ matrix.env-dir }}"
-          flox activate -d "$env_dir" -- bash -lc 'AVD_FLAVOR=${{ matrix.avd-flavor }} bash scripts/devices.sh setup android'
       - name: Android E2E Build
         run: |
-          env_dir="${{ matrix.env-dir }}"
-          flox activate -d "$env_dir" -- bash -lc "set -euo pipefail; AVD_FLAVOR=${{ matrix.avd-flavor }} yarn --cwd examples/E2E build:android"
+          env_dir="$(TEMPLATES_DIR="$GITHUB_WORKSPACE/templates" scripts/ci-env.sh ${{ matrix.name == 'android-minsdk' && 'android-min' || 'android-max' }})"
+          flox activate -d "$env_dir" -- bash -lc "set -euo pipefail; yarn --cwd examples/E2E build:android"
       - name: Android E2E Tests
         run: |
-          env_dir="${{ matrix.env-dir }}"
-          flox activate -d "$env_dir" -- bash -lc "set -euo pipefail; AVD_FLAVOR=${{ matrix.avd-flavor }} yarn --cwd examples/E2E test:android"
+          env_dir="$(TEMPLATES_DIR="$GITHUB_WORKSPACE/templates" scripts/ci-env.sh ${{ matrix.name == 'android-minsdk' && 'android-min' || 'android-max' }})"
+          flox activate -d "$env_dir" -- bash -lc "set -euo pipefail; ANDROID_AVD_NAME=\"${ANDROID_AVD_NAME:-$DETOX_AVD}\" flox services start ${{ matrix.emulator-service }}; sleep 10; yarn --cwd examples/E2E test:android"

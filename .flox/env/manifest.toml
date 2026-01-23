@@ -1,20 +1,19 @@
 version = 1
 
 [install]
+
 [vars]
+
 [hook]
+
 [profile]
+
 [services]
 
 [include]
  environments = [
      { dir = "env/common", name = "common" },
-     { dir = "env/nodejs", name = "nodejs" },
-     { dir = "env/android/min", name = "android-min" },
-     { dir = "env/android/max", name = "android-max" },
-     { dir = "env/ios", name = "ios" },
-     { dir = "env/ios/min", name = "ios-min" },
-     { dir = "env/ios/max", name = "ios-max" }
+     { dir = "../templates/env/nodejs", name = "nodejs" }
  ]
 
 [build]
@@ -43,4 +42,5 @@ command = """
     fi
   fi
 """
+
 [options]

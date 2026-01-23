@@ -38,18 +38,7 @@
     "clean:emulators": "bash scripts/clean.sh emulators",
     "clean:nix": "bash scripts/clean.sh nix",
     "clean:flox": "bash scripts/clean.sh flox",
-    "devices:start": "bash scripts/devices.sh start",
-    "devices:start:min": "bash scripts/devices.sh start min",
-    "devices:start:all": "bash scripts/devices.sh start all",
-    "devices:stop": "bash scripts/devices.sh stop all",
     "release": "yarn multi-semantic-release",
-    "devices:setup": "bash scripts/devices.sh setup all",
-    "devices:setup:android": "bash scripts/devices.sh setup android",
-    "devices:setup:ios": "bash scripts/devices.sh setup ios",
-    "e2e:prepare:android": "bash scripts/devices.sh setup android",
-    "e2e:prepare:ios": "bash scripts/devices.sh setup ios",
-    "pree2e:android": "bash scripts/devices.sh setup android",
-    "pree2e:ios": "bash scripts/devices.sh setup ios",
     "e2e": "yarn --cwd examples/E2E"
   },
   "devDependencies": {

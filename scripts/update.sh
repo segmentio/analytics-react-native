@@ -35,13 +35,6 @@ update_flox_envs() {
 
   # Update base envs first (no includes), then include-aware envs in dependency order.
   update_env "env/common"
-  update_env "env/nodejs"
-  update_env "env/android/android-common"
-  update_env "env/android/min"
-  update_env "env/android/max"
-  update_env "env/ios"
-  update_env "env/ios/min"
-  update_env "env/ios/max"
   update_env "."
 }
 
@@ -62,8 +55,7 @@ update_pods() {
 }
 
 update_nix() {
-  nix --extra-experimental-features "nix-command flakes" flake update env/android/min || true
-  nix --extra-experimental-features "nix-command flakes" flake update env/android/max || true
+  echo "No local flake inputs to update."
 }
 
 case "$target" in

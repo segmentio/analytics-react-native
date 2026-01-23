@@ -23,6 +23,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Checkout templates
+        uses: actions/checkout@v4
+        with:
+          repository: segment-integrations/templates
+          path: templates
       - name: Yarn cache
         uses: actions/cache@v4
         with:
@@ -36,4 +41,5 @@ jobs:
         uses: flox/install-flox-action@v2.2.0
       - name: Build, lint, and test
         run: |
-          flox activate -d env/nodejs -- bash -lc "yarn install --immutable && yarn format:check && yarn test:fast"
+          env_dir="$(TEMPLATES_DIR="$GITHUB_WORKSPACE/templates" scripts/ci-env.sh fast)"
+          flox activate -d "$env_dir" -- bash -lc "yarn install --immutable && yarn format:check && yarn test:fast"
