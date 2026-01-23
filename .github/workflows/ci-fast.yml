@@ -2,7 +2,7 @@ name: CI Fast
 
 on:
   push:
-    branches: [master, beta, ci2]
+    branches: [master, beta]
     paths-ignore:
       - 'docs/**'
       - 'wiki/**'

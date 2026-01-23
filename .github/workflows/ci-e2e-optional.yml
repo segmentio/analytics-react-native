@@ -1,8 +1,6 @@
 name: E2E (On-Demand)
 
 on:
-  push:
-    branches: [ci2]
   workflow_dispatch:
     inputs:
       platforms:
