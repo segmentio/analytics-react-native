@@ -30,7 +30,7 @@
       "IOS_SIM_RUNTIME": "26.1"
     },
     "hook": {
-      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n    script() {\n      local name=\"${1:-}\"\n      shift || true\n      if [ -z \"$name\" ]; then\n        echo \"Usage: script <name> [args...] (runs scripts/<name>.sh)\" >&2\n        return 1\n      fi\n      local project_root=\"${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n      local path=\"$project_root/scripts/${name}.sh\"\n      if [ ! -x \"$path\" ]; then\n        echo \"script: $path not found or not executable\" >&2\n        return 1\n      fi\n      \"$path\" \"$@\"\n    }\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n    script() {\n      local name=\"${1:-}\"\n      shift || true\n      if [ -z \"$name\" ]; then\n        echo \"Usage: script <name> [args...] (runs scripts/<name>.sh)\" >&2\n        return 1\n      fi\n      local project_root=\"${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n      local path=\"$project_root/scripts/${name}.sh\"\n      if [ ! -x \"$path\" ]; then\n        echo \"script: $path not found or not executable\" >&2\n        return 1\n      fi\n      \"$path\" \"$@\"\n    }\n \n    yarn\n \n  set -euo pipefail\n  project_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n  if [ ! -d \"$project_root/env/ios\" ]; then\n    project_root=\"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/../../../../..\" && pwd)\"\n  fi\n  export PROJECT_ROOT=\"$project_root\"\n  if [ -f \"$project_root/scripts/ios.sh\" ]; then\n    source \"$project_root/scripts/ios.sh\"\n  elif [ -f \"$project_root/env/ios/setup.sh\" ]; then\n    source \"$project_root/env/ios/setup.sh\"\n  fi\n "
+      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n    script() {\n      local name=\"${1:-}\"\n      shift || true\n      if [ -z \"$name\" ]; then\n        echo \"Usage: script <name> [args...] (runs scripts/<name>.sh)\" >&2\n        return 1\n      fi\n      local project_root=\"${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n      local path=\"$project_root/scripts/${name}.sh\"\n      if [ ! -x \"$path\" ]; then\n        echo \"script: $path not found or not executable\" >&2\n        return 1\n      fi\n      \"$path\" \"$@\"\n    }\n    if command -v corepack >/dev/null 2>&1; then\n      corepack enable --install-directory \"$HOME/.local/bin\" >/dev/null 2>&1 || true\n      export PATH=\"$HOME/.local/bin:$PATH\"\n    fi\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n    script() {\n      local name=\"${1:-}\"\n      shift || true\n      if [ -z \"$name\" ]; then\n        echo \"Usage: script <name> [args...] (runs scripts/<name>.sh)\" >&2\n        return 1\n      fi\n      local project_root=\"${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n      local path=\"$project_root/scripts/${name}.sh\"\n      if [ ! -x \"$path\" ]; then\n        echo \"script: $path not found or not executable\" >&2\n        return 1\n      fi\n      \"$path\" \"$@\"\n    }\n    if command -v corepack >/dev/null 2>&1; then\n      corepack enable --install-directory \"$HOME/.local/bin\" >/dev/null 2>&1 || true\n      export PATH=\"$HOME/.local/bin:$PATH\"\n    fi\n \n    yarn\n \n  set -euo pipefail\n  project_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n  if [ ! -d \"$project_root/env/ios\" ]; then\n    project_root=\"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/../../../../..\" && pwd)\"\n  fi\n  export PROJECT_ROOT=\"$project_root\"\n  if [ -f \"$project_root/scripts/ios.sh\" ]; then\n    source \"$project_root/scripts/ios.sh\"\n  elif [ -f \"$project_root/env/ios/setup.sh\" ]; then\n    source \"$project_root/env/ios/setup.sh\"\n  fi\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n    script() {\n      local name=\"${1:-}\"\n      shift || true\n      if [ -z \"$name\" ]; then\n        echo \"Usage: script <name> [args...] (runs scripts/<name>.sh)\" >&2\n        return 1\n      fi\n      local project_root=\"${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n      local path=\"$project_root/scripts/${name}.sh\"\n      if [ ! -x \"$path\" ]; then\n        echo \"script: $path not found or not executable\" >&2\n        return 1\n      fi\n      \"$path\" \"$@\"\n    }\n    if command -v corepack >/dev/null 2>&1; then\n      corepack enable --install-directory \"$HOME/.local/bin\" >/dev/null 2>&1 || true\n      export PATH=\"$HOME/.local/bin:$PATH\"\n    fi\n \n    yarn\n "
     },
     "profile": {},
     "options": {},
@@ -583,6 +583,9 @@
         "environments": [
           {
             "dir": ".."
+          },
+          {
+            "dir": "../../nodejs"
           }
         ]
       }
@@ -617,7 +620,7 @@
             "IOS_SIM_LATEST_DEVICE": "iPhone 17"
           },
           "hook": {
-            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n    script() {\n      local name=\"${1:-}\"\n      shift || true\n      if [ -z \"$name\" ]; then\n        echo \"Usage: script <name> [args...] (runs scripts/<name>.sh)\" >&2\n        return 1\n      fi\n      local project_root=\"${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n      local path=\"$project_root/scripts/${name}.sh\"\n      if [ ! -x \"$path\" ]; then\n        echo \"script: $path not found or not executable\" >&2\n        return 1\n      fi\n      \"$path\" \"$@\"\n    }\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n    script() {\n      local name=\"${1:-}\"\n      shift || true\n      if [ -z \"$name\" ]; then\n        echo \"Usage: script <name> [args...] (runs scripts/<name>.sh)\" >&2\n        return 1\n      fi\n      local project_root=\"${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n      local path=\"$project_root/scripts/${name}.sh\"\n      if [ ! -x \"$path\" ]; then\n        echo \"script: $path not found or not executable\" >&2\n        return 1\n      fi\n      \"$path\" \"$@\"\n    }\n \n    yarn\n \n  set -euo pipefail\n  project_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n  if [ ! -d \"$project_root/env/ios\" ]; then\n    project_root=\"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/../../../../..\" && pwd)\"\n  fi\n  export PROJECT_ROOT=\"$project_root\"\n  if [ -f \"$project_root/scripts/ios.sh\" ]; then\n    source \"$project_root/scripts/ios.sh\"\n  elif [ -f \"$project_root/env/ios/setup.sh\" ]; then\n    source \"$project_root/env/ios/setup.sh\"\n  fi\n "
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n    script() {\n      local name=\"${1:-}\"\n      shift || true\n      if [ -z \"$name\" ]; then\n        echo \"Usage: script <name> [args...] (runs scripts/<name>.sh)\" >&2\n        return 1\n      fi\n      local project_root=\"${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n      local path=\"$project_root/scripts/${name}.sh\"\n      if [ ! -x \"$path\" ]; then\n        echo \"script: $path not found or not executable\" >&2\n        return 1\n      fi\n      \"$path\" \"$@\"\n    }\n    if command -v corepack >/dev/null 2>&1; then\n      corepack enable --install-directory \"$HOME/.local/bin\" >/dev/null 2>&1 || true\n      export PATH=\"$HOME/.local/bin:$PATH\"\n    fi\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n    script() {\n      local name=\"${1:-}\"\n      shift || true\n      if [ -z \"$name\" ]; then\n        echo \"Usage: script <name> [args...] (runs scripts/<name>.sh)\" >&2\n        return 1\n      fi\n      local project_root=\"${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n      local path=\"$project_root/scripts/${name}.sh\"\n      if [ ! -x \"$path\" ]; then\n        echo \"script: $path not found or not executable\" >&2\n        return 1\n      fi\n      \"$path\" \"$@\"\n    }\n    if command -v corepack >/dev/null 2>&1; then\n      corepack enable --install-directory \"$HOME/.local/bin\" >/dev/null 2>&1 || true\n      export PATH=\"$HOME/.local/bin:$PATH\"\n    fi\n \n    yarn\n \n  set -euo pipefail\n  project_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n  if [ ! -d \"$project_root/env/ios\" ]; then\n    project_root=\"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/../../../../..\" && pwd)\"\n  fi\n  export PROJECT_ROOT=\"$project_root\"\n  if [ -f \"$project_root/scripts/ios.sh\" ]; then\n    source \"$project_root/scripts/ios.sh\"\n  elif [ -f \"$project_root/env/ios/setup.sh\" ]; then\n    source \"$project_root/env/ios/setup.sh\"\n  fi\n "
           },
           "profile": {},
           "options": {}
@@ -626,8 +629,74 @@
         "descriptor": {
           "dir": ".."
         }
+      },
+      {
+        "manifest": {
+          "version": 1,
+          "install": {
+            "nixfmt": {
+              "pkg-path": "nixfmt-rfc-style"
+            },
+            "shfmt": {
+              "pkg-path": "shfmt"
+            },
+            "treefmt": {
+              "pkg-path": "treefmt"
+            },
+            "yarn": {
+              "pkg-path": "yarn-berry",
+              "version": "4.12.0"
+            }
+          },
+          "hook": {
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n    script() {\n      local name=\"${1:-}\"\n      shift || true\n      if [ -z \"$name\" ]; then\n        echo \"Usage: script <name> [args...] (runs scripts/<name>.sh)\" >&2\n        return 1\n      fi\n      local project_root=\"${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n      local path=\"$project_root/scripts/${name}.sh\"\n      if [ ! -x \"$path\" ]; then\n        echo \"script: $path not found or not executable\" >&2\n        return 1\n      fi\n      \"$path\" \"$@\"\n    }\n    if command -v corepack >/dev/null 2>&1; then\n      corepack enable --install-directory \"$HOME/.local/bin\" >/dev/null 2>&1 || true\n      export PATH=\"$HOME/.local/bin:$PATH\"\n    fi\n \n    yarn\n "
+          },
+          "profile": {},
+          "options": {}
+        },
+        "name": "nodejs",
+        "descriptor": {
+          "dir": "../../nodejs"
+        }
       }
     ],
-    "warnings": []
+    "warnings": [
+      {
+        "warning": {
+          "Overriding": [
+            "install",
+            "nixfmt"
+          ]
+        },
+        "higher_priority_name": "nodejs"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "install",
+            "shfmt"
+          ]
+        },
+        "higher_priority_name": "nodejs"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "install",
+            "treefmt"
+          ]
+        },
+        "higher_priority_name": "nodejs"
+      },
+      {
+        "warning": {
+          "Overriding": [
+            "install",
+            "yarn"
+          ]
+        },
+        "higher_priority_name": "nodejs"
+      }
+    ]
   }
 }

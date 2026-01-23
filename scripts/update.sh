@@ -29,6 +29,8 @@ update_flox_envs() {
         flox include upgrade -d "$abs"
       fi
     fi
+    # Ensure manifest/lock are in sync (regenerate lock if hooks changed)
+    flox list -d "$abs" >/dev/null || true
   }
 
   # Update base envs first (no includes), then include-aware envs in dependency order.
