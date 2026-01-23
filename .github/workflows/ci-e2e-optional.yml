@@ -57,10 +57,12 @@ jobs:
         uses: flox/install-flox-action@v2.2.0
       - name: Yarn debug (iOS env)
         run: |
-          flox activate -d env/ios/latest -- bash -lc 'echo PATH=$PATH && ls -l /Users/runner/.local/bin || true && which yarn && yarn --version && node -v && corepack --version'
+          CLEAN_PATH=$(echo "$PATH" | tr ':' '\n' | grep -v '/.yarn/bin' | paste -sd:)
+          PATH="$CLEAN_PATH" flox activate -d env/ios/latest -- bash -lc 'echo PATH=$PATH && ls -l /Users/runner/.local/bin || true && which yarn && yarn --version && node -v && corepack --version'
       - name: iOS E2E Tests
         run: |
-          flox activate -d env/ios/latest -- bash -lc "yarn e2e:ios"
+          CLEAN_PATH=$(echo "$PATH" | tr ':' '\n' | grep -v '/.yarn/bin' | paste -sd:)
+          PATH="$CLEAN_PATH" flox activate -d env/ios/latest -- bash -lc "yarn e2e:ios"
 
   run-e2e-android:
     if: (github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-e2e') || github.event_name == 'push') && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == '' || github.event.inputs.platforms == 'android' || github.event.inputs.platforms == null)
