@@ -2,6 +2,7 @@ version = 1
 
 
 [install]
+node.pkg-path = "nodejs_20"
 yarn.pkg-path = "yarn-berry"
 yarn.version = "4.12.0"
 

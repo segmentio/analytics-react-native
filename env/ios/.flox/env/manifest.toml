@@ -34,8 +34,7 @@ IOS_SIM_LATEST_DEVICE = "iPhone 17"
 
 [include]
 environments = [
-    { dir = "../common" },
-    { dir = "../nodejs" }
+    { dir = "../common" }
 ]
 
 

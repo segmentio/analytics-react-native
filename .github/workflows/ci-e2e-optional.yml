@@ -70,6 +70,9 @@ jobs:
             derived-${{ runner.os }}-
       - name: Install flox
         uses: flox/install-flox-action@v2.2.0
+      - name: Yarn debug (iOS env)
+        run: |
+          flox activate -d env/ios/latest -- bash -lc "which yarn && yarn --version && node -v && corepack --version"
       - name: iOS E2E Tests
         run: |
           flox activate -d env/ios/latest -- bash -lc "yarn e2e:ios"

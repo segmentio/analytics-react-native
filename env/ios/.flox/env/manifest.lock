@@ -18,17 +18,13 @@
       },
       "treefmt": {
         "pkg-path": "treefmt"
-      },
-      "yarn": {
-        "pkg-path": "yarn-berry",
-        "version": "4.12.0"
       }
     },
     "vars": {
       "IOS_SIM_LATEST_DEVICE": "iPhone 17"
     },
     "hook": {
-      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n    script() {\n      local name=\"${1:-}\"\n      shift || true\n      if [ -z \"$name\" ]; then\n        echo \"Usage: script <name> [args...] (runs scripts/<name>.sh)\" >&2\n        return 1\n      fi\n      local project_root=\"${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n      local path=\"$project_root/scripts/${name}.sh\"\n      if [ ! -x \"$path\" ]; then\n        echo \"script: $path not found or not executable\" >&2\n        return 1\n      fi\n      \"$path\" \"$@\"\n    }\n    if command -v corepack >/dev/null 2>&1; then\n      corepack enable --install-directory \"$HOME/.local/bin\" >/dev/null 2>&1 || true\n      export PATH=\"$HOME/.local/bin:$PATH\"\n    fi\n \n    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n    script() {\n      local name=\"${1:-}\"\n      shift || true\n      if [ -z \"$name\" ]; then\n        echo \"Usage: script <name> [args...] (runs scripts/<name>.sh)\" >&2\n        return 1\n      fi\n      local project_root=\"${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n      local path=\"$project_root/scripts/${name}.sh\"\n      if [ ! -x \"$path\" ]; then\n        echo \"script: $path not found or not executable\" >&2\n        return 1\n      fi\n      \"$path\" \"$@\"\n    }\n    if command -v corepack >/dev/null 2>&1; then\n      corepack enable --install-directory \"$HOME/.local/bin\" >/dev/null 2>&1 || true\n      export PATH=\"$HOME/.local/bin:$PATH\"\n    fi\n \n    yarn\n \n  set -euo pipefail\n  project_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n  if [ ! -d \"$project_root/env/ios\" ]; then\n    project_root=\"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/../../../../..\" && pwd)\"\n  fi\n  export PROJECT_ROOT=\"$project_root\"\n  if [ -f \"$project_root/scripts/ios.sh\" ]; then\n    source \"$project_root/scripts/ios.sh\"\n  elif [ -f \"$project_root/env/ios/setup.sh\" ]; then\n    source \"$project_root/env/ios/setup.sh\"\n  fi\n "
+      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n    script() {\n      local name=\"${1:-}\"\n      shift || true\n      if [ -z \"$name\" ]; then\n        echo \"Usage: script <name> [args...] (runs scripts/<name>.sh)\" >&2\n        return 1\n      fi\n      local project_root=\"${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n      local path=\"$project_root/scripts/${name}.sh\"\n      if [ ! -x \"$path\" ]; then\n        echo \"script: $path not found or not executable\" >&2\n        return 1\n      fi\n      \"$path\" \"$@\"\n    }\n    if command -v corepack >/dev/null 2>&1; then\n      corepack enable --install-directory \"$HOME/.local/bin\" >/dev/null 2>&1 || true\n      export PATH=\"$HOME/.local/bin:$PATH\"\n    fi\n \n  set -euo pipefail\n  project_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n  if [ ! -d \"$project_root/env/ios\" ]; then\n    project_root=\"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/../../../../..\" && pwd)\"\n  fi\n  export PROJECT_ROOT=\"$project_root\"\n  if [ -f \"$project_root/scripts/ios.sh\" ]; then\n    source \"$project_root/scripts/ios.sh\"\n  elif [ -f \"$project_root/env/ios/setup.sh\" ]; then\n    source \"$project_root/env/ios/setup.sh\"\n  fi\n "
     },
     "profile": {},
     "options": {}
@@ -439,122 +435,6 @@
       "system": "x86_64-linux",
       "group": "toplevel",
       "priority": 5
-    },
-    {
-      "attr_path": "yarn-berry",
-      "broken": false,
-      "derivation": "/nix/store/sy0jbfhah2dkmxf9ngd4j5wpymj61s8z-yarn-berry-4.12.0.drv",
-      "description": "Fast, reliable, and secure dependency management",
-      "install_id": "yarn",
-      "license": "BSD-2-Clause",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "name": "yarn-berry-4.12.0",
-      "pname": "yarn-berry",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T04:30:38.337965Z",
-      "stabilities": [
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "4.12.0",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/2l7sbyyqardvrzr35zkrw67gbng5gb8y-yarn-berry-4.12.0"
-      },
-      "system": "aarch64-darwin",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "yarn-berry",
-      "broken": false,
-      "derivation": "/nix/store/jzxis6qs5mb2lc9lx7xndv5vqmkx10x0-yarn-berry-4.12.0.drv",
-      "description": "Fast, reliable, and secure dependency management",
-      "install_id": "yarn",
-      "license": "BSD-2-Clause",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "name": "yarn-berry-4.12.0",
-      "pname": "yarn-berry",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T05:05:45.606272Z",
-      "stabilities": [
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "4.12.0",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/klx9ndw1djgx0zhhyrkcn9an094rmmwv-yarn-berry-4.12.0"
-      },
-      "system": "aarch64-linux",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "yarn-berry",
-      "broken": false,
-      "derivation": "/nix/store/pjdps1mpblxfbmppb8b5wds8mzzjar2m-yarn-berry-4.12.0.drv",
-      "description": "Fast, reliable, and secure dependency management",
-      "install_id": "yarn",
-      "license": "BSD-2-Clause",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "name": "yarn-berry-4.12.0",
-      "pname": "yarn-berry",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T05:36:38.743524Z",
-      "stabilities": [
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "4.12.0",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/m6cwiya6hrbwnlprh2cbnmz6c7mkylrf-yarn-berry-4.12.0"
-      },
-      "system": "x86_64-darwin",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "yarn-berry",
-      "broken": false,
-      "derivation": "/nix/store/v5xk5ivmrak80ppdcz4jpindj21xy6va-yarn-berry-4.12.0.drv",
-      "description": "Fast, reliable, and secure dependency management",
-      "install_id": "yarn",
-      "license": "BSD-2-Clause",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "name": "yarn-berry-4.12.0",
-      "pname": "yarn-berry",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T06:24:08.258012Z",
-      "stabilities": [
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "4.12.0",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/q1gys3zgijcciiafbh9nfawkx5wj8179-yarn-berry-4.12.0"
-      },
-      "system": "x86_64-linux",
-      "group": "toplevel",
-      "priority": 5
     }
   ],
   "compose": {
@@ -581,9 +461,6 @@
         "environments": [
           {
             "dir": "../common"
-          },
-          {
-            "dir": "../nodejs"
           }
         ]
       }
@@ -613,65 +490,8 @@
         "descriptor": {
           "dir": "../common"
         }
-      },
-      {
-        "manifest": {
-          "version": 1,
-          "install": {
-            "nixfmt": {
-              "pkg-path": "nixfmt-rfc-style"
-            },
-            "shfmt": {
-              "pkg-path": "shfmt"
-            },
-            "treefmt": {
-              "pkg-path": "treefmt"
-            },
-            "yarn": {
-              "pkg-path": "yarn-berry",
-              "version": "4.12.0"
-            }
-          },
-          "hook": {
-            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n    script() {\n      local name=\"${1:-}\"\n      shift || true\n      if [ -z \"$name\" ]; then\n        echo \"Usage: script <name> [args...] (runs scripts/<name>.sh)\" >&2\n        return 1\n      fi\n      local project_root=\"${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n      local path=\"$project_root/scripts/${name}.sh\"\n      if [ ! -x \"$path\" ]; then\n        echo \"script: $path not found or not executable\" >&2\n        return 1\n      fi\n      \"$path\" \"$@\"\n    }\n    if command -v corepack >/dev/null 2>&1; then\n      corepack enable --install-directory \"$HOME/.local/bin\" >/dev/null 2>&1 || true\n      export PATH=\"$HOME/.local/bin:$PATH\"\n    fi\n \n    yarn\n "
-          },
-          "profile": {},
-          "options": {}
-        },
-        "name": "nodejs",
-        "descriptor": {
-          "dir": "../nodejs"
-        }
       }
     ],
-    "warnings": [
-      {
-        "warning": {
-          "Overriding": [
-            "install",
-            "nixfmt"
-          ]
-        },
-        "higher_priority_name": "nodejs"
-      },
-      {
-        "warning": {
-          "Overriding": [
-            "install",
-            "shfmt"
-          ]
-        },
-        "higher_priority_name": "nodejs"
-      },
-      {
-        "warning": {
-          "Overriding": [
-            "install",
-            "treefmt"
-          ]
-        },
-        "higher_priority_name": "nodejs"
-      }
-    ]
+    "warnings": []
   }
 }
