@@ -1,37 +1,21 @@
 version = 1
 
 [install]
-
 [vars]
 [hook]
- on-activate = '''
-  set -euo pipefail
-  project_root="${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
-  if [ ! -d "$project_root/env" ]; then
-    project_root="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/../../../../.." && pwd)"
-  fi
-  export PROJECT_ROOT="$project_root"
-  export ROOT_PROJECT="$project_root"
-if [ -f "$project_root/env/android/android-common/setup.sh" ]; then
-  source "$project_root/env/android/android-common/setup.sh"
-fi
-if [ -f "$project_root/scripts/ios.sh" ]; then
-  source "$project_root/scripts/ios.sh"
-fi
-
- '''
 [profile]
+[services]
 
 [include]
-environments = [
-    { dir = "env/common", name = "common" },
-    { dir = "env/nodejs", name = "nodejs" },
-    { dir = "env/android/min", name = "android-min" },
-    { dir = "env/android/max", name = "android-max" },
-    { dir = "env/ios/min", name = "ios-min" },
-    { dir = "env/ios/max", name = "ios-max" }
-]
-
+ environments = [
+     { dir = "env/common", name = "common" },
+     { dir = "env/nodejs", name = "nodejs" },
+     { dir = "env/android/min", name = "android-min" },
+     { dir = "env/android/max", name = "android-max" },
+     { dir = "env/ios", name = "ios" },
+     { dir = "env/ios/min", name = "ios-min" },
+     { dir = "env/ios/max", name = "ios-max" }
+ ]
 
 [build]
 [build.analytics-react-native]

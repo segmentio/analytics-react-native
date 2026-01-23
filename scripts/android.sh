@@ -3,18 +3,81 @@ set -euo pipefail
 
 # Helper to set ANDROID_SDK_ROOT/ANDROID_HOME/PATH from the flake if not already set.
 setup_android_env() {
+  local tools_root=""
+  local flavor="${ANDROID_SDK_FLAVOR:-${AVD_FLAVOR:-${ANDROID_TARGET:-max}}}"
+
   if [ -z "${ANDROID_SDK_ROOT:-}" ] && [ -z "${ANDROID_HOME:-}" ]; then
     project_root="${PROJECT_ROOT:-${PWD}}"
-    sdk_out=$(
-      nix --extra-experimental-features 'nix-command flakes' \
-        eval --raw "path:${project_root}/env/android/max#android-sdk-max.outPath" 2>/dev/null || \
-      nix --extra-experimental-features 'nix-command flakes' \
-        eval --raw "path:${project_root}/env/android/min#android-sdk-min.outPath" 2>/dev/null || true
-    )
-    if [ -n "${sdk_out:-}" ] && [ -d "$sdk_out/libexec/android-sdk" ]; then
-      ANDROID_SDK_ROOT="$sdk_out/libexec/android-sdk"
-      ANDROID_HOME="$ANDROID_SDK_ROOT"
+    local lock_path="$project_root/env/android/max/.flox/env/manifest.lock"
+    if [[ "$flavor" == "minsdk" || "$flavor" == "min" ]]; then
+      lock_path="$project_root/env/android/min/.flox/env/manifest.lock"
     fi
+    if [ ! -f "$lock_path" ]; then
+      echo "Android flox manifest lock not found at $lock_path; set ANDROID_SDK_ROOT/ANDROID_HOME explicitly." >&2
+      exit 1
+    fi
+    if ! command -v jq >/dev/null 2>&1; then
+      echo "jq is required to read $lock_path; install jq or set ANDROID_SDK_ROOT/ANDROID_HOME explicitly." >&2
+      exit 1
+    fi
+    local desired_api
+    if [[ "$flavor" == "minsdk" || "$flavor" == "min" ]]; then
+      desired_api="${ANDROID_MIN_API:-21}"
+    else
+      desired_api="${ANDROID_MAX_API:-33}"
+    fi
+    local host_arch
+    host_arch="$(uname -m)"
+
+    sdk_candidates=()
+    while IFS= read -r line; do
+      [ -n "$line" ] && sdk_candidates+=("$line")
+    done < <(jq -r '.packages[] | select(.name|test(\"androidsdk\")) | .outputs.out // empty' "$lock_path" 2>/dev/null)
+
+    if [ "${#sdk_candidates[@]}" -eq 0 ]; then
+      # Fallback to any androidsdk in the store (last resort).
+      while IFS= read -r cand; do
+        [ -n "$cand" ] && sdk_candidates+=("$cand")
+      done < <(find /nix/store -maxdepth 1 -type d -name "*-androidsdk" 2>/dev/null | sort)
+    fi
+
+    if [ "${#sdk_candidates[@]}" -eq 0 ]; then
+      echo "No androidsdk output found in $lock_path (or /nix/store); set ANDROID_SDK_ROOT/ANDROID_HOME explicitly." >&2
+      exit 1
+    fi
+
+    for cand in "${sdk_candidates[@]}"; do
+      [ -z "$cand" ] && continue
+      local sdk_path="$cand/libexec/android-sdk"
+      if [ ! -d "$sdk_path/system-images" ]; then
+        continue
+      fi
+      # Prefer a candidate that already contains the desired system image and ABI for this host.
+      local abi_pref=""
+      if [[ "$host_arch" == "arm64" || "$host_arch" == "aarch64" ]]; then
+        abi_pref="arm64-v8a"
+      else
+        abi_pref="x86_64"
+      fi
+      local image_path="$sdk_path/system-images/android-${desired_api}/google_apis/${abi_pref}"
+      if [ -d "$image_path" ]; then
+        tools_root="$sdk_path"
+        break
+      fi
+    done
+
+    if [ -z "${tools_root:-}" ]; then
+      # Fall back to the first candidate if none matched our preferred image.
+      tools_root="${sdk_candidates[0]}/libexec/android-sdk"
+    fi
+
+    if [ -z "${tools_root:-}" ] || [ "$tools_root" = "null" ] || [ ! -d "$tools_root" ]; then
+      echo "No usable androidsdk output found in $lock_path; set ANDROID_SDK_ROOT/ANDROID_HOME explicitly." >&2
+      exit 1
+    fi
+
+    ANDROID_SDK_ROOT="$tools_root"
+    ANDROID_HOME="$tools_root"
   fi
 
   if [ -z "${ANDROID_SDK_ROOT:-}" ] && [ -n "${ANDROID_HOME:-}" ]; then
@@ -25,28 +88,68 @@ setup_android_env() {
     ANDROID_HOME="$ANDROID_SDK_ROOT"
   fi
 
-  export ANDROID_SDK_ROOT ANDROID_HOME
+  if [ -z "$tools_root" ]; then
+    tools_root="$ANDROID_SDK_ROOT"
+  fi
 
-  if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
+  export ANDROID_SDK_ROOT ANDROID_HOME ANDROID_SDK_TOOLS_ROOT="$tools_root"
+
+  if [ -n "${tools_root:-}" ]; then
     cmdline_tools_bin=""
-    if [ -d "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" ]; then
-      cmdline_tools_bin="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin"
+    if [ -d "$tools_root/cmdline-tools/latest/bin" ]; then
+      cmdline_tools_bin="$tools_root/cmdline-tools/latest/bin"
     else
-      cmdline_tools_dir=$(find "$ANDROID_SDK_ROOT/cmdline-tools" -maxdepth 1 -mindepth 1 -type d -not -name latest 2>/dev/null | sort -V | tail -n 1)
+      cmdline_tools_dir=$(find "$tools_root/cmdline-tools" -maxdepth 1 -mindepth 1 -type d -not -name latest 2>/dev/null | sort -V | tail -n 1)
       if [ -n "${cmdline_tools_dir:-}" ] && [ -d "$cmdline_tools_dir/bin" ]; then
         cmdline_tools_bin="$cmdline_tools_dir/bin"
       fi
     fi
 
-    new_path="$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/platform-tools"
+    new_path="$tools_root/emulator:$tools_root/platform-tools"
 
     if [ -n "${cmdline_tools_bin:-}" ]; then
       new_path="$new_path:$cmdline_tools_bin"
     fi
 
-    new_path="$new_path:$ANDROID_SDK_ROOT/tools/bin:$PATH"
+    new_path="$new_path:$tools_root/tools/bin:$PATH"
     PATH="$new_path"
     export PATH
+  fi
+
+  if [ -z "${ANDROID_ENV_INFO_PRINTED:-}" ]; then
+    local host_arch flavor_api flavor_avd flavor_sysimg
+    host_arch="$(uname -m)"
+    if [[ "$flavor" == "minsdk" || "$flavor" == "min" ]]; then
+      flavor_api="${ANDROID_MIN_API:-${ANDROID_API:-unknown}}"
+      if [[ "$host_arch" == "arm64" || "$host_arch" == "aarch64" ]]; then
+        flavor_avd="${ANDROID_MIN_AVD_ARM:-${ANDROID_MIN_AVD:-unknown}}"
+        flavor_sysimg="${ANDROID_SYSTEM_IMAGE_MIN_ARM:-${ANDROID_SYSTEM_IMAGE_MIN:-unknown}}"
+      else
+        flavor_avd="${ANDROID_MIN_AVD:-${ANDROID_MIN_AVD_ARM:-unknown}}"
+        flavor_sysimg="${ANDROID_SYSTEM_IMAGE_MIN:-${ANDROID_SYSTEM_IMAGE_MIN_ARM:-unknown}}"
+      fi
+    else
+      flavor_api="${ANDROID_MAX_API:-${ANDROID_API:-unknown}}"
+      if [[ "$host_arch" == "arm64" || "$host_arch" == "aarch64" ]]; then
+        flavor_avd="${ANDROID_AVD_MAX_ARM:-${ANDROID_MAX_AVD_ARM:-${ANDROID_AVD_MAX:-${ANDROID_MAX_AVD:-medium_phone_API33_arm64_v8a}}}}"
+        flavor_sysimg="${ANDROID_SYSTEM_IMAGE_MAX_ARM:-${ANDROID_SYSTEM_IMAGE_LATEST_ARM:-unknown}}"
+      else
+        flavor_avd="${ANDROID_AVD_MAX_X64:-${ANDROID_MAX_AVD_X64:-${ANDROID_AVD_MAX:-${ANDROID_MAX_AVD:-medium_phone_API33_x86_64}}}}"
+        flavor_sysimg="${ANDROID_SYSTEM_IMAGE_MAX_X86:-${ANDROID_SYSTEM_IMAGE_LATEST_X86:-unknown}}"
+      fi
+    fi
+    local effective_flavor="${flavor:-maxsdk}"
+    local effective_avd="${DETOX_AVD:-${flavor_avd}}"
+    local effective_sysimg="${ANDROID_SYSTEM_IMAGE:-${flavor_sysimg:-unknown}}"
+    echo
+    echo "Android env:"
+    echo "  ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT}"
+    echo "  AVD_FLAVOR=${AVD_FLAVOR:-${ANDROID_TARGET:-maxsdk}} (resolved ${effective_flavor}, API ${flavor_api}, host ${host_arch})"
+    echo "  DETOX_AVD=${effective_avd}"
+    echo "  ANDROID_SYSTEM_IMAGE=${effective_sysimg}"
+    echo "  Overrides: see wiki/ci.md#knobs"
+    echo
+    ANDROID_ENV_INFO_PRINTED=1
   fi
 }
 
@@ -132,13 +235,8 @@ pick_image() {
 download_system_image() {
   local api="$1" tag="$2" abi="$3"
   local pkg="system-images;android-${api};${tag};${abi}"
-  if [[ -d "${ANDROID_SDK_ROOT}/system-images/android-${api}/${tag}/${abi}" ]]; then
-    return 0
-  fi
-  require_tool sdkmanager
-  echo "Downloading Android system image ${pkg}..."
-  yes "" | sdkmanager --licenses >/dev/null 2>&1 || true
-  yes "" | sdkmanager "${pkg}"
+  echo "Required system image ${pkg} not found under ${ANDROID_SDK_ROOT}. Install it or update the target." >&2
+  return 1
 }
 
 create_avd() {
@@ -170,15 +268,8 @@ ensure_avd() {
         *) abi_to_fetch="x86_64" ;;
       esac
     fi
-    if ! download_system_image "$api" "$tag" "$abi_to_fetch"; then
-      echo "Expected API ${api} system image (${tag}; ABI ${abi_to_fetch}) not found and download failed." >&2
-      return 1
-    fi
-    api_image="$(pick_image "$api" "$tag" "$preferred_abi")" || true
-    if [[ -z "${api_image:-}" ]]; then
-      echo "System image ${api}/${tag}/${abi_to_fetch} still missing after download." >&2
-      return 1
-    fi
+    echo "Expected API ${api} system image (${tag}; ABI ${abi_to_fetch}) not found under ${ANDROID_SDK_ROOT}. Install it or adjust ANDROID_SYSTEM_IMAGE/AVD_FLAVOR." >&2
+    return 1
   fi
 
   create_avd "$name" "$device" "$api_image"
@@ -193,8 +284,9 @@ fi
 
 action="${1:-}"; shift || true
 
-start_android() {
-  local flavor="${AVD_FLAVOR:-minsdk}" headless="${EMU_HEADLESS:-}" port="${EMU_PORT:-5554}"
+run_android() {
+  local boot="${1:-boot}"
+  local flavor="${AVD_FLAVOR:-max}" headless="${EMU_HEADLESS:-}" port="${EMU_PORT:-5554}"
   local avd="${DETOX_AVD:-}"
   local host_arch
   host_arch="$(uname -m)"
@@ -216,11 +308,11 @@ start_android() {
     api_hint="${ANDROID_API:-${ANDROID_MAX_API:-33}}"
     if [[ -z "$avd" ]]; then
       if [[ "$host_arch" == "arm64" || "$host_arch" == "aarch64" ]]; then
-        avd="${ANDROID_AVD_MAX_ARM:-medium_phone_API33_arm64_v8a}"
-    else
-        avd="${ANDROID_AVD_MAX_X64:-medium_phone_API33_x86_64}"
+        avd="${ANDROID_AVD_MAX_ARM:-${ANDROID_MAX_AVD_ARM:-medium_phone_API33_arm64_v8a}}"
+      else
+        avd="${ANDROID_AVD_MAX_X64:-${ANDROID_MAX_AVD_X64:-medium_phone_API33_x86_64}}"
+      fi
     fi
-  fi
   fi
 
   local device_hint="" abi_hint=""
@@ -269,7 +361,7 @@ start_android() {
   if command -v adb >/dev/null 2>&1; then
     adb devices | awk 'NR>1 && $2=="offline" {print $1}' | while read -r d; do adb -s "$d" emu kill >/dev/null 2>&1 || true; done
   fi
-  if [[ "${AVD_PREPARE_ONLY:-}" == "1" || "${AVD_PREPARE_ONLY:-}" == "true" ]]; then
+  if [[ "$boot" != "boot" ]]; then
     echo "Prepared Android AVD ${avd} (API ${api_hint:-unknown}); skipping boot."
     return 0
   fi
@@ -305,8 +397,9 @@ reset_android() {
 }
 
 case "$action" in
-  start) start_android ;;
-  prepare) AVD_PREPARE_ONLY=1 start_android ;;
+  start) run_android boot ;;
+  prepare) run_android noboot ;;
+  info) setup_android_env ;;
   stop) stop_android ;;
   reset) reset_android ;;
   *) echo "Usage: android.sh {start|prepare|stop|reset}" >&2; exit 1 ;;

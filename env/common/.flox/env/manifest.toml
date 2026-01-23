@@ -5,6 +5,7 @@ version = 1
 treefmt.pkg-path = "treefmt"
 nixfmt.pkg-path = "nixfmt-rfc-style"
 shfmt.pkg-path = "shfmt"
+jq.pkg-path = "jq"
 
 
 [vars]

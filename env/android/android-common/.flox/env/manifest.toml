@@ -19,6 +19,8 @@ ANDROID_EMULATOR_HEADLESS_FLAGS = "-no-window -no-audio -gpu swiftshader_indirec
     project_root="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/../../../../.." && pwd)"
   fi
   export PROJECT_ROOT="$project_root"
+  export ANDROID_SDK_FLAVOR="${AVD_FLAVOR:-${ANDROID_TARGET:-max}}"
+  export ANDROID_FLAVOR_SOURCED=1
   source "$project_root/env/android/android-common/setup.sh"
  '''
 [profile]

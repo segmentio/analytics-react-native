@@ -11,10 +11,13 @@ cd "$project_root"
 start_android() { bash "${script_dir}/android.sh" start; }
 stop_android() { bash "${script_dir}/android.sh" stop; }
 reset_android() { bash "${script_dir}/android.sh" reset; }
+setup_android() { bash "${script_dir}/android.sh" prepare; }
 
 start_ios() { bash "${script_dir}/ios.sh" start; }
 stop_ios() { bash "${script_dir}/ios.sh" stop; }
 reset_ios() { bash "${script_dir}/ios.sh" reset; }
+setup_ios() { bash "${script_dir}/ios.sh" prepare; }
+setup_all() { setup_android; setup_ios; }
 
 case "$action:$target" in
   start:android) start_android ;;
@@ -26,10 +29,13 @@ case "$action:$target" in
   reset:android) reset_android ;;
   reset:ios) reset_ios ;;
   reset:all) reset_android; reset_ios ;;
+  setup:android) setup_android ;;
+  setup:ios) setup_ios ;;
+  setup:all) setup_all ;;
   *)
     cat >&2 <<'EOF'
-Usage: bash scripts/devices.sh [start|stop|reset] [all|android|ios]
-Starts/stops the local Android emulator and iOS simulator using the helper scripts.
+Usage: bash scripts/devices.sh [start|stop|reset|setup] [all|android|ios]
+Starts/stops/resets/sets up the local Android emulator and iOS simulator using the helper scripts.
 EOF
     exit 1
     ;;

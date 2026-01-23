@@ -33,6 +33,7 @@ jobs:
             ios-runtime: "26.1"
             simulator-service: ios-simulator-max
             xcode-version: "26.1.1"
+            env-dir: env/ios/max
             device-target: "ios-max"
     steps:
       - uses: actions/checkout@v4
@@ -90,10 +91,13 @@ jobs:
         uses: flox/install-flox-action@v2.2.0
       - name: Prepare iOS runtime (no boot)
         run: |
-          flox activate -d env/ios/max -- bash -lc 'IOS_PREPARE_ONLY=1 IOS_DOWNLOAD_RUNTIME=1 scripts/ios.sh start'
+          flox activate -d "${{ matrix.env-dir }}" -- bash -lc 'IOS_DOWNLOAD_RUNTIME=1 bash scripts/devices.sh setup ios'
+      - name: iOS E2E Build
+        run: |
+          flox activate -d "${{ matrix.env-dir }}" -- bash -lc "yarn --cwd examples/E2E build:ios"
       - name: iOS E2E Tests
         run: |
-          flox activate -d env/ios/max -- bash -lc "yarn e2e:ios"
+          flox activate -d "${{ matrix.env-dir }}" -- bash -lc "yarn --cwd examples/E2E test:ios"
 
   run-e2e-android:
     if: (github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-e2e') || github.event_name == 'push') && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == '' || github.event.inputs.platforms == 'android' || github.event.inputs.platforms == null)
@@ -103,9 +107,9 @@ jobs:
       matrix:
         include:
           - name: android-max
-            avd-name: medium_phone_API33_x86_64
-            system-image: "system-images;android-33;google_apis;x86_64"
             emulator-service: android-emulator-max
+            env-dir: env/android/max
+            avd-flavor: "max"
             device-target: "android-max"
     steps:
       - uses: actions/checkout@v4
@@ -131,7 +135,10 @@ jobs:
         uses: flox/install-flox-action@v2.2.0
       - name: Prepare Android image (no boot)
         run: |
-          flox activate -d env/android/max -- bash -lc 'AVD_PREPARE_ONLY=1 scripts/android.sh start'
+          flox activate -d "${{ matrix.env-dir }}" -- bash -lc 'AVD_FLAVOR=${{ matrix.avd-flavor }} bash scripts/devices.sh setup android'
+      - name: Android E2E Build
+        run: |
+          flox activate -d "${{ matrix.env-dir }}" -- bash -lc "set -euo pipefail; AVD_FLAVOR=${{ matrix.avd-flavor }} yarn --cwd examples/E2E build:android"
       - name: Android E2E Tests
         run: |
-          flox activate -d env/android/max -- bash -lc "set -euo pipefail; yarn e2e:android"
+          flox activate -d "${{ matrix.env-dir }}" -- bash -lc "set -euo pipefail; AVD_FLAVOR=${{ matrix.avd-flavor }} yarn --cwd examples/E2E test:android"

@@ -1,6 +1,69 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Helpers for selecting an iOS runtime (uses whatever is installed).
+latest_runtime() {
+  local json
+  json="$(xcrun simctl list runtimes -j)"
+  echo "$json" | jq -r '.runtimes[] | select(.isAvailable and (.name|startswith("iOS "))) | "\(.version)|\(.identifier)|\(.name)"' \
+    | sort -Vr | head -n1 | cut -d"|" -f2-
+}
+
+resolve_runtime() {
+  local preferred="${1:-}"
+  local json choice
+  json="$(xcrun simctl list runtimes -j)"
+
+  if [[ -n "$preferred" ]]; then
+    # Normalize inputs like "iOS 26.2" or a full runtime identifier.
+    if [[ "$preferred" =~ ^iOS[[:space:]]+ ]]; then
+      preferred="${preferred#iOS }"
+      preferred="${preferred# }"
+    fi
+    if [[ "$preferred" =~ ^com\.apple\.CoreSimulator\.SimRuntime\.iOS- ]]; then
+      choice="$(echo "$json" | jq -r --arg v "$preferred" '.runtimes[] | select(.isAvailable and .identifier == $v) | "\(.identifier)|\(.name)"' | head -n1)"
+      if [[ -n "$choice" && "$choice" != "null" ]]; then
+        echo "$choice"
+        return 0
+      fi
+      echo "Preferred runtime identifier ${preferred} not found. Install it in Xcode (Settings > Platforms) or update IOS_RUNTIME." >&2
+      return 1
+    fi
+
+    choice="$(echo "$json" | jq -r --arg v "$preferred" '.runtimes[] | select(.isAvailable and (.name|startswith("iOS \($v)"))) | "\(.identifier)|\(.name)"' | head -n1)"
+    if [[ -n "$choice" && "$choice" != "null" ]]; then
+      echo "$choice"
+      return 0
+    fi
+
+    if [[ "${IOS_DOWNLOAD_RUNTIME:-0}" != "0" ]] && command -v xcodebuild >/dev/null 2>&1; then
+      local dl_target="iOS${preferred}"
+      echo "Preferred runtime iOS ${preferred} not found. Attempting to download via xcodebuild -downloadPlatform ${dl_target}..." >&2
+      if xcodebuild -downloadPlatform "${dl_target}" || xcodebuild -downloadPlatform iOS; then
+        json="$(xcrun simctl list runtimes -j)"
+        choice="$(echo "$json" | jq -r --arg v "$preferred" '.runtimes[] | select(.isAvailable and (.name|startswith("iOS \($v)"))) | "\(.identifier)|\(.name)"' | head -n1)"
+        if [[ -n "$choice" && "$choice" != "null" ]]; then
+          echo "$choice"
+          return 0
+        fi
+      else
+        echo "xcodebuild -downloadPlatform iOS failed." >&2
+      fi
+    fi
+
+    echo "Preferred runtime iOS ${preferred} not found. Install the platform in Xcode (Settings > Platforms) or update IOS_RUNTIME." >&2
+    return 1
+  fi
+
+  choice="$(latest_runtime)"
+  if [[ -z "$choice" || "$choice" == "null" ]]; then
+    echo "No available iOS simulator runtime found. Install one in Xcode (Settings > Platforms) and retry." >&2
+    return 1
+  fi
+
+  echo "$choice"
+}
+
 init_ios_env() {
   if [[ -z "${PROJECT_ROOT:-}" ]] && command -v git >/dev/null 2>&1; then
     PROJECT_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
@@ -14,6 +77,42 @@ init_ios_env() {
       DETOX_IOS_DEVICE="${IOS_DEVICE_NAMES:-${IOS_MAX_DEVICE:-${IOS_SIM_DEVICE:-${IOS_SIM_MAX_DEVICE:-iPhone 17}}}}"
     fi
     export DETOX_IOS_DEVICE
+  fi
+
+  if [[ -z "${IOS_ENV_INFO_PRINTED:-}" ]]; then
+    local flavor="${IOS_FLAVOR:-max}" runtime_hint device_hint runtime_resolved runtime_id runtime_name dev_dir
+    if [[ "$flavor" == "minsdk" || "$flavor" == "min" ]]; then
+      runtime_hint="${IOS_RUNTIME:-${IOS_MIN_RUNTIME:-unknown}}"
+      device_hint="${IOS_DEVICE_NAMES:-${IOS_MIN_DEVICE:-${IOS_SIM_DEVICE:-unknown}}}"
+    else
+      runtime_hint="${IOS_RUNTIME:-latest-installed}"
+      device_hint="${IOS_DEVICE_NAMES:-${IOS_MAX_DEVICE:-${IOS_SIM_DEVICE:-unknown}}}"
+    fi
+
+    if command -v xcrun >/dev/null 2>&1; then
+      runtime_resolved="$(resolve_runtime "${IOS_RUNTIME:-}")" || runtime_resolved=""
+      runtime_id="$(echo "${runtime_resolved}" | cut -d'|' -f1)"
+      runtime_name="$(echo "${runtime_resolved}" | cut -d'|' -f2)"
+    fi
+
+    if command -v xcode-select >/dev/null 2>&1; then
+      dev_dir="$(xcode-select -p 2>/dev/null || true)"
+    fi
+
+    echo
+    echo "iOS env:"
+    echo "  IOS_FLAVOR=${IOS_FLAVOR:-${IOS_TARGET:-maxsdk}} (resolved ${flavor}, runtime ${runtime_hint})"
+    if [[ -n "${runtime_name:-}" ]]; then
+      echo "  IOS_RUNTIME_RESOLVED=${runtime_name} (${runtime_id})"
+    fi
+    if [[ -n "${dev_dir:-}" ]]; then
+      echo "  DEVELOPER_DIR=${dev_dir}"
+    fi
+    echo "  IOS_DEVICE_NAMES=${IOS_DEVICE_NAMES:-unset} (comma-separated; defaults to DETOX_IOS_DEVICE)"
+    echo "  DETOX_IOS_DEVICE=${DETOX_IOS_DEVICE:-${device_hint}}"
+    echo "  Overrides: see wiki/ci.md#knobs"
+    echo
+    IOS_ENV_INFO_PRINTED=1
   fi
 }
 
@@ -213,8 +312,8 @@ fi
 action="${1:-}"
 shift || true
 
-start_ios() {
-  local flavor="${IOS_FLAVOR:-max}"
+run_ios() {
+  local boot="${1:-boot}" flavor="${IOS_FLAVOR:-max}"
   if [[ "$flavor" == "minsdk" ]]; then
     local default_device="${IOS_MIN_DEVICE:-iPhone 13}"
     export IOS_DEVICE_NAMES="${IOS_DEVICE_NAMES:-$default_device}"
@@ -223,6 +322,7 @@ start_ios() {
   else
     local default_device="${IOS_MAX_DEVICE:-${IOS_SIM_MAX_DEVICE:-iPhone 17}}"
     export IOS_DEVICE_NAMES="${IOS_DEVICE_NAMES:-$default_device}"
+    # Default to latest installed runtime when not pinned.
     export IOS_RUNTIME="${IOS_RUNTIME:-${IOS_MAX_RUNTIME:-}}"
     export DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-$default_device}"
   fi
@@ -244,7 +344,7 @@ start_ios() {
   done
 
   local sim_device="${DETOX_IOS_DEVICE:-$(echo "${devices[0]}" | xargs)}"
-  if [[ "${IOS_PREPARE_ONLY:-}" == "1" || "${IOS_PREPARE_ONLY:-}" == "true" ]]; then
+  if [[ "$boot" != "boot" ]]; then
     echo "Prepared iOS simulators for ${sim_device}${runtime_name:+ (runtime ${runtime_name})}; skipping boot."
     return 0
   fi
@@ -271,8 +371,12 @@ reset_ios() {
 }
 
 case "$action" in
-  start) start_ios ;;
-  prepare) IOS_PREPARE_ONLY=1 start_ios ;;
+  start) run_ios boot ;;
+  prepare) run_ios noboot ;;
+  info)
+    # Ensure env defaults and print the banner without starting anything.
+    init_ios_env
+    ;;
   stop) stop_ios ;;
   reset) reset_ios ;;
   *) echo "Usage: ios.sh {start|prepare|stop|reset}" >&2; exit 1 ;;

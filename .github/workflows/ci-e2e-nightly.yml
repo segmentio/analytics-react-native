@@ -23,13 +23,15 @@ jobs:
             ios-device: "iPhone 13"
             ios-runtime: "15.0"
             simulator-service: ios-simulator-min
-            xcode-version: "26.1.1"
+            xcode-version: "16.1"
+            env-dir: env/ios/min
             device-target: "ios-min"
           - name: ios-max
             ios-device: "iPhone 17"
             ios-runtime: "26.1"
             simulator-service: ios-simulator-max
             xcode-version: "26.1.1"
+            env-dir: env/ios/max
             device-target: "ios-max"
     steps:
       - uses: actions/checkout@v4
@@ -89,14 +91,16 @@ jobs:
         uses: flox/install-flox-action@v2.2.0
       - name: Prepare iOS runtime (no boot)
         run: |
-          env_dir="env/ios/max"
-          if [ "${{ matrix.name }}" = "ios-min" ]; then env_dir="env/ios/min"; fi
-          flox activate -d "$env_dir" -- bash -lc 'IOS_PREPARE_ONLY=1 IOS_DOWNLOAD_RUNTIME=1 scripts/ios.sh start'
+          env_dir="${{ matrix.env-dir }}"
+          flox activate -d "$env_dir" -- bash -lc 'IOS_DOWNLOAD_RUNTIME=1 bash scripts/devices.sh setup ios'
+      - name: iOS E2E Build
+        run: |
+          env_dir="${{ matrix.env-dir }}"
+          flox activate -d "$env_dir" -- bash -lc "yarn --cwd examples/E2E build:ios"
       - name: iOS E2E Tests
         run: |
-          env_dir="env/ios/max"
-          if [ "${{ matrix.name }}" = "ios-min" ]; then env_dir="env/ios/min"; fi
-          flox activate -d "$env_dir" -- bash -lc "yarn e2e:ios"
+          env_dir="${{ matrix.env-dir }}"
+          flox activate -d "$env_dir" -- bash -lc "yarn --cwd examples/E2E test:ios"
 
   run-e2e-android:
     continue-on-error: true
@@ -105,15 +109,15 @@ jobs:
       matrix:
         include:
           - name: android-min
-            avd-name: pixel_API21_x86_64
-            system-image: "system-images;android-21;google_apis;x86_64"
             emulator-service: android-emulator-min
+            env-dir: env/android/min
             device-target: "android-min"
+            avd-flavor: "minsdk"
           - name: android-max
-            avd-name: medium_phone_API33_x86_64
-            system-image: "system-images;android-33;google_apis;x86_64"
             emulator-service: android-emulator-max
+            env-dir: env/android/max
             device-target: "android-max"
+            avd-flavor: "max"
     steps:
       - uses: actions/checkout@v4
       - name: Resolve platform targets
@@ -140,11 +144,13 @@ jobs:
         uses: flox/install-flox-action@v2.2.0
       - name: Prepare Android image (no boot)
         run: |
-          env_dir="env/android/max"
-          if [ "${{ matrix.name }}" = "android-min" ]; then env_dir="env/android/min"; fi
-          flox activate -d "$env_dir" -- bash -lc 'AVD_PREPARE_ONLY=1 scripts/android.sh start'
+          env_dir="${{ matrix.env-dir }}"
+          flox activate -d "$env_dir" -- bash -lc 'AVD_FLAVOR=${{ matrix.avd-flavor }} bash scripts/devices.sh setup android'
+      - name: Android E2E Build
+        run: |
+          env_dir="${{ matrix.env-dir }}"
+          flox activate -d "$env_dir" -- bash -lc "set -euo pipefail; AVD_FLAVOR=${{ matrix.avd-flavor }} yarn --cwd examples/E2E build:android"
       - name: Android E2E Tests
         run: |
-          env_dir="env/android/max"
-          if [ "${{ matrix.name }}" = "android-min" ]; then env_dir="env/android/min"; fi
-          flox activate -d "$env_dir" -- bash -lc "set -euo pipefail; yarn e2e:android"
+          env_dir="${{ matrix.env-dir }}"
+          flox activate -d "$env_dir" -- bash -lc "set -euo pipefail; AVD_FLAVOR=${{ matrix.avd-flavor }} yarn --cwd examples/E2E test:android"
