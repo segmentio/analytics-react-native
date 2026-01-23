@@ -32,7 +32,7 @@ jobs:
             ios-device: "iPhone 17"
             ios-runtime: "26.1"
             simulator-service: ios-simulator-max
-            xcode-version: "26.1.1"
+            xcode-version: "26.2"
             env-dir: env/ios/max
             device-target: "ios-max"
     steps:
