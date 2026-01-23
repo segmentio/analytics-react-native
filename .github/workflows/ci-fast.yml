@@ -35,4 +35,4 @@ jobs:
       - name: Install flox
         uses: flox/install-flox-action@v2.2.0
       - name: Build, lint, and test
-        run: flox activate . --devshell default -- bash -lc "yarn install --immutable && yarn format:check && yarn test:fast"
+        run: flox activate -d env/nodejs -- bash -lc "yarn install --immutable && yarn format:check && yarn test:fast"

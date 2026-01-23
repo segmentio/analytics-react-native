@@ -3,6 +3,13 @@ version = 1
 android-sdk.flake = "path:env/android/min"
 [vars]
 [hook]
+ on-activate = '''
+  project_root="${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+  if [ -f "$project_root/scripts/android.sh" ]; then
+    # shellcheck disable=SC1091
+    . "$project_root/scripts/android.sh"
+  fi
+ '''
 [profile]
 [services]
 android-emulator-min.command = """

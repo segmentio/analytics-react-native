@@ -41,7 +41,7 @@ jobs:
           echo "$HOME/.flox/bin" >> "$GITHUB_PATH"
 
       - name: Config, Build, Release
-        run: flox activate . --devshell default -- bash flox/scripts/release.sh
+        run: flox activate -d . -- bash flox/scripts/release.sh
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}

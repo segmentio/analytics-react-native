@@ -105,7 +105,7 @@ jobs:
         run: df -H
       - name: iOS E2E Tests
         run: |
-          flox activate . --devshell default -- bash -lc "yarn install --immutable && yarn e2e:ios"
+          flox activate -d env/ios/latest -- bash -lc "yarn install --immutable && yarn e2e:ios"
 
   run-e2e-android:
     if: (github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-e2e') || github.event_name == 'push') && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == '' || github.event.inputs.platforms == 'android' || github.event.inputs.platforms == null)
@@ -157,9 +157,9 @@ jobs:
         run: bash scripts/devices.sh start ${{ matrix.device-target }}
       - name: Wait for emulator
         run: |
-          flox activate . --devshell default -- bash -lc "adb wait-for-device && timeout 180s bash -c 'until adb shell getprop sys.boot_completed 2>/dev/null | grep -q 1; do sleep 5; done'"
+          flox activate -d env/android/latest -- bash -lc "adb wait-for-device && timeout 180s bash -c 'until adb shell getprop sys.boot_completed 2>/dev/null | grep -q 1; do sleep 5; done'"
       - name: Android E2E Tests
         run: |
-          flox activate . --devshell default -- bash -lc "yarn install --immutable && yarn e2e:android"
+          flox activate -d env/android/latest -- bash -lc "yarn install --immutable && yarn e2e:android"
       - name: disk check
         run: df -H
