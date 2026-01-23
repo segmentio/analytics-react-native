@@ -628,12 +628,12 @@
     },
     {
       "install_id": "android-sdk",
-      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/latest?lastModified=1769128635&narHash=sha256-JtlE1Gb2eOfqcm2xh2d0ps91RFUADbnuIgQfAQ/qGlM%3D",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/latest?lastModified=1769136139&narHash=sha256-sb2uOGr899aqmvUI4iP/2Ce2BKCRkP7guAdd/dkKTuw%3D",
       "flake-description": "Android SDK (API 33) for flox",
       "locked-flake-attr-path": "packages.aarch64-darwin.default",
-      "derivation": "/nix/store/q58fn0llpj7faw35ynhy2myk2rwy97wj-androidsdk.drv",
+      "derivation": "/nix/store/0l95fy1ffhir9i3bc58gsi8mnpcz5py2-androidsdk.drv",
       "outputs": {
-        "out": "/nix/store/3hbkhbybkagnrapzr5mxf93qzh1zmm89-androidsdk"
+        "out": "/nix/store/jiyz1w3ilgr67zmmliy49acq920wg9s0-androidsdk"
       },
       "output-names": [
         "out"
@@ -654,12 +654,12 @@
     },
     {
       "install_id": "android-sdk",
-      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/latest?lastModified=1769128635&narHash=sha256-JtlE1Gb2eOfqcm2xh2d0ps91RFUADbnuIgQfAQ/qGlM%3D",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/latest?lastModified=1769136139&narHash=sha256-sb2uOGr899aqmvUI4iP/2Ce2BKCRkP7guAdd/dkKTuw%3D",
       "flake-description": "Android SDK (API 33) for flox",
       "locked-flake-attr-path": "packages.aarch64-linux.default",
-      "derivation": "/nix/store/3384qf36xcy52x9zrrvsdirync3vydnf-androidsdk.drv",
+      "derivation": "/nix/store/6w6v5wwvmpjbxciw00jqywnnnmsxfvh2-androidsdk.drv",
       "outputs": {
-        "out": "/nix/store/9cixbx6cqna2910gccvhdhdx6dddyhg6-androidsdk"
+        "out": "/nix/store/c1r7y7yv0x9wi1rhhkkh1a390mnfl1ry-androidsdk"
       },
       "output-names": [
         "out"
@@ -680,12 +680,12 @@
     },
     {
       "install_id": "android-sdk",
-      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/latest?lastModified=1769128635&narHash=sha256-JtlE1Gb2eOfqcm2xh2d0ps91RFUADbnuIgQfAQ/qGlM%3D",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/latest?lastModified=1769136139&narHash=sha256-sb2uOGr899aqmvUI4iP/2Ce2BKCRkP7guAdd/dkKTuw%3D",
       "flake-description": "Android SDK (API 33) for flox",
       "locked-flake-attr-path": "packages.x86_64-darwin.default",
-      "derivation": "/nix/store/x6qgpdf3izz2dsnq0jqasxx1paigyjr8-androidsdk.drv",
+      "derivation": "/nix/store/d3gwnrkzsk0179m6w13pm0n0k7j7a3ri-androidsdk.drv",
       "outputs": {
-        "out": "/nix/store/bwv6dgrf8wqscw4iwwp5933xr4bikyxq-androidsdk"
+        "out": "/nix/store/4sp4dl3b96qbqkksf964524yxn6s7rvw-androidsdk"
       },
       "output-names": [
         "out"
@@ -706,12 +706,12 @@
     },
     {
       "install_id": "android-sdk",
-      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/latest?lastModified=1769128635&narHash=sha256-JtlE1Gb2eOfqcm2xh2d0ps91RFUADbnuIgQfAQ/qGlM%3D",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/latest?lastModified=1769136139&narHash=sha256-sb2uOGr899aqmvUI4iP/2Ce2BKCRkP7guAdd/dkKTuw%3D",
       "flake-description": "Android SDK (API 33) for flox",
       "locked-flake-attr-path": "packages.x86_64-linux.default",
-      "derivation": "/nix/store/l0z1dcbb140kjzbamn50bgwlid4brh7p-androidsdk.drv",
+      "derivation": "/nix/store/pm23dkchhl3fyzp08bymifcrci3y6ji4-androidsdk.drv",
       "outputs": {
-        "out": "/nix/store/482h0f3gbyly10hra7zg70l22sn7zpm7-androidsdk"
+        "out": "/nix/store/fc9z39c2c6hbmn1yfh6h4h1dzv9g37zp-androidsdk"
       },
       "output-names": [
         "out"

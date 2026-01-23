@@ -33,7 +33,7 @@
       "ANDROID_SYSTEM_IMAGE_MIN": "system-images;android-21;google_apis;x86_64"
     },
     "hook": {
-      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n    script() {\n      local name=\"${1:-}\"\n      shift || true\n      if [ -z \"$name\" ]; then\n        echo \"Usage: script <name> [args...] (runs scripts/<name>.sh)\" >&2\n        return 1\n      fi\n      local project_root=\"${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n      local path=\"$project_root/scripts/${name}.sh\"\n      if [ ! -x \"$path\" ]; then\n        echo \"script: $path not found or not executable\" >&2\n        return 1\n      fi\n      \"$path\" \"$@\"\n    }\n \n set -euo pipefail\n  project_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n  if [ ! -d \"$project_root/env/android\" ]; then\n    project_root=\"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/../../../../..\" && pwd)\"\n  fi\n  export PROJECT_ROOT=\"$project_root\"\n  source \"$project_root/env/android/android-common/setup.sh\"\n "
+      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n    script() {\n      local name=\"${1:-}\"\n      shift || true\n      if [ -z \"$name\" ]; then\n        echo \"Usage: script <name> [args...] (runs scripts/<name>.sh)\" >&2\n        return 1\n      fi\n      local project_root=\"${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n      local path=\"$project_root/scripts/${name}.sh\"\n      if [ ! -x \"$path\" ]; then\n        echo \"script: $path not found or not executable\" >&2\n        return 1\n      fi\n      \"$path\" \"$@\"\n    }\n \n set -euo pipefail\n  project_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n  if [ ! -d \"$project_root/env/android\" ]; then\n    project_root=\"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/../../../../..\" && pwd)\"\n  fi\n  export PROJECT_ROOT=\"$project_root\"\n  source \"$project_root/env/android/android-common/setup.sh\"\n \n  project_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n  if [ -f \"$project_root/scripts/android.sh\" ]; then\n    # shellcheck disable=SC1091\n    . \"$project_root/scripts/android.sh\"\n  fi\n "
     },
     "profile": {},
     "options": {},
@@ -628,7 +628,7 @@
     },
     {
       "install_id": "android-sdk",
-      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/min?lastModified=1769128642&narHash=sha256-6gzDQ2F/Xqef6lSqVFrVzx5BsovGXVDYRld7ALxGPVk%3D",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/min?lastModified=1769136144&narHash=sha256-IhWPU/kQbx/duj4Td9t1qII2/WQ8xCj3LOrCnvLmLwc%3D",
       "flake-description": "Android SDK (API 21) for flox",
       "locked-flake-attr-path": "packages.aarch64-darwin.default",
       "derivation": "/nix/store/s7n6xvyqis03q6k2n7ar59whyj52nfm4-androidsdk.drv",
@@ -654,7 +654,7 @@
     },
     {
       "install_id": "android-sdk",
-      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/min?lastModified=1769128642&narHash=sha256-6gzDQ2F/Xqef6lSqVFrVzx5BsovGXVDYRld7ALxGPVk%3D",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/min?lastModified=1769136144&narHash=sha256-IhWPU/kQbx/duj4Td9t1qII2/WQ8xCj3LOrCnvLmLwc%3D",
       "flake-description": "Android SDK (API 21) for flox",
       "locked-flake-attr-path": "packages.aarch64-linux.default",
       "derivation": "/nix/store/hicxc36mlbzbi1mr2y2gcfl0f6ng9ksv-androidsdk.drv",
@@ -680,7 +680,7 @@
     },
     {
       "install_id": "android-sdk",
-      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/min?lastModified=1769128642&narHash=sha256-6gzDQ2F/Xqef6lSqVFrVzx5BsovGXVDYRld7ALxGPVk%3D",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/min?lastModified=1769136144&narHash=sha256-IhWPU/kQbx/duj4Td9t1qII2/WQ8xCj3LOrCnvLmLwc%3D",
       "flake-description": "Android SDK (API 21) for flox",
       "locked-flake-attr-path": "packages.x86_64-darwin.default",
       "derivation": "/nix/store/1n5111imc6aiaqvq2ri8ywmk4arfncxs-androidsdk.drv",
@@ -706,7 +706,7 @@
     },
     {
       "install_id": "android-sdk",
-      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/min?lastModified=1769128642&narHash=sha256-6gzDQ2F/Xqef6lSqVFrVzx5BsovGXVDYRld7ALxGPVk%3D",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/min?lastModified=1769136144&narHash=sha256-IhWPU/kQbx/duj4Td9t1qII2/WQ8xCj3LOrCnvLmLwc%3D",
       "flake-description": "Android SDK (API 21) for flox",
       "locked-flake-attr-path": "packages.x86_64-linux.default",
       "derivation": "/nix/store/dxld1kpxp5xpq8pv2bl62f2ylxygmzzg-androidsdk.drv",
@@ -739,7 +739,9 @@
           "flake": "path:env/android/min"
         }
       },
-      "hook": {},
+      "hook": {
+        "on-activate": "  project_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n  if [ -f \"$project_root/scripts/android.sh\" ]; then\n    # shellcheck disable=SC1091\n    . \"$project_root/scripts/android.sh\"\n  fi\n "
+      },
       "profile": {},
       "options": {},
       "services": {

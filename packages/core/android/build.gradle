@@ -54,6 +54,7 @@ android {
   }
 
   compileSdkVersion getExtOrIntegerDefault("compileSdkVersion")
+  buildToolsVersion getExtOrDefault("buildToolsVersion")
 
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault("minSdkVersion")
@@ -93,4 +94,3 @@ dependencies {
   // Requires sovran for communication
   implementation project(path: ':segment_sovran-react-native')  
 }
-

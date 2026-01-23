@@ -72,6 +72,7 @@ android {
     ndkVersion rootProject.ext.ndkVersion
 
     compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     namespace "com.AnalyticsReactNativeE2E"
     defaultConfig {

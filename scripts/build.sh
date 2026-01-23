@@ -12,7 +12,15 @@ cd "$project_root"
 yarn install --immutable
 
 build_libs() {
-  yarn workspaces foreach -A --topological-dev run build
+  local since_flags=()
+  if [[ -n "${BUILD_SINCE_REF:-}" ]]; then
+    since_flags=(--since "${BUILD_SINCE_REF}")
+  fi
+  if [[ ${#since_flags[@]} -gt 0 ]]; then
+    yarn workspaces foreach -A --topological-dev -p "${since_flags[@]}" run build
+  else
+    yarn workspaces foreach -A --topological-dev -p run build
+  fi
 }
 
 case "$target" in

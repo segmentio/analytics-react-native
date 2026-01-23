@@ -36,7 +36,7 @@
 
           sdk = pkgs.androidenv.composeAndroidPackages {
             platformVersions = [ "33" ];
-            buildToolsVersions = [ "33.0.0" ];
+            buildToolsVersions = [ "30.0.3" ];
             cmdLineToolsVersion = "19.0";
             includeEmulator = true;
             includeSystemImages = true;

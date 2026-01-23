@@ -54,6 +54,7 @@ android {
   }
 
   compileSdkVersion getExtOrIntegerDefault("compileSdkVersion")
+  buildToolsVersion getExtOrDefault("buildToolsVersion")
 
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault("minSdkVersion")
@@ -91,4 +92,3 @@ dependencies {
   implementation "com.facebook.react:react-native:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
-

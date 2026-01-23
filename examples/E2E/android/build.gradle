@@ -1,9 +1,16 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+// Ensure Gradle sees the SDK path from the environment (set by flox activation).
+def envSdk = System.getenv("ANDROID_SDK_ROOT") ?: System.getenv("ANDROID_HOME")
+if (envSdk) {
+    System.setProperty("android.home", envSdk)
+    System.setProperty("android.sdkRoot", envSdk)
+}
+
 buildscript {
     ext {
-        // Default to the build-tools pinned in the flake; allow override via ANDROID_BUILD_TOOLS_VERSION.
-        buildToolsVersion = System.getenv("ANDROID_BUILD_TOOLS_VERSION") ?: "33.0.0"
+        // Resolve build-tools from env override, then from the SDK on disk, falling back to a sane default.
+        buildToolsVersion = System.getenv("ANDROID_BUILD_TOOLS_VERSION") ?: "30.0.3"
         minSdkVersion = 21
         compileSdkVersion = 33
         targetSdkVersion = 33
