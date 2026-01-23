@@ -9,58 +9,15 @@ if [ -z "$project_root" ]; then
   project_root="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/../../.." && pwd)"
 fi
 export PROJECT_ROOT="$project_root"
+export DEVBOX_PROJECT_ROOT="$project_root"
 
-# Resolve SDK from flakes if not provided.
-if [ -z "${ANDROID_SDK_ROOT:-}" ] && [ -z "${ANDROID_HOME:-}" ]; then
-  for target in \
-    "path:${project_root}/env/android/latest#android-sdk-latest.outPath" \
-    "path:${project_root}/env/android/min#android-sdk-min.outPath"
-  do
-    sdk_out=$(nix --extra-experimental-features "nix-command flakes" eval --raw "$target" 2>/dev/null || true)
-    if [ -n "${sdk_out:-}" ] && [ -d "$sdk_out/libexec/android-sdk" ]; then
-      export ANDROID_SDK_ROOT="$sdk_out/libexec/android-sdk"
-      export ANDROID_HOME="$ANDROID_SDK_ROOT"
-      break
-    fi
-  done
-fi
-
-if [ -z "${ANDROID_SDK_ROOT:-}" ] && [ -n "${ANDROID_HOME:-}" ]; then
-  export ANDROID_SDK_ROOT="$ANDROID_HOME"
-fi
-
-if [ -n "${ANDROID_SDK_ROOT:-}" ] && [ -z "${ANDROID_HOME:-}" ]; then
-  export ANDROID_HOME="$ANDROID_SDK_ROOT"
+# Use the device helper to set SDK + PATH without starting anything.
+if [ -f "$project_root/scripts/android.sh" ]; then
+  # shellcheck disable=SC1091
+  . "$project_root/scripts/android.sh"
 fi
 
 if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
-  cmdline_tools_bin=""
-  if [ -d "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" ]; then
-    cmdline_tools_bin="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin"
-  else
-    cmdline_tools_dir=$(find "$ANDROID_SDK_ROOT/cmdline-tools" -maxdepth 1 -mindepth 1 -type d -not -name latest 2>/dev/null | sort -V | tail -n 1)
-    if [ -n "${cmdline_tools_dir:-}" ] && [ -d "$cmdline_tools_dir/bin" ]; then
-      cmdline_tools_bin="$cmdline_tools_dir/bin"
-    fi
-  fi
-
-  new_path="$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/platform-tools"
-  if [ -n "${cmdline_tools_bin:-}" ]; then
-    new_path="$new_path:$cmdline_tools_bin"
-  fi
-  new_path="$new_path:$ANDROID_SDK_ROOT/tools/bin:$PATH"
-  export PATH="$new_path"
-
-  if [ -z "${ANDROID_EMULATOR_BIN:-}" ]; then
-    export ANDROID_EMULATOR_BIN="$ANDROID_SDK_ROOT/emulator/emulator"
-  fi
-  if [ -z "${AVDMANAGER_BIN:-}" ] && [ -n "${cmdline_tools_bin:-}" ]; then
-    export AVDMANAGER_BIN="$cmdline_tools_bin/avdmanager"
-  fi
-  if [ -z "${SDKMANAGER_BIN:-}" ] && [ -n "${cmdline_tools_bin:-}" ]; then
-    export SDKMANAGER_BIN="$cmdline_tools_bin/sdkmanager"
-  fi
-
   if [ -z "${ANDROID_AVD_HOME:-}" ]; then
     avd_home="${FLOX_ENV_CACHE:-$HOME/.flox/cache}/android/avd"
     mkdir -p "$avd_home"

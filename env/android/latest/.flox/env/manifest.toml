@@ -5,6 +5,24 @@ android-sdk.flake = "path:env/android/latest"
 [hook]
 [profile]
 [services]
+android-emulator-latest.command = """
+bash -lc '
+set -euo pipefail
+
+project_root="${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$project_root"
+
+arch="$(uname -m)"
+default_avd="medium_phone_API33_x86_64"
+if [ "$arch" = "arm64" ] || [ "$arch" = "aarch64" ]; then
+  default_avd="medium_phone_API33_arm64_v8a"
+fi
+
+DETOX_AVD="${DETOX_AVD:-${ANDROID_AVD_LATEST:-$default_avd}}" \
+EMU_FOREGROUND=1 \
+bash "$project_root/scripts/android.sh" start
+'
+"""
 [include]
 environments = [
     { dir = "../android-common" }

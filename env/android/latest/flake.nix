@@ -29,6 +29,11 @@
             };
           };
 
+          abiVersions =
+            if builtins.match "aarch64-.*" system != null
+            then [ "arm64-v8a" ]
+            else [ "x86_64" ];
+
           sdk = pkgs.androidenv.composeAndroidPackages {
             platformVersions = [ "33" ];
             buildToolsVersions = [ "33.0.0" ];
@@ -36,7 +41,7 @@
             includeEmulator = true;
             includeSystemImages = true;
             includeNDK = true;
-            abiVersions = [ "x86_64" ];
+            abiVersions = abiVersions;
             systemImageTypes = [ "google_apis" ];
           };
         in

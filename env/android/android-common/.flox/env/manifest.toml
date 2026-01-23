@@ -13,8 +13,13 @@ ANDROID_EMULATOR_FLAGS = "-no-boot-anim -netdelay none -netspeed full -no-snapsh
 ANDROID_EMULATOR_HEADLESS_FLAGS = "-no-window -no-audio -gpu swiftshader_indirect"
 [hook]
  on-activate = '''
-  set -euo pipefail
-  source "$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)/setup.sh"
+ set -euo pipefail
+  project_root="${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+  if [ ! -d "$project_root/env/android" ]; then
+    project_root="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/../../../../.." && pwd)"
+  fi
+  export PROJECT_ROOT="$project_root"
+  source "$project_root/env/android/android-common/setup.sh"
  '''
 [profile]
 [services]

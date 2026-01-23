@@ -12,6 +12,21 @@ shfmt.pkg-path = "shfmt"
 [hook]
  on-activate = '''
     export ROOT_PROJECT=$(git rev-parse --show-toplevel)
+    script() {
+      local name="${1:-}"
+      shift || true
+      if [ -z "$name" ]; then
+        echo "Usage: script <name> [args...] (runs scripts/<name>.sh)" >&2
+        return 1
+      fi
+      local project_root="${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+      local path="$project_root/scripts/${name}.sh"
+      if [ ! -x "$path" ]; then
+        echo "script: $path not found or not executable" >&2
+        return 1
+      fi
+      "$path" "$@"
+    }
  '''
 
 

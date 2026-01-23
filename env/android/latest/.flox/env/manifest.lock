@@ -11,6 +11,15 @@
       },
       "jdk17": {
         "pkg-path": "jdk17"
+      },
+      "nixfmt": {
+        "pkg-path": "nixfmt-rfc-style"
+      },
+      "shfmt": {
+        "pkg-path": "shfmt"
+      },
+      "treefmt": {
+        "pkg-path": "treefmt"
       }
     },
     "vars": {
@@ -24,10 +33,15 @@
       "ANDROID_SYSTEM_IMAGE_MIN": "system-images;android-21;google_apis;x86_64"
     },
     "hook": {
-      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n  set -euo pipefail\n  source \"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")\" && pwd)/setup.sh\"\n "
+      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n    script() {\n      local name=\"${1:-}\"\n      shift || true\n      if [ -z \"$name\" ]; then\n        echo \"Usage: script <name> [args...] (runs scripts/<name>.sh)\" >&2\n        return 1\n      fi\n      local project_root=\"${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n      local path=\"$project_root/scripts/${name}.sh\"\n      if [ ! -x \"$path\" ]; then\n        echo \"script: $path not found or not executable\" >&2\n        return 1\n      fi\n      \"$path\" \"$@\"\n    }\n \n set -euo pipefail\n  project_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n  if [ ! -d \"$project_root/env/android\" ]; then\n    project_root=\"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/../../../../..\" && pwd)\"\n  fi\n  export PROJECT_ROOT=\"$project_root\"\n  source \"$project_root/env/android/android-common/setup.sh\"\n "
     },
     "profile": {},
-    "options": {}
+    "options": {},
+    "services": {
+      "android-emulator-latest": {
+        "command": "bash -lc '\nset -euo pipefail\n\nproject_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\ncd \"$project_root\"\n\narch=\"$(uname -m)\"\ndefault_avd=\"medium_phone_API33_x86_64\"\nif [ \"$arch\" = \"arm64\" ] || [ \"$arch\" = \"aarch64\" ]; then\n  default_avd=\"medium_phone_API33_arm64_v8a\"\nfi\n\nDETOX_AVD=\"${DETOX_AVD:-${ANDROID_AVD_LATEST:-$default_avd}}\" EMU_FOREGROUND=1 bash \"$project_root/scripts/android.sh\" start\n'\n"
+      }
+    }
   },
   "packages": [
     {
@@ -265,13 +279,361 @@
       "priority": 5
     },
     {
-      "install_id": "android-sdk",
-      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/latest?lastModified=1769120830&narHash=sha256-7ttfRiNhVZ9oAoFOaorF3Ozk2lHqJ8NG4osc4v9zqsk%3D",
-      "flake-description": "Android SDK (API 33) for flox/devbox",
-      "locked-flake-attr-path": "packages.aarch64-darwin.default",
-      "derivation": "/nix/store/g6xfs9ryqwq0ng0igml13272v5wbxn9f-androidsdk.drv",
+      "attr_path": "nixfmt-rfc-style",
+      "broken": false,
+      "derivation": "/nix/store/awh5fy1i2xnh52pxkzj8mghxaqd7skx3-nixfmt-1.2.0.drv",
+      "description": "Official formatter for Nix code",
+      "install_id": "nixfmt",
+      "license": "MPL-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "nixfmt-1.2.0",
+      "pname": "nixfmt-rfc-style",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T04:28:16.356813Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.2.0",
+      "outputs_to_install": [
+        "out"
+      ],
       "outputs": {
-        "out": "/nix/store/gdlxackvpc805gw0609a4k3vc6wkymj9-androidsdk"
+        "out": "/nix/store/4jzq73b6bax62245z5a5ag8xdazfw4fg-nixfmt-1.2.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "nixfmt-rfc-style",
+      "broken": false,
+      "derivation": "/nix/store/pjy6lhz46m791bxjfzvvkr0cgm7mm0bg-nixfmt-1.2.0.drv",
+      "description": "Official formatter for Nix code",
+      "install_id": "nixfmt",
+      "license": "MPL-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "nixfmt-1.2.0",
+      "pname": "nixfmt-rfc-style",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:02:53.381263Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.2.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/as7f2yrlqgv130vdiw2xi7rhlgd1yk8v-nixfmt-1.2.0"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "nixfmt-rfc-style",
+      "broken": false,
+      "derivation": "/nix/store/nyfwismzwk7b3hlkbcvssgikl4n4z3gx-nixfmt-1.2.0.drv",
+      "description": "Official formatter for Nix code",
+      "install_id": "nixfmt",
+      "license": "MPL-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "nixfmt-1.2.0",
+      "pname": "nixfmt-rfc-style",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:34:27.681985Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.2.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/qmas80hmzqbm7n5h9is2im9gjzxsl04a-nixfmt-1.2.0"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "nixfmt-rfc-style",
+      "broken": false,
+      "derivation": "/nix/store/vanb0cqaybyiq2315nk59c92mbksyf32-nixfmt-1.2.0.drv",
+      "description": "Official formatter for Nix code",
+      "install_id": "nixfmt",
+      "license": "MPL-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "nixfmt-1.2.0",
+      "pname": "nixfmt-rfc-style",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T06:20:58.281533Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.2.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/yx338k689yp9hpnl6h5y22f7vbmi5pky-nixfmt-1.2.0"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "shfmt",
+      "broken": false,
+      "derivation": "/nix/store/92637k27nqb44f4h7clw1kdqw8rar5hx-shfmt-3.12.0.drv",
+      "description": "Shell parser and formatter",
+      "install_id": "shfmt",
+      "license": "BSD-3-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "shfmt-3.12.0",
+      "pname": "shfmt",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T04:29:40.815428Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "3.12.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/dwz5z2wp95pkv6gsmz74w01qrihvhl1h-shfmt-3.12.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "shfmt",
+      "broken": false,
+      "derivation": "/nix/store/g50gkqd9lwgpfwr7jcg582dw1nw614rv-shfmt-3.12.0.drv",
+      "description": "Shell parser and formatter",
+      "install_id": "shfmt",
+      "license": "BSD-3-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "shfmt-3.12.0",
+      "pname": "shfmt",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:04:32.072948Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "3.12.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/6gqqharpvjfzm1wzny6a0zgf1v0aj53a-shfmt-3.12.0"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "shfmt",
+      "broken": false,
+      "derivation": "/nix/store/9piagmiq56gsz4fj4jfd465xg7lff27x-shfmt-3.12.0.drv",
+      "description": "Shell parser and formatter",
+      "install_id": "shfmt",
+      "license": "BSD-3-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "shfmt-3.12.0",
+      "pname": "shfmt",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:35:46.086711Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "3.12.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/98fwma9rxd04pxj9jrsgvf9xs76f9hlf-shfmt-3.12.0"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "shfmt",
+      "broken": false,
+      "derivation": "/nix/store/i58i9fgshxnqyjhin1zjqwg51cf5x6v1-shfmt-3.12.0.drv",
+      "description": "Shell parser and formatter",
+      "install_id": "shfmt",
+      "license": "BSD-3-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "shfmt-3.12.0",
+      "pname": "shfmt",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T06:22:48.977965Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "3.12.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/c3bgrcwq2735ybl5zw68n9nqgwaa0yrj-shfmt-3.12.0"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "treefmt",
+      "broken": false,
+      "derivation": "/nix/store/mms0hjzhldcg5a5jl3x17y7i359c8776-treefmt-2.4.0.drv",
+      "description": "One CLI to format the code tree",
+      "install_id": "treefmt",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "treefmt-2.4.0",
+      "pname": "treefmt",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T04:30:06.303007Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.4.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/48r10kj61pjhz8alfscs8vgrdmlfnqx9-treefmt-2.4.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "treefmt",
+      "broken": false,
+      "derivation": "/nix/store/mjzjj0nz5h89bmfk38m24drghiw8ksbz-treefmt-2.4.0.drv",
+      "description": "One CLI to format the code tree",
+      "install_id": "treefmt",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "treefmt-2.4.0",
+      "pname": "treefmt",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:05:08.050718Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.4.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/d46fscf82k9ay6s8a3qxk3682ycqalds-treefmt-2.4.0"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "treefmt",
+      "broken": false,
+      "derivation": "/nix/store/mwp0vfbz5937vcp9ngcj2caza8bjfzmj-treefmt-2.4.0.drv",
+      "description": "One CLI to format the code tree",
+      "install_id": "treefmt",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "treefmt-2.4.0",
+      "pname": "treefmt",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T05:36:09.420552Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.4.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/yllw5b2js10ia8v0z8x3crbakhal0cs7-treefmt-2.4.0"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "treefmt",
+      "broken": false,
+      "derivation": "/nix/store/6jm0r48c7bfs81mvwc1ydbgn5s978f0b-treefmt-2.4.0.drv",
+      "description": "One CLI to format the code tree",
+      "install_id": "treefmt",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "name": "treefmt-2.4.0",
+      "pname": "treefmt",
+      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "rev_count": 930839,
+      "rev_date": "2026-01-20T05:17:20Z",
+      "scrape_date": "2026-01-22T06:23:26.245521Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.4.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/1pdwlp9d1rrm3xp4s5rhhk7mkmx9cmv2-treefmt-2.4.0"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "install_id": "android-sdk",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/latest?lastModified=1769128635&narHash=sha256-JtlE1Gb2eOfqcm2xh2d0ps91RFUADbnuIgQfAQ/qGlM%3D",
+      "flake-description": "Android SDK (API 33) for flox",
+      "locked-flake-attr-path": "packages.aarch64-darwin.default",
+      "derivation": "/nix/store/q58fn0llpj7faw35ynhy2myk2rwy97wj-androidsdk.drv",
+      "outputs": {
+        "out": "/nix/store/3hbkhbybkagnrapzr5mxf93qzh1zmm89-androidsdk"
       },
       "output-names": [
         "out"
@@ -292,12 +654,12 @@
     },
     {
       "install_id": "android-sdk",
-      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/latest?lastModified=1769120830&narHash=sha256-7ttfRiNhVZ9oAoFOaorF3Ozk2lHqJ8NG4osc4v9zqsk%3D",
-      "flake-description": "Android SDK (API 33) for flox/devbox",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/latest?lastModified=1769128635&narHash=sha256-JtlE1Gb2eOfqcm2xh2d0ps91RFUADbnuIgQfAQ/qGlM%3D",
+      "flake-description": "Android SDK (API 33) for flox",
       "locked-flake-attr-path": "packages.aarch64-linux.default",
-      "derivation": "/nix/store/fg6nkfv5aqj2a0nd37g0bmzxplf7mc7n-androidsdk.drv",
+      "derivation": "/nix/store/3384qf36xcy52x9zrrvsdirync3vydnf-androidsdk.drv",
       "outputs": {
-        "out": "/nix/store/p8d1cyy81sngsxpa74n83hk178lkjx63-androidsdk"
+        "out": "/nix/store/9cixbx6cqna2910gccvhdhdx6dddyhg6-androidsdk"
       },
       "output-names": [
         "out"
@@ -318,8 +680,8 @@
     },
     {
       "install_id": "android-sdk",
-      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/latest?lastModified=1769120830&narHash=sha256-7ttfRiNhVZ9oAoFOaorF3Ozk2lHqJ8NG4osc4v9zqsk%3D",
-      "flake-description": "Android SDK (API 33) for flox/devbox",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/latest?lastModified=1769128635&narHash=sha256-JtlE1Gb2eOfqcm2xh2d0ps91RFUADbnuIgQfAQ/qGlM%3D",
+      "flake-description": "Android SDK (API 33) for flox",
       "locked-flake-attr-path": "packages.x86_64-darwin.default",
       "derivation": "/nix/store/x6qgpdf3izz2dsnq0jqasxx1paigyjr8-androidsdk.drv",
       "outputs": {
@@ -344,8 +706,8 @@
     },
     {
       "install_id": "android-sdk",
-      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/latest?lastModified=1769120830&narHash=sha256-7ttfRiNhVZ9oAoFOaorF3Ozk2lHqJ8NG4osc4v9zqsk%3D",
-      "flake-description": "Android SDK (API 33) for flox/devbox",
+      "locked-url": "path:/Users/abueide/code/analytics-react-native/env/android/latest?lastModified=1769128635&narHash=sha256-JtlE1Gb2eOfqcm2xh2d0ps91RFUADbnuIgQfAQ/qGlM%3D",
+      "flake-description": "Android SDK (API 33) for flox",
       "locked-flake-attr-path": "packages.x86_64-linux.default",
       "derivation": "/nix/store/l0z1dcbb140kjzbamn50bgwlid4brh7p-androidsdk.drv",
       "outputs": {
@@ -380,6 +742,11 @@
       "hook": {},
       "profile": {},
       "options": {},
+      "services": {
+        "android-emulator-latest": {
+          "command": "bash -lc '\nset -euo pipefail\n\nproject_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\ncd \"$project_root\"\n\narch=\"$(uname -m)\"\ndefault_avd=\"medium_phone_API33_x86_64\"\nif [ \"$arch\" = \"arm64\" ] || [ \"$arch\" = \"aarch64\" ]; then\n  default_avd=\"medium_phone_API33_arm64_v8a\"\nfi\n\nDETOX_AVD=\"${DETOX_AVD:-${ANDROID_AVD_LATEST:-$default_avd}}\" EMU_FOREGROUND=1 bash \"$project_root/scripts/android.sh\" start\n'\n"
+        }
+      },
       "include": {
         "environments": [
           {
@@ -398,6 +765,15 @@
             },
             "jdk17": {
               "pkg-path": "jdk17"
+            },
+            "nixfmt": {
+              "pkg-path": "nixfmt-rfc-style"
+            },
+            "shfmt": {
+              "pkg-path": "shfmt"
+            },
+            "treefmt": {
+              "pkg-path": "treefmt"
             }
           },
           "vars": {
@@ -411,7 +787,7 @@
             "ANDROID_SYSTEM_IMAGE_MIN": "system-images;android-21;google_apis;x86_64"
           },
           "hook": {
-            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n \n  set -euo pipefail\n  source \"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")\" && pwd)/setup.sh\"\n "
+            "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n    script() {\n      local name=\"${1:-}\"\n      shift || true\n      if [ -z \"$name\" ]; then\n        echo \"Usage: script <name> [args...] (runs scripts/<name>.sh)\" >&2\n        return 1\n      fi\n      local project_root=\"${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n      local path=\"$project_root/scripts/${name}.sh\"\n      if [ ! -x \"$path\" ]; then\n        echo \"script: $path not found or not executable\" >&2\n        return 1\n      fi\n      \"$path\" \"$@\"\n    }\n \n set -euo pipefail\n  project_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n  if [ ! -d \"$project_root/env/android\" ]; then\n    project_root=\"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/../../../../..\" && pwd)\"\n  fi\n  export PROJECT_ROOT=\"$project_root\"\n  source \"$project_root/env/android/android-common/setup.sh\"\n "
           },
           "profile": {},
           "options": {}

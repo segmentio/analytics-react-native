@@ -8,13 +8,21 @@ cocoapods.systems = ["x86_64-darwin", "aarch64-darwin"]
 
 [vars]
 IOS_SIM_LATEST_DEVICE = "iPhone 17"
-IOS_SIM_LATEST_RUNTIME = "26.1"
 
 
 [hook]
  on-activate = '''
   set -euo pipefail
-  source "$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/.." && pwd)/setup.sh"
+  project_root="${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+  if [ ! -d "$project_root/env/ios" ]; then
+    project_root="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/../../../../.." && pwd)"
+  fi
+  export PROJECT_ROOT="$project_root"
+  if [ -f "$project_root/scripts/ios.sh" ]; then
+    source "$project_root/scripts/ios.sh"
+  elif [ -f "$project_root/env/ios/setup.sh" ]; then
+    source "$project_root/env/ios/setup.sh"
+  fi
  '''
 
 

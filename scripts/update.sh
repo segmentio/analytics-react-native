@@ -14,14 +14,27 @@ update_flox_envs() {
   update_env() {
     local dir="$1"
     local abs="$project_root/$dir"
+    local manifest="$abs/.flox/env/manifest.toml"
+    local has_includes=false
+
+    if [ -f "$manifest" ] && grep -q "environments" "$manifest"; then
+      has_includes=true
+    fi
+
     echo "Updating flox environment: $abs"
-    flox update -d "$abs" || true
-    if ! flox include upgrade -d "$abs"; then
-      flox list -d "$abs" >/dev/null || true
-      flox include upgrade -d "$abs"
+    flox update -d "$abs"
+    if "$has_includes"; then
+      if ! flox include upgrade -d "$abs"; then
+        flox list -d "$abs" >/dev/null || true
+        flox include upgrade -d "$abs"
+      fi
     fi
   }
 
+  # Update base envs first (no includes), then include-aware envs in dependency order.
+  update_env "env/common"
+  update_env "env/nodejs"
+  update_env "env/android/android-common"
   update_env "env/android/min"
   update_env "env/android/latest"
   update_env "env/ios"

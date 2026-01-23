@@ -7,6 +7,16 @@ IOS_SIM_RUNTIME = "26.1"
 [hook]
 [profile]
 [services]
+ios-simulator-latest.command = """
+bash -lc '
+set -euo pipefail
+
+project_root="${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$project_root"
+
+IOS_MANAGER_FOREGROUND=1 IOS_FLAVOR=latest IOS_DOWNLOAD_RUNTIME=1 bash "$project_root/scripts/ios.sh" start
+'
+"""
 [include]
 environments = [
     { dir = ".." }
