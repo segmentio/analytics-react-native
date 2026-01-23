@@ -54,21 +54,17 @@ jobs:
         run: |
           CLEAN_PATH=$(printf "%s" "$PATH" | tr ':' '\n' | grep -v '/.yarn/bin' | awk '!seen[$0]++' | paste -sd ':' -)
           PATH="$CLEAN_PATH" flox activate -d env/ios/latest -- bash -lc '
-            PATH=$(printf "%s" "$PATH" | tr ":" "\n" | grep -v "/.yarn/bin" | awk "!seen[$0]++" | paste -sd ":" -)
-            export PATH
             echo PATH=$PATH
             ls -l /Users/runner/.local/bin || true
-            which yarn
+            command -v yarn
             yarn --version
             node -v
-            corepack --version
+            command -v corepack && corepack --version
           '
       - name: iOS E2E Tests
         run: |
           CLEAN_PATH=$(printf "%s" "$PATH" | tr ':' '\n' | grep -v '/.yarn/bin' | awk '!seen[$0]++' | paste -sd ':' -)
           PATH="$CLEAN_PATH" flox activate -d env/ios/latest -- bash -lc '
-            PATH=$(printf "%s" "$PATH" | tr ":" "\n" | grep -v "/.yarn/bin" | awk "!seen[$0]++" | paste -sd ":" -)
-            export PATH
             yarn e2e:ios
           '
 
