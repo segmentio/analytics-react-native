@@ -22,20 +22,37 @@ concurrency:
 jobs:
   run-e2e-ios:
     if: (github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-e2e') || github.event_name == 'push') && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == '' || github.event.inputs.platforms == 'ios' || github.event.inputs.platforms == null)
-    runs-on: macos-15
+    runs-on: macos-26
     env:
       YARN_ENABLE_HARDENED_MODE: 0
     strategy:
       matrix:
         include:
-          - name: ios-latest
+          - name: ios-max
             ios-device: "iPhone 17"
             ios-runtime: "26.1"
-            simulator-service: ios-simulator-latest
+            simulator-service: ios-simulator-max
             xcode-version: "26.1.1"
-            device-target: "ios-latest"
+            device-target: "ios-max"
     steps:
       - uses: actions/checkout@v4
+      - name: Resolve platform targets
+        id: targets
+        run: |
+          eval "$(scripts/targets.sh profile ios-max)"
+          {
+            echo "IOS_RUNTIME=${IOS_RUNTIME}"
+            echo "IOS_DEVICE_NAMES=${IOS_DEVICE_NAMES}"
+            echo "DETOX_IOS_DEVICE=${DETOX_IOS_DEVICE}"
+            echo "IOS_FLAVOR=${IOS_FLAVOR}"
+            echo "IOS_TARGET=${IOS_TARGET}"
+          } >> "$GITHUB_ENV"
+          {
+            echo "runtime=${IOS_RUNTIME}"
+            echo "device=${IOS_DEVICE}"
+            echo "flavor=${IOS_FLAVOR}"
+            echo "target=${IOS_TARGET}"
+          } >> "$GITHUB_OUTPUT"
       - name: Yarn cache (E2E)
         uses: actions/cache@v4
         with:
@@ -71,30 +88,50 @@ jobs:
           xcode-version: ${{ matrix.xcode-version }}
       - name: Install flox
         uses: flox/install-flox-action@v2.2.0
+      - name: Prepare iOS runtime (no boot)
+        run: |
+          flox activate -d env/ios/max -- bash -lc 'IOS_PREPARE_ONLY=1 IOS_DOWNLOAD_RUNTIME=1 scripts/ios.sh start'
       - name: iOS E2E Tests
         run: |
-          flox activate -d env/ios/latest -- bash -lc "yarn e2e:ios"
+          flox activate -d env/ios/max -- bash -lc "yarn e2e:ios"
 
   run-e2e-android:
     if: (github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-e2e') || github.event_name == 'push') && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == '' || github.event.inputs.platforms == 'android' || github.event.inputs.platforms == null)
     continue-on-error: true
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04-arm
     strategy:
       matrix:
         include:
-          - name: android-latest
+          - name: android-max
             avd-name: medium_phone_API33_x86_64
             system-image: "system-images;android-33;google_apis;x86_64"
-            emulator-service: android-emulator-latest
-            device-target: "android-latest"
+            emulator-service: android-emulator-max
+            device-target: "android-max"
     steps:
       - uses: actions/checkout@v4
+      - name: Resolve platform targets
+        id: android_targets
+        run: |
+          eval "$(scripts/targets.sh profile android-max)"
+          {
+            echo "ANDROID_API=${ANDROID_API}"
+            echo "DETOX_AVD=${DETOX_AVD}"
+            echo "AVD_FLAVOR=${AVD_FLAVOR}"
+            echo "ANDROID_TARGET=${ANDROID_TARGET}"
+          } >> "$GITHUB_ENV"
+          {
+            echo "api=${ANDROID_API}"
+            echo "avd=${DETOX_AVD}"
+            echo "flavor=${AVD_FLAVOR}"
+            echo "target=${ANDROID_TARGET}"
+          } >> "$GITHUB_OUTPUT"
       - name: Free Disk Space (Ubuntu)
         uses: jlumbroso/free-disk-space@v1.3.1
       - name: Install flox
         uses: flox/install-flox-action@v2.2.0
-      - name: Start Android emulator
-        run: flox services start ${{ matrix.emulator-service }}
+      - name: Prepare Android image (no boot)
+        run: |
+          flox activate -d env/android/max -- bash -lc 'AVD_PREPARE_ONLY=1 scripts/android.sh start'
       - name: Android E2E Tests
         run: |
-          flox activate -d env/android/latest -- bash -lc "set -euo pipefail; yarn e2e:android"
+          flox activate -d env/android/max -- bash -lc "set -euo pipefail; yarn e2e:android"

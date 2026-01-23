@@ -13,26 +13,45 @@ concurrency:
 
 jobs:
   run-e2e-ios:
-    runs-on: macos-15
+    runs-on: macos-26
     env:
       YARN_ENABLE_HARDENED_MODE: 0
     strategy:
       matrix:
         include:
           - name: ios-min
-            ios-device: "iPhone 14"
-            ios-runtime: "18.5"
+            ios-device: "iPhone 13"
+            ios-runtime: "15.0"
             simulator-service: ios-simulator-min
-            xcode-version: "16.1"
+            xcode-version: "26.1.1"
             device-target: "ios-min"
-          - name: ios-latest
+          - name: ios-max
             ios-device: "iPhone 17"
             ios-runtime: "26.1"
-            simulator-service: ios-simulator-latest
+            simulator-service: ios-simulator-max
             xcode-version: "26.1.1"
-            device-target: "ios-latest"
+            device-target: "ios-max"
     steps:
       - uses: actions/checkout@v4
+      - name: Resolve platform targets
+        id: targets
+        run: |
+          profile="ios-max"
+          if [ "${{ matrix.name }}" = "ios-min" ]; then profile="ios-min"; fi
+          eval "$(scripts/targets.sh profile "$profile")"
+          {
+            echo "IOS_RUNTIME=${IOS_RUNTIME}"
+            echo "IOS_DEVICE_NAMES=${IOS_DEVICE_NAMES}"
+            echo "DETOX_IOS_DEVICE=${DETOX_IOS_DEVICE}"
+            echo "IOS_FLAVOR=${IOS_FLAVOR}"
+            echo "IOS_TARGET=${IOS_TARGET}"
+          } >> "$GITHUB_ENV"
+          {
+            echo "runtime=${IOS_RUNTIME}"
+            echo "device=${IOS_DEVICE}"
+            echo "flavor=${IOS_FLAVOR}"
+            echo "target=${IOS_TARGET}"
+          } >> "$GITHUB_OUTPUT"
       - name: Yarn cache (E2E)
         uses: actions/cache@v4
         with:
@@ -68,13 +87,20 @@ jobs:
           xcode-version: ${{ matrix.xcode-version }}
       - name: Install flox
         uses: flox/install-flox-action@v2.2.0
+      - name: Prepare iOS runtime (no boot)
+        run: |
+          env_dir="env/ios/max"
+          if [ "${{ matrix.name }}" = "ios-min" ]; then env_dir="env/ios/min"; fi
+          flox activate -d "$env_dir" -- bash -lc 'IOS_PREPARE_ONLY=1 IOS_DOWNLOAD_RUNTIME=1 scripts/ios.sh start'
       - name: iOS E2E Tests
         run: |
-          flox activate -d env/ios/latest -- bash -lc "yarn e2e:ios"
+          env_dir="env/ios/max"
+          if [ "${{ matrix.name }}" = "ios-min" ]; then env_dir="env/ios/min"; fi
+          flox activate -d "$env_dir" -- bash -lc "yarn e2e:ios"
 
   run-e2e-android:
     continue-on-error: true
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04-arm
     strategy:
       matrix:
         include:
@@ -83,19 +109,42 @@ jobs:
             system-image: "system-images;android-21;google_apis;x86_64"
             emulator-service: android-emulator-min
             device-target: "android-min"
-          - name: android-latest
+          - name: android-max
             avd-name: medium_phone_API33_x86_64
             system-image: "system-images;android-33;google_apis;x86_64"
-            emulator-service: android-emulator-latest
-            device-target: "android-latest"
+            emulator-service: android-emulator-max
+            device-target: "android-max"
     steps:
       - uses: actions/checkout@v4
+      - name: Resolve platform targets
+        id: android_targets
+        run: |
+          profile="android-max"
+          if [ "${{ matrix.name }}" = "android-min" ]; then profile="android-min"; fi
+          eval "$(scripts/targets.sh profile "$profile")"
+          {
+            echo "ANDROID_API=${ANDROID_API}"
+            echo "DETOX_AVD=${DETOX_AVD}"
+            echo "AVD_FLAVOR=${AVD_FLAVOR}"
+            echo "ANDROID_TARGET=${ANDROID_TARGET}"
+          } >> "$GITHUB_ENV"
+          {
+            echo "api=${ANDROID_API}"
+            echo "avd=${DETOX_AVD}"
+            echo "flavor=${AVD_FLAVOR}"
+            echo "target=${ANDROID_TARGET}"
+          } >> "$GITHUB_OUTPUT"
       - name: Free Disk Space (Ubuntu)
         uses: jlumbroso/free-disk-space@v1.3.1
       - name: Install flox
         uses: flox/install-flox-action@v2.2.0
-      - name: Start Android emulator
-        run: flox services start ${{ matrix.emulator-service }}
+      - name: Prepare Android image (no boot)
+        run: |
+          env_dir="env/android/max"
+          if [ "${{ matrix.name }}" = "android-min" ]; then env_dir="env/android/min"; fi
+          flox activate -d "$env_dir" -- bash -lc 'AVD_PREPARE_ONLY=1 scripts/android.sh start'
       - name: Android E2E Tests
         run: |
-          flox activate -d env/android/latest -- bash -lc "set -euo pipefail; yarn e2e:android"
+          env_dir="env/android/max"
+          if [ "${{ matrix.name }}" = "android-min" ]; then env_dir="env/android/min"; fi
+          flox activate -d "$env_dir" -- bash -lc "set -euo pipefail; yarn e2e:android"

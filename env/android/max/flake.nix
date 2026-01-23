@@ -46,7 +46,7 @@
           };
         in
         {
-          android-sdk-latest = sdk.androidsdk;
+          android-sdk-max = sdk.androidsdk;
           default = sdk.androidsdk;
         });
     };

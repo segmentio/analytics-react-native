@@ -2,7 +2,8 @@ version = 1
 
 [install]
 [vars]
-IOS_SIM_DEVICE = "iPhone 14"
+IOS_SIM_DEVICE = "iPhone 13"
+IOS_RUNTIME = "15.0"
 [hook]
 [profile]
 [services]

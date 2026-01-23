@@ -7,7 +7,7 @@ cocoapods.systems = ["x86_64-darwin", "aarch64-darwin"]
 
 
 [vars]
-IOS_SIM_LATEST_DEVICE = "iPhone 17"
+IOS_SIM_MAX_DEVICE = "iPhone 17"
 
 
 [hook]

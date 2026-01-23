@@ -23,14 +23,14 @@ fi
 [profile]
 
 [include]
- environments = [
-     { dir = "env/common", name = "common" },
-     { dir = "env/nodejs", name = "nodejs" },
-     { dir = "env/android/min", name = "android-min" },
-     { dir = "env/android/latest", name = "android-latest" },
-     { dir = "env/ios/min", name = "ios-min" },
-     { dir = "env/ios/latest", name = "ios-latest" }
- ]
+environments = [
+    { dir = "env/common", name = "common" },
+    { dir = "env/nodejs", name = "nodejs" },
+    { dir = "env/android/min", name = "android-min" },
+    { dir = "env/android/max", name = "android-max" },
+    { dir = "env/ios/min", name = "ios-min" },
+    { dir = "env/ios/max", name = "ios-max" }
+]
 
 
 [build]

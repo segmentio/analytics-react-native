@@ -11,5 +11,9 @@ fi
 export PROJECT_ROOT="$project_root"
 
 if [ -z "${DETOX_IOS_DEVICE:-}" ]; then
-  export DETOX_IOS_DEVICE="${IOS_SIM_DEVICE:-${IOS_SIM_LATEST_DEVICE:-iPhone 17}}"
+  if [ "${IOS_FLAVOR:-}" = "minsdk" ] || [ "${IOS_TARGET:-}" = "min" ]; then
+    export DETOX_IOS_DEVICE="${IOS_DEVICE_NAMES:-${IOS_MIN_DEVICE:-${IOS_SIM_DEVICE:-${IOS_SIM_MAX_DEVICE:-iPhone 17}}}}"
+  else
+    export DETOX_IOS_DEVICE="${IOS_DEVICE_NAMES:-${IOS_MAX_DEVICE:-${IOS_SIM_DEVICE:-${IOS_SIM_MAX_DEVICE:-iPhone 17}}}}"
+  fi
 fi

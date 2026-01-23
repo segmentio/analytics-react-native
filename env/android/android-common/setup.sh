@@ -32,8 +32,8 @@ fi
 if [ -z "${DETOX_AVD:-}" ]; then
   arch="$(uname -m)"
   if [ "$arch" = "arm64" ] || [ "$arch" = "aarch64" ]; then
-    export DETOX_AVD="${ANDROID_AVD_LATEST_ARM:-medium_phone_API33_arm64_v8a}"
+    export DETOX_AVD="${ANDROID_AVD_MAX_ARM:-medium_phone_API33_arm64_v8a}"
   else
-    export DETOX_AVD="${ANDROID_AVD_LATEST_X86:-medium_phone_API33_x86_64}"
+    export DETOX_AVD="${ANDROID_AVD_MAX_X86:-medium_phone_API33_x86_64}"
   fi
 fi

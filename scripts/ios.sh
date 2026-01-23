@@ -8,7 +8,11 @@ init_ios_env() {
   fi
 
   if [[ -z "${DETOX_IOS_DEVICE:-}" ]]; then
-    DETOX_IOS_DEVICE="${IOS_SIM_DEVICE:-${IOS_SIM_LATEST_DEVICE:-iPhone 17}}"
+    if [[ "${IOS_FLAVOR:-}" == "minsdk" || "${IOS_TARGET:-}" == "min" ]]; then
+      DETOX_IOS_DEVICE="${IOS_DEVICE_NAMES:-${IOS_MIN_DEVICE:-${IOS_SIM_DEVICE:-${IOS_SIM_MAX_DEVICE:-iPhone 17}}}}"
+    else
+      DETOX_IOS_DEVICE="${IOS_DEVICE_NAMES:-${IOS_MAX_DEVICE:-${IOS_SIM_DEVICE:-${IOS_SIM_MAX_DEVICE:-iPhone 17}}}}"
+    fi
     export DETOX_IOS_DEVICE
   fi
 }
@@ -116,8 +120,9 @@ resolve_runtime() {
     fi
 
     if [[ "${IOS_DOWNLOAD_RUNTIME:-0}" != "0" ]] && command -v xcodebuild >/dev/null 2>&1; then
-      echo "Preferred runtime iOS ${preferred} not found. Attempting to download via xcodebuild -downloadPlatform iOS..." >&2
-      if xcodebuild -downloadPlatform iOS; then
+      local dl_target="iOS${preferred}"
+      echo "Preferred runtime iOS ${preferred} not found. Attempting to download via xcodebuild -downloadPlatform ${dl_target}..." >&2
+      if xcodebuild -downloadPlatform "${dl_target}" || xcodebuild -downloadPlatform iOS; then
         json="$(xcrun simctl list runtimes -j)"
         choice="$(echo "$json" | jq -r --arg v "$preferred" '.runtimes[] | select(.isAvailable and (.name|startswith("iOS \($v)"))) | "\(.identifier)|\(.name)"' | head -n1)"
         if [[ -n "$choice" && "$choice" != "null" ]]; then
@@ -209,15 +214,17 @@ action="${1:-}"
 shift || true
 
 start_ios() {
-  local flavor="${IOS_FLAVOR:-latest}"
+  local flavor="${IOS_FLAVOR:-max}"
   if [[ "$flavor" == "minsdk" ]]; then
-    export IOS_DEVICE_NAMES="${IOS_DEVICE_NAMES:-iPhone 14}"
-    export IOS_RUNTIME="${IOS_RUNTIME:-18.5}"
-    export DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-iPhone 14}"
+    local default_device="${IOS_MIN_DEVICE:-iPhone 13}"
+    export IOS_DEVICE_NAMES="${IOS_DEVICE_NAMES:-$default_device}"
+    export IOS_RUNTIME="${IOS_RUNTIME:-${IOS_MIN_RUNTIME:-15.0}}"
+    export DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-$default_device}"
   else
-    export IOS_DEVICE_NAMES="${IOS_DEVICE_NAMES:-iPhone 14,iPhone 17}"
-    export IOS_RUNTIME="${IOS_RUNTIME:-}"
-    export DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-iPhone 17}"
+    local default_device="${IOS_MAX_DEVICE:-${IOS_SIM_MAX_DEVICE:-iPhone 17}}"
+    export IOS_DEVICE_NAMES="${IOS_DEVICE_NAMES:-$default_device}"
+    export IOS_RUNTIME="${IOS_RUNTIME:-${IOS_MAX_RUNTIME:-}}"
+    export DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-$default_device}"
   fi
 
   ensure_developer_dir
@@ -237,6 +244,11 @@ start_ios() {
   done
 
   local sim_device="${DETOX_IOS_DEVICE:-$(echo "${devices[0]}" | xargs)}"
+  if [[ "${IOS_PREPARE_ONLY:-}" == "1" || "${IOS_PREPARE_ONLY:-}" == "true" ]]; then
+    echo "Prepared iOS simulators for ${sim_device}${runtime_name:+ (runtime ${runtime_name})}; skipping boot."
+    return 0
+  fi
+
   echo "Starting iOS simulator: ${sim_device}${runtime_name:+ (runtime ${runtime_name})}"
   xcrun simctl boot "$sim_device" >/dev/null 2>&1 || true
   open -a Simulator
@@ -260,7 +272,8 @@ reset_ios() {
 
 case "$action" in
   start) start_ios ;;
+  prepare) IOS_PREPARE_ONLY=1 start_ios ;;
   stop) stop_ios ;;
   reset) reset_ios ;;
-  *) echo "Usage: ios.sh {start|stop|reset}" >&2; exit 1 ;;
+  *) echo "Usage: ios.sh {start|prepare|stop|reset}" >&2; exit 1 ;;
 esac

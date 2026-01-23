@@ -24,7 +24,7 @@ clean_pods() {
 
 stop_android_emulators() {
   if command -v flox >/dev/null 2>&1; then
-    flox services stop android-emulator-min android-emulator-latest >/dev/null 2>&1 || true
+    flox services stop android-emulator-min android-emulator-max >/dev/null 2>&1 || true
   fi
   if command -v adb >/dev/null 2>&1; then
     devices=$(adb devices -l 2>/dev/null | tail -n +2 | awk '{print $1}')
@@ -37,7 +37,7 @@ stop_android_emulators() {
 
 stop_ios_simulators() {
   if command -v flox >/dev/null 2>&1; then
-    flox services stop ios-simulator-min ios-simulator-latest >/dev/null 2>&1 || true
+    flox services stop ios-simulator-min ios-simulator-max >/dev/null 2>&1 || true
   fi
   if command -v xcrun >/dev/null 2>&1 && xcrun -f simctl >/dev/null 2>&1; then
     xcrun simctl shutdown all >/dev/null 2>&1 || true

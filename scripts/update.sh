@@ -38,10 +38,10 @@ update_flox_envs() {
   update_env "env/nodejs"
   update_env "env/android/android-common"
   update_env "env/android/min"
-  update_env "env/android/latest"
+  update_env "env/android/max"
   update_env "env/ios"
   update_env "env/ios/min"
-  update_env "env/ios/latest"
+  update_env "env/ios/max"
   update_env "."
 }
 
@@ -63,7 +63,7 @@ update_pods() {
 
 update_nix() {
   nix --extra-experimental-features "nix-command flakes" flake update env/android/min || true
-  nix --extra-experimental-features "nix-command flakes" flake update env/android/latest || true
+  nix --extra-experimental-features "nix-command flakes" flake update env/android/max || true
 }
 
 case "$target" in

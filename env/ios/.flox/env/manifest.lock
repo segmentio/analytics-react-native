@@ -21,10 +21,20 @@
       }
     },
     "vars": {
-      "IOS_SIM_LATEST_DEVICE": "iPhone 17"
+      "ANDROID_MAX_API": "33",
+      "ANDROID_MAX_AVD_ARM": "medium_phone_API33_arm64_v8a",
+      "ANDROID_MAX_AVD_X64": "medium_phone_API33_x86_64",
+      "ANDROID_MIN_API": "21",
+      "ANDROID_MIN_AVD": "pixel_API21_x86_64",
+      "ANDROID_MIN_AVD_ARM": "pixel_API21_arm64_v8a",
+      "IOS_MAX_DEVICE": "iPhone 17",
+      "IOS_MAX_RUNTIME": "26.1",
+      "IOS_MIN_DEVICE": "iPhone 13",
+      "IOS_MIN_RUNTIME": "15.0",
+      "IOS_SIM_MAX_DEVICE": "iPhone 17"
     },
     "hook": {
-      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n    script() {\n      local name=\"${1:-}\"\n      shift || true\n      if [ -z \"$name\" ]; then\n        echo \"Usage: script <name> [args...] (runs scripts/<name>.sh)\" >&2\n        return 1\n      fi\n      local project_root=\"${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n      local path=\"$project_root/scripts/${name}.sh\"\n      if [ ! -x \"$path\" ]; then\n        echo \"script: $path not found or not executable\" >&2\n        return 1\n      fi\n      \"$path\" \"$@\"\n    }\n    # Ensure Yarn 4 from the env wins over any host Yarn 1.x\n    clean_path=\"$(printf '%s' \"$PATH\" | tr ':' '\\n' | grep -v '/.yarn/bin' | paste -sd: -)\"\n    export COREPACK_HOME=\"$HOME/.local/share/corepack\"\n    mkdir -p \"$HOME/.local/bin\" \"$COREPACK_HOME\"\n    # Prefer the env-provided yarn binary explicitly if present.\n    if command -v yarn >/dev/null 2>&1; then\n      yarn_dir=\"$(dirname \"$(command -v yarn)\")\"\n      export PATH=\"$yarn_dir:$HOME/.local/bin:$COREPACK_HOME:$clean_path\"\n    else\n      export PATH=\"$HOME/.local/bin:$COREPACK_HOME:$clean_path\"\n    fi\n    if command -v corepack >/dev/null 2>&1; then\n      corepack enable --install-directory \"$HOME/.local/bin\" >/dev/null 2>&1 || true\n      corepack prepare \"yarn@4.12.0\" --activate --install-directory \"$HOME/.local/bin\" >/dev/null 2>&1 || true\n      hash -r\n    fi\n \n  set -euo pipefail\n  unset NIX_CFLAGS_COMPILE NIX_LDFLAGS NIX_CFLAGS_LINK LIBRARY_PATH\n  project_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n  if [ ! -d \"$project_root/env/ios\" ]; then\n    project_root=\"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/../../../../..\" && pwd)\"\n  fi\n  export PROJECT_ROOT=\"$project_root\"\n  if [ -f \"$project_root/scripts/ios.sh\" ]; then\n    source \"$project_root/scripts/ios.sh\"\n  elif [ -f \"$project_root/env/ios/setup.sh\" ]; then\n    source \"$project_root/env/ios/setup.sh\"\n  fi\n "
+      "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n    script() {\n      local name=\"${1:-}\"\n      shift || true\n      if [ -z \"$name\" ]; then\n        echo \"Usage: script <name> [args...] (runs scripts/<name>.sh)\" >&2\n        return 1\n      fi\n      local project_root=\"${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n      local path=\"$project_root/scripts/${name}.sh\"\n      if [ ! -x \"$path\" ]; then\n        echo \"script: $path not found or not executable\" >&2\n        return 1\n      fi\n      \"$path\" \"$@\"\n    }\n    # Ensure Yarn 4 from the env wins over any host Yarn 1.x\n    clean_path=\"$(printf '%s' \"$PATH\" | tr ':' '\\n' | grep -v '/.yarn/bin' | paste -sd: -)\"\n    export COREPACK_HOME=\"$HOME/.local/share/corepack\"\n    mkdir -p \"$HOME/.local/bin\" \"$COREPACK_HOME\"\n    # Prefer the env-provided yarn binary explicitly if present.\n    if command -v yarn >/dev/null 2>&1; then\n      yarn_dir=\"$(dirname \"$(command -v yarn)\")\"\n      export PATH=\"$yarn_dir:$HOME/.local/bin:$COREPACK_HOME:$clean_path\"\n    else\n      export PATH=\"$HOME/.local/bin:$COREPACK_HOME:$clean_path\"\n    fi\n    if command -v corepack >/dev/null 2>&1; then\n      corepack enable --install-directory \"$HOME/.local/bin\" >/dev/null 2>&1 || true\n      corepack prepare \"yarn@4.12.0\" --activate --install-directory \"$HOME/.local/bin\" >/dev/null 2>&1 || true\n      hash -r\n    fi\n \n  set -euo pipefail\n\n  # Prefer system toolchains for iOS builds; avoid Nix C toolchain flags leaking into xcodebuild.\n  unset NIX_CFLAGS_COMPILE NIX_LDFLAGS NIX_CFLAGS_LINK LIBRARY_PATH\n\n  project_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n  if [ ! -d \"$project_root/env/ios\" ]; then\n    project_root=\"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/../../../../..\" && pwd)\"\n  fi\n  export PROJECT_ROOT=\"$project_root\"\n  if [ -f \"$project_root/scripts/ios.sh\" ]; then\n    source \"$project_root/scripts/ios.sh\"\n  elif [ -f \"$project_root/env/ios/setup.sh\" ]; then\n    source \"$project_root/env/ios/setup.sh\"\n  fi\n "
     },
     "profile": {},
     "options": {}
@@ -33,17 +43,17 @@
     {
       "attr_path": "cocoapods",
       "broken": false,
-      "derivation": "/nix/store/256rcn7cqsimacisbfw0am6p9k3c1bg4-cocoapods-1.16.2.drv",
+      "derivation": "/nix/store/y5w3g46gq502rbq0nn7xl2sbmilskg3f-cocoapods-1.16.2.drv",
       "description": "Manages dependencies for your Xcode projects",
       "install_id": "cocoapods",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=88d3861acdd3d2f0e361767018218e51810df8a1",
       "name": "cocoapods-1.16.2",
       "pname": "cocoapods",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T04:27:53.946649Z",
+      "rev": "88d3861acdd3d2f0e361767018218e51810df8a1",
+      "rev_count": 931542,
+      "rev_date": "2026-01-21T18:02:10Z",
+      "scrape_date": "2026-01-23T04:32:30.375555Z",
       "stabilities": [
         "unstable"
       ],
@@ -62,17 +72,17 @@
     {
       "attr_path": "cocoapods",
       "broken": false,
-      "derivation": "/nix/store/ksmn2n54sby6rxxs3j515hz68j7s7x8x-cocoapods-1.16.2.drv",
+      "derivation": "/nix/store/fx20siq0r3zr83cpdy9ip744lvz3lcnd-cocoapods-1.16.2.drv",
       "description": "Manages dependencies for your Xcode projects",
       "install_id": "cocoapods",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=88d3861acdd3d2f0e361767018218e51810df8a1",
       "name": "cocoapods-1.16.2",
       "pname": "cocoapods",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T05:34:05.777201Z",
+      "rev": "88d3861acdd3d2f0e361767018218e51810df8a1",
+      "rev_count": 931542,
+      "rev_date": "2026-01-21T18:02:10Z",
+      "scrape_date": "2026-01-23T05:49:36.520160Z",
       "stabilities": [
         "unstable"
       ],
@@ -91,17 +101,17 @@
     {
       "attr_path": "nixfmt-rfc-style",
       "broken": false,
-      "derivation": "/nix/store/awh5fy1i2xnh52pxkzj8mghxaqd7skx3-nixfmt-1.2.0.drv",
+      "derivation": "/nix/store/fx8ad03fjhqywyxaajjhziyly8mqh021-nixfmt-1.2.0.drv",
       "description": "Official formatter for Nix code",
       "install_id": "nixfmt",
       "license": "MPL-2.0",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=88d3861acdd3d2f0e361767018218e51810df8a1",
       "name": "nixfmt-1.2.0",
       "pname": "nixfmt-rfc-style",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T04:28:16.356813Z",
+      "rev": "88d3861acdd3d2f0e361767018218e51810df8a1",
+      "rev_count": 931542,
+      "rev_date": "2026-01-21T18:02:10Z",
+      "scrape_date": "2026-01-23T04:32:52.083117Z",
       "stabilities": [
         "unstable"
       ],
@@ -120,17 +130,17 @@
     {
       "attr_path": "nixfmt-rfc-style",
       "broken": false,
-      "derivation": "/nix/store/pjy6lhz46m791bxjfzvvkr0cgm7mm0bg-nixfmt-1.2.0.drv",
+      "derivation": "/nix/store/8j6zhq8f1wfy89payg3gz2z6y1m3swsp-nixfmt-1.2.0.drv",
       "description": "Official formatter for Nix code",
       "install_id": "nixfmt",
       "license": "MPL-2.0",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=88d3861acdd3d2f0e361767018218e51810df8a1",
       "name": "nixfmt-1.2.0",
       "pname": "nixfmt-rfc-style",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T05:02:53.381263Z",
+      "rev": "88d3861acdd3d2f0e361767018218e51810df8a1",
+      "rev_count": 931542,
+      "rev_date": "2026-01-21T18:02:10Z",
+      "scrape_date": "2026-01-23T05:13:08.638952Z",
       "stabilities": [
         "unstable"
       ],
@@ -149,17 +159,17 @@
     {
       "attr_path": "nixfmt-rfc-style",
       "broken": false,
-      "derivation": "/nix/store/nyfwismzwk7b3hlkbcvssgikl4n4z3gx-nixfmt-1.2.0.drv",
+      "derivation": "/nix/store/331wm1gvrsn17vrynavd3x5rdyx8nq3k-nixfmt-1.2.0.drv",
       "description": "Official formatter for Nix code",
       "install_id": "nixfmt",
       "license": "MPL-2.0",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=88d3861acdd3d2f0e361767018218e51810df8a1",
       "name": "nixfmt-1.2.0",
       "pname": "nixfmt-rfc-style",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T05:34:27.681985Z",
+      "rev": "88d3861acdd3d2f0e361767018218e51810df8a1",
+      "rev_count": 931542,
+      "rev_date": "2026-01-21T18:02:10Z",
+      "scrape_date": "2026-01-23T05:49:58.662647Z",
       "stabilities": [
         "unstable"
       ],
@@ -178,17 +188,17 @@
     {
       "attr_path": "nixfmt-rfc-style",
       "broken": false,
-      "derivation": "/nix/store/vanb0cqaybyiq2315nk59c92mbksyf32-nixfmt-1.2.0.drv",
+      "derivation": "/nix/store/6q0g17l6inxcjb64kc145mswx1az49ah-nixfmt-1.2.0.drv",
       "description": "Official formatter for Nix code",
       "install_id": "nixfmt",
       "license": "MPL-2.0",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=88d3861acdd3d2f0e361767018218e51810df8a1",
       "name": "nixfmt-1.2.0",
       "pname": "nixfmt-rfc-style",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T06:20:58.281533Z",
+      "rev": "88d3861acdd3d2f0e361767018218e51810df8a1",
+      "rev_count": 931542,
+      "rev_date": "2026-01-21T18:02:10Z",
+      "scrape_date": "2026-01-23T06:36:32.398807Z",
       "stabilities": [
         "unstable"
       ],
@@ -207,17 +217,17 @@
     {
       "attr_path": "shfmt",
       "broken": false,
-      "derivation": "/nix/store/92637k27nqb44f4h7clw1kdqw8rar5hx-shfmt-3.12.0.drv",
+      "derivation": "/nix/store/z0sc4njl80kfq2mn8b9bi2m4irqcyxzw-shfmt-3.12.0.drv",
       "description": "Shell parser and formatter",
       "install_id": "shfmt",
       "license": "BSD-3-Clause",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=88d3861acdd3d2f0e361767018218e51810df8a1",
       "name": "shfmt-3.12.0",
       "pname": "shfmt",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T04:29:40.815428Z",
+      "rev": "88d3861acdd3d2f0e361767018218e51810df8a1",
+      "rev_count": 931542,
+      "rev_date": "2026-01-21T18:02:10Z",
+      "scrape_date": "2026-01-23T04:34:10.936375Z",
       "stabilities": [
         "unstable"
       ],
@@ -236,17 +246,17 @@
     {
       "attr_path": "shfmt",
       "broken": false,
-      "derivation": "/nix/store/g50gkqd9lwgpfwr7jcg582dw1nw614rv-shfmt-3.12.0.drv",
+      "derivation": "/nix/store/gv9fiilz8zz933c0xq4wqbzyqhbz2m2x-shfmt-3.12.0.drv",
       "description": "Shell parser and formatter",
       "install_id": "shfmt",
       "license": "BSD-3-Clause",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=88d3861acdd3d2f0e361767018218e51810df8a1",
       "name": "shfmt-3.12.0",
       "pname": "shfmt",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T05:04:32.072948Z",
+      "rev": "88d3861acdd3d2f0e361767018218e51810df8a1",
+      "rev_count": 931542,
+      "rev_date": "2026-01-21T18:02:10Z",
+      "scrape_date": "2026-01-23T05:14:47.349479Z",
       "stabilities": [
         "unstable"
       ],
@@ -265,17 +275,17 @@
     {
       "attr_path": "shfmt",
       "broken": false,
-      "derivation": "/nix/store/9piagmiq56gsz4fj4jfd465xg7lff27x-shfmt-3.12.0.drv",
+      "derivation": "/nix/store/yphf1h380jqk3pqxd7xwiz298bsxdsvb-shfmt-3.12.0.drv",
       "description": "Shell parser and formatter",
       "install_id": "shfmt",
       "license": "BSD-3-Clause",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=88d3861acdd3d2f0e361767018218e51810df8a1",
       "name": "shfmt-3.12.0",
       "pname": "shfmt",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T05:35:46.086711Z",
+      "rev": "88d3861acdd3d2f0e361767018218e51810df8a1",
+      "rev_count": 931542,
+      "rev_date": "2026-01-21T18:02:10Z",
+      "scrape_date": "2026-01-23T05:51:17.976009Z",
       "stabilities": [
         "unstable"
       ],
@@ -294,17 +304,17 @@
     {
       "attr_path": "shfmt",
       "broken": false,
-      "derivation": "/nix/store/i58i9fgshxnqyjhin1zjqwg51cf5x6v1-shfmt-3.12.0.drv",
+      "derivation": "/nix/store/fgjj3k9b069i67iyd5srxvp93nh2jfw9-shfmt-3.12.0.drv",
       "description": "Shell parser and formatter",
       "install_id": "shfmt",
       "license": "BSD-3-Clause",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=88d3861acdd3d2f0e361767018218e51810df8a1",
       "name": "shfmt-3.12.0",
       "pname": "shfmt",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T06:22:48.977965Z",
+      "rev": "88d3861acdd3d2f0e361767018218e51810df8a1",
+      "rev_count": 931542,
+      "rev_date": "2026-01-21T18:02:10Z",
+      "scrape_date": "2026-01-23T06:38:15.479860Z",
       "stabilities": [
         "unstable"
       ],
@@ -323,17 +333,17 @@
     {
       "attr_path": "treefmt",
       "broken": false,
-      "derivation": "/nix/store/mms0hjzhldcg5a5jl3x17y7i359c8776-treefmt-2.4.0.drv",
+      "derivation": "/nix/store/qrmmwn0rjp9ycy6y5faw6wqglyxp2bj3-treefmt-2.4.0.drv",
       "description": "One CLI to format the code tree",
       "install_id": "treefmt",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=88d3861acdd3d2f0e361767018218e51810df8a1",
       "name": "treefmt-2.4.0",
       "pname": "treefmt",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T04:30:06.303007Z",
+      "rev": "88d3861acdd3d2f0e361767018218e51810df8a1",
+      "rev_count": 931542,
+      "rev_date": "2026-01-21T18:02:10Z",
+      "scrape_date": "2026-01-23T04:34:34.088958Z",
       "stabilities": [
         "unstable"
       ],
@@ -352,17 +362,17 @@
     {
       "attr_path": "treefmt",
       "broken": false,
-      "derivation": "/nix/store/mjzjj0nz5h89bmfk38m24drghiw8ksbz-treefmt-2.4.0.drv",
+      "derivation": "/nix/store/lcd0piipc6hpgb66fzpdxlh344rxpxqh-treefmt-2.4.0.drv",
       "description": "One CLI to format the code tree",
       "install_id": "treefmt",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=88d3861acdd3d2f0e361767018218e51810df8a1",
       "name": "treefmt-2.4.0",
       "pname": "treefmt",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T05:05:08.050718Z",
+      "rev": "88d3861acdd3d2f0e361767018218e51810df8a1",
+      "rev_count": 931542,
+      "rev_date": "2026-01-21T18:02:10Z",
+      "scrape_date": "2026-01-23T05:15:20.659483Z",
       "stabilities": [
         "unstable"
       ],
@@ -381,17 +391,17 @@
     {
       "attr_path": "treefmt",
       "broken": false,
-      "derivation": "/nix/store/mwp0vfbz5937vcp9ngcj2caza8bjfzmj-treefmt-2.4.0.drv",
+      "derivation": "/nix/store/xl8lgbv3l1wfr7ixsv0lyprvnxci2xwg-treefmt-2.4.0.drv",
       "description": "One CLI to format the code tree",
       "install_id": "treefmt",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=88d3861acdd3d2f0e361767018218e51810df8a1",
       "name": "treefmt-2.4.0",
       "pname": "treefmt",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T05:36:09.420552Z",
+      "rev": "88d3861acdd3d2f0e361767018218e51810df8a1",
+      "rev_count": 931542,
+      "rev_date": "2026-01-21T18:02:10Z",
+      "scrape_date": "2026-01-23T05:51:41.337074Z",
       "stabilities": [
         "unstable"
       ],
@@ -410,17 +420,17 @@
     {
       "attr_path": "treefmt",
       "broken": false,
-      "derivation": "/nix/store/6jm0r48c7bfs81mvwc1ydbgn5s978f0b-treefmt-2.4.0.drv",
+      "derivation": "/nix/store/4nxjb15vdv83ja6rj13smh4iq4va42zv-treefmt-2.4.0.drv",
       "description": "One CLI to format the code tree",
       "install_id": "treefmt",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=88d3861acdd3d2f0e361767018218e51810df8a1",
       "name": "treefmt-2.4.0",
       "pname": "treefmt",
-      "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
-      "rev_count": 930839,
-      "rev_date": "2026-01-20T05:17:20Z",
-      "scrape_date": "2026-01-22T06:23:26.245521Z",
+      "rev": "88d3861acdd3d2f0e361767018218e51810df8a1",
+      "rev_count": 931542,
+      "rev_date": "2026-01-21T18:02:10Z",
+      "scrape_date": "2026-01-23T06:38:49.793596Z",
       "stabilities": [
         "unstable"
       ],
@@ -450,10 +460,10 @@
         }
       },
       "vars": {
-        "IOS_SIM_LATEST_DEVICE": "iPhone 17"
+        "IOS_SIM_MAX_DEVICE": "iPhone 17"
       },
       "hook": {
-        "on-activate": "  set -euo pipefail\n  unset NIX_CFLAGS_COMPILE NIX_LDFLAGS NIX_CFLAGS_LINK LIBRARY_PATH\n  project_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n  if [ ! -d \"$project_root/env/ios\" ]; then\n    project_root=\"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/../../../../..\" && pwd)\"\n  fi\n  export PROJECT_ROOT=\"$project_root\"\n  if [ -f \"$project_root/scripts/ios.sh\" ]; then\n    source \"$project_root/scripts/ios.sh\"\n  elif [ -f \"$project_root/env/ios/setup.sh\" ]; then\n    source \"$project_root/env/ios/setup.sh\"\n  fi\n "
+        "on-activate": "  set -euo pipefail\n\n  # Prefer system toolchains for iOS builds; avoid Nix C toolchain flags leaking into xcodebuild.\n  unset NIX_CFLAGS_COMPILE NIX_LDFLAGS NIX_CFLAGS_LINK LIBRARY_PATH\n\n  project_root=\"${PROJECT_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n  if [ ! -d \"$project_root/env/ios\" ]; then\n    project_root=\"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")/../../../../..\" && pwd)\"\n  fi\n  export PROJECT_ROOT=\"$project_root\"\n  if [ -f \"$project_root/scripts/ios.sh\" ]; then\n    source \"$project_root/scripts/ios.sh\"\n  elif [ -f \"$project_root/env/ios/setup.sh\" ]; then\n    source \"$project_root/env/ios/setup.sh\"\n  fi\n "
       },
       "profile": {},
       "options": {},
@@ -479,6 +489,18 @@
             "treefmt": {
               "pkg-path": "treefmt"
             }
+          },
+          "vars": {
+            "ANDROID_MAX_API": "33",
+            "ANDROID_MAX_AVD_ARM": "medium_phone_API33_arm64_v8a",
+            "ANDROID_MAX_AVD_X64": "medium_phone_API33_x86_64",
+            "ANDROID_MIN_API": "21",
+            "ANDROID_MIN_AVD": "pixel_API21_x86_64",
+            "ANDROID_MIN_AVD_ARM": "pixel_API21_arm64_v8a",
+            "IOS_MAX_DEVICE": "iPhone 17",
+            "IOS_MAX_RUNTIME": "26.1",
+            "IOS_MIN_DEVICE": "iPhone 13",
+            "IOS_MIN_RUNTIME": "15.0"
           },
           "hook": {
             "on-activate": "    export ROOT_PROJECT=$(git rev-parse --show-toplevel)\n    script() {\n      local name=\"${1:-}\"\n      shift || true\n      if [ -z \"$name\" ]; then\n        echo \"Usage: script <name> [args...] (runs scripts/<name>.sh)\" >&2\n        return 1\n      fi\n      local project_root=\"${ROOT_PROJECT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}\"\n      local path=\"$project_root/scripts/${name}.sh\"\n      if [ ! -x \"$path\" ]; then\n        echo \"script: $path not found or not executable\" >&2\n        return 1\n      fi\n      \"$path\" \"$@\"\n    }\n    # Ensure Yarn 4 from the env wins over any host Yarn 1.x\n    clean_path=\"$(printf '%s' \"$PATH\" | tr ':' '\\n' | grep -v '/.yarn/bin' | paste -sd: -)\"\n    export COREPACK_HOME=\"$HOME/.local/share/corepack\"\n    mkdir -p \"$HOME/.local/bin\" \"$COREPACK_HOME\"\n    # Prefer the env-provided yarn binary explicitly if present.\n    if command -v yarn >/dev/null 2>&1; then\n      yarn_dir=\"$(dirname \"$(command -v yarn)\")\"\n      export PATH=\"$yarn_dir:$HOME/.local/bin:$COREPACK_HOME:$clean_path\"\n    else\n      export PATH=\"$HOME/.local/bin:$COREPACK_HOME:$clean_path\"\n    fi\n    if command -v corepack >/dev/null 2>&1; then\n      corepack enable --install-directory \"$HOME/.local/bin\" >/dev/null 2>&1 || true\n      corepack prepare \"yarn@4.12.0\" --activate --install-directory \"$HOME/.local/bin\" >/dev/null 2>&1 || true\n      hash -r\n    fi\n "

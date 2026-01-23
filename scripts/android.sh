@@ -7,7 +7,7 @@ setup_android_env() {
     project_root="${PROJECT_ROOT:-${PWD}}"
     sdk_out=$(
       nix --extra-experimental-features 'nix-command flakes' \
-        eval --raw "path:${project_root}/env/android/latest#android-sdk-latest.outPath" 2>/dev/null || \
+        eval --raw "path:${project_root}/env/android/max#android-sdk-max.outPath" 2>/dev/null || \
       nix --extra-experimental-features 'nix-command flakes' \
         eval --raw "path:${project_root}/env/android/min#android-sdk-min.outPath" 2>/dev/null || true
     )
@@ -107,6 +107,16 @@ pick_image() {
     esac
   fi
 
+  # Prefer an explicit system image override if present.
+  if [[ -n "${ANDROID_SYSTEM_IMAGE:-}" ]]; then
+    local override_path="${ANDROID_SYSTEM_IMAGE/system-images;/system-images/}"
+    override_path="${override_path//;/\/}"
+    if [[ -d "${ANDROID_SDK_ROOT}/${override_path}" ]]; then
+      echo "${ANDROID_SYSTEM_IMAGE}"
+      return 0
+    fi
+  fi
+
   for abi in "${candidates[@]}"; do
     local image="system-images;android-${api};${tag};${abi}"
     local path="${ANDROID_SDK_ROOT}/system-images/android-${api}/${tag}/${abi}"
@@ -117,6 +127,18 @@ pick_image() {
   done
 
   return 1
+}
+
+download_system_image() {
+  local api="$1" tag="$2" abi="$3"
+  local pkg="system-images;android-${api};${tag};${abi}"
+  if [[ -d "${ANDROID_SDK_ROOT}/system-images/android-${api}/${tag}/${abi}" ]]; then
+    return 0
+  fi
+  require_tool sdkmanager
+  echo "Downloading Android system image ${pkg}..."
+  yes "" | sdkmanager --licenses >/dev/null 2>&1 || true
+  yes "" | sdkmanager "${pkg}"
 }
 
 create_avd() {
@@ -139,10 +161,24 @@ ensure_avd() {
     return 0
   fi
 
-  local api_image
+  local api_image=""
   if ! api_image="$(pick_image "$api" "$tag" "$preferred_abi")"; then
-    echo "Expected API ${api} system image (${tag}; preferred ABI ${preferred_abi:-auto}) not found under ${ANDROID_SDK_ROOT}/system-images/android-${api}." >&2
-    return 1
+    local abi_to_fetch="${preferred_abi:-}"
+    if [[ -z "$abi_to_fetch" ]]; then
+      case "$(uname -m)" in
+        arm64|aarch64) abi_to_fetch="arm64-v8a" ;;
+        *) abi_to_fetch="x86_64" ;;
+      esac
+    fi
+    if ! download_system_image "$api" "$tag" "$abi_to_fetch"; then
+      echo "Expected API ${api} system image (${tag}; ABI ${abi_to_fetch}) not found and download failed." >&2
+      return 1
+    fi
+    api_image="$(pick_image "$api" "$tag" "$preferred_abi")" || true
+    if [[ -z "${api_image:-}" ]]; then
+      echo "System image ${api}/${tag}/${abi_to_fetch} still missing after download." >&2
+      return 1
+    fi
   fi
 
   create_avd "$name" "$device" "$api_image"
@@ -162,19 +198,32 @@ start_android() {
   local avd="${DETOX_AVD:-}"
   local host_arch
   host_arch="$(uname -m)"
+  local api_hint=""
 
   require_tool avdmanager
   require_tool emulator
 
-  if [[ -z "$avd" ]]; then
-    if [[ "$host_arch" == "arm64" || "$host_arch" == "aarch64" ]]; then
-      avd="medium_phone_API33_arm64_v8a"
+  if [[ "$flavor" == "minsdk" ]]; then
+    api_hint="${ANDROID_API:-${ANDROID_MIN_API:-21}}"
+    if [[ -z "$avd" ]]; then
+      if [[ "$host_arch" == "arm64" || "$host_arch" == "aarch64" ]]; then
+        avd="${ANDROID_MIN_AVD_ARM:-pixel_API21_arm64_v8a}"
+      else
+        avd="${ANDROID_MIN_AVD:-pixel_API21_x86_64}"
+      fi
+    fi
+  else
+    api_hint="${ANDROID_API:-${ANDROID_MAX_API:-33}}"
+    if [[ -z "$avd" ]]; then
+      if [[ "$host_arch" == "arm64" || "$host_arch" == "aarch64" ]]; then
+        avd="${ANDROID_AVD_MAX_ARM:-medium_phone_API33_arm64_v8a}"
     else
-      avd="medium_phone_API33_x86_64"
+        avd="${ANDROID_AVD_MAX_X64:-medium_phone_API33_x86_64}"
     fi
   fi
+  fi
 
-  local api_hint="" device_hint="" abi_hint=""
+  local device_hint="" abi_hint=""
   if [[ "$avd" =~ _API([0-9]+)_ ]]; then
     api_hint="${BASH_REMATCH[1]}"
   fi
@@ -208,10 +257,10 @@ start_android() {
   fi
 
   if ! avd_exists "${avd}"; then
-    if avd_exists "medium_phone_API33_arm64_v8a"; then
-      avd="medium_phone_API33_arm64_v8a"
-    elif avd_exists "medium_phone_API33_x86_64"; then
-      avd="medium_phone_API33_x86_64"
+    if avd_exists "${ANDROID_AVD_MAX_ARM:-medium_phone_API33_arm64_v8a}"; then
+      avd="${ANDROID_AVD_MAX_ARM:-medium_phone_API33_arm64_v8a}"
+    elif avd_exists "${ANDROID_AVD_MAX_X64:-medium_phone_API33_x86_64}"; then
+      avd="${ANDROID_AVD_MAX_X64:-medium_phone_API33_x86_64}"
     else
       avd="$(avdmanager list avd | awk -F': ' '/Name:/ {print $2}' | head -n1)"
     fi
@@ -219,6 +268,10 @@ start_android() {
 
   if command -v adb >/dev/null 2>&1; then
     adb devices | awk 'NR>1 && $2=="offline" {print $1}' | while read -r d; do adb -s "$d" emu kill >/dev/null 2>&1 || true; done
+  fi
+  if [[ "${AVD_PREPARE_ONLY:-}" == "1" || "${AVD_PREPARE_ONLY:-}" == "true" ]]; then
+    echo "Prepared Android AVD ${avd} (API ${api_hint:-unknown}); skipping boot."
+    return 0
   fi
   echo "Starting Android emulator: ${avd} (flavor ${flavor}, port ${port}, headless=${headless:-0})"
   emulator -avd "${avd}" ${headless:+-no-window} -port "${port}" -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -accel on -writable-system -no-snapshot-save &
@@ -253,7 +306,8 @@ reset_android() {
 
 case "$action" in
   start) start_android ;;
+  prepare) AVD_PREPARE_ONLY=1 start_android ;;
   stop) stop_android ;;
   reset) reset_android ;;
-  *) echo "Usage: android.sh {start|stop|reset}" >&2; exit 1 ;;
+  *) echo "Usage: android.sh {start|prepare|stop|reset}" >&2; exit 1 ;;
 esac
