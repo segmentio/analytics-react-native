@@ -21,12 +21,9 @@ concurrency:
   group: e2e-optional-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  RUN_E2E: ${{ github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-e2e') || github.event_name == 'push' }}
-
 jobs:
   run-e2e-ios:
-    if: env.RUN_E2E == 'true' && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == '' || github.event.inputs.platforms == 'ios' || github.event.inputs.platforms == null)
+    if: (github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-e2e') || github.event_name == 'push') && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == '' || github.event.inputs.platforms == 'ios' || github.event.inputs.platforms == null)
     runs-on: macos-15
     env:
       YARN_ENABLE_HARDENED_MODE: 0
@@ -111,7 +108,7 @@ jobs:
           flox activate . --devshell default -- bash -lc "yarn install --immutable && yarn e2e:ios"
 
   run-e2e-android:
-    if: env.RUN_E2E == 'true' && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == '' || github.event.inputs.platforms == 'android' || github.event.inputs.platforms == null)
+    if: (github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-e2e') || github.event_name == 'push') && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == '' || github.event.inputs.platforms == 'android' || github.event.inputs.platforms == null)
     continue-on-error: true
     runs-on: ubuntu-22.04
     strategy:
