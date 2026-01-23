@@ -27,11 +27,17 @@ shfmt.pkg-path = "shfmt"
       fi
       "$path" "$@"
     }
-    # Ensure Yarn 4 shim wins over any host Yarn 1.x
+    # Ensure Yarn 4 from the env wins over any host Yarn 1.x
     clean_path="$(printf '%s' "$PATH" | tr ':' '\n' | grep -v '/.yarn/bin' | paste -sd: -)"
     export COREPACK_HOME="$HOME/.local/share/corepack"
     mkdir -p "$HOME/.local/bin" "$COREPACK_HOME"
-    export PATH="$HOME/.local/bin:$COREPACK_HOME:$clean_path"
+    # Prefer the env-provided yarn binary explicitly if present.
+    if command -v yarn >/dev/null 2>&1; then
+      yarn_dir="$(dirname "$(command -v yarn)")"
+      export PATH="$yarn_dir:$HOME/.local/bin:$COREPACK_HOME:$clean_path"
+    else
+      export PATH="$HOME/.local/bin:$COREPACK_HOME:$clean_path"
+    fi
     if command -v corepack >/dev/null 2>&1; then
       corepack enable --install-directory "$HOME/.local/bin" >/dev/null 2>&1 || true
       corepack prepare "yarn@4.12.0" --activate --install-directory "$HOME/.local/bin" >/dev/null 2>&1 || true

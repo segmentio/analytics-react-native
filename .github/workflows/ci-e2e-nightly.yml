@@ -52,7 +52,7 @@ jobs:
         uses: flox/install-flox-action@v2.2.0
       - name: Yarn debug (iOS env)
         run: |
-          flox activate -d env/ios/latest -- bash -lc "echo PATH=$PATH && ls -l /Users/runner/.local/bin || true && which yarn && yarn --version && node -v && corepack --version"
+          flox activate -d env/ios/latest -- bash -lc 'echo PATH=$PATH && ls -l /Users/runner/.local/bin || true && which yarn && yarn --version && node -v && corepack --version'
       - name: iOS E2E Tests
         run: |
           flox activate -d env/ios/latest -- bash -lc "yarn e2e:ios"
