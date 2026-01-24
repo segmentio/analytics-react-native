@@ -23,6 +23,12 @@ require_tool() {
   fi
 }
 
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+if [ -f "$script_dir/platform-versions.sh" ]; then
+  # shellcheck disable=SC1090
+  . "$script_dir/platform-versions.sh"
+fi
+
 detect_sdk_root() {
   if [[ -n "${ANDROID_SDK_ROOT:-}" ]]; then
     echo "$ANDROID_SDK_ROOT"
@@ -112,13 +118,13 @@ main() {
   require_tool avdmanager
   require_tool emulator
 
-  local primary_api="${AVD_API:-21}"
-  local primary_tag="${AVD_TAG:-google_apis}"
+  local primary_api="${AVD_API:-${ANDROID_MIN_API:-${PLATFORM_ANDROID_MIN_API:-21}}}"
+  local primary_tag="${AVD_TAG:-${ANDROID_SYSTEM_IMAGE_TAG:-${PLATFORM_ANDROID_SYSTEM_IMAGE_TAG:-google_apis}}}"
   local primary_device="${AVD_DEVICE:-pixel}"
   local primary_preferred_abi="${AVD_ABI:-}"
 
-  local secondary_api="${AVD_SECONDARY_API:-33}"
-  local secondary_tag="${AVD_SECONDARY_TAG:-google_apis}"
+  local secondary_api="${AVD_SECONDARY_API:-${ANDROID_MAX_API:-${PLATFORM_ANDROID_MAX_API:-33}}}"
+  local secondary_tag="${AVD_SECONDARY_TAG:-${ANDROID_SYSTEM_IMAGE_TAG:-${PLATFORM_ANDROID_SYSTEM_IMAGE_TAG:-google_apis}}}"
   local secondary_device="${AVD_SECONDARY_DEVICE:-medium_phone}"
   local secondary_preferred_abi="${AVD_SECONDARY_ABI:-}"
 

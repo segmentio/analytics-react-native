@@ -1,6 +1,29 @@
 #!/usr/bin/env sh
 # Sets ANDROID_SDK_ROOT/ANDROID_HOME and PATH to the flake-pinned SDK if not already set.
 
+# Load shared platform versions if present.
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+if [ -f "$script_dir/platform-versions.sh" ]; then
+  # shellcheck disable=SC1090
+  . "$script_dir/platform-versions.sh"
+fi
+
+if [ -z "${ANDROID_MIN_API:-}" ] && [ -n "${PLATFORM_ANDROID_MIN_API:-}" ]; then
+  ANDROID_MIN_API="$PLATFORM_ANDROID_MIN_API"
+fi
+if [ -z "${ANDROID_MAX_API:-}" ] && [ -n "${PLATFORM_ANDROID_MAX_API:-}" ]; then
+  ANDROID_MAX_API="$PLATFORM_ANDROID_MAX_API"
+fi
+if [ -z "${ANDROID_BUILD_TOOLS_VERSION:-}" ] && [ -n "${PLATFORM_ANDROID_BUILD_TOOLS_VERSION:-}" ]; then
+  ANDROID_BUILD_TOOLS_VERSION="$PLATFORM_ANDROID_BUILD_TOOLS_VERSION"
+fi
+if [ -z "${ANDROID_CMDLINE_TOOLS_VERSION:-}" ] && [ -n "${PLATFORM_ANDROID_CMDLINE_TOOLS_VERSION:-}" ]; then
+  ANDROID_CMDLINE_TOOLS_VERSION="$PLATFORM_ANDROID_CMDLINE_TOOLS_VERSION"
+fi
+if [ -z "${ANDROID_SYSTEM_IMAGE_TAG:-}" ] && [ -n "${PLATFORM_ANDROID_SYSTEM_IMAGE_TAG:-}" ]; then
+  ANDROID_SYSTEM_IMAGE_TAG="$PLATFORM_ANDROID_SYSTEM_IMAGE_TAG"
+fi
+
 # Only act if neither var is already provided.
 if [ -z "${ANDROID_SDK_ROOT:-}" ] && [ -z "${ANDROID_HOME:-}" ]; then
   DEVBOX_SDK_OUT=$(
@@ -22,6 +45,7 @@ if [ -n "${ANDROID_SDK_ROOT:-}" ] && [ -z "${ANDROID_HOME:-}" ]; then
 fi
 
 export ANDROID_SDK_ROOT ANDROID_HOME
+export ANDROID_BUILD_TOOLS_VERSION
 
 if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
   # Prefer cmdline-tools;latest, or fall back to the highest numbered cmdline-tools folder.

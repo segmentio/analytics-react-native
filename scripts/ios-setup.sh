@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+if [ -f "$script_dir/platform-versions.sh" ]; then
+  # shellcheck disable=SC1090
+  . "$script_dir/platform-versions.sh"
+fi
+
 # Creates local iOS simulators for common targets. Requires Xcode command-line tools and jq.
 # Env overrides:
 #   IOS_DEVICE_NAMES="iPhone 15,iPhone 17" (comma-separated)
@@ -177,8 +183,8 @@ ensure_device() {
 
 main() {
   ensure_core_sim_service || return 1
-  IFS=',' read -r -a devices <<<"${IOS_DEVICE_NAMES:-iPhone 13,iPhone 17}"
-  local runtime="${IOS_RUNTIME:-15.0}"
+  IFS=',' read -r -a devices <<<"${IOS_DEVICE_NAMES:-${IOS_MIN_DEVICE:-${PLATFORM_IOS_MIN_DEVICE:-iPhone 13}},${IOS_MAX_DEVICE:-${PLATFORM_IOS_MAX_DEVICE:-iPhone 17}}}"
+  local runtime="${IOS_RUNTIME:-${IOS_MIN_RUNTIME:-${PLATFORM_IOS_MIN_RUNTIME:-15.0}}}"
   for device in "${devices[@]}"; do
     ensure_device "$(echo "$device" | xargs)" "$runtime"
   done

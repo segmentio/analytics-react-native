@@ -12,6 +12,25 @@
         "aarch64-darwin"
       ];
 
+      versionsFile = builtins.readFile ./scripts/platform-versions.sh;
+      versionLines = builtins.splitString "\n" versionsFile;
+      getVar = name: default:
+        let
+          line = builtins.findFirst (l: builtins.match ("^" + name + "=") l != null) "" versionLines;
+          raw = if line == "" then default else builtins.elemAt (builtins.splitString "=" line) 1;
+          cleaned = builtins.replaceStrings ["\"" "'"] ["", ""] raw;
+        in cleaned;
+
+      androidSdkConfig = {
+        platformVersions = [
+          (getVar "PLATFORM_ANDROID_MIN_API" "21")
+          (getVar "PLATFORM_ANDROID_MAX_API" "33")
+        ];
+        buildToolsVersion = getVar "PLATFORM_ANDROID_BUILD_TOOLS_VERSION" "30.0.3";
+        cmdLineToolsVersion = getVar "PLATFORM_ANDROID_CMDLINE_TOOLS_VERSION" "19.0";
+        systemImageTypes = [ (getVar "PLATFORM_ANDROID_SYSTEM_IMAGE_TAG" "google_apis") ];
+      };
+
       forAllSystems = f:
         builtins.listToAttrs (map (system: {
           name = system;
@@ -29,19 +48,28 @@
             };
           };
 
+          abiVersions =
+            if builtins.match "aarch64-.*" system != null
+            then [ "arm64-v8a" ]
+            else [ "x86_64" ];
+
           androidPkgs = pkgs.androidenv.composeAndroidPackages {
             # Keep API 21 images for the AVD and add API 33 for React Native builds.
-            platformVersions = [ "21" "33" ];
-            buildToolsVersions = [ "30.0.3" "33.0.0" "latest" ];
-            cmdLineToolsVersion = "19.0";
+            platformVersions = androidSdkConfig.platformVersions;
+            buildToolsVersions = [ androidSdkConfig.buildToolsVersion ];
+            cmdLineToolsVersion = androidSdkConfig.cmdLineToolsVersion;
             includeEmulator = true;
             includeSystemImages = true;
-            includeNDK = true;
+            includeNDK = false;
+            abiVersions = abiVersions;
+            systemImageTypes = androidSdkConfig.systemImageTypes;
           };
         in
         {
           android-sdk = androidPkgs.androidsdk;
           default = androidPkgs.androidsdk;
         });
+
+      androidSdkConfig = androidSdkConfig;
     };
 }

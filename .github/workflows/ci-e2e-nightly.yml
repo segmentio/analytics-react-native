@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   run-e2e-ios:
-    runs-on: macos-15
+    runs-on: macos-26
     env:
       YARN_ENABLE_HARDENED_MODE: 0
       XCODE_VERSION: '26.2'
@@ -19,11 +19,7 @@ jobs:
       matrix:
         include:
           - name: ios-min
-            ios-device: iPhone 13
-            ios-runtime: '15.0'
           - name: ios-latest
-            ios-device: iPhone 17
-            ios-runtime: ''
     steps:
       - uses: actions/checkout@v4
       - name: Aggressive disk cleanup (macOS)
@@ -47,23 +43,30 @@ jobs:
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
           enable-cache: 'false'
+      - name: Resolve iOS targets
+        run: |
+          . scripts/platform-versions.sh
+          if [ "${{ matrix.name }}" = "ios-min" ]; then
+            echo "DETOX_IOS_DEVICE=${PLATFORM_IOS_MIN_DEVICE}" >> "$GITHUB_ENV"
+            echo "IOS_RUNTIME=${PLATFORM_IOS_MIN_RUNTIME}" >> "$GITHUB_ENV"
+          else
+            echo "DETOX_IOS_DEVICE=${PLATFORM_IOS_MAX_DEVICE}" >> "$GITHUB_ENV"
+            echo "IOS_RUNTIME=${PLATFORM_IOS_MAX_RUNTIME}" >> "$GITHUB_ENV"
+          fi
       - name: iOS E2E Tests
-        env:
-          DETOX_IOS_DEVICE: ${{ matrix.ios-device }}
-          IOS_RUNTIME: ${{ matrix.ios-runtime }}
         run: devbox shell --omit-nix-env -- devbox run test-ios
 
   run-e2e-android:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04-arm
     env:
       EMU_HEADLESS: 1
     strategy:
       matrix:
         include:
           - name: android-min
-            avd-name: pixel_API21_x86_64
+            target: min
           - name: android-latest
-            avd-name: medium_phone_API33_x86_64
+            target: max
     steps:
       - uses: actions/checkout@v4
       - name: Aggressive disk cleanup (Ubuntu)
@@ -86,7 +89,17 @@ jobs:
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
           enable-cache: 'false'
+      - name: Resolve Android targets
+        run: |
+          . scripts/platform-versions.sh
+          if [ "${{ matrix.target }}" = "min" ]; then
+            api="$PLATFORM_ANDROID_MIN_API"
+            device="$PLATFORM_ANDROID_MIN_DEVICE"
+          else
+            api="$PLATFORM_ANDROID_MAX_API"
+            device="$PLATFORM_ANDROID_MAX_DEVICE"
+          fi
+          avd_name="${device}_API${api}_arm64_v8a"
+          echo "DETOX_AVD=${avd_name}" >> "$GITHUB_ENV"
       - name: Android E2E Tests
-        env:
-          DETOX_AVD: ${{ matrix.avd-name }}
         run: devbox run test-android
