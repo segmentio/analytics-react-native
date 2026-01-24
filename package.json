@@ -20,6 +20,8 @@
     "typescript": "tsc --noEmit --composite false",
     "test": "jest",
     "lint": "eslint .",
+    "format": "treefmt --clear-cache",
+    "format:check": "treefmt --clear-cache --fail-on-change",
     "release": "yarn multi-semantic-release"
   },
   "devDependencies": {
