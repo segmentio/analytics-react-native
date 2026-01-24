@@ -2,6 +2,8 @@ name: E2E (On-Demand)
 
 on:
   workflow_dispatch:
+  push:
+    branches: [ci2]
 
 concurrency:
   group: e2e-optional-${{ github.ref }}
