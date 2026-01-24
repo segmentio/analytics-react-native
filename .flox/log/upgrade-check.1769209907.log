@@ -1,0 +1,25 @@
+2026-01-23T23:11:47.737456Z DEBUG flox: FLOX_VERSION=1.8.2-g27fa46f
+2026-01-23T23:11:47.738740Z DEBUG flox::config: Global config directory overridden path="/Users/abueide/.config/flox"
+2026-01-23T23:11:47.738928Z DEBUG flox::utils::init::sentry: No Sentry DSN set, skipping Sentry initialization
+2026-01-23T23:11:47.738940Z DEBUG flox: set _FLOX_SUBSYSTEM_VERBOSITY=2
+2026-01-23T23:11:47.739614Z DEBUG flox::config: Global config directory overridden path="/Users/abueide/.config/flox"
+2026-01-23T23:11:47.740099Z DEBUG flox::utils::update_notifications: Skipping update check in development mode
+2026-01-23T23:11:47.740328Z DEBUG flox::commands: Metrics collection enabled
+2026-01-23T23:11:47.740607Z DEBUG flox::utils::init::catalog_client: using catalog client with url: https://api.flox.dev
+2026-01-23T23:11:47.742769Z DEBUG flox::commands: feature flags configured=Features { upload: false, qa: false, outputs: false }
+2026-01-23T23:11:47.743559Z DEBUG check-upgrade: flox::utils::metrics: pushing entry to metrics buffer: MetricEntry { subcommand: Some("check-upgrade"), extras: {}, timestamp: 2026-01-23 23:11:47.74287 +00:00:00, uuid: 8cd236ce-19ae-492d-a825-647800e32704, flox_version: "1.8.2-g27fa46f", os_family: Some("Mac OS"), os_family_release: Some("24.6.0"), os: None, os_version: None, empty_flags: [] }
+2026-01-23T23:11:47.743920Z DEBUG check-upgrade: flox_rust_sdk::models::environment: detected concrete environment type: path
+2026-01-23T23:11:47.745018Z DEBUG check-upgrade: flox_rust_sdk::providers::upgrade_checks: created unlocked upgrade information guard upgrade_information_path="/Users/abueide/code/analytics-react-native/.flox/cache/upgrade-checks.json"
+2026-01-23T23:11:47.745133Z DEBUG check-upgrade: flox_rust_sdk::providers::upgrade_checks: lock acquired upgrade_information_path="/Users/abueide/code/analytics-react-native/.flox/cache/upgrade-checks.json"
+2026-01-23T23:11:47.745179Z DEBUG check-upgrade:check-upgrade: flox_rust_sdk::models::environment::core_environment: upgrading to_upgrade=""
+2026-01-23T23:11:47.745358Z DEBUG check-upgrade:check-upgrade: flox_rust_sdk::models::environment::core_environment: checking group membership for requested packages
+2026-01-23T23:11:47.745363Z DEBUG check-upgrade:check-upgrade: flox_rust_sdk::models::environment::core_environment: using catalog client to upgrade
+2026-01-23T23:11:47.745367Z DEBUG check-upgrade:check-upgrade: flox_rust_sdk::models::environment::core_environment: upgrading to_upgrade=""
+2026-01-23T23:11:47.745601Z DEBUG check-upgrade:check-upgrade:merge_manifest: flox_rust_sdk::models::lockfile: composing included environments
+2026-01-23T23:11:47.745618Z DEBUG check-upgrade:check-upgrade:merge_manifest: flox_rust_sdk::models::lockfile: inspecting included environment name="common"
+2026-01-23T23:11:47.745630Z DEBUG check-upgrade:check-upgrade:merge_manifest: flox_rust_sdk::models::lockfile: found existing locked include for common
+2026-01-23T23:11:47.745635Z DEBUG check-upgrade:check-upgrade:merge_manifest: flox_rust_sdk::models::lockfile: using existing locked include from lockfile name="common"
+2026-01-23T23:11:47.745640Z DEBUG check-upgrade:check-upgrade:merge_manifest: flox_rust_sdk::models::lockfile: inspecting included environment name="nodejs"
+2026-01-23T23:11:47.745644Z DEBUG check-upgrade:check-upgrade:merge_manifest: flox_rust_sdk::models::lockfile: fetching included environment name="nodejs"
+2026-01-23T23:11:47.745809Z DEBUG flox::commands: removing process tempdir temp_dir="/Users/abueide/.cache/flox/process/.tmpdm6QIg"
+❌ ERROR: failed to fetch environment 'nodejs': Did not find an environment in '/Users/abueide/code/analytics-react-native/github:segment-integrations/templates?dir=env/nodejs'

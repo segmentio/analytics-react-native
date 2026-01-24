@@ -177,8 +177,8 @@ ensure_device() {
 
 main() {
   ensure_core_sim_service || return 1
-  IFS=',' read -r -a devices <<<"${IOS_DEVICE_NAMES:-iPhone 14,iPhone 17}"
-  local runtime="${IOS_RUNTIME:-18.5}"
+  IFS=',' read -r -a devices <<<"${IOS_DEVICE_NAMES:-iPhone 13,iPhone 17}"
+  local runtime="${IOS_RUNTIME:-15.0}"
   for device in "${devices[@]}"; do
     ensure_device "$(echo "$device" | xargs)" "$runtime"
   done

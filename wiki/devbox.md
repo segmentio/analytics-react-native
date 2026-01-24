@@ -28,7 +28,7 @@ By default, Devbox uses the flake-pinned SDK (`path:./nix#android-sdk`). It sets
 ### Detox defaults
 
 - Android Detox defaults to the latest AVD (`medium_phone_API33_arm64_v8a` on arm hosts, x86_64 otherwise). Set `DETOX_AVD=pixel_API21_*` to run against the minsdk AVD.
-- CI Android E2E runs both API 21 (Pixel) and API 33 (Medium Phone) in parallel using these scripts by default. Override `ANDROID_MATRIX` in the workflow/job env to change the AVD matrix if needed.
+- CI Android E2E runs both API 21 (Pixel) and API 33 (Medium Phone) in parallel in the nightly workflow. Override the workflow matrix in `ci-e2e-nightly.yml` if needed.
 
 ### Updating Android min/latest versions
 
@@ -47,12 +47,12 @@ iOS uses the host Xcode toolchain. There is no Nix-provisioned iOS SDK. Run `dev
 
 ### Simulators and Detox
 
-- `devbox run setup-ios` provisions simulators. Defaults are `IOS_DEVICE_NAMES="iPhone 14,iPhone 17"` and `IOS_RUNTIME="18.5"` (will fall back to the latest installed iOS runtime if 18.5 isn’t available). Override via env vars to target a specific device/runtime. Set `IOS_DOWNLOAD_RUNTIME=0` to skip attempting `xcodebuild -downloadPlatform iOS` when the preferred runtime is missing. Set `IOS_DEVELOPER_DIR` (e.g., `/Applications/Xcode.app/Contents/Developer`) to point at a specific Xcode; otherwise it uses `xcode-select -p` or the default Xcode.app if found.
+- `devbox run setup-ios` provisions simulators. Defaults are `IOS_DEVICE_NAMES="iPhone 13,iPhone 17"` and `IOS_RUNTIME="15.0"` (will fall back to the latest installed iOS runtime if 15.0 isn’t available). Override via env vars to target a specific device/runtime. Set `IOS_DOWNLOAD_RUNTIME=0` to skip attempting `xcodebuild -downloadPlatform iOS` when the preferred runtime is missing. Set `IOS_DEVELOPER_DIR` (e.g., `/Applications/Xcode.app/Contents/Developer`) to point at a specific Xcode; otherwise it uses `xcode-select -p` or the default Xcode.app if found.
 - On macOS, use `devbox shell --omit-nix-env --command "<cmd>"` when invoking iOS builds/tests to ensure the Xcode toolchain is used instead of the Nix compiler toolchain.
-- `devbox run start-ios` provisions simulators (via `setup-ios`), then boots the chosen device (`DETOX_IOS_DEVICE` or default `iPhone 17`) and opens Simulator. Set `IOS_FLAVOR=minsdk` to target the min sim (iPhone 14 @ iOS 18.5) or leave default for latest. Internally uses `scripts/ios-manager.sh`.
+- `devbox run start-ios` provisions simulators (via `setup-ios`), then boots the chosen device (`DETOX_IOS_DEVICE` or default `iPhone 17`) and opens Simulator. Set `IOS_FLAVOR=minsdk` to target the min sim (iPhone 13 @ iOS 15.0) or leave default for latest. Internally uses `scripts/ios-manager.sh`.
 - `devbox run reset-ios` shuts down/erases and removes all local simulator devices.
 - `devbox run stop-android` / `stop-ios` / `stop` to shut down running emulators/simulators (handy for headless runs).
-- Detox defaults to `iPhone 17` for local runs; override with `DETOX_IOS_DEVICE`. CI runs a matrix: min sim (iPhone 14 @ iOS 18.5) and latest (iPhone 17 @ iOS 26.1).
+- Detox defaults to `iPhone 17` for local runs; override with `DETOX_IOS_DEVICE`. CI runs a matrix: min sim (iPhone 13 @ iOS 15.0) and latest (iPhone 17 @ latest runtime).
 - `devbox run test-ios` runs `setup-ios` first to ensure simulators exist; Detox handles booting. Use `start-ios` if you want to pre-boot.
 
 ### Common env knobs
@@ -68,4 +68,4 @@ iOS uses the host Xcode toolchain. There is no Nix-provisioned iOS SDK. Run `dev
 
 - Adjust simulator defaults in `scripts/ios-setup.sh` (`IOS_DEVICE_NAMES`/`IOS_RUNTIME`) and `devbox.json` (`start-ios` uses `IOS_FLAVOR` to pick minsdk/latest).
 - Update Detox default device in `examples/E2E/.detoxrc.js` if the default device changes.
-- Update CI matrix in `.github/workflows/ci.yml` (ios-min/ios-latest rows: device and runtime values) and Xcode version if needed.
+- Update CI matrices in `.github/workflows/ci-e2e-nightly.yml` (ios-min/ios-latest rows: device and runtime values) and Xcode version if needed.

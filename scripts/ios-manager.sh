@@ -7,11 +7,11 @@ shift || true
 start_ios() {
   local flavor="${IOS_FLAVOR:-latest}"
   if [[ "$flavor" == "minsdk" ]]; then
-    export IOS_DEVICE_NAMES="iPhone 14"
-    export IOS_RUNTIME="18.5"
-    export DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-iPhone 14}"
+    export IOS_DEVICE_NAMES="iPhone 13"
+    export IOS_RUNTIME="15.0"
+    export DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-iPhone 13}"
   else
-    export IOS_DEVICE_NAMES="${IOS_DEVICE_NAMES:-iPhone 14,iPhone 17}"
+    export IOS_DEVICE_NAMES="${IOS_DEVICE_NAMES:-iPhone 13,iPhone 17}"
     export IOS_RUNTIME="${IOS_RUNTIME:-26.1}"
     export DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-iPhone 17}"
   fi
