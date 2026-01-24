@@ -18,7 +18,7 @@
         let
           line = builtins.findFirst (l: builtins.match ("^" + name + "=") l != null) "" versionLines;
           raw = if line == "" then default else builtins.elemAt (builtins.splitString "=" line) 1;
-          cleaned = builtins.replaceStrings ["\"" "'"] ["", ""] raw;
+          cleaned = builtins.replaceStrings ["\"" "'"] [ "" "" ] raw;
         in cleaned;
 
       androidSdkConfig = {
