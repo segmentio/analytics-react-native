@@ -41,19 +41,13 @@
       ],
       "setup-android": ["bash $SCRIPTS_DIR/android/setup.sh"],
       "setup-ios": ["bash $SCRIPTS_DIR/ios/setup.sh"],
-      "start-emulator": [
-        "bash $SCRIPTS_DIR/android/manager.sh start"
-      ],
+      "start-emulator": ["bash $SCRIPTS_DIR/android/manager.sh start"],
       "start-ios": ["bash $SCRIPTS_DIR/ios/manager.sh start"],
-      "start-android-minsdk": [
-        "bash $SCRIPTS_DIR/android/manager.sh start"
-      ],
+      "start-android-minsdk": ["bash $SCRIPTS_DIR/android/manager.sh start"],
       "start-android-latest": [
         "AVD_FLAVOR=latest bash $SCRIPTS_DIR/android/manager.sh start"
       ],
-      "start-android": [
-        "bash $SCRIPTS_DIR/android/manager.sh start"
-      ],
+      "start-android": ["bash $SCRIPTS_DIR/android/manager.sh start"],
       "release": [
         "npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}",
         "yarn install --immutable",
