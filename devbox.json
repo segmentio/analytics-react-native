@@ -12,12 +12,14 @@
     "jdk17": "latest",
     "gradle": "latest",
     "jq": "latest",
+    "netcat": "latest",
     "path:./nix#android-sdk": ""
   },
   "shell": {
     "init_hook": [
       "echo 'Welcome to analytics-react-native devbox!' > /dev/null",
-      ". $DEVBOX_PROJECT_ROOT/scripts/android-env.sh",
+      "if [ \"$(uname -s)\" = \"Darwin\" ]; then . $DEVBOX_PROJECT_ROOT/scripts/ios/env.sh; fi",
+      ". $DEVBOX_PROJECT_ROOT/scripts/android/env.sh",
       "echo 'Android SDK env configured (details: wiki/devbox.md#devbox-android).'"
     ],
     "scripts": {
@@ -28,46 +30,26 @@
         "yarn cache clean",
         "find $DEVBOX_PROJECT_DIR -type d -name node_modules -exec rmdir {} \\;"
       ],
-      "build": [
-        "yarn install --immutable",
-        "yarn build",
-        "yarn lint",
-        "yarn test --coverage"
-      ],
-      "test-android": [
-        "devbox run setup-android",
-        "yarn install",
-        "yarn e2e install",
-        "yarn build",
-        "yarn e2e build:android",
-        "yarn e2e test:android"
-      ],
-      "test-ios": [
-        "devbox run setup-ios",
-        "yarn install",
-        "yarn e2e install",
-        "yarn e2e pods",
-        "yarn build",
-        "yarn e2e build:ios",
-        "yarn e2e test:ios"
-      ],
+      "build": ["bash $DEVBOX_PROJECT_ROOT/scripts/build.sh"],
+      "test-android": ["bash $DEVBOX_PROJECT_ROOT/scripts/android/test.sh"],
+      "test-ios": ["bash $DEVBOX_PROJECT_ROOT/scripts/ios/test.sh"],
       "act-ci": [
-        "bash $DEVBOX_PROJECT_ROOT/scripts/act-ci.sh --platform ubuntu-latest=node:20-bullseye"
+        "bash $DEVBOX_PROJECT_ROOT/scripts/act-ci.sh --platform ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-24.04"
       ],
-      "setup-android": ["bash $DEVBOX_PROJECT_ROOT/scripts/android-setup.sh"],
-      "setup-ios": ["bash $DEVBOX_PROJECT_ROOT/scripts/ios-setup.sh"],
+      "setup-android": ["bash $DEVBOX_PROJECT_ROOT/scripts/android/setup.sh"],
+      "setup-ios": ["bash $DEVBOX_PROJECT_ROOT/scripts/ios/setup.sh"],
       "start-emulator": [
-        "bash $DEVBOX_PROJECT_ROOT/scripts/android-manager.sh start"
+        "bash $DEVBOX_PROJECT_ROOT/scripts/android/manager.sh start"
       ],
-      "start-ios": ["bash $DEVBOX_PROJECT_ROOT/scripts/ios-manager.sh start"],
+      "start-ios": ["bash $DEVBOX_PROJECT_ROOT/scripts/ios/manager.sh start"],
       "start-android-minsdk": [
-        "bash $DEVBOX_PROJECT_ROOT/scripts/android-manager.sh start"
+        "bash $DEVBOX_PROJECT_ROOT/scripts/android/manager.sh start"
       ],
       "start-android-latest": [
-        "AVD_FLAVOR=latest bash $DEVBOX_PROJECT_ROOT/scripts/android-manager.sh start"
+        "AVD_FLAVOR=latest bash $DEVBOX_PROJECT_ROOT/scripts/android/manager.sh start"
       ],
       "start-android": [
-        "bash $DEVBOX_PROJECT_ROOT/scripts/android-manager.sh start"
+        "bash $DEVBOX_PROJECT_ROOT/scripts/android/manager.sh start"
       ],
       "release": [
         "npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}",

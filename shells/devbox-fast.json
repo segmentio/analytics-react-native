@@ -9,12 +9,7 @@
   },
   "shell": {
     "scripts": {
-      "build": [
-        "yarn install --immutable",
-        "yarn build",
-        "yarn lint",
-        "yarn test --coverage"
-      ]
+      "build": ["bash $DEVBOX_PROJECT_ROOT/scripts/build.sh"]
     }
   }
 }

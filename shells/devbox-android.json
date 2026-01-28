@@ -10,18 +10,11 @@
   "shell": {
     "init_hook": [
       "echo 'Android SDK env configured (details: wiki/devbox.md#devbox-android).'",
-      ". $DEVBOX_PROJECT_ROOT/scripts/android-env.sh"
+      ". $DEVBOX_PROJECT_ROOT/scripts/android/env.sh"
     ],
     "scripts": {
-      "setup-android": ["bash $DEVBOX_PROJECT_ROOT/scripts/android-setup.sh"],
-      "test-android": [
-        "devbox run setup-android",
-        "yarn install",
-        "yarn e2e install",
-        "yarn build",
-        "yarn e2e build:android",
-        "yarn e2e test:android"
-      ]
+      "setup-android": ["bash $DEVBOX_PROJECT_ROOT/scripts/android/setup.sh"],
+      "test-android": ["bash $DEVBOX_PROJECT_ROOT/scripts/android/test.sh"]
     }
   }
 }

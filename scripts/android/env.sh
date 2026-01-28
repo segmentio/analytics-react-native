@@ -3,9 +3,10 @@
 
 # Load shared platform versions if present.
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-if [ -f "$script_dir/platform-versions.sh" ]; then
+platform_versions="$script_dir/../platform-versions.sh"
+if [ -f "$platform_versions" ]; then
   # shellcheck disable=SC1090
-  . "$script_dir/platform-versions.sh"
+  . "$platform_versions"
 fi
 
 if [ -z "${ANDROID_MIN_API:-}" ] && [ -n "${PLATFORM_ANDROID_MIN_API:-}" ]; then

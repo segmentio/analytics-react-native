@@ -2,10 +2,18 @@
 set -euo pipefail
 
 # Run GitHub Actions workflows locally via act.
-# Usage: scripts/act-ci.sh [--job JOB] [--platform ubuntu-latest=node:20-bullseye]
+# Usage: scripts/act-ci.sh [--job JOB] [--platform ubuntu-latest=IMAGE]
 
 JOB=""
-PLATFORM="ubuntu-latest=node:20-bullseye"
+PLATFORMS=()
+
+host_arch="$(uname -m)"
+if [[ "$host_arch" == "arm64" || "$host_arch" == "aarch64" ]]; then
+  PLATFORMS+=("ubuntu-24.04-arm=ghcr.io/catthehacker/ubuntu:act-24.04")
+else
+  PLATFORMS+=("ubuntu-24.04=ghcr.io/catthehacker/ubuntu:act-24.04")
+fi
+PLATFORMS+=("ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-24.04")
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -14,7 +22,7 @@ while [[ $# -gt 0 ]]; do
     shift 2
     ;;
   -p | --platform)
-    PLATFORM="$2"
+    PLATFORMS+=("$2")
     shift 2
     ;;
   *)
@@ -26,7 +34,9 @@ done
 
 CMD=(act)
 CMD+=(--pull=false)
-CMD+=(--platform "${PLATFORM}")
+for platform in "${PLATFORMS[@]}"; do
+  CMD+=(--platform "$platform")
+done
 CMD+=(--input ACT=true)
 if [[ -n $JOB ]]; then
   CMD+=(--job "$JOB")
