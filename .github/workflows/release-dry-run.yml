@@ -1,0 +1,22 @@
+name: Release Dry Run
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release-dry-run:
+    name: Release Dry Run
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: devbox installer
+        uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          project-path: shells/minimal/devbox.json
+          enable-cache: 'false'
+      - name: Release Dry Run
+        run: devbox run --config=shells/minimal/devbox.json release-dry-run
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

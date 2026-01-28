@@ -11,8 +11,7 @@
   "shell": {
     "init_hook": [
       ". $DEVBOX_PROJECT_ROOT/../../scripts/shared/common.sh",
-      "if [ \"$(uname -s)\" = \"Darwin\" ]; then . $SCRIPTS_DIR/ios/env.sh; fi",
-      ". $SCRIPTS_DIR/shared/sdk-summary.sh"
+      "if [ \"$(uname -s)\" = \"Darwin\" ]; then . $SCRIPTS_DIR/ios/env.sh; fi"
     ],
     "scripts": {
       "setup-ios": ["bash $SCRIPTS_DIR/ios/setup.sh"],

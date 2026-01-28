@@ -79,6 +79,23 @@ if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
       ;;
     esac
   fi
+  if [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ] && [ -z "${DEVBOX_ANDROID_SDK_SUMMARY_PRINTED:-}" ]; then
+    DEVBOX_ANDROID_SDK_SUMMARY_PRINTED=1
+    export DEVBOX_ANDROID_SDK_SUMMARY_PRINTED
+
+    android_sdk_root="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+    android_sdk_version="${ANDROID_BUILD_TOOLS_VERSION:-${ANDROID_CMDLINE_TOOLS_VERSION:-${PLATFORM_ANDROID_BUILD_TOOLS_VERSION:-${PLATFORM_ANDROID_CMDLINE_TOOLS_VERSION:-}}}}"
+    android_min_api="${ANDROID_MIN_API:-${PLATFORM_ANDROID_MIN_API:-}}"
+    android_max_api="${ANDROID_MAX_API:-${PLATFORM_ANDROID_MAX_API:-}}"
+    android_system_image_tag="${ANDROID_SYSTEM_IMAGE_TAG:-${PLATFORM_ANDROID_SYSTEM_IMAGE_TAG:-}}"
+
+    echo "Resolved Android SDK"
+    echo "  SDK: ${android_sdk_root:-not set}"
+    echo "  Tools: ${android_sdk_version:-not set}"
+    echo "  Min API: ${android_min_api:-not set}"
+    echo "  Max API: ${android_max_api:-not set}"
+    echo "  System Image: ${android_system_image_tag:-not set}"
+  fi
 else
   if [ -n "${CI:-}" ] || [ -n "${GITHUB_ACTIONS:-}" ]; then
     echo "Android SDK not set; using system PATH"

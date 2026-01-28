@@ -17,6 +17,11 @@
         "yarn build",
         "yarn release"
       ],
+      "release-dry-run": [
+        "yarn install --immutable",
+        "yarn build",
+        "yarn multi-semantic-release --dry-run"
+      ],
       "format": ["treefmt"],
       "lint": ["treefmt --fail-on-change"]
     }

@@ -69,3 +69,43 @@ devbox_omit_nix_env() {
 }
 
 devbox_omit_nix_env
+
+if [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ] && [ -z "${DEVBOX_IOS_SDK_SUMMARY_PRINTED:-}" ]; then
+  DEVBOX_IOS_SDK_SUMMARY_PRINTED=1
+  export DEVBOX_IOS_SDK_SUMMARY_PRINTED
+
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+  repo_root="$(cd "$script_dir/../.." && pwd)"
+
+  if [ -z "${PLATFORM_IOS_MIN_RUNTIME:-}" ] || [ -z "${PLATFORM_ANDROID_MIN_API:-}" ]; then
+    if ! command -v jq >/dev/null 2>&1; then
+      if [ -n "${DEVBOX_PACKAGES_DIR:-}" ] && [ -x "$DEVBOX_PACKAGES_DIR/bin/jq" ]; then
+        PATH="$DEVBOX_PACKAGES_DIR/bin:$PATH"
+      fi
+    fi
+    # shellcheck disable=SC1090
+    . "$repo_root/scripts/platform-versions.sh"
+  fi
+
+  ios_min_runtime="${IOS_MIN_RUNTIME:-${PLATFORM_IOS_MIN_RUNTIME:-}}"
+  ios_max_runtime="${IOS_MAX_RUNTIME:-${PLATFORM_IOS_MAX_RUNTIME:-}}"
+  if [ -z "$ios_max_runtime" ] && command -v xcrun >/dev/null 2>&1; then
+    ios_max_runtime="$(xcrun --sdk iphonesimulator --show-sdk-version 2>/dev/null || true)"
+  fi
+
+  xcode_dir="${DEVELOPER_DIR:-}"
+  if [ -z "$xcode_dir" ] && command -v xcode-select >/dev/null 2>&1; then
+    xcode_dir="$(xcode-select -p 2>/dev/null || true)"
+  fi
+
+  xcode_version="unknown"
+  if command -v xcodebuild >/dev/null 2>&1; then
+    xcode_version="$(xcodebuild -version 2>/dev/null | awk 'NR==1{print $2}')"
+  fi
+
+  echo "Resolved iOS SDK"
+  echo "  Runtime Min: ${ios_min_runtime:-not set}"
+  echo "  Runtime Max: ${ios_max_runtime:-not set}"
+  echo "  Xcode: ${xcode_version:-unknown}"
+  echo "  Xcode Dir: ${xcode_dir:-not set}"
+fi

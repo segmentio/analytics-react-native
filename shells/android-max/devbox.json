@@ -11,8 +11,7 @@
     "init_hook": [
       ". $DEVBOX_PROJECT_ROOT/../../scripts/shared/common.sh",
       "if [ -n \"${CI:-}\" ] || [ -n \"${GITHUB_ACTIONS:-}\" ]; then echo 'Android SDK env configured (details: wiki/devbox.md#devbox-android).'; fi",
-      ". $SCRIPTS_DIR/android/env.sh",
-      ". $SCRIPTS_DIR/shared/sdk-summary.sh"
+      ". $SCRIPTS_DIR/android/env.sh"
     ],
     "scripts": {
       "setup-android": ["bash $SCRIPTS_DIR/android/setup.sh"],
