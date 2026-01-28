@@ -48,12 +48,6 @@
         "AVD_FLAVOR=latest bash $SCRIPTS_DIR/android/manager.sh start"
       ],
       "start-android": ["bash $SCRIPTS_DIR/android/manager.sh start"],
-      "release": [
-        "npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}",
-        "yarn install --immutable",
-        "yarn build",
-        "yarn release"
-      ],
       "update-apps": [
         "yarn install --no-immutable",
         "yarn e2e install --no-immutable",
