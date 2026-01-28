@@ -14,13 +14,15 @@
     "sovran": "yarn workspace @segment/sovran-react-native",
     "example": "yarn --cwd examples/AnalyticsReactNativeExample",
     "e2e": "yarn --cwd examples/E2E",
-    "build": "yarn workspaces foreach -A --topological-dev run build",
+    "build": "yarn workspaces foreach -A -p --topological-dev run build",
     "testAll": "yarn workspaces foreach -A -p run test --passWithNoTests",
     "clean": "yarn workspaces foreach -A -p run clean",
     "typescript": "tsc --noEmit --composite false",
     "test": "jest",
     "lint": "eslint .",
-    "release": " yarn multi-semantic-release"
+    "format": "treefmt --clear-cache",
+    "format:check": "treefmt --clear-cache --fail-on-change",
+    "release": "yarn multi-semantic-release"
   },
   "devDependencies": {
     "@anolilab/multi-semantic-release": "^1.0.3",

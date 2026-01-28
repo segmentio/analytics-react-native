@@ -1,0 +1,135 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.2/.schema/devbox.schema.json",
+  "packages": {
+    "cocoapods": {
+      "version":   "latest",
+      "platforms": ["x86_64-darwin", "aarch64-darwin"],
+    },
+    "yarn-berry":             "latest",
+    "treefmt":                "latest",
+    "nixfmt":                 "latest",
+    "shfmt":                  "latest",
+    "jdk17":                  "latest",
+    "gradle":                 "latest",
+    "jq":                     "latest",
+    "path:./nix#android-sdk": "",
+  },
+  "shell": {
+    "init_hook": [
+      "echo 'Welcome to analytics-react-native devbox!' > /dev/null",
+      ". $DEVBOX_PROJECT_ROOT/scripts/android-env.sh",
+      "echo 'Android SDK env configured (details: wiki/devbox.md#devbox-android).'",
+    ],
+    "scripts": {
+      "clean": [
+        "rm -rf $DEVBOX_PROJECT_ROOT/examples/E2E/ios/Podfile.lock",
+        "rm -rf $DEVBOX_PROJECT_ROOT/examples/E2E/ios/Pods",
+        "cd $DEVBOX_PROJECT_DIR/examples/E2E/android && gradle clean",
+        "yarn cache clean",
+        "find $DEVBOX_PROJECT_DIR -type d -name node_modules -exec rmdir {} \\;",
+      ],
+      "build": [
+        "yarn install --immutable",
+        "yarn build",
+        "yarn lint",
+        "yarn test --coverage",
+      ],
+      "test-android": [
+        "devbox run setup-android",
+        "yarn install",
+        "yarn e2e install",
+        "yarn build",
+        "yarn e2e build:android",
+        "yarn e2e test:android",
+      ],
+      "test-ios": [
+        "devbox run setup-ios",
+        "yarn install",
+        "yarn e2e install",
+        "yarn e2e pods",
+        "yarn build",
+        "yarn e2e build:ios",
+        "yarn e2e test:ios",
+      ],
+      "act-ci": [
+        "bash $DEVBOX_PROJECT_ROOT/scripts/act-ci.sh --platform ubuntu-latest=node:20-bullseye"
+      ],
+      "setup-android": [
+        "bash $DEVBOX_PROJECT_ROOT/scripts/android-setup.sh",
+      ],
+      "setup-ios": [
+        "bash $DEVBOX_PROJECT_ROOT/scripts/ios-setup.sh",
+      ],
+      "start-emulator": [
+        "bash $DEVBOX_PROJECT_ROOT/scripts/android-manager.sh start",
+      ],
+      "start-ios": [
+        "bash $DEVBOX_PROJECT_ROOT/scripts/ios-manager.sh start",
+      ],
+      "start-android-minsdk": [
+        "bash $DEVBOX_PROJECT_ROOT/scripts/android-manager.sh start",
+      ],
+      "start-android-latest": [
+        "AVD_FLAVOR=latest bash $DEVBOX_PROJECT_ROOT/scripts/android-manager.sh start",
+      ],
+      "start-android": [
+        "bash $DEVBOX_PROJECT_ROOT/scripts/android-manager.sh start",
+      ],
+      "release": [
+        "npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}",
+        "yarn install --immutable",
+        "yarn build",
+        "yarn release",
+      ],
+      "reset-android": [
+        "rm -rf ~/.android/avd",
+        "rm -f ~/.android/adbkey*",
+        "echo \"AVDs and adb keys removed. Recreate via devbox run start-android* as needed.\"",
+      ],
+      "reset-ios": [
+        "xcrun simctl shutdown all || true",
+        "xcrun simctl erase all || true",
+        "xcrun simctl delete all || true",
+        "xcrun simctl delete unavailable || true",
+        "killall -9 com.apple.CoreSimulatorService 2>/dev/null || true",
+        "echo \"Simulators reset via simctl. Recreate via devbox run start-ios.\"",
+      ],
+      "stop-android": [
+        "if command -v adb >/dev/null 2>&1; then",
+        "  devices=$(adb devices -l 2>/dev/null | tail -n +2 | awk '{print $1}' | tr '\\n' ' ');",
+        "  if [[ -n \"$devices\" ]]; then",
+        "    echo \"Stopping Android emulators: $devices\";",
+        "    for d in $devices; do adb -s \"$d\" emu kill >/dev/null 2>&1 || true; done;",
+        "  else",
+        "    echo \"No Android emulators detected via adb.\";",
+        "  fi;",
+        "else",
+        "  echo \"adb not found; skipping Android emulator shutdown.\";",
+        "fi",
+        "pkill -f \"emulator@\" >/dev/null 2>&1 || true",
+        "echo \"Android emulators stopped (if any were running).\"",
+      ],
+      "stop-ios": [
+        "if command -v xcrun >/dev/null 2>&1 && xcrun -f simctl >/dev/null 2>&1; then",
+        "  if xcrun simctl list devices booted | grep -q \"Booted\"; then",
+        "    echo \"Shutting down booted iOS simulators...\";",
+        "    xcrun simctl shutdown all >/dev/null 2>&1 || true;",
+        "  else",
+        "    echo \"No booted iOS simulators detected.\";",
+        "  fi;",
+        "else",
+        "  echo \"simctl not available; skipping iOS shutdown.\";",
+        "fi",
+        "echo \"iOS simulators shutdown (if any were running).\"",
+      ],
+      "stop": [
+        "devbox run stop-android",
+        "devbox run stop-ios",
+      ],
+      "test": [
+        "devbox run test-android",
+        "devbox run test-ios",
+      ],
+    },
+  },
+}

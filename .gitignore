@@ -12,6 +12,8 @@
 !.yarn/cache
 #.pnp.*
 
+.cache/
+
 # OSX
 #
 .DS_Store

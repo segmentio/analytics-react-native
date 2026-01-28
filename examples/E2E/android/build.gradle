@@ -2,7 +2,9 @@
 
 buildscript {
     ext {
-        buildToolsVersion = "33.0.0"
+        // Default to the build-tools pinned in devbox; allow override via ANDROID_BUILD_TOOLS_VERSION.
+        // Keep in sync with nix/flake.nix when ANDROID_BUILD_TOOLS_VERSION is unset.
+        buildToolsVersion = System.getenv("ANDROID_BUILD_TOOLS_VERSION") ?: "30.0.3"
         minSdkVersion = 21
         compileSdkVersion = 33
         targetSdkVersion = 33

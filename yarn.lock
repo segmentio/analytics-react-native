@@ -3380,7 +3380,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native-plugin-amplitude-session@workspace:packages/plugins/plugin-amplitudeSession"
   dependencies:
-    "@segment/analytics-react-native": "npm:^2.18.0"
+    "@segment/analytics-react-native": "npm:^2.21.4"
     "@segment/analytics-rn-shared": "workspace:^"
     "@segment/sovran-react-native": "npm:^1.1.0"
     "@types/jest": "npm:^29.5.8"
@@ -3615,7 +3615,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@segment/analytics-react-native@npm:^2.18.0, @segment/analytics-react-native@workspace:packages/core":
+"@segment/analytics-react-native@npm:^2.18.0, @segment/analytics-react-native@npm:^2.21.4, @segment/analytics-react-native@workspace:packages/core":
   version: 0.0.0-use.local
   resolution: "@segment/analytics-react-native@workspace:packages/core"
   dependencies:
