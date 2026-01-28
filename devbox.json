@@ -56,9 +56,10 @@
       ],
       "update-shells": [
         "devbox update",
-        "devbox update --config=shells/devbox-fast.json",
-        "devbox update --config=shells/devbox-android.json",
-        "devbox update --config=shells/devbox-ios.json"
+        "devbox update --config=shells/minimal/devbox.json",
+        "devbox update --config=shells/android-min/devbox.json",
+        "devbox update --config=shells/android-max/devbox.json",
+        "devbox update --config=shells/ios/devbox.json"
       ],
       "reset-android": [
         "rm -rf ~/.android/avd",

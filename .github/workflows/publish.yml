@@ -17,10 +17,10 @@ jobs:
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
-          project-path: shells/devbox-fast.json
+          project-path: shells/minimal/devbox.json
           enable-cache: 'false'
       - name: build
-        run: devbox run --config=shells/devbox-fast.json build
+        run: devbox run --config=shells/minimal/devbox.json build
 
   e2e-ios:
     name: E2E iOS (min/max)
@@ -55,7 +55,7 @@ jobs:
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
-          project-path: shells/devbox-ios.json
+          project-path: shells/ios/devbox.json
           enable-cache: 'false'
       - name: Resolve iOS targets
         run: |
@@ -68,7 +68,7 @@ jobs:
             echo "IOS_RUNTIME=${PLATFORM_IOS_MAX_RUNTIME}" >> "$GITHUB_ENV"
           fi
       - name: iOS E2E Tests
-        run: devbox run --config=shells/devbox-ios.json test-ios
+        run: devbox run --config=shells/ios/devbox.json test-ios
 
   e2e-android:
     name: E2E Android (min/max)
@@ -103,7 +103,7 @@ jobs:
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
-          project-path: shells/devbox-android.json
+          project-path: shells/android-${{ matrix.target }}/devbox.json
           enable-cache: 'false'
       - name: Resolve Android targets
         run: |
@@ -118,7 +118,7 @@ jobs:
           avd_name="${device}_API${api}_arm64_v8a"
           echo "DETOX_AVD=${avd_name}" >> "$GITHUB_ENV"
       - name: Android E2E Tests
-        run: devbox run --config=shells/devbox-android.json test-android
+        run: devbox run --config=shells/android-${{ matrix.target }}/devbox.json test-android
 
   publish:
     name: Publish to npm
@@ -138,11 +138,11 @@ jobs:
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
-          project-path: shells/devbox-fast.json
+          project-path: shells/minimal/devbox.json
           enable-cache: 'false'
 
       - name: Config, Build, Release
-        run: devbox run --config=shells/devbox-fast.json release
+        run: devbox run --config=shells/minimal/devbox.json release
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}

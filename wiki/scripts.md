@@ -25,7 +25,7 @@ This repo uses `scripts/` as the entry point for devbox commands and CI helpers.
 
   - Sets `ANDROID_SDK_ROOT`/`ANDROID_HOME` and PATH for the Nix SDK.
   - Loads platform defaults via `scripts/platform-versions.sh`.
-  - Used by devbox init hooks in `devbox.json` and `shells/devbox-android.json`.
+  - Used by devbox init hooks in `devbox.json` and `shells/android-min/devbox.json` + `shells/android-max/devbox.json`.
 
 - `scripts/android/setup.sh`
 
@@ -83,8 +83,9 @@ Root devbox (`devbox.json`) exposes:
 
 Slim CI shells:
 
-- `shells/devbox-fast.json` -> `scripts/build.sh`
-- `shells/devbox-android.json` -> `scripts/android/test.sh`
-- `shells/devbox-ios.json` -> `scripts/ios/test.sh`
+- `shells/minimal/devbox.json` -> `scripts/build.sh`
+- `shells/android-min/devbox.json` -> `scripts/android/test.sh`
+- `shells/android-max/devbox.json` -> `scripts/android/test.sh`
+- `shells/ios/devbox.json` -> `scripts/ios/test.sh`
 
 See `wiki/devbox.md` for usage and `wiki/nix.md` for platform version sources.

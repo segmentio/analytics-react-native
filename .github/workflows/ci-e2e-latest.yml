@@ -35,7 +35,7 @@ jobs:
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
-          project-path: shells/devbox-ios.json
+          project-path: shells/ios/devbox.json
           enable-cache: 'false'
       - name: Resolve iOS targets
         run: |
@@ -43,7 +43,7 @@ jobs:
           echo "DETOX_IOS_DEVICE=${PLATFORM_IOS_MAX_DEVICE}" >> "$GITHUB_ENV"
           echo "IOS_RUNTIME=${PLATFORM_IOS_MAX_RUNTIME}" >> "$GITHUB_ENV"
       - name: iOS E2E Tests (latest)
-        run: devbox run --config=shells/devbox-ios.json test-ios
+        run: devbox run --config=shells/ios/devbox.json test-ios
 
   run-e2e-android:
     runs-on: ubuntu-24.04-arm
@@ -70,7 +70,7 @@ jobs:
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
-          project-path: shells/devbox-android.json
+          project-path: shells/android-max/devbox.json
           enable-cache: 'false'
       - name: Resolve Android targets
         run: |
@@ -80,4 +80,4 @@ jobs:
           avd_name="${device}_API${api}_arm64_v8a"
           echo "DETOX_AVD=${avd_name}" >> "$GITHUB_ENV"
       - name: Android E2E Tests (latest)
-        run: devbox run --config=shells/devbox-android.json test-android
+        run: devbox run --config=shells/android-max/devbox.json test-android

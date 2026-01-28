@@ -27,6 +27,12 @@
         cmdLineToolsVersion = getVar "PLATFORM_ANDROID_CMDLINE_TOOLS_VERSION" "19.0";
         systemImageTypes = [ (getVar "PLATFORM_ANDROID_SYSTEM_IMAGE_TAG" "google_apis") ];
       };
+      androidSdkConfigMin = androidSdkConfig // {
+        platformVersions = [ (getVar "PLATFORM_ANDROID_MIN_API" "21") ];
+      };
+      androidSdkConfigMax = androidSdkConfig // {
+        platformVersions = [ (getVar "PLATFORM_ANDROID_MAX_API" "33") ];
+      };
 
       forAllSystems =
         f:
@@ -51,21 +57,25 @@
 
           abiVersions = if builtins.match "aarch64-.*" system != null then [ "arm64-v8a" ] else [ "x86_64" ];
 
-          androidPkgs = pkgs.androidenv.composeAndroidPackages {
-            # Keep API 21 images for the AVD and add API 33 for React Native builds.
-            platformVersions = androidSdkConfig.platformVersions;
-            buildToolsVersions = [ androidSdkConfig.buildToolsVersion ];
-            cmdLineToolsVersion = androidSdkConfig.cmdLineToolsVersion;
-            includeEmulator = true;
-            includeSystemImages = true;
-            includeNDK = false;
-            abiVersions = abiVersions;
-            systemImageTypes = androidSdkConfig.systemImageTypes;
-          };
+          androidPkgs =
+            config:
+            pkgs.androidenv.composeAndroidPackages {
+              # Keep API 21 images for the AVD and add API 33 for React Native builds.
+              platformVersions = config.platformVersions;
+              buildToolsVersions = [ config.buildToolsVersion ];
+              cmdLineToolsVersion = config.cmdLineToolsVersion;
+              includeEmulator = true;
+              includeSystemImages = true;
+              includeNDK = false;
+              abiVersions = abiVersions;
+              systemImageTypes = config.systemImageTypes;
+            };
         in
         {
-          android-sdk = androidPkgs.androidsdk;
-          default = androidPkgs.androidsdk;
+          android-sdk = (androidPkgs androidSdkConfig).androidsdk;
+          android-sdk-min = (androidPkgs androidSdkConfigMin).androidsdk;
+          android-sdk-max = (androidPkgs androidSdkConfigMax).androidsdk;
+          default = (androidPkgs androidSdkConfig).androidsdk;
         }
       );
 

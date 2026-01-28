@@ -10,7 +10,7 @@
   },
   "shell": {
     "init_hook": [
-      ". $DEVBOX_PROJECT_ROOT/../scripts/shared/common.sh",
+      ". $DEVBOX_PROJECT_ROOT/../../scripts/shared/common.sh",
       "if [ \"$(uname -s)\" = \"Darwin\" ]; then . $SCRIPTS_DIR/ios/env.sh; fi",
       ". $SCRIPTS_DIR/shared/sdk-summary.sh"
     ],

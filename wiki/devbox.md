@@ -73,16 +73,18 @@ iOS uses the host Xcode toolchain. There is no Nix-provisioned iOS SDK. Run `dev
 
 The root `devbox.json` is a full local dev environment. CI uses slim Devbox configs under `shells/` to avoid pulling unnecessary SDKs:
 
-- `shells/devbox-fast.json`: build + lint only.
-- `shells/devbox-android.json`: Android SDK + JDK/Gradle for Android E2E.
-- `shells/devbox-ios.json`: CocoaPods + Yarn for iOS E2E (Xcode still required on macOS).
+- `shells/minimal/devbox.json`: build + lint only.
+- `shells/android-min/devbox.json`: Android SDK (min API) + JDK/Gradle for Android E2E.
+- `shells/android-max/devbox.json`: Android SDK (max API) + JDK/Gradle for Android E2E.
+- `shells/ios/devbox.json`: CocoaPods + Yarn for iOS E2E (Xcode still required on macOS).
 
 Run them locally with:
 
 ```sh
-devbox run --config=shells/devbox-fast.json build
-devbox run --config=shells/devbox-android.json test-android
-devbox run --config=shells/devbox-ios.json test-ios
+devbox run --config=shells/minimal/devbox.json build
+devbox run --config=shells/android-min/devbox.json test-android
+devbox run --config=shells/android-max/devbox.json test-android
+devbox run --config=shells/ios/devbox.json test-ios
 ```
 
-Note: when you use `devbox run --config=shells/...`, Devbox treats `shells/` as the config root. The init hooks set `SCRIPTS_DIR` to point back at the repo-level `scripts/` folder.
+Note: when you use `devbox run --config=shells/<name>/devbox.json`, Devbox treats `shells/<name>/` as the config root. The init hooks set `SCRIPTS_DIR` to point back at the repo-level `scripts/` folder.
