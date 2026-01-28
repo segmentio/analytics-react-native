@@ -1,12 +1,12 @@
-name: E2E (On-Demand)
+name: E2E (Full)
 
 on:
+  schedule:
+    - cron: '0 6 * * *'
   workflow_dispatch:
-  push:
-    branches: [ci2]
 
 concurrency:
-  group: e2e-optional-${{ github.ref }}
+  group: e2e-full-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -15,6 +15,11 @@ jobs:
     env:
       YARN_ENABLE_HARDENED_MODE: 0
       XCODE_VERSION: '26.2'
+    strategy:
+      matrix:
+        include:
+          - name: ios-min
+          - name: ios-latest
     steps:
       - uses: actions/checkout@v4
       - name: Aggressive disk cleanup (macOS)
@@ -41,15 +46,27 @@ jobs:
       - name: Resolve iOS targets
         run: |
           . scripts/platform-versions.sh
-          echo "DETOX_IOS_DEVICE=${PLATFORM_IOS_MAX_DEVICE}" >> "$GITHUB_ENV"
-          echo "IOS_RUNTIME=${PLATFORM_IOS_MAX_RUNTIME}" >> "$GITHUB_ENV"
-      - name: iOS E2E Tests (latest)
-        run: devbox shell --omit-nix-env -- devbox run test-ios
+          if [ "${{ matrix.name }}" = "ios-min" ]; then
+            echo "DETOX_IOS_DEVICE=${PLATFORM_IOS_MIN_DEVICE}" >> "$GITHUB_ENV"
+            echo "IOS_RUNTIME=${PLATFORM_IOS_MIN_RUNTIME}" >> "$GITHUB_ENV"
+          else
+            echo "DETOX_IOS_DEVICE=${PLATFORM_IOS_MAX_DEVICE}" >> "$GITHUB_ENV"
+            echo "IOS_RUNTIME=${PLATFORM_IOS_MAX_RUNTIME}" >> "$GITHUB_ENV"
+          fi
+      - name: iOS E2E Tests
+        run: devbox run --config=shells/devbox-ios.json test-ios
 
   run-e2e-android:
     runs-on: ubuntu-24.04-arm
     env:
       EMU_HEADLESS: 1
+    strategy:
+      matrix:
+        include:
+          - name: android-min
+            target: min
+          - name: android-latest
+            target: max
     steps:
       - uses: actions/checkout@v4
       - name: Aggressive disk cleanup (Ubuntu)
@@ -75,9 +92,14 @@ jobs:
       - name: Resolve Android targets
         run: |
           . scripts/platform-versions.sh
-          api="$PLATFORM_ANDROID_MAX_API"
-          device="$PLATFORM_ANDROID_MAX_DEVICE"
+          if [ "${{ matrix.target }}" = "min" ]; then
+            api="$PLATFORM_ANDROID_MIN_API"
+            device="$PLATFORM_ANDROID_MIN_DEVICE"
+          else
+            api="$PLATFORM_ANDROID_MAX_API"
+            device="$PLATFORM_ANDROID_MAX_DEVICE"
+          fi
           avd_name="${device}_API${api}_arm64_v8a"
           echo "DETOX_AVD=${avd_name}" >> "$GITHUB_ENV"
-      - name: Android E2E Tests (latest)
-        run: devbox run test-android
+      - name: Android E2E Tests
+        run: devbox run --config=shells/devbox-android.json test-android

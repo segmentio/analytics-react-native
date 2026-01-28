@@ -4,10 +4,10 @@ set -euo pipefail
 action="${1:-}"
 shift || true
 
-source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/android-env.sh"
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/env.sh"
 
 start_android() {
-  local flavor="${AVD_FLAVOR:-minsdk}" headless="${EMU_HEADLESS:-}" port="${EMU_PORT:-5554}"
+  local flavor="${AVD_FLAVOR:-latest}" headless="${EMU_HEADLESS:-}" port="${EMU_PORT:-5554}"
   local avd="${DETOX_AVD:-}"
 
   if [[ -z $avd ]]; then
@@ -51,7 +51,7 @@ start) start_android ;;
 stop) stop_android ;;
 reset) reset_android ;;
 *)
-  echo "Usage: android-manager.sh {start|stop|reset}" >&2
+  echo "Usage: manager.sh {start|stop|reset}" >&2
   exit 1
   ;;
 esac

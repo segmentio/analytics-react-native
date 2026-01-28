@@ -94,3 +94,6 @@ tsconfig.tsbuildinfo
 packages/core/src/info.ts
 
 .pnpm/
+
+AGENTS.md
+

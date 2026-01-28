@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.2/.schema/devbox.schema.json",
+  "packages": {
+    "yarn-berry": "latest",
+    "jdk17": "latest",
+    "gradle": "latest",
+    "jq": "latest",
+    "path:../nix#android-sdk": ""
+  },
+  "shell": {
+    "init_hook": [
+      ". $DEVBOX_PROJECT_ROOT/../scripts/shared/common.sh",
+      "echo 'Android SDK env configured (details: wiki/devbox.md#devbox-android).'",
+      ". $SCRIPTS_DIR/android/env.sh"
+    ],
+    "scripts": {
+      "setup-android": ["bash $SCRIPTS_DIR/android/setup.sh"],
+      "test-android": ["bash $SCRIPTS_DIR/android/test.sh"]
+    }
+  }
+}

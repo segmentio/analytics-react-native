@@ -2,10 +2,9 @@
 set -euo pipefail
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-if [ -f "$script_dir/platform-versions.sh" ]; then
-  # shellcheck disable=SC1090
-  . "$script_dir/platform-versions.sh"
-fi
+# shellcheck disable=SC1090
+. "$script_dir/../shared/common.sh"
+load_platform_versions "$script_dir"
 
 action="${1:-}"
 shift || true
@@ -46,7 +45,7 @@ start) start_ios ;;
 stop) stop_ios ;;
 reset) reset_ios ;;
 *)
-  echo "Usage: ios-manager.sh {start|stop|reset}" >&2
+  echo "Usage: manager.sh {start|stop|reset}" >&2
   exit 1
   ;;
 esac

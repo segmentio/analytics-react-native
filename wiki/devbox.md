@@ -2,7 +2,7 @@
 
 This repo ships a Devbox environment that preinstalls the Android SDK and common build tools like Gradle and Yarn. Devbox uses Nix under the hood to pin versions so everyone has the same setup. You don’t need to know Nix to use it.
 
-Enter the environment with `devbox shell`. The init hook wires `ANDROID_SDK_ROOT`/`ANDROID_HOME` and PATH. Common scripts run via `devbox run`, for example `devbox run build`. For Devbox basics, see the official docs: https://www.jetify.com/devbox/docs/.
+Enter the environment with `devbox shell`. The init hook wires `ANDROID_SDK_ROOT`/`ANDROID_HOME` and PATH. Common scripts run via `devbox run`, for example `devbox run build`. For Devbox basics, see the official docs: https://www.jetify.com/devbox/docs/. For script layout, see `wiki/scripts.md`; for Nix/SDK versions, see `wiki/nix.md`.
 
 ## Getting started
 
@@ -13,13 +13,13 @@ Enter the environment with `devbox shell`. The init hook wires `ANDROID_SDK_ROOT
 
 ## Android
 
-By default, Devbox uses the flake-pinned SDK (`path:./nix#android-sdk`). It sets `ANDROID_SDK_ROOT`/`ANDROID_HOME` and adds emulator/platform-tools/cmdline-tools to `PATH` via `scripts/android-env.sh`. Platform versions live in `nix/platform-versions.json` (single source of truth for min/max API and build tools; loaded by `scripts/platform-versions.sh`). To use a local SDK instead, launch with `ANDROID_HOME="$HOME/Library/Android/sdk" devbox shell` (or set `ANDROID_SDK_ROOT`). Clear both env vars to return to the Nix SDK. Inspect the active SDK with `echo "$ANDROID_SDK_ROOT"` and `which sdkmanager` inside the shell. Create/boot AVDs via `devbox run start-android*` (uses `scripts/android-setup.sh` + `scripts/android-manager.sh`).
+By default, Devbox uses the flake-pinned SDK (`path:./nix#android-sdk`). It sets `ANDROID_SDK_ROOT`/`ANDROID_HOME` and adds emulator/platform-tools/cmdline-tools to `PATH` via `scripts/android/env.sh`. To use a local SDK instead, launch with `ANDROID_HOME="$HOME/Library/Android/sdk" devbox shell` (or set `ANDROID_SDK_ROOT`). Clear both env vars to return to the Nix SDK. Inspect the active SDK with `echo "$ANDROID_SDK_ROOT"` and `which sdkmanager` inside the shell. Create/boot AVDs via `devbox run start-android*` (uses `scripts/android/setup.sh` + `scripts/android/manager.sh`). Version sources are documented in `wiki/nix.md`.
 
 ### Emulator/AVD scripts
 
 - `devbox run start-android` launches the default “latest” AVD (API 33, Medium Phone). On arm64 hosts it uses the arm64-v8a image; on Intel it uses x86_64. Override with `AVD_FLAVOR=minsdk` to launch the API 21 Pixel AVD instead. You can also set `DETOX_AVD` to pick an exact AVD name.
-- `devbox run start-android-latest` / `start-android-minsdk` explicitly launch the latest (API 33) or minsdk (API 21) AVDs. Both will create the AVD first via `scripts/android-setup.sh` if it does not exist.
-- `scripts/android-setup.sh` now accepts env overrides: `AVD_API`, `AVD_DEVICE`, `AVD_TAG`, `AVD_ABI`, `AVD_NAME`. Defaults target API 21 for minsdk; CI passes API 33 for latest. The script auto-selects the best ABI for the host (arm64-v8a on arm, x86_64 on Intel) if `AVD_ABI` is unset.
+- `devbox run start-android-latest` / `start-android-minsdk` explicitly launch the latest (API 33) or minsdk (API 21) AVDs. Both will create the AVD first via `scripts/android/setup.sh` if it does not exist.
+- `scripts/android/setup.sh` accepts env overrides: `AVD_API`, `AVD_DEVICE`, `AVD_TAG`, `AVD_ABI`, `AVD_NAME`. Defaults target API 21 for minsdk; CI passes API 33 for latest. The script auto-selects the best ABI for the host (arm64-v8a on arm, x86_64 on Intel) if `AVD_ABI` is unset.
 - `devbox run reset-android` removes local AVDs/adb keys if you need a clean slate.
 - `EMU_HEADLESS=1 devbox run start-android*` to run the emulator headless (CI sets this); omit for a visible emulator locally.
 - `EMU_PORT=5554 devbox run start-android*` to set the emulator port/serial (defaults to 5554) and avoid adb conflicts.
@@ -28,28 +28,27 @@ By default, Devbox uses the flake-pinned SDK (`path:./nix#android-sdk`). It sets
 ### Detox defaults
 
 - Android Detox defaults to the latest AVD (`medium_phone_API33_arm64_v8a` on arm hosts, x86*64 otherwise). Set `DETOX_AVD=pixel_API21*\*` to run against the minsdk AVD.
-- CI Android E2E runs both API 21 (Pixel) and API 33 (Medium Phone) in parallel in the nightly workflow. Override the workflow matrix in `ci-e2e-nightly.yml` if needed.
+- CI Android E2E runs both API 21 (Pixel) and API 33 (Medium Phone) in parallel in the full workflow. Override the workflow matrix in `ci-e2e-full.yml` if needed.
 
 ### Updating Android min/latest versions
 
-- Bump pinned SDK versions in `nix/platform-versions.json` (platformVersions/buildToolsVersions/cmdLineToolsVersion). Rebuild devbox (`devbox shell --rebuild`) so everyone gets the new SDK.
+- Bump pinned SDK versions in `nix/platform-versions.json` (platformVersions/buildToolsVersions/cmdLineToolsVersion). Refresh your devshell by running the `refresh` command while inside a devbox shell.
 - Update AVD defaults/names if you change API levels:
   - `devbox.json` (`start-android-*` scripts) for default AVD names.
   - `examples/E2E/.detoxrc.js` for the default `DETOX_AVD`.
-  - CI matrix in `.github/workflows/ci-e2e-nightly.yml` (`android-min`/`android-latest` targets).
+  - CI matrix in `.github/workflows/ci-e2e-full.yml` (`android-min`/`android-latest` targets).
 - Gradle uses `buildToolsVersion` from `examples/E2E/android/build.gradle`; Devbox exports `ANDROID_BUILD_TOOLS_VERSION` from `nix/platform-versions.json` (single source of truth) and you can override it if needed.
 
 ## iOS
 
-iOS uses the host Xcode toolchain. There is no Nix-provisioned iOS SDK. Run `devbox run setup-ios` to install pods and bootstrap the iOS example/E2E apps. Full Xcode is required for `simctl` (Command Line Tools alone are not enough). Make sure Xcode command line tools are selected (`xcode-select --print-path` or `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer`) and that you have agreed to the license if prompted.
+iOS uses the host Xcode toolchain. There is no Nix-provisioned iOS SDK. Run `devbox run setup-ios` to provision simulators and validate Xcode tooling. Full Xcode is required for `simctl` (Command Line Tools alone are not enough). Make sure Xcode command line tools are selected (`xcode-select --print-path` or `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer`) and that you have agreed to the license if prompted.
 
-> Important: `devbox run` by itself uses the Nix compiler toolchain on macOS. For iOS work you must route commands through `devbox shell --omit-nix-env --command "<cmd>"` (or run an interactive `devbox shell --omit-nix-env` first) so the Xcode toolchain is used. CI does this for setup/tests.
+> Important: `devbox shell` injects Nix toolchain variables on macOS, which can break Xcode builds. The init hooks source `scripts/ios/env.sh` to undo that and re-select the system toolchain, and `scripts/ios/test.sh` re-applies it before running E2E.
 
 ### Simulators and Detox
 
 - `devbox run setup-ios` provisions simulators. Defaults are driven by `nix/platform-versions.json` (min/max device/runtime). Override via env vars to target a specific device/runtime. Set `IOS_DOWNLOAD_RUNTIME=0` to skip attempting `xcodebuild -downloadPlatform iOS` when the preferred runtime is missing. Set `IOS_DEVELOPER_DIR` (e.g., `/Applications/Xcode.app/Contents/Developer`) to point at a specific Xcode; otherwise it uses `xcode-select -p` or the default Xcode.app if found.
-- On macOS, use `devbox shell --omit-nix-env --command "<cmd>"` when invoking iOS builds/tests to ensure the Xcode toolchain is used instead of the Nix compiler toolchain.
-- `devbox run start-ios` provisions simulators (via `setup-ios`), then boots the chosen device (`DETOX_IOS_DEVICE` or default `iPhone 17`) and opens Simulator. Set `IOS_FLAVOR=minsdk` to target the min sim (per `nix/platform-versions.json`) or leave default for latest. Internally uses `scripts/ios-manager.sh`.
+- `devbox run start-ios` provisions simulators (via `setup-ios`), then boots the chosen device (`DETOX_IOS_DEVICE` or default `iPhone 17`) and opens Simulator. Set `IOS_FLAVOR=minsdk` to target the min sim (per `nix/platform-versions.json`) or leave default for latest. Internally uses `scripts/ios/manager.sh`.
 - `devbox run reset-ios` shuts down/erases and removes all local simulator devices.
 - `devbox run stop-android` / `stop-ios` / `stop` to shut down running emulators/simulators (handy for headless runs).
 - Detox defaults to `iPhone 17` for local runs; override with `DETOX_IOS_DEVICE`. CI runs a matrix: min sim (from `nix/platform-versions.json`) and latest (iPhone 17 @ latest runtime).
@@ -68,17 +67,22 @@ iOS uses the host Xcode toolchain. There is no Nix-provisioned iOS SDK. Run `dev
 
 - Adjust platform defaults in `nix/platform-versions.json` and rebuild Devbox if you change Android SDK versions.
 - Update Detox default device in `examples/E2E/.detoxrc.js` if the default device changes.
-- Update CI matrices in `.github/workflows/ci-e2e-nightly.yml` (ios-min/ios-latest rows) if you want to override the platform defaults in CI.
+- Update CI matrices in `.github/workflows/ci-e2e-full.yml` (ios-min/ios-latest rows) if you want to override the platform defaults in CI.
 
-### Platform versions source of truth
+### CI devbox shells
 
-`nix/platform-versions.json` is the single source of truth for min/max SDK targets and Android build tools. It feeds:
+The root `devbox.json` is a full local dev environment. CI uses slim Devbox configs under `shells/` to avoid pulling unnecessary SDKs:
 
-- `nix/flake.nix` (Android SDK packages).
-- `scripts/platform-versions.sh` (exports env vars via `jq` for devbox scripts).
-- CI workflows (`ci-e2e-optional.yml` and `ci-e2e-nightly.yml`) for iOS/Android target selection.
+- `shells/devbox-fast.json`: build + lint only.
+- `shells/devbox-android.json`: Android SDK + JDK/Gradle for Android E2E.
+- `shells/devbox-ios.json`: CocoaPods + Yarn for iOS E2E (Xcode still required on macOS).
 
-After updating `nix/platform-versions.json`:
+Run them locally with:
 
-- Run `devbox install` or `devbox shell --rebuild` to refresh the SDK.
-- If you change iOS min/max, re-run the iOS E2E workflow to confirm the runtime/device exists on the runner.
+```sh
+devbox run --config=shells/devbox-fast.json build
+devbox run --config=shells/devbox-android.json test-android
+devbox run --config=shells/devbox-ios.json test-ios
+```
+
+Note: when you use `devbox run --config=shells/...`, Devbox treats `shells/` as the config root. The init hooks set `SCRIPTS_DIR` to point back at the repo-level `scripts/` folder.

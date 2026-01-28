@@ -16,18 +16,10 @@ set -euo pipefail
 #   AVD_SECONDARY_ABI (preferred ABI; optional)
 #   AVD_SECONDARY_NAME (override final name)
 
-require_tool() {
-  if ! command -v "$1" >/dev/null 2>&1; then
-    echo "Missing required tool: $1. Ensure devbox shell is active and required packages are installed." >&2
-    exit 1
-  fi
-}
-
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-if [ -f "$script_dir/platform-versions.sh" ]; then
-  # shellcheck disable=SC1090
-  . "$script_dir/platform-versions.sh"
-fi
+# shellcheck disable=SC1090
+. "$script_dir/../shared/common.sh"
+load_platform_versions "$script_dir"
 
 detect_sdk_root() {
   if [[ -n ${ANDROID_SDK_ROOT:-} ]]; then
