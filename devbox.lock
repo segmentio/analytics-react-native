@@ -226,6 +226,150 @@
         }
       }
     },
+    "nixfmt@latest": {
+      "last_modified": "2026-01-09T13:41:53Z",
+      "resolved": "github:NixOS/nixpkgs/5f02c91314c8ba4afe83b256b023756412218535#nixfmt",
+      "source": "devbox-search",
+      "version": "1.2.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/4jzq73b6bax62245z5a5ag8xdazfw4fg-nixfmt-1.2.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/4jzq73b6bax62245z5a5ag8xdazfw4fg-nixfmt-1.2.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/as7f2yrlqgv130vdiw2xi7rhlgd1yk8v-nixfmt-1.2.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/as7f2yrlqgv130vdiw2xi7rhlgd1yk8v-nixfmt-1.2.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/qmas80hmzqbm7n5h9is2im9gjzxsl04a-nixfmt-1.2.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/qmas80hmzqbm7n5h9is2im9gjzxsl04a-nixfmt-1.2.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/yx338k689yp9hpnl6h5y22f7vbmi5pky-nixfmt-1.2.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/yx338k689yp9hpnl6h5y22f7vbmi5pky-nixfmt-1.2.0"
+        }
+      }
+    },
+    "shfmt@latest": {
+      "last_modified": "2025-12-31T03:27:36Z",
+      "resolved": "github:NixOS/nixpkgs/f665af0cdb70ed27e1bd8f9fdfecaf451260fc55#shfmt",
+      "source": "devbox-search",
+      "version": "3.12.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/dwz5z2wp95pkv6gsmz74w01qrihvhl1h-shfmt-3.12.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/dwz5z2wp95pkv6gsmz74w01qrihvhl1h-shfmt-3.12.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/6gqqharpvjfzm1wzny6a0zgf1v0aj53a-shfmt-3.12.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/6gqqharpvjfzm1wzny6a0zgf1v0aj53a-shfmt-3.12.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/98fwma9rxd04pxj9jrsgvf9xs76f9hlf-shfmt-3.12.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/98fwma9rxd04pxj9jrsgvf9xs76f9hlf-shfmt-3.12.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/c3bgrcwq2735ybl5zw68n9nqgwaa0yrj-shfmt-3.12.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/c3bgrcwq2735ybl5zw68n9nqgwaa0yrj-shfmt-3.12.0"
+        }
+      }
+    },
+    "treefmt@latest": {
+      "last_modified": "2025-12-31T03:27:36Z",
+      "resolved": "github:NixOS/nixpkgs/f665af0cdb70ed27e1bd8f9fdfecaf451260fc55#treefmt",
+      "source": "devbox-search",
+      "version": "2.4.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/48r10kj61pjhz8alfscs8vgrdmlfnqx9-treefmt-2.4.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/48r10kj61pjhz8alfscs8vgrdmlfnqx9-treefmt-2.4.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/d46fscf82k9ay6s8a3qxk3682ycqalds-treefmt-2.4.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/d46fscf82k9ay6s8a3qxk3682ycqalds-treefmt-2.4.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/yllw5b2js10ia8v0z8x3crbakhal0cs7-treefmt-2.4.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/yllw5b2js10ia8v0z8x3crbakhal0cs7-treefmt-2.4.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/1pdwlp9d1rrm3xp4s5rhhk7mkmx9cmv2-treefmt-2.4.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/1pdwlp9d1rrm3xp4s5rhhk7mkmx9cmv2-treefmt-2.4.0"
+        }
+      }
+    },
     "yarn-berry@latest": {
       "last_modified": "2025-12-31T03:27:36Z",
       "resolved": "github:NixOS/nixpkgs/f665af0cdb70ed27e1bd8f9fdfecaf451260fc55#yarn-berry",

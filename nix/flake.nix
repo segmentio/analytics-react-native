@@ -12,14 +12,11 @@
         "aarch64-darwin"
       ];
 
-      versionsFile = builtins.readFile ./scripts/platform-versions.sh;
-      versionLines = builtins.splitString "\n" versionsFile;
+      versionData = builtins.fromJSON (builtins.readFile ./platform-versions.json);
       getVar = name: default:
-        let
-          line = builtins.findFirst (l: builtins.match ("^" + name + "=") l != null) "" versionLines;
-          raw = if line == "" then default else builtins.elemAt (builtins.splitString "=" line) 1;
-          cleaned = builtins.replaceStrings ["\"" "'"] [ "" "" ] raw;
-        in cleaned;
+        if builtins.hasAttr name versionData
+        then toString (builtins.getAttr name versionData)
+        else default;
 
       androidSdkConfig = {
         platformVersions = [

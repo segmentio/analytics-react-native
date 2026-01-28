@@ -13,7 +13,7 @@ Enter the environment with `devbox shell`. The init hook wires `ANDROID_SDK_ROOT
 
 ## Android
 
-By default, Devbox uses the flake-pinned SDK (`path:./nix#android-sdk`). It sets `ANDROID_SDK_ROOT`/`ANDROID_HOME` and adds emulator/platform-tools/cmdline-tools to `PATH` via `scripts/android-env.sh`. Platform versions live in `scripts/platform-versions.sh` (source of truth for min/max API and build tools). To use a local SDK instead, launch with `ANDROID_HOME="$HOME/Library/Android/sdk" devbox shell` (or set `ANDROID_SDK_ROOT`). Clear both env vars to return to the Nix SDK. Inspect the active SDK with `echo "$ANDROID_SDK_ROOT"` and `which sdkmanager` inside the shell. Create/boot AVDs via `devbox run start-android*` (uses `scripts/android-setup.sh` + `scripts/android-manager.sh`).
+By default, Devbox uses the flake-pinned SDK (`path:./nix#android-sdk`). It sets `ANDROID_SDK_ROOT`/`ANDROID_HOME` and adds emulator/platform-tools/cmdline-tools to `PATH` via `scripts/android-env.sh`. Platform versions live in `nix/platform-versions.json` (single source of truth for min/max API and build tools; loaded by `scripts/platform-versions.sh`). To use a local SDK instead, launch with `ANDROID_HOME="$HOME/Library/Android/sdk" devbox shell` (or set `ANDROID_SDK_ROOT`). Clear both env vars to return to the Nix SDK. Inspect the active SDK with `echo "$ANDROID_SDK_ROOT"` and `which sdkmanager` inside the shell. Create/boot AVDs via `devbox run start-android*` (uses `scripts/android-setup.sh` + `scripts/android-manager.sh`).
 
 ### Emulator/AVD scripts
 
@@ -37,7 +37,7 @@ By default, Devbox uses the flake-pinned SDK (`path:./nix#android-sdk`). It sets
   - `devbox.json` (`start-android-*` scripts) for default AVD names.
   - `examples/E2E/.detoxrc.js` for the default `DETOX_AVD`.
   - CI matrix in `.github/workflows/ci.yml` (`ANDROID_MATRIX` entries).
-- Gradle uses `buildToolsVersion` from `examples/E2E/android/build.gradle`; Devbox exports `ANDROID_BUILD_TOOLS_VERSION` from `scripts/platform-versions.sh` (single source of truth) and you can override it if needed.
+- Gradle uses `buildToolsVersion` from `examples/E2E/android/build.gradle`; Devbox exports `ANDROID_BUILD_TOOLS_VERSION` from `nix/platform-versions.json` (single source of truth) and you can override it if needed.
 
 ## iOS
 
@@ -47,12 +47,12 @@ iOS uses the host Xcode toolchain. There is no Nix-provisioned iOS SDK. Run `dev
 
 ### Simulators and Detox
 
-- `devbox run setup-ios` provisions simulators. Defaults are driven by `scripts/platform-versions.sh` (min/max device/runtime). Override via env vars to target a specific device/runtime. Set `IOS_DOWNLOAD_RUNTIME=0` to skip attempting `xcodebuild -downloadPlatform iOS` when the preferred runtime is missing. Set `IOS_DEVELOPER_DIR` (e.g., `/Applications/Xcode.app/Contents/Developer`) to point at a specific Xcode; otherwise it uses `xcode-select -p` or the default Xcode.app if found.
+- `devbox run setup-ios` provisions simulators. Defaults are driven by `nix/platform-versions.json` (min/max device/runtime). Override via env vars to target a specific device/runtime. Set `IOS_DOWNLOAD_RUNTIME=0` to skip attempting `xcodebuild -downloadPlatform iOS` when the preferred runtime is missing. Set `IOS_DEVELOPER_DIR` (e.g., `/Applications/Xcode.app/Contents/Developer`) to point at a specific Xcode; otherwise it uses `xcode-select -p` or the default Xcode.app if found.
 - On macOS, use `devbox shell --omit-nix-env --command "<cmd>"` when invoking iOS builds/tests to ensure the Xcode toolchain is used instead of the Nix compiler toolchain.
-- `devbox run start-ios` provisions simulators (via `setup-ios`), then boots the chosen device (`DETOX_IOS_DEVICE` or default `iPhone 17`) and opens Simulator. Set `IOS_FLAVOR=minsdk` to target the min sim (per `scripts/platform-versions.sh`) or leave default for latest. Internally uses `scripts/ios-manager.sh`.
+- `devbox run start-ios` provisions simulators (via `setup-ios`), then boots the chosen device (`DETOX_IOS_DEVICE` or default `iPhone 17`) and opens Simulator. Set `IOS_FLAVOR=minsdk` to target the min sim (per `nix/platform-versions.json`) or leave default for latest. Internally uses `scripts/ios-manager.sh`.
 - `devbox run reset-ios` shuts down/erases and removes all local simulator devices.
 - `devbox run stop-android` / `stop-ios` / `stop` to shut down running emulators/simulators (handy for headless runs).
-- Detox defaults to `iPhone 17` for local runs; override with `DETOX_IOS_DEVICE`. CI runs a matrix: min sim (from `scripts/platform-versions.sh`) and latest (iPhone 17 @ latest runtime).
+- Detox defaults to `iPhone 17` for local runs; override with `DETOX_IOS_DEVICE`. CI runs a matrix: min sim (from `nix/platform-versions.json`) and latest (iPhone 17 @ latest runtime).
 - `devbox run test-ios` runs `setup-ios` first to ensure simulators exist; Detox handles booting. Use `start-ios` if you want to pre-boot.
 
 ### Common env knobs
@@ -66,6 +66,18 @@ iOS uses the host Xcode toolchain. There is no Nix-provisioned iOS SDK. Run `dev
 
 ### Updating iOS min/latest versions
 
-- Adjust platform defaults in `scripts/platform-versions.sh` and rebuild Devbox if you change Android SDK versions.
+- Adjust platform defaults in `nix/platform-versions.json` and rebuild Devbox if you change Android SDK versions.
 - Update Detox default device in `examples/E2E/.detoxrc.js` if the default device changes.
 - Update CI matrices in `.github/workflows/ci-e2e-nightly.yml` (ios-min/ios-latest rows) if you want to override the platform defaults in CI.
+
+### Platform versions source of truth
+
+`nix/platform-versions.json` is the single source of truth for min/max SDK targets and Android build tools. It feeds:
+
+- `nix/flake.nix` (Android SDK packages).
+- `scripts/platform-versions.sh` (exports env vars via `jq` for devbox scripts).
+- CI workflows (`ci-e2e-optional.yml` and `ci-e2e-nightly.yml`) for iOS/Android target selection.
+
+After updating `nix/platform-versions.json`:
+- Run `devbox install` or `devbox shell --rebuild` to refresh the SDK.
+- If you change iOS min/max, re-run the iOS E2E workflow to confirm the runtime/device exists on the runner.

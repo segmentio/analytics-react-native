@@ -1,15 +1,12 @@
 #!/usr/bin/env sh
-# Shared platform version defaults for Android/iOS.
+# Load shared platform version defaults from JSON for a single source of truth.
 
-PLATFORM_ANDROID_MIN_API="21"
-PLATFORM_ANDROID_MAX_API="33"
-PLATFORM_ANDROID_BUILD_TOOLS_VERSION="30.0.3"
-PLATFORM_ANDROID_CMDLINE_TOOLS_VERSION="19.0"
-PLATFORM_ANDROID_SYSTEM_IMAGE_TAG="google_apis"
-PLATFORM_ANDROID_MIN_DEVICE="pixel"
-PLATFORM_ANDROID_MAX_DEVICE="medium_phone"
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+repo_root="$(cd "$script_dir/.." && pwd)"
+versions_json="${PLATFORM_VERSIONS_JSON:-$repo_root/nix/platform-versions.json}"
 
-PLATFORM_IOS_MIN_RUNTIME="15.0"
-PLATFORM_IOS_MAX_RUNTIME=""
-PLATFORM_IOS_MIN_DEVICE="iPhone 13"
-PLATFORM_IOS_MAX_DEVICE="iPhone 17"
+if [ -f "$versions_json" ] && command -v jq >/dev/null 2>&1; then
+  eval "$(
+    jq -r 'to_entries[] | "\(.key)=\"\(.value|tostring|gsub(\"\\\"\"; \"\\\\\\\"\"))\""' "$versions_json"
+  )"
+fi
