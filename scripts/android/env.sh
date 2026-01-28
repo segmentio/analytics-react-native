@@ -41,20 +41,58 @@ if [ -z "${ANDROID_SYSTEM_IMAGE_TAG:-}" ] && [ -n "${PLATFORM_ANDROID_SYSTEM_IMA
   ANDROID_SYSTEM_IMAGE_TAG="$PLATFORM_ANDROID_SYSTEM_IMAGE_TAG"
 fi
 
+resolve_flake_sdk_root() {
+  root="${PROJECT_ROOT:-${DEVBOX_PROJECT_ROOT:-}}"
+  if [ -z "$root" ]; then
+    root="$(cd "$script_dir/../.." && pwd)"
+  fi
+  output="$1"
+  sdk_out=$(
+    nix --extra-experimental-features 'nix-command flakes' \
+      eval --raw "path:${root}/nix#${output}.outPath" 2>/dev/null || true
+  )
+  if [ -n "${sdk_out:-}" ] && [ -d "$sdk_out/libexec/android-sdk" ]; then
+    printf '%s\n' "$sdk_out/libexec/android-sdk"
+    return 0
+  fi
+  return 1
+}
+
 # Only act if neither var is already provided.
 if [ -z "${ANDROID_SDK_ROOT:-}" ] && [ -z "${ANDROID_HOME:-}" ]; then
-  project_root="${PROJECT_ROOT:-${DEVBOX_PROJECT_ROOT:-}}"
-  if [ -z "$project_root" ]; then
-    project_root="$(cd "$script_dir/../.." && pwd)"
+  preferred_output="${ANDROID_SDK_FLAKE_OUTPUT:-}"
+  sdk_root_max=""
+  sdk_root_min=""
+
+  if [ -n "$preferred_output" ]; then
+    preferred_root="$(resolve_flake_sdk_root "$preferred_output" 2>/dev/null || true)"
+    if [ -n "$preferred_root" ]; then
+      ANDROID_SDK_ROOT="$preferred_root"
+      ANDROID_HOME="$ANDROID_SDK_ROOT"
+    fi
   fi
-  flake_output="${ANDROID_SDK_FLAKE_OUTPUT:-android-sdk}"
-  DEVBOX_SDK_OUT=$(
-    nix --extra-experimental-features 'nix-command flakes' \
-      eval --raw "path:${project_root}/nix#${flake_output}.outPath" 2>/dev/null || true
-  )
-  if [ -n "${DEVBOX_SDK_OUT:-}" ] && [ -d "$DEVBOX_SDK_OUT/libexec/android-sdk" ]; then
-    ANDROID_SDK_ROOT="$DEVBOX_SDK_OUT/libexec/android-sdk"
-    ANDROID_HOME="$ANDROID_SDK_ROOT"
+
+  sdk_root_max="$(resolve_flake_sdk_root "android-sdk-max" 2>/dev/null || true)"
+  sdk_root_min="$(resolve_flake_sdk_root "android-sdk" 2>/dev/null || true)"
+
+  if [ -n "$sdk_root_max" ]; then
+    ANDROID_SDK_ROOT_MAX="$sdk_root_max"
+    ANDROID_HOME_MAX="$sdk_root_max"
+  fi
+  if [ -n "$sdk_root_min" ]; then
+    ANDROID_SDK_ROOT_MIN="$sdk_root_min"
+    ANDROID_HOME_MIN="$sdk_root_min"
+  fi
+  export ANDROID_SDK_ROOT_MAX ANDROID_HOME_MAX ANDROID_SDK_ROOT_MIN ANDROID_HOME_MIN
+
+  if [ -z "${ANDROID_SDK_ROOT:-}" ]; then
+    if [ -n "$sdk_root_max" ]; then
+      ANDROID_SDK_ROOT="$sdk_root_max"
+      ANDROID_HOME="$ANDROID_SDK_ROOT"
+    elif [ -n "$sdk_root_min" ]; then
+      ANDROID_SDK_ROOT="$sdk_root_min"
+      ANDROID_HOME="$ANDROID_SDK_ROOT"
+    fi
   fi
 fi
 
@@ -110,13 +148,33 @@ if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
     android_min_api="${ANDROID_MIN_API:-${PLATFORM_ANDROID_MIN_API:-21}}"
     android_max_api="${ANDROID_MAX_API:-${PLATFORM_ANDROID_MAX_API:-33}}"
     android_system_image_tag="${ANDROID_SYSTEM_IMAGE_TAG:-${PLATFORM_ANDROID_SYSTEM_IMAGE_TAG:-google_apis}}"
+    android_system_image_abi=""
+    if [ -n "$android_sdk_root" ] && [ -n "$android_max_api" ] && [ -n "$android_system_image_tag" ]; then
+      host_arch="$(uname -m)"
+      if [ "$host_arch" = "arm64" ] || [ "$host_arch" = "aarch64" ]; then
+        candidates="arm64-v8a x86_64 x86"
+      else
+        candidates="x86_64 x86 arm64-v8a"
+      fi
+      for abi in $candidates; do
+        if [ -d "$android_sdk_root/system-images/android-${android_max_api}/${android_system_image_tag}/${abi}" ]; then
+          android_system_image_abi="$abi"
+          break
+        fi
+      done
+    fi
+    if [ -n "$android_system_image_abi" ]; then
+      android_system_image_summary="${android_system_image_tag};${android_system_image_abi}"
+    else
+      android_system_image_summary="$android_system_image_tag"
+    fi
 
     echo "Resolved Android SDK"
     echo "  SDK: ${android_sdk_root:-not set}"
     echo "  Tools: ${android_sdk_version:-30.0.3}"
     echo "  Min API: ${android_min_api:-21}"
     echo "  Max API: ${android_max_api:-33}"
-    echo "  System Image: ${android_system_image_tag:-google_apis}"
+    echo "  System Image: ${android_system_image_summary:-google_apis}"
   fi
 else
   if [ -n "${CI:-}" ] || [ -n "${GITHUB_ACTIONS:-}" ]; then

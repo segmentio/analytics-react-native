@@ -1,11 +1,11 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/usr/bin/env sh
+set -eu
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck disable=SC1090
 . "$script_dir/../shared/common.sh"
 
-bash "$SCRIPTS_DIR/android/setup.sh"
+sh "$SCRIPTS_DIR/android/setup.sh"
 yarn install
 yarn e2e install
 yarn build

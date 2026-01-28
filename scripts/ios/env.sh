@@ -1,5 +1,5 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/usr/bin/env sh
+set -eu
 
 devbox_omit_nix_env() {
   if [ "${DEVBOX_OMIT_NIX_ENV_APPLIED:-}" = "1" ]; then
@@ -50,14 +50,16 @@ devbox_omit_nix_env() {
     done
 
     if [ -x /usr/bin/clang ]; then
-      export CC=/usr/bin/clang
-      export CXX=/usr/bin/clang++
+      CC=/usr/bin/clang
+      CXX=/usr/bin/clang++
+      export CC CXX
     fi
 
     if command -v xcode-select >/dev/null 2>&1; then
       dev_dir="$(xcode-select -p 2>/dev/null || true)"
       if [ -n "$dev_dir" ]; then
-        export DEVELOPER_DIR="$dev_dir"
+        DEVELOPER_DIR="$dev_dir"
+        export DEVELOPER_DIR
       fi
     fi
 
@@ -74,8 +76,13 @@ if [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ] && [ -z "${DEVBOX_IOS_SDK_SU
   DEVBOX_IOS_SDK_SUMMARY_PRINTED=1
   export DEVBOX_IOS_SDK_SUMMARY_PRINTED
 
-  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
-  repo_root="$(cd "$script_dir/../.." && pwd)"
+  repo_root="${PROJECT_ROOT:-${DEVBOX_PROJECT_ROOT:-}}"
+  if [ -z "$repo_root" ] && [ -n "${SCRIPTS_DIR:-}" ]; then
+    repo_root="$(cd "$SCRIPTS_DIR/.." && pwd)"
+  fi
+  if [ -z "$repo_root" ]; then
+    repo_root="$(cd "$(dirname "$0")/../.." && pwd)"
+  fi
 
   if [ -z "${PLATFORM_IOS_MIN_RUNTIME:-}" ] || [ -z "${PLATFORM_ANDROID_MIN_API:-}" ]; then
     if ! command -v jq >/dev/null 2>&1; then

@@ -13,7 +13,8 @@
     "gradle": "latest",
     "jq": "latest",
     "netcat": "latest",
-    "path:./nix#android-sdk": ""
+    "path:./nix#android-sdk": "",
+    "path:./nix#android-sdk-max": ""
   },
   "shell": {
     "init_hook": [

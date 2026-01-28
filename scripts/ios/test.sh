@@ -1,5 +1,5 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/usr/bin/env sh
+set -eu
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck disable=SC1090
@@ -18,7 +18,7 @@ if [ -n "${CI:-}" ] || [ -n "${GITHUB_ACTIONS:-}" ]; then
   echo "  DEVELOPER_DIR=${DEVELOPER_DIR:-}"
 fi
 
-bash "$SCRIPTS_DIR/ios/setup.sh"
+sh "$SCRIPTS_DIR/ios/setup.sh"
 yarn install
 yarn e2e install
 yarn e2e pods

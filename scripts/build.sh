@@ -1,5 +1,5 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/usr/bin/env sh
+set -eu
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck disable=SC1090
