@@ -80,5 +80,21 @@ iOS uses the host Xcode toolchain. There is no Nix-provisioned iOS SDK. Run `dev
 
 After updating `nix/platform-versions.json`:
 
-- Run `refresh` while in a devbox shell to refresh the SDK.
+- Run `refresh` inside a devbox shell to refresh the SDK.
 - If you change iOS min/max, re-run the iOS E2E workflow to confirm the runtime/device exists on the runner.
+
+### CI devbox shells
+
+CI uses slim Devbox configs under `shells/` to avoid pulling unnecessary SDKs:
+
+- `shells/devbox-fast.json`: build/lint/tests only.
+- `shells/devbox-android.json`: Android SDK + JDK/Gradle for Android E2E.
+- `shells/devbox-ios.json`: CocoaPods + Yarn for iOS E2E (Xcode still required on macOS).
+
+Run them locally with:
+
+```sh
+devbox run --config=shells/devbox-fast.json build
+devbox run --config=shells/devbox-android.json test-android
+devbox shell --omit-nix-env -- devbox run --config=shells/devbox-ios.json test-ios
+```

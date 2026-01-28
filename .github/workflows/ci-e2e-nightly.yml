@@ -54,7 +54,7 @@ jobs:
             echo "IOS_RUNTIME=${PLATFORM_IOS_MAX_RUNTIME}" >> "$GITHUB_ENV"
           fi
       - name: iOS E2E Tests
-        run: devbox shell --omit-nix-env -- devbox run test-ios
+        run: devbox shell --omit-nix-env -- devbox run --config=shells/devbox-ios.json test-ios
 
   run-e2e-android:
     runs-on: ubuntu-24.04-arm
@@ -102,4 +102,4 @@ jobs:
           avd_name="${device}_API${api}_arm64_v8a"
           echo "DETOX_AVD=${avd_name}" >> "$GITHUB_ENV"
       - name: Android E2E Tests
-        run: devbox run test-android
+        run: devbox run --config=shells/devbox-android.json test-android
