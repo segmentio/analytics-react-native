@@ -120,10 +120,43 @@ main() {
   local secondary_device="${AVD_SECONDARY_DEVICE:-medium_phone}"
   local secondary_preferred_abi="${AVD_SECONDARY_ABI:-}"
 
-  local targets=(
-    "$primary_api|$primary_tag|$primary_device|$primary_preferred_abi|${AVD_NAME:-}"
-    "$secondary_api|$secondary_tag|$secondary_device|$secondary_preferred_abi|${AVD_SECONDARY_NAME:-}"
-  )
+  local primary_required=0
+  if [ -n "${AVD_API:-}" ] || [ -n "${AVD_TAG:-}" ] || [ -n "${AVD_DEVICE:-}" ] || [ -n "${AVD_ABI:-}" ] || [ -n "${AVD_NAME:-}" ]; then
+    primary_required=1
+  fi
+
+  local secondary_required=0
+  if [ -n "${AVD_SECONDARY_API:-}" ] || [ -n "${AVD_SECONDARY_TAG:-}" ] || [ -n "${AVD_SECONDARY_DEVICE:-}" ] || [ -n "${AVD_SECONDARY_ABI:-}" ] || [ -n "${AVD_SECONDARY_NAME:-}" ]; then
+    secondary_required=1
+  fi
+
+  local targets=()
+  local primary_dir="$ANDROID_SDK_ROOT/system-images/android-${primary_api}/${primary_tag}"
+  if [ -d "$primary_dir" ]; then
+    targets+=("$primary_api|$primary_tag|$primary_device|$primary_preferred_abi|${AVD_NAME:-}")
+  elif [ "$primary_required" = "1" ]; then
+    echo "Expected API ${primary_api} system image (${primary_tag}) not found under ${primary_dir}." >&2
+    echo "Re-enter the devbox shell (flake should provide images) or rebuild Devbox to fetch them." >&2
+    exit 1
+  fi
+
+  local secondary_dir="$ANDROID_SDK_ROOT/system-images/android-${secondary_api}/${secondary_tag}"
+  if [ -n "$secondary_api" ] && [ "$secondary_api" != "$primary_api" ]; then
+    if [ -d "$secondary_dir" ]; then
+      targets+=("$secondary_api|$secondary_tag|$secondary_device|$secondary_preferred_abi|${AVD_SECONDARY_NAME:-}")
+    elif [ "$secondary_required" = "1" ]; then
+      echo "Expected API ${secondary_api} system image (${secondary_tag}) not found under ${secondary_dir}." >&2
+      echo "Re-enter the devbox shell (flake should provide images) or rebuild Devbox to fetch them." >&2
+      exit 1
+    elif [ -d "$primary_dir" ]; then
+      echo "Warning: API ${secondary_api} system image (${secondary_tag}) not found; continuing with API ${primary_api} only." >&2
+    fi
+  fi
+
+  if [ "${#targets[@]}" -eq 0 ]; then
+    echo "No compatible Android system images found under ${ANDROID_SDK_ROOT}/system-images for configured APIs." >&2
+    exit 1
+  fi
 
   for target in "${targets[@]}"; do
     IFS="|" read -r api tag device preferred_abi name_override <<<"$target"

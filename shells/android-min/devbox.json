@@ -11,6 +11,7 @@
     "init_hook": [
       ". $DEVBOX_PROJECT_ROOT/../../scripts/shared/common.sh",
       "if [ -n \"${CI:-}\" ] || [ -n \"${GITHUB_ACTIONS:-}\" ]; then echo 'Android SDK env configured (details: wiki/devbox.md#devbox-android).'; fi",
+      "export ANDROID_SDK_FLAKE_OUTPUT=android-sdk-min",
       ". $SCRIPTS_DIR/android/env.sh"
     ],
     "scripts": {
