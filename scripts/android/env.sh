@@ -1,11 +1,14 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 # Sets ANDROID_SDK_ROOT/ANDROID_HOME and PATH to the flake-pinned SDK if not already set.
 
 # Load shared platform versions if present.
-script_path="${BASH_SOURCE[0]:-$0}"
-script_dir="$(cd "$(dirname "$script_path")" && pwd)"
+project_root="${PROJECT_ROOT:-${DEVBOX_PROJECT_ROOT:-}}"
+if [ -z "$project_root" ]; then
+  project_root="$(cd "$(dirname "$0")/../.." && pwd)"
+fi
+script_dir="$project_root/scripts/android"
 # shellcheck disable=SC1090
-. "$script_dir/../shared/common.sh"
+. "$project_root/scripts/shared/common.sh"
 load_platform_versions "$script_dir"
 
 if [ -z "${PLATFORM_ANDROID_MIN_API:-}" ]; then
