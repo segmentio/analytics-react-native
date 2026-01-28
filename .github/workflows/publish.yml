@@ -72,9 +72,10 @@ jobs:
 
   e2e-android:
     name: E2E Android (min/max)
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-latest
     env:
       EMU_HEADLESS: 1
+      AVD_ABI: x86_64
     strategy:
       matrix:
         include:
@@ -115,7 +116,7 @@ jobs:
             api="$PLATFORM_ANDROID_MAX_API"
             device="$PLATFORM_ANDROID_MAX_DEVICE"
           fi
-          avd_name="${device}_API${api}_arm64_v8a"
+          avd_name="${device}_API${api}_${AVD_ABI}"
           echo "DETOX_AVD=${avd_name}" >> "$GITHUB_ENV"
       - name: Android E2E Tests
         run: devbox run --config=shells/android-${{ matrix.target }}/devbox.json test-android

@@ -47,9 +47,10 @@ jobs:
         run: devbox run --config=shells/ios/devbox.json test-ios
 
   run-e2e-android:
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-latest
     env:
       EMU_HEADLESS: 1
+      AVD_ABI: x86_64
     steps:
       - uses: actions/checkout@v4
       - name: Aggressive disk cleanup (Ubuntu)
@@ -78,7 +79,7 @@ jobs:
           . scripts/platform-versions.sh
           api="$PLATFORM_ANDROID_MAX_API"
           device="$PLATFORM_ANDROID_MAX_DEVICE"
-          avd_name="${device}_API${api}_arm64_v8a"
+          avd_name="${device}_API${api}_${AVD_ABI}"
           echo "DETOX_AVD=${avd_name}" >> "$GITHUB_ENV"
       - name: Android E2E Tests (latest)
         run: devbox run --config=shells/android-max/devbox.json test-android
