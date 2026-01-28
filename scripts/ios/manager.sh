@@ -23,7 +23,7 @@ start_ios() {
     export IOS_DEVICE_NAMES IOS_RUNTIME DETOX_IOS_DEVICE
   fi
 
-  devbox run setup-ios
+  sh "$SCRIPTS_DIR/ios/setup.sh"
   sim_device="${DETOX_IOS_DEVICE}"
   if ! xcrun simctl list devices | grep -q "${sim_device}"; then
     echo "Simulator ${sim_device} not found; ensure setup-ios created it." >&2
@@ -35,11 +35,26 @@ start_ios() {
 }
 
 stop_ios() {
-  devbox run stop-ios
+  if command -v xcrun >/dev/null 2>&1 && xcrun -f simctl >/dev/null 2>&1; then
+    if xcrun simctl list devices booted | grep -q "Booted"; then
+      echo "Shutting down booted iOS simulators..."
+      xcrun simctl shutdown all >/dev/null 2>&1 || true
+    else
+      echo "No booted iOS simulators detected."
+    fi
+  else
+    echo "simctl not available; skipping iOS shutdown."
+  fi
+  echo "iOS simulators shutdown (if any were running)."
 }
 
 reset_ios() {
-  devbox run reset-ios
+  xcrun simctl shutdown all || true
+  xcrun simctl erase all || true
+  xcrun simctl delete all || true
+  xcrun simctl delete unavailable || true
+  killall -9 com.apple.CoreSimulatorService 2>/dev/null || true
+  echo "Simulators reset via simctl. Recreate via start-ios."
 }
 
 case "$action" in

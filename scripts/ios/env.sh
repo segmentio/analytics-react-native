@@ -110,9 +110,11 @@ if [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ] && [ -z "${DEVBOX_IOS_SDK_SU
     xcode_version="$(xcodebuild -version 2>/dev/null | awk 'NR==1{print $2}')"
   fi
 
+  ios_target_runtime="${IOS_RUNTIME:-${ios_max_runtime:-${ios_min_runtime:-}}}"
   echo "Resolved iOS SDK"
-  echo "  Runtime Min: ${ios_min_runtime:-not set}"
-  echo "  Runtime Max: ${ios_max_runtime:-not set}"
-  echo "  Xcode: ${xcode_version:-unknown}"
-  echo "  Xcode Dir: ${xcode_dir:-not set}"
+  echo "  IOS_MIN_RUNTIME: ${ios_min_runtime:-not set}"
+  echo "  IOS_MAX_RUNTIME: ${ios_max_runtime:-not set}"
+  echo "  IOS_RUNTIME: ${ios_target_runtime:-not set}"
+  echo "  xcodebuild: ${xcode_version:-unknown}"
+  echo "  DEVELOPER_DIR: ${xcode_dir:-not set}"
 fi

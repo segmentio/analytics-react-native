@@ -149,6 +149,21 @@ if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
     android_max_api="${ANDROID_MAX_API:-${PLATFORM_ANDROID_MAX_API:-33}}"
     android_system_image_tag="${ANDROID_SYSTEM_IMAGE_TAG:-${PLATFORM_ANDROID_SYSTEM_IMAGE_TAG:-google_apis}}"
     android_system_image_abi=""
+    android_target_api="${AVD_API:-${ANDROID_TARGET_API:-}}"
+    android_target_source=""
+    if [ -z "$android_target_api" ]; then
+      if [ -n "$android_max_api" ]; then
+        android_target_api="$android_max_api"
+        android_target_source="max"
+      elif [ -n "$android_min_api" ]; then
+        android_target_api="$android_min_api"
+        android_target_source="min"
+      fi
+    elif [ -n "${AVD_API:-}" ]; then
+      android_target_source="avd"
+    elif [ -n "${ANDROID_TARGET_API:-}" ]; then
+      android_target_source="target"
+    fi
     if [ -n "$android_sdk_root" ] && [ -n "$android_max_api" ] && [ -n "$android_system_image_tag" ]; then
       host_arch="$(uname -m)"
       if [ "$host_arch" = "arm64" ] || [ "$host_arch" = "aarch64" ]; then
@@ -163,6 +178,18 @@ if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
         fi
       done
     fi
+    if [ -z "$android_target_api" ] && [ -n "$android_sdk_root" ] && [ -n "$android_min_api" ] && [ -n "$android_system_image_tag" ]; then
+      for abi in $candidates; do
+        if [ -d "$android_sdk_root/system-images/android-${android_min_api}/${android_system_image_tag}/${abi}" ]; then
+          android_system_image_abi="${android_system_image_abi:-$abi}"
+          if [ -z "$android_target_api" ]; then
+            android_target_api="$android_min_api"
+            android_target_source="min"
+          fi
+          break
+        fi
+      done
+    fi
     if [ -n "$android_system_image_abi" ]; then
       android_system_image_summary="${android_system_image_tag};${android_system_image_abi}"
     else
@@ -170,11 +197,12 @@ if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
     fi
 
     echo "Resolved Android SDK"
-    echo "  SDK: ${android_sdk_root:-not set}"
-    echo "  Tools: ${android_sdk_version:-30.0.3}"
-    echo "  Min API: ${android_min_api:-21}"
-    echo "  Max API: ${android_max_api:-33}"
-    echo "  System Image: ${android_system_image_summary:-google_apis}"
+    echo "  ANDROID_SDK_ROOT: ${android_sdk_root:-not set}"
+    echo "  ANDROID_BUILD_TOOLS_VERSION: ${android_sdk_version:-30.0.3}"
+    echo "  ANDROID_MIN_API: ${android_min_api:-21}"
+    echo "  ANDROID_MAX_API: ${android_max_api:-33}"
+    echo "  ANDROID_TARGET_API: ${android_target_api:-not set}${android_target_source:+ (${android_target_source})}"
+    echo "  ANDROID_SYSTEM_IMAGE_TAG: ${android_system_image_summary:-google_apis}"
   fi
 else
   if [ -n "${CI:-}" ] || [ -n "${GITHUB_ACTIONS:-}" ]; then

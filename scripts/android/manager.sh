@@ -33,7 +33,7 @@ start_android() {
     fi
   fi
 
-  devbox run setup-android
+  sh "$SCRIPTS_DIR/android/setup.sh"
   target_serial="emulator-${port}"
   if command -v adb >/dev/null 2>&1; then
     adb devices | awk 'NR>1 && $2=="offline" {print $1}' | while read -r d; do adb -s "$d" emu kill >/dev/null 2>&1 || true; done
@@ -57,11 +57,28 @@ start_android() {
 }
 
 stop_android() {
-  devbox run stop-android
+  if command -v adb >/dev/null 2>&1; then
+    adb devices | awk 'NR>1 && $2=="offline" {print $1}' | while read -r d; do adb -s "$d" emu kill >/dev/null 2>&1 || true; done
+    devices="$(adb devices -l 2>/dev/null | awk 'NR>1{print $1}' | tr '\n' ' ')"
+    if [ -n "$devices" ]; then
+      echo "Stopping Android emulators: $devices"
+      for d in $devices; do
+        adb -s "$d" emu kill >/dev/null 2>&1 || true
+      done
+    else
+      echo "No Android emulators detected via adb."
+    fi
+  else
+    echo "adb not found; skipping Android emulator shutdown."
+  fi
+  pkill -f "emulator@" >/dev/null 2>&1 || true
+  echo "Android emulators stopped (if any were running)."
 }
 
 reset_android() {
-  devbox run reset-android
+  rm -rf "$HOME/.android/avd"
+  rm -f "$HOME/.android/adbkey" "$HOME/.android/adbkey.pub"
+  echo "AVDs and adb keys removed. Recreate via start-android* as needed."
 }
 
 case "$action" in

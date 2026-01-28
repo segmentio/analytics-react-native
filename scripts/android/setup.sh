@@ -130,7 +130,7 @@ main() {
   require_tool avdmanager
   require_tool emulator
 
-  primary_api="${AVD_API:-${ANDROID_MIN_API:-${PLATFORM_ANDROID_MIN_API:-21}}}"
+  primary_api="${AVD_API:-${ANDROID_TARGET_API:-${ANDROID_MAX_API:-${ANDROID_MIN_API:-${PLATFORM_ANDROID_MIN_API:-21}}}}}"
   primary_tag="${AVD_TAG:-${ANDROID_SYSTEM_IMAGE_TAG:-${PLATFORM_ANDROID_SYSTEM_IMAGE_TAG:-google_apis}}}"
   primary_device="${AVD_DEVICE:-pixel}"
   primary_preferred_abi="${AVD_ABI:-}"

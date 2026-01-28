@@ -14,8 +14,8 @@
       "if [ \"$(uname -s)\" = \"Darwin\" ]; then . $SCRIPTS_DIR/ios/env.sh; fi"
     ],
     "scripts": {
-      "setup-ios": ["bash $SCRIPTS_DIR/ios/setup.sh"],
-      "test-ios": ["bash $SCRIPTS_DIR/ios/test.sh"]
+      "setup-ios": ["sh $SCRIPTS_DIR/ios/setup.sh"],
+      "test-ios": ["sh $SCRIPTS_DIR/ios/test.sh"]
     }
   }
 }

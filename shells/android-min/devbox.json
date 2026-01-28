@@ -15,8 +15,8 @@
       ". $SCRIPTS_DIR/android/env.sh"
     ],
     "scripts": {
-      "setup-android": ["bash $SCRIPTS_DIR/android/setup.sh"],
-      "test-android": ["bash $SCRIPTS_DIR/android/test.sh"]
+      "setup-android": ["sh $SCRIPTS_DIR/android/setup.sh"],
+      "test-android": ["sh $SCRIPTS_DIR/android/test.sh"]
     }
   }
 }
