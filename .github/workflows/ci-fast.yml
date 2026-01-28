@@ -18,6 +18,7 @@ jobs:
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
+          project-path: shells/devbox-fast.json
           enable-cache: 'false'
       - name: build
         run: devbox run --config=shells/devbox-fast.json build
