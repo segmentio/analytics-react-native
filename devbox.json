@@ -21,7 +21,8 @@
       ". $DEVBOX_PROJECT_ROOT/scripts/shared/common.sh",
       "if [ \"$(uname -s)\" = \"Darwin\" ]; then . $DEVBOX_PROJECT_ROOT/scripts/ios/env.sh; fi",
       ". $DEVBOX_PROJECT_ROOT/scripts/android/env.sh",
-      "echo 'Android SDK env configured (details: wiki/devbox.md#devbox-android).'"
+      ". $DEVBOX_PROJECT_ROOT/scripts/shared/sdk-summary.sh",
+      "if [ -n \"${CI:-}\" ] || [ -n \"${GITHUB_ACTIONS:-}\" ]; then echo 'Android SDK env configured (details: wiki/devbox.md#devbox-android).'; fi"
     ],
     "scripts": {
       "clean": [

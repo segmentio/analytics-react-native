@@ -68,15 +68,19 @@ if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
   new_path="$new_path:$ANDROID_SDK_ROOT/tools/bin:$PATH"
   PATH="$new_path"
   export PATH
-  echo "Using Android SDK: $ANDROID_SDK_ROOT"
-  case "$ANDROID_SDK_ROOT" in
-  /nix/store/*)
-    echo "Source: Nix flake (reproducible, pinned). To use your local SDK instead, set ANDROID_HOME/ANDROID_SDK_ROOT before starting devbox shell."
-    ;;
-  *)
-    echo "Source: User/local SDK. To use the pinned Nix SDK, unset ANDROID_HOME/ANDROID_SDK_ROOT before starting devbox shell."
-    ;;
-  esac
+  if [ -n "${CI:-}" ] || [ -n "${GITHUB_ACTIONS:-}" ]; then
+    echo "Using Android SDK: $ANDROID_SDK_ROOT"
+    case "$ANDROID_SDK_ROOT" in
+    /nix/store/*)
+      echo "Source: Nix flake (reproducible, pinned). To use your local SDK instead, set ANDROID_HOME/ANDROID_SDK_ROOT before starting devbox shell."
+      ;;
+    *)
+      echo "Source: User/local SDK. To use the pinned Nix SDK, unset ANDROID_HOME/ANDROID_SDK_ROOT before starting devbox shell."
+      ;;
+    esac
+  fi
 else
-  echo "Android SDK not set; using system PATH"
+  if [ -n "${CI:-}" ] || [ -n "${GITHUB_ACTIONS:-}" ]; then
+    echo "Android SDK not set; using system PATH"
+  fi
 fi

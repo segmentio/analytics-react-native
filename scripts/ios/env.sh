@@ -9,32 +9,43 @@ devbox_omit_nix_env() {
   export DEVBOX_OMIT_NIX_ENV_APPLIED=1
 
   dump_env() {
-    echo "devbox omit-nix-env $1"
-    echo "  PATH=$PATH"
-    echo "  CC=${CC:-}"
-    echo "  CXX=${CXX:-}"
-    echo "  LD=${LD:-}"
-    echo "  CPP=${CPP:-}"
-    echo "  AR=${AR:-}"
-    echo "  SDKROOT=${SDKROOT:-}"
-    echo "  DEVELOPER_DIR=${DEVELOPER_DIR:-}"
+    if [ -n "${CI:-}" ] || [ -n "${GITHUB_ACTIONS:-}" ]; then
+      echo "devbox omit-nix-env $1"
+      echo "  PATH=$PATH"
+      echo "  CC=${CC:-}"
+      echo "  CXX=${CXX:-}"
+      echo "  LD=${LD:-}"
+      echo "  CPP=${CPP:-}"
+      echo "  AR=${AR:-}"
+      echo "  SDKROOT=${SDKROOT:-}"
+      echo "  DEVELOPER_DIR=${DEVELOPER_DIR:-}"
+    fi
   }
 
   dump_env "before"
 
-  devbox_cmd=(devbox shellenv --init-hook --install --no-refresh-alias --omit-nix-env=true)
-  if [ -n "${DEVBOX_CONFIG_DIR:-}" ]; then
-    devbox_cmd=(devbox --config "${DEVBOX_CONFIG_DIR%/}/devbox.json" "${devbox_cmd[@]:1}")
+  devbox_config_path=""
+  if [ -n "${DEVBOX_CONFIG:-}" ] && [ -f "$DEVBOX_CONFIG" ]; then
+    devbox_config_path="$DEVBOX_CONFIG"
+  elif [ -n "${DEVBOX_CONFIG_PATH:-}" ] && [ -f "$DEVBOX_CONFIG_PATH" ]; then
+    devbox_config_path="$DEVBOX_CONFIG_PATH"
+  elif [ -n "${DEVBOX_CONFIG_DIR:-}" ] && [ -f "${DEVBOX_CONFIG_DIR%/}/devbox.json" ]; then
+    devbox_config_path="${DEVBOX_CONFIG_DIR%/}/devbox.json"
   fi
-  eval "$("${devbox_cmd[@]}")"
+
+  if [ -n "$devbox_config_path" ]; then
+    eval "$(devbox --config "$devbox_config_path" shellenv --install --no-refresh-alias --omit-nix-env=true)"
+  else
+    eval "$(devbox shellenv --install --no-refresh-alias --omit-nix-env=true)"
+  fi
 
   if [ "$(uname -s)" = "Darwin" ]; then
     PATH="$(printf '%s' "$PATH" | tr ':' '\n' | awk '!/^\/nix\/store\//{print}' | paste -sd ':' -)"
 
     for var in CC CXX LD CPP AR AS NM RANLIB STRIP OBJC OBJCXX SDKROOT DEVELOPER_DIR; do
-      value="${!var:-}"
+      value="$(eval "printf '%s' \"\${$var-}\"")"
       if [ -n "$value" ] && [ "${value#/nix/store/}" != "$value" ]; then
-        unset "$var"
+        eval "unset $var"
       fi
     done
 
@@ -54,6 +65,7 @@ devbox_omit_nix_env() {
   fi
 
   dump_env "after"
+
 }
 
 devbox_omit_nix_env
