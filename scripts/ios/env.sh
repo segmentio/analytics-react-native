@@ -22,7 +22,11 @@ devbox_omit_nix_env() {
 
   dump_env "before"
 
-  eval "$(devbox shellenv --init-hook --install --no-refresh-alias --omit-nix-env=true)"
+  devbox_cmd=(devbox shellenv --init-hook --install --no-refresh-alias --omit-nix-env=true)
+  if [ -n "${DEVBOX_CONFIG_DIR:-}" ]; then
+    devbox_cmd=(devbox --config "${DEVBOX_CONFIG_DIR%/}/devbox.json" "${devbox_cmd[@]:1}")
+  fi
+  eval "$("${devbox_cmd[@]}")"
 
   if [ "$(uname -s)" = "Darwin" ]; then
     PATH="$(printf '%s' "$PATH" | tr ':' '\n' | awk '!/^\/nix\/store\//{print}' | paste -sd ':' -)"
