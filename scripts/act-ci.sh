@@ -8,7 +8,7 @@ JOB=""
 PLATFORMS=()
 
 host_arch="$(uname -m)"
-if [[ "$host_arch" == "arm64" || "$host_arch" == "aarch64" ]]; then
+if [[ $host_arch == "arm64" || $host_arch == "aarch64" ]]; then
   PLATFORMS+=("ubuntu-24.04-arm=ghcr.io/catthehacker/ubuntu:act-24.04")
 else
   PLATFORMS+=("ubuntu-24.04=ghcr.io/catthehacker/ubuntu:act-24.04")

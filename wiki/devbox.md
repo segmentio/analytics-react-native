@@ -2,7 +2,7 @@
 
 This repo ships a Devbox environment that preinstalls the Android SDK and common build tools like Gradle and Yarn. Devbox uses Nix under the hood to pin versions so everyone has the same setup. You don’t need to know Nix to use it.
 
-Enter the environment with `devbox shell`. The init hook wires `ANDROID_SDK_ROOT`/`ANDROID_HOME` and PATH. Common scripts run via `devbox run`, for example `devbox run build`. For Devbox basics, see the official docs: https://www.jetify.com/devbox/docs/.
+Enter the environment with `devbox shell`. The init hook wires `ANDROID_SDK_ROOT`/`ANDROID_HOME` and PATH. Common scripts run via `devbox run`, for example `devbox run build`. For Devbox basics, see the official docs: https://www.jetify.com/devbox/docs/. For script layout, see `wiki/scripts.md`; for Nix/SDK versions, see `wiki/nix.md`.
 
 ## Getting started
 
@@ -13,7 +13,7 @@ Enter the environment with `devbox shell`. The init hook wires `ANDROID_SDK_ROOT
 
 ## Android
 
-By default, Devbox uses the flake-pinned SDK (`path:./nix#android-sdk`). It sets `ANDROID_SDK_ROOT`/`ANDROID_HOME` and adds emulator/platform-tools/cmdline-tools to `PATH` via `scripts/android/env.sh`. Platform versions live in `nix/platform-versions.json` (single source of truth for min/max API and build tools; loaded by `scripts/platform-versions.sh`). To use a local SDK instead, launch with `ANDROID_HOME="$HOME/Library/Android/sdk" devbox shell` (or set `ANDROID_SDK_ROOT`). Clear both env vars to return to the Nix SDK. Inspect the active SDK with `echo "$ANDROID_SDK_ROOT"` and `which sdkmanager` inside the shell. Create/boot AVDs via `devbox run start-android*` (uses `scripts/android/setup.sh` + `scripts/android/manager.sh`).
+By default, Devbox uses the flake-pinned SDK (`path:./nix#android-sdk`). It sets `ANDROID_SDK_ROOT`/`ANDROID_HOME` and adds emulator/platform-tools/cmdline-tools to `PATH` via `scripts/android/env.sh`. To use a local SDK instead, launch with `ANDROID_HOME="$HOME/Library/Android/sdk" devbox shell` (or set `ANDROID_SDK_ROOT`). Clear both env vars to return to the Nix SDK. Inspect the active SDK with `echo "$ANDROID_SDK_ROOT"` and `which sdkmanager` inside the shell. Create/boot AVDs via `devbox run start-android*` (uses `scripts/android/setup.sh` + `scripts/android/manager.sh`). Version sources are documented in `wiki/nix.md`.
 
 ### Emulator/AVD scripts
 
@@ -28,7 +28,7 @@ By default, Devbox uses the flake-pinned SDK (`path:./nix#android-sdk`). It sets
 ### Detox defaults
 
 - Android Detox defaults to the latest AVD (`medium_phone_API33_arm64_v8a` on arm hosts, x86*64 otherwise). Set `DETOX_AVD=pixel_API21*\*` to run against the minsdk AVD.
-- CI Android E2E runs both API 21 (Pixel) and API 33 (Medium Phone) in parallel in the nightly workflow. Override the workflow matrix in `ci-e2e-nightly.yml` if needed.
+- CI Android E2E runs both API 21 (Pixel) and API 33 (Medium Phone) in parallel in the full workflow. Override the workflow matrix in `ci-e2e-full.yml` if needed.
 
 ### Updating Android min/latest versions
 
@@ -36,12 +36,12 @@ By default, Devbox uses the flake-pinned SDK (`path:./nix#android-sdk`). It sets
 - Update AVD defaults/names if you change API levels:
   - `devbox.json` (`start-android-*` scripts) for default AVD names.
   - `examples/E2E/.detoxrc.js` for the default `DETOX_AVD`.
-  - CI matrix in `.github/workflows/ci-e2e-nightly.yml` (`android-min`/`android-latest` targets).
+  - CI matrix in `.github/workflows/ci-e2e-full.yml` (`android-min`/`android-latest` targets).
 - Gradle uses `buildToolsVersion` from `examples/E2E/android/build.gradle`; Devbox exports `ANDROID_BUILD_TOOLS_VERSION` from `nix/platform-versions.json` (single source of truth) and you can override it if needed.
 
 ## iOS
 
-iOS uses the host Xcode toolchain. There is no Nix-provisioned iOS SDK. Run `devbox run setup-ios` to install pods and bootstrap the iOS example/E2E apps. Full Xcode is required for `simctl` (Command Line Tools alone are not enough). Make sure Xcode command line tools are selected (`xcode-select --print-path` or `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer`) and that you have agreed to the license if prompted.
+iOS uses the host Xcode toolchain. There is no Nix-provisioned iOS SDK. Run `devbox run setup-ios` to provision simulators and validate Xcode tooling. Full Xcode is required for `simctl` (Command Line Tools alone are not enough). Make sure Xcode command line tools are selected (`xcode-select --print-path` or `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer`) and that you have agreed to the license if prompted.
 
 > Important: `devbox shell` injects Nix toolchain variables on macOS, which can break Xcode builds. The init hooks source `scripts/ios/env.sh` to undo that and re-select the system toolchain, and `scripts/ios/test.sh` re-applies it before running E2E.
 
@@ -67,26 +67,13 @@ iOS uses the host Xcode toolchain. There is no Nix-provisioned iOS SDK. Run `dev
 
 - Adjust platform defaults in `nix/platform-versions.json` and rebuild Devbox if you change Android SDK versions.
 - Update Detox default device in `examples/E2E/.detoxrc.js` if the default device changes.
-- Update CI matrices in `.github/workflows/ci-e2e-nightly.yml` (ios-min/ios-latest rows) if you want to override the platform defaults in CI.
-
-### Platform versions source of truth
-
-`nix/platform-versions.json` is the single source of truth for min/max SDK targets and Android build tools. It feeds:
-
-- `nix/flake.nix` (Android SDK packages).
-- `scripts/platform-versions.sh` (exports env vars via `jq` for devbox scripts).
-- CI workflows (`ci-e2e-optional.yml` and `ci-e2e-nightly.yml`) for iOS/Android target selection.
-
-After updating `nix/platform-versions.json`:
-
-- Run `refresh` inside a devbox shell to refresh the SDK.
-- If you change iOS min/max, re-run the iOS E2E workflow to confirm the runtime/device exists on the runner.
+- Update CI matrices in `.github/workflows/ci-e2e-full.yml` (ios-min/ios-latest rows) if you want to override the platform defaults in CI.
 
 ### CI devbox shells
 
-CI uses slim Devbox configs under `shells/` to avoid pulling unnecessary SDKs:
+The root `devbox.json` is a full local dev environment. CI uses slim Devbox configs under `shells/` to avoid pulling unnecessary SDKs:
 
-- `shells/devbox-fast.json`: build/lint/tests only.
+- `shells/devbox-fast.json`: build + lint only.
 - `shells/devbox-android.json`: Android SDK + JDK/Gradle for Android E2E.
 - `shells/devbox-ios.json`: CocoaPods + Yarn for iOS E2E (Xcode still required on macOS).
 

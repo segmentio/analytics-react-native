@@ -9,9 +9,118 @@ on:
         required: true
 
 jobs:
+  fast-checks:
+    name: Build + Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: devbox installer
+        uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          enable-cache: 'false'
+      - name: build
+        run: devbox run --config=shells/devbox-fast.json build
+
+  e2e-ios:
+    name: E2E iOS (min/max)
+    runs-on: macos-26
+    env:
+      YARN_ENABLE_HARDENED_MODE: 0
+      XCODE_VERSION: '26.2'
+    strategy:
+      matrix:
+        include:
+          - name: ios-min
+          - name: ios-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Aggressive disk cleanup (macOS)
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          sudo rm -rf /Applications/Android\ Studio.app
+          sudo rm -rf /usr/local/share/miniconda
+          sudo rm -rf /opt/homebrew
+          sudo rm -rf "$HOME/Library/Android"
+          sudo rm -rf "$HOME/.gradle"
+          sudo rm -rf "$HOME/Library/Developer/CoreSimulator/Devices"
+          sudo rm -rf "$HOME/Library/Developer/Xcode/DerivedData"
+          df -H
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '26.2'
+      - name: devbox installer
+        uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          enable-cache: 'false'
+      - name: Resolve iOS targets
+        run: |
+          . scripts/platform-versions.sh
+          if [ "${{ matrix.name }}" = "ios-min" ]; then
+            echo "DETOX_IOS_DEVICE=${PLATFORM_IOS_MIN_DEVICE}" >> "$GITHUB_ENV"
+            echo "IOS_RUNTIME=${PLATFORM_IOS_MIN_RUNTIME}" >> "$GITHUB_ENV"
+          else
+            echo "DETOX_IOS_DEVICE=${PLATFORM_IOS_MAX_DEVICE}" >> "$GITHUB_ENV"
+            echo "IOS_RUNTIME=${PLATFORM_IOS_MAX_RUNTIME}" >> "$GITHUB_ENV"
+          fi
+      - name: iOS E2E Tests
+        run: devbox run --config=shells/devbox-ios.json test-ios
+
+  e2e-android:
+    name: E2E Android (min/max)
+    runs-on: ubuntu-24.04-arm
+    env:
+      EMU_HEADLESS: 1
+    strategy:
+      matrix:
+        include:
+          - name: android-min
+            target: min
+          - name: android-latest
+            target: max
+    steps:
+      - uses: actions/checkout@v4
+      - name: Aggressive disk cleanup (Ubuntu)
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/local/lib/node_modules
+          sudo rm -rf /usr/local/share/boost
+          sudo rm -rf /usr/local/share/chromium
+          sudo rm -rf /usr/local/share/powershell
+          sudo rm -rf /usr/local/share/edge_driver
+          sudo rm -rf /usr/local/share/gecko_driver
+          sudo rm -rf /usr/local/share/phantomjs
+          sudo rm -rf "$HOME/.cache"
+          df -H
+      - name: devbox installer
+        uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          enable-cache: 'false'
+      - name: Resolve Android targets
+        run: |
+          . scripts/platform-versions.sh
+          if [ "${{ matrix.target }}" = "min" ]; then
+            api="$PLATFORM_ANDROID_MIN_API"
+            device="$PLATFORM_ANDROID_MIN_DEVICE"
+          else
+            api="$PLATFORM_ANDROID_MAX_API"
+            device="$PLATFORM_ANDROID_MAX_DEVICE"
+          fi
+          avd_name="${device}_API${api}_arm64_v8a"
+          echo "DETOX_AVD=${avd_name}" >> "$GITHUB_ENV"
+      - name: Android E2E Tests
+        run: devbox run --config=shells/devbox-android.json test-android
+
   publish:
     name: Publish to npm
     environment: Publish
+    needs: [fast-checks, e2e-ios, e2e-android]
     runs-on: ubuntu-latest
     permissions:
       contents: write # to be able to publish a GitHub release
@@ -23,22 +132,10 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GH_TOKEN }}
 
-      # Workaround for corepack enable in node
-      # Source: (https://github.com/actions/setup-node/issues/899#issuecomment-1828798029)
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: corepack enable
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: yarn
-      # End workaround
-
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
-          enable-cache: 'true'
+          enable-cache: 'false'
 
       - name: Config, Build, Release
         run: devbox run release
@@ -49,6 +146,4 @@ jobs:
 
       - name: Update Apps
         run: |
-          yarn install --no-immutable
-          yarn e2e install --no-immutable
-          yarn example install --no-immutable
+          devbox run update-apps

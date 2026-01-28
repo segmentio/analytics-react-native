@@ -9,7 +9,9 @@
   },
   "shell": {
     "scripts": {
-      "build": ["bash $DEVBOX_PROJECT_ROOT/scripts/build.sh"]
+      "build": ["bash $DEVBOX_PROJECT_ROOT/scripts/build.sh"],
+      "format": ["treefmt"],
+      "lint": ["treefmt --fail-on-change"]
     }
   }
 }
