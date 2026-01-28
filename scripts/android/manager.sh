@@ -7,7 +7,7 @@ shift || true
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/env.sh"
 
 start_android() {
-  local flavor="${AVD_FLAVOR:-minsdk}" headless="${EMU_HEADLESS:-}" port="${EMU_PORT:-5554}"
+  local flavor="${AVD_FLAVOR:-latest}" headless="${EMU_HEADLESS:-}" port="${EMU_PORT:-5554}"
   local avd="${DETOX_AVD:-}"
 
   if [[ -z $avd ]]; then

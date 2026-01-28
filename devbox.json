@@ -18,6 +18,7 @@
   "shell": {
     "init_hook": [
       "echo 'Welcome to analytics-react-native devbox!' > /dev/null",
+      ". $DEVBOX_PROJECT_ROOT/scripts/shared/common.sh",
       "if [ \"$(uname -s)\" = \"Darwin\" ]; then . $DEVBOX_PROJECT_ROOT/scripts/ios/env.sh; fi",
       ". $DEVBOX_PROJECT_ROOT/scripts/android/env.sh",
       "echo 'Android SDK env configured (details: wiki/devbox.md#devbox-android).'"
@@ -30,28 +31,28 @@
         "yarn cache clean",
         "find $DEVBOX_PROJECT_DIR -type d -name node_modules -exec rmdir {} \\;"
       ],
-      "build": ["bash $DEVBOX_PROJECT_ROOT/scripts/build.sh"],
+      "build": ["bash $SCRIPTS_DIR/build.sh"],
       "format": ["treefmt"],
       "lint": ["treefmt --fail-on-change"],
-      "test-android": ["bash $DEVBOX_PROJECT_ROOT/scripts/android/test.sh"],
-      "test-ios": ["bash $DEVBOX_PROJECT_ROOT/scripts/ios/test.sh"],
+      "test-android": ["bash $SCRIPTS_DIR/android/test.sh"],
+      "test-ios": ["bash $SCRIPTS_DIR/ios/test.sh"],
       "act-ci": [
-        "bash $DEVBOX_PROJECT_ROOT/scripts/act-ci.sh --platform ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-24.04"
+        "bash $SCRIPTS_DIR/act-ci.sh --platform ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-24.04"
       ],
-      "setup-android": ["bash $DEVBOX_PROJECT_ROOT/scripts/android/setup.sh"],
-      "setup-ios": ["bash $DEVBOX_PROJECT_ROOT/scripts/ios/setup.sh"],
+      "setup-android": ["bash $SCRIPTS_DIR/android/setup.sh"],
+      "setup-ios": ["bash $SCRIPTS_DIR/ios/setup.sh"],
       "start-emulator": [
-        "bash $DEVBOX_PROJECT_ROOT/scripts/android/manager.sh start"
+        "bash $SCRIPTS_DIR/android/manager.sh start"
       ],
-      "start-ios": ["bash $DEVBOX_PROJECT_ROOT/scripts/ios/manager.sh start"],
+      "start-ios": ["bash $SCRIPTS_DIR/ios/manager.sh start"],
       "start-android-minsdk": [
-        "bash $DEVBOX_PROJECT_ROOT/scripts/android/manager.sh start"
+        "bash $SCRIPTS_DIR/android/manager.sh start"
       ],
       "start-android-latest": [
-        "AVD_FLAVOR=latest bash $DEVBOX_PROJECT_ROOT/scripts/android/manager.sh start"
+        "AVD_FLAVOR=latest bash $SCRIPTS_DIR/android/manager.sh start"
       ],
       "start-android": [
-        "bash $DEVBOX_PROJECT_ROOT/scripts/android/manager.sh start"
+        "bash $SCRIPTS_DIR/android/manager.sh start"
       ],
       "release": [
         "npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}",

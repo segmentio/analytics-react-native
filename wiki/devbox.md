@@ -84,3 +84,5 @@ devbox run --config=shells/devbox-fast.json build
 devbox run --config=shells/devbox-android.json test-android
 devbox run --config=shells/devbox-ios.json test-ios
 ```
+
+Note: when you use `devbox run --config=shells/...`, Devbox treats `shells/` as the config root. The init hooks set `SCRIPTS_DIR` to point back at the repo-level `scripts/` folder.

@@ -9,12 +9,13 @@
   },
   "shell": {
     "init_hook": [
+      ". $DEVBOX_PROJECT_ROOT/../scripts/shared/common.sh",
       "echo 'Android SDK env configured (details: wiki/devbox.md#devbox-android).'",
-      ". $DEVBOX_PROJECT_ROOT/scripts/android/env.sh"
+      ". $SCRIPTS_DIR/android/env.sh"
     ],
     "scripts": {
-      "setup-android": ["bash $DEVBOX_PROJECT_ROOT/scripts/android/setup.sh"],
-      "test-android": ["bash $DEVBOX_PROJECT_ROOT/scripts/android/test.sh"]
+      "setup-android": ["bash $SCRIPTS_DIR/android/setup.sh"],
+      "test-android": ["bash $SCRIPTS_DIR/android/test.sh"]
     }
   }
 }

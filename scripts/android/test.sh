@@ -2,8 +2,10 @@
 set -euo pipefail
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-project_root="$(cd "$script_dir/../.." && pwd)"
-bash "$project_root/scripts/android/setup.sh"
+# shellcheck disable=SC1090
+. "$script_dir/../shared/common.sh"
+
+bash "$SCRIPTS_DIR/android/setup.sh"
 yarn install
 yarn e2e install
 yarn build

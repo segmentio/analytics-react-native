@@ -16,6 +16,8 @@ This repo uses `scripts/` as the entry point for devbox commands and CI helpers.
 - `scripts/shared/common.sh`
   - `require_tool`: asserts a tool exists (with an optional custom message).
   - `load_platform_versions`: sources `scripts/platform-versions.sh` if present.
+  - `PROJECT_ROOT`: auto-detected git root when unset.
+  - `SCRIPTS_DIR`: defaults to `$PROJECT_ROOT/scripts` when unset.
 
 ## Android scripts
 

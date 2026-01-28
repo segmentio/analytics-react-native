@@ -2,10 +2,11 @@
 set -euo pipefail
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-project_root="$(cd "$script_dir/../.." && pwd)"
+# shellcheck disable=SC1090
+. "$script_dir/../shared/common.sh"
 
 if [ "$(uname -s)" = "Darwin" ]; then
-  . "$project_root/scripts/ios/env.sh"
+  . "$SCRIPTS_DIR/ios/env.sh"
 fi
 
 echo "iOS test env"
@@ -15,7 +16,7 @@ echo "  CXX=${CXX:-}"
 echo "  SDKROOT=${SDKROOT:-}"
 echo "  DEVELOPER_DIR=${DEVELOPER_DIR:-}"
 
-bash "$project_root/scripts/ios/setup.sh"
+bash "$SCRIPTS_DIR/ios/setup.sh"
 yarn install
 yarn e2e install
 yarn e2e pods
