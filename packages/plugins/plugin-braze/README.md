@@ -1,17 +1,19 @@
 # @segment/analytics-react-native-plugin-braze
 
-`DestinationPlugin` for [Braze](https://www.braze.com). Wraps [`@braze/react-native-sdk`](https://github.com/Appboy/appboy-react-sdk). This Plugin should be used with a [Device Mode](https://segment.com/docs/connections/destinations/#connection-modes) connection to Braze. To connect to Braze with a Cloud Mode connection use the [Braze Middleware Plugin]((https://www.npmjs.com/package/@segment/analytics-react-native-plugin-braze))instead. It is not possible to use both plugins in one `Analytics React Native` instance. 
+`DestinationPlugin` for [Braze](https://www.braze.com). Wraps [`@braze/react-native-sdk`](https://github.com/Appboy/appboy-react-sdk). This Plugin should be used with a [Device Mode](https://segment.com/docs/connections/destinations/#connection-modes) connection to Braze. To connect to Braze with a Cloud Mode connection use the [Braze Middleware Plugin](<(https://www.npmjs.com/package/@segment/analytics-react-native-plugin-braze)>)instead. It is not possible to use both plugins in one `Analytics React Native` instance.
 
 ## Installation
 
 You need to install the `@segment/analytics-react-native-plugin-braze` and the `@braze/react-native-sdk` dependency.
 
 Using NPM:
+
 ```bash
 npm install --save @segment/analytics-react-native-plugin-braze @braze/react-native-sdk
 ```
 
 Using Yarn:
+
 ```bash
 yarn add @segment/analytics-react-native-plugin-braze @braze/react-native-sdk
 ```
@@ -32,7 +34,7 @@ import { createClient } from '@segment/analytics-react-native';
 import { BrazePlugin } from '@segment/analytics-react-native-plugin-braze';
 
 const segmentClient = createClient({
-  writeKey: 'SEGMENT_KEY'
+  writeKey: 'SEGMENT_KEY',
 });
 
 segmentClient.add({ plugin: new BrazePlugin() });
@@ -47,6 +49,7 @@ Please use Github issues, Pull Requests, or feel free to reach out to our [suppo
 Interested in integrating your service with us? Check out our [Partners page](https://segment.com/partners/) for more details.
 
 ## License
+
 ```
 MIT License
 

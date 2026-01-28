@@ -1,20 +1,23 @@
 # @segment/analytics-react-native-plugin-braze-middleware
 
-`BeforePlugin`  to debounce `identify` events for [Braze](https://www.braze.com). This Plugin should be used with a [Cloud Mode](https://segment.com/docs/connections/destinations/#connection-modes) connection to Braze. To connect to Braze with a Device Mode connection use the [Braze Destination Plugin]((https://www.npmjs.com/package/@segment/analytics-react-native-plugin-braze))instead. It is not possible to use both plugins in one `Analytics React Native` instance. 
+`BeforePlugin` to debounce `identify` events for [Braze](https://www.braze.com). This Plugin should be used with a [Cloud Mode](https://segment.com/docs/connections/destinations/#connection-modes) connection to Braze. To connect to Braze with a Device Mode connection use the [Braze Destination Plugin](<(https://www.npmjs.com/package/@segment/analytics-react-native-plugin-braze)>)instead. It is not possible to use both plugins in one `Analytics React Native` instance.
 
 ## Installation
 
 You need to install the `@segment/analytics-react-native-plugin-braze-middleware`.
 
 Using NPM:
+
 ```bash
-npm install --save @segment/analytics-react-native-plugin-braze-middleware 
+npm install --save @segment/analytics-react-native-plugin-braze-middleware
 ```
 
 Using Yarn:
+
 ```bash
 yarn add @segment/analytics-react-native-plugin-braze-middleware
 ```
+
 ## Usage
 
 Follow the [instructions for adding plugins](https://github.com/segmentio/analytics-react-native#adding-plugins) on the main Analytics client:
@@ -27,7 +30,7 @@ import { createClient } from '@segment/analytics-react-native';
 import { BrazePlugin } from '@segment/analytics-react-native-plugin-braze-middleware';
 
 const segmentClient = createClient({
-  writeKey: 'SEGMENT_KEY'
+  writeKey: 'SEGMENT_KEY',
 });
 
 segmentClient.add({ plugin: new BrazeMiddlewarePlugin() });
@@ -42,6 +45,7 @@ Please use Github issues, Pull Requests, or feel free to reach out to our [suppo
 Interested in integrating your service with us? Check out our [Partners page](https://segment.com/partners/) for more details.
 
 ## License
+
 ```
 MIT License
 

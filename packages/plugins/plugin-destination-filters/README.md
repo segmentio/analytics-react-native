@@ -7,11 +7,13 @@ Plugin for adding support for [Destination Filters](https://segment.com/docs/con
 You will need to install the `@segment/analytics-react-native-plugin-destination-filters` package as a dependency in your project:
 
 Using NPM:
+
 ```bash
 npm install --save @segment/analytics-react-native-plugin-destination-filters
 ```
 
 Using Yarn:
+
 ```bash
 yarn add @segment/analytics-react-native-plugin-destination-filters
 ```
@@ -28,13 +30,12 @@ import { createClient } from '@segment/analytics-react-native';
 import { DestinationFiltersPlugin } from '@segment/analytics-react-native-plugin-destination-filters';
 
 const segmentClient = createClient({
-  writeKey: 'SEGMENT_KEY'
+  writeKey: 'SEGMENT_KEY',
 });
 
 segmentClient.add({ plugin: new DestinationFiltersPlugin() });
-segment.add({ plugin: new FirebasePlugin() })
+segment.add({ plugin: new FirebasePlugin() });
 ```
-
 
 ## Support
 
@@ -45,6 +46,7 @@ Please use Github issues, Pull Requests, or feel free to reach out to our [suppo
 Interested in integrating your service with us? Check out our [Partners page](https://segment.com/partners/) for more details.
 
 ## License
+
 ```
 MIT License
 
@@ -68,4 +70,3 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
-

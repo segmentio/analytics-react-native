@@ -11,6 +11,7 @@ The main advantages of Sovran vs Redux are:
 - Sovran is lightweight and simple to use. Subscribing and dispatching actions is easy to setup.
 - Sovran can manage state at different scope levels. From global to local to a single object.
 - Sovran is designed to be used with React Native so it supports dispatching actions via the bridge native -> RN
+
 ## Installation
 
 ```sh
@@ -34,7 +35,7 @@ const store = createStore<State>({
 });
 ```
 
-`createStore` accepts any object as a state. 
+`createStore` accepts any object as a state.
 You only need to pass the **initial state** as a parameter.
 Returns a **Store** object:
 
@@ -42,7 +43,7 @@ Returns a **Store** object:
 
 The returned store object has the following methods:
 
-#### **subscribe(callback)**: 
+#### **subscribe(callback)**:
 
 Subscribes a listener to updates on the store:
 
@@ -56,7 +57,7 @@ const unsubscribe = store.subscribe((newState: State) => {
 unsubscribe();
 ```
 
-#### **dispatch(action)**: 
+#### **dispatch(action)**:
 
 Dispatches an action to modify the state, actions can be async:
 
@@ -67,11 +68,11 @@ store.dispatch((state: State): State => {
   return {
     ...state,
     count: state.count + 1,
-  }
+  };
 });
 ```
 
-#### **getState()**: 
+#### **getState()**:
 
 Returns the current state on the store:
 
@@ -98,8 +99,9 @@ const messages = createStore<MessageQueue>({
 });
 
 // Action to add new events
-const addMessage = (message: Message) => (state: MessageQueue) =>
-  ({ messages: [...state.messages, message] });
+const addMessage = (message: Message) => (state: MessageQueue) => ({
+  messages: [...state.messages, message],
+});
 
 // Register the store to listen to native events
 registerBridgeStore({

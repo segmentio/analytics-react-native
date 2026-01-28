@@ -2,9 +2,9 @@
 
 Plugin for adding support for [OneTrust](https://onetrust.com/) CMP to your React Native application.
 
-⚠️ version 1.2.0 and below are out of date and upgrading will require a re-implementation of the plugin configuration. 
+⚠️ version 1.2.0 and below are out of date and upgrading will require a re-implementation of the plugin configuration.
 
-⚠️ The SDK version used must match the version of the JSON published from your OneTrust instance. This Provider was built using `202405.1.0`. This is not a "plugin" as defined by the SDK's [plugin-timeline architecture](https://github.com/segmentio/analytics-react-native/tree/master?tab=readme-ov-file#plugins--timeline-architecture). Instead, it must be used with the `ConsentPlugin` included in the core SDK. This is deliberate as it is impossible to support every possible version of the OneTrust SDK. Therefore, the `OneTrustConsentProvider` should serve as a reference/example for users on a different version. 
+⚠️ The SDK version used must match the version of the JSON published from your OneTrust instance. This Provider was built using `202405.1.0`. This is not a "plugin" as defined by the SDK's [plugin-timeline architecture](https://github.com/segmentio/analytics-react-native/tree/master?tab=readme-ov-file#plugins--timeline-architecture). Instead, it must be used with the `ConsentPlugin` included in the core SDK. This is deliberate as it is impossible to support every possible version of the OneTrust SDK. Therefore, the `OneTrustConsentProvider` should serve as a reference/example for users on a different version.
 
 ## Installation
 
@@ -51,7 +51,7 @@ OTPublishersNativeSDK.startSDK(
   });
 ```
 
-2. Create a new `OneTrustConsentProvider` and pass the `OneTrust` SDK to it: 
+2. Create a new `OneTrustConsentProvider` and pass the `OneTrust` SDK to it:
 
 ```ts
 import { createClient, ConsentPlugin } from '@segment/analytics-react-native';
@@ -63,7 +63,7 @@ import { OTCategoryConsentProvider } from '@segment/analytics-react-native-plugi
  const oneTrustProvider = new OneTrustConsentProvider(OTPublishersNativeSDK)
 ```
 
-3. Initialize a new `ConsentPlugin` and pass the `OneTrustConsentProvider` to it: 
+3. Initialize a new `ConsentPlugin` and pass the `OneTrustConsentProvider` to it:
 
 ```ts
 import OTPublishersNativeSDK from 'react-native-onetrust-cmp';
@@ -75,14 +75,14 @@ const oneTrustProvider = new OneTrustConsentProvider(OTPublisherNativeSDK)
 const oneTrustPlugin = new ConsentPlugin(oneTrustProvider);
 ```
 
-4. Add `oneTrustPlugin` as a plugin, order doesn't matter, this plugin will apply to all device mode destinations you add before and after this plugin is added. 
+4. Add `oneTrustPlugin` as a plugin, order doesn't matter, this plugin will apply to all device mode destinations you add before and after this plugin is added.
 
 5. Call `oneTrustPlugin.start()` to start event flow.
 
- Full example below:
+Full example below:
 
 ```ts
-import { createClient, ConsentPlugin} from '@segment/analytics-react-native';
+import { createClient, ConsentPlugin } from '@segment/analytics-react-native';
 import { OneTrustConsentProvider } from '@segment/analytics-react-native-plugin-onetrust';
 import OTPublishersNativeSDK from 'react-native-onetrust-cmp';
 
@@ -90,8 +90,8 @@ OTPublishersNativeSDK.startSDK(
   'storageLocation',
   'domainIdentifier',
   'languageCode',
-  {countryCode: 'us', regionCode:'ca'},
-  true,
+  { countryCode: 'us', regionCode: 'ca' },
+  true
 )
   .then((responseObject) => {
     console.info('Download status is ' + responseObject.status);
@@ -105,16 +105,14 @@ const segment = createClient({
   writeKey: 'SEGMENT_KEY',
 });
 
-
-const oneTrustProvider = new OneTrustConsentProvider(OTPublisherNativeSDK)
+const oneTrustProvider = new OneTrustConsentProvider(OTPublisherNativeSDK);
 const oneTrustPlugin = new ConsentPlugin(oneTrustProvider);
 
 segment.add({ plugin: oneTrustPlugin });
 
 // NOTE: You might want to wait until CMP is ready before you call start()
 // so that events are held until the CMP is ready to provide the current consent status.
-onetrustPlugin.start()
-
+onetrustPlugin.start();
 
 // device mode destinations
 segment.add({ plugin: new BrazePlugin() });

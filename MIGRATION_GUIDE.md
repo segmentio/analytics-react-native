@@ -1,11 +1,11 @@
 # Migrating to 2.0
 
-Analytics-React-Native 2.0 currently supports [these destinations](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins) with Segment actively adding more to the list. 
-If you’re using  `analytics-react-native 1.5.1`  or older, follow these steps to migrate to the `analytics-react-native 2.0`. You can continue to use your React Native source write key for the migration to view historical events.
+Analytics-React-Native 2.0 currently supports [these destinations](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins) with Segment actively adding more to the list.
+If you’re using `analytics-react-native 1.5.1` or older, follow these steps to migrate to the `analytics-react-native 2.0`. You can continue to use your React Native source write key for the migration to view historical events.
 
 ---
 
-🚨 **Important Note**: Analytics React Native 2.0 implements a new storage framework, [@segment/sovran-react-native](https://github.com/segmentio/sovran-react-native), **which makes it impossible to determine if your app has been previously installed**. 
+🚨 **Important Note**: Analytics React Native 2.0 implements a new storage framework, [@segment/sovran-react-native](https://github.com/segmentio/sovran-react-native), **which makes it impossible to determine if your app has been previously installed**.
 
 **Migrating to Analytics React Native 2.0 results in new `Application Installed` events for your existing users**. To filter these events out you can either create an Enrichment Plugin to drop events or filter them using your Segment workspace.
 
@@ -20,10 +20,13 @@ yarn upgrade @segment/analytics-react-native
 If you are using any device mode destinations from V1 you will have to remove them and add their [equivalent plugin package for V2](#plugins).
 
 2. Add/Update pods
+
 ```sh
 npx pod-install
 ```
+
 3. Add permission to `AndroidManifest.xml`
+
 ```sh
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 ```
@@ -35,6 +38,7 @@ You will have to remove your current configuration and replace it with the `crea
 **Example client configuration for `analytics-react-native 1.5.1`**
 
 App.js:
+
 ```sh
 import analytics from '@segment/analytics-react-native'
 
@@ -47,7 +51,9 @@ analytics.setup('WRITE_KEY', {
 });
 
 ```
+
 package.json
+
 ```sh
 "dependencies": {
    ...
@@ -56,6 +62,7 @@ package.json
 ```
 
 podfile.lock
+
 ```sh
 PODS:
 ...
@@ -65,6 +72,7 @@ PODS:
 
 **Example client configuration for `analytics-react-native 2.0.0`**
 App.tsx (or .js):
+
 ```sh
 import {
  createClient,
@@ -87,7 +95,9 @@ const App = () => {
   );
 };
 ```
+
 package.json
+
 ```sh
 "dependencies": {
   ...
@@ -97,6 +107,7 @@ package.json
 ```
 
 podfile.lock
+
 ```sh
 PODS:
 ...
@@ -110,6 +121,7 @@ PODS:
 **Example tracking implementation for `analytics-react-native 1.5.1`**
 
 Home.js
+
 ```sh
 import analytics from '@segment/analytics-react-native';
 
@@ -128,6 +140,7 @@ onSendEvent = async() => {
 **Example tracking implementation for `analytics-react-native 2.0.0`**
 
 Home.tsx
+
 ```sh
 import { useAnalytics } from '@segment/analytics-react-native';
 
@@ -146,21 +159,21 @@ const Home = ({ navigation }: { navigation: any }) => {
 
 ### Plugins
 
-**The plugins for V2 have changed from V1**. 
+**The plugins for V2 have changed from V1**.
 
-The plugins have been re-released with different names. These are the equivalent packages for V2. Not all packages in V1 have yet been released for V2 but Segment is actively adding more packages to the list. 
+The plugins have been re-released with different names. These are the equivalent packages for V2. Not all packages in V1 have yet been released for V2 but Segment is actively adding more packages to the list.
 
 Also review [the main package list](README.md#supported-plugins) for new V2 plugins.
 
-| Plugin | V1 Package      | V2 Package     |
-| ----------- | ----------- | ----------- |
-| [Adjust](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-adjust)      | `@segment/analytics-react-native-adjust`|  `@segment/analytics-react-native-plugin-adjust` |
-| [Amplitude Sessions](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-amplitudeSession)      | `@segment/analytics-react-native-amplitude`| `@segment/analytics-react-native-plugin-amplitude-session`|
-| [AppsFlyer](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-appsflyer)    | `@segment/analytics-react-native-appsflyer` | `@segment/analytics-react-native-plugin-appsflyer`|
-| [Facebook App Events](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-facebook-app-events)    | `@segment/analytics-react-native-facebook-app-events-ios` | `@segment/analytics-react-native-plugin-facebook-app-events` |
-| [Firebase](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-firebase)      | `@segment/analytics-react-native-firebase` | `@segment/analytics-react-native-plugin-firebase`|
-| [Mixpanel](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-mixpanel)    | `@segment/analytics-react-native-mixpanel` | `@segment/analytics-react-native-plugin-mixpanel` |
-| [Taplytics](https://github.com/taplytics/segment-react-native-plugin-taplytics)     | `@segment/analytics-react-native-taplytics-ios` | `@taplytics/segment-react-native-plugin-taplytics` |
+| Plugin                                                                                                                             | V1 Package                                                | V2 Package                                                   |
+| ---------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------ |
+| [Adjust](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-adjust)                           | `@segment/analytics-react-native-adjust`                  | `@segment/analytics-react-native-plugin-adjust`              |
+| [Amplitude Sessions](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-amplitudeSession)     | `@segment/analytics-react-native-amplitude`               | `@segment/analytics-react-native-plugin-amplitude-session`   |
+| [AppsFlyer](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-appsflyer)                     | `@segment/analytics-react-native-appsflyer`               | `@segment/analytics-react-native-plugin-appsflyer`           |
+| [Facebook App Events](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-facebook-app-events) | `@segment/analytics-react-native-facebook-app-events-ios` | `@segment/analytics-react-native-plugin-facebook-app-events` |
+| [Firebase](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-firebase)                       | `@segment/analytics-react-native-firebase`                | `@segment/analytics-react-native-plugin-firebase`            |
+| [Mixpanel](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-mixpanel)                       | `@segment/analytics-react-native-mixpanel`                | `@segment/analytics-react-native-plugin-mixpanel`            |
+| [Taplytics](https://github.com/taplytics/segment-react-native-plugin-taplytics)                                                    | `@segment/analytics-react-native-taplytics-ios`           | `@taplytics/segment-react-native-plugin-taplytics`           |
 
 ### Context Traits
 
@@ -176,7 +189,7 @@ import { createClient } from '@segment/analytics-react-native';
 import { InjectTraits } from './InjectTraits';
 
 const segmentClient = createClient({
-  writeKey: 'SEGMENT_KEY'
+  writeKey: 'SEGMENT_KEY',
 });
 
 segmentClient.add({ plugin: new InjectTraits() });

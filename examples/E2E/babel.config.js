@@ -1,4 +1,4 @@
-const { srcMap } = require('./workspace')
+const {srcMap} = require('./workspace');
 
 module.exports = {
   presets: ['module:metro-react-native-babel-preset'],

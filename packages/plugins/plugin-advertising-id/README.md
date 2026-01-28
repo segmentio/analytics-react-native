@@ -10,7 +10,7 @@ Add the package
 yarn add @segment/analytics-react-native-plugin-advertising-id
 ```
 
-This plugin requires a `compileSdkVersion` of at least 19. 
+This plugin requires a `compileSdkVersion` of at least 19.
 
 ## Usage
 
@@ -23,7 +23,7 @@ import { createClient } from '@segment/analytics-react-native';
 import { AdvertisingIdPlugin } from '@segment/analytics-react-native-plugin-advertising-id';
 
 const segmentClient = createClient({
-  writeKey: 'SEGMENT_KEY'
+  writeKey: 'SEGMENT_KEY',
 });
 
 //...

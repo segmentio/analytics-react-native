@@ -1,7 +1,7 @@
-const { element, by, device } = require('detox');
+const {element, by, device} = require('detox');
 
-import { startServer, stopServer } from './mockServer';
-import { setupMatchers } from './matchers';
+import {startServer, stopServer} from './mockServer';
+import {setupMatchers} from './matchers';
 
 describe('#mainTest', () => {
   const mockServerListener = jest.fn();
@@ -63,8 +63,8 @@ describe('#mainTest', () => {
     const events = mockServerListener.mock.calls[0][0].batch;
 
     expect(events).toHaveLength(2);
-    expect(events).toHaveEventWith({ type: 'track', event: 'Track pressed' });
-    expect(events).toHaveEventWith({ type: 'screen', name: 'Home Screen' });
+    expect(events).toHaveEventWith({type: 'track', event: 'Track pressed'});
+    expect(events).toHaveEventWith({type: 'screen', name: 'Home Screen'});
   });
 
   it('checks the identify method', async () => {
@@ -95,7 +95,7 @@ describe('#mainTest', () => {
     const events = mockServerListener.mock.calls[0][0].batch;
 
     expect(events).toHaveLength(1);
-    expect(events).toHaveEventWith({ type: 'group', groupId: 'best-group' });
+    expect(events).toHaveEventWith({type: 'group', groupId: 'best-group'});
   });
 
   it('checks the alias method', async () => {
@@ -109,7 +109,7 @@ describe('#mainTest', () => {
     const events = mockServerListener.mock.calls[0][0].batch;
 
     expect(events).toHaveLength(1);
-    expect(events).toHaveEventWith({ type: 'alias', userId: 'new-id' });
+    expect(events).toHaveEventWith({type: 'alias', userId: 'new-id'});
   });
 
   it('reset the client and checks the user id', async () => {
@@ -125,11 +125,11 @@ describe('#mainTest', () => {
 
     const events = mockServerListener.mock.calls[0][0].batch;
 
-    const screenEvent = events.find((item) => item.type === 'screen');
+    const screenEvent = events.find(item => item.type === 'screen');
 
     expect(events).toHaveLength(3);
-    expect(events).toHaveEventWith({ type: 'identify', userId: 'user_2' });
-    expect(events).toHaveEventWith({ type: 'track', userId: 'user_2' });
+    expect(events).toHaveEventWith({type: 'identify', userId: 'user_2'});
+    expect(events).toHaveEventWith({type: 'track', userId: 'user_2'});
     expect(screenEvent.userId).toBeUndefined();
   });
 
@@ -162,7 +162,7 @@ describe('#mainTest', () => {
     await identifyButton.tap();
 
     await device.sendToHome();
-    await device.launchApp({ newInstance: true });
+    await device.launchApp({newInstance: true});
 
     await flushButton.tap();
 
@@ -173,8 +173,8 @@ describe('#mainTest', () => {
     const platform = device.getPlatform();
 
     expect(events).toHaveLength(platform === 'android' ? 4 : 3); // Track + Identify + App Launch (+ Backgrounded on Android)
-    expect(events).toHaveEventWith({ type: 'identify', userId: 'user_2' });
-    expect(events).toHaveEventWith({ type: 'track', userId: 'user_2' });
+    expect(events).toHaveEventWith({type: 'identify', userId: 'user_2'});
+    expect(events).toHaveEventWith({type: 'track', userId: 'user_2'});
     expect(events).toHaveEventWith({
       type: 'track',
       event: 'Application Opened',

@@ -30,14 +30,14 @@ if [ -f "$script_dir/platform-versions.sh" ]; then
 fi
 
 detect_sdk_root() {
-  if [[ -n "${ANDROID_SDK_ROOT:-}" ]]; then
+  if [[ -n ${ANDROID_SDK_ROOT:-} ]]; then
     echo "$ANDROID_SDK_ROOT"
     return
   fi
 
   local sm
   sm="$(command -v sdkmanager 2>/dev/null || true)"
-  if [[ -z "$sm" ]]; then
+  if [[ -z $sm ]]; then
     return
   fi
   sm="$(readlink -f "$sm")"
@@ -66,19 +66,19 @@ pick_image() {
   host_arch="$(uname -m)"
 
   local candidates=()
-  if [[ -n "${preferred_abi:-}" ]]; then
+  if [[ -n ${preferred_abi:-} ]]; then
     candidates=("$preferred_abi")
   else
     case "$host_arch" in
-      arm64|aarch64) candidates=("arm64-v8a" "x86_64" "x86") ;;
-      *) candidates=("x86_64" "x86" "arm64-v8a") ;;
+    arm64 | aarch64) candidates=("arm64-v8a" "x86_64" "x86") ;;
+    *) candidates=("x86_64" "x86" "arm64-v8a") ;;
     esac
   fi
 
   for abi in "${candidates[@]}"; do
     local image="system-images;android-${api};${tag};${abi}"
     local path="${ANDROID_SDK_ROOT}/system-images/android-${api}/${tag}/${abi}"
-    if [[ -d "$path" ]]; then
+    if [[ -d $path ]]; then
       echo "$image"
       return 0
     fi
@@ -104,11 +104,11 @@ main() {
   local detected_sdk_root
   detected_sdk_root="$(detect_sdk_root)"
 
-  if [[ -z "${ANDROID_SDK_ROOT:-}" && -n "$detected_sdk_root" ]]; then
+  if [[ -z ${ANDROID_SDK_ROOT:-} && -n $detected_sdk_root ]]; then
     export ANDROID_SDK_ROOT="$detected_sdk_root"
   fi
 
-  if [[ -z "${ANDROID_SDK_ROOT:-}" && -z "${ANDROID_HOME:-}" ]]; then
+  if [[ -z ${ANDROID_SDK_ROOT:-} && -z ${ANDROID_HOME:-} ]]; then
     echo "ANDROID_SDK_ROOT/ANDROID_HOME must be set. In a devbox shell, the flake-provided SDK should supply sdkmanager in PATH; if not, set ANDROID_SDK_ROOT to the flake's android-sdk path." >&2
     exit 1
   fi

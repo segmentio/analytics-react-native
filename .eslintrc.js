@@ -1,6 +1,6 @@
 module.exports = {
   extends: [
-    "@react-native",
+    '@react-native',
     'plugin:@typescript-eslint/recommended',
     // 'plugin:@typescript-eslint/recommended-requiring-type-checking',
   ],
@@ -15,18 +15,18 @@ module.exports = {
         useTabs: false,
       },
     ],
-    "no-void": [
-      "error", 
-      { "allowAsStatement": true }
+    'no-void': ['error', { allowAsStatement: true }],
+    '@typescript-eslint/restrict-template-expressions': [
+      'warn',
+      {
+        allowNumber: true,
+        allowBoolean: true,
+        allowAny: true,
+        allowNullish: true,
+      },
     ],
-    "@typescript-eslint/restrict-template-expressions": ["warn", { 
-      allowNumber: true,
-      allowBoolean: true,
-      allowAny: true,
-      allowNullish: true
-     }],
-     "@typescript-eslint/no-explicit-any": "error",
-     "@typescript-eslint/strict-boolean-expressions": "error"
+    '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/strict-boolean-expressions': 'error',
   },
   overrides: [
     // Detox tests
@@ -36,7 +36,7 @@ module.exports = {
         jest: true,
       },
     },
-    // Jest 
+    // Jest
     {
       files: ['**/__tests__/**', '**/__mocks__/**', '**/__helpers__/**'],
       plugins: ['jest'],
@@ -44,13 +44,13 @@ module.exports = {
         jest: true,
       },
       rules: {
-        "no-unused-vars": "off",
-        "@typescript-eslint/no-unsafe-call": "warn",
-        "@typescript-eslint/no-unused-vars": "error",
-        "@typescript-eslint/unbound-method": "off",
-        "@typescript-eslint/no-unsafe-assignment": "warn",
-        "@typescript-eslint/no-unsafe-member-access": "warn",
-        "@typescript-eslint/ban-ts-comment": "warn"
+        'no-unused-vars': 'off',
+        '@typescript-eslint/no-unsafe-call': 'warn',
+        '@typescript-eslint/no-unused-vars': 'error',
+        '@typescript-eslint/unbound-method': 'off',
+        '@typescript-eslint/no-unsafe-assignment': 'warn',
+        '@typescript-eslint/no-unsafe-member-access': 'warn',
+        '@typescript-eslint/ban-ts-comment': 'warn',
       },
     },
   ],

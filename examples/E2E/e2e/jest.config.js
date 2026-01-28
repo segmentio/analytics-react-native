@@ -10,4 +10,3 @@ module.exports = {
   globalTeardown: 'detox/runners/jest/globalTeardown',
   testEnvironment: 'detox/runners/jest/testEnvironment',
 };
-

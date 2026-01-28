@@ -70,12 +70,12 @@ if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
   export PATH
   echo "Using Android SDK: $ANDROID_SDK_ROOT"
   case "$ANDROID_SDK_ROOT" in
-    /nix/store/*)
-      echo "Source: Nix flake (reproducible, pinned). To use your local SDK instead, set ANDROID_HOME/ANDROID_SDK_ROOT before starting devbox shell."
-      ;;
-    *)
-      echo "Source: User/local SDK. To use the pinned Nix SDK, unset ANDROID_HOME/ANDROID_SDK_ROOT before starting devbox shell."
-      ;;
+  /nix/store/*)
+    echo "Source: Nix flake (reproducible, pinned). To use your local SDK instead, set ANDROID_HOME/ANDROID_SDK_ROOT before starting devbox shell."
+    ;;
+  *)
+    echo "Source: User/local SDK. To use the pinned Nix SDK, unset ANDROID_HOME/ANDROID_SDK_ROOT before starting devbox shell."
+    ;;
   esac
 else
   echo "Android SDK not set; using system PATH"

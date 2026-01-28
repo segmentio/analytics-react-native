@@ -7,11 +7,13 @@
 ## Installation
 
 Using NPM:
+
 ```bash
 npm install --save @segment/analytics-react-native-plugin-idfa
 ```
 
 Using Yarn:
+
 ```bash
 yarn add @segment/analytics-react-native-plugin-idfa
 ```
@@ -30,7 +32,7 @@ import { createClient } from '@segment/analytics-react-native';
 import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
 
 const segmentClient = createClient({
-  writeKey: 'SEGMENT_KEY'
+  writeKey: 'SEGMENT_KEY',
 });
 
 segmentClient.add({ plugin: new IdfaPlugin() });
@@ -40,7 +42,7 @@ You will need to provide a [NSUserTrackingUsageDescription](https://developer.ap
 
 ## Customize IDFA Plugin Initialization
 
-To delay the `IDFA Plugin` initialization (ie. to avoid race condition with push notification prompt) implement the following: 
+To delay the `IDFA Plugin` initialization (ie. to avoid race condition with push notification prompt) implement the following:
 
 ```ts
 import { createClient } from '@segment/analytics-react-native';
@@ -54,23 +56,24 @@ const segmentClient = createClient({
 ...
 
  /** The IDFA Plugin supports an optional `shouldAskPermission` boolean
- which defaults to true. Setting to false prevents the plugin from 
+ which defaults to true. Setting to false prevents the plugin from
  requesting permission from the user. If you set the parameter to `false` on
- initialization you **must** call `requestTrackingPermission()` 
- to retrieve the `idfa`  
+ initialization you **must** call `requestTrackingPermission()`
+ to retrieve the `idfa`
  */
 const idfaPlugin = new IdfaPlugin(false);
 segmentClient.add({ plugin: idfaPlugin });
 
 
-/** `requestTrackingPermission()` will prompt the user for 
-tracking permission and returns a promise you can use to 
-make additional tracking decisions based on the response 
+/** `requestTrackingPermission()` will prompt the user for
+tracking permission and returns a promise you can use to
+make additional tracking decisions based on the response
 */
 idfaPlugin.requestTrackingPermission().then((enabled: boolean) => {
   console.log('Tracking Enabled -->', enabled);
 });
 ```
+
 ## Support
 
 Please use Github issues, Pull Requests, or feel free to reach out to our [support team](https://segment.com/help/).
@@ -80,6 +83,7 @@ Please use Github issues, Pull Requests, or feel free to reach out to our [suppo
 Interested in integrating your service with us? Check out our [Partners page](https://segment.com/partners/) for more details.
 
 ## License
+
 ```
 MIT License
 

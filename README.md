@@ -1,14 +1,12 @@
 # @segment/analytics-react-native
 
 ### 🎉 Flagship 🎉
-This library is one of Segment’s most popular Flagship libraries. It is actively maintained by Segment, benefitting from new feature releases and ongoing support.
 
+This library is one of Segment’s most popular Flagship libraries. It is actively maintained by Segment, benefitting from new feature releases and ongoing support.
 
 The hassle-free way to add Segment analytics to your React-Native app.
 
-⚠️ This readme covers `analytics-react-native 2.0.0` and greater. The code and readme for `analytics-react-native` versions below `2.0.0` can be found on the `analytics-react-native-v1` branch. On May 15, 2023, Segment will end support for Analytics React Native Classic, which includes versions 1.5.1 and older. Upgrade to Analytics React Native 2.0. 
-
-
+⚠️ This readme covers `analytics-react-native 2.0.0` and greater. The code and readme for `analytics-react-native` versions below `2.0.0` can be found on the `analytics-react-native-v1` branch. On May 15, 2023, Segment will end support for Analytics React Native Classic, which includes versions 1.5.1 and older. Upgrade to Analytics React Native 2.0.
 
 ## Table of Contents
 
@@ -61,28 +59,30 @@ The hassle-free way to add Segment analytics to your React-Native app.
 
 ## Installation
 
-Install `@segment/analytics-react-native`,  [`@segment/sovran-react-native`](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran) and [`react-native-get-random-values`](https://github.com/LinusU/react-native-get-random-values):
+Install `@segment/analytics-react-native`, [`@segment/sovran-react-native`](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran) and [`react-native-get-random-values`](https://github.com/LinusU/react-native-get-random-values):
 
 ```sh
-yarn add @segment/analytics-react-native @segment/sovran-react-native react-native-get-random-values @react-native-async-storage/async-storage 
+yarn add @segment/analytics-react-native @segment/sovran-react-native react-native-get-random-values @react-native-async-storage/async-storage
 # or
-npm install --save @segment/analytics-react-native @segment/sovran-react-native react-native-get-random-values @react-native-async-storage/async-storage 
+npm install --save @segment/analytics-react-native @segment/sovran-react-native react-native-get-random-values @react-native-async-storage/async-storage
 ```
 
-*Note: `@react-native-async-storage/async-storage` is an optional dependency. If you wish to use your own persistence layer you can use the `storePersistor` option when initializing the client. Make sure you always have a persistor (either by having AsyncStorage package installed or by explicitly passing a value), else you might get unexpected side-effects like multiple 'Application Installed' events. Read more [Client Options](#client-options)*
+_Note: `@react-native-async-storage/async-storage` is an optional dependency. If you wish to use your own persistence layer you can use the `storePersistor` option when initializing the client. Make sure you always have a persistor (either by having AsyncStorage package installed or by explicitly passing a value), else you might get unexpected side-effects like multiple 'Application Installed' events. Read more [Client Options](#client-options)_
 
 For iOS, install native modules with:
 
 ```sh
 npx pod-install
 ```
+
 ⚠️ For Android, you will have to add some extra permissions to your `AndroidManifest.xml`.
 
-### Expo 
+### Expo
 
 🚀 `@segment/analytics-react-native 2.0` is compatible with Expo's [Custom Dev Client](https://docs.expo.dev/clients/getting-started/) and [EAS builds](https://docs.expo.dev/build/introduction/) without any additional configuration. Destination Plugins that require native modules may require custom [Expo Config Plugins](https://docs.expo.dev/guides/config-plugins/).
 
-⚠️ `@segment/analytics-react-native 2.0` is not compatible with Expo Go. 
+⚠️ `@segment/analytics-react-native 2.0` is not compatible with Expo Go.
+
 ### Permissions
 
 <details>
@@ -97,6 +97,7 @@ In your app's `AndroidManifest.xml` add the below line between the `<manifest>` 
 </details>
 
 ## Migrating
+
 See the [Migration Guide](MIGRATION_GUIDE.md) for a detailed walkthrough of the changes you will need to make when upgrading to `analytics-react-native 2.0`
 
 ## Usage
@@ -110,59 +111,59 @@ central client manages all our tracking events.
 import { createClient } from '@segment/analytics-react-native';
 
 const segmentClient = createClient({
-  writeKey: 'SEGMENT_API_KEY'
+  writeKey: 'SEGMENT_API_KEY',
 });
 ```
 
 You must pass at least the `writeKey`. Additional configuration options are listed below:
-  
+
 ### Client Options
 
-| **Name**                   | **Default**  | **Description** |
-|----------------------------|--------------|------------------|
-| `writeKey` **(REQUIRED)**   | ''           | Your Segment API key. |
-| `collectDeviceId`           | false        | Set to true to automatically collect the device Id from the DRM API on Android devices. |
-| `debug`                     | true\*       | When set to false, it will not generate any logs. |
-| `logger`                    | undefined    | Custom logger instance to expose internal Segment client logging. |
-| `flushAt`                   | 20           | How many events to accumulate before sending events to the backend. |
-| `flushInterval`             | 30           | In seconds, how often to send events to the backend. |
-| `flushPolicies`             | undefined    | Add more granular control for when to flush, see [Adding or removing policies](#adding-or-removing-policies). **Mutually exclusive with flushAt/flushInterval** |
-| `maxBatchSize`              | 1000         | How many events to send to the API at once |
-| `trackAppLifecycleEvents`   | false        | Enable automatic tracking for [app lifecycle events](https://segment.com/docs/connections/spec/mobile/#lifecycle-events): application installed, opened, updated, backgrounded. |
-| `trackDeepLinks`            | false        | Enable automatic tracking for when the user opens the app via a deep link (Note: Requires additional setup on iOS, [see instructions](#ios-deep-link-tracking-setup)). |
-| `defaultSettings`           | undefined    | Settings that will be used if the request to get the settings from Segment fails. Type: [SegmentAPISettings](https://github.com/segmentio/analytics-react-native/blob/c0a5895c0c57375f18dd20e492b7d984393b7bc4/packages/core/src/types.ts#L293-L299) |
-| `autoAddSegmentDestination` | true         | Set to false to skip adding the SegmentDestination plugin. |
-| `storePersistor`            | undefined    | A custom persistor for the store that `analytics-react-native` leverages. Must match [`Persistor`](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran/src/persistor/persistor.ts#L1-L18) interface exported from [sovran-react-native](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran). |
-| `proxy`                     | undefined    | `proxy` is a batch URL to post the events. Enable `useSegmentEndpoint` if proxy domain is provided and you want to append the Segment endpoints automatically. If you want to completely customize the proxy by providing a custom URL, disable `useSegmentEndpoint`. Default value is `false`. |
-| `errorHandler`              | undefined    | Create custom actions when errors happen, see [Handling errors](#handling-errors). |
-| `cdnProxy`                  | undefined    | Sets an alternative CDN host for settings retrieval. Enable `useSegmentEndpoint` if `cdnProxy` domain is provided and you want to append the Segment endpoints automatically. <br><br>⚠️ **IMPORTANT NOTE:** *Prior to version 2.20.4, any value provided for `cdnProxy` was automatically appended with `/write-key/settings`. **Starting from v2.20.4**, this behavior has **CHANGED**—the SDK will now behave based on the `useSegmentEndpoint` flag.* Please update your configuration accordingly to avoid unexpected issues. ⚠️ |
-| `useSegmentEndpoint`        | false        | Set to `true` to automatically append the Segment endpoints when using `proxy` or `cdnProxy` to send or fetch settings. This will enable automatic routing to the appropriate endpoints. |
-
-
+| **Name**                    | **Default** | **Description**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| --------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `writeKey` **(REQUIRED)**   | ''          | Your Segment API key.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `collectDeviceId`           | false       | Set to true to automatically collect the device Id from the DRM API on Android devices.                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `debug`                     | true\*      | When set to false, it will not generate any logs.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `logger`                    | undefined   | Custom logger instance to expose internal Segment client logging.                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `flushAt`                   | 20          | How many events to accumulate before sending events to the backend.                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `flushInterval`             | 30          | In seconds, how often to send events to the backend.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `flushPolicies`             | undefined   | Add more granular control for when to flush, see [Adding or removing policies](#adding-or-removing-policies). **Mutually exclusive with flushAt/flushInterval**                                                                                                                                                                                                                                                                                                                                                                       |
+| `maxBatchSize`              | 1000        | How many events to send to the API at once                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `trackAppLifecycleEvents`   | false       | Enable automatic tracking for [app lifecycle events](https://segment.com/docs/connections/spec/mobile/#lifecycle-events): application installed, opened, updated, backgrounded.                                                                                                                                                                                                                                                                                                                                                       |
+| `trackDeepLinks`            | false       | Enable automatic tracking for when the user opens the app via a deep link (Note: Requires additional setup on iOS, [see instructions](#ios-deep-link-tracking-setup)).                                                                                                                                                                                                                                                                                                                                                                |
+| `defaultSettings`           | undefined   | Settings that will be used if the request to get the settings from Segment fails. Type: [SegmentAPISettings](https://github.com/segmentio/analytics-react-native/blob/c0a5895c0c57375f18dd20e492b7d984393b7bc4/packages/core/src/types.ts#L293-L299)                                                                                                                                                                                                                                                                                  |
+| `autoAddSegmentDestination` | true        | Set to false to skip adding the SegmentDestination plugin.                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `storePersistor`            | undefined   | A custom persistor for the store that `analytics-react-native` leverages. Must match [`Persistor`](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran/src/persistor/persistor.ts#L1-L18) interface exported from [sovran-react-native](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran).                                                                                                                                                                                 |
+| `proxy`                     | undefined   | `proxy` is a batch URL to post the events. Enable `useSegmentEndpoint` if proxy domain is provided and you want to append the Segment endpoints automatically. If you want to completely customize the proxy by providing a custom URL, disable `useSegmentEndpoint`. Default value is `false`.                                                                                                                                                                                                                                       |
+| `errorHandler`              | undefined   | Create custom actions when errors happen, see [Handling errors](#handling-errors).                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `cdnProxy`                  | undefined   | Sets an alternative CDN host for settings retrieval. Enable `useSegmentEndpoint` if `cdnProxy` domain is provided and you want to append the Segment endpoints automatically. <br><br>⚠️ **IMPORTANT NOTE:** _Prior to version 2.20.4, any value provided for `cdnProxy` was automatically appended with `/write-key/settings`. **Starting from v2.20.4**, this behavior has **CHANGED**—the SDK will now behave based on the `useSegmentEndpoint` flag._ Please update your configuration accordingly to avoid unexpected issues. ⚠️ |
+| `useSegmentEndpoint`        | false       | Set to `true` to automatically append the Segment endpoints when using `proxy` or `cdnProxy` to send or fetch settings. This will enable automatic routing to the appropriate endpoints.                                                                                                                                                                                                                                                                                                                                              |
 
 \* The default value of `debug` will be false in production.
 
 ### iOS Deep Link Tracking Setup
-*Note: This is only required for iOS if you are using the `trackDeepLinks` option. Android does not require any additional setup*
+
+_Note: This is only required for iOS if you are using the `trackDeepLinks` option. Android does not require any additional setup_
 
 To track deep links in iOS you must add the following to your `AppDelegate.m` file:
 
 ```objc
   #import <segment_analytics_react_native-Swift.h>
-  
+
   ...
-  
+
 - (BOOL)application:(UIApplication *)application
             openURL: (NSURL *)url
             options:(nonnull NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
-  
-  [AnalyticsReactNative trackDeepLink:url withOptions:options];  
+
+  [AnalyticsReactNative trackDeepLink:url withOptions:options];
   return YES;
 }
 ```
 
 If you are using Expo, you need to create an [AppDelegateSubscriber](https://docs.expo.dev/modules/appdelegate-subscribers/), make sure to include `segment_analytics_react_native` in your `podspec` file.
 The rest of the code looks like this:
+
 ```swift
     import segment_analytics_react_native
 
@@ -174,11 +175,12 @@ The rest of the code looks like this:
    }
 ```
 
-### Native AnonymousId 
+### Native AnonymousId
 
-If you need to generate an `anonymousId` either natively or before the Analytics React Native package is initialized, you can send the anonymousId value from native code. The value has to be generated and stored by the caller. For reference, you can find a working example in the app and reference the code below: 
+If you need to generate an `anonymousId` either natively or before the Analytics React Native package is initialized, you can send the anonymousId value from native code. The value has to be generated and stored by the caller. For reference, you can find a working example in the app and reference the code below:
 
 **iOS**
+
 ```objc
 ...
 #import <segment_analytics_react_native-Swift.h>
@@ -193,7 +195,9 @@ If you need to generate an `anonymousId` either natively or before the Analytics
   return yes
 }
 ```
+
 **Android**
+
 ```java
 // MainApplication.java
 ...
@@ -237,7 +241,7 @@ import {
 } from '@segment/analytics-react-native';
 
 const segmentClient = createClient({
-  writeKey: 'SEGMENT_API_KEY'
+  writeKey: 'SEGMENT_API_KEY',
 });
 
 const App = () => (
@@ -283,7 +287,7 @@ import {
 
 // create the client once when the app loads
 const segmentClient = createClient({
-  writeKey: 'SEGMENT_API_KEY'
+  writeKey: 'SEGMENT_API_KEY',
 });
 
 // track an event using the client instance
@@ -416,7 +420,7 @@ const { reset } = useAnalytics();
 
 reset();
 
-reset(resetAnonymousId = false);
+reset((resetAnonymousId = false));
 ```
 
 ### Flush
@@ -445,13 +449,13 @@ In case you need to reinitialize the client, that is, you've called `createClien
 
 ```js
 let client = createClient({
-  writeKey: 'KEY'
+  writeKey: 'KEY',
 });
 
 client.cleanup();
 
 client = createClient({
-  writeKey: 'KEY'
+  writeKey: 'KEY',
 });
 ```
 
@@ -509,10 +513,9 @@ Navigation.events().registerComponentDidAppearListener(({ componentName }) => {
 
 ## Consent Management
 
-Consent Management is the management of a user’s consent preferences related to privacy.  You might be familiar with the Privacy Pop-ups that have become mandated recently that ask the user if he or she consents to the use of certain category of cookies:
+Consent Management is the management of a user’s consent preferences related to privacy. You might be familiar with the Privacy Pop-ups that have become mandated recently that ask the user if he or she consents to the use of certain category of cookies:
 
-![Sample CMP UI](imgs/cmp-sample.png?raw=true "Sample CMP UI")
-
+![Sample CMP UI](imgs/cmp-sample.png?raw=true 'Sample CMP UI')
 
 The Privacy pop-up asks the user if he or she will consent to the use of cookies and allows the user to customize their consent by turning on/off different categories of cookies.
 
@@ -520,12 +523,11 @@ After the user selects “Allow All” or “Save Preferences” a callback is f
 
 Additionally, besides the initial pop-up the website owner must give users a way to later change any preferences they originally selected. This is usually accomplished by providing a link to display the customization screen.
 
-
 ### Segment managed CMP
 
 Segment provides a framework for users to integrate any CMP they choose and use the Segment web app to map consent categories to device mode destinations. This information is sent down the analytics-kotlin SDK and stored for later lookup.
 
-Every event that flows through the library will be stamped with the current status according to whatever configured CMP is used. Event stamping is handled by the ConsentManagementPlugin. 
+Every event that flows through the library will be stamped with the current status according to whatever configured CMP is used. Event stamping is handled by the ConsentManagementPlugin.
 
 Using consent status stamped on the events and the mappings sent down from the Segment web app each event is evaluated and action is taken. Currently the supported actions are:
 
@@ -539,48 +541,49 @@ Before
 
 ```json
 {
-    "anonymousId": "23adfd82-aa0f-45a7-a756-24f2a7a4c895",
-    "type": "track",
-    "event": "MyEvent",
-    "userId": "u123",
-    "timestamp": "2023-01-01T00:00:00.000Z",
-    "context": {
-        "traits": {
-            "email": "peter@example.com",
-            "phone": "555-555-5555"
-        },
-        "device": {
-            "advertisingId": "7A3CBBA0-BDF5-11E4-8DFC-AA02A5B093DB"
-        }
+  "anonymousId": "23adfd82-aa0f-45a7-a756-24f2a7a4c895",
+  "type": "track",
+  "event": "MyEvent",
+  "userId": "u123",
+  "timestamp": "2023-01-01T00:00:00.000Z",
+  "context": {
+    "traits": {
+      "email": "peter@example.com",
+      "phone": "555-555-5555"
+    },
+    "device": {
+      "advertisingId": "7A3CBBA0-BDF5-11E4-8DFC-AA02A5B093DB"
     }
+  }
 }
 ```
+
 After
 
 ```json
 {
-    "anonymousId": "23adfd82-aa0f-45a7-a756-24f2a7a4c895",
-    "type": "track",
-    "event": "MyEvent",
-    "userId": "u123",
-    "timestamp": "2023-01-01T00:00:00.000Z",
-    "context": {
-        "traits": {
-            "email": "peter@example.com",
-            "phone": "555-555-5555"
-        },
-        "device": {
-            "advertisingId": "7A3CBBA0-BDF5-11E4-8DFC-AA02A5B093DB"
-        },
-        "consent": {
-            "categoryPreferences": {
-                "Advertising": true,
-                "Analytics": false,
-                "Functional": true,
-                "DataSharing": false
-            }
-        }
+  "anonymousId": "23adfd82-aa0f-45a7-a756-24f2a7a4c895",
+  "type": "track",
+  "event": "MyEvent",
+  "userId": "u123",
+  "timestamp": "2023-01-01T00:00:00.000Z",
+  "context": {
+    "traits": {
+      "email": "peter@example.com",
+      "phone": "555-555-5555"
+    },
+    "device": {
+      "advertisingId": "7A3CBBA0-BDF5-11E4-8DFC-AA02A5B093DB"
+    },
+    "consent": {
+      "categoryPreferences": {
+        "Advertising": true,
+        "Analytics": false,
+        "Functional": true,
+        "DataSharing": false
+      }
     }
+  }
 }
 ```
 
@@ -590,31 +593,30 @@ When notified by the CMP SDK that consent has changed, a track event with name �
 
 ```json
 {
-    "anonymousId": "23adfd82-aa0f-45a7-a756-24f2a7a4c895",
-    "type": "track",
-    "event": "Segment Consent Preference Updated",
-    "userId": "u123",
-    "timestamp": "2023-01-01T00:00:00.000Z",
-    "context": {
-        "device": {
-            "advertisingId": "7A3CBEA0-BDF5-11E4-8DFC-AA07A5B093DB"
-        },
-        "consent": {
-            "categoryPreferences": {
-                "Advertising": true,
-                "Analytics": false,
-                "Functional": true,
-                "DataSharing": false
-            }
-        }
+  "anonymousId": "23adfd82-aa0f-45a7-a756-24f2a7a4c895",
+  "type": "track",
+  "event": "Segment Consent Preference Updated",
+  "userId": "u123",
+  "timestamp": "2023-01-01T00:00:00.000Z",
+  "context": {
+    "device": {
+      "advertisingId": "7A3CBEA0-BDF5-11E4-8DFC-AA07A5B093DB"
+    },
+    "consent": {
+      "categoryPreferences": {
+        "Advertising": true,
+        "Analytics": false,
+        "Functional": true,
+        "DataSharing": false
+      }
     }
+  }
 }
 ```
 
 ### Event Flow
 
-
-![Shows how an event is stamped and later checked for consent](imgs/main-flow-diagram.png?raw=true "Event Flow Diagram")
+![Shows how an event is stamped and later checked for consent](imgs/main-flow-diagram.png?raw=true 'Event Flow Diagram')
 
 1. An event is dropped onto the timeline by some tracking call.
 2. The ConsentManagementPlugin consumes the event, stamps it, and returns it.
@@ -627,11 +629,12 @@ When notified by the CMP SDK that consent has changed, a track event with name �
 
 ### Getting Started
 
-1. Since the Consent Management Plugin is built into the core `Analytics-React-Native` SDK, you can simply import it and begin using it without adding any additional Segment dependencies. 
+1. Since the Consent Management Plugin is built into the core `Analytics-React-Native` SDK, you can simply import it and begin using it without adding any additional Segment dependencies.
 
 ```
 import { createClient, ConsentPlugin} from '@segment/analytics-react-native';
 ```
+
 2. From here, you will have to build an Consent Provider integration with your CMP. You can reference our example `OneTrust` [integration here](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-onetrust). It is not possible for Segment to support this as an active plugin as OneTrust requires you to use very specific versions of their SDK. However, the functionality is usually unchanged across versions so the example linked above should be almost copy/paste. If you build your own, it needs to imlpement the `CategoryConsentProvider` interface:
 
 ```
@@ -644,7 +647,6 @@ interface CategoryConsentStatusProvider {
 ```
 
 3. Add the Consent Provider to the `ConsentPlugin()` and add `ConsentPlugin()` to the `client`. A full example of this setup, including initializing the `OneTrust` SDK can be [found here](https://github.com/segmentio/analytics-react-native/blob/master/packages/plugins/plugin-onetrust/README.md).
-
 
 ```
 const segment = createClient({
@@ -673,13 +675,13 @@ In order to customise what happens after an event is created, you can create and
 
 ### Plugin Types
 
-| Plugin Type  | Description                                                                                             |
-|--------------|---------------------------------------------------------------------------------------------------------|
-| before       | Executed before event processing begins.                                                                |
-| enrichment   | Executed as the first level of event processing.                                                        |
-| destination  | Executed as events begin to pass off to destinations.                                                   |
-| after        | Executed after all event processing is completed.  This can be used to perform cleanup operations, etc. |
-| utility      | Executed only when called manually, such as Logging.                                                    |
+| Plugin Type | Description                                                                                            |
+| ----------- | ------------------------------------------------------------------------------------------------------ |
+| before      | Executed before event processing begins.                                                               |
+| enrichment  | Executed as the first level of event processing.                                                       |
+| destination | Executed as events begin to pass off to destinations.                                                  |
+| after       | Executed after all event processing is completed. This can be used to perform cleanup operations, etc. |
+| utility     | Executed only when called manually, such as Logging.                                                   |
 
 Plugins can have their own native code (such as the iOS-only `IdfaPlugin`) or wrap an underlying library (such as `FirebasePlugin` which uses `react-native-firebase` under the hood)
 
@@ -701,7 +703,7 @@ import { FirebasePlugin } from '@segment/analytics-react-native-plugin-firebase'
 import { IdfaPlugin } from '@segment/analytics-react-native-plugin-idfa';
 
 const segmentClient = createClient({
-  writeKey: 'SEGMENT_KEY'
+  writeKey: 'SEGMENT_KEY',
 });
 
 segmentClient.add({ plugin: new AmplitudeSessionPlugin() });
@@ -735,7 +737,6 @@ import {
 } from '@segment/analytics-react-native';
 
 export class Logger extends Plugin {
-
   // Note that `type` is set as a class property
   // If you do not set a type your plugin will be a `utility` plugin (see Plugin Types above)
   type = PluginType.before;
@@ -756,30 +757,29 @@ segmentClient.add({ plugin: new Logger() });
 ```
 
 As it overrides the `execute()` method, this `Logger` will call `console.log` for every event going through the Timeline.
-  
-### Supported Plugins 
-  
+
+### Supported Plugins
+
 Refer to the following table for Plugins you can use to meet your tracking needs:
-  
-| Plugin      | Package     |
-| ----------- | ----------- |
-| [Adjust](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-adjust)      | `@segment/analytics-react-native-plugin-adjust`|
-| [Amplitude Sessions](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-amplitudeSession)      | `@segment/analytics-react-native-plugin-amplitude-session`|
-| [AppsFlyer](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-appsflyer)    | `@segment/analytics-react-native-plugin-appsflyer`|
-| [Braze](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-braze)      | `@segment/analytics-react-native-plugin-braze`|
-| [Braze Middleware (Cloud Mode)](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-braze)      | `@segment/analytics-react-native-plugin-braze-middleware`|
-| [CleverTap](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-clevertap)      | `@segment/analytics-react-native-plugin-clevertap`|
-| [Facebook App Events](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-facebook-app-events)    | `@segment/analytics-react-native-plugin-facebook-app-events` |
-| [Firebase](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-firebase)      | `@segment/analytics-react-native-plugin-firebase`|
-| [FullStory](https://github.com/fullstorydev/segment-react-native-plugin-fullstory) | `@fullstory/segment-react-native-plugin-fullstory`|
-| [IDFA](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-idfa)     | `@segment/analytics-react-native-plugin-idfa` |
-| [Mixpanel](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-mixpanel)    | `@segment/analytics-react-native-plugin-mixpanel` |
-| [Sprig](https://github.com/UserLeap/analytics-react-native-plugin-sprig)    | [`@sprig-technologies/analytics-react-native-plugin-sprig`](https://www.npmjs.com/package/@sprig-technologies/analytics-react-native-plugin-sprig) |
-| [Taplytics](https://github.com/taplytics/segment-react-native-plugin-taplytics)     | `@taplytics/segment-react-native-plugin-taplytics` |
-| [Android Advertising ID](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-advertising-id) | `@segment/analytics-react-native-plugin-advertising-id` |
-| [Survicate](https://github.com/Survicate/analytics-react-native-survicate) | `@survicate/analytics-react-native-survicate` |
-  
-  
+
+| Plugin                                                                                                                             | Package                                                                                                                                            |
+| ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Adjust](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-adjust)                           | `@segment/analytics-react-native-plugin-adjust`                                                                                                    |
+| [Amplitude Sessions](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-amplitudeSession)     | `@segment/analytics-react-native-plugin-amplitude-session`                                                                                         |
+| [AppsFlyer](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-appsflyer)                     | `@segment/analytics-react-native-plugin-appsflyer`                                                                                                 |
+| [Braze](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-braze)                             | `@segment/analytics-react-native-plugin-braze`                                                                                                     |
+| [Braze Middleware (Cloud Mode)](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-braze)     | `@segment/analytics-react-native-plugin-braze-middleware`                                                                                          |
+| [CleverTap](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-clevertap)                     | `@segment/analytics-react-native-plugin-clevertap`                                                                                                 |
+| [Facebook App Events](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-facebook-app-events) | `@segment/analytics-react-native-plugin-facebook-app-events`                                                                                       |
+| [Firebase](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-firebase)                       | `@segment/analytics-react-native-plugin-firebase`                                                                                                  |
+| [FullStory](https://github.com/fullstorydev/segment-react-native-plugin-fullstory)                                                 | `@fullstory/segment-react-native-plugin-fullstory`                                                                                                 |
+| [IDFA](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-idfa)                               | `@segment/analytics-react-native-plugin-idfa`                                                                                                      |
+| [Mixpanel](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-mixpanel)                       | `@segment/analytics-react-native-plugin-mixpanel`                                                                                                  |
+| [Sprig](https://github.com/UserLeap/analytics-react-native-plugin-sprig)                                                           | [`@sprig-technologies/analytics-react-native-plugin-sprig`](https://www.npmjs.com/package/@sprig-technologies/analytics-react-native-plugin-sprig) |
+| [Taplytics](https://github.com/taplytics/segment-react-native-plugin-taplytics)                                                    | `@taplytics/segment-react-native-plugin-taplytics`                                                                                                 |
+| [Android Advertising ID](https://github.com/segmentio/analytics-react-native/tree/master/packages/plugins/plugin-advertising-id)   | `@segment/analytics-react-native-plugin-advertising-id`                                                                                            |
+| [Survicate](https://github.com/Survicate/analytics-react-native-survicate)                                                         | `@survicate/analytics-react-native-survicate`                                                                                                      |
+
 ## Controlling Upload With Flush Policies
 
 To more granurily control when events are uploaded you can use `FlushPolicies`. **This will override any setting on `flushAt` and `flushInterval`, but you can use `CountFlushPolicy` and `TimerFlushPolicy` to have the same behaviour respectively.**
@@ -799,11 +799,12 @@ const client = createClient({
 });
 ```
 
-You can set several policies at a time. Whenever any of them decides it is time for a flush it will trigger an upload of the events. The rest get reset so that their logic restarts after every flush. 
+You can set several policies at a time. Whenever any of them decides it is time for a flush it will trigger an upload of the events. The rest get reset so that their logic restarts after every flush.
 
 That means only the first policy to reach `shouldFlush` gets to trigger a flush at a time. In the example above either the event count gets to 5 or the timer reaches 500ms, whatever comes first will trigger a flush.
 
 We have several standard FlushPolicies:
+
 - `CountFlushPolicy` triggers whenever a certain number of events is reached
 - `TimerFlushPolicy` triggers on an interval of milliseconds
 - `StartupFlushPolicy` triggers on client startup only
@@ -811,13 +812,12 @@ We have several standard FlushPolicies:
 
 ## Adding or removing policies
 
-One of the main advatanges of FlushPolicies is that you can add and remove policies on the fly. This is very powerful when you want to reduce or increase the amount of flushes. 
+One of the main advatanges of FlushPolicies is that you can add and remove policies on the fly. This is very powerful when you want to reduce or increase the amount of flushes.
 
 For example you might want to disable flushes if you detect the user has no network:
 
 ```ts
-
-import NetInfo from "@react-native-community/netinfo";
+import NetInfo from '@react-native-community/netinfo';
 
 const policiesIfNetworkIsUp = [
   new CountFlushPolicy(5),
@@ -830,25 +830,25 @@ const client = createClient({
   flushPolicies: policies,
 });
 
-// If we detect the user disconnects from the network remove all flush policies, 
-// that way we won't keep attempting to send events to segment but we will still 
+// If we detect the user disconnects from the network remove all flush policies,
+// that way we won't keep attempting to send events to segment but we will still
 // store them for future upload.
 // If the network comes back up we add the policies back
 const unsubscribe = NetInfo.addEventListener((state) => {
   if (state.isConnected) {
     client.addFlushPolicy(...policiesIfNetworkIsUp);
   } else {
-    client.removeFlushPolicy(...policiesIfNetworkIsUp)
+    client.removeFlushPolicy(...policiesIfNetworkIsUp);
   }
 });
-
 ```
 
 ### Creating your own flush policies
 
-You can create a custom FlushPolicy special for your application needs by implementing the  `FlushPolicy` interface. You can also extend the `FlushPolicyBase` class that already creates and handles the `shouldFlush` value reset.
+You can create a custom FlushPolicy special for your application needs by implementing the `FlushPolicy` interface. You can also extend the `FlushPolicyBase` class that already creates and handles the `shouldFlush` value reset.
 
 A `FlushPolicy` only needs to implement 2 methods:
+
 - `start()`: Executed when the flush policy is enabled and added to the client. This is a good place to start background operations, make async calls, configure things before execution
 - `onEvent(event: SegmentEvent)`: Gets called on every event tracked by your client
 - `reset()`: Called after a flush is triggered (either by your policy, by another policy or manually)
@@ -857,7 +857,6 @@ They also have a `shouldFlush` observable boolean value. When this is set to tru
 
 ```ts
 export class FlushOnScreenEventsPolicy extends FlushPolicyBase {
-
   onEvent(event: SegmentEvent): void {
     // Only flush when a screen even happens
     if (event.type === EventType.ScreenEvent) {
@@ -877,7 +876,7 @@ export class FlushOnScreenEventsPolicy extends FlushPolicyBase {
 
 You can handle analytics client errors through the `errorHandler` option.
 
-The error handler configuration receives a function which will get called whenever an error happens on the analytics client. It will receive an argument of [`SegmentError`](packages/core/src/errors.ts#L20) type. 
+The error handler configuration receives a function which will get called whenever an error happens on the analytics client. It will receive an argument of [`SegmentError`](packages/core/src/errors.ts#L20) type.
 
 You can use this error handling to trigger different behaviours in the client when a problem occurs. For example if the client gets rate limited you could use the error handler to swap flush policies to be less aggressive:
 
@@ -905,28 +904,28 @@ const segmentClient = createClient({
   flushPolicies: flushPolicies,
   errorHandler: errorHandler,
 });
-
 ```
 
-The reported errors can be of any of the [`ErrorType`](packages/core/src/errors.ts#L4) enum values. 
+The reported errors can be of any of the [`ErrorType`](packages/core/src/errors.ts#L4) enum values.
 
 ### Reporting errors from plugins
 
 Plugins can also report errors to the handler by using the [`.reportInternalError`](packages/core/src/analytics.ts#L741) function of the analytics client, we recommend using the `ErrorType.PluginError` for consistency, and attaching the `innerError` with the actual exception that was hit:
 
 ```ts
-  try {
-    distinctId = await mixpanel.getDistinctId();
-  } catch (e) {
-    analytics.reportInternalError(
-      new SegmentError(ErrorType.PluginError, 'Error: Mixpanel error calling getDistinctId', e)
-    );
-    analytics.logger.warn(e);
-  }
+try {
+  distinctId = await mixpanel.getDistinctId();
+} catch (e) {
+  analytics.reportInternalError(
+    new SegmentError(
+      ErrorType.PluginError,
+      'Error: Mixpanel error calling getDistinctId',
+      e
+    )
+  );
+  analytics.logger.warn(e);
+}
 ```
-
-
-
 
 ## Contributing
 

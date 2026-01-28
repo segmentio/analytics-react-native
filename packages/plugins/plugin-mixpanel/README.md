@@ -7,11 +7,13 @@
 You need to install the `@segment/analytics-react-native-plugin-mixpanel` and the `mixpanel-react-native` dependency.
 
 Using NPM:
+
 ```bash
 npm install --save @segment/analytics-react-native-plugin-mixpanel mixpanel-react-native
 ```
 
 Using Yarn:
+
 ```bash
 yarn add @segment/analytics-react-native-plugin-mixpanel mixpanel-react-native
 ```
@@ -19,6 +21,7 @@ yarn add @segment/analytics-react-native-plugin-mixpanel mixpanel-react-native
 Run `pod install` after the installation to autolink the Mixpanel SDK.
 
 See [Mixpanel React Native SDK](https://github.com/mixpanel/mixpanel-react-native) for more details of this dependency.
+
 ## Usage
 
 Follow the [instructions for adding plugins](https://github.com/segmentio/analytics-react-native#adding-plugins) on the main Analytics client:
@@ -31,7 +34,7 @@ import { createClient } from '@segment/analytics-react-native';
 import { MixpanelPlugin } from '@segment/analytics-react-native-plugin-mixpanel';
 
 const segmentClient = createClient({
-  writeKey: 'SEGMENT_KEY'
+  writeKey: 'SEGMENT_KEY',
 });
 
 segmentClient.add({ plugin: new MixpanelPlugin() });
@@ -46,6 +49,7 @@ Please use Github issues, Pull Requests, or feel free to reach out to our [suppo
 Interested in integrating your service with us? Check out our [Partners page](https://segment.com/partners/) for more details.
 
 ## License
+
 ```
 MIT License
 
