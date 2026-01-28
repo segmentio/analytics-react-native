@@ -65,6 +65,12 @@
         "yarn e2e install --no-immutable",
         "yarn example install --no-immutable"
       ],
+      "update-shells": [
+        "devbox update",
+        "devbox update --config=shells/devbox-fast.json",
+        "devbox update --config=shells/devbox-android.json",
+        "devbox update --config=shells/devbox-ios.json"
+      ],
       "reset-android": [
         "rm -rf ~/.android/avd",
         "rm -f ~/.android/adbkey*",
