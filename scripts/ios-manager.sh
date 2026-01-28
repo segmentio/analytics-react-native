@@ -12,7 +12,7 @@ shift || true
 
 start_ios() {
   local flavor="${IOS_FLAVOR:-latest}"
-  if [[ "$flavor" == "minsdk" ]]; then
+  if [[ $flavor == "minsdk" ]]; then
     export IOS_DEVICE_NAMES="${IOS_MIN_DEVICE:-${PLATFORM_IOS_MIN_DEVICE:-iPhone 13}}"
     export IOS_RUNTIME="${IOS_MIN_RUNTIME:-${PLATFORM_IOS_MIN_RUNTIME:-15.0}}"
     export DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-${IOS_MIN_DEVICE:-${PLATFORM_IOS_MIN_DEVICE:-iPhone 13}}}"
@@ -42,8 +42,11 @@ reset_ios() {
 }
 
 case "$action" in
-  start) start_ios ;;
-  stop) stop_ios ;;
-  reset) reset_ios ;;
-  *) echo "Usage: ios-manager.sh {start|stop|reset}" >&2; exit 1 ;;
+start) start_ios ;;
+stop) stop_ios ;;
+reset) reset_ios ;;
+*)
+  echo "Usage: ios-manager.sh {start|stop|reset}" >&2
+  exit 1
+  ;;
 esac

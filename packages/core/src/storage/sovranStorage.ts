@@ -187,7 +187,7 @@ export class SovranStorage implements Storage {
     Settable<SegmentEvent[]> &
     Queue<SegmentEvent, SegmentEvent[]>;
 
-  readonly enabledStore: Store<{ enabled: boolean }>; 
+  readonly enabledStore: Store<{ enabled: boolean }>;
   readonly enabled: Watchable<boolean> & Settable<boolean>;
 
   constructor(config: StorageConfig) {
@@ -535,7 +535,6 @@ export class SovranStorage implements Storage {
         return enabled;
       },
     };
-
 
     this.fixAnonymousId();
   }

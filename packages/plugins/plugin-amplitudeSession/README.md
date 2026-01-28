@@ -1,15 +1,17 @@
 # @segment/analytics-react-native-plugin-amplitude
 
-`DestinationPlugin` for [Amplitude](https://www.amplitude.com/) sessions. This plugin makes it possible to track session info and send it to Amplitude via a Cloud Mode conenction. 
+`DestinationPlugin` for [Amplitude](https://www.amplitude.com/) sessions. This plugin makes it possible to track session info and send it to Amplitude via a Cloud Mode conenction.
 
 ## Installation
 
 Using NPM:
+
 ```bash
 npm install --save @segment/analytics-react-native-plugin-amplitude-session
 ```
 
 Using Yarn:
+
 ```bash
 yarn add @segment/analytics-react-native-plugin-amplitude-session
 ```
@@ -26,7 +28,7 @@ import { createClient } from '@segment/analytics-react-native';
 import { AmplitudeSessionPlugin } from '@segment/analytics-react-native-plugin-amplitude-session';
 
 const segmentClient = createClient({
-  writeKey: 'SEGMENT_KEY'
+  writeKey: 'SEGMENT_KEY',
 });
 
 segmentClient.add({ plugin: new AmplitudeSessionPlugin() });
@@ -41,6 +43,7 @@ Please use Github issues, Pull Requests, or feel free to reach out to our [suppo
 Interested in integrating your service with us? Check out our [Partners page](https://segment.com/partners/) for more details.
 
 ## License
+
 ```
 MIT License
 

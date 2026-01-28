@@ -5,5 +5,4 @@ export default () => {
   //TO DO : Remove commented lines in next release
   // Adjust.resetSessionPartnerParameters();
   Adjust.removeGlobalPartnerParameters();
-
 };

@@ -2,17 +2,18 @@
 
 `DestinationPlugin` for [Adjust](http://adjust.com/). Wraps [`react-native-adjust`](https://github.com/adjust/react_native_sdk).
 
-
 ## Installation
 
 You need to install the `@segment/analytics-react-native-plugin-adjust` and the `react-native-adjust` dependency.
 
 Using NPM:
+
 ```bash
 npm install --save @segment/analytics-react-native-plugin-adjust react-native-adjust
 ```
 
 Using Yarn:
+
 ```bash
 yarn add @segment/analytics-react-native-plugin-adjust react-native-adjust
 ```
@@ -20,6 +21,7 @@ yarn add @segment/analytics-react-native-plugin-adjust react-native-adjust
 Run `pod install` after the installation to autolink the Adjust SDK.
 
 See [React Native SDK of Adjust](https://github.com/adjust/react_native_sdk) for more details of this dependency.
+
 ## Usage
 
 Follow the [instructions for adding plugins](https://github.com/segmentio/analytics-react-native#adding-plugins) on the main Analytics client:
@@ -32,7 +34,7 @@ import { createClient } from '@segment/analytics-react-native';
 import { AdjustPlugin } from '@segment/analytics-react-native-plugin-adjust';
 
 const segmentClient = createClient({
-  writeKey: 'SEGMENT_KEY'
+  writeKey: 'SEGMENT_KEY',
 });
 
 segmentClient.add({ plugin: new AdjustPlugin() });
@@ -47,6 +49,7 @@ Please use Github issues, Pull Requests, or feel free to reach out to our [suppo
 Interested in integrating your service with us? Check out our [Partners page](https://segment.com/partners/) for more details.
 
 ## License
+
 ```
 MIT License
 

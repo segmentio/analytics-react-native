@@ -5,9 +5,7 @@
         "componentTypes": []
       },
       "consentSettings": {
-        "categories": [
-          "C0001"
-        ]
+        "categories": ["C0001"]
       }
     },
     "DummyDest2": {
@@ -15,9 +13,7 @@
         "componentTypes": []
       },
       "consentSettings": {
-        "categories": [
-          "C0002"
-        ]
+        "categories": ["C0002"]
       }
     },
     "DummyDest3": {
@@ -25,9 +21,7 @@
         "componentTypes": []
       },
       "consentSettings": {
-        "categories": [
-          "C0003"
-        ]
+        "categories": ["C0003"]
       }
     },
     "DummyDest4": {
@@ -35,9 +29,7 @@
         "componentTypes": []
       },
       "consentSettings": {
-        "categories": [
-          "C0004"
-        ]
+        "categories": ["C0004"]
       }
     },
     "DummyDest5": {
@@ -45,9 +37,7 @@
         "componentTypes": []
       },
       "consentSettings": {
-        "categories": [
-          "C0005"
-        ]
+        "categories": ["C0005"]
       }
     },
     "Segment.io": {
@@ -57,9 +47,7 @@
       "maybeBundledConfigIds": {},
       "versionSettings": {
         "version": "4.4.7",
-        "componentTypes": [
-          "browser"
-        ]
+        "componentTypes": ["browser"]
       },
       "apiHost": "api.segment.io/v1"
     }
@@ -94,12 +82,6 @@
   "remotePlugins": [],
   "consentSettings": {
     "hasUnmappedDestinations": false,
-    "allCategories": [
-      "C0001",
-      "C0002",
-      "C0003",
-      "C0004",
-      "C0005"
-    ]
+    "allCategories": ["C0001", "C0002", "C0003", "C0004", "C0005"]
   }
 }

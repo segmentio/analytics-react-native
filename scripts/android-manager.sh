@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-action="${1:-}"; shift || true
+action="${1:-}"
+shift || true
 
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/android-env.sh"
 
@@ -9,11 +10,11 @@ start_android() {
   local flavor="${AVD_FLAVOR:-minsdk}" headless="${EMU_HEADLESS:-}" port="${EMU_PORT:-5554}"
   local avd="${DETOX_AVD:-}"
 
-  if [[ -z "$avd" ]]; then
-    if [[ "$flavor" == "latest" ]]; then
+  if [[ -z $avd ]]; then
+    if [[ $flavor == "latest" ]]; then
       local host_arch
       host_arch="$(uname -m)"
-      avd="medium_phone_API33_$( [[ "$host_arch" == "arm64" || "$host_arch" == "aarch64" ]] && echo arm64_v8a || echo x86_64 )"
+      avd="medium_phone_API33_$([[ $host_arch == "arm64" || $host_arch == "aarch64" ]] && echo arm64_v8a || echo x86_64)"
     else
       avd="pixel_API21_$(uname -m | grep -qi arm && echo arm64_v8a || echo x86_64)"
     fi
@@ -46,8 +47,11 @@ reset_android() {
 }
 
 case "$action" in
-  start) start_android ;;
-  stop) stop_android ;;
-  reset) reset_android ;;
-  *) echo "Usage: android-manager.sh {start|stop|reset}" >&2; exit 1 ;;
+start) start_android ;;
+stop) stop_android ;;
+reset) reset_android ;;
+*)
+  echo "Usage: android-manager.sh {start|stop|reset}" >&2
+  exit 1
+  ;;
 esac

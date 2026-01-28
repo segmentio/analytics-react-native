@@ -7,11 +7,13 @@
 You need to install the `@segment/analytics-react-native-plugin-appsflyer` and the `react-native-appsflyer` dependency.
 
 Using NPM:
+
 ```bash
 npm install --save @segment/analytics-react-native-plugin-appsflyer react-native-appsflyer
 ```
 
 Using Yarn:
+
 ```bash
 yarn add @segment/analytics-react-native-plugin-appsflyer react-native-appsflyer
 ```
@@ -19,11 +21,12 @@ yarn add @segment/analytics-react-native-plugin-appsflyer react-native-appsflyer
 Run `pod install` after the installation to autolink the AppsFlyer SDK.
 
 See [AppsFlyer React Native Plugin](https://github.com/AppsFlyerSDK/appsflyer-react-native-plugin) for more details of this dependency.
+
 ## Usage
 
 Follow the [instructions for adding plugins](https://github.com/segmentio/analytics-react-native#adding-plugins) on the main Analytics client:
 
-In your code where you initialize the analytics client call the `.add(plugin)` method with an `AppsflyerPlugin` instance. 
+In your code where you initialize the analytics client call the `.add(plugin)` method with an `AppsflyerPlugin` instance.
 
 ```ts
 // app.js
@@ -33,7 +36,7 @@ import { createClient } from '@segment/analytics-react-native';
 import { AppsflyerPlugin } from '@segment/analytics-react-native-plugin-appsflyer';
 
 const segmentClient = createClient({
-  writeKey: 'SEGMENT_KEY'
+  writeKey: 'SEGMENT_KEY',
 });
 
 const plugin = new AppsflyerPlugin();
@@ -43,7 +46,7 @@ segmentClient.add({ plugin });
 
 ### Tracking Deep Links on iOS
 
-The Analytics React Native SDK [requires additonal setup](https://github.com/segmentio/analytics-react-native#ios-deep-link-tracking-setup) to automatically track deep links. If you are also tracking [Universal Links](https://dev.appsflyer.com/hc/docs/ios-sdk-reference-appsflyerlib#continue), add the following to your `AppDelegate.m` : 
+The Analytics React Native SDK [requires additonal setup](https://github.com/segmentio/analytics-react-native#ios-deep-link-tracking-setup) to automatically track deep links. If you are also tracking [Universal Links](https://dev.appsflyer.com/hc/docs/ios-sdk-reference-appsflyerlib#continue), add the following to your `AppDelegate.m` :
 
 ```objc
 - (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity
@@ -54,7 +57,7 @@ The Analytics React Native SDK [requires additonal setup](https://github.com/seg
     NSDictionary *options = @{};
     [AnalyticsReactNative trackDeepLink:url withOptions:options];
   }
- ```
+```
 
 ## Support
 
@@ -65,6 +68,7 @@ Please use Github issues, Pull Requests, or feel free to reach out to our [suppo
 Interested in integrating your service with us? Check out our [Partners page](https://segment.com/partners/) for more details.
 
 ## License
+
 ```
 MIT License
 

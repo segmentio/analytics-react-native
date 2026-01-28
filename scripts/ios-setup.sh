@@ -23,7 +23,7 @@ require_tool() {
 
 ensure_developer_dir() {
   local desired="${IOS_DEVELOPER_DIR:-}"
-  if [[ -z "$desired" ]]; then
+  if [[ -z $desired ]]; then
     if xcode-select -p >/dev/null 2>&1; then
       desired="$(xcode-select -p)"
     elif [[ -d /Applications/Xcode.app/Contents/Developer ]]; then
@@ -31,7 +31,7 @@ ensure_developer_dir() {
     fi
   fi
 
-  if [[ -n "$desired" && -d "$desired" ]]; then
+  if [[ -n $desired && -d $desired ]]; then
     export DEVELOPER_DIR="$desired"
     export PATH="$DEVELOPER_DIR/usr/bin:$PATH"
     return 0
@@ -65,7 +65,7 @@ ensure_simctl
 ensure_core_sim_service() {
   local output status
   output="$(xcrun simctl list devices -j 2>&1)" || status=$?
-  if [[ -n "${status:-}" ]]; then
+  if [[ -n ${status:-} ]]; then
     echo "simctl failed while listing devices (status ${status}). CoreSimulatorService may be unhealthy." >&2
     echo "Try restarting it:" >&2
     echo "  killall -9 com.apple.CoreSimulatorService 2>/dev/null || true" >&2
@@ -92,10 +92,10 @@ pick_runtime() {
   local json choice
   json="$(xcrun simctl list runtimes -j)"
   choice="$(echo "$json" | jq -r --arg v "$preferred" '.runtimes[] | select(.isAvailable and (.name|startswith("iOS \($v)"))) | "\(.identifier)|\(.name)"' | head -n1)"
-  if [[ -z "$choice" || "$choice" == "null" ]]; then
+  if [[ -z $choice || $choice == "null" ]]; then
     choice="$(echo "$json" | jq -r '.runtimes[] | select(.isAvailable and (.name|startswith("iOS "))) | "\(.version)|\(.identifier)|\(.name)"' | sort -Vr | head -n1 | cut -d"|" -f2-)"
   fi
-  [[ -n "$choice" && "$choice" != "null" ]] || return 1
+  [[ -n $choice && $choice != "null" ]] || return 1
   echo "$choice"
 }
 
@@ -106,7 +106,7 @@ resolve_runtime() {
     return 0
   fi
 
-  if [[ "${IOS_DOWNLOAD_RUNTIME:-1}" != "0" ]] && command -v xcodebuild >/dev/null 2>&1; then
+  if [[ ${IOS_DOWNLOAD_RUNTIME:-1} != "0" ]] && command -v xcodebuild >/dev/null 2>&1; then
     echo "Preferred runtime iOS ${preferred} not found. Attempting to download via xcodebuild -downloadPlatform iOS..." >&2
     if xcodebuild -downloadPlatform iOS; then
       if choice=$(pick_runtime "$preferred"); then
@@ -128,9 +128,9 @@ existing_device_udid_any_runtime() {
 
 device_data_dir_exists() {
   local udid="${1:-}"
-  [[ -n "$udid" ]] || return 1
+  [[ -n $udid ]] || return 1
   local dir="$HOME/Library/Developer/CoreSimulator/Devices/$udid"
-  [[ -d "$dir" ]]
+  [[ -d $dir ]]
 }
 
 devicetype_id_for_name() {
@@ -142,7 +142,10 @@ ensure_device() {
   local base_name="$1" preferred_runtime="$2"
 
   # If a device with this name already exists anywhere, reuse it.
-  if existing_udid=$(existing_device_udid_any_runtime "$base_name"); [[ -n "${existing_udid}" ]]; then
+  if
+    existing_udid=$(existing_device_udid_any_runtime "$base_name")
+    [[ -n ${existing_udid} ]]
+  then
     if device_data_dir_exists "$existing_udid"; then
       echo "Found existing ${base_name}: ${existing_udid}"
       return 0
@@ -167,7 +170,10 @@ ensure_device() {
   fi
 
   # Also check for an existing device with the runtime-qualified display name.
-  if existing_udid=$(existing_device_udid_any_runtime "$display_name"); [[ -n "${existing_udid}" ]]; then
+  if
+    existing_udid=$(existing_device_udid_any_runtime "$display_name")
+    [[ -n ${existing_udid} ]]
+  then
     if device_data_dir_exists "$existing_udid"; then
       echo "Found existing ${display_name}: ${existing_udid}"
       return 0

@@ -7,11 +7,13 @@
 You need to install the `@segment/analytics-react-native-plugin-facebook-app-events` and the `react-native-fbsdk-next` dependency.
 
 Using NPM:
+
 ```bash
 npm install --save @segment/analytics-react-native-plugin-facebook-app-events react-native-fbsdk-next
 ```
 
 Using Yarn:
+
 ```bash
 yarn add @segment/analytics-react-native-plugin-facebook-app-events react-native-fbsdk-next
 ```
@@ -21,6 +23,7 @@ Run `pod install` after the installation to autolink the Facebook SDK.
 Follow the instructions in [Configure projects](https://github.com/thebergamo/react-native-fbsdk-next#3-configure-projects) of React-Native-fbsdk-next to finish the setup of FBSDK.
 
 See [React Native FBSDK Next](https://github.com/thebergamo/react-native-fbsdk-next) for more details of this dependency. The plugin automatically calls the `Settings.initializeSDK();` method, so you do not need to explictly add that code to your app. Adding the method again may result in an error.
+
 ## Usage
 
 Follow the [instructions for adding plugins](https://github.com/segmentio/analytics-react-native#adding-plugins) on the main Analytics client:
@@ -33,7 +36,7 @@ import { createClient } from '@segment/analytics-react-native';
 import { FacebookAppEventsPlugin } from '@segment/analytics-react-native-plugin-facebook-app-events';
 
 const segmentClient = createClient({
-  writeKey: 'SEGMENT_KEY'
+  writeKey: 'SEGMENT_KEY',
 });
 
 segmentClient.add({ plugin: new FacebookAppEventsPlugin() });
@@ -48,6 +51,7 @@ Please use Github issues, Pull Requests, or feel free to reach out to our [suppo
 Interested in integrating your service with us? Check out our [Partners page](https://segment.com/partners/) for more details.
 
 ## License
+
 ```
 MIT License
 

@@ -7,11 +7,13 @@
 You need to install the `@segment/analytics-react-native-plugin-firebase` and its dependencies: `@react-native-firebase/app` and `@react-native-firebase/analytics`
 
 Using NPM:
+
 ```bash
 npm install --save @segment/analytics-react-native-plugin-firebase @react-native-firebase/app @react-native-firebase/analytics
 ```
 
 Using Yarn:
+
 ```bash
 yarn add @segment/analytics-react-native-plugin-firebase @react-native-firebase/app @react-native-firebase/analytics
 ```
@@ -24,7 +26,7 @@ See [React Native Firebase](https://rnfirebase.io) and [React Native Firebase An
 
 Follow the [instructions for adding plugins](https://github.com/segmentio/analytics-react-native#adding-plugins) on the main Analytics client:
 
-In your code where you initialize the analytics client call the `.add(plugin)` method with an `FirebasePlugin` instance. 
+In your code where you initialize the analytics client call the `.add(plugin)` method with an `FirebasePlugin` instance.
 
 ```ts
 import { createClient } from '@segment/analytics-react-native';
@@ -32,7 +34,7 @@ import { createClient } from '@segment/analytics-react-native';
 import { FirebasePlugin } from '@segment/analytics-react-native-plugin-firebase';
 
 const segmentClient = createClient({
-  writeKey: 'SEGMENT_KEY'
+  writeKey: 'SEGMENT_KEY',
 });
 
 segmentClient.add({ plugin: new FirebasePlugin() });
@@ -47,6 +49,7 @@ Please use Github issues, Pull Requests, or feel free to reach out to our [suppo
 Interested in integrating your service with us? Check out our [Partners page](https://segment.com/partners/) for more details.
 
 ## License
+
 ```
 MIT License
 

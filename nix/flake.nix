@@ -3,7 +3,8 @@
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
-  outputs = { self, nixpkgs }:
+  outputs =
+    { self, nixpkgs }:
     let
       systems = [
         "x86_64-linux"
@@ -13,10 +14,9 @@
       ];
 
       versionData = builtins.fromJSON (builtins.readFile ./platform-versions.json);
-      getVar = name: default:
-        if builtins.hasAttr name versionData
-        then toString (builtins.getAttr name versionData)
-        else default;
+      getVar =
+        name: default:
+        if builtins.hasAttr name versionData then toString (builtins.getAttr name versionData) else default;
 
       androidSdkConfig = {
         platformVersions = [
@@ -28,14 +28,18 @@
         systemImageTypes = [ (getVar "PLATFORM_ANDROID_SYSTEM_IMAGE_TAG" "google_apis") ];
       };
 
-      forAllSystems = f:
-        builtins.listToAttrs (map (system: {
-          name = system;
-          value = f system;
-        }) systems);
+      forAllSystems =
+        f:
+        builtins.listToAttrs (
+          map (system: {
+            name = system;
+            value = f system;
+          }) systems
+        );
     in
     {
-      packages = forAllSystems (system:
+      packages = forAllSystems (
+        system:
         let
           pkgs = import nixpkgs {
             inherit system;
@@ -45,10 +49,7 @@
             };
           };
 
-          abiVersions =
-            if builtins.match "aarch64-.*" system != null
-            then [ "arm64-v8a" ]
-            else [ "x86_64" ];
+          abiVersions = if builtins.match "aarch64-.*" system != null then [ "arm64-v8a" ] else [ "x86_64" ];
 
           androidPkgs = pkgs.androidenv.composeAndroidPackages {
             # Keep API 21 images for the AVD and add API 33 for React Native builds.
@@ -65,7 +66,8 @@
         {
           android-sdk = androidPkgs.androidsdk;
           default = androidPkgs.androidsdk;
-        });
+        }
+      );
 
       androidSdkConfig = androidSdkConfig;
     };

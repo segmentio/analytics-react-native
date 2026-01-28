@@ -1,12 +1,12 @@
-const { rootMap } = require('./workspace') // Load the linked data
+const {rootMap} = require('./workspace'); // Load the linked data
 
 module.exports = {
   project: {
     ios: {
-      automaticPodsInstallation: true
-    }
+      automaticPodsInstallation: true,
+    },
   },
   dependencies: {
-    ...rootMap
+    ...rootMap,
   },
-}
+};

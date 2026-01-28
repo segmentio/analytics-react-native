@@ -1,5 +1,5 @@
-const { getLinkedData } = require('../linkHelper')
+const {getLinkedData} = require('../linkHelper');
 
 module.exports = {
-  ...getLinkedData(['core', 'sovran'])
-}
+  ...getLinkedData(['core', 'sovran']),
+};

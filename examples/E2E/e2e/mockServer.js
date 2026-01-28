@@ -5,23 +5,23 @@ const port = 9091;
 
 let server;
 
-export const startServer = async (mockServerListener) => {
+export const startServer = async mockServerListener => {
   if (server) {
     throw new Error('Server is already running');
   }
 
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const app = express();
 
     app.use(bodyParser.json());
-    
+
     // Handles batch events
     app.post('/v1/b', (req, res) => {
       console.log(`➡️  Received request`);
       const body = req.body;
       mockServerListener(body);
 
-      res.status(200).send({ mockSuccess: true });
+      res.status(200).send({mockSuccess: true});
     });
 
     // Handles settings calls

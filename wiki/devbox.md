@@ -27,7 +27,7 @@ By default, Devbox uses the flake-pinned SDK (`path:./nix#android-sdk`). It sets
 
 ### Detox defaults
 
-- Android Detox defaults to the latest AVD (`medium_phone_API33_arm64_v8a` on arm hosts, x86_64 otherwise). Set `DETOX_AVD=pixel_API21_*` to run against the minsdk AVD.
+- Android Detox defaults to the latest AVD (`medium_phone_API33_arm64_v8a` on arm hosts, x86*64 otherwise). Set `DETOX_AVD=pixel_API21*\*` to run against the minsdk AVD.
 - CI Android E2E runs both API 21 (Pixel) and API 33 (Medium Phone) in parallel in the nightly workflow. Override the workflow matrix in `ci-e2e-nightly.yml` if needed.
 
 ### Updating Android min/latest versions
@@ -79,5 +79,6 @@ iOS uses the host Xcode toolchain. There is no Nix-provisioned iOS SDK. Run `dev
 - CI workflows (`ci-e2e-optional.yml` and `ci-e2e-nightly.yml`) for iOS/Android target selection.
 
 After updating `nix/platform-versions.json`:
+
 - Run `devbox install` or `devbox shell --rebuild` to refresh the SDK.
 - If you change iOS min/max, re-run the iOS E2E workflow to confirm the runtime/device exists on the runner.

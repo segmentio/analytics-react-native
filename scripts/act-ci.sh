@@ -9,11 +9,18 @@ PLATFORM="ubuntu-latest=node:20-bullseye"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -j|--job)
-      JOB="$2"; shift 2 ;;
-    -p|--platform)
-      PLATFORM="$2"; shift 2 ;;
-    *) echo "Unknown option: $1" >&2; exit 1 ;;
+  -j | --job)
+    JOB="$2"
+    shift 2
+    ;;
+  -p | --platform)
+    PLATFORM="$2"
+    shift 2
+    ;;
+  *)
+    echo "Unknown option: $1" >&2
+    exit 1
+    ;;
   esac
 done
 
@@ -21,7 +28,7 @@ CMD=(act)
 CMD+=(--pull=false)
 CMD+=(--platform "${PLATFORM}")
 CMD+=(--input ACT=true)
-if [[ -n "$JOB" ]]; then
+if [[ -n $JOB ]]; then
   CMD+=(--job "$JOB")
 fi
 
