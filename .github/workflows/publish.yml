@@ -17,6 +17,7 @@ jobs:
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
+          project-path: shells/devbox-fast.json
           enable-cache: 'false'
       - name: build
         run: devbox run --config=shells/devbox-fast.json build
@@ -54,6 +55,7 @@ jobs:
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
+          project-path: shells/devbox-ios.json
           enable-cache: 'false'
       - name: Resolve iOS targets
         run: |
@@ -101,6 +103,7 @@ jobs:
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
+          project-path: shells/devbox-android.json
           enable-cache: 'false'
       - name: Resolve Android targets
         run: |
@@ -135,6 +138,7 @@ jobs:
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
+          project-path: .
           enable-cache: 'false'
 
       - name: Config, Build, Release
