@@ -26,6 +26,7 @@ jobs:
     name: E2E iOS (min/max)
     runs-on: macos-26
     env:
+      ANALYTICS_CI_DEBUG: "1"
       YARN_ENABLE_HARDENED_MODE: 0
       XCODE_VERSION: '26.2'
     strategy:
@@ -74,6 +75,7 @@ jobs:
     name: E2E Android (min/max)
     runs-on: ubuntu-latest
     env:
+      ANALYTICS_CI_DEBUG: "1"
       EMU_HEADLESS: 1
       AVD_ABI: x86_64
     strategy:

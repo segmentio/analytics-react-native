@@ -58,8 +58,15 @@ resolve_flake_sdk_root() {
   return 1
 }
 
-# Only act if neither var is already provided.
-if [ -z "${ANDROID_SDK_ROOT:-}" ] && [ -z "${ANDROID_HOME:-}" ]; then
+prefer_local="${ANDROID_SDK_USE_LOCAL:-}"
+if [ -n "$prefer_local" ]; then
+  if [ -z "${ANDROID_SDK_ROOT:-}" ] && [ -n "${ANDROID_HOME:-}" ]; then
+    ANDROID_SDK_ROOT="$ANDROID_HOME"
+  fi
+  if [ -n "${ANDROID_SDK_ROOT:-}" ] && [ -z "${ANDROID_HOME:-}" ]; then
+    ANDROID_HOME="$ANDROID_SDK_ROOT"
+  fi
+else
   preferred_output="${ANDROID_SDK_FLAKE_OUTPUT:-}"
   sdk_root_max=""
   sdk_root_min=""
@@ -85,14 +92,12 @@ if [ -z "${ANDROID_SDK_ROOT:-}" ] && [ -z "${ANDROID_HOME:-}" ]; then
   fi
   export ANDROID_SDK_ROOT_MAX ANDROID_HOME_MAX ANDROID_SDK_ROOT_MIN ANDROID_HOME_MIN
 
-  if [ -z "${ANDROID_SDK_ROOT:-}" ]; then
-    if [ -n "$sdk_root_max" ]; then
-      ANDROID_SDK_ROOT="$sdk_root_max"
-      ANDROID_HOME="$ANDROID_SDK_ROOT"
-    elif [ -n "$sdk_root_min" ]; then
-      ANDROID_SDK_ROOT="$sdk_root_min"
-      ANDROID_HOME="$ANDROID_SDK_ROOT"
-    fi
+  if [ -n "$sdk_root_max" ]; then
+    ANDROID_SDK_ROOT="$sdk_root_max"
+    ANDROID_HOME="$ANDROID_SDK_ROOT"
+  elif [ -n "$sdk_root_min" ]; then
+    ANDROID_SDK_ROOT="$sdk_root_min"
+    ANDROID_HOME="$ANDROID_SDK_ROOT"
   fi
 fi
 
@@ -132,10 +137,10 @@ if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
     echo "Using Android SDK: $ANDROID_SDK_ROOT"
     case "$ANDROID_SDK_ROOT" in
     /nix/store/*)
-      echo "Source: Nix flake (reproducible, pinned). To use your local SDK instead, set ANDROID_HOME/ANDROID_SDK_ROOT before starting devbox shell."
+      echo "Source: Nix flake (reproducible, pinned). To use your local SDK instead, set ANDROID_SDK_USE_LOCAL=1 before starting devbox shell."
       ;;
     *)
-      echo "Source: User/local SDK. To use the pinned Nix SDK, unset ANDROID_HOME/ANDROID_SDK_ROOT before starting devbox shell."
+      echo "Source: User/local SDK. To use the pinned Nix SDK, unset ANDROID_HOME/ANDROID_SDK_ROOT and ensure ANDROID_SDK_USE_LOCAL is not set before starting devbox shell."
       ;;
     esac
   fi

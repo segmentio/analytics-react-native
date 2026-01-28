@@ -23,7 +23,8 @@ This repo uses `scripts/` as the entry point for devbox commands and CI helpers.
 
 - `scripts/android/env.sh`
 
-  - Sets `ANDROID_SDK_ROOT`/`ANDROID_HOME` and PATH for the Nix SDK.
+  - Sets `ANDROID_SDK_ROOT`/`ANDROID_HOME` and PATH for the Nix SDK (prefers `android-sdk-max` when available).
+  - Set `ANDROID_SDK_USE_LOCAL=1` to keep a pre-set local SDK instead.
   - Loads platform defaults via `scripts/platform-versions.sh`.
   - Used by devbox init hooks in `devbox.json` and `shells/android-min/devbox.json` + `shells/android-max/devbox.json`.
 
@@ -36,7 +37,7 @@ This repo uses `scripts/` as the entry point for devbox commands and CI helpers.
 - `scripts/android/manager.sh`
 
   - Starts/stops/resets AVDs and applies emulator defaults.
-  - Uses `devbox run setup-android` to ensure AVDs exist.
+  - Invokes `scripts/android/setup.sh` directly to ensure AVDs exist.
 
 - `scripts/android/test.sh`
   - Runs setup + yarn build + Android E2E (Detox).
