@@ -1,4 +1,4 @@
-## Devbox Overview
+# Devbox Overview
 
 This repo ships a Devbox environment that preinstalls the Android SDK and common build tools like Gradle and Yarn. Devbox uses Nix under the hood to pin versions so everyone has the same setup. You don’t need to know Nix to use it.
 
@@ -32,11 +32,11 @@ By default, Devbox uses the flake-pinned SDK (`path:./nix#android-sdk`). It sets
 
 ### Updating Android min/latest versions
 
-- Bump pinned SDKs in `nix/flake.nix` (platformVersions/buildToolsVersions/cmdLineToolsVersion). Rebuild devbox (`devbox shell --rebuild`) so everyone gets the new SDK.
+- Bump pinned SDK versions in `nix/platform-versions.json` (platformVersions/buildToolsVersions/cmdLineToolsVersion). Rebuild devbox (`devbox shell --rebuild`) so everyone gets the new SDK.
 - Update AVD defaults/names if you change API levels:
   - `devbox.json` (`start-android-*` scripts) for default AVD names.
   - `examples/E2E/.detoxrc.js` for the default `DETOX_AVD`.
-  - CI matrix in `.github/workflows/ci.yml` (`ANDROID_MATRIX` entries).
+  - CI matrix in `.github/workflows/ci-e2e-nightly.yml` (`android-min`/`android-latest` targets).
 - Gradle uses `buildToolsVersion` from `examples/E2E/android/build.gradle`; Devbox exports `ANDROID_BUILD_TOOLS_VERSION` from `nix/platform-versions.json` (single source of truth) and you can override it if needed.
 
 ## iOS

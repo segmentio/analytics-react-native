@@ -7,6 +7,6 @@ versions_json="${PLATFORM_VERSIONS_JSON:-$repo_root/nix/platform-versions.json}"
 
 if [ -f "$versions_json" ] && command -v jq >/dev/null 2>&1; then
   eval "$(
-    jq -r 'to_entries[] | "\(.key)=\"\(.value|tostring|gsub(\"\\\"\"; \"\\\\\\\"\"))\""' "$versions_json"
+    jq -r 'to_entries[] | "\(.key)=\(.value|@sh)"' "$versions_json"
   )"
 fi
