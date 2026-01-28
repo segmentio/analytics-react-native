@@ -32,7 +32,7 @@ By default, Devbox uses the flake-pinned SDK (`path:./nix#android-sdk`). It sets
 
 ### Updating Android min/latest versions
 
-- Bump pinned SDK versions in `nix/platform-versions.json` (platformVersions/buildToolsVersions/cmdLineToolsVersion). Rebuild devbox (`devbox shell --rebuild`) so everyone gets the new SDK.
+- Bump pinned SDK versions in `nix/platform-versions.json` (platformVersions/buildToolsVersions/cmdLineToolsVersion). Refresh your devshell by running the `refresh` command while inside a devbox shell.
 - Update AVD defaults/names if you change API levels:
   - `devbox.json` (`start-android-*` scripts) for default AVD names.
   - `examples/E2E/.detoxrc.js` for the default `DETOX_AVD`.
@@ -80,5 +80,5 @@ iOS uses the host Xcode toolchain. There is no Nix-provisioned iOS SDK. Run `dev
 
 After updating `nix/platform-versions.json`:
 
-- Run `devbox install` or `devbox shell --rebuild` to refresh the SDK.
+- Run `refresh` while in a devbox shell to refresh the SDK.
 - If you change iOS min/max, re-run the iOS E2E workflow to confirm the runtime/device exists on the runner.
