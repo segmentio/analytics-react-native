@@ -18,6 +18,20 @@ const safeParseJSON = cmd => {
   }
 };
 
+const resolveGradleCmd = () => {
+  if (process.env.GRADLE_CMD) {
+    return process.env.GRADLE_CMD;
+  }
+  try {
+    execSync('command -v gradle', {stdio: 'ignore'});
+    return 'gradle';
+  } catch (_) {
+    return './gradlew';
+  }
+};
+
+const gradleCmd = resolveGradleCmd();
+
 const listAvailableDevices = () => {
   const parsed = safeParseJSON('xcrun simctl list devices -j');
   if (!parsed || !parsed.devices) return [];
@@ -119,14 +133,14 @@ module.exports = {
       type: 'android.apk',
       binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
       build:
-        'cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug',
+        `cd android && ${gradleCmd} assembleDebug assembleAndroidTest -DtestBuildType=debug`,
       reversePorts: [8081],
     },
     'android.release': {
       type: 'android.apk',
       binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
       build:
-        'cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release',
+        `cd android && ${gradleCmd} assembleRelease assembleAndroidTest -DtestBuildType=release`,
     },
   },
   devices: {

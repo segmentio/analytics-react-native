@@ -74,9 +74,43 @@ jobs:
       - uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
           xcode-version: ${{ steps.defaults.outputs.runtime }}
+      - name: Environment check
+        run: sh scripts/ci/env-check.sh
+      - name: Xcode diagnostics
+        run: |
+          set -euo pipefail
+          echo "Xcode path: $(xcode-select -p)"
+          xcodebuild -version
+          xcodebuild -showsdks
+          echo "Swift toolchain libs (simulator):"
+          ls -la "$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator" || true
+          echo "Swift runtime libs (SDK):"
+          ls -la "$(xcode-select -p)/Platforms/iPhoneSimulator.platform/Developer/SDKs" || true
+          sdk_path="$(xcrun --sdk iphonesimulator --show-sdk-path 2>/dev/null || true)"
+          if [ -n "$sdk_path" ]; then
+            ls -la "$sdk_path/usr/lib/swift" || true
+          fi
+      - name: Verify Swift compatibility libs
+        run: |
+          set -euo pipefail
+          toolchain_swift_dir="$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator"
+          sdk_path="$(xcrun --sdk iphonesimulator --show-sdk-path 2>/dev/null || true)"
+          sdk_swift_dir="${sdk_path}/usr/lib/swift"
+          missing=""
+          for lib in swiftCompatibilityPacks swiftCompatibility56 swiftCompatibilityConcurrency; do
+            if [ ! -e "${toolchain_swift_dir}/lib${lib}.dylib" ] && [ ! -e "${sdk_swift_dir}/lib${lib}.dylib" ]; then
+              missing="${missing} ${lib}"
+            fi
+          done
+          if [ -n "$missing" ]; then
+            echo "Missing Swift compatibility libraries:${missing}" >&2
+            echo "toolchain_swift_dir=${toolchain_swift_dir}" >&2
+            echo "sdk_swift_dir=${sdk_swift_dir}" >&2
+            exit 1
+          fi
       - name: Install Xcode components
         run: |
-          sudo xcodebuild -runFirstLaunch
+          sudo xcodebuild -runFirstLaunch -checkForNewerComponents
           sudo xcodebuild -downloadPlatform iOS
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0

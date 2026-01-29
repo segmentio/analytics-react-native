@@ -57,23 +57,28 @@ resolve_device() {
   if [ -z "$desired" ]; then
     return 1
   fi
-  if avdmanager list device | grep -qi "Name: ${desired}$"; then
-    printf '%s\n' "$desired"
-    return 0
+  devices="$(avdmanager list device | awk -F': ' '/Name:/{print $2}')"
+  if [ -z "$devices" ]; then
+    return 1
   fi
-  if avdmanager list device | grep -qi "Name: ${desired}"; then
-    printf '%s\n' "$desired"
-    return 0
-  fi
-  if avdmanager list device | grep -qi "Name: pixel"; then
-    printf '%s\n' "pixel"
-    return 0
-  fi
-  fallback="$(avdmanager list device | awk -F': ' '/Name:/{print $2; exit}')"
-  if [ -n "$fallback" ]; then
-    printf '%s\n' "$fallback"
-    return 0
-  fi
+
+  normalize_name() {
+    printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | tr -cd '[:alnum:]'
+  }
+
+  desired_norm="$(normalize_name "$desired")"
+  desired_alt_norm="$(normalize_name "$(printf '%s' "$desired" | tr '_-' '  ')")"
+
+  while IFS= read -r name; do
+    name_norm="$(normalize_name "$name")"
+    if [ "$name_norm" = "$desired_norm" ] || [ "$name_norm" = "$desired_alt_norm" ]; then
+      printf '%s\n' "$name"
+      return 0
+    fi
+  done <<EOF
+$devices
+EOF
+
   return 1
 }
 
