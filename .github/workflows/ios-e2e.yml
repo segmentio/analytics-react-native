@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Resolve iOS runtime
-        id: runtime
+        id: defaults
         run: |
           runtime="${{ inputs.runtime }}"
           min="$(jq -r '.defaults.IOS_RUNTIME_MIN' nix/defaults.json)"
@@ -71,9 +71,13 @@ jobs:
           sudo rm -rf "$HOME/Library/Developer/CoreSimulator/Devices"
           sudo rm -rf "$HOME/Library/Developer/Xcode/DerivedData"
           df -H
-      - uses: maxim-lobanov/setup-xcode@v1
+      - uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
-          xcode-version: ${{ steps.runtime.outputs.runtime }}
+          xcode-version: ${{ steps.defaults.outputs.runtime }}
+      - name: Install Xcode components
+        run: |
+          sudo xcodebuild -runFirstLaunch
+          sudo xcodebuild -downloadPlatform iOS
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
@@ -83,5 +87,5 @@ jobs:
         run: devbox run --config=${{ inputs.devbox_config }} test-ios
         env:
           TARGET_SDK: ${{ inputs.target }}
-          IOS_RUNTIME_MIN: ${{ steps.runtime.outputs.runtime_min }}
-          IOS_RUNTIME_MAX: ${{ steps.runtime.outputs.runtime_max }}
+          IOS_RUNTIME_MIN: ${{ steps.defaults.outputs.runtime_min }}
+          IOS_RUNTIME_MAX: ${{ steps.defaults.outputs.runtime_max }}

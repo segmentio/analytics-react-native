@@ -142,6 +142,7 @@ ${target_line}"
 
 android_setup() {
   TARGETS=""
+  resolved_avd_name=""
   detected_sdk_root="$(detect_sdk_root 2>/dev/null || true)"
 
   if [ -z "${ANDROID_SDK_ROOT:-}" ] && [ -n "$detected_sdk_root" ]; then
@@ -275,6 +276,9 @@ TARGET_EOF
     else
       avd_name="$(printf '%s_API%s_%s' "$device" "$api" "$abi_safe")"
     fi
+    if [ -z "$resolved_avd_name" ]; then
+      resolved_avd_name="$avd_name"
+    fi
 
     create_avd "$avd_name" "$device" "$api_image"
     if avd_exists "$avd_name"; then
@@ -283,6 +287,10 @@ TARGET_EOF
   done
   IFS="$ifs_backup"
 
+  if [ -z "${DETOX_AVD:-}" ] && [ -n "$resolved_avd_name" ]; then
+    DETOX_AVD="$resolved_avd_name"
+    export DETOX_AVD
+  fi
   echo "AVDs ready. Boot with: emulator -avd <name> --netdelay none --netspeed full"
 }
 
