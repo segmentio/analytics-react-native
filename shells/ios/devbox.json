@@ -10,11 +10,11 @@
   },
   "shell": {
     "init_hook": [
-      "DEVBOX_INIT_IOS=1 sh $DEVBOX_PROJECT_ROOT/../../scripts/devbox/init.sh"
+      "DEVBOX_INIT_IOS=1 . $DEVBOX_PROJECT_ROOT/../../scripts/env-defaults.sh"
     ],
     "scripts": {
-      "setup-ios": ["sh $DEVBOX_PROJECT_ROOT/../../scripts/entry/run.sh ios setup"],
-      "test-ios": ["sh $DEVBOX_PROJECT_ROOT/../../scripts/entry/run.sh ios test"]
+      "setup-ios": ["sh $DEVBOX_PROJECT_ROOT/../../scripts/run.sh ios setup"],
+      "test-ios": ["sh $DEVBOX_PROJECT_ROOT/../../scripts/run.sh ios test"]
     }
   }
 }

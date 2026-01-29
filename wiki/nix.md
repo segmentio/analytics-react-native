@@ -9,28 +9,28 @@ This repo uses a Nix flake for the Android SDK, and a JSON file for single-sourc
   - Defines the pinned Android SDK (emulator, system images, build tools).
   - Exposes an `android-sdk` output used by Devbox (`path:./nix#android-sdk`).
 
-- `nix/platform-versions.json`
+- `scripts/env-defaults.json`
 
   - Single source of truth for Android/iOS min and max targets.
   - Contains Android build tools + cmdline tools versions.
 
-- `scripts/platform-versions.sh`
-  - Loads `nix/platform-versions.json` via `jq` and exports env vars for scripts and CI.
+- `scripts/env-defaults.sh`
+  - Loads `scripts/env-defaults.json` via `jq` and exports env vars for scripts and CI.
 
 ## How versions flow
 
-1. `nix/platform-versions.json` is updated.
+1. `scripts/env-defaults.json` is updated.
 2. `nix/flake.nix` reads those values when building the Android SDK output.
-3. `scripts/platform-versions.sh` exports the same values for:
+3. `scripts/env-defaults.sh` exports the same values for:
    - scripts under `scripts/android/` and `scripts/ios/`
    - CI workflows that set min/max targets
 
 ## Updating versions
 
-1. Edit `nix/platform-versions.json`.
+1. Edit `scripts/env-defaults.json`.
 2. In a devbox shell, run `refresh` to rebuild the SDK.
 3. If iOS min/max versions change, re-run the iOS E2E workflow to confirm the runtime/device exists on the runner.
-4. `nix/platform-versions.json` now has a `defaults` section (exported by `scripts/platform-versions.sh`) and a `vars` section that lists supported env knobs.
+4. `scripts/env-defaults.json` now has a `defaults` section (exported by `scripts/env-defaults.sh`) and a `vars` section that lists supported env knobs.
 
 ## CI targets
 

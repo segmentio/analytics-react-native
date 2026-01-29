@@ -6,7 +6,6 @@ if [ -z "${COMMON_SH_LOADED:-}" ]; then
   # shellcheck disable=SC1090
   . "$script_dir/../shared/common.sh"
 fi
-load_platform_versions "$script_dir"
 debug_log_script "scripts/ios/simctl.sh"
 
 ensure_core_sim_service() {

@@ -2,65 +2,29 @@
 set -eu
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-repo_root="$(cd "$script_dir/../.." && pwd)"
 
-# shellcheck disable=SC1090
-. "$repo_root/scripts/shared/common.sh"
-debug_log_script "scripts/entry/run.sh"
-
-platform="${1:-}"
-action="${2:-}"
-shift 2 || true
-
-run_android() {
+if [ -z "${COMMON_SH_LOADED:-}" ]; then
   # shellcheck disable=SC1090
-  . "$repo_root/scripts/android/env.sh"
+  . "$script_dir/../shared/common.sh"
+fi
 
-  case "$action" in
-    test)
-      RUN_MAIN=0
-      # shellcheck disable=SC1090
-      . "$repo_root/scripts/android/avd.sh"
-      android_setup
-      yarn e2e install
-      yarn build
-      yarn e2e build:android
-      yarn e2e test:android
-      ;;
-    setup)
-      RUN_MAIN=0
-      # shellcheck disable=SC1090
-      . "$repo_root/scripts/android/avd.sh"
-      android_setup "$@"
-      ;;
-    start | stop | reset)
-      RUN_MAIN=0
-      # shellcheck disable=SC1090
-      . "$repo_root/scripts/android/avd.sh"
-      case "$action" in
-        start) android_start "$@" ;;
-        stop) android_stop "$@" ;;
-        reset) android_reset "$@" ;;
-      esac
-      ;;
-    *)
-      echo "Usage: run.sh android {test|setup|start|stop|reset} [args]" >&2
-      exit 1
-      ;;
-  esac
-}
+scripts_root="${SCRIPTS_DIR:-$(cd "$script_dir/.." && pwd)}"
+debug_log_script "scripts/ios/run.sh"
 
-run_ios() {
+ios_run() {
+  action="${1:-}"
+  shift 1 || true
+
   if [ "$(uname -s)" = "Darwin" ]; then
     # shellcheck disable=SC1090
-    . "$repo_root/scripts/ios/env.sh"
+    . "$scripts_root/ios/env.sh"
   fi
 
   case "$action" in
     test)
       RUN_MAIN=0
       # shellcheck disable=SC1090
-      . "$repo_root/scripts/ios/simctl.sh"
+      . "$scripts_root/ios/simctl.sh"
       ios_setup
       yarn e2e install
       yarn e2e pods
@@ -71,13 +35,13 @@ run_ios() {
     setup)
       RUN_MAIN=0
       # shellcheck disable=SC1090
-      . "$repo_root/scripts/ios/simctl.sh"
+      . "$scripts_root/ios/simctl.sh"
       ios_setup "$@"
       ;;
     start | stop | reset)
       RUN_MAIN=0
       # shellcheck disable=SC1090
-      . "$repo_root/scripts/ios/simctl.sh"
+      . "$scripts_root/ios/simctl.sh"
       case "$action" in
         start)
           flavor="${IOS_FLAVOR:-latest}"
@@ -131,17 +95,6 @@ run_ios() {
   esac
 }
 
-case "$platform" in
-  android) run_android "$@" ;;
-  ios) run_ios "$@" ;;
-  build)
-    RUN_MAIN=0
-    # shellcheck disable=SC1090
-    . "$repo_root/scripts/build.sh"
-    build_project "$@"
-    ;;
-  *)
-    echo "Usage: run.sh {android|ios} <action> [args] | run.sh build" >&2
-    exit 1
-    ;;
-esac
+if [ "${RUN_MAIN:-1}" = "1" ]; then
+  ios_run "$@"
+fi

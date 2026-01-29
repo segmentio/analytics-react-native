@@ -16,6 +16,7 @@
     "ANDROID": [
       "ANDROID_SDK_USE_LOCAL",
       "ANDROID_SDK_FLAKE_OUTPUT",
+      "TARGET_SDK",
       "ANDROID_TARGET_API",
       "ANDROID_MIN_API",
       "ANDROID_MAX_API",
@@ -29,11 +30,6 @@
       "AVD_TAG",
       "AVD_ABI",
       "AVD_NAME",
-      "AVD_SECONDARY_API",
-      "AVD_SECONDARY_DEVICE",
-      "AVD_SECONDARY_TAG",
-      "AVD_SECONDARY_ABI",
-      "AVD_SECONDARY_NAME",
       "EMU_HEADLESS",
       "EMU_PORT",
       "DETOX_AVD"

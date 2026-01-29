@@ -26,23 +26,14 @@ ensure_project_root() {
 
   if [ -n "$git_root" ]; then
     PROJECT_ROOT="$git_root"
-  elif [ -f "$base_dir/../shared/common.sh" ] && [ -f "$base_dir/../build.sh" ]; then
+  elif [ -f "$base_dir/../shared/common.sh" ] && [ -f "$base_dir/../run.sh" ]; then
     PROJECT_ROOT="$(cd "$base_dir/.." && pwd)"
-  elif [ -f "$base_dir/shared/common.sh" ] && [ -f "$base_dir/build.sh" ]; then
+  elif [ -f "$base_dir/shared/common.sh" ] && [ -f "$base_dir/run.sh" ]; then
     PROJECT_ROOT="$(cd "$base_dir" && pwd)"
   fi
 
   if [ -n "${PROJECT_ROOT:-}" ]; then
     export PROJECT_ROOT
-  fi
-}
-
-load_platform_versions() {
-  base_dir="$1"
-  platform_versions="${base_dir%/}/../platform-versions.sh"
-  if [ -f "$platform_versions" ]; then
-    # shellcheck disable=SC1090
-    . "$platform_versions"
   fi
 }
 
@@ -57,6 +48,11 @@ if [ -f "${SCRIPTS_DIR:-}/shared/debug.sh" ]; then
   # shellcheck disable=SC1090
   . "$SCRIPTS_DIR/shared/debug.sh"
   debug_log_script "scripts/shared/common.sh"
+fi
+
+if [ -f "${SCRIPTS_DIR:-}/env-defaults.sh" ] && [ "${ENV_DEFAULTS_LOADED:-}" != "1" ]; then
+  # shellcheck disable=SC1090
+  . "$SCRIPTS_DIR/env-defaults.sh"
 fi
 
 COMMON_SH_LOADED=1

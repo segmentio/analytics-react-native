@@ -7,7 +7,6 @@ if [ -z "${COMMON_SH_LOADED:-}" ]; then
   . "$script_dir/../shared/common.sh"
 fi
 debug_log_script "scripts/ios/env.sh"
-load_platform_versions "$script_dir"
 
 devbox_omit_nix_env() {
   if [ "${DEVBOX_OMIT_NIX_ENV_APPLIED:-}" = "1" ]; then
@@ -130,16 +129,6 @@ if [ -n "${DEVBOX_INIT_IOS:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-
   fi
   if [ -z "$repo_root" ]; then
     repo_root="$(cd "$(dirname "$0")/../.." && pwd)"
-  fi
-
-  if [ -z "${PLATFORM_IOS_MIN_VERSION:-}" ] || [ -z "${PLATFORM_ANDROID_MIN_API:-}" ]; then
-    if ! command -v jq >/dev/null 2>&1; then
-      if [ -n "${DEVBOX_PACKAGES_DIR:-}" ] && [ -x "$DEVBOX_PACKAGES_DIR/bin/jq" ]; then
-        PATH="$DEVBOX_PACKAGES_DIR/bin:$PATH"
-      fi
-    fi
-    # shellcheck disable=SC1090
-    . "$repo_root/scripts/platform-versions.sh"
   fi
 
   ios_min_version="${IOS_MIN_VERSION:-${PLATFORM_IOS_MIN_VERSION:-}}"

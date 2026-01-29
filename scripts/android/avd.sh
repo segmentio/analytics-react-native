@@ -8,7 +8,6 @@ if [ -z "${COMMON_SH_LOADED:-}" ]; then
   # shellcheck disable=SC1090
   . "$script_dir/../shared/common.sh"
 fi
-load_platform_versions "$script_dir"
 debug_log_script "scripts/android/avd.sh"
 
 detect_sdk_root() {
@@ -38,6 +37,31 @@ detect_sdk_root() {
 avd_exists() {
   name="$1"
   avdmanager list avd | grep -q "Name: ${name}"
+}
+
+resolve_device() {
+  desired="$1"
+  if [ -z "$desired" ]; then
+    return 1
+  fi
+  if avdmanager list device | grep -qi "Name: ${desired}$"; then
+    printf '%s\n' "$desired"
+    return 0
+  fi
+  if avdmanager list device | grep -qi "Name: ${desired}"; then
+    printf '%s\n' "$desired"
+    return 0
+  fi
+  if avdmanager list device | grep -qi "Name: pixel"; then
+    printf '%s\n' "pixel"
+    return 0
+  fi
+  fallback="$(avdmanager list device | awk -F': ' '/Name:/{print $2; exit}')"
+  if [ -n "$fallback" ]; then
+    printf '%s\n' "$fallback"
+    return 0
+  fi
+  return 1
 }
 
 pick_image() {
@@ -129,63 +153,46 @@ android_setup() {
   platform_max_device="${PLATFORM_ANDROID_MAX_DEVICE:-medium_phone}"
   platform_image_tag="${PLATFORM_ANDROID_SYSTEM_IMAGE_TAG:-google_apis}"
 
-  primary_api="${AVD_API:-${ANDROID_TARGET_API:-${ANDROID_MAX_API:-${platform_max_api:-${ANDROID_MIN_API:-$platform_min_api}}}}}"
-  primary_tag="${AVD_TAG:-${ANDROID_SYSTEM_IMAGE_TAG:-$platform_image_tag}}"
+  target_sdk="${TARGET_SDK:-max}"
+  case "$target_sdk" in
+    min)
+      target_api="$platform_min_api"
+      target_device="$platform_min_device"
+      ;;
+    max)
+      target_api="$platform_max_api"
+      target_device="$platform_max_device"
+      ;;
+    *)
+      target_api="$platform_max_api"
+      target_device="$platform_max_device"
+      ;;
+  esac
+
+  target_api="${AVD_API:-${ANDROID_TARGET_API:-$target_api}}"
+  target_tag="${AVD_TAG:-${ANDROID_SYSTEM_IMAGE_TAG:-$platform_image_tag}}"
   if [ -n "${AVD_DEVICE:-}" ]; then
-    primary_device="$AVD_DEVICE"
-  elif [ -n "$primary_api" ] && [ "$primary_api" = "$platform_min_api" ]; then
-    primary_device="$platform_min_device"
-  elif [ -n "$primary_api" ] && [ "$primary_api" = "$platform_max_api" ]; then
-    primary_device="$platform_max_device"
+    target_device="$AVD_DEVICE"
+  fi
+  resolved_device="$(resolve_device "$target_device" || true)"
+  if [ -n "$resolved_device" ]; then
+    target_device="$resolved_device"
+  fi
+  target_preferred_abi="${AVD_ABI:-}"
+
+  if debug_enabled; then
+    debug_log "target_sdk=${target_sdk} target_api=${target_api} target_device=${target_device} target_tag=${target_tag} target_preferred_abi=${target_preferred_abi:-auto}"
+  fi
+
+  target_dir="$ANDROID_SDK_ROOT/system-images/android-${target_api}/${target_tag}"
+  if [ -d "$target_dir" ]; then
+    add_target "${target_api}|${target_tag}|${target_device}|${target_preferred_abi}|${AVD_NAME:-}"
   else
-    primary_device="pixel"
-  fi
-  primary_preferred_abi="${AVD_ABI:-}"
-
-  if debug_enabled; then
-    debug_log "primary_api=${primary_api} primary_device=${primary_device} primary_tag=${primary_tag} primary_preferred_abi=${primary_preferred_abi:-auto}"
-  fi
-
-  secondary_api="${AVD_SECONDARY_API:-${ANDROID_MAX_API:-${PLATFORM_ANDROID_MAX_API:-33}}}"
-  secondary_tag="${AVD_SECONDARY_TAG:-${ANDROID_SYSTEM_IMAGE_TAG:-${PLATFORM_ANDROID_SYSTEM_IMAGE_TAG:-google_apis}}}"
-  secondary_device="${AVD_SECONDARY_DEVICE:-medium_phone}"
-  secondary_preferred_abi="${AVD_SECONDARY_ABI:-}"
-
-  if debug_enabled; then
-    debug_log "secondary_api=${secondary_api} secondary_device=${secondary_device} secondary_tag=${secondary_tag} secondary_preferred_abi=${secondary_preferred_abi:-auto}"
-  fi
-
-  primary_required=0
-  if [ -n "${AVD_API:-}" ] || [ -n "${AVD_TAG:-}" ] || [ -n "${AVD_DEVICE:-}" ] || [ -n "${AVD_ABI:-}" ] || [ -n "${AVD_NAME:-}" ]; then
-    primary_required=1
-  fi
-
-  secondary_required=0
-  if [ -n "${AVD_SECONDARY_API:-}" ] || [ -n "${AVD_SECONDARY_TAG:-}" ] || [ -n "${AVD_SECONDARY_DEVICE:-}" ] || [ -n "${AVD_SECONDARY_ABI:-}" ] || [ -n "${AVD_SECONDARY_NAME:-}" ]; then
-    secondary_required=1
-  fi
-
-  primary_dir="$ANDROID_SDK_ROOT/system-images/android-${primary_api}/${primary_tag}"
-  if [ -d "$primary_dir" ]; then
-    add_target "${primary_api}|${primary_tag}|${primary_device}|${primary_preferred_abi}|${AVD_NAME:-}"
-  elif [ "$primary_required" = "1" ]; then
-    echo "Expected API ${primary_api} system image (${primary_tag}) not found under ${primary_dir}." >&2
+    echo "Expected API ${target_api} system image (${target_tag}) not found under ${target_dir}." >&2
     echo "Re-enter the devbox shell (flake should provide images) or rebuild Devbox to fetch them." >&2
     exit 1
   fi
 
-  secondary_dir="$ANDROID_SDK_ROOT/system-images/android-${secondary_api}/${secondary_tag}"
-  if [ -n "$secondary_api" ] && [ "$secondary_api" != "$primary_api" ]; then
-    if [ -d "$secondary_dir" ]; then
-      add_target "${secondary_api}|${secondary_tag}|${secondary_device}|${secondary_preferred_abi}|${AVD_SECONDARY_NAME:-}"
-    elif [ "$secondary_required" = "1" ]; then
-      echo "Expected API ${secondary_api} system image (${secondary_tag}) not found under ${secondary_dir}." >&2
-      echo "Re-enter the devbox shell (flake should provide images) or rebuild Devbox to fetch them." >&2
-      exit 1
-    elif [ -d "$primary_dir" ]; then
-      echo "Warning: API ${secondary_api} system image (${secondary_tag}) not found; continuing with API ${primary_api} only." >&2
-    fi
-  fi
 
   if [ -z "$TARGETS" ]; then
     echo "No compatible Android system images found under ${ANDROID_SDK_ROOT}/system-images for configured APIs." >&2
@@ -255,37 +262,68 @@ TARGET_EOF
 }
 
 android_start() {
-  flavor="${AVD_FLAVOR:-latest}"
+  target_sdk="${TARGET_SDK:-max}"
   headless="${EMU_HEADLESS:-}"
   port="${EMU_PORT:-5554}"
   avd="${DETOX_AVD:-}"
 
+  android_setup
+
+  if [ -z "$avd" ] && [ -n "${AVD_NAME:-}" ]; then
+    avd="$AVD_NAME"
+  fi
+
   if [ -z "$avd" ]; then
-    if [ "$flavor" = "latest" ]; then
-      host_arch="$(uname -m)"
-      if [ "$host_arch" = "arm64" ] || [ "$host_arch" = "aarch64" ]; then
-        abi="arm64_v8a"
-      else
-        abi="x86_64"
-      fi
-      avd="medium_phone_API33_${abi}"
-    else
-      if uname -m | grep -qi arm; then
-        abi="arm64_v8a"
-      else
-        abi="x86_64"
-      fi
-      avd="pixel_API21_${abi}"
+    platform_min_api="${PLATFORM_ANDROID_MIN_API:-21}"
+    platform_max_api="${PLATFORM_ANDROID_MAX_API:-33}"
+    platform_min_device="${PLATFORM_ANDROID_MIN_DEVICE:-pixel}"
+    platform_max_device="${PLATFORM_ANDROID_MAX_DEVICE:-medium_phone}"
+    platform_image_tag="${PLATFORM_ANDROID_SYSTEM_IMAGE_TAG:-google_apis}"
+
+    case "$target_sdk" in
+      min)
+        target_api="$platform_min_api"
+        target_device="$platform_min_device"
+        ;;
+      max)
+        target_api="$platform_max_api"
+        target_device="$platform_max_device"
+        ;;
+      *)
+        target_api="$platform_max_api"
+        target_device="$platform_max_device"
+        ;;
+    esac
+
+    target_api="${AVD_API:-${ANDROID_TARGET_API:-$target_api}}"
+    target_tag="${AVD_TAG:-${ANDROID_SYSTEM_IMAGE_TAG:-$platform_image_tag}}"
+    if [ -n "${AVD_DEVICE:-}" ]; then
+      target_device="$AVD_DEVICE"
+    fi
+    resolved_device="$(resolve_device "$target_device" || true)"
+    if [ -n "$resolved_device" ]; then
+      target_device="$resolved_device"
+    fi
+    target_preferred_abi="${AVD_ABI:-}"
+
+    api_image="$(pick_image "$target_api" "$target_tag" "$target_preferred_abi" 2>/dev/null || true)"
+    if [ -n "$api_image" ]; then
+      abi="${api_image##*;}"
+      abi_safe="$(printf '%s' "$abi" | tr '-' '_')"
+      avd="$(printf '%s_API%s_%s' "$target_device" "$target_api" "$abi_safe")"
     fi
   fi
 
-  android_setup
+  if [ -z "$avd" ]; then
+    echo "No AVD resolved; set DETOX_AVD or AVD_NAME explicitly." >&2
+    exit 1
+  fi
 
   target_serial="emulator-${port}"
   if command -v adb >/dev/null 2>&1; then
     adb devices | awk 'NR>1 && $2=="offline" {print $1}' | while read -r d; do adb -s "$d" emu kill >/dev/null 2>&1 || true; done
   fi
-  echo "Starting Android emulator: ${avd} (flavor ${flavor}, port ${port}, headless=${headless:-0})"
+  echo "Starting Android emulator: ${avd} (target ${target_sdk}, port ${port}, headless=${headless:-0})"
   if [ -n "$headless" ]; then
     headless_flag="-no-window"
   else

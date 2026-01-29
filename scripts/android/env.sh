@@ -11,22 +11,7 @@ if [ -z "${COMMON_SH_LOADED:-}" ]; then
   # shellcheck disable=SC1090
   . "$project_root/scripts/shared/common.sh"
 fi
-load_platform_versions "$script_dir"
 debug_log_script "scripts/android/env.sh"
-
-if [ -z "${PLATFORM_ANDROID_MIN_API:-}" ]; then
-  if ! command -v jq >/dev/null 2>&1; then
-    if [ -n "${DEVBOX_PACKAGES_DIR:-}" ] && [ -x "$DEVBOX_PACKAGES_DIR/bin/jq" ]; then
-      PATH="$DEVBOX_PACKAGES_DIR/bin:$PATH"
-    fi
-  fi
-  project_root="${PROJECT_ROOT:-${DEVBOX_PROJECT_ROOT:-}}"
-  if [ -z "$project_root" ]; then
-    project_root="$(cd "$script_dir/../.." && pwd)"
-  fi
-  # shellcheck disable=SC1090
-  . "$project_root/scripts/platform-versions.sh"
-fi
 
 if [ -z "${ANDROID_MIN_API:-}" ] && [ -n "${PLATFORM_ANDROID_MIN_API:-}" ]; then
   ANDROID_MIN_API="$PLATFORM_ANDROID_MIN_API"
@@ -191,13 +176,20 @@ if [ -n "${DEVBOX_INIT_ANDROID:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIO
     android_target_api="${AVD_API:-${ANDROID_TARGET_API:-}}"
     android_target_source=""
     if [ -z "$android_target_api" ]; then
-      if [ -n "$android_max_api" ]; then
-        android_target_api="$android_max_api"
-        android_target_source="max"
-      elif [ -n "$android_min_api" ]; then
-        android_target_api="$android_min_api"
-        android_target_source="min"
-      fi
+      case "${TARGET_SDK:-max}" in
+        min)
+          android_target_api="$android_min_api"
+          android_target_source="min"
+          ;;
+        max)
+          android_target_api="$android_max_api"
+          android_target_source="max"
+          ;;
+        *)
+          android_target_api="$android_max_api"
+          android_target_source="max"
+          ;;
+      esac
     elif [ -n "${AVD_API:-}" ]; then
       android_target_source="avd"
     elif [ -n "${ANDROID_TARGET_API:-}" ]; then
@@ -206,10 +198,16 @@ if [ -n "${DEVBOX_INIT_ANDROID:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIO
 
     android_target_device="${AVD_DEVICE:-}"
     if [ -z "$android_target_device" ]; then
-      if [ -n "$android_target_api" ] && [ "$android_target_api" = "$android_min_api" ]; then
-        android_target_device="${PLATFORM_ANDROID_MIN_DEVICE:-}"
-      elif [ -n "$android_target_api" ] && [ "$android_target_api" = "$android_max_api" ]; then
-        android_target_device="${PLATFORM_ANDROID_MAX_DEVICE:-}"
+      case "${TARGET_SDK:-max}" in
+        min) android_target_device="${PLATFORM_ANDROID_MIN_DEVICE:-}" ;;
+        max) android_target_device="${PLATFORM_ANDROID_MAX_DEVICE:-}" ;;
+      esac
+      if [ -z "$android_target_device" ]; then
+        if [ -n "$android_target_api" ] && [ "$android_target_api" = "$android_min_api" ]; then
+          android_target_device="${PLATFORM_ANDROID_MIN_DEVICE:-}"
+        elif [ -n "$android_target_api" ] && [ "$android_target_api" = "$android_max_api" ]; then
+          android_target_device="${PLATFORM_ANDROID_MAX_DEVICE:-}"
+        fi
       fi
     fi
 
@@ -256,6 +254,7 @@ if [ -n "${DEVBOX_INIT_ANDROID:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIO
           ANDROID_HOME_MAX \
           ANDROID_MIN_API \
           ANDROID_MAX_API \
+          TARGET_SDK \
           ANDROID_TARGET_API \
           ANDROID_SYSTEM_IMAGE_TAG \
           ANDROID_BUILD_TOOLS_VERSION \

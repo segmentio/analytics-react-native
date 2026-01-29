@@ -10,11 +10,11 @@
   "shell": {
     "init_hook": [
       "export ANDROID_SDK_FLAKE_OUTPUT=android-sdk-min",
-      "DEVBOX_INIT_ANDROID=1 sh $DEVBOX_PROJECT_ROOT/../../scripts/devbox/init.sh"
+      "DEVBOX_INIT_ANDROID=1 . $DEVBOX_PROJECT_ROOT/../../scripts/env-defaults.sh"
     ],
     "scripts": {
-      "setup-android": ["sh $DEVBOX_PROJECT_ROOT/../../scripts/entry/run.sh android setup"],
-      "test-android": ["sh $DEVBOX_PROJECT_ROOT/../../scripts/entry/run.sh android test"]
+      "setup-android": ["sh $DEVBOX_PROJECT_ROOT/../../scripts/run.sh android setup"],
+      "test-android": ["sh $DEVBOX_PROJECT_ROOT/../../scripts/run.sh android test"]
     }
   }
 }

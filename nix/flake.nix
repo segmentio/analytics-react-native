@@ -13,10 +13,11 @@
         "aarch64-darwin"
       ];
 
-      versionData = builtins.fromJSON (builtins.readFile ./platform-versions.json);
+      versionData = builtins.fromJSON (builtins.readFile ../scripts/env-defaults.json);
+      defaultsData = if builtins.hasAttr "defaults" versionData then versionData.defaults else versionData;
       getVar =
         name: default:
-        if builtins.hasAttr name versionData then toString (builtins.getAttr name versionData) else default;
+        if builtins.hasAttr name defaultsData then toString (builtins.getAttr name defaultsData) else default;
 
       androidSdkConfig = {
         platformVersions = [
