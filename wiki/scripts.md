@@ -54,6 +54,8 @@ These env vars can be set by users to override defaults or behavior.
 
 ### Android
 
+- `ENV_DEFAULTS_JSON`: path to an alternate `env-defaults.json` (advanced).
+- `ANDROID_SDK_ROOT`, `ANDROID_HOME`: explicit SDK location (used with `ANDROID_SDK_USE_LOCAL=1`).
 - `ANDROID_SDK_USE_LOCAL`: use a local Android SDK instead of the Nix SDK.
 - `ANDROID_SDK_FLAKE_OUTPUT`: force a specific flake output (e.g., `android-sdk-max`).
 - `TARGET_SDK`: `min`, `max`, or `custom` (selects which API/device pairing to use).
