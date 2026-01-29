@@ -28,7 +28,7 @@ This repo uses `scripts/` as the entry point for devbox commands and CI helpers.
 - `scripts/android/env.sh`
 
   - Sets `ANDROID_SDK_ROOT`/`ANDROID_HOME` and PATH for the Nix SDK (prefers `android-sdk-max` when available).
-  - Set `ANDROID_SDK_USE_LOCAL=1` to keep a pre-set local SDK instead.
+  - Set `ANDROID_LOCAL_SDK=1` to keep a pre-set local SDK instead.
   - Loads platform defaults via `scripts/shared/defaults.sh` (from `nix/defaults.json`).
   - Used by devbox init hooks in `devbox.json` and `shells/android-min/devbox.json` + `shells/android-max/devbox.json`.
 
@@ -59,8 +59,8 @@ These env vars can be set by users to override defaults or behavior.
 ### Android
 
 - `ENV_DEFAULTS_JSON`: path to an alternate `nix/defaults.json` (advanced).
-- `ANDROID_SDK_ROOT`, `ANDROID_HOME`: explicit SDK location (used with `ANDROID_SDK_USE_LOCAL=1`).
-- `ANDROID_SDK_USE_LOCAL`: use a local Android SDK instead of the Nix SDK.
+- `ANDROID_SDK_ROOT`, `ANDROID_HOME`: explicit SDK location (used with `ANDROID_LOCAL_SDK=1`).
+- `ANDROID_LOCAL_SDK`: use a local Android SDK instead of the Nix SDK.
 - `ANDROID_SDK_FLAKE_OUTPUT`: force a specific flake output (e.g., `android-sdk-max`).
 - `TARGET_SDK`: `min`, `max`, or `custom` (selects which API/device pairing to use).
 - `ANDROID_MIN_API`, `ANDROID_MAX_API`: override the min/max API levels.

@@ -36,6 +36,9 @@ ios_run() {
       . "$SCRIPTS_DIR/ios/simctl.sh"
       case "$action" in
         start)
+          ensure_developer_dir
+          require_tool jq
+          ensure_simctl
           target_sdk="${TARGET_SDK:-max}"
           runtime_version=""
           if [ "$target_sdk" = "custom" ]; then

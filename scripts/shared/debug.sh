@@ -10,7 +10,6 @@ if [ "${DEBUG_SH_LOADED:-}" = "1" ] && [ "${DEBUG_SH_LOADED_PID:-}" = "$$" ]; th
 fi
 DEBUG_SH_LOADED=1
 DEBUG_SH_LOADED_PID="$$"
-set -eu
 
 debug_enabled() {
   [ "${ANALYTICS_CI_DEBUG:-}" = "1" ] || [ "${DEBUG:-}" = "1" ]

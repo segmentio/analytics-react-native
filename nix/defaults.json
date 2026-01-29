@@ -1,6 +1,6 @@
 {
   "defaults": {
-    "ANDROID_SDK_USE_LOCAL": "0",
+    "ANDROID_LOCAL_SDK": "0",
     "ANDROID_MIN_API": "21",
     "ANDROID_MAX_API": "33",
     "ANDROID_CUSTOM_API": "29",

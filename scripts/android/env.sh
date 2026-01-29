@@ -56,7 +56,15 @@ detect_sdk_root_from_sdkmanager() {
   return 1
 }
 
-prefer_local="${ANDROID_SDK_USE_LOCAL:-}"
+prefer_local="${ANDROID_LOCAL_SDK:-}"
+case "$prefer_local" in
+  1 | true | TRUE | yes | YES | on | ON)
+    prefer_local=1
+    ;;
+  *)
+    prefer_local=""
+    ;;
+esac
 if [ -n "$prefer_local" ]; then
   if [ -z "${ANDROID_SDK_ROOT:-}" ] && [ -n "${ANDROID_HOME:-}" ]; then
     ANDROID_SDK_ROOT="$ANDROID_HOME"
@@ -153,10 +161,10 @@ ANDROID_ENV_LOADED_PID="$$"
       echo "Using Android SDK: $ANDROID_SDK_ROOT"
       case "$ANDROID_SDK_ROOT" in
       /nix/store/*)
-        echo "Source: Nix flake (reproducible, pinned). To use your local SDK instead, set ANDROID_SDK_USE_LOCAL=1 before starting devbox shell."
+        echo "Source: Nix flake (reproducible, pinned). To use your local SDK instead, set ANDROID_LOCAL_SDK=1 before starting devbox shell."
         ;;
       *)
-        echo "Source: User/local SDK. To use the pinned Nix SDK, unset ANDROID_HOME/ANDROID_SDK_ROOT and ensure ANDROID_SDK_USE_LOCAL is not set before starting devbox shell."
+        echo "Source: User/local SDK. To use the pinned Nix SDK, unset ANDROID_HOME/ANDROID_SDK_ROOT and ensure ANDROID_LOCAL_SDK is not set before starting devbox shell."
         ;;
       esac
     fi
@@ -249,7 +257,7 @@ if [ -n "${INIT_ANDROID:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" 
         debug_dump_vars \
           ANDROID_SDK_ROOT \
           ANDROID_HOME \
-          ANDROID_SDK_USE_LOCAL \
+          ANDROID_LOCAL_SDK \
           ANDROID_SDK_FLAKE_OUTPUT \
           ANDROID_SDK_ROOT_MIN \
           ANDROID_HOME_MIN \
@@ -268,10 +276,8 @@ if [ -n "${INIT_ANDROID:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" 
     echo "Resolved Android SDK"
     echo "  ANDROID_SDK_ROOT: ${android_sdk_root:-not set}"
     echo "  ANDROID_BUILD_TOOLS_VERSION: ${android_sdk_version:-30.0.3}"
-    echo "  ANDROID_MIN_API: ${android_min_api:-21}"
-    echo "  ANDROID_MAX_API: ${android_max_api:-33}"
-    echo "  ANDROID_TARGET_API: ${android_target_api:-not set}${android_target_source:+ (${android_target_source})}"
     echo "  ANDROID_AVD_TARGET: api=${android_target_api:-not set} device=${android_target_device:-unknown} image=${android_system_image_summary:-google_apis}"
+    echo "  Tip: use a local SDK with ANDROID_LOCAL_SDK=1 ANDROID_SDK_ROOT=/path/to/sdk (or ANDROID_HOME)."
   fi
 else
   if [ -n "${CI:-}" ] || [ -n "${GITHUB_ACTIONS:-}" ]; then

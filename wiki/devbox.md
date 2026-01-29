@@ -13,7 +13,7 @@ Enter the environment with `devbox shell`. The init hook wires `ANDROID_SDK_ROOT
 
 ## Android
 
-By default, Devbox uses the flake-pinned SDKs and prefers the latest (`android-sdk-max`) when available. It sets `ANDROID_SDK_ROOT`/`ANDROID_HOME` and adds emulator/platform-tools/cmdline-tools to `PATH` via `scripts/android/env.sh`. To use a local SDK instead, launch with `ANDROID_SDK_USE_LOCAL=1 ANDROID_HOME="$HOME/Library/Android/sdk" devbox shell` (or set `ANDROID_SDK_ROOT`). Unset `ANDROID_SDK_USE_LOCAL` (and `ANDROID_HOME`/`ANDROID_SDK_ROOT` if you set them) to return to the Nix SDK. Inspect the active SDK with `echo "$ANDROID_SDK_ROOT"` and `which sdkmanager` inside the shell. Create/boot AVDs via `devbox run start-android*` (uses `scripts/android/avd.sh`). Version sources are documented in `wiki/nix.md`.
+By default, Devbox uses the flake-pinned SDKs and prefers the latest (`android-sdk-max`) when available. It sets `ANDROID_SDK_ROOT`/`ANDROID_HOME` and adds emulator/platform-tools/cmdline-tools to `PATH` via `scripts/android/env.sh`. To use a local SDK instead, launch with `ANDROID_LOCAL_SDK=1 ANDROID_HOME="$HOME/Library/Android/sdk" devbox shell` (or set `ANDROID_SDK_ROOT`). Unset `ANDROID_LOCAL_SDK` (and `ANDROID_HOME`/`ANDROID_SDK_ROOT` if you set them) to return to the Nix SDK. Inspect the active SDK with `echo "$ANDROID_SDK_ROOT"` and `which sdkmanager` inside the shell. Create/boot AVDs via `devbox run start-android*` (uses `scripts/android/avd.sh`). Version sources are documented in `wiki/nix.md`.
 
 Example custom targets (root `devbox.json` sets these via `shell.env` for testing):
 `ANDROID_CUSTOM_API=29` `ANDROID_CUSTOM_DEVICE=pixel_6` `IOS_CUSTOM_DEVICE="iPhone 15"`

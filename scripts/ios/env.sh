@@ -162,10 +162,24 @@ if [ -n "${INIT_IOS:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ] &&
     xcode_version="$(xcodebuild -version 2>/dev/null | awk 'NR==1{print $2}')"
   fi
 
+  ios_target_device="${DETOX_IOS_DEVICE:-}"
+  if [ -z "$ios_target_device" ]; then
+    if [ -n "${IOS_DEVICE_NAMES:-}" ]; then
+      ios_target_device="$(printf '%s' "$IOS_DEVICE_NAMES" | cut -d',' -f1 | xargs)"
+    else
+      case "${TARGET_SDK:-max}" in
+        min) ios_target_device="${IOS_MIN_DEVICE:-}" ;;
+        max) ios_target_device="${IOS_MAX_DEVICE:-}" ;;
+        custom) ios_target_device="${IOS_CUSTOM_DEVICE:-}" ;;
+        *) ios_target_device="${IOS_MAX_DEVICE:-}" ;;
+      esac
+    fi
+  fi
+  ios_target_runtime="${IOS_RUNTIME:-$ios_runtime}"
+
   echo "Resolved iOS SDK"
-  echo "  IOS_RUNTIME_MIN: ${IOS_RUNTIME_MIN:-not set}"
-  echo "  IOS_RUNTIME_MAX: ${IOS_RUNTIME_MAX:-not set}"
-  echo "  IOS_RUNTIME: ${ios_runtime:-not set}"
-  echo "  xcodebuild: ${xcode_version:-unknown}"
   echo "  DEVELOPER_DIR: ${xcode_dir:-not set}"
+  echo "  XCODE_VERSION: ${xcode_version:-unknown}"
+  echo "  IOS_RUNTIME: ${ios_runtime:-not set}"
+  echo "  IOS_SIM_TARGET: device=${ios_target_device:-unknown} runtime=${ios_target_runtime:-not set}"
 fi
