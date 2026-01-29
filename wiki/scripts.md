@@ -48,6 +48,39 @@ This repo uses `scripts/` as the entry point for devbox commands and CI helpers.
   - Helpers for runtime selection and simulator management.
   - Ensures Xcode tools are selected and simulators exist.
 
+## User overrides
+
+These env vars can be set by users to override defaults or behavior.
+
+### Android
+
+- `ANDROID_SDK_USE_LOCAL`: use a local Android SDK instead of the Nix SDK.
+- `ANDROID_SDK_FLAKE_OUTPUT`: force a specific flake output (e.g., `android-sdk-max`).
+- `TARGET_SDK`: `min`, `max`, or `custom` (selects which API/device pairing to use).
+- `ANDROID_MIN_API`, `ANDROID_MAX_API`: override the min/max API levels.
+- `ANDROID_MIN_DEVICE`, `ANDROID_MAX_DEVICE`: override the min/max AVD device names.
+- `ANDROID_SYSTEM_IMAGE_TAG`: override the system image tag (default `google_apis`).
+- `ANDROID_BUILD_TOOLS_VERSION`, `ANDROID_CMDLINE_TOOLS_VERSION`: override build tools/cmdline tools versions.
+- `ANDROID_CUSTOM_API`, `ANDROID_CUSTOM_DEVICE`, `ANDROID_CUSTOM_SYSTEM_IMAGE_TAG`: required/optional when `TARGET_SDK=custom`.
+- `ANDROID_TARGET_API`: force a specific API, bypassing `TARGET_SDK`.
+- `AVD_API`, `AVD_DEVICE`, `AVD_TAG`, `AVD_ABI`, `AVD_NAME`: override AVD creation/selection.
+- `DETOX_AVD`: force a specific AVD name for Detox.
+- `EMU_HEADLESS`: `1` to launch the emulator without a window.
+- `EMU_PORT`: emulator port/serial (default `5554`).
+- `DEBUG` / `ANALYTICS_CI_DEBUG`: enables verbose logging for script helpers.
+
+### iOS
+
+- `IOS_MIN_VERSION`, `IOS_MAX_VERSION`: override min/max iOS versions.
+- `IOS_MIN_DEVICE`, `IOS_MAX_DEVICE`: override min/max device names.
+- `IOS_RUNTIME`: preferred runtime (used by simctl).
+- `IOS_DEVICE_NAMES`: comma-separated list of devices to create.
+- `IOS_DEVELOPER_DIR`: override the Xcode path.
+- `IOS_DOWNLOAD_RUNTIME`: set to `0` to skip `xcodebuild -downloadPlatform iOS`.
+- `IOS_FLAVOR`: `minsdk`, `latest`, or `custom` (controls which device/runtime to boot).
+- `IOS_CUSTOM_DEVICE`, `IOS_CUSTOM_VERSION`: used when `IOS_FLAVOR=custom`.
+- `DETOX_IOS_DEVICE`: force a specific simulator name for Detox.
+
 
 ## Devbox wiring
 

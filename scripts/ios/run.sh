@@ -26,6 +26,7 @@ ios_run() {
       # shellcheck disable=SC1090
       . "$scripts_root/ios/simctl.sh"
       ios_setup
+      yarn install --immutable
       yarn e2e install
       yarn e2e pods
       yarn build
@@ -45,11 +46,22 @@ ios_run() {
       case "$action" in
         start)
           flavor="${IOS_FLAVOR:-latest}"
-          if [ "$flavor" = "minsdk" ]; then
-            IOS_DEVICE_NAMES="${IOS_MIN_DEVICE:-${PLATFORM_IOS_MIN_DEVICE:-iPhone 13}}"
-            DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-${IOS_MIN_DEVICE:-${PLATFORM_IOS_MIN_DEVICE:-iPhone 13}}}"
+          if [ "$flavor" = "custom" ]; then
+            if [ -z "${IOS_CUSTOM_DEVICE:-}" ]; then
+              echo "IOS_FLAVOR=custom requires IOS_CUSTOM_DEVICE to be set." >&2
+              exit 1
+            fi
+            if [ -n "${IOS_CUSTOM_VERSION:-}" ]; then
+              IOS_RUNTIME="${IOS_CUSTOM_VERSION}"
+              export IOS_RUNTIME
+            fi
+            IOS_DEVICE_NAMES="${IOS_CUSTOM_DEVICE}"
+            DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-${IOS_CUSTOM_DEVICE}}"
+          elif [ "$flavor" = "minsdk" ]; then
+            IOS_DEVICE_NAMES="${IOS_MIN_DEVICE:-iPhone 13}"
+            DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-${IOS_MIN_DEVICE:-iPhone 13}}"
           else
-            IOS_DEVICE_NAMES="${IOS_DEVICE_NAMES:-${IOS_MIN_DEVICE:-${PLATFORM_IOS_MIN_DEVICE:-iPhone 13}},${IOS_MAX_DEVICE:-${PLATFORM_IOS_MAX_DEVICE:-iPhone 17}}}"
+            IOS_DEVICE_NAMES="${IOS_DEVICE_NAMES:-${IOS_MIN_DEVICE:-iPhone 13},${IOS_MAX_DEVICE:-iPhone 17}}"
             DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-iPhone 17}"
           fi
           export IOS_DEVICE_NAMES DETOX_IOS_DEVICE

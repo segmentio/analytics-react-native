@@ -47,12 +47,7 @@ jobs:
           enable-cache: 'false'
       - name: Resolve iOS targets
         run: |
-          . scripts/platform-versions.sh
-          if [ "${{ matrix.name }}" = "ios-min" ]; then
-            echo "DETOX_IOS_DEVICE=${PLATFORM_IOS_MIN_DEVICE}" >> "$GITHUB_ENV"
-          else
-            echo "DETOX_IOS_DEVICE=${PLATFORM_IOS_MAX_DEVICE}" >> "$GITHUB_ENV"
-          fi
+          node -e "const fs=require('fs');const d=JSON.parse(fs.readFileSync('scripts/env-defaults.json','utf8')).defaults;const isMin='${{ matrix.name }}'==='ios-min';const device=isMin?d.IOS_MIN_DEVICE:d.IOS_MAX_DEVICE;process.stdout.write('DETOX_IOS_DEVICE=' + device + '\n');" >> "$GITHUB_ENV"
       - name: iOS E2E Tests
         run: devbox run --config=shells/ios/devbox.json test-ios
 
@@ -94,15 +89,6 @@ jobs:
           enable-cache: 'false'
       - name: Resolve Android targets
         run: |
-          . scripts/platform-versions.sh
-          if [ "${{ matrix.target }}" = "min" ]; then
-            api="$PLATFORM_ANDROID_MIN_API"
-            device="$PLATFORM_ANDROID_MIN_DEVICE"
-          else
-            api="$PLATFORM_ANDROID_MAX_API"
-            device="$PLATFORM_ANDROID_MAX_DEVICE"
-          fi
-          avd_name="${device}_API${api}_${AVD_ABI}"
-          echo "DETOX_AVD=${avd_name}" >> "$GITHUB_ENV"
+          node -e "const fs=require('fs');const d=JSON.parse(fs.readFileSync('scripts/env-defaults.json','utf8')).defaults;const target='${{ matrix.target }}';const api=target==='min'?d.ANDROID_MIN_API:d.ANDROID_MAX_API;const device=target==='min'?d.ANDROID_MIN_DEVICE:d.ANDROID_MAX_DEVICE;const abi=process.env.AVD_ABI||'x86_64';process.stdout.write('DETOX_AVD=' + device + '_API' + api + '_' + abi + '\n');" >> "$GITHUB_ENV"
       - name: Android E2E Tests
         run: devbox run --config=shells/android-${{ matrix.target }}/devbox.json test-android

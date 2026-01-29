@@ -13,21 +13,7 @@ if [ -z "${COMMON_SH_LOADED:-}" ]; then
 fi
 debug_log_script "scripts/android/env.sh"
 
-if [ -z "${ANDROID_MIN_API:-}" ] && [ -n "${PLATFORM_ANDROID_MIN_API:-}" ]; then
-  ANDROID_MIN_API="$PLATFORM_ANDROID_MIN_API"
-fi
-if [ -z "${ANDROID_MAX_API:-}" ] && [ -n "${PLATFORM_ANDROID_MAX_API:-}" ]; then
-  ANDROID_MAX_API="$PLATFORM_ANDROID_MAX_API"
-fi
-if [ -z "${ANDROID_BUILD_TOOLS_VERSION:-}" ] && [ -n "${PLATFORM_ANDROID_BUILD_TOOLS_VERSION:-}" ]; then
-  ANDROID_BUILD_TOOLS_VERSION="$PLATFORM_ANDROID_BUILD_TOOLS_VERSION"
-fi
-if [ -z "${ANDROID_CMDLINE_TOOLS_VERSION:-}" ] && [ -n "${PLATFORM_ANDROID_CMDLINE_TOOLS_VERSION:-}" ]; then
-  ANDROID_CMDLINE_TOOLS_VERSION="$PLATFORM_ANDROID_CMDLINE_TOOLS_VERSION"
-fi
-if [ -z "${ANDROID_SYSTEM_IMAGE_TAG:-}" ] && [ -n "${PLATFORM_ANDROID_SYSTEM_IMAGE_TAG:-}" ]; then
-  ANDROID_SYSTEM_IMAGE_TAG="$PLATFORM_ANDROID_SYSTEM_IMAGE_TAG"
-fi
+
 
 resolve_flake_sdk_root() {
   root="${PROJECT_ROOT:-${DEVBOX_PROJECT_ROOT:-}}"
@@ -168,10 +154,10 @@ if [ -n "${DEVBOX_INIT_ANDROID:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIO
     export DEVBOX_ANDROID_SDK_SUMMARY_PRINTED
 
     android_sdk_root="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
-    android_sdk_version="${ANDROID_BUILD_TOOLS_VERSION:-${PLATFORM_ANDROID_BUILD_TOOLS_VERSION:-${ANDROID_CMDLINE_TOOLS_VERSION:-${PLATFORM_ANDROID_CMDLINE_TOOLS_VERSION:-30.0.3}}}}"
-    android_min_api="${ANDROID_MIN_API:-${PLATFORM_ANDROID_MIN_API:-21}}"
-    android_max_api="${ANDROID_MAX_API:-${PLATFORM_ANDROID_MAX_API:-33}}"
-    android_system_image_tag="${ANDROID_SYSTEM_IMAGE_TAG:-${PLATFORM_ANDROID_SYSTEM_IMAGE_TAG:-google_apis}}"
+    android_sdk_version="${ANDROID_BUILD_TOOLS_VERSION:-${ANDROID_CMDLINE_TOOLS_VERSION:-30.0.3}}"
+    android_min_api="${ANDROID_MIN_API:-21}"
+    android_max_api="${ANDROID_MAX_API:-33}"
+    android_system_image_tag="${ANDROID_CUSTOM_SYSTEM_IMAGE_TAG:-${ANDROID_SYSTEM_IMAGE_TAG:-google_apis}}"
     android_system_image_abi=""
     android_target_api="${AVD_API:-${ANDROID_TARGET_API:-}}"
     android_target_source=""
@@ -184,6 +170,10 @@ if [ -n "${DEVBOX_INIT_ANDROID:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIO
         max)
           android_target_api="$android_max_api"
           android_target_source="max"
+          ;;
+        custom)
+          android_target_api="${ANDROID_CUSTOM_API:-}"
+          android_target_source="custom"
           ;;
         *)
           android_target_api="$android_max_api"
@@ -199,14 +189,15 @@ if [ -n "${DEVBOX_INIT_ANDROID:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIO
     android_target_device="${AVD_DEVICE:-}"
     if [ -z "$android_target_device" ]; then
       case "${TARGET_SDK:-max}" in
-        min) android_target_device="${PLATFORM_ANDROID_MIN_DEVICE:-}" ;;
-        max) android_target_device="${PLATFORM_ANDROID_MAX_DEVICE:-}" ;;
+        min) android_target_device="${ANDROID_MIN_DEVICE:-}" ;;
+        max) android_target_device="${ANDROID_MAX_DEVICE:-}" ;;
+        custom) android_target_device="${ANDROID_CUSTOM_DEVICE:-}" ;;
       esac
       if [ -z "$android_target_device" ]; then
         if [ -n "$android_target_api" ] && [ "$android_target_api" = "$android_min_api" ]; then
-          android_target_device="${PLATFORM_ANDROID_MIN_DEVICE:-}"
+          android_target_device="${ANDROID_MIN_DEVICE:-}"
         elif [ -n "$android_target_api" ] && [ "$android_target_api" = "$android_max_api" ]; then
-          android_target_device="${PLATFORM_ANDROID_MAX_DEVICE:-}"
+          android_target_device="${ANDROID_MAX_DEVICE:-}"
         fi
       fi
     fi

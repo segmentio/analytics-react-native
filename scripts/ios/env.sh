@@ -131,8 +131,8 @@ if [ -n "${DEVBOX_INIT_IOS:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-
     repo_root="$(cd "$(dirname "$0")/../.." && pwd)"
   fi
 
-  ios_min_version="${IOS_MIN_VERSION:-${PLATFORM_IOS_MIN_VERSION:-}}"
-  ios_max_version="${IOS_MAX_VERSION:-${PLATFORM_IOS_MAX_VERSION:-}}"
+  ios_min_version="${IOS_MIN_VERSION:-}"
+  ios_max_version="${IOS_MAX_VERSION:-}"
   ios_runtime="${IOS_RUNTIME:-}"
   if [ -z "$ios_runtime" ] && command -v xcrun >/dev/null 2>&1; then
     ios_runtime="$(xcrun --sdk iphonesimulator --show-sdk-version 2>/dev/null || true)"

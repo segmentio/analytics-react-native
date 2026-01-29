@@ -10,7 +10,7 @@ export ENV_DEFAULTS_LOADING
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_root="$(cd "$script_dir/.." && pwd)"
-versions_json="${ENV_DEFAULTS_JSON:-${PLATFORM_VERSIONS_JSON:-$repo_root/scripts/env-defaults.json}}"
+versions_json="${ENV_DEFAULTS_JSON:-$repo_root/scripts/env-defaults.json}"
 
 if ! command -v debug_log_script >/dev/null 2>&1; then
   if [ -f "$script_dir/shared/debug.sh" ]; then
@@ -47,17 +47,17 @@ EOF
       ENV_DEFAULTS_DEBUG_PRINTED=1
       export ENV_DEFAULTS_DEBUG_PRINTED
       for key in \
-        PLATFORM_ANDROID_MIN_API \
-        PLATFORM_ANDROID_MAX_API \
-        PLATFORM_ANDROID_BUILD_TOOLS_VERSION \
-        PLATFORM_ANDROID_CMDLINE_TOOLS_VERSION \
-        PLATFORM_ANDROID_SYSTEM_IMAGE_TAG \
-        PLATFORM_ANDROID_MIN_DEVICE \
-        PLATFORM_ANDROID_MAX_DEVICE \
-        PLATFORM_IOS_MIN_VERSION \
-        PLATFORM_IOS_MAX_VERSION \
-        PLATFORM_IOS_MIN_DEVICE \
-        PLATFORM_IOS_MAX_DEVICE; do
+        ANDROID_MIN_API \
+        ANDROID_MAX_API \
+        ANDROID_BUILD_TOOLS_VERSION \
+        ANDROID_CMDLINE_TOOLS_VERSION \
+        ANDROID_SYSTEM_IMAGE_TAG \
+        ANDROID_MIN_DEVICE \
+        ANDROID_MAX_DEVICE \
+        IOS_MIN_VERSION \
+        IOS_MAX_VERSION \
+        IOS_MIN_DEVICE \
+        IOS_MAX_DEVICE; do
         value="$(eval "printf '%s' \"\${$key-}\"")"
         printf 'DEBUG: %s=%s\n' "$key" "$value"
       done

@@ -32,7 +32,7 @@ By default, Devbox uses the flake-pinned SDKs and prefers the latest (`android-s
 
 ### Updating Android min/latest versions
 
-- Bump pinned SDK versions in `scripts/env-defaults.json` (platformVersions/buildToolsVersions/cmdLineToolsVersion). Refresh your devshell by running the `refresh` command while inside a devbox shell.
+- Bump pinned SDK versions in `scripts/env-defaults.json`. Refresh your devshell by running the `refresh` command while inside a devbox shell.
 - Update AVD defaults/names if you change API levels:
   - `devbox.json` (`start-android-*` scripts) for default AVD names.
   - `examples/E2E/.detoxrc.js` for the default `DETOX_AVD`.
@@ -57,7 +57,7 @@ iOS uses the host Xcode toolchain. There is no Nix-provisioned iOS SDK. Run `dev
 ### Common env knobs
 
 - Android: `TARGET_SDK` (min/max), `DETOX_AVD` (explicit AVD name), `AVD_NAME` (explicit AVD name for create + start), `EMU_HEADLESS` (1 for headless), `EMU_PORT` (emulator port/serial), `ANDROID_BUILD_TOOLS_VERSION` (override build-tools).
-- iOS: `IOS_FLAVOR` (minsdk/latest), `DETOX_IOS_DEVICE` (explicit sim device), `IOS_RUNTIME` (preferred runtime), `IOS_DEVICE_NAMES` (comma list to create), `IOS_DEVELOPER_DIR` (Xcode path), `IOS_DOWNLOAD_RUNTIME` (0 to skip runtime download attempt). The default min/max iOS versions live in `scripts/env-defaults.json` as `PLATFORM_IOS_MIN_VERSION`/`PLATFORM_IOS_MAX_VERSION`.
+- iOS: `IOS_FLAVOR` (minsdk/latest), `DETOX_IOS_DEVICE` (explicit sim device), `IOS_RUNTIME` (preferred runtime), `IOS_DEVICE_NAMES` (comma list to create), `IOS_DEVELOPER_DIR` (Xcode path), `IOS_DOWNLOAD_RUNTIME` (0 to skip runtime download attempt). The default min/max iOS versions live in `scripts/env-defaults.json` as `IOS_MIN_VERSION`/`IOS_MAX_VERSION`.
 
 ### Releases
 

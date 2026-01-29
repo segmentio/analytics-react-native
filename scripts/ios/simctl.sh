@@ -186,7 +186,7 @@ ios_setup() {
   if ! ensure_core_sim_service; then
     return 1
   fi
-  devices_list="${IOS_DEVICE_NAMES:-${IOS_MIN_DEVICE:-${PLATFORM_IOS_MIN_DEVICE:-iPhone 13}},${IOS_MAX_DEVICE:-${PLATFORM_IOS_MAX_DEVICE:-iPhone 17}}}"
+  devices_list="${IOS_DEVICE_NAMES:-${IOS_MIN_DEVICE:-iPhone 13},${IOS_MAX_DEVICE:-iPhone 17}}"
   runtime="${IOS_RUNTIME:-}"
   if [ -z "$runtime" ] && command -v xcrun >/dev/null 2>&1; then
     runtime="$(xcrun --sdk iphonesimulator --show-sdk-version 2>/dev/null || true)"

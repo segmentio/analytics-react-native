@@ -84,7 +84,7 @@ pick_image() {
   for abi in $candidates; do
     image="system-images;android-${api};${tag};${abi}"
     path="${ANDROID_SDK_ROOT}/system-images/android-${api}/${tag}/${abi}"
-    if [ -n "${ANDROID_SETUP_DEBUG:-}" ]; then
+    if debug_enabled; then
       if [ -d "$path" ]; then
         echo "Debug: found ABI path $path" >&2
       else
@@ -147,11 +147,11 @@ android_setup() {
   require_tool avdmanager
   require_tool emulator
 
-  platform_min_api="${PLATFORM_ANDROID_MIN_API:-21}"
-  platform_max_api="${PLATFORM_ANDROID_MAX_API:-33}"
-  platform_min_device="${PLATFORM_ANDROID_MIN_DEVICE:-pixel}"
-  platform_max_device="${PLATFORM_ANDROID_MAX_DEVICE:-medium_phone}"
-  platform_image_tag="${PLATFORM_ANDROID_SYSTEM_IMAGE_TAG:-google_apis}"
+  platform_min_api="${ANDROID_MIN_API:-21}"
+  platform_max_api="${ANDROID_MAX_API:-33}"
+  platform_min_device="${ANDROID_MIN_DEVICE:-pixel}"
+  platform_max_device="${ANDROID_MAX_DEVICE:-medium_phone}"
+  platform_image_tag="${ANDROID_SYSTEM_IMAGE_TAG:-google_apis}"
 
   target_sdk="${TARGET_SDK:-max}"
   case "$target_sdk" in
@@ -163,6 +163,18 @@ android_setup() {
       target_api="$platform_max_api"
       target_device="$platform_max_device"
       ;;
+    custom)
+      target_api="${ANDROID_CUSTOM_API:-}"
+      target_device="${ANDROID_CUSTOM_DEVICE:-}"
+      if [ -z "$target_api" ]; then
+        echo "TARGET_SDK=custom requires ANDROID_CUSTOM_API to be set." >&2
+        exit 1
+      fi
+      if [ -z "$target_device" ]; then
+        echo "TARGET_SDK=custom requires ANDROID_CUSTOM_DEVICE to be set." >&2
+        exit 1
+      fi
+      ;;
     *)
       target_api="$platform_max_api"
       target_device="$platform_max_device"
@@ -170,7 +182,7 @@ android_setup() {
   esac
 
   target_api="${AVD_API:-${ANDROID_TARGET_API:-$target_api}}"
-  target_tag="${AVD_TAG:-${ANDROID_SYSTEM_IMAGE_TAG:-$platform_image_tag}}"
+  target_tag="${AVD_TAG:-${ANDROID_CUSTOM_SYSTEM_IMAGE_TAG:-${ANDROID_SYSTEM_IMAGE_TAG:-$platform_image_tag}}}"
   if [ -n "${AVD_DEVICE:-}" ]; then
     target_device="$AVD_DEVICE"
   fi
@@ -212,7 +224,7 @@ TARGET_EOF
     preferred_abi="${preferred_abi-}"
     name_override="${name_override-}"
 
-    if [ -n "${ANDROID_SETUP_DEBUG:-}" ]; then
+    if debug_enabled; then
       api_image="$(pick_image "$api" "$tag" "$preferred_abi" || true)"
     else
       api_image="$(pick_image "$api" "$tag" "$preferred_abi" 2>/dev/null || true)"
@@ -274,11 +286,11 @@ android_start() {
   fi
 
   if [ -z "$avd" ]; then
-    platform_min_api="${PLATFORM_ANDROID_MIN_API:-21}"
-    platform_max_api="${PLATFORM_ANDROID_MAX_API:-33}"
-    platform_min_device="${PLATFORM_ANDROID_MIN_DEVICE:-pixel}"
-    platform_max_device="${PLATFORM_ANDROID_MAX_DEVICE:-medium_phone}"
-    platform_image_tag="${PLATFORM_ANDROID_SYSTEM_IMAGE_TAG:-google_apis}"
+    platform_min_api="${ANDROID_MIN_API:-21}"
+    platform_max_api="${ANDROID_MAX_API:-33}"
+    platform_min_device="${ANDROID_MIN_DEVICE:-pixel}"
+    platform_max_device="${ANDROID_MAX_DEVICE:-medium_phone}"
+    platform_image_tag="${ANDROID_SYSTEM_IMAGE_TAG:-google_apis}"
 
     case "$target_sdk" in
       min)
@@ -289,6 +301,18 @@ android_start() {
         target_api="$platform_max_api"
         target_device="$platform_max_device"
         ;;
+      custom)
+        target_api="${ANDROID_CUSTOM_API:-}"
+        target_device="${ANDROID_CUSTOM_DEVICE:-}"
+        if [ -z "$target_api" ]; then
+          echo "TARGET_SDK=custom requires ANDROID_CUSTOM_API to be set." >&2
+          exit 1
+        fi
+        if [ -z "$target_device" ]; then
+          echo "TARGET_SDK=custom requires ANDROID_CUSTOM_DEVICE to be set." >&2
+          exit 1
+        fi
+        ;;
       *)
         target_api="$platform_max_api"
         target_device="$platform_max_device"
@@ -296,7 +320,7 @@ android_start() {
     esac
 
     target_api="${AVD_API:-${ANDROID_TARGET_API:-$target_api}}"
-    target_tag="${AVD_TAG:-${ANDROID_SYSTEM_IMAGE_TAG:-$platform_image_tag}}"
+    target_tag="${AVD_TAG:-${ANDROID_CUSTOM_SYSTEM_IMAGE_TAG:-${ANDROID_SYSTEM_IMAGE_TAG:-$platform_image_tag}}}"
     if [ -n "${AVD_DEVICE:-}" ]; then
       target_device="$AVD_DEVICE"
     fi

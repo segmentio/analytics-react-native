@@ -41,8 +41,7 @@ jobs:
           enable-cache: 'false'
       - name: Resolve iOS targets
         run: |
-          . scripts/platform-versions.sh
-          echo "DETOX_IOS_DEVICE=${PLATFORM_IOS_MAX_DEVICE}" >> "$GITHUB_ENV"
+          node -e "const fs=require('fs');const d=JSON.parse(fs.readFileSync('scripts/env-defaults.json','utf8')).defaults;process.stdout.write('DETOX_IOS_DEVICE=' + d.IOS_MAX_DEVICE + '\n');" >> "$GITHUB_ENV"
       - name: iOS E2E Tests (latest)
         run: devbox run --config=shells/ios/devbox.json test-ios
 
@@ -77,10 +76,6 @@ jobs:
           enable-cache: 'false'
       - name: Resolve Android targets
         run: |
-          . scripts/platform-versions.sh
-          api="$PLATFORM_ANDROID_MAX_API"
-          device="$PLATFORM_ANDROID_MAX_DEVICE"
-          avd_name="${device}_API${api}_${AVD_ABI}"
-          echo "DETOX_AVD=${avd_name}" >> "$GITHUB_ENV"
+          node -e "const fs=require('fs');const d=JSON.parse(fs.readFileSync('scripts/env-defaults.json','utf8')).defaults;const abi=process.env.AVD_ABI||'x86_64';process.stdout.write('DETOX_AVD=' + d.ANDROID_MAX_DEVICE + '_API' + d.ANDROID_MAX_API + '_' + abi + '\n');" >> "$GITHUB_ENV"
       - name: Android E2E Tests (latest)
         run: devbox run --config=shells/android-max/devbox.json test-android

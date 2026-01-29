@@ -24,6 +24,7 @@ android_run() {
       # shellcheck disable=SC1090
       . "$scripts_root/android/avd.sh"
       android_setup
+      yarn install --immutable
       yarn e2e install
       yarn build
       yarn e2e build:android
