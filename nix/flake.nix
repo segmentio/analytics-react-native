@@ -37,7 +37,10 @@
         systemImageTypes = [ (getVar "ANDROID_SYSTEM_IMAGE_TAG") ];
       };
       androidSdkConfigMin = androidSdkConfig // {
-        platformVersions = [ (getVar "ANDROID_MIN_API") ];
+        platformVersions = unique [
+          (getVar "ANDROID_MIN_API")
+          (getVar "ANDROID_MAX_API")
+        ];
       };
       androidSdkConfigMax = androidSdkConfig // {
         platformVersions = [ (getVar "ANDROID_MAX_API") ];

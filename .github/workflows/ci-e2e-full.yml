@@ -17,11 +17,14 @@ jobs:
         include:
           - name: ios-min
             target: min
+            runs_on: macos-14
           - name: ios-latest
             target: max
+            runs_on: macos-26
     uses: ./.github/workflows/ios-e2e.yml
     with:
       target: ${{ matrix.target }}
+      runs_on: ${{ matrix.runs_on }}
     secrets: inherit
 
   run-e2e-android:
