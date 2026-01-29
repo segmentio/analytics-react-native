@@ -3,7 +3,7 @@
   "packages": {
     "yarn-berry": "latest",
     "jdk17": "latest",
-    "gradle": "latest",
+    "gradle": "8.0.1",
     "jq": "latest",
     "path:../../nix#android-sdk-min": ""
   },

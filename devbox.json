@@ -10,7 +10,7 @@
     "nixfmt": "latest",
     "shfmt": "latest",
     "jdk17": "latest",
-    "gradle": "latest",
+    "gradle": "8.0.1",
     "jq": "latest",
     "netcat": "latest",
     "act": "latest",

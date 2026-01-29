@@ -6,22 +6,17 @@ if ! (return 0 2>/dev/null); then
   exit 1
 fi
 
-script_dir="$(cd "$(dirname "$0")" && pwd)"
+scripts_root="${SCRIPTS_DIR:-$(cd "$(dirname "$0")" && pwd)}"
+android_dir="$scripts_root/android"
 if [ "${SHARED_LOADED:-}" != "1" ] || [ "${SHARED_LOADED_PID:-}" != "$$" ]; then
-  init_path="$script_dir/../env.sh"
-  if [ ! -f "$init_path" ]; then
-    repo_root=""
-    if command -v git >/dev/null 2>&1; then
-      repo_root="$(git -C "$script_dir" rev-parse --show-toplevel 2>/dev/null || git -C "$PWD" rev-parse --show-toplevel 2>/dev/null || true)"
-    fi
-    if [ -n "$repo_root" ] && [ -f "$repo_root/scripts/env.sh" ]; then
-      init_path="$repo_root/scripts/env.sh"
-    fi
-  fi
   # shellcheck disable=SC1090
-  . "$init_path"
+  . "$scripts_root/lib/bootstrap.sh"
+  load_env "$scripts_root"
 fi
 debug_log_script "scripts/android/avd.sh"
+
+# shellcheck disable=SC1090
+. "$android_dir/lib.sh"
 
 detect_sdk_root() {
   if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
@@ -57,22 +52,38 @@ resolve_device() {
   if [ -z "$desired" ]; then
     return 1
   fi
-  devices="$(avdmanager list device | awk -F': ' '/Name:/{print $2}')"
+  devices="$(avdmanager list device | awk -F': ' '
+    /^id: /{
+      id=$2
+      if (index(id, "\"") > 0) {
+        q=index(id, "\"")
+        rest=substr(id, q + 1)
+        q2=index(rest, "\"")
+        if (q2 > 0) { id=substr(rest, 1, q2 - 1) }
+      } else {
+        split(id, parts, " ")
+        id=parts[1]
+      }
+      next
+    }
+    /^[[:space:]]*Name: /{
+      name=$2
+      if (id != "") { print id "\t" name; id="" }
+    }
+  ')"
   if [ -z "$devices" ]; then
     return 1
   fi
 
-  normalize_name() {
-    printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | tr -cd '[:alnum:]'
-  }
+  desired_norm="$(android_normalize_name "$desired")"
+  desired_alt_norm="$(android_normalize_name "$(printf '%s' "$desired" | tr '_-' '  ')")"
 
-  desired_norm="$(normalize_name "$desired")"
-  desired_alt_norm="$(normalize_name "$(printf '%s' "$desired" | tr '_-' '  ')")"
-
-  while IFS= read -r name; do
-    name_norm="$(normalize_name "$name")"
-    if [ "$name_norm" = "$desired_norm" ] || [ "$name_norm" = "$desired_alt_norm" ]; then
-      printf '%s\n' "$name"
+  while IFS=$'\t' read -r id name; do
+    id_norm="$(android_normalize_name "$id")"
+    name_norm="$(android_normalize_name "$name")"
+    if [ "$id_norm" = "$desired_norm" ] || [ "$id_norm" = "$desired_alt_norm" ] || \
+      [ "$name_norm" = "$desired_norm" ] || [ "$name_norm" = "$desired_alt_norm" ]; then
+      printf '%s\n' "$id"
       return 0
     fi
   done <<EOF
@@ -149,6 +160,7 @@ android_setup() {
   TARGETS=""
   resolved_avd_name=""
   detected_sdk_root="$(detect_sdk_root 2>/dev/null || true)"
+  target_sdk="${TARGET_SDK:-max}"
 
   if [ -z "${ANDROID_SDK_ROOT:-}" ] && [ -n "$detected_sdk_root" ]; then
     ANDROID_SDK_ROOT="$detected_sdk_root"
@@ -166,50 +178,13 @@ android_setup() {
   require_tool avdmanager
   require_tool emulator
 
-  platform_min_api="${ANDROID_MIN_API:-21}"
-  platform_max_api="${ANDROID_MAX_API:-33}"
-  platform_min_device="${ANDROID_MIN_DEVICE:-pixel}"
-  platform_max_device="${ANDROID_MAX_DEVICE:-medium_phone}"
-  platform_image_tag="${ANDROID_SYSTEM_IMAGE_TAG:-google_apis}"
-
-  target_sdk="${TARGET_SDK:-max}"
-  case "$target_sdk" in
-    min)
-      target_api="$platform_min_api"
-      target_device="$platform_min_device"
-      ;;
-    max)
-      target_api="$platform_max_api"
-      target_device="$platform_max_device"
-      ;;
-    custom)
-      target_api="${ANDROID_CUSTOM_API:-}"
-      target_device="${ANDROID_CUSTOM_DEVICE:-}"
-      if [ -z "$target_api" ]; then
-        echo "TARGET_SDK=custom requires ANDROID_CUSTOM_API to be set." >&2
-        exit 1
-      fi
-      if [ -z "$target_device" ]; then
-        echo "TARGET_SDK=custom requires ANDROID_CUSTOM_DEVICE to be set." >&2
-        exit 1
-      fi
-      ;;
-    *)
-      target_api="$platform_max_api"
-      target_device="$platform_max_device"
-      ;;
-  esac
-
-  target_api="${AVD_API:-${ANDROID_TARGET_API:-$target_api}}"
-  target_tag="${AVD_TAG:-${ANDROID_CUSTOM_SYSTEM_IMAGE_TAG:-${ANDROID_SYSTEM_IMAGE_TAG:-$platform_image_tag}}}"
-  if [ -n "${AVD_DEVICE:-}" ]; then
-    target_device="$AVD_DEVICE"
-  fi
+  IFS='|' read -r target_api target_device target_tag target_preferred_abi <<TARGET_EOF
+$(android_resolve_target)
+TARGET_EOF
   resolved_device="$(resolve_device "$target_device" || true)"
   if [ -n "$resolved_device" ]; then
     target_device="$resolved_device"
   fi
-  target_preferred_abi="${AVD_ABI:-}"
 
   if debug_enabled; then
     debug_log "target_sdk=${target_sdk} target_api=${target_api} target_device=${target_device} target_tag=${target_tag} target_preferred_abi=${target_preferred_abi:-auto}"
@@ -231,12 +206,12 @@ android_setup() {
   fi
 
   ifs_backup="$IFS"
-  IFS='\n'
+  IFS="$(printf '\n')"
   for target in $TARGETS; do
     IFS='|' read -r api tag device preferred_abi name_override <<TARGET_EOF
 $target
 TARGET_EOF
-    IFS='\n'
+    IFS="$(printf '\n')"
     api="${api-}"
     tag="${tag-}"
     device="${device-}"
@@ -279,7 +254,12 @@ TARGET_EOF
     if [ -n "$name_override" ]; then
       avd_name="$name_override"
     else
-      avd_name="$(printf '%s_API%s_%s' "$device" "$api" "$abi_safe")"
+      safe_device="$(android_sanitize_avd_name "$device" || true)"
+      if [ -z "$safe_device" ]; then
+        echo "Unable to derive a valid AVD name from device '${device}'." >&2
+        exit 1
+      fi
+      avd_name="$(printf '%s_API%s_%s' "$safe_device" "$api" "$abi_safe")"
     fi
     if [ -z "$resolved_avd_name" ]; then
       resolved_avd_name="$avd_name"
@@ -312,55 +292,22 @@ android_start() {
   fi
 
   if [ -z "$avd" ]; then
-    platform_min_api="${ANDROID_MIN_API:-21}"
-    platform_max_api="${ANDROID_MAX_API:-33}"
-    platform_min_device="${ANDROID_MIN_DEVICE:-pixel}"
-    platform_max_device="${ANDROID_MAX_DEVICE:-medium_phone}"
-    platform_image_tag="${ANDROID_SYSTEM_IMAGE_TAG:-google_apis}"
-
-    case "$target_sdk" in
-      min)
-        target_api="$platform_min_api"
-        target_device="$platform_min_device"
-        ;;
-      max)
-        target_api="$platform_max_api"
-        target_device="$platform_max_device"
-        ;;
-      custom)
-        target_api="${ANDROID_CUSTOM_API:-}"
-        target_device="${ANDROID_CUSTOM_DEVICE:-}"
-        if [ -z "$target_api" ]; then
-          echo "TARGET_SDK=custom requires ANDROID_CUSTOM_API to be set." >&2
-          exit 1
-        fi
-        if [ -z "$target_device" ]; then
-          echo "TARGET_SDK=custom requires ANDROID_CUSTOM_DEVICE to be set." >&2
-          exit 1
-        fi
-        ;;
-      *)
-        target_api="$platform_max_api"
-        target_device="$platform_max_device"
-        ;;
-    esac
-
-    target_api="${AVD_API:-${ANDROID_TARGET_API:-$target_api}}"
-    target_tag="${AVD_TAG:-${ANDROID_CUSTOM_SYSTEM_IMAGE_TAG:-${ANDROID_SYSTEM_IMAGE_TAG:-$platform_image_tag}}}"
-    if [ -n "${AVD_DEVICE:-}" ]; then
-      target_device="$AVD_DEVICE"
-    fi
+    IFS='|' read -r target_api target_device target_tag target_preferred_abi <<TARGET_EOF
+$(android_resolve_target)
+TARGET_EOF
     resolved_device="$(resolve_device "$target_device" || true)"
     if [ -n "$resolved_device" ]; then
       target_device="$resolved_device"
     fi
-    target_preferred_abi="${AVD_ABI:-}"
 
     api_image="$(pick_image "$target_api" "$target_tag" "$target_preferred_abi" 2>/dev/null || true)"
     if [ -n "$api_image" ]; then
       abi="${api_image##*;}"
       abi_safe="$(printf '%s' "$abi" | tr '-' '_')"
-      avd="$(printf '%s_API%s_%s' "$target_device" "$target_api" "$abi_safe")"
+      safe_device="$(android_sanitize_avd_name "$target_device" || true)"
+      if [ -n "$safe_device" ]; then
+        avd="$(printf '%s_API%s_%s' "$safe_device" "$target_api" "$abi_safe")"
+      fi
     fi
   fi
 
