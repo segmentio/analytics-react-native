@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 if ! (return 0 2>/dev/null); then
-  echo "scripts/env.sh must be sourced." >&2
+  echo "scripts/bootstrap/env.sh must be sourced." >&2
   exit 1
 fi
 
@@ -52,12 +52,12 @@ fi
 
 if [ "${INIT_ANDROID:-}" = "1" ]; then
   # shellcheck disable=SC1090
-  . "$SCRIPTS_DIR/android/env.sh"
+  . "$SCRIPTS_DIR/platforms/android/env.sh"
 fi
 
 if [ "${INIT_IOS:-}" = "1" ] && [ "$(uname -s)" = "Darwin" ]; then
   # shellcheck disable=SC1090
-  . "$SCRIPTS_DIR/ios/env.sh"
+  . "$SCRIPTS_DIR/platforms/ios/env.sh"
 fi
 
 SHARED_LOADED=1

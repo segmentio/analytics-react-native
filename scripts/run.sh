@@ -2,7 +2,7 @@
 set -eu
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-lib_dir="$script_dir/lib"
+bootstrap_dir="$script_dir/bootstrap"
 
 if [ "${RUN_SH_ACTIVE:-}" = "1" ]; then
   echo "scripts/run.sh is already running." >&2
@@ -12,7 +12,7 @@ RUN_SH_ACTIVE=1
 export RUN_SH_ACTIVE
 
 # shellcheck disable=SC1090
-. "$lib_dir/bootstrap.sh"
+. "$bootstrap_dir/init.sh"
 load_env "$script_dir"
 debug_log_script "scripts/run.sh"
 
@@ -32,12 +32,12 @@ run_build() {
 case "$platform" in
   android)
     # shellcheck disable=SC1090
-    . "$scripts_root/android/actions.sh"
+    . "$scripts_root/platforms/android/actions.sh"
     android_run "$action" "$@"
     ;;
   ios)
     # shellcheck disable=SC1090
-    . "$scripts_root/ios/actions.sh"
+    . "$scripts_root/platforms/ios/actions.sh"
     ios_run "$action" "$@"
     ;;
   build)

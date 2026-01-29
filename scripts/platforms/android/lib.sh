@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 if ! (return 0 2>/dev/null); then
-  echo "scripts/android/lib.sh must be sourced." >&2
+  echo "scripts/platforms/android/lib.sh must be sourced." >&2
   exit 1
 fi
 

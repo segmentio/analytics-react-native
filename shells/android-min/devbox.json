@@ -11,7 +11,7 @@
     "init_hook": [
       "export TARGET_SDK=min",
       "export ANDROID_SDK_FLAKE_OUTPUT=android-sdk-min",
-      "INIT_ANDROID=1 . $DEVBOX_PROJECT_ROOT/../../scripts/env.sh"
+      "INIT_ANDROID=1 . $DEVBOX_PROJECT_ROOT/../../scripts/bootstrap/env.sh"
     ],
     "scripts": {
       "setup-android": ["sh $DEVBOX_PROJECT_ROOT/../../scripts/run.sh android setup"],

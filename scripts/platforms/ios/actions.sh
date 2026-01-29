@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 if ! (return 0 2>/dev/null); then
-  echo "scripts/ios/actions.sh must be sourced." >&2
+  echo "scripts/platforms/ios/actions.sh must be sourced." >&2
   exit 1
 fi
 
@@ -11,13 +11,13 @@ ios_run() {
 
   if [ "$(uname -s)" = "Darwin" ]; then
     # shellcheck disable=SC1090
-    . "$SCRIPTS_DIR/ios/env.sh"
+    . "$SCRIPTS_DIR/platforms/ios/env.sh"
   fi
 
   case "$action" in
     test)
       # shellcheck disable=SC1090
-      . "$SCRIPTS_DIR/ios/simctl.sh"
+      . "$SCRIPTS_DIR/platforms/ios/simctl.sh"
       target_sdk="${TARGET_SDK:-max}"
       runtime_version=""
       device_name=""
@@ -74,12 +74,12 @@ ios_run() {
       ;;
     setup)
       # shellcheck disable=SC1090
-      . "$SCRIPTS_DIR/ios/simctl.sh"
+      . "$SCRIPTS_DIR/platforms/ios/simctl.sh"
       ios_setup "$@"
       ;;
     start | stop | reset)
       # shellcheck disable=SC1090
-      . "$SCRIPTS_DIR/ios/simctl.sh"
+      . "$SCRIPTS_DIR/platforms/ios/simctl.sh"
       case "$action" in
         start)
           ensure_developer_dir

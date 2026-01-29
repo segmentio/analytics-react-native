@@ -19,3 +19,41 @@ require_tool() {
     exit 1
   fi
 }
+
+require_file() {
+  path="$1"
+  message="${2:-Missing required file: $path.}"
+  if [ ! -f "$path" ]; then
+    echo "$message" >&2
+    exit 1
+  fi
+}
+
+require_dir() {
+  path="$1"
+  message="${2:-Missing required directory: $path.}"
+  if [ ! -d "$path" ]; then
+    echo "$message" >&2
+    exit 1
+  fi
+}
+
+require_dir_contains() {
+  base="$1"
+  subpath="$2"
+  message="${3:-Missing required path: $base/$subpath.}"
+  if [ ! -e "$base/$subpath" ]; then
+    echo "$message" >&2
+    exit 1
+  fi
+}
+
+require_var() {
+  var_name="$1"
+  message="${2:-Missing required environment variable: $var_name.}"
+  value="$(eval "printf '%s' \"\${$var_name-}\"")"
+  if [ -z "$value" ]; then
+    echo "$message" >&2
+    exit 1
+  fi
+}

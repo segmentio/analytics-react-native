@@ -2,18 +2,18 @@
 set -eu
 
 if ! (return 0 2>/dev/null); then
-  echo "scripts/android/avd.sh must be sourced via scripts/run.sh." >&2
+  echo "scripts/platforms/android/avd.sh must be sourced via scripts/run.sh." >&2
   exit 1
 fi
 
 scripts_root="${SCRIPTS_DIR:-$(cd "$(dirname "$0")" && pwd)}"
-android_dir="$scripts_root/android"
+android_dir="$scripts_root/platforms/android"
 if [ "${SHARED_LOADED:-}" != "1" ] || [ "${SHARED_LOADED_PID:-}" != "$$" ]; then
   # shellcheck disable=SC1090
-  . "$scripts_root/lib/bootstrap.sh"
+  . "$scripts_root/bootstrap/init.sh"
   load_env "$scripts_root"
 fi
-debug_log_script "scripts/android/avd.sh"
+debug_log_script "scripts/platforms/android/avd.sh"
 
 # shellcheck disable=SC1090
 . "$android_dir/lib.sh"
@@ -191,6 +191,7 @@ TARGET_EOF
   fi
 
   target_dir="$ANDROID_SDK_ROOT/system-images/android-${target_api}/${target_tag}"
+  require_dir_contains "$ANDROID_SDK_ROOT" "system-images/android-${target_api}/${target_tag}" "Missing system image directory for API ${target_api} (${target_tag}) under ${ANDROID_SDK_ROOT}. Re-enter the devbox shell or rebuild Devbox to fetch images."
   if [ -d "$target_dir" ]; then
     add_target "${target_api}|${target_tag}|${target_device}|${target_preferred_abi}|${AVD_NAME:-}"
   else
@@ -224,6 +225,9 @@ TARGET_EOF
       api_image="$(pick_image "$api" "$tag" "$preferred_abi" 2>/dev/null || true)"
     fi
     if [ -z "$api_image" ]; then
+      if [ -n "$preferred_abi" ]; then
+        require_dir_contains "$ANDROID_SDK_ROOT" "system-images/android-${api}/${tag}/${preferred_abi}" "Missing preferred ABI ${preferred_abi} for API ${api} (${tag}) under ${ANDROID_SDK_ROOT}."
+      fi
       base_dir="${ANDROID_SDK_ROOT}/system-images/android-${api}/${tag}"
       if [ -d "$base_dir" ]; then
         available_abis="$(ls -1 "$base_dir" 2>/dev/null | tr '\n' ' ' | sed 's/[[:space:]]*$//')"

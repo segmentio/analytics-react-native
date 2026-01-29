@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 if ! (return 0 2>/dev/null); then
-  echo "scripts/android/env.sh must be sourced via scripts/run.sh or scripts/env.sh." >&2
+  echo "scripts/platforms/android/env.sh must be sourced via scripts/run.sh or scripts/bootstrap/env.sh." >&2
   exit 1
 fi
 project_root="${PROJECT_ROOT:-}"
@@ -11,12 +11,12 @@ fi
 if [ -z "$project_root" ]; then
   project_root="$(cd "$(dirname "$0")/../.." && pwd)"
 fi
-script_dir="$project_root/scripts/android"
+script_dir="$project_root/scripts/platforms/android"
 if [ "${SHARED_LOADED:-}" != "1" ] || [ "${SHARED_LOADED_PID:-}" != "$$" ]; then
   # shellcheck disable=SC1090
-  . "$project_root/scripts/env.sh"
+  . "$project_root/scripts/bootstrap/env.sh"
 fi
-debug_log_script "scripts/android/env.sh"
+debug_log_script "scripts/platforms/android/env.sh"
 
 
 

@@ -1,17 +1,18 @@
 # Scripts Overview
 
-This repo uses `scripts/` as the entry point for devbox commands and CI helpers. Scripts are organized by platform with a small shared helper layer.
+This repo uses `scripts/` as the entry point for devbox commands and tasks. Scripts are organized by platform with a small shared helper layer.
 
 ## Layout
 
-- `scripts/run.sh`: entrypoint for devbox/CI tasks (build/test/act).
-- `scripts/env.sh`: establishes `PROJECT_ROOT`/`SCRIPTS_DIR`, loads `scripts/shared/*`, and optionally initializes platforms when `INIT_ANDROID`/`INIT_IOS` are set.
+- `scripts/run.sh`: entrypoint for tasks (build/test).
+- `scripts/bootstrap/env.sh`: establishes `PROJECT_ROOT`/`SCRIPTS_DIR`, loads `scripts/shared/*`, and optionally initializes platforms when `INIT_ANDROID`/`INIT_IOS` are set.
+- `scripts/bootstrap/init.sh`: bootstraps `scripts/bootstrap/env.sh` when invoked from `scripts/run.sh`.
 - `scripts/shared/project.sh`: project root + scripts path helpers.
 - `scripts/shared/tools.sh`: shared tool checks.
 - `scripts/shared/defaults.sh`: loads `nix/defaults.json` via `jq`.
-- `scripts/android/`: Android SDK, AVD, and E2E helpers.
-- `scripts/ios/`: iOS simulator setup, toolchain fixups, and E2E helpers.
-- `scripts/android/actions.sh` + `scripts/ios/actions.sh`: platform task dispatchers called by `scripts/run.sh`.
+- `scripts/platforms/android/`: Android SDK, AVD, and E2E helpers.
+- `scripts/platforms/ios/`: iOS simulator setup, toolchain fixups, and E2E helpers.
+- `scripts/platforms/android/actions.sh` + `scripts/platforms/ios/actions.sh`: platform task dispatchers called by `scripts/run.sh`.
 
 ## Shared helpers
 
@@ -20,19 +21,23 @@ This repo uses `scripts/` as the entry point for devbox commands and CI helpers.
   - `SCRIPTS_DIR`: defaults to `$PROJECT_ROOT/scripts` when unset.
 - `scripts/shared/tools.sh`
   - `require_tool`: asserts a tool exists (with an optional custom message).
+  - `require_file`: asserts a file exists (with an optional custom message).
+  - `require_dir`: asserts a directory exists (with an optional custom message).
+  - `require_dir_contains`: asserts a directory contains a specific subpath (with an optional custom message).
+  - `require_var`: asserts an env var is set (with an optional custom message).
 - `scripts/shared/defaults.sh`
   - Loads `nix/defaults.json` (via `jq`) to export default env vars when available.
 
 ## Android scripts
 
-- `scripts/android/env.sh`
+- `scripts/platforms/android/env.sh`
 
   - Sets `ANDROID_SDK_ROOT`/`ANDROID_HOME` and PATH for the Nix SDK (prefers `android-sdk-max` when available).
   - Set `ANDROID_LOCAL_SDK=1` to keep a pre-set local SDK instead.
   - Loads platform defaults via `scripts/shared/defaults.sh` (from `nix/defaults.json`).
   - Used by devbox init hooks in `devbox.json` and `shells/android-min/devbox.json` + `shells/android-max/devbox.json`.
 
-- `scripts/android/avd.sh`
+- `scripts/platforms/android/avd.sh`
 
   - Creates/ensures AVDs for the target API level, then starts/stops/resets emulators.
   - Depends on `sdkmanager`, `avdmanager`, `emulator` in PATH (Devbox shell).
@@ -41,13 +46,13 @@ This repo uses `scripts/` as the entry point for devbox commands and CI helpers.
 
 ## iOS scripts
 
-- `scripts/ios/env.sh`
+- `scripts/platforms/ios/env.sh`
 
   - Workaround for Devbox macOS toolchain injection.
   - Removes Nix toolchain variables and re-selects system clang/Xcode.
   - Sourced by devbox init hooks and re-applied in `scripts/run.sh` for iOS tasks.
 
-- `scripts/ios/simctl.sh`
+- `scripts/platforms/ios/simctl.sh`
 
   - Helpers for runtime selection and simulator management.
   - Ensures Xcode tools are selected and simulators exist.
@@ -97,9 +102,8 @@ Root devbox (`devbox.json`) exposes:
 - `test-ios` -> `scripts/run.sh ios test`
 - `setup-android` -> `scripts/run.sh android setup`
 - `setup-ios` -> `scripts/run.sh ios setup`
-- `start-android*` -> `scripts/run.sh android start` (uses `scripts/android/avd.sh`)
+- `start-android*` -> `scripts/run.sh android start` (uses `scripts/platforms/android/avd.sh`)
 - `start-ios` -> `scripts/run.sh ios start`
-- `act` -> `scripts/run.sh act <workflow>`
 
 Slim CI shells:
 

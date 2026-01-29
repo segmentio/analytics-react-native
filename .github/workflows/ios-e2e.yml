@@ -85,7 +85,7 @@ jobs:
         with:
           xcode-version: ${{ steps.defaults.outputs.runtime }}
       - name: Environment check
-        run: sh scripts/ci/env-check.sh
+        run: sh scripts/shared/env-check.sh
       - name: Xcode diagnostics
         run: |
           set -euo pipefail
@@ -100,6 +100,10 @@ jobs:
           if [ -n "$sdk_path" ]; then
             ls -la "$sdk_path/usr/lib/swift" || true
           fi
+      - name: Install Xcode components
+        run: |
+          sudo xcodebuild -runFirstLaunch -checkForNewerComponents
+          sudo xcodebuild -downloadPlatform iOS
       - name: Verify Swift compatibility libs
         run: |
           set -euo pipefail
@@ -118,10 +122,6 @@ jobs:
             echo "sdk_swift_dir=${sdk_swift_dir}" >&2
             exit 1
           fi
-      - name: Install Xcode components
-        run: |
-          sudo xcodebuild -runFirstLaunch -checkForNewerComponents
-          sudo xcodebuild -downloadPlatform iOS
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:

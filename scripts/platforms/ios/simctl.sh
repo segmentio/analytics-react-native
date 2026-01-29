@@ -2,26 +2,26 @@
 set -eu
 
 if ! (return 0 2>/dev/null); then
-  echo "scripts/ios/simctl.sh must be sourced via scripts/run.sh." >&2
+  echo "scripts/platforms/ios/simctl.sh must be sourced via scripts/run.sh." >&2
   exit 1
 fi
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
 if [ "${SHARED_LOADED:-}" != "1" ] || [ "${SHARED_LOADED_PID:-}" != "$$" ]; then
-  init_path="$script_dir/../env.sh"
+  init_path="$script_dir/../../bootstrap/env.sh"
   if [ ! -f "$init_path" ]; then
     repo_root=""
     if command -v git >/dev/null 2>&1; then
       repo_root="$(git -C "$script_dir" rev-parse --show-toplevel 2>/dev/null || git -C "$PWD" rev-parse --show-toplevel 2>/dev/null || true)"
     fi
-    if [ -n "$repo_root" ] && [ -f "$repo_root/scripts/env.sh" ]; then
-      init_path="$repo_root/scripts/env.sh"
+    if [ -n "$repo_root" ] && [ -f "$repo_root/scripts/bootstrap/env.sh" ]; then
+      init_path="$repo_root/scripts/bootstrap/env.sh"
     fi
   fi
   # shellcheck disable=SC1090
   . "$init_path"
 fi
-debug_log_script "scripts/ios/simctl.sh"
+debug_log_script "scripts/platforms/ios/simctl.sh"
 
 ensure_core_sim_service() {
   status=0
@@ -203,15 +203,14 @@ ensure_developer_dir() {
     fi
   fi
 
-  if [ -n "$desired" ] && [ -d "$desired" ]; then
-    DEVELOPER_DIR="$desired"
-    PATH="$DEVELOPER_DIR/usr/bin:$PATH"
-    export DEVELOPER_DIR PATH
-    return 0
-  fi
+  require_dir "$desired" "Xcode developer directory not found. Install Xcode/CLI tools or set IOS_DEVELOPER_DIR to an Xcode path (e.g., /Applications/Xcode.app/Contents/Developer)."
+  require_dir_contains "$desired" "Toolchains/XcodeDefault.xctoolchain" "Xcode toolchain missing under ${desired}."
+  require_dir_contains "$desired" "Platforms/iPhoneSimulator.platform" "iPhoneSimulator platform missing under ${desired}."
 
-  echo "Xcode developer directory not found. Install Xcode/CLI tools or set IOS_DEVELOPER_DIR to an Xcode path (e.g., /Applications/Xcode.app/Contents/Developer)." >&2
-  exit 1
+  DEVELOPER_DIR="$desired"
+  PATH="$DEVELOPER_DIR/usr/bin:$PATH"
+  export DEVELOPER_DIR PATH
+  return 0
 }
 
 ensure_simctl() {

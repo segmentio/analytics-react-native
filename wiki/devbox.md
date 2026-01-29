@@ -13,16 +13,16 @@ Enter the environment with `devbox shell`. The init hook wires `ANDROID_SDK_ROOT
 
 ## Android
 
-By default, Devbox uses the flake-pinned SDKs and prefers the latest (`android-sdk-max`) when available. It sets `ANDROID_SDK_ROOT`/`ANDROID_HOME` and adds emulator/platform-tools/cmdline-tools to `PATH` via `scripts/android/env.sh`. To use a local SDK instead, launch with `ANDROID_LOCAL_SDK=1 ANDROID_HOME="$HOME/Library/Android/sdk" devbox shell` (or set `ANDROID_SDK_ROOT`). Unset `ANDROID_LOCAL_SDK` (and `ANDROID_HOME`/`ANDROID_SDK_ROOT` if you set them) to return to the Nix SDK. Inspect the active SDK with `echo "$ANDROID_SDK_ROOT"` and `which sdkmanager` inside the shell. Create/boot AVDs via `devbox run start-android*` (uses `scripts/android/avd.sh`). Version sources are documented in `wiki/nix.md`.
+By default, Devbox uses the flake-pinned SDKs and prefers the latest (`android-sdk-max`) when available. It sets `ANDROID_SDK_ROOT`/`ANDROID_HOME` and adds emulator/platform-tools/cmdline-tools to `PATH` via `scripts/platforms/android/env.sh`. To use a local SDK instead, launch with `ANDROID_LOCAL_SDK=1 ANDROID_HOME="$HOME/Library/Android/sdk" devbox shell` (or set `ANDROID_SDK_ROOT`). Unset `ANDROID_LOCAL_SDK` (and `ANDROID_HOME`/`ANDROID_SDK_ROOT` if you set them) to return to the Nix SDK. Inspect the active SDK with `echo "$ANDROID_SDK_ROOT"` and `which sdkmanager` inside the shell. Create/boot AVDs via `devbox run start-android*` (uses `scripts/platforms/android/avd.sh`). Version sources are documented in `wiki/nix.md`.
 
 Example custom targets (root `devbox.json` sets these via `shell.env` for testing):
 `ANDROID_CUSTOM_API=29` `ANDROID_CUSTOM_DEVICE=pixel_6` `IOS_CUSTOM_DEVICE="iPhone 15"`
 
 ### Emulator/AVD scripts
 
-- `devbox run start-android` launches the default “max” AVD (from `nix/defaults.json`). Override with `TARGET_SDK=min` to launch the min AVD instead. You can also set `DETOX_AVD` or `AVD_NAME` to pick an exact AVD name. Internally uses `scripts/android/avd.sh`.
-- `devbox run start-android-max` / `start-android-min` explicitly launch the max (API 33) or min (API 21) AVDs. Both will create the AVD first via `scripts/android/avd.sh` if it does not exist.
-- `scripts/android/avd.sh` accepts env overrides: `AVD_API`, `AVD_DEVICE`, `AVD_TAG`, `AVD_ABI`, `AVD_NAME`, `ANDROID_TARGET_API`. Defaults target the latest API (`ANDROID_MAX_API`) when available. The script auto-selects the best ABI for the host (arm64-v8a on arm, x86_64 on Intel) if `AVD_ABI` is unset.
+- `devbox run start-android` launches the default “max” AVD (from `nix/defaults.json`). Override with `TARGET_SDK=min` to launch the min AVD instead. You can also set `DETOX_AVD` or `AVD_NAME` to pick an exact AVD name. Internally uses `scripts/platforms/android/avd.sh`.
+- `devbox run start-android-max` / `start-android-min` explicitly launch the max (API 33) or min (API 21) AVDs. Both will create the AVD first via `scripts/platforms/android/avd.sh` if it does not exist.
+- `scripts/platforms/android/avd.sh` accepts env overrides: `AVD_API`, `AVD_DEVICE`, `AVD_TAG`, `AVD_ABI`, `AVD_NAME`, `ANDROID_TARGET_API`. Defaults target the latest API (`ANDROID_MAX_API`) when available. The script auto-selects the best ABI for the host (arm64-v8a on arm, x86_64 on Intel) if `AVD_ABI` is unset.
 - `devbox run reset-android` removes local AVDs/adb keys if you need a clean slate.
 - `EMU_HEADLESS=1 devbox run start-android*` to run the emulator headless (CI sets this); omit for a visible emulator locally.
 - `EMU_PORT=5554 devbox run start-android*` to set the emulator port/serial (defaults to 5554) and avoid adb conflicts.
@@ -46,11 +46,11 @@ Example custom targets (root `devbox.json` sets these via `shell.env` for testin
 
 iOS uses the host Xcode toolchain. There is no Nix-provisioned iOS SDK. Run `devbox run setup-ios` to provision simulators and validate Xcode tooling. Full Xcode is required for `simctl` (Command Line Tools alone are not enough). Make sure Xcode command line tools are selected (`xcode-select --print-path` or `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer`) and that you have agreed to the license if prompted.
 
-> Important: `devbox shell` injects Nix toolchain variables on macOS, which can break Xcode builds. The init hooks source `scripts/ios/env.sh` to undo that and re-select the system toolchain, and `scripts/run.sh` re-applies it before running iOS E2E.
+> Important: `devbox shell` injects Nix toolchain variables on macOS, which can break Xcode builds. The init hooks source `scripts/platforms/ios/env.sh` to undo that and re-select the system toolchain, and `scripts/run.sh` re-applies it before running iOS E2E.
 
 ### Simulators and Detox
 
-- `devbox run setup-ios` provisions simulators. Defaults are driven by `nix/defaults.json` (min/max device and iOS version). Override via env vars to target a specific device/runtime. Set `IOS_DOWNLOAD_RUNTIME=0` to skip attempting `xcodebuild -downloadPlatform iOS` when the preferred runtime is missing. Set `IOS_DEVELOPER_DIR` (e.g., `/Applications/Xcode.app/Contents/Developer`) to point at a specific Xcode; otherwise it uses `xcode-select -p` or the default Xcode.app if found. Internally uses `scripts/ios/simctl.sh`.
+- `devbox run setup-ios` provisions simulators. Defaults are driven by `nix/defaults.json` (min/max device and iOS version). Override via env vars to target a specific device/runtime. Set `IOS_DOWNLOAD_RUNTIME=0` to skip attempting `xcodebuild -downloadPlatform iOS` when the preferred runtime is missing. Set `IOS_DEVELOPER_DIR` (e.g., `/Applications/Xcode.app/Contents/Developer`) to point at a specific Xcode; otherwise it uses `xcode-select -p` or the default Xcode.app if found. Internally uses `scripts/platforms/ios/simctl.sh`.
 - `devbox run start-ios` provisions simulators (via `setup-ios`), then boots the chosen device (`DETOX_IOS_DEVICE` or default `iPhone 17`) and opens Simulator. Set `TARGET_SDK=min` to target the min sim (per `nix/defaults.json`) or leave default for latest. Internally uses `scripts/run.sh ios start`.
 - `devbox run reset-ios` shuts down/erases and removes all local simulator devices.
 - `devbox run stop-android` / `stop-ios` / `stop` to shut down running emulators/simulators (handy for headless runs).

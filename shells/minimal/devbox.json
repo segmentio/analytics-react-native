@@ -8,7 +8,7 @@
     "shfmt": "latest"
   },
   "shell": {
-    "init_hook": [". $DEVBOX_PROJECT_ROOT/../../scripts/env.sh"],
+    "init_hook": [". $DEVBOX_PROJECT_ROOT/../../scripts/bootstrap/env.sh"],
     "scripts": {
       "build": ["sh $DEVBOX_PROJECT_ROOT/../../scripts/run.sh build"],
       "release": [

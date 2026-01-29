@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 if ! (return 0 2>/dev/null); then
-  echo "scripts/android/actions.sh must be sourced." >&2
+  echo "scripts/platforms/android/actions.sh must be sourced." >&2
   exit 1
 fi
 
@@ -10,12 +10,12 @@ android_run() {
   shift 1 || true
 
   # shellcheck disable=SC1090
-  . "$SCRIPTS_DIR/android/env.sh"
+  . "$SCRIPTS_DIR/platforms/android/env.sh"
 
   case "$action" in
     test)
       # shellcheck disable=SC1090
-      . "$SCRIPTS_DIR/android/avd.sh"
+      . "$SCRIPTS_DIR/platforms/android/avd.sh"
       android_setup
       yarn install --immutable
       yarn e2e install
@@ -25,12 +25,12 @@ android_run() {
       ;;
     setup)
       # shellcheck disable=SC1090
-      . "$SCRIPTS_DIR/android/avd.sh"
+      . "$SCRIPTS_DIR/platforms/android/avd.sh"
       android_setup "$@"
       ;;
     start | stop | reset)
       # shellcheck disable=SC1090
-      . "$SCRIPTS_DIR/android/avd.sh"
+      . "$SCRIPTS_DIR/platforms/android/avd.sh"
       case "$action" in
         start) android_start "$@" ;;
         stop) android_stop "$@" ;;

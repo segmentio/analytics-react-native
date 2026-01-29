@@ -14,7 +14,7 @@ This repo uses a Nix flake for the Android SDK, and a JSON file for single-sourc
   - Single source of truth for Android/iOS min and max targets.
   - Contains Android build tools + cmdline tools versions.
 
-- `scripts/env.sh`
+- `scripts/bootstrap/env.sh`
   - Establishes `PROJECT_ROOT` and `SCRIPTS_DIR` for scripts and CI.
 
 ## How versions flow
@@ -22,7 +22,7 @@ This repo uses a Nix flake for the Android SDK, and a JSON file for single-sourc
 1. `nix/defaults.json` is updated.
 2. `nix/flake.nix` reads those values when building the Android SDK output.
 3. `scripts/shared/defaults.sh` loads defaults (via `jq`) and establishes script root context for:
-   - scripts under `scripts/android/` and `scripts/ios/`
+   - scripts under `scripts/platforms/android/` and `scripts/platforms/ios/`
    - CI workflows that set min/max targets
 
 ## Updating versions

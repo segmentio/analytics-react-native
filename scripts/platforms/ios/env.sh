@@ -1,27 +1,27 @@
 #!/usr/bin/env sh
 
 if ! (return 0 2>/dev/null); then
-  echo "scripts/ios/env.sh must be sourced via scripts/run.sh or scripts/env.sh." >&2
+  echo "scripts/platforms/ios/env.sh must be sourced via scripts/run.sh or scripts/bootstrap/env.sh." >&2
   exit 1
 fi
 set -eu
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
 if [ "${SHARED_LOADED:-}" != "1" ] || [ "${SHARED_LOADED_PID:-}" != "$$" ]; then
-  init_path="$script_dir/../env.sh"
+  init_path="$script_dir/../../bootstrap/env.sh"
   if [ ! -f "$init_path" ]; then
     repo_root=""
     if command -v git >/dev/null 2>&1; then
       repo_root="$(git -C "$script_dir" rev-parse --show-toplevel 2>/dev/null || git -C "$PWD" rev-parse --show-toplevel 2>/dev/null || true)"
     fi
-    if [ -n "$repo_root" ] && [ -f "$repo_root/scripts/env.sh" ]; then
-      init_path="$repo_root/scripts/env.sh"
+    if [ -n "$repo_root" ] && [ -f "$repo_root/scripts/bootstrap/env.sh" ]; then
+      init_path="$repo_root/scripts/bootstrap/env.sh"
     fi
   fi
   # shellcheck disable=SC1090
   . "$init_path"
 fi
-debug_log_script "scripts/ios/env.sh"
+debug_log_script "scripts/platforms/ios/env.sh"
 
 devbox_omit_nix_env() {
   if [ "${DEVBOX_OMIT_NIX_ENV_APPLIED:-}" = "1" ]; then
