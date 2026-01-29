@@ -12,12 +12,14 @@
     "scripts": {
       "build": ["sh $DEVBOX_PROJECT_ROOT/../../scripts/run.sh build"],
       "release": [
+        "cd $DEVBOX_PROJECT_ROOT/../..",
         "npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}",
         "yarn install --immutable",
         "yarn build",
         "yarn release"
       ],
       "release-dry-run": [
+        "cd $DEVBOX_PROJECT_ROOT/../..",
         "yarn install --immutable",
         "yarn build",
         "yarn multi-semantic-release --dry-run"
