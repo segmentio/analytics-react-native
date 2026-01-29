@@ -102,7 +102,11 @@ jobs:
           fi
       - name: Install Xcode components
         run: |
-          sudo xcodebuild -runFirstLaunch -checkForNewerComponents
+          if xcodebuild -help 2>&1 | grep -q "checkForNewerComponents"; then
+            sudo xcodebuild -runFirstLaunch -checkForNewerComponents
+          else
+            sudo xcodebuild -runFirstLaunch
+          fi
           sudo xcodebuild -downloadPlatform iOS
       - name: Verify Swift compatibility libs
         run: |
