@@ -1,6 +1,10 @@
 #!/usr/bin/env sh
 set -eu
 
+if command -v debug_log_script >/dev/null 2>&1; then
+  debug_log_script "scripts/ios/simctl.sh"
+fi
+
 ensure_core_sim_service() {
   status=0
   output="$(xcrun simctl list devices -j 2>&1)" || status=$?

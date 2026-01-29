@@ -7,6 +7,7 @@ shift || true
 script_dir="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck disable=SC1090
 . "$script_dir/env.sh"
+debug_log_script "scripts/android/manager.sh"
 
 start_android() {
   flavor="${AVD_FLAVOR:-latest}"

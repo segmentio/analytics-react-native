@@ -10,12 +10,11 @@
   },
   "shell": {
     "init_hook": [
-      ". $DEVBOX_PROJECT_ROOT/../../scripts/shared/common.sh",
-      "if [ \"$(uname -s)\" = \"Darwin\" ]; then . $SCRIPTS_DIR/ios/env.sh; fi"
+      "DEVBOX_INIT_IOS=1 sh $DEVBOX_PROJECT_ROOT/../../scripts/devbox/init.sh"
     ],
     "scripts": {
-      "setup-ios": ["sh $SCRIPTS_DIR/ios/setup.sh"],
-      "test-ios": ["sh $SCRIPTS_DIR/ios/test.sh"]
+      "setup-ios": ["sh $DEVBOX_PROJECT_ROOT/../../scripts/ios/setup.sh"],
+      "test-ios": ["sh $DEVBOX_PROJECT_ROOT/../../scripts/ios/test.sh"]
     }
   }
 }

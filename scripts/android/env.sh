@@ -10,6 +10,7 @@ script_dir="$project_root/scripts/android"
 # shellcheck disable=SC1090
 . "$project_root/scripts/shared/common.sh"
 load_platform_versions "$script_dir"
+debug_log_script "scripts/android/env.sh"
 
 if [ -z "${PLATFORM_ANDROID_MIN_API:-}" ]; then
   if ! command -v jq >/dev/null 2>&1; then
@@ -58,6 +59,25 @@ resolve_flake_sdk_root() {
   return 1
 }
 
+detect_sdk_root_from_sdkmanager() {
+  sm=$(command -v sdkmanager 2>/dev/null || true)
+  if [ -z "$sm" ]; then
+    return 1
+  fi
+  if command -v readlink >/dev/null 2>&1; then
+    sm="$(readlink "$sm" 2>/dev/null || printf '%s' "$sm")"
+  fi
+  sm_dir="$(cd "$(dirname "$sm")" && pwd)"
+  candidates="${sm_dir}/.. ${sm_dir}/../share/android-sdk ${sm_dir}/../libexec/android-sdk ${sm_dir}/../.."
+  for c in $candidates; do
+    if [ -d "$c/platform-tools" ] || [ -d "$c/platforms" ] || [ -d "$c/system-images" ]; then
+      printf '%s\n' "$c"
+      return 0
+    fi
+  done
+  return 1
+}
+
 prefer_local="${ANDROID_SDK_USE_LOCAL:-}"
 if [ -n "$prefer_local" ]; then
   if [ -z "${ANDROID_SDK_ROOT:-}" ] && [ -n "${ANDROID_HOME:-}" ]; then
@@ -99,6 +119,14 @@ else
     ANDROID_SDK_ROOT="$sdk_root_min"
     ANDROID_HOME="$ANDROID_SDK_ROOT"
   fi
+
+  if [ -z "${ANDROID_SDK_ROOT:-}" ]; then
+    detected_root="$(detect_sdk_root_from_sdkmanager 2>/dev/null || true)"
+    if [ -n "$detected_root" ]; then
+      ANDROID_SDK_ROOT="$detected_root"
+      ANDROID_HOME="$ANDROID_SDK_ROOT"
+    fi
+  fi
 fi
 
 if [ -z "${ANDROID_SDK_ROOT:-}" ] && [ -n "${ANDROID_HOME:-}" ]; then
@@ -112,7 +140,7 @@ fi
 export ANDROID_SDK_ROOT ANDROID_HOME
 export ANDROID_BUILD_TOOLS_VERSION
 
-if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
+  if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
   # Prefer cmdline-tools;latest, or fall back to the highest numbered cmdline-tools folder.
   cmdline_tools_bin=""
   if [ -d "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" ]; then
@@ -134,17 +162,19 @@ if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
   PATH="$new_path"
   export PATH
   if [ -n "${CI:-}" ] || [ -n "${GITHUB_ACTIONS:-}" ]; then
-    echo "Using Android SDK: $ANDROID_SDK_ROOT"
-    case "$ANDROID_SDK_ROOT" in
-    /nix/store/*)
-      echo "Source: Nix flake (reproducible, pinned). To use your local SDK instead, set ANDROID_SDK_USE_LOCAL=1 before starting devbox shell."
-      ;;
-    *)
-      echo "Source: User/local SDK. To use the pinned Nix SDK, unset ANDROID_HOME/ANDROID_SDK_ROOT and ensure ANDROID_SDK_USE_LOCAL is not set before starting devbox shell."
-      ;;
-    esac
+    if [ "${ANALYTICS_CI_DEBUG:-}" = "1" ] || [ "${DEBUG:-}" = "1" ]; then
+      echo "Using Android SDK: $ANDROID_SDK_ROOT"
+      case "$ANDROID_SDK_ROOT" in
+      /nix/store/*)
+        echo "Source: Nix flake (reproducible, pinned). To use your local SDK instead, set ANDROID_SDK_USE_LOCAL=1 before starting devbox shell."
+        ;;
+      *)
+        echo "Source: User/local SDK. To use the pinned Nix SDK, unset ANDROID_HOME/ANDROID_SDK_ROOT and ensure ANDROID_SDK_USE_LOCAL is not set before starting devbox shell."
+        ;;
+      esac
+    fi
   fi
-  if [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ] && [ -z "${DEVBOX_ANDROID_SDK_SUMMARY_PRINTED:-}" ]; then
+if [ -n "${DEVBOX_INIT_ANDROID:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ] && [ -z "${DEVBOX_ANDROID_SDK_SUMMARY_PRINTED:-}" ]; then
     DEVBOX_ANDROID_SDK_SUMMARY_PRINTED=1
     export DEVBOX_ANDROID_SDK_SUMMARY_PRINTED
 
@@ -169,36 +199,64 @@ if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
     elif [ -n "${ANDROID_TARGET_API:-}" ]; then
       android_target_source="target"
     fi
-    if [ -n "$android_sdk_root" ] && [ -n "$android_max_api" ] && [ -n "$android_system_image_tag" ]; then
+
+    android_target_device="${AVD_DEVICE:-}"
+    if [ -z "$android_target_device" ]; then
+      if [ -n "$android_target_api" ] && [ "$android_target_api" = "$android_min_api" ]; then
+        android_target_device="${PLATFORM_ANDROID_MIN_DEVICE:-}"
+      elif [ -n "$android_target_api" ] && [ "$android_target_api" = "$android_max_api" ]; then
+        android_target_device="${PLATFORM_ANDROID_MAX_DEVICE:-}"
+      fi
+    fi
+
+    candidates=""
+    if [ -n "$android_sdk_root" ] && [ -n "$android_system_image_tag" ]; then
       host_arch="$(uname -m)"
       if [ "$host_arch" = "arm64" ] || [ "$host_arch" = "aarch64" ]; then
         candidates="arm64-v8a x86_64 x86"
       else
         candidates="x86_64 x86 arm64-v8a"
       fi
+    fi
+
+    if [ -n "$android_sdk_root" ] && [ -n "$android_target_api" ] && [ -n "$android_system_image_tag" ]; then
       for abi in $candidates; do
-        if [ -d "$android_sdk_root/system-images/android-${android_max_api}/${android_system_image_tag}/${abi}" ]; then
+        if [ -d "$android_sdk_root/system-images/android-${android_target_api}/${android_system_image_tag}/${abi}" ]; then
           android_system_image_abi="$abi"
           break
         fi
       done
     fi
-    if [ -z "$android_target_api" ] && [ -n "$android_sdk_root" ] && [ -n "$android_min_api" ] && [ -n "$android_system_image_tag" ]; then
-      for abi in $candidates; do
-        if [ -d "$android_sdk_root/system-images/android-${android_min_api}/${android_system_image_tag}/${abi}" ]; then
-          android_system_image_abi="${android_system_image_abi:-$abi}"
-          if [ -z "$android_target_api" ]; then
-            android_target_api="$android_min_api"
-            android_target_source="min"
-          fi
-          break
-        fi
-      done
-    fi
+
     if [ -n "$android_system_image_abi" ]; then
       android_system_image_summary="${android_system_image_tag};${android_system_image_abi}"
     else
       android_system_image_summary="$android_system_image_tag"
+    fi
+    if [ -n "$android_target_device" ]; then
+      android_system_image_summary="${android_system_image_summary} (${android_target_device})"
+    fi
+
+    if debug_enabled; then
+      if [ "${ANDROID_ENV_DEBUG_PRINTED:-}" != "1" ]; then
+        ANDROID_ENV_DEBUG_PRINTED=1
+        export ANDROID_ENV_DEBUG_PRINTED
+        debug_dump_vars \
+          ANDROID_SDK_ROOT \
+          ANDROID_HOME \
+          ANDROID_SDK_USE_LOCAL \
+          ANDROID_SDK_FLAKE_OUTPUT \
+          ANDROID_SDK_ROOT_MIN \
+          ANDROID_HOME_MIN \
+          ANDROID_SDK_ROOT_MAX \
+          ANDROID_HOME_MAX \
+          ANDROID_MIN_API \
+          ANDROID_MAX_API \
+          ANDROID_TARGET_API \
+          ANDROID_SYSTEM_IMAGE_TAG \
+          ANDROID_BUILD_TOOLS_VERSION \
+          ANDROID_CMDLINE_TOOLS_VERSION
+      fi
     fi
 
     echo "Resolved Android SDK"
@@ -207,7 +265,7 @@ if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
     echo "  ANDROID_MIN_API: ${android_min_api:-21}"
     echo "  ANDROID_MAX_API: ${android_max_api:-33}"
     echo "  ANDROID_TARGET_API: ${android_target_api:-not set}${android_target_source:+ (${android_target_source})}"
-    echo "  ANDROID_SYSTEM_IMAGE_TAG: ${android_system_image_summary:-google_apis}"
+    echo "  ANDROID_AVD_TARGET: api=${android_target_api:-not set} device=${android_target_device:-unknown} image=${android_system_image_summary:-google_apis}"
   fi
 else
   if [ -n "${CI:-}" ] || [ -n "${GITHUB_ACTIONS:-}" ]; then

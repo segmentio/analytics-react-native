@@ -7,6 +7,7 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck disable=SC1090
 . "$script_dir/simctl.sh"
 load_platform_versions "$script_dir"
+debug_log_script "scripts/ios/setup.sh"
 
 # Creates local iOS simulators for common targets. Requires Xcode command-line tools and jq.
 # Env overrides:
@@ -62,7 +63,10 @@ main() {
     return 1
   fi
   devices_list="${IOS_DEVICE_NAMES:-${IOS_MIN_DEVICE:-${PLATFORM_IOS_MIN_DEVICE:-iPhone 13}},${IOS_MAX_DEVICE:-${PLATFORM_IOS_MAX_DEVICE:-iPhone 17}}}"
-  runtime="${IOS_RUNTIME:-${IOS_MIN_RUNTIME:-${PLATFORM_IOS_MIN_RUNTIME:-15.0}}}"
+  runtime="${IOS_RUNTIME:-}"
+  if [ -z "$runtime" ] && command -v xcrun >/dev/null 2>&1; then
+    runtime="$(xcrun --sdk iphonesimulator --show-sdk-version 2>/dev/null || true)"
+  fi
 
   ifs_backup="$IFS"
   IFS=','

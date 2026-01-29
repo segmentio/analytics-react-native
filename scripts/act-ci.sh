@@ -4,6 +4,11 @@ set -eu
 # Run GitHub Actions workflows locally via act.
 # Usage: scripts/act-ci.sh [--job JOB] [--platform ubuntu-latest=IMAGE]
 
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck disable=SC1090
+. "$script_dir/shared/common.sh"
+debug_log_script "scripts/act-ci.sh"
+
 JOB=""
 PLATFORMS=""
 

@@ -43,7 +43,6 @@ jobs:
         run: |
           . scripts/platform-versions.sh
           echo "DETOX_IOS_DEVICE=${PLATFORM_IOS_MAX_DEVICE}" >> "$GITHUB_ENV"
-          echo "IOS_RUNTIME=${PLATFORM_IOS_MAX_RUNTIME}" >> "$GITHUB_ENV"
       - name: iOS E2E Tests (latest)
         run: devbox run --config=shells/ios/devbox.json test-ios
 

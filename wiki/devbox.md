@@ -47,17 +47,17 @@ iOS uses the host Xcode toolchain. There is no Nix-provisioned iOS SDK. Run `dev
 
 ### Simulators and Detox
 
-- `devbox run setup-ios` provisions simulators. Defaults are driven by `nix/platform-versions.json` (min/max device/runtime). Override via env vars to target a specific device/runtime. Set `IOS_DOWNLOAD_RUNTIME=0` to skip attempting `xcodebuild -downloadPlatform iOS` when the preferred runtime is missing. Set `IOS_DEVELOPER_DIR` (e.g., `/Applications/Xcode.app/Contents/Developer`) to point at a specific Xcode; otherwise it uses `xcode-select -p` or the default Xcode.app if found.
+- `devbox run setup-ios` provisions simulators. Defaults are driven by `nix/platform-versions.json` (min/max device and iOS version). Override via env vars to target a specific device/runtime. Set `IOS_DOWNLOAD_RUNTIME=0` to skip attempting `xcodebuild -downloadPlatform iOS` when the preferred runtime is missing. Set `IOS_DEVELOPER_DIR` (e.g., `/Applications/Xcode.app/Contents/Developer`) to point at a specific Xcode; otherwise it uses `xcode-select -p` or the default Xcode.app if found.
 - `devbox run start-ios` provisions simulators (via `setup-ios`), then boots the chosen device (`DETOX_IOS_DEVICE` or default `iPhone 17`) and opens Simulator. Set `IOS_FLAVOR=minsdk` to target the min sim (per `nix/platform-versions.json`) or leave default for latest. Internally uses `scripts/ios/manager.sh`.
 - `devbox run reset-ios` shuts down/erases and removes all local simulator devices.
 - `devbox run stop-android` / `stop-ios` / `stop` to shut down running emulators/simulators (handy for headless runs).
-- Detox defaults to `iPhone 17` for local runs; override with `DETOX_IOS_DEVICE`. CI runs a matrix: min sim (from `nix/platform-versions.json`) and latest (iPhone 17 @ latest runtime).
+- Detox defaults to `iPhone 17` for local runs; override with `DETOX_IOS_DEVICE`. CI runs a matrix: min sim (from `nix/platform-versions.json`) and latest (iPhone 17).
 - `devbox run test-ios` runs `setup-ios` first to ensure simulators exist; Detox handles booting. Use `start-ios` if you want to pre-boot.
 
 ### Common env knobs
 
 - Android: `AVD_FLAVOR` (minsdk/latest), `DETOX_AVD` (explicit AVD name), `EMU_HEADLESS` (1 for headless), `EMU_PORT` (emulator port/serial), `ANDROID_BUILD_TOOLS_VERSION` (override build-tools).
-- iOS: `IOS_FLAVOR` (minsdk/latest), `DETOX_IOS_DEVICE` (explicit sim device), `IOS_RUNTIME` (preferred runtime), `IOS_DEVICE_NAMES` (comma list to create), `IOS_DEVELOPER_DIR` (Xcode path), `IOS_DOWNLOAD_RUNTIME` (0 to skip runtime download attempt).
+- iOS: `IOS_FLAVOR` (minsdk/latest), `DETOX_IOS_DEVICE` (explicit sim device), `IOS_RUNTIME` (preferred runtime), `IOS_DEVICE_NAMES` (comma list to create), `IOS_DEVELOPER_DIR` (Xcode path), `IOS_DOWNLOAD_RUNTIME` (0 to skip runtime download attempt). The default min/max iOS versions live in `nix/platform-versions.json` as `PLATFORM_IOS_MIN_VERSION`/`PLATFORM_IOS_MAX_VERSION`.
 
 ### Releases
 

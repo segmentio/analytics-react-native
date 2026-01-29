@@ -20,6 +20,7 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck disable=SC1090
 . "$script_dir/../shared/common.sh"
 load_platform_versions "$script_dir"
+debug_log_script "scripts/android/setup.sh"
 
 detect_sdk_root() {
   if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
@@ -31,8 +32,11 @@ detect_sdk_root() {
   if [ -z "$sm" ]; then
     return 1
   fi
-  sm=$(readlink -f "$sm")
-  candidates="$(dirname "$sm")/.. $(dirname "$sm")/../share/android-sdk $(dirname "$sm")/../libexec/android-sdk $(dirname "$sm")/../.."
+  if command -v readlink >/dev/null 2>&1; then
+    sm="$(readlink "$sm" 2>/dev/null || printf '%s' "$sm")"
+  fi
+  sm_dir="$(cd "$(dirname "$sm")" && pwd)"
+  candidates="${sm_dir}/.. ${sm_dir}/../share/android-sdk ${sm_dir}/../libexec/android-sdk ${sm_dir}/../.."
   for c in $candidates; do
     if [ -d "$c/platform-tools" ] || [ -d "$c/platforms" ] || [ -d "$c/system-images" ]; then
       printf '%s\n' "$c"
@@ -130,15 +134,37 @@ main() {
   require_tool avdmanager
   require_tool emulator
 
-  primary_api="${AVD_API:-${ANDROID_TARGET_API:-${ANDROID_MAX_API:-${ANDROID_MIN_API:-${PLATFORM_ANDROID_MIN_API:-21}}}}}"
-  primary_tag="${AVD_TAG:-${ANDROID_SYSTEM_IMAGE_TAG:-${PLATFORM_ANDROID_SYSTEM_IMAGE_TAG:-google_apis}}}"
-  primary_device="${AVD_DEVICE:-pixel}"
+  platform_min_api="${PLATFORM_ANDROID_MIN_API:-21}"
+  platform_max_api="${PLATFORM_ANDROID_MAX_API:-33}"
+  platform_min_device="${PLATFORM_ANDROID_MIN_DEVICE:-pixel}"
+  platform_max_device="${PLATFORM_ANDROID_MAX_DEVICE:-medium_phone}"
+  platform_image_tag="${PLATFORM_ANDROID_SYSTEM_IMAGE_TAG:-google_apis}"
+
+  primary_api="${AVD_API:-${ANDROID_TARGET_API:-${ANDROID_MAX_API:-${platform_max_api:-${ANDROID_MIN_API:-$platform_min_api}}}}}"
+  primary_tag="${AVD_TAG:-${ANDROID_SYSTEM_IMAGE_TAG:-$platform_image_tag}}"
+  if [ -n "${AVD_DEVICE:-}" ]; then
+    primary_device="$AVD_DEVICE"
+  elif [ -n "$primary_api" ] && [ "$primary_api" = "$platform_min_api" ]; then
+    primary_device="$platform_min_device"
+  elif [ -n "$primary_api" ] && [ "$primary_api" = "$platform_max_api" ]; then
+    primary_device="$platform_max_device"
+  else
+    primary_device="pixel"
+  fi
   primary_preferred_abi="${AVD_ABI:-}"
+
+  if debug_enabled; then
+    debug_log "primary_api=${primary_api} primary_device=${primary_device} primary_tag=${primary_tag} primary_preferred_abi=${primary_preferred_abi:-auto}"
+  fi
 
   secondary_api="${AVD_SECONDARY_API:-${ANDROID_MAX_API:-${PLATFORM_ANDROID_MAX_API:-33}}}"
   secondary_tag="${AVD_SECONDARY_TAG:-${ANDROID_SYSTEM_IMAGE_TAG:-${PLATFORM_ANDROID_SYSTEM_IMAGE_TAG:-google_apis}}}"
   secondary_device="${AVD_SECONDARY_DEVICE:-medium_phone}"
   secondary_preferred_abi="${AVD_SECONDARY_ABI:-}"
+
+  if debug_enabled; then
+    debug_log "secondary_api=${secondary_api} secondary_device=${secondary_device} secondary_tag=${secondary_tag} secondary_preferred_abi=${secondary_preferred_abi:-auto}"
+  fi
 
   primary_required=0
   if [ -n "${AVD_API:-}" ] || [ -n "${AVD_TAG:-}" ] || [ -n "${AVD_DEVICE:-}" ] || [ -n "${AVD_ABI:-}" ] || [ -n "${AVD_NAME:-}" ]; then

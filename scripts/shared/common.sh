@@ -52,3 +52,9 @@ if [ -z "${SCRIPTS_DIR:-}" ] && [ -n "${PROJECT_ROOT:-}" ]; then
   SCRIPTS_DIR="$PROJECT_ROOT/scripts"
   export SCRIPTS_DIR
 fi
+
+if [ -f "${SCRIPTS_DIR:-}/shared/debug.sh" ]; then
+  # shellcheck disable=SC1090
+  . "$SCRIPTS_DIR/shared/debug.sh"
+  debug_log_script "scripts/shared/common.sh"
+fi

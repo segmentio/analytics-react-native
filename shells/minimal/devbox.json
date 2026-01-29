@@ -8,9 +8,9 @@
     "shfmt": "latest"
   },
   "shell": {
-    "init_hook": [". $DEVBOX_PROJECT_ROOT/../../scripts/shared/common.sh"],
+    "init_hook": ["sh $DEVBOX_PROJECT_ROOT/../../scripts/devbox/init.sh"],
     "scripts": {
-      "build": ["sh $SCRIPTS_DIR/build.sh"],
+      "build": ["sh $DEVBOX_PROJECT_ROOT/../../scripts/build.sh"],
       "release": [
         "npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}",
         "yarn install --immutable",

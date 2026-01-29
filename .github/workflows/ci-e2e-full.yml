@@ -50,10 +50,8 @@ jobs:
           . scripts/platform-versions.sh
           if [ "${{ matrix.name }}" = "ios-min" ]; then
             echo "DETOX_IOS_DEVICE=${PLATFORM_IOS_MIN_DEVICE}" >> "$GITHUB_ENV"
-            echo "IOS_RUNTIME=${PLATFORM_IOS_MIN_RUNTIME}" >> "$GITHUB_ENV"
           else
             echo "DETOX_IOS_DEVICE=${PLATFORM_IOS_MAX_DEVICE}" >> "$GITHUB_ENV"
-            echo "IOS_RUNTIME=${PLATFORM_IOS_MAX_RUNTIME}" >> "$GITHUB_ENV"
           fi
       - name: iOS E2E Tests
         run: devbox run --config=shells/ios/devbox.json test-ios
