@@ -5,7 +5,13 @@ if ! (return 0 2>/dev/null); then
   exit 1
 fi
 
-if [ "${ENV_DEFAULTS_LOADED:-}" = "1" ]; then
+if [ "${DEFAULTS_SH_LOADED:-}" = "1" ] && [ "${DEFAULTS_SH_LOADED_PID:-}" = "$$" ]; then
+  return 0 2>/dev/null || exit 0
+fi
+DEFAULTS_SH_LOADED=1
+DEFAULTS_SH_LOADED_PID="$$"
+
+if [ "${ENV_DEFAULTS_LOADED:-}" = "1" ] && [ "${ENV_DEFAULTS_LOADED_PID:-}" = "$$" ]; then
   return 0 2>/dev/null || exit 0
 fi
 
@@ -34,4 +40,4 @@ EOF
 fi
 
 ENV_DEFAULTS_LOADED=1
-export ENV_DEFAULTS_LOADED
+ENV_DEFAULTS_LOADED_PID="$$"

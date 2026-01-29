@@ -5,6 +5,12 @@ if ! (return 0 2>/dev/null); then
   exit 1
 fi
 
+if [ "${PROJECT_SH_LOADED:-}" = "1" ] && [ "${PROJECT_SH_LOADED_PID:-}" = "$$" ]; then
+  return 0 2>/dev/null || exit 0
+fi
+PROJECT_SH_LOADED=1
+PROJECT_SH_LOADED_PID="$$"
+
 ensure_project_root() {
   if [ -n "${PROJECT_ROOT:-}" ]; then
     return 0

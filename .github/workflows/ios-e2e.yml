@@ -1,0 +1,87 @@
+name: iOS E2E (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      target:
+        description: "TARGET_SDK value (min/max/custom)"
+        required: true
+        type: string
+      runtime:
+        description: "Xcode version to install and iOS runtime to require (optional override)"
+        required: false
+        type: string
+        default: ""
+      devbox_config:
+        description: "Devbox config to use"
+        required: false
+        type: string
+        default: "shells/ios/devbox.json"
+      runs_on:
+        description: "GitHub runner label"
+        required: false
+        type: string
+        default: "macos-26"
+
+jobs:
+  ios-e2e:
+    runs-on: ${{ inputs.runs_on }}
+    env:
+      ANALYTICS_CI_DEBUG: "1"
+      YARN_ENABLE_HARDENED_MODE: 0
+    steps:
+      - uses: actions/checkout@v4
+      - name: Resolve iOS runtime
+        id: runtime
+        run: |
+          runtime="${{ inputs.runtime }}"
+          min="$(jq -r '.defaults.IOS_RUNTIME_MIN' nix/defaults.json)"
+          max="$(jq -r '.defaults.IOS_RUNTIME_MAX' nix/defaults.json)"
+          custom="$(jq -r '.defaults.IOS_RUNTIME_CUSTOM // empty' nix/defaults.json)"
+          if [ -z "$runtime" ]; then
+            case "${{ inputs.target }}" in
+              min) runtime="$min" ;;
+              max) runtime="$max" ;;
+              custom) runtime="$custom" ;;
+              *) echo "Unknown target: ${{ inputs.target }}" >&2; exit 1 ;;
+            esac
+          fi
+          if [ -z "$runtime" ] || [ "$runtime" = "null" ]; then
+            echo "Missing runtime for target ${{ inputs.target }}" >&2
+            exit 1
+          fi
+          if [ -z "$min" ] || [ "$min" = "null" ] || [ -z "$max" ] || [ "$max" = "null" ]; then
+            echo "Missing IOS_RUNTIME_MIN/IOS_RUNTIME_MAX in nix/defaults.json" >&2
+            exit 1
+          fi
+          echo "runtime=$runtime" >> "$GITHUB_OUTPUT"
+          echo "runtime_min=$min" >> "$GITHUB_OUTPUT"
+          echo "runtime_max=$max" >> "$GITHUB_OUTPUT"
+      - name: Aggressive disk cleanup (macOS)
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          sudo rm -rf /Applications/Android\ Studio.app
+          sudo rm -rf /usr/local/share/miniconda
+          sudo rm -rf /opt/homebrew
+          sudo rm -rf "$HOME/Library/Android"
+          sudo rm -rf "$HOME/.gradle"
+          sudo rm -rf "$HOME/Library/Developer/CoreSimulator/Devices"
+          sudo rm -rf "$HOME/Library/Developer/Xcode/DerivedData"
+          df -H
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ steps.runtime.outputs.runtime }}
+      - name: devbox installer
+        uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          project-path: ${{ inputs.devbox_config }}
+          enable-cache: 'false'
+      - name: iOS E2E Tests
+        run: devbox run --config=${{ inputs.devbox_config }} test-ios
+        env:
+          TARGET_SDK: ${{ inputs.target }}
+          IOS_RUNTIME_MIN: ${{ steps.runtime.outputs.runtime_min }}
+          IOS_RUNTIME_MAX: ${{ steps.runtime.outputs.runtime_max }}

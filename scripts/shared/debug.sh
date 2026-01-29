@@ -4,6 +4,12 @@ if ! (return 0 2>/dev/null); then
   echo "scripts/shared/debug.sh must be sourced." >&2
   exit 1
 fi
+
+if [ "${DEBUG_SH_LOADED:-}" = "1" ] && [ "${DEBUG_SH_LOADED_PID:-}" = "$$" ]; then
+  return 0 2>/dev/null || exit 0
+fi
+DEBUG_SH_LOADED=1
+DEBUG_SH_LOADED_PID="$$"
 set -eu
 
 debug_enabled() {

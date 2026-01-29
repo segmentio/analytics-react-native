@@ -77,14 +77,14 @@ These env vars can be set by users to override defaults or behavior.
 
 ### iOS
 
-- `IOS_MIN_VERSION`, `IOS_MAX_VERSION`: override min/max iOS versions.
 - `IOS_MIN_DEVICE`, `IOS_MAX_DEVICE`: override min/max device names.
-- `IOS_RUNTIME`: preferred runtime (used by simctl).
+- `IOS_RUNTIME_MIN`, `IOS_RUNTIME_MAX`: required iOS simulator runtimes for min/max.
+- `IOS_RUNTIME_CUSTOM`: required runtime when `TARGET_SDK=custom`.
 - `IOS_DEVICE_NAMES`: comma-separated list of devices to create.
 - `IOS_DEVELOPER_DIR`: override the Xcode path.
 - `IOS_DOWNLOAD_RUNTIME`: set to `0` to skip `xcodebuild -downloadPlatform iOS`.
 - `TARGET_SDK`: `min`, `max`, or `custom` (controls which device/runtime to boot for iOS).
-- `IOS_CUSTOM_DEVICE`, `IOS_CUSTOM_VERSION`: used when `TARGET_SDK=custom`.
+- `IOS_CUSTOM_DEVICE`: used when `TARGET_SDK=custom`.
 - `DETOX_IOS_DEVICE`: force a specific simulator name for Detox.
 
 

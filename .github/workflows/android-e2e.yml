@@ -1,0 +1,50 @@
+name: Android E2E (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      target:
+        description: "TARGET_SDK value (min/max/custom)"
+        required: true
+        type: string
+      runs_on:
+        description: "GitHub runner label"
+        required: false
+        type: string
+        default: "ubuntu-latest"
+
+jobs:
+  android-e2e:
+    runs-on: ${{ inputs.runs_on }}
+    env:
+      ANALYTICS_CI_DEBUG: "1"
+      EMU_HEADLESS: 1
+      AVD_ABI: x86_64
+    steps:
+      - uses: actions/checkout@v4
+      - name: Aggressive disk cleanup (Ubuntu)
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/local/lib/node_modules
+          sudo rm -rf /usr/local/share/boost
+          sudo rm -rf /usr/local/share/chromium
+          sudo rm -rf /usr/local/share/powershell
+          sudo rm -rf /usr/local/share/edge_driver
+          sudo rm -rf /usr/local/share/gecko_driver
+          sudo rm -rf /usr/local/share/phantomjs
+          sudo rm -rf "$HOME/.cache"
+          df -H
+      - name: Resolve devbox config
+        run: |
+          echo "DEVBOX_CONFIG=shells/android-${{ inputs.target }}/devbox.json" >> "$GITHUB_ENV"
+      - name: devbox installer
+        uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          project-path: ${{ env.DEVBOX_CONFIG }}
+          enable-cache: 'false'
+      - name: Android E2E Tests
+        run: devbox run --config=${{ env.DEVBOX_CONFIG }} test-android

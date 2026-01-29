@@ -20,10 +20,17 @@
         if builtins.hasAttr name defaultsData then toString (builtins.getAttr name defaultsData)
         else builtins.throw "Missing required default in nix/defaults.json: ${name}";
 
+      unique =
+        list:
+        builtins.foldl' (
+          acc: item: if builtins.elem item acc then acc else acc ++ [ item ]
+        ) [ ] list;
+
       androidSdkConfig = {
-        platformVersions = [
+        platformVersions = unique [
           (getVar "ANDROID_MIN_API")
           (getVar "ANDROID_MAX_API")
+          (getVar "ANDROID_CUSTOM_API")
         ];
         buildToolsVersion = getVar "ANDROID_BUILD_TOOLS_VERSION";
         cmdLineToolsVersion = getVar "ANDROID_CMDLINE_TOOLS_VERSION";
@@ -34,6 +41,9 @@
       };
       androidSdkConfigMax = androidSdkConfig // {
         platformVersions = [ (getVar "ANDROID_MAX_API") ];
+      };
+      androidSdkConfigCustom = androidSdkConfig // {
+        platformVersions = [ (getVar "ANDROID_CUSTOM_API") ];
       };
 
       forAllSystems =
@@ -77,6 +87,7 @@
           android-sdk = (androidPkgs androidSdkConfig).androidsdk;
           android-sdk-min = (androidPkgs androidSdkConfigMin).androidsdk;
           android-sdk-max = (androidPkgs androidSdkConfigMax).androidsdk;
+          android-sdk-custom = (androidPkgs androidSdkConfigCustom).androidsdk;
           default = (androidPkgs androidSdkConfig).androidsdk;
         }
       );

@@ -7,7 +7,7 @@ if ! (return 0 2>/dev/null); then
 fi
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-if [ -z "${SHARED_LOADED:-}" ]; then
+if [ "${SHARED_LOADED:-}" != "1" ] || [ "${SHARED_LOADED_PID:-}" != "$$" ]; then
   init_path="$script_dir/../env.sh"
   if [ ! -f "$init_path" ]; then
     repo_root=""
@@ -398,7 +398,25 @@ android_stop() {
 }
 
 android_reset() {
-  rm -rf "$HOME/.android/avd"
-  rm -f "$HOME/.android/adbkey" "$HOME/.android/adbkey.pub"
+  rm_bin="rm"
+  if [ "$(uname -s)" = "Darwin" ] && [ -x /bin/rm ]; then
+    rm_bin="/bin/rm"
+  fi
+  avd_dir="$HOME/.android/avd"
+  if [ -d "$avd_dir" ]; then
+    if command -v chflags >/dev/null 2>&1; then
+      chflags -R nouchg "$avd_dir" >/dev/null 2>&1 || true
+    fi
+    chmod -R u+w "$avd_dir" >/dev/null 2>&1 || true
+    if ! "$rm_bin" -rf "$avd_dir"; then
+      echo "Failed to remove $avd_dir. Check permissions or Full Disk Access for your terminal." >&2
+      return 1
+    fi
+  fi
+
+  if ! "$rm_bin" -f "$HOME/.android/adbkey" "$HOME/.android/adbkey.pub"; then
+    echo "Failed to remove adb keys under $HOME/.android. Check permissions." >&2
+    return 1
+  fi
   echo "AVDs and adb keys removed. Recreate via start-android* as needed."
 }

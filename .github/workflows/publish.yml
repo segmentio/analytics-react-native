@@ -24,11 +24,6 @@ jobs:
 
   e2e-ios:
     name: E2E iOS (min/max)
-    runs-on: macos-26
-    env:
-      ANALYTICS_CI_DEBUG: "1"
-      YARN_ENABLE_HARDENED_MODE: 0
-      XCODE_VERSION: '26.2'
     strategy:
       matrix:
         include:
@@ -36,42 +31,13 @@ jobs:
             target: min
           - name: ios-latest
             target: max
-    steps:
-      - uses: actions/checkout@v4
-      - name: Aggressive disk cleanup (macOS)
-        run: |
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /opt/ghc
-          sudo rm -rf "/usr/local/share/boost"
-          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-          sudo rm -rf /Applications/Android\ Studio.app
-          sudo rm -rf /usr/local/share/miniconda
-          sudo rm -rf /opt/homebrew
-          sudo rm -rf "$HOME/Library/Android"
-          sudo rm -rf "$HOME/.gradle"
-          sudo rm -rf "$HOME/Library/Developer/CoreSimulator/Devices"
-          sudo rm -rf "$HOME/Library/Developer/Xcode/DerivedData"
-          df -H
-      - uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '26.2'
-      - name: devbox installer
-        uses: jetify-com/devbox-install-action@v0.14.0
-        with:
-          project-path: shells/ios/devbox.json
-          enable-cache: 'false'
-      - name: iOS E2E Tests
-        run: devbox run --config=shells/ios/devbox.json test-ios
-        env:
-          TARGET_SDK: ${{ matrix.target }}
+    uses: ./.github/workflows/ios-e2e.yml
+    with:
+      target: ${{ matrix.target }}
+    secrets: inherit
 
   e2e-android:
     name: E2E Android (min/max)
-    runs-on: ubuntu-latest
-    env:
-      ANALYTICS_CI_DEBUG: "1"
-      EMU_HEADLESS: 1
-      AVD_ABI: x86_64
     strategy:
       matrix:
         include:
@@ -79,31 +45,10 @@ jobs:
             target: min
           - name: android-latest
             target: max
-    steps:
-      - uses: actions/checkout@v4
-      - name: Aggressive disk cleanup (Ubuntu)
-        run: |
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /opt/ghc
-          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-          sudo rm -rf /opt/hostedtoolcache/CodeQL
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /usr/local/lib/node_modules
-          sudo rm -rf /usr/local/share/boost
-          sudo rm -rf /usr/local/share/chromium
-          sudo rm -rf /usr/local/share/powershell
-          sudo rm -rf /usr/local/share/edge_driver
-          sudo rm -rf /usr/local/share/gecko_driver
-          sudo rm -rf /usr/local/share/phantomjs
-          sudo rm -rf "$HOME/.cache"
-          df -H
-      - name: devbox installer
-        uses: jetify-com/devbox-install-action@v0.14.0
-        with:
-          project-path: shells/android-${{ matrix.target }}/devbox.json
-          enable-cache: 'false'
-      - name: Android E2E Tests
-        run: devbox run --config=shells/android-${{ matrix.target }}/devbox.json test-android
+    uses: ./.github/workflows/android-e2e.yml
+    with:
+      target: ${{ matrix.target }}
+    secrets: inherit
 
   publish:
     name: Publish to npm

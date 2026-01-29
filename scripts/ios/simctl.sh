@@ -7,7 +7,7 @@ if ! (return 0 2>/dev/null); then
 fi
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-if [ -z "${SHARED_LOADED:-}" ]; then
+if [ "${SHARED_LOADED:-}" != "1" ] || [ "${SHARED_LOADED_PID:-}" != "$$" ]; then
   init_path="$script_dir/../env.sh"
   if [ ! -f "$init_path" ]; then
     repo_root=""
@@ -82,6 +82,49 @@ resolve_runtime() {
   fi
 
   pick_runtime "$preferred"
+}
+
+resolve_runtime_strict() {
+  preferred="$1"
+  if choice="$(pick_runtime "$preferred")"; then
+    printf '%s\n' "$choice"
+    return 0
+  fi
+
+  if [ "${IOS_DOWNLOAD_RUNTIME:-1}" != "0" ] && command -v xcodebuild >/dev/null 2>&1; then
+    echo "Preferred runtime iOS ${preferred} not found. Attempting to download via xcodebuild -downloadPlatform iOS..." >&2
+    if xcodebuild -downloadPlatform iOS; then
+      if choice="$(pick_runtime "$preferred")"; then
+        printf '%s\n' "$choice"
+        return 0
+      fi
+    else
+      echo "xcodebuild -downloadPlatform iOS failed." >&2
+    fi
+  fi
+
+  echo "Preferred runtime iOS ${preferred} not found." >&2
+  return 1
+}
+
+resolve_runtime_name() {
+  preferred="$1"
+  choice="$(resolve_runtime "$preferred" || true)"
+  if [ -n "$choice" ]; then
+    printf '%s\n' "$choice" | cut -d'|' -f2
+    return 0
+  fi
+  return 1
+}
+
+resolve_runtime_name_strict() {
+  preferred="$1"
+  choice="$(resolve_runtime_strict "$preferred" || true)"
+  if [ -n "$choice" ]; then
+    printf '%s\n' "$choice" | cut -d'|' -f2
+    return 0
+  fi
+  return 1
 }
 
 existing_device_udid_any_runtime() {
@@ -195,7 +238,7 @@ ios_setup() {
     return 1
   fi
   devices_list="${IOS_DEVICE_NAMES:-${IOS_MIN_DEVICE:-iPhone 13},${IOS_MAX_DEVICE:-iPhone 17}}"
-  runtime="${IOS_RUNTIME:-}"
+  runtime="${IOS_RUNTIME:-${IOS_RUNTIME_MAX:-}}"
   if [ -z "$runtime" ] && command -v xcrun >/dev/null 2>&1; then
     runtime="$(xcrun --sdk iphonesimulator --show-sdk-version 2>/dev/null || true)"
   fi

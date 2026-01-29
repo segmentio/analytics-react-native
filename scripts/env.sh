@@ -5,6 +5,12 @@ if ! (return 0 2>/dev/null); then
   exit 1
 fi
 
+if [ "${ENV_SH_LOADED:-}" = "1" ] && [ "${ENV_SH_LOADED_PID:-}" = "$$" ]; then
+  return 0 2>/dev/null || exit 0
+fi
+ENV_SH_LOADED=1
+ENV_SH_LOADED_PID="$$"
+
 script_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_root=""
 if command -v git >/dev/null 2>&1; then
@@ -42,4 +48,4 @@ if [ "${INIT_IOS:-}" = "1" ] && [ "$(uname -s)" = "Darwin" ]; then
 fi
 
 SHARED_LOADED=1
-export SHARED_LOADED
+SHARED_LOADED_PID="$$"

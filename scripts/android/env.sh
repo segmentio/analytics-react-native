@@ -12,7 +12,7 @@ if [ -z "$project_root" ]; then
   project_root="$(cd "$(dirname "$0")/../.." && pwd)"
 fi
 script_dir="$project_root/scripts/android"
-if [ -z "${SHARED_LOADED:-}" ]; then
+if [ "${SHARED_LOADED:-}" != "1" ] || [ "${SHARED_LOADED_PID:-}" != "$$" ]; then
   # shellcheck disable=SC1090
   . "$project_root/scripts/env.sh"
 fi
@@ -66,6 +66,13 @@ if [ -n "$prefer_local" ]; then
   fi
 else
   preferred_output="${ANDROID_SDK_FLAKE_OUTPUT:-}"
+  if [ -z "$preferred_output" ]; then
+    case "${TARGET_SDK:-max}" in
+      min) preferred_output="android-sdk-min" ;;
+      custom) preferred_output="android-sdk-custom" ;;
+      *) preferred_output="android-sdk-max" ;;
+    esac
+  fi
   sdk_root_max=""
   sdk_root_min=""
 
@@ -118,7 +125,7 @@ fi
 export ANDROID_SDK_ROOT ANDROID_HOME
 export ANDROID_BUILD_TOOLS_VERSION
 ANDROID_ENV_LOADED=1
-export ANDROID_ENV_LOADED
+ANDROID_ENV_LOADED_PID="$$"
 
   if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
   # Prefer cmdline-tools;latest, or fall back to the highest numbered cmdline-tools folder.

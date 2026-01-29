@@ -3,6 +3,7 @@
     "ANDROID_SDK_USE_LOCAL": "0",
     "ANDROID_MIN_API": "21",
     "ANDROID_MAX_API": "33",
+    "ANDROID_CUSTOM_API": "29",
     "ANDROID_SYSTEM_IMAGE_TAG": "google_apis",
     "ANDROID_BUILD_TOOLS_VERSION": "30.0.3",
     "ANDROID_CMDLINE_TOOLS_VERSION": "19.0",
@@ -10,8 +11,8 @@
     "ANDROID_MAX_DEVICE": "medium_phone",
     "ANALYTICS_CI_DEBUG": "0",
     "DEBUG": "0",
-    "IOS_MIN_VERSION": "15.0",
-    "IOS_MAX_VERSION": "26.2",
+    "IOS_RUNTIME_MIN": "15.5",
+    "IOS_RUNTIME_MAX": "26.2",
     "IOS_MIN_DEVICE": "iPhone 13",
     "IOS_MAX_DEVICE": "iPhone 17"
   }

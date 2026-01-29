@@ -37,33 +37,54 @@ ios_run() {
       case "$action" in
         start)
           target_sdk="${TARGET_SDK:-max}"
+          runtime_version=""
           if [ "$target_sdk" = "custom" ]; then
             if [ -z "${IOS_CUSTOM_DEVICE:-}" ]; then
               echo "TARGET_SDK=custom requires IOS_CUSTOM_DEVICE to be set." >&2
               exit 1
             fi
-            if [ -n "${IOS_CUSTOM_VERSION:-}" ]; then
-              IOS_RUNTIME="${IOS_CUSTOM_VERSION}"
-              export IOS_RUNTIME
-            fi
+            runtime_version="${IOS_RUNTIME_CUSTOM:-}"
             IOS_DEVICE_NAMES="${IOS_CUSTOM_DEVICE}"
             DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-${IOS_CUSTOM_DEVICE}}"
           elif [ "$target_sdk" = "min" ]; then
+            runtime_version="${IOS_RUNTIME_MIN:-}"
             IOS_DEVICE_NAMES="${IOS_MIN_DEVICE:-iPhone 13}"
             DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-${IOS_MIN_DEVICE:-iPhone 13}}"
           else
+            runtime_version="${IOS_RUNTIME_MAX:-}"
             IOS_DEVICE_NAMES="${IOS_DEVICE_NAMES:-${IOS_MIN_DEVICE:-iPhone 13},${IOS_MAX_DEVICE:-iPhone 17}}"
             DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-iPhone 17}"
           fi
           export IOS_DEVICE_NAMES DETOX_IOS_DEVICE
+          if [ -n "$runtime_version" ]; then
+            if ! resolve_runtime_name_strict "$runtime_version"; then
+              exit 1
+            fi
+            IOS_RUNTIME="$runtime_version"
+            export IOS_RUNTIME
+          fi
           ios_setup
           sim_device="${DETOX_IOS_DEVICE}"
-          if ! xcrun simctl list devices | grep -q "${sim_device}"; then
+          runtime_name="$(resolve_runtime_name "${runtime_version:-}" || true)"
+          display_name="$sim_device"
+          if [ -n "$runtime_name" ]; then
+            display_name="${sim_device} (${runtime_name})"
+          fi
+
+          sim_udid="$(existing_device_udid_any_runtime "$display_name")"
+          if [ -z "$sim_udid" ]; then
+            sim_udid="$(existing_device_udid_any_runtime "$sim_device")"
+          fi
+          if [ -z "$sim_udid" ]; then
+            ensure_device "$sim_device" "${runtime_version:-}"
+            sim_udid="$(existing_device_udid_any_runtime "$display_name")"
+          fi
+          if [ -z "$sim_udid" ]; then
             echo "Simulator ${sim_device} not found; ensure setup-ios created it." >&2
             exit 1
           fi
-          echo "Starting iOS simulator: ${sim_device} (runtime ${IOS_RUNTIME:-})"
-          xcrun simctl boot "$sim_device" || true
+          echo "Starting iOS simulator: ${sim_device} (runtime ${runtime_version:-})"
+          xcrun simctl boot "$sim_udid" || true
           if [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ]; then
             open -a Simulator
           fi

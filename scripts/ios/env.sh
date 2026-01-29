@@ -7,7 +7,7 @@ fi
 set -eu
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-if [ -z "${SHARED_LOADED:-}" ]; then
+if [ "${SHARED_LOADED:-}" != "1" ] || [ "${SHARED_LOADED_PID:-}" != "$$" ]; then
   init_path="$script_dir/../env.sh"
   if [ ! -f "$init_path" ]; then
     repo_root=""
@@ -98,7 +98,7 @@ devbox_omit_nix_env() {
 devbox_omit_nix_env
 
 IOS_ENV_LOADED=1
-export IOS_ENV_LOADED
+IOS_ENV_LOADED_PID="$$"
 
 if debug_enabled; then
   if [ "${IOS_ENV_DEBUG_PRINTED:-}" != "1" ]; then
@@ -106,8 +106,9 @@ if debug_enabled; then
     export IOS_ENV_DEBUG_PRINTED
     debug_dump_vars \
       IOS_RUNTIME \
-      IOS_MIN_VERSION \
-      IOS_MAX_VERSION \
+      IOS_RUNTIME_MIN \
+      IOS_RUNTIME_MAX \
+      IOS_RUNTIME_CUSTOM \
       IOS_DEVICE_NAMES \
       DETOX_IOS_DEVICE \
       IOS_DEVELOPER_DIR \
@@ -146,14 +147,9 @@ if [ -n "${INIT_IOS:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ] &&
     repo_root="$(cd "$(dirname "$0")/../.." && pwd)"
   fi
 
-  ios_min_version="${IOS_MIN_VERSION:-}"
-  ios_max_version="${IOS_MAX_VERSION:-}"
-  ios_runtime="${IOS_RUNTIME:-}"
+  ios_runtime="${IOS_RUNTIME_MAX:-}"
   if [ -z "$ios_runtime" ] && command -v xcrun >/dev/null 2>&1; then
     ios_runtime="$(xcrun --sdk iphonesimulator --show-sdk-version 2>/dev/null || true)"
-  fi
-  if [ -z "$ios_max_version" ]; then
-    ios_max_version="$ios_runtime"
   fi
 
   xcode_dir="${DEVELOPER_DIR:-}"
@@ -167,8 +163,8 @@ if [ -n "${INIT_IOS:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ] &&
   fi
 
   echo "Resolved iOS SDK"
-  echo "  IOS_MIN_VERSION: ${ios_min_version:-not set}"
-  echo "  IOS_MAX_VERSION: ${ios_max_version:-not set}"
+  echo "  IOS_RUNTIME_MIN: ${IOS_RUNTIME_MIN:-not set}"
+  echo "  IOS_RUNTIME_MAX: ${IOS_RUNTIME_MAX:-not set}"
   echo "  IOS_RUNTIME: ${ios_runtime:-not set}"
   echo "  xcodebuild: ${xcode_version:-unknown}"
   echo "  DEVELOPER_DIR: ${xcode_dir:-not set}"

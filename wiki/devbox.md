@@ -15,6 +15,9 @@ Enter the environment with `devbox shell`. The init hook wires `ANDROID_SDK_ROOT
 
 By default, Devbox uses the flake-pinned SDKs and prefers the latest (`android-sdk-max`) when available. It sets `ANDROID_SDK_ROOT`/`ANDROID_HOME` and adds emulator/platform-tools/cmdline-tools to `PATH` via `scripts/android/env.sh`. To use a local SDK instead, launch with `ANDROID_SDK_USE_LOCAL=1 ANDROID_HOME="$HOME/Library/Android/sdk" devbox shell` (or set `ANDROID_SDK_ROOT`). Unset `ANDROID_SDK_USE_LOCAL` (and `ANDROID_HOME`/`ANDROID_SDK_ROOT` if you set them) to return to the Nix SDK. Inspect the active SDK with `echo "$ANDROID_SDK_ROOT"` and `which sdkmanager` inside the shell. Create/boot AVDs via `devbox run start-android*` (uses `scripts/android/avd.sh`). Version sources are documented in `wiki/nix.md`.
 
+Example custom targets (root `devbox.json` sets these via `shell.env` for testing):
+`ANDROID_CUSTOM_API=29` `ANDROID_CUSTOM_DEVICE=pixel_6` `IOS_CUSTOM_DEVICE="iPhone 15"`
+
 ### Emulator/AVD scripts
 
 - `devbox run start-android` launches the default “max” AVD (from `nix/defaults.json`). Override with `TARGET_SDK=min` to launch the min AVD instead. You can also set `DETOX_AVD` or `AVD_NAME` to pick an exact AVD name. Internally uses `scripts/android/avd.sh`.
@@ -57,7 +60,7 @@ iOS uses the host Xcode toolchain. There is no Nix-provisioned iOS SDK. Run `dev
 ### Common env knobs
 
 - Android: `TARGET_SDK` (min/max), `DETOX_AVD` (explicit AVD name), `AVD_NAME` (explicit AVD name for create + start), `EMU_HEADLESS` (1 for headless), `EMU_PORT` (emulator port/serial), `ANDROID_BUILD_TOOLS_VERSION` (override build-tools).
-- iOS: `TARGET_SDK` (min/max/custom), `DETOX_IOS_DEVICE` (explicit sim device), `IOS_RUNTIME` (preferred runtime), `IOS_DEVICE_NAMES` (comma list to create), `IOS_DEVELOPER_DIR` (Xcode path), `IOS_DOWNLOAD_RUNTIME` (0 to skip runtime download attempt). The default min/max iOS versions live in `nix/defaults.json` as `IOS_MIN_VERSION`/`IOS_MAX_VERSION`.
+- iOS: `TARGET_SDK` (min/max/custom), `DETOX_IOS_DEVICE` (explicit sim device), `IOS_DEVICE_NAMES` (comma list to create), `IOS_RUNTIME_MIN`/`IOS_RUNTIME_MAX` (runtime versions for min/max), `IOS_RUNTIME_CUSTOM` (runtime for custom), `IOS_DEVELOPER_DIR` (Xcode path), `IOS_DOWNLOAD_RUNTIME` (0 to skip runtime download attempt). The simulator runtime must exist in the active Xcode install.
 
 ### Releases
 
