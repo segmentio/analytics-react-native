@@ -9,6 +9,7 @@
   },
   "shell": {
     "init_hook": [
+      "export TARGET_SDK=max",
       "export ANDROID_SDK_FLAKE_OUTPUT=android-sdk-max",
       "INIT_ANDROID=1 . $DEVBOX_PROJECT_ROOT/../../scripts/env.sh"
     ],

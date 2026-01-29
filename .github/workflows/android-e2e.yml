@@ -40,7 +40,15 @@ jobs:
           df -H
       - name: Resolve devbox config
         run: |
-          echo "DEVBOX_CONFIG=shells/android-${{ inputs.target }}/devbox.json" >> "$GITHUB_ENV"
+          case "${{ inputs.target }}" in
+            min|max)
+              echo "DEVBOX_CONFIG=shells/android-${{ inputs.target }}/devbox.json" >> "$GITHUB_ENV"
+              ;;
+            *)
+              echo "Unsupported target '${{ inputs.target }}' for CI. Use min or max." >&2
+              exit 1
+              ;;
+          esac
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:

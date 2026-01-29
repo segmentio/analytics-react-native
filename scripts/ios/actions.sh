@@ -18,6 +18,52 @@ ios_run() {
     test)
       # shellcheck disable=SC1090
       . "$SCRIPTS_DIR/ios/simctl.sh"
+      target_sdk="${TARGET_SDK:-max}"
+      runtime_version=""
+      device_name=""
+      case "$target_sdk" in
+        custom)
+          if [ -z "${IOS_CUSTOM_DEVICE:-}" ]; then
+            echo "TARGET_SDK=custom requires IOS_CUSTOM_DEVICE to be set." >&2
+            exit 1
+          fi
+          if [ -z "${IOS_RUNTIME_CUSTOM:-}" ]; then
+            echo "TARGET_SDK=custom requires IOS_RUNTIME_CUSTOM to be set." >&2
+            exit 1
+          fi
+          runtime_version="${IOS_RUNTIME_CUSTOM}"
+          device_name="${IOS_CUSTOM_DEVICE}"
+          ;;
+        min)
+          if [ -z "${IOS_RUNTIME_MIN:-}" ]; then
+            echo "TARGET_SDK=min requires IOS_RUNTIME_MIN to be set." >&2
+            exit 1
+          fi
+          runtime_version="${IOS_RUNTIME_MIN}"
+          device_name="${IOS_MIN_DEVICE:-iPhone 13}"
+          ;;
+        max)
+          if [ -z "${IOS_RUNTIME_MAX:-}" ]; then
+            echo "TARGET_SDK=max requires IOS_RUNTIME_MAX to be set." >&2
+            exit 1
+          fi
+          runtime_version="${IOS_RUNTIME_MAX}"
+          device_name="${IOS_MAX_DEVICE:-iPhone 17}"
+          ;;
+        *)
+          echo "Unsupported TARGET_SDK '${target_sdk}'. Use min, max, or custom." >&2
+          exit 1
+          ;;
+      esac
+
+      IOS_RUNTIME="$runtime_version"
+      IOS_DEVICE_NAMES="$device_name"
+      DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-$device_name}"
+      export IOS_RUNTIME IOS_DEVICE_NAMES DETOX_IOS_DEVICE
+
+      if ! resolve_runtime_name_strict "$runtime_version"; then
+        exit 1
+      fi
       ios_setup
       yarn install --immutable
       yarn e2e install
@@ -41,23 +87,43 @@ ios_run() {
           ensure_simctl
           target_sdk="${TARGET_SDK:-max}"
           runtime_version=""
-          if [ "$target_sdk" = "custom" ]; then
-            if [ -z "${IOS_CUSTOM_DEVICE:-}" ]; then
-              echo "TARGET_SDK=custom requires IOS_CUSTOM_DEVICE to be set." >&2
+          case "$target_sdk" in
+            custom)
+              if [ -z "${IOS_CUSTOM_DEVICE:-}" ]; then
+                echo "TARGET_SDK=custom requires IOS_CUSTOM_DEVICE to be set." >&2
+                exit 1
+              fi
+              if [ -z "${IOS_RUNTIME_CUSTOM:-}" ]; then
+                echo "TARGET_SDK=custom requires IOS_RUNTIME_CUSTOM to be set." >&2
+                exit 1
+              fi
+              runtime_version="${IOS_RUNTIME_CUSTOM}"
+              IOS_DEVICE_NAMES="${IOS_CUSTOM_DEVICE}"
+              DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-${IOS_CUSTOM_DEVICE}}"
+              ;;
+            min)
+              if [ -z "${IOS_RUNTIME_MIN:-}" ]; then
+                echo "TARGET_SDK=min requires IOS_RUNTIME_MIN to be set." >&2
+                exit 1
+              fi
+              runtime_version="${IOS_RUNTIME_MIN}"
+              IOS_DEVICE_NAMES="${IOS_MIN_DEVICE:-iPhone 13}"
+              DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-${IOS_MIN_DEVICE:-iPhone 13}}"
+              ;;
+            max)
+              if [ -z "${IOS_RUNTIME_MAX:-}" ]; then
+                echo "TARGET_SDK=max requires IOS_RUNTIME_MAX to be set." >&2
+                exit 1
+              fi
+              runtime_version="${IOS_RUNTIME_MAX}"
+              IOS_DEVICE_NAMES="${IOS_MAX_DEVICE:-iPhone 17}"
+              DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-${IOS_MAX_DEVICE:-iPhone 17}}"
+              ;;
+            *)
+              echo "Unsupported TARGET_SDK '${target_sdk}'. Use min, max, or custom." >&2
               exit 1
-            fi
-            runtime_version="${IOS_RUNTIME_CUSTOM:-}"
-            IOS_DEVICE_NAMES="${IOS_CUSTOM_DEVICE}"
-            DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-${IOS_CUSTOM_DEVICE}}"
-          elif [ "$target_sdk" = "min" ]; then
-            runtime_version="${IOS_RUNTIME_MIN:-}"
-            IOS_DEVICE_NAMES="${IOS_MIN_DEVICE:-iPhone 13}"
-            DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-${IOS_MIN_DEVICE:-iPhone 13}}"
-          else
-            runtime_version="${IOS_RUNTIME_MAX:-}"
-            IOS_DEVICE_NAMES="${IOS_DEVICE_NAMES:-${IOS_MIN_DEVICE:-iPhone 13},${IOS_MAX_DEVICE:-iPhone 17}}"
-            DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-iPhone 17}"
-          fi
+              ;;
+          esac
           export IOS_DEVICE_NAMES DETOX_IOS_DEVICE
           if [ -n "$runtime_version" ]; then
             if ! resolve_runtime_name_strict "$runtime_version"; then

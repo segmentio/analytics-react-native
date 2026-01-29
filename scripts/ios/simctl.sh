@@ -239,8 +239,9 @@ ios_setup() {
   fi
   devices_list="${IOS_DEVICE_NAMES:-${IOS_MIN_DEVICE:-iPhone 13},${IOS_MAX_DEVICE:-iPhone 17}}"
   runtime="${IOS_RUNTIME:-${IOS_RUNTIME_MAX:-}}"
-  if [ -z "$runtime" ] && command -v xcrun >/dev/null 2>&1; then
-    runtime="$(xcrun --sdk iphonesimulator --show-sdk-version 2>/dev/null || true)"
+  if [ -z "$runtime" ]; then
+    echo "IOS_RUNTIME (or IOS_RUNTIME_MAX) must be set to create simulators." >&2
+    return 1
   fi
 
   ifs_backup="$IFS"

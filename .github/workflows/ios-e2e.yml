@@ -31,6 +31,16 @@ jobs:
       YARN_ENABLE_HARDENED_MODE: 0
     steps:
       - uses: actions/checkout@v4
+      - name: Validate target
+        run: |
+          case "${{ inputs.target }}" in
+            min|max)
+              ;;
+            *)
+              echo "Unsupported target '${{ inputs.target }}' for CI. Use min or max." >&2
+              exit 1
+              ;;
+          esac
       - name: Resolve iOS runtime
         id: defaults
         run: |
