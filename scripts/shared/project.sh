@@ -1,13 +1,15 @@
 #!/usr/bin/env sh
 
-require_tool() {
-  tool="$1"
-  message="${2:-Missing required tool: $tool. Ensure devbox shell is active and required packages are installed.}"
-  if ! command -v "$tool" >/dev/null 2>&1; then
-    echo "$message" >&2
-    exit 1
-  fi
-}
+if ! (return 0 2>/dev/null); then
+  echo "scripts/shared/project.sh must be sourced." >&2
+  exit 1
+fi
+
+if [ "${PROJECT_SH_LOADED:-}" = "1" ] && [ "${PROJECT_SH_LOADED_PID:-}" = "$$" ]; then
+  return 0 2>/dev/null || exit 0
+fi
+PROJECT_SH_LOADED=1
+PROJECT_SH_LOADED_PID="$$"
 
 ensure_project_root() {
   if [ -n "${PROJECT_ROOT:-}" ]; then
@@ -26,23 +28,14 @@ ensure_project_root() {
 
   if [ -n "$git_root" ]; then
     PROJECT_ROOT="$git_root"
-  elif [ -f "$base_dir/../shared/common.sh" ] && [ -f "$base_dir/../build.sh" ]; then
+  elif [ -f "$base_dir/../shared/project.sh" ] && [ -f "$base_dir/../run.sh" ]; then
     PROJECT_ROOT="$(cd "$base_dir/.." && pwd)"
-  elif [ -f "$base_dir/shared/common.sh" ] && [ -f "$base_dir/build.sh" ]; then
+  elif [ -f "$base_dir/shared/project.sh" ] && [ -f "$base_dir/run.sh" ]; then
     PROJECT_ROOT="$(cd "$base_dir" && pwd)"
   fi
 
   if [ -n "${PROJECT_ROOT:-}" ]; then
     export PROJECT_ROOT
-  fi
-}
-
-load_platform_versions() {
-  base_dir="$1"
-  platform_versions="${base_dir%/}/../platform-versions.sh"
-  if [ -f "$platform_versions" ]; then
-    # shellcheck disable=SC1090
-    . "$platform_versions"
   fi
 }
 

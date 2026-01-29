@@ -1,0 +1,28 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.2/.schema/devbox.schema.json",
+  "packages": {
+    "yarn-berry": "latest",
+    "git": "latest",
+    "bash": "latest",
+    "nodejs": "latest",
+    "coreutils": "latest",
+    "gnused": "latest",
+    "gnugrep": "latest",
+    "gawk": "latest",
+    "jdk17": "latest",
+    "gradle": "8.0.1",
+    "jq": "latest",
+    "path:../../nix#android-sdk-min": ""
+  },
+  "shell": {
+    "init_hook": [
+      "export TARGET_SDK=min",
+      "export ANDROID_SDK_FLAKE_OUTPUT=android-sdk-min",
+      "INIT_ANDROID=1 . $DEVBOX_PROJECT_ROOT/../../scripts/bootstrap/env.sh"
+    ],
+    "scripts": {
+      "setup-android": ["sh $DEVBOX_PROJECT_ROOT/../../scripts/run.sh android setup"],
+      "test-android": ["sh $DEVBOX_PROJECT_ROOT/../../scripts/run.sh android test"]
+    }
+  }
+}

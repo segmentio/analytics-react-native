@@ -17,13 +17,13 @@ This repo uses semantic-release with multi-semantic-release to version and publi
 ### CI/CD path (recommended)
 
 1. Ensure `master`/`beta` are green. Merges must use conventional commits.
-2. Trigger `Publish` workflow in Actions. Inputs are tokens only; workflow fetches full history, installs Devbox, then runs `devbox run release`.
+2. Trigger `Publish` workflow in Actions. Inputs are tokens only; workflow fetches full history, installs Devbox, then runs `devbox run --pure release`.
 3. Outputs: package tags (`${name}-vX.Y.Z`), npm publishes, GitHub releases, and updated changelog commits pushed back via the workflow token.
 
 ### Local dry run
 
 1. `GH_TOKEN=<token> NPM_TOKEN=<token> YARN_NPM_AUTH_TOKEN=<token>` (GH token needs `contents` write; npm token can be automation/classic publish).
-2. `devbox run release -- --dry-run` to see what would publish. Omit `--dry-run` to actually publish (only do this if you intend to release from your machine).
+2. `devbox run --pure release -- --dry-run` to see what would publish. Omit `--dry-run` to actually publish (only do this if you intend to release from your machine).
 
 ### Tips and gotchas
 
