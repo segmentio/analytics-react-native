@@ -1,12 +1,25 @@
 #!/usr/bin/env sh
 set -eu
 
-# Android AVD setup + lifecycle helpers.
+if ! (return 0 2>/dev/null); then
+  echo "scripts/android/avd.sh must be sourced via scripts/run.sh." >&2
+  exit 1
+fi
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-if [ -z "${COMMON_SH_LOADED:-}" ]; then
+if [ -z "${SHARED_LOADED:-}" ]; then
+  init_path="$script_dir/../env.sh"
+  if [ ! -f "$init_path" ]; then
+    repo_root=""
+    if command -v git >/dev/null 2>&1; then
+      repo_root="$(git -C "$script_dir" rev-parse --show-toplevel 2>/dev/null || git -C "$PWD" rev-parse --show-toplevel 2>/dev/null || true)"
+    fi
+    if [ -n "$repo_root" ] && [ -f "$repo_root/scripts/env.sh" ]; then
+      init_path="$repo_root/scripts/env.sh"
+    fi
+  fi
   # shellcheck disable=SC1090
-  . "$script_dir/../shared/common.sh"
+  . "$init_path"
 fi
 debug_log_script "scripts/android/avd.sh"
 
@@ -389,18 +402,3 @@ android_reset() {
   rm -f "$HOME/.android/adbkey" "$HOME/.android/adbkey.pub"
   echo "AVDs and adb keys removed. Recreate via start-android* as needed."
 }
-
-if [ "${RUN_MAIN:-1}" = "1" ]; then
-  action="${1:-}"
-  shift || true
-  case "$action" in
-    start) android_start "$@" ;;
-    stop) android_stop "$@" ;;
-    reset) android_reset "$@" ;;
-    setup) android_setup "$@" ;;
-    *)
-      echo "Usage: avd.sh {start|stop|reset|setup}" >&2
-      exit 1
-      ;;
-  esac
-fi

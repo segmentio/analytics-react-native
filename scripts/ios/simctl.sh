@@ -1,10 +1,25 @@
 #!/usr/bin/env sh
 set -eu
 
+if ! (return 0 2>/dev/null); then
+  echo "scripts/ios/simctl.sh must be sourced via scripts/run.sh." >&2
+  exit 1
+fi
+
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-if [ -z "${COMMON_SH_LOADED:-}" ]; then
+if [ -z "${SHARED_LOADED:-}" ]; then
+  init_path="$script_dir/../env.sh"
+  if [ ! -f "$init_path" ]; then
+    repo_root=""
+    if command -v git >/dev/null 2>&1; then
+      repo_root="$(git -C "$script_dir" rev-parse --show-toplevel 2>/dev/null || git -C "$PWD" rev-parse --show-toplevel 2>/dev/null || true)"
+    fi
+    if [ -n "$repo_root" ] && [ -f "$repo_root/scripts/env.sh" ]; then
+      init_path="$repo_root/scripts/env.sh"
+    fi
+  fi
   # shellcheck disable=SC1090
-  . "$script_dir/../shared/common.sh"
+  . "$init_path"
 fi
 debug_log_script "scripts/ios/simctl.sh"
 
@@ -135,13 +150,6 @@ ensure_device() {
   echo "Created ${display_name}"
 }
 
-# Creates local iOS simulators for common targets. Requires Xcode command-line tools and jq.
-# Env overrides:
-#   IOS_DEVICE_NAMES="iPhone 15,iPhone 17" (comma-separated)
-#   IOS_RUNTIME="26.1" (preferred runtime prefix; falls back to latest available)
-#   IOS_DOWNLOAD_RUNTIME=1 to attempt xcodebuild -downloadPlatform iOS when the preferred runtime is missing
-#   IOS_DEVELOPER_DIR="/Applications/Xcode.app/Contents/Developer" to override the Xcode path; defaults to xcode-select -p or the standard Xcode.app if found
-
 ensure_developer_dir() {
   desired="${IOS_DEVELOPER_DIR:-}"
   if [ -z "$desired" ]; then
@@ -201,15 +209,3 @@ ios_setup() {
   IFS="$ifs_backup"
   echo "Done. Launch via Xcode > Devices or 'xcrun simctl boot \"<name>\"' then 'open -a Simulator'."
 }
-
-if [ "${RUN_MAIN:-1}" = "1" ]; then
-  action="${1:-}"
-  shift || true
-  case "$action" in
-    setup) ios_setup "$@" ;;
-    *)
-      echo "Usage: simctl.sh {setup}" >&2
-      exit 1
-      ;;
-  esac
-fi

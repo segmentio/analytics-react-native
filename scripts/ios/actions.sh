@@ -1,15 +1,9 @@
 #!/usr/bin/env sh
-set -eu
 
-script_dir="$(cd "$(dirname "$0")" && pwd)"
-
-if [ -z "${COMMON_SH_LOADED:-}" ]; then
-  # shellcheck disable=SC1090
-  . "$script_dir/../shared/common.sh"
+if ! (return 0 2>/dev/null); then
+  echo "scripts/ios/actions.sh must be sourced." >&2
+  exit 1
 fi
-
-scripts_root="${SCRIPTS_DIR:-$(cd "$script_dir/.." && pwd)}"
-debug_log_script "scripts/ios/run.sh"
 
 ios_run() {
   action="${1:-}"
@@ -17,14 +11,13 @@ ios_run() {
 
   if [ "$(uname -s)" = "Darwin" ]; then
     # shellcheck disable=SC1090
-    . "$scripts_root/ios/env.sh"
+    . "$SCRIPTS_DIR/ios/env.sh"
   fi
 
   case "$action" in
     test)
-      RUN_MAIN=0
       # shellcheck disable=SC1090
-      . "$scripts_root/ios/simctl.sh"
+      . "$SCRIPTS_DIR/ios/simctl.sh"
       ios_setup
       yarn install --immutable
       yarn e2e install
@@ -34,15 +27,13 @@ ios_run() {
       yarn e2e test:ios
       ;;
     setup)
-      RUN_MAIN=0
       # shellcheck disable=SC1090
-      . "$scripts_root/ios/simctl.sh"
+      . "$SCRIPTS_DIR/ios/simctl.sh"
       ios_setup "$@"
       ;;
     start | stop | reset)
-      RUN_MAIN=0
       # shellcheck disable=SC1090
-      . "$scripts_root/ios/simctl.sh"
+      . "$SCRIPTS_DIR/ios/simctl.sh"
       case "$action" in
         start)
           flavor="${IOS_FLAVOR:-latest}"
@@ -106,7 +97,3 @@ ios_run() {
       ;;
   esac
 }
-
-if [ "${RUN_MAIN:-1}" = "1" ]; then
-  ios_run "$@"
-fi

@@ -1,4 +1,9 @@
 #!/usr/bin/env sh
+
+if ! (return 0 2>/dev/null); then
+  echo "scripts/shared/debug.sh must be sourced." >&2
+  exit 1
+fi
 set -eu
 
 debug_enabled() {

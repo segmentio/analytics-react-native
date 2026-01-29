@@ -19,7 +19,7 @@
   "shell": {
     "init_hook": [
       "echo 'Welcome to analytics-react-native devbox!' > /dev/null",
-      "DEVBOX_INIT_ANDROID=1 DEVBOX_INIT_IOS=1 . $DEVBOX_PROJECT_ROOT/scripts/env-defaults.sh"
+      "INIT_ANDROID=1 INIT_IOS=1 . $DEVBOX_PROJECT_ROOT/scripts/env.sh"
     ],
     "scripts": {
       "clean": [

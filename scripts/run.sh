@@ -3,8 +3,18 @@ set -eu
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
 
+init_path="$script_dir/env.sh"
+if [ ! -f "$init_path" ]; then
+  repo_root=""
+  if command -v git >/dev/null 2>&1; then
+    repo_root="$(git -C "$script_dir" rev-parse --show-toplevel 2>/dev/null || git -C "$PWD" rev-parse --show-toplevel 2>/dev/null || true)"
+  fi
+  if [ -n "$repo_root" ] && [ -f "$repo_root/scripts/env.sh" ]; then
+    init_path="$repo_root/scripts/env.sh"
+  fi
+fi
 # shellcheck disable=SC1090
-. "$script_dir/shared/common.sh"
+. "$init_path"
 debug_log_script "scripts/run.sh"
 
 scripts_root="${SCRIPTS_DIR:-$script_dir}"
@@ -82,15 +92,13 @@ run_act() {
 
 case "$platform" in
   android)
-    RUN_MAIN=0
     # shellcheck disable=SC1090
-    . "$scripts_root/android/run.sh"
+    . "$scripts_root/android/actions.sh"
     android_run "$action" "$@"
     ;;
   ios)
-    RUN_MAIN=0
     # shellcheck disable=SC1090
-    . "$scripts_root/ios/run.sh"
+    . "$scripts_root/ios/actions.sh"
     ios_run "$action" "$@"
     ;;
   build)

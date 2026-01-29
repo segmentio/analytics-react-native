@@ -1,10 +1,25 @@
 #!/usr/bin/env sh
+
+if ! (return 0 2>/dev/null); then
+  echo "scripts/ios/env.sh must be sourced via scripts/run.sh or scripts/env.sh." >&2
+  exit 1
+fi
 set -eu
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-if [ -z "${COMMON_SH_LOADED:-}" ]; then
+if [ -z "${SHARED_LOADED:-}" ]; then
+  init_path="$script_dir/../env.sh"
+  if [ ! -f "$init_path" ]; then
+    repo_root=""
+    if command -v git >/dev/null 2>&1; then
+      repo_root="$(git -C "$script_dir" rev-parse --show-toplevel 2>/dev/null || git -C "$PWD" rev-parse --show-toplevel 2>/dev/null || true)"
+    fi
+    if [ -n "$repo_root" ] && [ -f "$repo_root/scripts/env.sh" ]; then
+      init_path="$repo_root/scripts/env.sh"
+    fi
+  fi
   # shellcheck disable=SC1090
-  . "$script_dir/../shared/common.sh"
+  . "$init_path"
 fi
 debug_log_script "scripts/ios/env.sh"
 
@@ -119,9 +134,9 @@ if debug_enabled; then
   fi
 fi
 
-if [ -n "${DEVBOX_INIT_IOS:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ] && [ -z "${DEVBOX_IOS_SDK_SUMMARY_PRINTED:-}" ]; then
-  DEVBOX_IOS_SDK_SUMMARY_PRINTED=1
-  export DEVBOX_IOS_SDK_SUMMARY_PRINTED
+if [ -n "${INIT_IOS:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ] && [ -z "${IOS_SDK_SUMMARY_PRINTED:-}" ]; then
+  IOS_SDK_SUMMARY_PRINTED=1
+  export IOS_SDK_SUMMARY_PRINTED
 
   repo_root="${PROJECT_ROOT:-${DEVBOX_PROJECT_ROOT:-}}"
   if [ -z "$repo_root" ] && [ -n "${SCRIPTS_DIR:-}" ]; then

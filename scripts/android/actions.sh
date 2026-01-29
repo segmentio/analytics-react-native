@@ -1,28 +1,21 @@
 #!/usr/bin/env sh
-set -eu
 
-script_dir="$(cd "$(dirname "$0")" && pwd)"
-
-if [ -z "${COMMON_SH_LOADED:-}" ]; then
-  # shellcheck disable=SC1090
-  . "$script_dir/../shared/common.sh"
+if ! (return 0 2>/dev/null); then
+  echo "scripts/android/actions.sh must be sourced." >&2
+  exit 1
 fi
-
-scripts_root="${SCRIPTS_DIR:-$(cd "$script_dir/.." && pwd)}"
-debug_log_script "scripts/android/run.sh"
 
 android_run() {
   action="${1:-}"
   shift 1 || true
 
   # shellcheck disable=SC1090
-  . "$scripts_root/android/env.sh"
+  . "$SCRIPTS_DIR/android/env.sh"
 
   case "$action" in
     test)
-      RUN_MAIN=0
       # shellcheck disable=SC1090
-      . "$scripts_root/android/avd.sh"
+      . "$SCRIPTS_DIR/android/avd.sh"
       android_setup
       yarn install --immutable
       yarn e2e install
@@ -31,15 +24,13 @@ android_run() {
       yarn e2e test:android
       ;;
     setup)
-      RUN_MAIN=0
       # shellcheck disable=SC1090
-      . "$scripts_root/android/avd.sh"
+      . "$SCRIPTS_DIR/android/avd.sh"
       android_setup "$@"
       ;;
     start | stop | reset)
-      RUN_MAIN=0
       # shellcheck disable=SC1090
-      . "$scripts_root/android/avd.sh"
+      . "$SCRIPTS_DIR/android/avd.sh"
       case "$action" in
         start) android_start "$@" ;;
         stop) android_stop "$@" ;;
@@ -52,7 +43,3 @@ android_run() {
       ;;
   esac
 }
-
-if [ "${RUN_MAIN:-1}" = "1" ]; then
-  android_run "$@"
-fi

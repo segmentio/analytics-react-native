@@ -1,22 +1,27 @@
 #!/usr/bin/env sh
-# Sets ANDROID_SDK_ROOT/ANDROID_HOME and PATH to the flake-pinned SDK if not already set.
 
-# Load shared platform versions if present.
-project_root="${PROJECT_ROOT:-${DEVBOX_PROJECT_ROOT:-}}"
+if ! (return 0 2>/dev/null); then
+  echo "scripts/android/env.sh must be sourced via scripts/run.sh or scripts/env.sh." >&2
+  exit 1
+fi
+project_root="${PROJECT_ROOT:-}"
+if [ -z "$project_root" ] && command -v git >/dev/null 2>&1; then
+  project_root="$(git -C "$(dirname "$0")" rev-parse --show-toplevel 2>/dev/null || git -C "$PWD" rev-parse --show-toplevel 2>/dev/null || true)"
+fi
 if [ -z "$project_root" ]; then
   project_root="$(cd "$(dirname "$0")/../.." && pwd)"
 fi
 script_dir="$project_root/scripts/android"
-if [ -z "${COMMON_SH_LOADED:-}" ]; then
+if [ -z "${SHARED_LOADED:-}" ]; then
   # shellcheck disable=SC1090
-  . "$project_root/scripts/shared/common.sh"
+  . "$project_root/scripts/env.sh"
 fi
 debug_log_script "scripts/android/env.sh"
 
 
 
 resolve_flake_sdk_root() {
-  root="${PROJECT_ROOT:-${DEVBOX_PROJECT_ROOT:-}}"
+  root="${PROJECT_ROOT:-}"
   if [ -z "$root" ]; then
     root="$(cd "$script_dir/../.." && pwd)"
   fi
@@ -149,9 +154,9 @@ export ANDROID_ENV_LOADED
       esac
     fi
   fi
-if [ -n "${DEVBOX_INIT_ANDROID:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ] && [ -z "${DEVBOX_ANDROID_SDK_SUMMARY_PRINTED:-}" ]; then
-    DEVBOX_ANDROID_SDK_SUMMARY_PRINTED=1
-    export DEVBOX_ANDROID_SDK_SUMMARY_PRINTED
+if [ -n "${INIT_ANDROID:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ] && [ -z "${ANDROID_SDK_SUMMARY_PRINTED:-}" ]; then
+    ANDROID_SDK_SUMMARY_PRINTED=1
+    export ANDROID_SDK_SUMMARY_PRINTED
 
     android_sdk_root="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
     android_sdk_version="${ANDROID_BUILD_TOOLS_VERSION:-${ANDROID_CMDLINE_TOOLS_VERSION:-30.0.3}}"

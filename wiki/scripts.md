@@ -5,19 +5,23 @@ This repo uses `scripts/` as the entry point for devbox commands and CI helpers.
 ## Layout
 
 - `scripts/run.sh`: entrypoint for devbox/CI tasks (build/test/act).
-- `scripts/env-defaults.sh`: loads `scripts/env-defaults.json` and exports platform vars for scripts.
-- `scripts/shared/common.sh`: shared helpers (tool checks, platform version loader).
+- `scripts/env.sh`: establishes `PROJECT_ROOT`/`SCRIPTS_DIR`, loads `scripts/shared/*`, and optionally initializes platforms when `INIT_ANDROID`/`INIT_IOS` are set.
+- `scripts/shared/project.sh`: project root + scripts path helpers.
+- `scripts/shared/tools.sh`: shared tool checks.
+- `scripts/shared/defaults.sh`: loads `scripts/env-defaults.json` via `jq`.
 - `scripts/android/`: Android SDK, AVD, and E2E helpers.
 - `scripts/ios/`: iOS simulator setup, toolchain fixups, and E2E helpers.
-- `scripts/android/run.sh` + `scripts/ios/run.sh`: platform task dispatchers called by `scripts/run.sh`.
+- `scripts/android/actions.sh` + `scripts/ios/actions.sh`: platform task dispatchers called by `scripts/run.sh`.
 
 ## Shared helpers
 
-- `scripts/shared/common.sh`
-  - `require_tool`: asserts a tool exists (with an optional custom message).
-  - `env-defaults.sh`: sourced once to load platform defaults for scripts.
-  - `PROJECT_ROOT`: auto-detected git root when unset.
+- `scripts/shared/project.sh`
+  - `ensure_project_root`: resolves `PROJECT_ROOT`.
   - `SCRIPTS_DIR`: defaults to `$PROJECT_ROOT/scripts` when unset.
+- `scripts/shared/tools.sh`
+  - `require_tool`: asserts a tool exists (with an optional custom message).
+- `scripts/shared/defaults.sh`
+  - Loads `scripts/env-defaults.json` (via `jq`) to export default env vars when available.
 
 ## Android scripts
 
@@ -25,14 +29,14 @@ This repo uses `scripts/` as the entry point for devbox commands and CI helpers.
 
   - Sets `ANDROID_SDK_ROOT`/`ANDROID_HOME` and PATH for the Nix SDK (prefers `android-sdk-max` when available).
   - Set `ANDROID_SDK_USE_LOCAL=1` to keep a pre-set local SDK instead.
-  - Loads platform defaults via `scripts/env-defaults.sh`.
+  - Loads platform defaults via `scripts/shared/defaults.sh` (from `scripts/env-defaults.json`).
   - Used by devbox init hooks in `devbox.json` and `shells/android-min/devbox.json` + `shells/android-max/devbox.json`.
 
 - `scripts/android/avd.sh`
 
   - Creates/ensures AVDs for the target API level, then starts/stops/resets emulators.
   - Depends on `sdkmanager`, `avdmanager`, `emulator` in PATH (Devbox shell).
-  - Uses platform defaults from `scripts/env-defaults.sh`.
+  - Uses platform defaults from `scripts/shared/defaults.sh`.
 
 
 ## iOS scripts
