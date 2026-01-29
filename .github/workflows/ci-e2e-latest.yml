@@ -39,11 +39,10 @@ jobs:
         with:
           project-path: shells/ios/devbox.json
           enable-cache: 'false'
-      - name: Resolve iOS targets
-        run: |
-          node -e "const fs=require('fs');const d=JSON.parse(fs.readFileSync('scripts/env-defaults.json','utf8')).defaults;process.stdout.write('DETOX_IOS_DEVICE=' + d.IOS_MAX_DEVICE + '\n');" >> "$GITHUB_ENV"
       - name: iOS E2E Tests (latest)
         run: devbox run --config=shells/ios/devbox.json test-ios
+        env:
+          TARGET_SDK: max
 
   run-e2e-android:
     runs-on: ubuntu-latest
@@ -74,8 +73,5 @@ jobs:
         with:
           project-path: shells/android-max/devbox.json
           enable-cache: 'false'
-      - name: Resolve Android targets
-        run: |
-          node -e "const fs=require('fs');const d=JSON.parse(fs.readFileSync('scripts/env-defaults.json','utf8')).defaults;const abi=process.env.AVD_ABI||'x86_64';process.stdout.write('DETOX_AVD=' + d.ANDROID_MAX_DEVICE + '_API' + d.ANDROID_MAX_API + '_' + abi + '\n');" >> "$GITHUB_ENV"
       - name: Android E2E Tests (latest)
         run: devbox run --config=shells/android-max/devbox.json test-android

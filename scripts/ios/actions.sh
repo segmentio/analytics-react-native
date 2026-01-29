@@ -36,10 +36,10 @@ ios_run() {
       . "$SCRIPTS_DIR/ios/simctl.sh"
       case "$action" in
         start)
-          flavor="${IOS_FLAVOR:-latest}"
-          if [ "$flavor" = "custom" ]; then
+          target_sdk="${TARGET_SDK:-max}"
+          if [ "$target_sdk" = "custom" ]; then
             if [ -z "${IOS_CUSTOM_DEVICE:-}" ]; then
-              echo "IOS_FLAVOR=custom requires IOS_CUSTOM_DEVICE to be set." >&2
+              echo "TARGET_SDK=custom requires IOS_CUSTOM_DEVICE to be set." >&2
               exit 1
             fi
             if [ -n "${IOS_CUSTOM_VERSION:-}" ]; then
@@ -48,7 +48,7 @@ ios_run() {
             fi
             IOS_DEVICE_NAMES="${IOS_CUSTOM_DEVICE}"
             DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-${IOS_CUSTOM_DEVICE}}"
-          elif [ "$flavor" = "minsdk" ]; then
+          elif [ "$target_sdk" = "min" ]; then
             IOS_DEVICE_NAMES="${IOS_MIN_DEVICE:-iPhone 13}"
             DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-${IOS_MIN_DEVICE:-iPhone 13}}"
           else

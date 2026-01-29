@@ -13,26 +13,27 @@
         "aarch64-darwin"
       ];
 
-      versionData = builtins.fromJSON (builtins.readFile ../scripts/env-defaults.json);
+      versionData = builtins.fromJSON (builtins.readFile ./defaults.json);
       defaultsData = if builtins.hasAttr "defaults" versionData then versionData.defaults else versionData;
       getVar =
-        name: default:
-        if builtins.hasAttr name defaultsData then toString (builtins.getAttr name defaultsData) else default;
+        name:
+        if builtins.hasAttr name defaultsData then toString (builtins.getAttr name defaultsData)
+        else builtins.throw "Missing required default in nix/defaults.json: ${name}";
 
       androidSdkConfig = {
         platformVersions = [
-          (getVar "PLATFORM_ANDROID_MIN_API" "21")
-          (getVar "PLATFORM_ANDROID_MAX_API" "33")
+          (getVar "ANDROID_MIN_API")
+          (getVar "ANDROID_MAX_API")
         ];
-        buildToolsVersion = getVar "PLATFORM_ANDROID_BUILD_TOOLS_VERSION" "30.0.3";
-        cmdLineToolsVersion = getVar "PLATFORM_ANDROID_CMDLINE_TOOLS_VERSION" "19.0";
-        systemImageTypes = [ (getVar "PLATFORM_ANDROID_SYSTEM_IMAGE_TAG" "google_apis") ];
+        buildToolsVersion = getVar "ANDROID_BUILD_TOOLS_VERSION";
+        cmdLineToolsVersion = getVar "ANDROID_CMDLINE_TOOLS_VERSION";
+        systemImageTypes = [ (getVar "ANDROID_SYSTEM_IMAGE_TAG") ];
       };
       androidSdkConfigMin = androidSdkConfig // {
-        platformVersions = [ (getVar "PLATFORM_ANDROID_MIN_API" "21") ];
+        platformVersions = [ (getVar "ANDROID_MIN_API") ];
       };
       androidSdkConfigMax = androidSdkConfig // {
-        platformVersions = [ (getVar "PLATFORM_ANDROID_MAX_API" "33") ];
+        platformVersions = [ (getVar "ANDROID_MAX_API") ];
       };
 
       forAllSystems =

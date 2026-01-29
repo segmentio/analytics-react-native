@@ -10,7 +10,7 @@ if [ "${ENV_DEFAULTS_LOADED:-}" = "1" ]; then
 fi
 
 if [ -n "${PROJECT_ROOT:-}" ]; then
-  defaults_json="${ENV_DEFAULTS_JSON:-$PROJECT_ROOT/scripts/env-defaults.json}"
+  defaults_json="${ENV_DEFAULTS_JSON:-$PROJECT_ROOT/nix/defaults.json}"
   jq_cmd=""
   if command -v jq >/dev/null 2>&1; then
     jq_cmd="jq"
