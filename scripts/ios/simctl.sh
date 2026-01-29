@@ -229,6 +229,19 @@ EOM
 }
 
 ios_setup() {
+  if [ -n "${IOS_XCODE_ENV_PATH:-}" ]; then
+    node_binary="${IOS_NODE_BINARY:-${NODE_BINARY:-}}"
+    if [ -z "$node_binary" ]; then
+      echo "IOS_XCODE_ENV_PATH is set but IOS_NODE_BINARY/NODE_BINARY is empty." >&2
+      return 1
+    fi
+    env_dir="$(dirname "$IOS_XCODE_ENV_PATH")"
+    if [ ! -d "$env_dir" ]; then
+      echo "IOS_XCODE_ENV_PATH directory does not exist: ${env_dir}" >&2
+      return 1
+    fi
+    printf 'export NODE_BINARY=%s\n' "$node_binary" >"$IOS_XCODE_ENV_PATH"
+  fi
   ensure_developer_dir
   require_tool xcrun "Missing required tool: xcrun. Install Xcode CLI tools before running (xcode-select --install or Xcode.app + xcode-select -s)."
   require_tool jq

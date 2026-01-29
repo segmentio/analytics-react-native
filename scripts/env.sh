@@ -37,6 +37,19 @@ for shared_script in project.sh debug.sh tools.sh defaults.sh; do
   fi
 done
 
+if [ -z "${IOS_NODE_BINARY:-}" ] && command -v node >/dev/null 2>&1; then
+  IOS_NODE_BINARY="$(command -v node)"
+  export IOS_NODE_BINARY
+fi
+
+if [ -z "${IOS_XCODE_ENV_PATH:-}" ] && [ -n "${PROJECT_ROOT:-}" ]; then
+  xcode_env_path="$PROJECT_ROOT/examples/E2E/ios/.xcode.env"
+  if [ -d "$PROJECT_ROOT/examples/E2E/ios" ]; then
+    IOS_XCODE_ENV_PATH="$xcode_env_path"
+    export IOS_XCODE_ENV_PATH
+  fi
+fi
+
 if [ "${INIT_ANDROID:-}" = "1" ]; then
   # shellcheck disable=SC1090
   . "$SCRIPTS_DIR/android/env.sh"
