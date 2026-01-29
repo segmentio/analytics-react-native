@@ -29,23 +29,23 @@
         "yarn cache clean",
         "find $DEVBOX_PROJECT_DIR -type d -name node_modules -exec rmdir {} \\;"
       ],
-      "build": ["sh $DEVBOX_PROJECT_ROOT/scripts/build.sh"],
+      "build": ["sh $DEVBOX_PROJECT_ROOT/scripts/entry/run.sh build"],
       "format": ["treefmt"],
       "lint": ["treefmt --fail-on-change"],
-      "test-android": ["sh $DEVBOX_PROJECT_ROOT/scripts/android/test.sh"],
-      "test-ios": ["sh $DEVBOX_PROJECT_ROOT/scripts/ios/test.sh"],
+      "test-android": ["sh $DEVBOX_PROJECT_ROOT/scripts/entry/run.sh android test"],
+      "test-ios": ["sh $DEVBOX_PROJECT_ROOT/scripts/entry/run.sh ios test"],
       "act-ci": [
         "sh $DEVBOX_PROJECT_ROOT/scripts/act-ci.sh --platform ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-24.04"
       ],
-      "setup-android": ["sh $DEVBOX_PROJECT_ROOT/scripts/android/setup.sh"],
-      "setup-ios": ["sh $DEVBOX_PROJECT_ROOT/scripts/ios/setup.sh"],
-      "start-emulator": ["sh $DEVBOX_PROJECT_ROOT/scripts/android/manager.sh start"],
-      "start-ios": ["sh $DEVBOX_PROJECT_ROOT/scripts/ios/manager.sh start"],
-      "start-android-minsdk": ["sh $DEVBOX_PROJECT_ROOT/scripts/android/manager.sh start"],
+      "setup-android": ["sh $DEVBOX_PROJECT_ROOT/scripts/entry/run.sh android setup"],
+      "setup-ios": ["sh $DEVBOX_PROJECT_ROOT/scripts/entry/run.sh ios setup"],
+      "start-emulator": ["sh $DEVBOX_PROJECT_ROOT/scripts/entry/run.sh android start"],
+      "start-ios": ["sh $DEVBOX_PROJECT_ROOT/scripts/entry/run.sh ios start"],
+      "start-android-minsdk": ["sh $DEVBOX_PROJECT_ROOT/scripts/entry/run.sh android start"],
       "start-android-latest": [
-        "AVD_FLAVOR=latest sh $DEVBOX_PROJECT_ROOT/scripts/android/manager.sh start"
+        "AVD_FLAVOR=latest sh $DEVBOX_PROJECT_ROOT/scripts/entry/run.sh android start"
       ],
-      "start-android": ["sh $DEVBOX_PROJECT_ROOT/scripts/android/manager.sh start"],
+      "start-android": ["sh $DEVBOX_PROJECT_ROOT/scripts/entry/run.sh android start"],
       "update-apps": [
         "yarn install --no-immutable",
         "yarn e2e install --no-immutable",
@@ -58,10 +58,10 @@
         "devbox update --config=shells/android-max/devbox.json",
         "devbox update --config=shells/ios/devbox.json"
       ],
-      "reset-android": ["sh $DEVBOX_PROJECT_ROOT/scripts/android/manager.sh reset"],
-      "reset-ios": ["sh $DEVBOX_PROJECT_ROOT/scripts/ios/manager.sh reset"],
-      "stop-android": ["sh $DEVBOX_PROJECT_ROOT/scripts/android/manager.sh stop"],
-      "stop-ios": ["sh $DEVBOX_PROJECT_ROOT/scripts/ios/manager.sh stop"],
+      "reset-android": ["sh $DEVBOX_PROJECT_ROOT/scripts/entry/run.sh android reset"],
+      "reset-ios": ["sh $DEVBOX_PROJECT_ROOT/scripts/entry/run.sh ios reset"],
+      "stop-android": ["sh $DEVBOX_PROJECT_ROOT/scripts/entry/run.sh android stop"],
+      "stop-ios": ["sh $DEVBOX_PROJECT_ROOT/scripts/entry/run.sh ios stop"],
       "stop": ["devbox run stop-android", "devbox run stop-ios"],
       "test": ["devbox run test-android", "devbox run test-ios"]
     }

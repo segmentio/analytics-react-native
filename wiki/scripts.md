@@ -28,20 +28,12 @@ This repo uses `scripts/` as the entry point for devbox commands and CI helpers.
   - Loads platform defaults via `scripts/platform-versions.sh`.
   - Used by devbox init hooks in `devbox.json` and `shells/android-min/devbox.json` + `shells/android-max/devbox.json`.
 
-- `scripts/android/setup.sh`
+- `scripts/android/avd.sh`
 
-  - Creates/ensures AVDs for min and max API levels.
+  - Creates/ensures AVDs for min and max API levels, then starts/stops/resets emulators.
   - Depends on `sdkmanager`, `avdmanager`, `emulator` in PATH (Devbox shell).
   - Uses platform defaults from `scripts/platform-versions.sh`.
 
-- `scripts/android/manager.sh`
-
-  - Starts/stops/resets AVDs and applies emulator defaults.
-  - Invokes `scripts/android/setup.sh` directly to ensure AVDs exist.
-
-- `scripts/android/test.sh`
-  - Runs setup + yarn build + Android E2E (Detox).
-  - Used by `devbox run test-android` and CI Android workflows.
 
 ## iOS scripts
 
@@ -49,44 +41,31 @@ This repo uses `scripts/` as the entry point for devbox commands and CI helpers.
 
   - Workaround for Devbox macOS toolchain injection.
   - Removes Nix toolchain variables and re-selects system clang/Xcode.
-  - Sourced by devbox init hooks and re-applied in `scripts/ios/test.sh`.
+  - Sourced by devbox init hooks and re-applied in `scripts/entry/run.sh` for iOS tasks.
 
 - `scripts/ios/simctl.sh`
 
   - Helpers for runtime selection and simulator management.
-  - Used by `scripts/ios/setup.sh`.
-
-- `scripts/ios/setup.sh`
-
   - Ensures Xcode tools are selected and simulators exist.
-  - Uses `scripts/ios/simctl.sh` to choose runtimes/devices.
 
-- `scripts/ios/manager.sh`
-
-  - Boots/shuts down simulators via `simctl`.
-  - Uses platform defaults from `scripts/platform-versions.sh`.
-
-- `scripts/ios/test.sh`
-  - Applies `scripts/ios/env.sh`, then runs setup + yarn build + iOS E2E.
-  - Used by `devbox run test-ios` and CI iOS workflows.
 
 ## Devbox wiring
 
 Root devbox (`devbox.json`) exposes:
 
-- `build` -> `scripts/build.sh`
-- `test-android` -> `scripts/android/test.sh`
-- `test-ios` -> `scripts/ios/test.sh`
-- `setup-android` -> `scripts/android/setup.sh`
-- `setup-ios` -> `scripts/ios/setup.sh`
-- `start-android*` -> `scripts/android/manager.sh`
-- `start-ios` -> `scripts/ios/manager.sh`
+- `build` -> `scripts/entry/run.sh build`
+- `test-android` -> `scripts/entry/run.sh android test`
+- `test-ios` -> `scripts/entry/run.sh ios test`
+- `setup-android` -> `scripts/entry/run.sh android setup`
+- `setup-ios` -> `scripts/entry/run.sh ios setup`
+- `start-android*` -> `scripts/entry/run.sh android start` (uses `scripts/android/avd.sh`)
+- `start-ios` -> `scripts/entry/run.sh ios start`
 
 Slim CI shells:
 
-- `shells/minimal/devbox.json` -> `scripts/build.sh`
-- `shells/android-min/devbox.json` -> `scripts/android/test.sh`
-- `shells/android-max/devbox.json` -> `scripts/android/test.sh`
-- `shells/ios/devbox.json` -> `scripts/ios/test.sh`
+- `shells/minimal/devbox.json` -> `scripts/entry/run.sh build`
+- `shells/android-min/devbox.json` -> `scripts/entry/run.sh android test`
+- `shells/android-max/devbox.json` -> `scripts/entry/run.sh android test`
+- `shells/ios/devbox.json` -> `scripts/entry/run.sh ios test`
 
 See `wiki/devbox.md` for usage and `wiki/nix.md` for platform version sources.

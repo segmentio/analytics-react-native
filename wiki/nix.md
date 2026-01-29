@@ -30,6 +30,7 @@ This repo uses a Nix flake for the Android SDK, and a JSON file for single-sourc
 1. Edit `nix/platform-versions.json`.
 2. In a devbox shell, run `refresh` to rebuild the SDK.
 3. If iOS min/max versions change, re-run the iOS E2E workflow to confirm the runtime/device exists on the runner.
+4. `nix/platform-versions.json` now has a `defaults` section (exported by `scripts/platform-versions.sh`) and a `vars` section that lists supported env knobs.
 
 ## CI targets
 

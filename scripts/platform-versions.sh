@@ -23,7 +23,7 @@ fi
 
 if [ -f "$versions_json" ] && [ -n "$jq_cmd" ]; then
   eval "$(
-    "$jq_cmd" -r 'to_entries[] | "\(.key)=\(.value|@sh)"' "$versions_json"
+    "$jq_cmd" -r 'if has("defaults") then .defaults else . end | to_entries[] | "\(.key)=\(.value|@sh)"' "$versions_json"
   )"
   if debug_enabled; then
     if [ "${PLATFORM_VERSIONS_DEBUG_PRINTED:-}" != "1" ]; then

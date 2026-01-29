@@ -2,8 +2,10 @@
 set -eu
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-# shellcheck disable=SC1090
-. "$script_dir/../shared/common.sh"
+if [ -z "${COMMON_SH_LOADED:-}" ]; then
+  # shellcheck disable=SC1090
+  . "$script_dir/../shared/common.sh"
+fi
 debug_log_script "scripts/ios/env.sh"
 load_platform_versions "$script_dir"
 
@@ -80,6 +82,9 @@ devbox_omit_nix_env() {
 }
 
 devbox_omit_nix_env
+
+IOS_ENV_LOADED=1
+export IOS_ENV_LOADED
 
 if debug_enabled; then
   if [ "${IOS_ENV_DEBUG_PRINTED:-}" != "1" ]; then

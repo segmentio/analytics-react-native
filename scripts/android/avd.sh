@@ -1,26 +1,15 @@
 #!/usr/bin/env sh
 set -eu
 
-# Creates AVDs using the Android SDK provided by devbox/flake (system images, emulator, NDK already installed).
-# Run inside a devbox shell so SDK tools are available.
-# Configurable via env:
-#   AVD_API (default 21)
-#   AVD_DEVICE (default "pixel")
-#   AVD_TAG (default "google_apis")
-#   AVD_ABI (preferred ABI; optional)
-#   AVD_NAME (override final AVD name; otherwise computed)
-# Secondary AVD (created in addition to the primary):
-#   AVD_SECONDARY_API (default 33)
-#   AVD_SECONDARY_DEVICE (default "medium_phone")
-#   AVD_SECONDARY_TAG (default "google_apis")
-#   AVD_SECONDARY_ABI (preferred ABI; optional)
-#   AVD_SECONDARY_NAME (override final name)
+# Android AVD setup + lifecycle helpers.
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-# shellcheck disable=SC1090
-. "$script_dir/../shared/common.sh"
+if [ -z "${COMMON_SH_LOADED:-}" ]; then
+  # shellcheck disable=SC1090
+  . "$script_dir/../shared/common.sh"
+fi
 load_platform_versions "$script_dir"
-debug_log_script "scripts/android/setup.sh"
+debug_log_script "scripts/android/avd.sh"
 
 detect_sdk_root() {
   if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
@@ -114,7 +103,7 @@ ${target_line}"
   fi
 }
 
-main() {
+android_setup() {
   TARGETS=""
   detected_sdk_root="$(detect_sdk_root 2>/dev/null || true)"
 
@@ -204,14 +193,12 @@ main() {
   fi
 
   ifs_backup="$IFS"
-  IFS='
-'
+  IFS='\n'
   for target in $TARGETS; do
-    IFS='|' read -r api tag device preferred_abi name_override <<EOF
+    IFS='|' read -r api tag device preferred_abi name_override <<TARGET_EOF
 $target
-EOF
-    IFS='
-'
+TARGET_EOF
+    IFS='\n'
     api="${api-}"
     tag="${tag-}"
     device="${device-}"
@@ -267,4 +254,91 @@ EOF
   echo "AVDs ready. Boot with: emulator -avd <name> --netdelay none --netspeed full"
 }
 
-main "$@"
+android_start() {
+  flavor="${AVD_FLAVOR:-latest}"
+  headless="${EMU_HEADLESS:-}"
+  port="${EMU_PORT:-5554}"
+  avd="${DETOX_AVD:-}"
+
+  if [ -z "$avd" ]; then
+    if [ "$flavor" = "latest" ]; then
+      host_arch="$(uname -m)"
+      if [ "$host_arch" = "arm64" ] || [ "$host_arch" = "aarch64" ]; then
+        abi="arm64_v8a"
+      else
+        abi="x86_64"
+      fi
+      avd="medium_phone_API33_${abi}"
+    else
+      if uname -m | grep -qi arm; then
+        abi="arm64_v8a"
+      else
+        abi="x86_64"
+      fi
+      avd="pixel_API21_${abi}"
+    fi
+  fi
+
+  android_setup
+
+  target_serial="emulator-${port}"
+  if command -v adb >/dev/null 2>&1; then
+    adb devices | awk 'NR>1 && $2=="offline" {print $1}' | while read -r d; do adb -s "$d" emu kill >/dev/null 2>&1 || true; done
+  fi
+  echo "Starting Android emulator: ${avd} (flavor ${flavor}, port ${port}, headless=${headless:-0})"
+  if [ -n "$headless" ]; then
+    headless_flag="-no-window"
+  else
+    headless_flag=""
+  fi
+  emulator -avd "$avd" ${headless_flag:+$headless_flag} -port "$port" -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -accel on -writable-system -no-snapshot-save &
+  adb -s "$target_serial" wait-for-device
+  boot_completed=""
+  until [ "$boot_completed" = "1" ]; do
+    boot_completed=$(adb -s "$target_serial" shell getprop sys.boot_completed 2>/dev/null | tr -d "\r")
+    sleep 5
+  done
+  adb -s "$target_serial" shell settings put global window_animation_scale 0
+  adb -s "$target_serial" shell settings put global transition_animation_scale 0
+  adb -s "$target_serial" shell settings put global animator_duration_scale 0
+}
+
+android_stop() {
+  if command -v adb >/dev/null 2>&1; then
+    adb devices | awk 'NR>1 && $2=="offline" {print $1}' | while read -r d; do adb -s "$d" emu kill >/dev/null 2>&1 || true; done
+    devices="$(adb devices -l 2>/dev/null | awk 'NR>1{print $1}' | tr '\n' ' ')"
+    if [ -n "$devices" ]; then
+      echo "Stopping Android emulators: $devices"
+      for d in $devices; do
+        adb -s "$d" emu kill >/dev/null 2>&1 || true
+      done
+    else
+      echo "No Android emulators detected via adb."
+    fi
+  else
+    echo "adb not found; skipping Android emulator shutdown."
+  fi
+  pkill -f "emulator@" >/dev/null 2>&1 || true
+  echo "Android emulators stopped (if any were running)."
+}
+
+android_reset() {
+  rm -rf "$HOME/.android/avd"
+  rm -f "$HOME/.android/adbkey" "$HOME/.android/adbkey.pub"
+  echo "AVDs and adb keys removed. Recreate via start-android* as needed."
+}
+
+if [ "${RUN_MAIN:-1}" = "1" ]; then
+  action="${1:-}"
+  shift || true
+  case "$action" in
+    start) android_start "$@" ;;
+    stop) android_stop "$@" ;;
+    reset) android_reset "$@" ;;
+    setup) android_setup "$@" ;;
+    *)
+      echo "Usage: avd.sh {start|stop|reset|setup}" >&2
+      exit 1
+      ;;
+  esac
+fi

@@ -58,3 +58,6 @@ if [ -f "${SCRIPTS_DIR:-}/shared/debug.sh" ]; then
   . "$SCRIPTS_DIR/shared/debug.sh"
   debug_log_script "scripts/shared/common.sh"
 fi
+
+COMMON_SH_LOADED=1
+export COMMON_SH_LOADED

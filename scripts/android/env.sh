@@ -7,8 +7,10 @@ if [ -z "$project_root" ]; then
   project_root="$(cd "$(dirname "$0")/../.." && pwd)"
 fi
 script_dir="$project_root/scripts/android"
-# shellcheck disable=SC1090
-. "$project_root/scripts/shared/common.sh"
+if [ -z "${COMMON_SH_LOADED:-}" ]; then
+  # shellcheck disable=SC1090
+  . "$project_root/scripts/shared/common.sh"
+fi
 load_platform_versions "$script_dir"
 debug_log_script "scripts/android/env.sh"
 
@@ -139,6 +141,8 @@ fi
 
 export ANDROID_SDK_ROOT ANDROID_HOME
 export ANDROID_BUILD_TOOLS_VERSION
+ANDROID_ENV_LOADED=1
+export ANDROID_ENV_LOADED
 
   if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
   # Prefer cmdline-tools;latest, or fall back to the highest numbered cmdline-tools folder.

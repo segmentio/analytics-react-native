@@ -10,7 +10,7 @@
   "shell": {
     "init_hook": ["sh $DEVBOX_PROJECT_ROOT/../../scripts/devbox/init.sh"],
     "scripts": {
-      "build": ["sh $DEVBOX_PROJECT_ROOT/../../scripts/build.sh"],
+      "build": ["sh $DEVBOX_PROJECT_ROOT/../../scripts/entry/run.sh build"],
       "release": [
         "npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}",
         "yarn install --immutable",
