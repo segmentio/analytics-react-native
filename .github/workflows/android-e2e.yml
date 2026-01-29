@@ -55,4 +55,4 @@ jobs:
           project-path: ${{ env.DEVBOX_CONFIG }}
           enable-cache: 'false'
       - name: Android E2E Tests
-        run: devbox run --config=${{ env.DEVBOX_CONFIG }} test-android
+        run: devbox run --pure --config=${{ env.DEVBOX_CONFIG }} test-android

@@ -61,6 +61,9 @@ ios_run() {
       DETOX_IOS_DEVICE="${DETOX_IOS_DEVICE:-$device_name}"
       export IOS_RUNTIME IOS_DEVICE_NAMES DETOX_IOS_DEVICE
 
+      ensure_developer_dir
+      require_tool jq
+      ensure_simctl
       if ! resolve_runtime_name_strict "$runtime_version"; then
         exit 1
       fi

@@ -132,6 +132,22 @@ fi
 
 export ANDROID_SDK_ROOT ANDROID_HOME
 export ANDROID_BUILD_TOOLS_VERSION
+
+if [ -n "${HOME:-}" ]; then
+  if [ -z "${ANDROID_SDK_HOME:-}" ]; then
+    ANDROID_SDK_HOME="$HOME/.android"
+    export ANDROID_SDK_HOME
+  fi
+  if [ -z "${ANDROID_USER_HOME:-}" ]; then
+    ANDROID_USER_HOME="$ANDROID_SDK_HOME"
+    export ANDROID_USER_HOME
+  fi
+  if [ -z "${ANDROID_AVD_HOME:-}" ]; then
+    ANDROID_AVD_HOME="$ANDROID_SDK_HOME/avd"
+    export ANDROID_AVD_HOME
+  fi
+  mkdir -p "$ANDROID_SDK_HOME" "$ANDROID_AVD_HOME" 2>/dev/null || true
+fi
 ANDROID_ENV_LOADED=1
 ANDROID_ENV_LOADED_PID="$$"
 

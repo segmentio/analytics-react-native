@@ -132,7 +132,7 @@ jobs:
           project-path: ${{ inputs.devbox_config }}
           enable-cache: 'false'
       - name: iOS E2E Tests
-        run: devbox run --config=${{ inputs.devbox_config }} test-ios
+        run: devbox run --pure --config=${{ inputs.devbox_config }} test-ios
         env:
           TARGET_SDK: ${{ inputs.target }}
           IOS_RUNTIME_MIN: ${{ steps.defaults.outputs.runtime_min }}

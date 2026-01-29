@@ -28,7 +28,7 @@ This repo uses a Nix flake for the Android SDK, and a JSON file for single-sourc
 ## Updating versions
 
 1. Edit `nix/defaults.json`.
-2. In a devbox shell, run `refresh` to rebuild the SDK.
+2. In a devbox shell (`devbox shell --pure`), run `refresh` to rebuild the SDK.
 3. If iOS min/max versions change, re-run the iOS E2E workflow to confirm the runtime/device exists on the runner.
 4. `nix/defaults.json` exports concrete defaults via the `defaults` section.
 

@@ -6,6 +6,17 @@
       "platforms": ["x86_64-darwin", "aarch64-darwin"]
     },
     "yarn-berry": "latest",
+    "git": "latest",
+    "bash": "latest",
+    "nodejs": "latest",
+    "coreutils": "latest",
+    "gnused": "latest",
+    "gnugrep": "latest",
+    "gawk": "latest",
+    "path:./nix#applesimutils": {
+      "version": "",
+      "platforms": ["aarch64-darwin", "x86_64-darwin"]
+    },
     "treefmt": "latest",
     "nixfmt": "latest",
     "shfmt": "latest",
@@ -24,6 +35,7 @@
   "shell": {
     "init_hook": [
       "echo 'Welcome to analytics-react-native devbox!' > /dev/null",
+      "export LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8",
       "INIT_ANDROID=1 INIT_IOS=1 . $DEVBOX_PROJECT_ROOT/scripts/bootstrap/env.sh"
     ],
     "scripts": {

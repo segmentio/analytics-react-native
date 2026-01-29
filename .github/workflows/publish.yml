@@ -20,7 +20,7 @@ jobs:
           project-path: shells/minimal/devbox.json
           enable-cache: 'false'
       - name: build
-        run: devbox run --config=shells/minimal/devbox.json build
+        run: devbox run --pure --config=shells/minimal/devbox.json build
 
   e2e-ios:
     name: E2E iOS (min/max)
@@ -75,7 +75,7 @@ jobs:
           enable-cache: 'false'
 
       - name: Config, Build, Release
-        run: devbox run --config=shells/minimal/devbox.json release
+        run: devbox run --pure --config=shells/minimal/devbox.json release
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -83,4 +83,4 @@ jobs:
 
       - name: Update Apps
         run: |
-          devbox run update-apps
+          devbox run --pure update-apps

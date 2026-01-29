@@ -2,13 +2,22 @@
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.2/.schema/devbox.schema.json",
   "packages": {
     "yarn-berry": "latest",
+    "git": "latest",
+    "bash": "latest",
+    "nodejs": "latest",
+    "coreutils": "latest",
+    "gnused": "latest",
+    "gnugrep": "latest",
+    "gawk": "latest",
     "jq": "latest",
     "treefmt": "latest",
     "nixfmt": "latest",
     "shfmt": "latest"
   },
   "shell": {
-    "init_hook": [". $DEVBOX_PROJECT_ROOT/../../scripts/bootstrap/env.sh"],
+    "init_hook": [
+      ". $DEVBOX_PROJECT_ROOT/../../scripts/bootstrap/env.sh"
+    ],
     "scripts": {
       "build": ["sh $DEVBOX_PROJECT_ROOT/../../scripts/run.sh build"],
       "release": [

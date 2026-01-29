@@ -13,7 +13,11 @@ ENV_SH_LOADED_PID="$$"
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_root=""
-if command -v git >/dev/null 2>&1; then
+if [ -n "${DEVBOX_PROJECT_ROOT:-}" ] && [ -d "$DEVBOX_PROJECT_ROOT" ]; then
+  repo_root="$DEVBOX_PROJECT_ROOT"
+elif [ -n "${DEVBOX_PROJECT_DIR:-}" ] && [ -d "$DEVBOX_PROJECT_DIR" ]; then
+  repo_root="$DEVBOX_PROJECT_DIR"
+elif command -v git >/dev/null 2>&1; then
   repo_root="$(git -C "$script_dir" rev-parse --show-toplevel 2>/dev/null || git -C "$PWD" rev-parse --show-toplevel 2>/dev/null || true)"
 fi
 if [ -z "$repo_root" ]; then

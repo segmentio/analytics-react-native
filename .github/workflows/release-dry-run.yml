@@ -20,6 +20,6 @@ jobs:
           project-path: shells/minimal/devbox.json
           enable-cache: 'false'
       - name: Release Dry Run
-        run: devbox run --config=shells/minimal/devbox.json release-dry-run
+        run: devbox run --pure --config=shells/minimal/devbox.json release-dry-run
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

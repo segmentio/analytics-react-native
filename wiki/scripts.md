@@ -1,6 +1,6 @@
 # Scripts Overview
 
-This repo uses `scripts/` as the entry point for devbox commands and tasks. Scripts are organized by platform with a small shared helper layer.
+This repo uses `scripts/` as the entry point for devbox commands and tasks. Scripts are organized by platform with a small shared helper layer. Devbox runs are expected to use `--pure` for reproducible environments.
 
 ## Layout
 

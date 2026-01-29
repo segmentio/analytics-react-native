@@ -9,6 +9,11 @@ fi
 script_dir="$(cd "$(dirname "$0")" && pwd)"
 if [ "${SHARED_LOADED:-}" != "1" ] || [ "${SHARED_LOADED_PID:-}" != "$$" ]; then
   init_path="$script_dir/../../bootstrap/env.sh"
+  if [ -n "${DEVBOX_PROJECT_ROOT:-}" ] && [ -f "${DEVBOX_PROJECT_ROOT}/scripts/bootstrap/env.sh" ]; then
+    init_path="${DEVBOX_PROJECT_ROOT}/scripts/bootstrap/env.sh"
+  elif [ -n "${DEVBOX_PROJECT_DIR:-}" ] && [ -f "${DEVBOX_PROJECT_DIR}/scripts/bootstrap/env.sh" ]; then
+    init_path="${DEVBOX_PROJECT_DIR}/scripts/bootstrap/env.sh"
+  fi
   if [ ! -f "$init_path" ]; then
     repo_root=""
     if command -v git >/dev/null 2>&1; then
@@ -195,6 +200,8 @@ ensure_device() {
 
 ensure_developer_dir() {
   desired="${IOS_DEVELOPER_DIR:-}"
+  PATH="/usr/bin:/bin:/usr/sbin:/sbin:${PATH}"
+  export PATH
   if [ -z "$desired" ]; then
     if xcode-select -p >/dev/null 2>&1; then
       desired="$(xcode-select -p)"

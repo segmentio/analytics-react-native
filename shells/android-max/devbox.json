@@ -2,6 +2,13 @@
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.2/.schema/devbox.schema.json",
   "packages": {
     "yarn-berry": "latest",
+    "git": "latest",
+    "bash": "latest",
+    "nodejs": "latest",
+    "coreutils": "latest",
+    "gnused": "latest",
+    "gnugrep": "latest",
+    "gawk": "latest",
     "jdk17": "latest",
     "gradle": "8.0.1",
     "jq": "latest",

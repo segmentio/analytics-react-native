@@ -70,6 +70,8 @@
             };
           };
 
+          applesimutils = pkgs.callPackage ./applesimutils.nix { };
+
           abiVersions = if builtins.match "aarch64-.*" system != null then [ "arm64-v8a" ] else [ "x86_64" ];
 
           androidPkgs =
@@ -87,6 +89,7 @@
             };
         in
         {
+          applesimutils = applesimutils;
           android-sdk = (androidPkgs androidSdkConfig).androidsdk;
           android-sdk-min = (androidPkgs androidSdkConfigMin).androidsdk;
           android-sdk-max = (androidPkgs androidSdkConfigMax).androidsdk;
