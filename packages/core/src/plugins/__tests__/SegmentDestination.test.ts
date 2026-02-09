@@ -24,12 +24,20 @@ jest.mock('uuid');
 
 describe('SegmentDestination', () => {
   const store = new MockSegmentStore();
+
+  // Mock persistor for backoff state management
+  const mockPersistor = {
+    get: jest.fn(() => Promise.resolve(undefined)),
+    set: jest.fn(() => Promise.resolve()),
+  };
+
   const clientArgs = {
     logger: getMockLogger(),
     config: {
       writeKey: '123-456',
       maxBatchSize: 2,
       flushInterval: 0,
+      storePersistor: mockPersistor,
     },
     store,
   };
@@ -325,6 +333,7 @@ describe('SegmentDestination', () => {
         events: events.slice(0, 2).map((e) => ({
           ...e,
         })),
+        retryCount: 0,
       });
       expect(sendEventsSpy).toHaveBeenCalledWith({
         url: getURL(defaultApiHost, ''), // default api already appended with '/b'
@@ -332,6 +341,7 @@ describe('SegmentDestination', () => {
         events: events.slice(2, 4).map((e) => ({
           ...e,
         })),
+        retryCount: 0,
       });
     });
 
@@ -359,6 +369,7 @@ describe('SegmentDestination', () => {
         events: events.slice(0, 2).map((e) => ({
           ...e,
         })),
+        retryCount: 0,
       });
     });
 
@@ -410,6 +421,7 @@ describe('SegmentDestination', () => {
           events: events.map((e) => ({
             ...e,
           })),
+          retryCount: 0,
         });
       }
     );
@@ -575,7 +587,10 @@ describe('SegmentDestination', () => {
           integrations: {
             [SEGMENT_DESTINATION_KEY]: settings?.integration ?? {},
           },
-          httpConfig: settings?.httpConfig,
+          httpConfig: settings?.httpConfig ?? {
+            rateLimitConfig: { enabled: true, maxRetryCount: 100, maxRetryInterval: 300, maxTotalBackoffDuration: 43200 },
+            backoffConfig: { enabled: true, maxRetryCount: 100, baseBackoffInterval: 0.5, maxBackoffInterval: 300, maxTotalBackoffDuration: 43200, jitterPercent: 10, retryableStatusCodes: [408, 410, 429, 460, 500, 502, 503, 504, 508] },
+          },
         },
         UpdateType.initial
       );
@@ -864,7 +879,7 @@ describe('SegmentDestination', () => {
       await plugin.flush();
 
       expect(infoSpy).toHaveBeenCalledWith(
-        expect.stringContaining('retry after 120s')
+        expect.stringContaining('waiting 120s before retry')
       );
     });
 
@@ -883,7 +898,7 @@ describe('SegmentDestination', () => {
       await plugin.flush();
 
       expect(infoSpy).toHaveBeenCalledWith(
-        expect.stringContaining('retry after 60s') // Default
+        expect.stringContaining('waiting 60s before retry') // Default
       );
     });
   });

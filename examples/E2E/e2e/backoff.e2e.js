@@ -281,6 +281,32 @@ describe('#backoffTests', () => {
       // Should not call server (still in WAITING state)
       expect(mockServerListener).not.toHaveBeenCalled();
     });
+
+    it('persists batch retry metadata across app restarts', async () => {
+      // Track event and cause a transient error (500)
+      setMockBehavior('server-error');
+      await trackButton.tap();
+      await flushButton.tap();
+
+      // Verify server was called (batch attempted)
+      expect(mockServerListener).toHaveBeenCalledTimes(1);
+      mockServerListener.mockReset();
+
+      // Restart app
+      await device.sendToHome();
+      await device.launchApp({newInstance: true});
+
+      // Reset to success
+      setMockBehavior('success');
+
+      // Flush should retry the failed batch
+      await flushButton.tap();
+
+      // Batch should be retried and succeed
+      expect(mockServerListener).toHaveBeenCalledTimes(1);
+      const request = mockServerListener.mock.calls[0][0];
+      expect(request.batch.length).toBeGreaterThan(0);
+    });
   });
 
   describe('Legacy Behavior', () => {

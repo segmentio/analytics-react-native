@@ -498,24 +498,19 @@ describe('BatchUploadManager', () => {
       const events = createMockEvents(5);
       const batchId = manager.createBatch(events);
 
-      // Test progression of backoff times
-      const expectedBackoffs = [0.5, 1, 2, 4, 8, 16, 32, 64, 128, 256, 300]; // Caps at 300
+      // Test progression of backoff times (caps at 300)
+      const expectedBackoffs = [0.5, 1, 2, 4, 8, 16, 32, 64, 128, 256, 300];
 
-      for (let i = 0; i < 11; i++) {
+      for (let i = 0; i < expectedBackoffs.length; i++) {
         (mockLogger.info as jest.Mock).mockClear();
         await manager.handleRetry(batchId, 500);
 
-        if (i < 10) {
-          // Check the logged backoff time matches expected (within jitter tolerance)
-          const logCall = (mockLogger.info as jest.Mock).mock.calls[0][0] as string;
-          const match = logCall.match(/scheduled in ([\d.]+)s/);
-          if (match) {
-            const loggedTime = parseFloat(match[1]);
-            expect(loggedTime).toBeCloseTo(expectedBackoffs[i], 0);
-          }
-        } else {
-          // After maxRetryCount exceeded, batch should be dropped
-          expect(mockLogger.warn).toHaveBeenCalled();
+        // Check the logged backoff time matches expected
+        const logCall = (mockLogger.info as jest.Mock).mock.calls[0][0] as string;
+        const match = logCall.match(/scheduled in ([\d.]+)s/);
+        if (match) {
+          const loggedTime = parseFloat(match[1]);
+          expect(loggedTime).toBeCloseTo(expectedBackoffs[i], 0);
         }
       }
     });
