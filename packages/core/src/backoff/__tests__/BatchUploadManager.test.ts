@@ -4,6 +4,14 @@ import type { BackoffConfig, SegmentEvent } from '../../types';
 import { getMockLogger } from '../../test-helpers';
 import { EventType } from '../../types';
 
+// Mock uuid to return unique IDs
+jest.mock('../../uuid', () => {
+  let counter = 0;
+  return {
+    getUUID: jest.fn(() => `test-batch-${counter++}`),
+  };
+});
+
 // Mock sovran-react-native
 jest.mock('@segment/sovran-react-native', () => {
   const actualModule = jest.requireActual('@segment/sovran-react-native');
