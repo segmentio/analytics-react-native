@@ -14,27 +14,33 @@ jest.mock('@segment/sovran-react-native', () => {
       return {
         getState: jest.fn(() => Promise.resolve(state)),
         dispatch: jest.fn((action: any) => {
-          // Handle different action types
-          if (action.type === 'ADD_BATCH') {
-            state = {
-              ...state,
-              batches: {
-                ...state.batches,
-                [action.payload.batchId]: action.payload.metadata,
-              },
-            };
-          } else if (action.type === 'UPDATE_BATCH') {
-            state = {
-              ...state,
-              batches: {
-                ...state.batches,
-                [action.payload.batchId]: action.payload.metadata,
-              },
-            };
-          } else if (action.type === 'REMOVE_BATCH') {
-            const { [action.payload.batchId]: removed, ...rest } = state.batches;
-            state = { ...state, batches: rest };
+          // Handle functional dispatch - update synchronously for tests
+          if (typeof action === 'function') {
+            state = action(state);
+          } else {
+            // Handle action object dispatch (legacy support)
+            if (action.type === 'ADD_BATCH') {
+              state = {
+                ...state,
+                batches: {
+                  ...state.batches,
+                  [action.payload.batchId]: action.payload.metadata,
+                },
+              };
+            } else if (action.type === 'UPDATE_BATCH') {
+              state = {
+                ...state,
+                batches: {
+                  ...state.batches,
+                  [action.payload.batchId]: action.payload.metadata,
+                },
+              };
+            } else if (action.type === 'REMOVE_BATCH') {
+              const { [action.payload.batchId]: removed, ...rest } = state.batches;
+              state = { ...state, batches: rest };
+            }
           }
+          // Return resolved promise synchronously
           return Promise.resolve();
         }),
       };

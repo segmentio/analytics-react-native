@@ -13,7 +13,13 @@ jest.mock('@segment/sovran-react-native', () => {
       return {
         getState: jest.fn(() => Promise.resolve(state)),
         dispatch: jest.fn((action: any) => {
-          state = action.payload;
+          // Handle functional dispatch
+          if (typeof action === 'function') {
+            state = action(state);
+          } else {
+            // Handle action object dispatch
+            state = action.payload;
+          }
           return Promise.resolve();
         }),
       };

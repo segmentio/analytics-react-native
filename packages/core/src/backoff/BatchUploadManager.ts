@@ -47,12 +47,14 @@ export class BatchUploadManager {
       firstFailureTime: now,
     };
 
-    // Dispatch asynchronously but don't wait for it
-    // The metadata will be available when needed for retry
-    void this.store.dispatch({
-      type: 'ADD_BATCH',
-      payload: { batchId, metadata },
-    });
+    // Store metadata synchronously for tests and immediate access
+    // In production, this is fast since it's just in-memory state update
+    this.store.dispatch((state: BatchMetadataStore) => ({
+      batches: {
+        ...state.batches,
+        [batchId]: metadata,
+      },
+    }));
 
     return batchId;
   }
@@ -70,8 +72,12 @@ export class BatchUploadManager {
     if (!metadata) return;
 
     const now = Date.now();
-    const newRetryCount = metadata.retryCount + 1;
     const totalBackoffDuration = (now - metadata.firstFailureTime) / 1000;
+
+    // Calculate backoff based on CURRENT retry count before incrementing
+    const backoffSeconds = this.calculateBackoff(metadata.retryCount);
+    const nextRetryTime = now + backoffSeconds * 1000;
+    const newRetryCount = metadata.retryCount + 1;
 
     // Check max retry count
     if (newRetryCount > this.config.maxRetryCount) {
@@ -91,21 +97,16 @@ export class BatchUploadManager {
       return;
     }
 
-    // Calculate exponential backoff with jitter
-    const backoffSeconds = this.calculateBackoff(newRetryCount);
-    const nextRetryTime = now + backoffSeconds * 1000;
-
-    await this.store.dispatch({
-      type: 'UPDATE_BATCH',
-      payload: {
-        batchId,
-        metadata: {
+    await this.store.dispatch((state: BatchMetadataStore) => ({
+      batches: {
+        ...state.batches,
+        [batchId]: {
           ...metadata,
           retryCount: newRetryCount,
           nextRetryTime,
         },
       },
-    });
+    }));
 
     this.logger?.info(
       `Batch ${batchId}: retry ${newRetryCount}/${this.config.maxRetryCount} scheduled in ${backoffSeconds}s (status ${statusCode})`
@@ -140,9 +141,9 @@ export class BatchUploadManager {
    * Removes batch metadata after successful upload or drop
    */
   async removeBatch(batchId: string): Promise<void> {
-    await this.store.dispatch({
-      type: 'REMOVE_BATCH',
-      payload: { batchId },
+    await this.store.dispatch((state: BatchMetadataStore) => {
+      const { [batchId]: _, ...remainingBatches } = state.batches;
+      return { batches: remainingBatches };
     });
   }
 

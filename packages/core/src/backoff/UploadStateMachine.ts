@@ -95,15 +95,12 @@ export class UploadStateMachine {
 
     const waitUntilTime = now + retryAfterSeconds * 1000;
 
-    await this.store.dispatch({
-      type: 'RATE_LIMITED',
-      payload: {
-        state: 'WAITING',
-        waitUntilTime,
-        globalRetryCount: newRetryCount,
-        firstFailureTime,
-      },
-    });
+    await this.store.dispatch(() => ({
+      state: 'WAITING' as const,
+      waitUntilTime,
+      globalRetryCount: newRetryCount,
+      firstFailureTime,
+    }));
 
     this.logger?.info(
       `Rate limited (429): waiting ${retryAfterSeconds}s before retry ${newRetryCount}/${this.config.maxRetryCount}`
@@ -114,10 +111,7 @@ export class UploadStateMachine {
    * Resets state to READY on successful upload
    */
   async reset(): Promise<void> {
-    await this.store.dispatch({
-      type: 'RESET',
-      payload: INITIAL_STATE,
-    });
+    await this.store.dispatch(() => INITIAL_STATE);
     this.logger?.info('Upload state reset to READY');
   }
 
@@ -130,14 +124,10 @@ export class UploadStateMachine {
   }
 
   private async transitionToReady(): Promise<void> {
-    const state = await this.store.getState();
-    await this.store.dispatch({
-      type: 'TRANSITION_READY',
-      payload: {
-        ...state,
-        state: 'READY',
-      },
-    });
+    await this.store.dispatch((state: UploadStateData) => ({
+      ...state,
+      state: 'READY' as const,
+    }));
     this.logger?.info('Upload state transitioned to READY');
   }
 }
