@@ -107,13 +107,14 @@ export class SegmentDestination extends DestinationPlugin {
     const config = this.analytics?.getConfig() ?? defaultConfig;
     const httpConfig = this.settings?.httpConfig ?? defaultHttpConfig;
 
-    // Create batch metadata for retry tracking
-    const batchId = this.batchUploadManager?.createBatch(batch) ?? '';
+    // Create batch metadata for retry tracking (only if manager exists)
+    const batchId = this.batchUploadManager?.createBatch(batch) ?? null;
 
     // Get retry count (per-batch preferred, fall back to global for 429)
-    const batchRetryCount = this.batchUploadManager
-      ? await this.batchUploadManager.getBatchRetryCount(batchId)
-      : 0;
+    const batchRetryCount =
+      this.batchUploadManager && batchId
+        ? await this.batchUploadManager.getBatchRetryCount(batchId)
+        : 0;
     const globalRetryCount = this.uploadStateMachine
       ? await this.uploadStateMachine.getGlobalRetryCount()
       : 0;
@@ -130,7 +131,9 @@ export class SegmentDestination extends DestinationPlugin {
       // Success case
       if (res.ok) {
         await this.uploadStateMachine?.reset();
-        await this.batchUploadManager?.removeBatch(batchId);
+        if (this.batchUploadManager && batchId) {
+          await this.batchUploadManager.removeBatch(batchId);
+        }
         this.analytics?.logger.info(
           `Batch uploaded successfully (${batch.length} events)`
         );
@@ -162,7 +165,9 @@ export class SegmentDestination extends DestinationPlugin {
 
       // Handle transient errors with exponential backoff
       if (classification.isRetryable && classification.errorType === 'transient') {
-        await this.batchUploadManager?.handleRetry(batchId, res.status);
+        if (this.batchUploadManager && batchId) {
+          await this.batchUploadManager.handleRetry(batchId, res.status);
+        }
         return { success: false, halt: false }; // Continue to next batch
       }
 
@@ -170,12 +175,16 @@ export class SegmentDestination extends DestinationPlugin {
       this.analytics?.logger.warn(
         `Permanent error (${res.status}): dropping batch (${batch.length} events)`
       );
-      await this.batchUploadManager?.removeBatch(batchId);
+      if (this.batchUploadManager && batchId) {
+        await this.batchUploadManager.removeBatch(batchId);
+      }
       return { success: false, halt: false };
 
     } catch (e) {
       // Network error: treat as transient
-      await this.batchUploadManager?.handleRetry(batchId, -1);
+      if (this.batchUploadManager && batchId) {
+        await this.batchUploadManager.handleRetry(batchId, -1);
+      }
       throw e;
     }
   }
