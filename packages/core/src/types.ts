@@ -332,6 +332,29 @@ export interface EdgeFunctionSettings {
   version: string;
 }
 
+// HTTP Configuration from Settings CDN
+export type HttpConfig = {
+  rateLimitConfig?: RateLimitConfig;
+  backoffConfig?: BackoffConfig;
+};
+
+export type RateLimitConfig = {
+  enabled: boolean;
+  maxRetryCount: number;
+  maxRetryInterval: number;        // seconds
+  maxTotalBackoffDuration: number;  // seconds
+};
+
+export type BackoffConfig = {
+  enabled: boolean;
+  maxRetryCount: number;
+  baseBackoffInterval: number;      // seconds
+  maxBackoffInterval: number;       // seconds
+  maxTotalBackoffDuration: number;  // seconds
+  jitterPercent: number;            // 0-100
+  retryableStatusCodes: number[];
+};
+
 export type SegmentAPISettings = {
   integrations: SegmentAPIIntegrations;
   edgeFunction?: EdgeFunctionSettings;
@@ -340,6 +363,7 @@ export type SegmentAPISettings = {
   };
   metrics?: MetricsOptions;
   consentSettings?: SegmentAPIConsentSettings;
+  httpConfig?: HttpConfig;
 };
 
 export type DestinationMetadata = {
@@ -390,3 +414,27 @@ export type AnalyticsReactNativeModule = NativeModule & {
 };
 
 export type EnrichmentClosure = (event: SegmentEvent) => SegmentEvent;
+
+// State machine persistence
+export type UploadStateData = {
+  state: 'READY' | 'WAITING';
+  waitUntilTime: number;          // timestamp ms
+  globalRetryCount: number;
+  firstFailureTime: number | null; // timestamp ms
+};
+
+// Per-batch retry metadata
+export type BatchMetadata = {
+  batchId: string;
+  events: SegmentEvent[];         // Store events to match batches
+  retryCount: number;
+  nextRetryTime: number;          // timestamp ms
+  firstFailureTime: number;       // timestamp ms
+};
+
+// Error classification result
+export type ErrorClassification = {
+  isRetryable: boolean;
+  errorType: 'rate_limit' | 'transient' | 'permanent';
+  retryAfterSeconds?: number;
+};

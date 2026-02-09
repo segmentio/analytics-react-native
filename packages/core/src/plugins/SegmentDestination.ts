@@ -11,9 +11,10 @@ import { uploadEvents } from '../api';
 import type { SegmentClient } from '../analytics';
 import { DestinationMetadataEnrichment } from './DestinationMetadataEnrichment';
 import { QueueFlushingPlugin } from './QueueFlushingPlugin';
-import { defaultApiHost } from '../constants';
-import { checkResponseForErrors, translateHTTPError } from '../errors';
+import { defaultApiHost, defaultHttpConfig } from '../constants';
+import { translateHTTPError, classifyError, parseRetryAfter } from '../errors';
 import { defaultConfig } from '../constants';
+import { UploadStateMachine, BatchUploadManager } from '../backoff';
 
 const MAX_EVENTS_PER_BATCH = 100;
 const MAX_PAYLOAD_SIZE_IN_KB = 500;
@@ -25,6 +26,9 @@ export class SegmentDestination extends DestinationPlugin {
   private apiHost?: string;
   private settingsResolve: () => void;
   private settingsPromise: Promise<void>;
+  private uploadStateMachine?: UploadStateMachine;
+  private batchUploadManager?: BatchUploadManager;
+  private settings?: SegmentAPISettings;
 
   constructor() {
     super();
@@ -42,6 +46,15 @@ export class SegmentDestination extends DestinationPlugin {
     // We're not sending events until Segment has loaded all settings
     await this.settingsPromise;
 
+    // Upload gate: check if uploads are allowed
+    if (this.uploadStateMachine) {
+      const canUpload = await this.uploadStateMachine.canUpload();
+      if (!canUpload) {
+        // Still in WAITING state, defer upload
+        return Promise.resolve();
+      }
+    }
+
     const config = this.analytics?.getConfig() ?? defaultConfig;
 
     const chunkedEvents: SegmentEvent[][] = chunk(
@@ -53,25 +66,27 @@ export class SegmentDestination extends DestinationPlugin {
     let sentEvents: SegmentEvent[] = [];
     let numFailedEvents = 0;
 
-    await Promise.all(
-      chunkedEvents.map(async (batch: SegmentEvent[]) => {
-        try {
-          const res = await uploadEvents({
-            writeKey: config.writeKey,
-            url: this.getEndpoint(),
-            events: batch,
-          });
-          checkResponseForErrors(res);
+    // CRITICAL: Process batches SEQUENTIALLY (not parallel)
+    for (const batch of chunkedEvents) {
+      try {
+        const result = await this.uploadBatch(batch);
+
+        if (result.success) {
           sentEvents = sentEvents.concat(batch);
-        } catch (e) {
-          this.analytics?.reportInternalError(translateHTTPError(e));
-          this.analytics?.logger.warn(e);
-          numFailedEvents += batch.length;
-        } finally {
-          await this.queuePlugin.dequeue(sentEvents);
+        } else if (result.halt) {
+          // 429 response: halt upload loop immediately
+          break;
         }
-      })
-    );
+        // Transient error: continue to next batch
+      } catch (e) {
+        this.analytics?.reportInternalError(translateHTTPError(e));
+        this.analytics?.logger.warn(e);
+        numFailedEvents += batch.length;
+      }
+    }
+
+    // Dequeue successfully sent events
+    await this.queuePlugin.dequeue(sentEvents);
 
     if (sentEvents.length) {
       if (config.debug === true) {
@@ -85,6 +100,85 @@ export class SegmentDestination extends DestinationPlugin {
 
     return Promise.resolve();
   };
+
+  private async uploadBatch(
+    batch: SegmentEvent[]
+  ): Promise<{ success: boolean; halt: boolean }> {
+    const config = this.analytics?.getConfig() ?? defaultConfig;
+    const httpConfig = this.settings?.httpConfig ?? defaultHttpConfig;
+
+    // Create batch metadata for retry tracking
+    const batchId = this.batchUploadManager?.createBatch(batch) ?? '';
+
+    // Get retry count (per-batch preferred, fall back to global for 429)
+    const batchRetryCount = this.batchUploadManager
+      ? await this.batchUploadManager.getBatchRetryCount(batchId)
+      : 0;
+    const globalRetryCount = this.uploadStateMachine
+      ? await this.uploadStateMachine.getGlobalRetryCount()
+      : 0;
+    const retryCount = batchRetryCount > 0 ? batchRetryCount : globalRetryCount;
+
+    try {
+      const res = await uploadEvents({
+        writeKey: config.writeKey,
+        url: this.getEndpoint(),
+        events: batch,
+        retryCount, // Send X-Retry-Count header
+      });
+
+      // Success case
+      if (res.ok) {
+        await this.uploadStateMachine?.reset();
+        await this.batchUploadManager?.removeBatch(batchId);
+        this.analytics?.logger.info(
+          `Batch uploaded successfully (${batch.length} events)`
+        );
+        return { success: true, halt: false };
+      }
+
+      // Error classification
+      const classification = classifyError(
+        res.status,
+        httpConfig.backoffConfig?.retryableStatusCodes
+      );
+
+      // Handle 429 rate limiting
+      if (classification.errorType === 'rate_limit') {
+        const retryAfterValue = res.headers.get('retry-after');
+        const retryAfterSeconds =
+          parseRetryAfter(
+            retryAfterValue,
+            httpConfig.rateLimitConfig?.maxRetryInterval
+          ) ?? 60; // Default 60s if missing
+
+        await this.uploadStateMachine?.handle429(retryAfterSeconds);
+
+        this.analytics?.logger.warn(
+          `Rate limited (429): retry after ${retryAfterSeconds}s`
+        );
+        return { success: false, halt: true }; // HALT upload loop
+      }
+
+      // Handle transient errors with exponential backoff
+      if (classification.isRetryable && classification.errorType === 'transient') {
+        await this.batchUploadManager?.handleRetry(batchId, res.status);
+        return { success: false, halt: false }; // Continue to next batch
+      }
+
+      // Permanent error: drop batch
+      this.analytics?.logger.warn(
+        `Permanent error (${res.status}): dropping batch (${batch.length} events)`
+      );
+      await this.batchUploadManager?.removeBatch(batchId);
+      return { success: false, halt: false };
+
+    } catch (e) {
+      // Network error: treat as transient
+      await this.batchUploadManager?.handleRetry(batchId, -1);
+      throw e;
+    }
+  }
 
   private readonly queuePlugin = new QueueFlushingPlugin(this.sendEvents);
 
@@ -137,6 +231,30 @@ export class SegmentDestination extends DestinationPlugin {
       //assign the api host from segment settings (domain/v1)
       this.apiHost = `https://${segmentSettings.apiHost}/b`;
     }
+
+    // Store settings for httpConfig access
+    this.settings = settings;
+
+    // Initialize backoff components when settings arrive
+    const httpConfig = settings.httpConfig ?? defaultHttpConfig;
+    const config = this.analytics?.getConfig();
+
+    if (config?.storePersistor) {
+      this.uploadStateMachine = new UploadStateMachine(
+        config.writeKey,
+        config.storePersistor,
+        httpConfig.rateLimitConfig ?? defaultHttpConfig.rateLimitConfig!,
+        this.analytics?.logger
+      );
+
+      this.batchUploadManager = new BatchUploadManager(
+        config.writeKey,
+        config.storePersistor,
+        httpConfig.backoffConfig ?? defaultHttpConfig.backoffConfig!,
+        this.analytics?.logger
+      );
+    }
+
     this.settingsResolve();
   }
 

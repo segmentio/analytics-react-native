@@ -121,3 +121,59 @@ export const translateHTTPError = (error: unknown): SegmentError => {
     return new NetworkError(-1, message, error);
   }
 };
+
+/**
+ * Classifies HTTP errors per TAPI SDD tables
+ */
+export const classifyError = (
+  statusCode: number,
+  retryableStatusCodes: number[] = [408, 410, 429, 460, 500, 502, 503, 504, 508]
+): import('./types').ErrorClassification => {
+  // 429 rate limiting
+  if (statusCode === 429) {
+    return {
+      isRetryable: true,
+      errorType: 'rate_limit',
+    };
+  }
+
+  // Retryable transient errors
+  if (retryableStatusCodes.includes(statusCode)) {
+    return {
+      isRetryable: true,
+      errorType: 'transient',
+    };
+  }
+
+  // Non-retryable (400, 401, 403, 404, 413, 422, 501, 505, etc.)
+  return {
+    isRetryable: false,
+    errorType: 'permanent',
+  };
+};
+
+/**
+ * Parses Retry-After header value
+ * Supports both seconds (number) and HTTP date format
+ */
+export const parseRetryAfter = (
+  retryAfterValue: string | null,
+  maxRetryInterval: number = 300
+): number | undefined => {
+  if (!retryAfterValue) return undefined;
+
+  // Try parsing as integer (seconds)
+  const seconds = parseInt(retryAfterValue, 10);
+  if (!isNaN(seconds)) {
+    return Math.min(seconds, maxRetryInterval);
+  }
+
+  // Try parsing as HTTP date
+  const retryDate = new Date(retryAfterValue);
+  if (!isNaN(retryDate.getTime())) {
+    const secondsUntil = Math.ceil((retryDate.getTime() - Date.now()) / 1000);
+    return Math.min(Math.max(secondsUntil, 0), maxRetryInterval);
+  }
+
+  return undefined;
+};
