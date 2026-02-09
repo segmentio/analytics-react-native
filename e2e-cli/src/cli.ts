@@ -150,7 +150,8 @@ const checkResponseForErrors = (response: Response) => {
 
 interface CLIInput {
   writeKey: string;
-  apiHost: string;
+  apiHost?: string;
+  cdnHost?: string;
   sequences: Array<{
     delayMs: number;
     events: Array<{
@@ -219,8 +220,8 @@ async function main() {
     const input: CLIInput = JSON.parse(inputStr);
     const anonymousId = uuidv4();
 
-    // Build URL - uses SDK's getURL function
-    const url = getURL(input.apiHost, "/b");
+    // Build URL - uses SDK's getURL function (default matches SDK's internal default)
+    const url = getURL(input.apiHost ?? "api.segment.io", "/b");
 
     // Collect events from all sequences
     const allEvents: SegmentEvent[] = [];
