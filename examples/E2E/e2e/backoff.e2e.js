@@ -290,7 +290,7 @@ describe('#backoffTests', () => {
 
       // Verify server was called (batch attempted)
       expect(mockServerListener).toHaveBeenCalledTimes(1);
-      mockServerListener.mockReset();
+      mockServerListener.mockClear();
 
       // Restart app
       await device.sendToHome();
