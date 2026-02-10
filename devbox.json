@@ -104,8 +104,8 @@
       "test-e2e-android": ["bash $SCRIPTS_DIR/android/test.sh"],
       "test-e2e-ios": ["bash $SCRIPTS_DIR/ios/test.sh"],
       "test-e2e": ["devbox run test-e2e-android", "devbox run test-e2e-ios"],
-      "test-all": ["yarn test:all"],
-      "test": ["devbox run test-fast"]
+      "test-all": ["devbox run test-fast", "devbox run test-e2e"],
+      "test": ["devbox run test-all"]
     }
   }
 }
