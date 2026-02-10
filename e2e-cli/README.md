@@ -1,6 +1,8 @@
 # analytics-react-native e2e-cli
 
-E2E test CLI for the [@segment/analytics-react-native](https://github.com/segmentio/analytics-react-native) SDK. This CLI uses code copied from the SDK's internals (HTTP upload, error handling) to test the real network behavior from Node.js, bypassing the React Native runtime.
+E2E test CLI for the [@segment/analytics-react-native](https://github.com/segmentio/analytics-react-native) SDK. Runs the **real SDK pipeline** on Node.js — events flow through `SegmentClient` → Timeline → `SegmentDestination` (batch chunking, upload) → `QueueFlushingPlugin` (queue management) → `uploadEvents` HTTP POST.
+
+React Native runtime dependencies (`AppState`, `NativeModules`, sovran native bridge, AsyncStorage) are stubbed with minimal Node.js equivalents so the full event processing pipeline executes without a React Native runtime.
 
 ## Setup
 
@@ -8,6 +10,8 @@ E2E test CLI for the [@segment/analytics-react-native](https://github.com/segmen
 npm install
 npm run build
 ```
+
+The build uses esbuild to bundle the CLI + SDK source + stubs into a single `dist/cli.js`.
 
 ## Usage
 
@@ -20,8 +24,8 @@ node dist/cli.js --input '{"writeKey":"...", ...}'
 ```jsonc
 {
   "writeKey": "your-write-key",       // required
-  "apiHost": "https://...",           // optional — defaults to api.segment.io
-  "cdnHost": "https://...",           // optional — not used yet (reserved for future)
+  "apiHost": "https://...",           // optional — SDK default if omitted
+  "cdnHost": "https://...",           // optional — SDK default if omitted
   "sequences": [                      // required — event sequences to send
     {
       "delayMs": 0,
@@ -31,8 +35,8 @@ node dist/cli.js --input '{"writeKey":"...", ...}'
     }
   ],
   "config": {                         // optional
-    "flushAt": 1,
-    "flushInterval": 1000
+    "flushAt": 20,
+    "flushInterval": 30
   }
 }
 ```

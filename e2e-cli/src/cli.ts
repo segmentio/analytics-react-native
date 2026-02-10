@@ -1,148 +1,19 @@
 /**
  * E2E CLI for React Native analytics SDK testing
  *
- * This CLI uses code copied directly from the SDK's api.ts and errors.ts
- * to test the real HTTP upload and error handling behavior.
+ * Runs the real SDK pipeline (SegmentClient → Timeline → SegmentDestination →
+ * QueueFlushingPlugin → uploadEvents) with stubs for React Native runtime
+ * dependencies so everything executes on Node.js.
  *
  * Usage:
  *   node dist/cli.js --input '{"writeKey":"...", ...}'
  */
 
-import { v4 as uuidv4 } from "uuid";
-
-// ============================================================================
-// Types (from SDK's types.ts)
-// ============================================================================
-
-interface SegmentEvent {
-  type: string;
-  anonymousId: string;
-  timestamp: string;
-  messageId: string;
-  context?: Record<string, unknown>;
-  userId?: string;
-  event?: string;
-  properties?: Record<string, unknown>;
-  traits?: Record<string, unknown>;
-}
-
-// ============================================================================
-// Copied from SDK's util.ts - getURL and validateURL
-// ============================================================================
-
-function getURL(host: string, path: string): string {
-  if (!host.startsWith("https://") && !host.startsWith("http://")) {
-    host = "https://" + host;
-  }
-  const s = `${host}${path}`;
-  if (!validateURL(s)) {
-    console.error("Invalid URL has been passed");
-    console.log(`Invalid Url passed is ${s}`);
-    throw new Error("Invalid URL has been passed");
-  }
-  return s;
-}
-
-function validateURL(url: string): boolean {
-  const urlRegex = new RegExp(
-    "^(?:https?:\\/\\/)" + // Protocol (http or https)
-      "(?:\\S+(?::\\S*)?@)?" + // Optional user:pass@
-      "(?:(localhost|\\d{1,3}(?:\\.\\d{1,3}){3})|" + // Localhost or IP address
-      "(?:(?!-)[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*(?:\\.[a-zA-Z]{2,})))" + // Domain validation (supports hyphens)
-      "(?::\\d{2,5})?" + // Optional port
-      "(\\/[^\\s?#]*)?" + // Path (allows `/projects/yup/settings`)
-      "(\\?[a-zA-Z0-9_.-]+=[a-zA-Z0-9_.-]+(&[a-zA-Z0-9_.-]+=[a-zA-Z0-9_.-]+)*)?" + // Query params
-      "(#[^\\s]*)?$", // Fragment (optional)
-    "i" // Case-insensitive
-  );
-  return urlRegex.test(url);
-}
-
-// ============================================================================
-// Copied from SDK's api.ts - uploadEvents
-// ============================================================================
-
-const uploadEvents = async ({
-  writeKey,
-  url,
-  events,
-}: {
-  writeKey: string;
-  url: string;
-  events: SegmentEvent[];
-}) => {
-  return await fetch(url, {
-    method: "POST",
-    body: JSON.stringify({
-      batch: events,
-      sentAt: new Date().toISOString(),
-      writeKey: writeKey,
-    }),
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-    },
-  });
-};
-
-// ============================================================================
-// Copied from SDK's errors.ts - checkResponseForErrors
-// ============================================================================
-
-enum ErrorType {
-  NetworkUnexpectedHTTPCode,
-  NetworkServerLimited,
-  NetworkServerRejected,
-  NetworkUnknown,
-}
-
-class SegmentError extends Error {
-  type: ErrorType;
-  message: string;
-  innerError?: unknown;
-
-  constructor(type: ErrorType, message: string, innerError?: unknown) {
-    super(message);
-    Object.setPrototypeOf(this, SegmentError.prototype);
-    this.type = type;
-    this.message = message;
-    this.innerError = innerError;
-  }
-}
-
-class NetworkError extends SegmentError {
-  statusCode: number;
-  type:
-    | ErrorType.NetworkServerLimited
-    | ErrorType.NetworkServerRejected
-    | ErrorType.NetworkUnexpectedHTTPCode
-    | ErrorType.NetworkUnknown;
-
-  constructor(statusCode: number, message: string, innerError?: unknown) {
-    let type: ErrorType;
-    if (statusCode === 429) {
-      type = ErrorType.NetworkServerLimited;
-    } else if (statusCode > 300 && statusCode < 400) {
-      type = ErrorType.NetworkUnexpectedHTTPCode;
-    } else if (statusCode >= 400) {
-      type = ErrorType.NetworkServerRejected;
-    } else {
-      type = ErrorType.NetworkUnknown;
-    }
-
-    super(type, message, innerError);
-    Object.setPrototypeOf(this, NetworkError.prototype);
-
-    this.statusCode = statusCode;
-    this.type = type as NetworkError["type"];
-  }
-}
-
-const checkResponseForErrors = (response: Response) => {
-  if (!response.ok) {
-    throw new NetworkError(response.status, response.statusText);
-  }
-  return response;
-};
+import { SegmentClient } from '../../packages/core/src/analytics';
+import { SovranStorage } from '../../packages/core/src/storage/sovranStorage';
+import { Logger } from '../../packages/core/src/logger';
+import type { Config, JsonMap } from '../../packages/core/src/types';
+import type { Persistor } from '@segment/sovran-react-native';
 
 // ============================================================================
 // CLI Input/Output Types
@@ -174,43 +45,35 @@ interface CLIOutput {
 }
 
 // ============================================================================
+// In-memory Persistor for Node.js (replaces AsyncStorage)
+// ============================================================================
+
+const memStore = new Map<string, unknown>();
+const MemoryPersistor: Persistor = {
+  get: async <T>(key: string): Promise<T | undefined> =>
+    memStore.get(key) as T | undefined,
+  set: async <T>(key: string, state: T): Promise<void> => {
+    memStore.set(key, state);
+  },
+};
+
+// ============================================================================
 // Main CLI Logic
 // ============================================================================
 
-function createEvent(
-  input: CLIInput["sequences"][0]["events"][0],
-  anonymousId: string
-): SegmentEvent {
-  return {
-    type: input.type,
-    anonymousId,
-    timestamp: new Date().toISOString(),
-    messageId: uuidv4(),
-    context: {
-      library: { name: "analytics-react-native", version: "e2e-cli" },
-    },
-    ...(input.userId && { userId: input.userId }),
-    ...(input.event && { event: input.event }),
-    ...(input.properties && { properties: input.properties }),
-    ...(input.traits && { traits: input.traits }),
-  };
-}
-
 async function main() {
-  // Parse command line arguments
   const args = process.argv.slice(2);
   let inputStr: string | undefined;
 
   for (let i = 0; i < args.length; i++) {
-    if (args[i] === "--input" && i + 1 < args.length) {
+    if (args[i] === '--input' && i + 1 < args.length) {
       inputStr = args[i + 1];
       break;
     }
   }
 
   if (!inputStr) {
-    console.error('Usage: cli --input \'{"writeKey":"...", ...}\'');
-    console.log(JSON.stringify({ success: false, error: "No input provided" }));
+    console.log(JSON.stringify({ success: false, error: 'No input provided' }));
     process.exit(1);
   }
 
@@ -218,33 +81,94 @@ async function main() {
 
   try {
     const input: CLIInput = JSON.parse(inputStr);
-    const anonymousId = uuidv4();
 
-    // Build URL - uses SDK's getURL function (default matches SDK's internal default)
-    const url = getURL(input.apiHost ?? "api.segment.io", "/b");
+    // Build SDK config
+    const config: Config = {
+      writeKey: input.writeKey,
+      trackAppLifecycleEvents: false,
+      trackDeepLinks: false,
+      autoAddSegmentDestination: true,
+      storePersistor: MemoryPersistor,
+      storePersistorSaveDelay: 0,
+      // When apiHost is provided (mock tests), use proxy to direct events there
+      ...(input.apiHost && {
+        proxy: input.apiHost,
+        useSegmentEndpoints: true,
+      }),
+      // Provide default settings so SDK doesn't require CDN response
+      defaultSettings: {
+        integrations: {
+          'Segment.io': {
+            apiKey: input.writeKey,
+            apiHost: 'api.segment.io/v1',
+          },
+        },
+      },
+      ...(input.config?.flushAt !== undefined && {
+        flushAt: input.config.flushAt,
+      }),
+      ...(input.config?.flushInterval !== undefined && {
+        flushInterval: input.config.flushInterval,
+      }),
+    };
 
-    // Collect events from all sequences
-    const allEvents: SegmentEvent[] = [];
+    // Create storage with in-memory persistor
+    const store = new SovranStorage({
+      storeId: input.writeKey,
+      storePersistor: MemoryPersistor,
+      storePersistorSaveDelay: 0,
+    });
 
+    // Create client with logging disabled (suppress SDK internal logs)
+    const logger = new Logger(true);
+    const client = new SegmentClient({ config, logger, store });
+
+    // Initialize — adds plugins, resolves settings, processes pending events
+    await client.init();
+
+    // Process event sequences
     for (const sequence of input.sequences) {
       if (sequence.delayMs > 0) {
         await new Promise((resolve) => setTimeout(resolve, sequence.delayMs));
       }
 
-      for (const eventInput of sequence.events) {
-        allEvents.push(createEvent(eventInput, anonymousId));
+      for (const evt of sequence.events) {
+        switch (evt.type) {
+          case 'track':
+            await client.track(
+              evt.event!,
+              evt.properties as JsonMap | undefined
+            );
+            break;
+          case 'identify':
+            await client.identify(evt.userId, evt.traits as JsonMap | undefined);
+            break;
+          case 'screen':
+            await client.screen(
+              evt.event!,
+              evt.properties as JsonMap | undefined
+            );
+            break;
+          case 'group':
+            await client.group(
+              evt.event!,
+              evt.traits as JsonMap | undefined
+            );
+            break;
+          case 'alias':
+            await client.alias(evt.userId!);
+            break;
+        }
       }
     }
 
-    // Upload batch - uses SDK's uploadEvents and checkResponseForErrors
-    if (allEvents.length > 0) {
-      const response = await uploadEvents({
-        writeKey: input.writeKey,
-        url,
-        events: allEvents,
-      });
-      checkResponseForErrors(response);
-    }
+    // Flush all queued events through the real pipeline
+    await client.flush();
+
+    // Brief delay to let async upload operations settle
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    client.cleanup();
 
     output = { success: true };
   } catch (e) {
