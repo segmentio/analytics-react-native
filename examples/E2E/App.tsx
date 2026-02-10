@@ -16,6 +16,7 @@ import {
   // @ts-ignore unused for e2e tests
   // TimerFlushPolicy,
 } from '@segment/analytics-react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Home from './Home';
 import SecondPage from './SecondPage';
 import Modal from './Modal';
@@ -55,6 +56,7 @@ const segmentClient = createClient({
     ios: 'http://localhost:9091/v1',
     android: 'http://10.0.2.2:9091/v1',
   }),
+  storePersistor: AsyncStorage,
 });
 
 const LoggerPlugin = new Logger();
