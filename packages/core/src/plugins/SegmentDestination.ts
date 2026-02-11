@@ -53,30 +53,37 @@ export class SegmentDestination extends DestinationPlugin {
 
     // Upload gate: check if uploads are allowed
     // Only check if backoff is fully initialized to avoid race conditions
+    console.log(`[UPLOAD_GATE] backoffInitialized=${this.backoffInitialized}, uploadStateMachine=${!!this.uploadStateMachine}`);
     if (this.backoffInitialized && this.uploadStateMachine) {
       try {
         const canUpload = await this.uploadStateMachine.canUpload();
+        console.log(`[UPLOAD_GATE] canUpload=${canUpload}`);
         this.analytics?.logger.warn(
           `🟡 UPLOAD_GATE_CHECK: canUpload=${canUpload}`
         );
         if (!canUpload) {
           // Still in WAITING state, defer upload
+          console.log('[UPLOAD_GATE] ❌ UPLOAD BLOCKED - rate limit in effect');
           this.analytics?.logger.warn(
             '🔴 UPLOAD_DEFERRED: rate limit in effect'
           );
           return Promise.resolve();
         }
+        console.log('[UPLOAD_GATE] ✅ UPLOAD ALLOWED - proceeding');
       } catch (e) {
         // If upload gate check fails, log warning but allow upload to proceed
+        console.error(`[UPLOAD_GATE] ⚠️ ERROR in canUpload(): ${e}`);
         this.analytics?.logger.error(
           `⚠️ CRITICAL: uploadStateMachine.canUpload() threw error: ${e}`
         );
       }
     } else if (!this.backoffInitialized) {
+      console.log('[UPLOAD_GATE] ⚠️ Backoff not initialized - proceeding without rate limiting');
       this.analytics?.logger.warn(
         `⚠️ BACKOFF_NOT_INITIALIZED: Upload proceeding without rate limiting`
       );
     } else if (!this.uploadStateMachine) {
+      console.error('[UPLOAD_GATE] ⚠️ CRITICAL: backoffInitialized=true but uploadStateMachine undefined!');
       this.analytics?.logger.error(
         `⚠️ CRITICAL: backoffInitialized=true but uploadStateMachine undefined!`
       );
