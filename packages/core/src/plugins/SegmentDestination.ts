@@ -29,6 +29,7 @@ export class SegmentDestination extends DestinationPlugin {
   private uploadStateMachine?: UploadStateMachine;
   private batchUploadManager?: BatchUploadManager;
   private settings?: SegmentAPISettings;
+  private backoffInitialized = false;
 
   constructor() {
     super();
@@ -39,20 +40,36 @@ export class SegmentDestination extends DestinationPlugin {
   }
 
   private sendEvents = async (events: SegmentEvent[]): Promise<void> => {
+    console.log(`[DEBUG sendEvents] Called with ${events.length} events`);
     if (events.length === 0) {
       return Promise.resolve();
     }
 
     // We're not sending events until Segment has loaded all settings
     await this.settingsPromise;
+    console.log('[DEBUG sendEvents] Settings loaded');
 
     // Upload gate: check if uploads are allowed
-    if (this.uploadStateMachine) {
-      const canUpload = await this.uploadStateMachine.canUpload();
-      if (!canUpload) {
-        // Still in WAITING state, defer upload
-        return Promise.resolve();
+    // Only check if backoff is fully initialized to avoid race conditions
+    if (this.backoffInitialized && this.uploadStateMachine) {
+      try {
+        const canUpload = await this.uploadStateMachine.canUpload();
+        console.log(`[DEBUG sendEvents] Upload gate check: canUpload=${canUpload}`);
+        if (!canUpload) {
+          // Still in WAITING state, defer upload
+          this.analytics?.logger.info('Upload deferred: rate limit in effect');
+          return Promise.resolve();
+        }
+      } catch (e) {
+        // If upload gate check fails, log warning but allow upload to proceed
+        const errorMsg = `⚠️ CRITICAL: uploadStateMachine.canUpload() threw an error even though backoffInitialized=true. This indicates the UploadStateMachine is in a broken state. Error: ${e}`;
+        console.error(errorMsg);
+        this.analytics?.logger.error(errorMsg);
       }
+    } else if (!this.backoffInitialized) {
+      console.log(`[DEBUG sendEvents] ⚠️ WARNING: Backoff components not initialized yet (backoffInitialized=false). Upload proceeding without rate limiting. This is expected during app initialization but should not happen repeatedly.`);
+    } else if (!this.uploadStateMachine) {
+      console.error(`[DEBUG sendEvents] ⚠️ CRITICAL ERROR: backoffInitialized=true but uploadStateMachine is ${this.uploadStateMachine}. This is a bug - the backoff flag should only be true when both components are initialized!`);
     }
 
     const config = this.analytics?.getConfig() ?? defaultConfig;
@@ -62,6 +79,7 @@ export class SegmentDestination extends DestinationPlugin {
       config.maxBatchSize ?? MAX_EVENTS_PER_BATCH,
       MAX_PAYLOAD_SIZE_IN_KB
     );
+    console.log(`[DEBUG sendEvents] Created ${chunkedEvents.length} chunks`);
 
     let sentEvents: SegmentEvent[] = [];
     let eventsToDequeue: SegmentEvent[] = [];
@@ -69,8 +87,10 @@ export class SegmentDestination extends DestinationPlugin {
 
     // CRITICAL: Process batches SEQUENTIALLY (not parallel)
     for (const batch of chunkedEvents) {
+      console.log(`[DEBUG sendEvents] Processing batch with ${batch.length} events`);
       try {
         const result = await this.uploadBatch(batch);
+        console.log(`[DEBUG sendEvents] uploadBatch result:`, result);
 
         if (result.success) {
           sentEvents = sentEvents.concat(batch);
@@ -84,12 +104,14 @@ export class SegmentDestination extends DestinationPlugin {
         }
         // Transient error: continue to next batch (don't dequeue, will retry)
       } catch (e) {
+        console.log('[DEBUG sendEvents] uploadBatch threw error:', e);
         this.analytics?.reportInternalError(translateHTTPError(e));
         this.analytics?.logger.warn(e);
         numFailedEvents += batch.length;
       }
     }
 
+    console.log(`[DEBUG sendEvents] Dequeuing ${eventsToDequeue.length} events`);
     // Dequeue both successfully sent events AND permanently dropped events
     await this.queuePlugin.dequeue(eventsToDequeue);
 
@@ -111,33 +133,60 @@ export class SegmentDestination extends DestinationPlugin {
   ): Promise<{ success: boolean; halt: boolean; dropped: boolean }> {
     const config = this.analytics?.getConfig() ?? defaultConfig;
     const httpConfig = this.settings?.httpConfig ?? defaultHttpConfig;
+    const endpoint = this.getEndpoint();
 
-    // Create batch metadata for retry tracking (only if manager exists)
-    const batchId = this.batchUploadManager?.createBatch(batch) ?? null;
+    console.log(`[DEBUG uploadBatch] Uploading ${batch.length} events to ${endpoint}`);
+
+    // Create batch metadata for retry tracking (only if backoff is initialized)
+    let batchId: string | null = null;
+    if (this.backoffInitialized && this.batchUploadManager) {
+      try {
+        batchId = this.batchUploadManager.createBatch(batch);
+      } catch (e) {
+        console.error(`⚠️ CRITICAL: BatchUploadManager.createBatch() failed even though backoffInitialized=true. BatchUploadManager is in a broken state. Error: ${e}`);
+      }
+    } else if (!this.backoffInitialized) {
+      console.log('[DEBUG uploadBatch] Backoff not initialized - proceeding without batch retry tracking');
+    }
 
     // Get retry count (per-batch preferred, fall back to global for 429)
-    const batchRetryCount =
-      this.batchUploadManager !== undefined && batchId !== null
-        ? await this.batchUploadManager.getBatchRetryCount(batchId)
-        : 0;
-    const globalRetryCount = this.uploadStateMachine
-      ? await this.uploadStateMachine.getGlobalRetryCount()
-      : 0;
-    const retryCount = batchRetryCount > 0 ? batchRetryCount : globalRetryCount;
+    let retryCount = 0;
+    if (this.backoffInitialized) {
+      try {
+        const batchRetryCount =
+          this.batchUploadManager !== undefined && batchId !== null
+            ? await this.batchUploadManager.getBatchRetryCount(batchId)
+            : 0;
+        const globalRetryCount = this.uploadStateMachine
+          ? await this.uploadStateMachine.getGlobalRetryCount()
+          : 0;
+        retryCount = batchRetryCount > 0 ? batchRetryCount : globalRetryCount;
+      } catch (e) {
+        console.error(`⚠️ CRITICAL: Failed to get retry count from backoff components even though backoffInitialized=true. Components are in a broken state. Error: ${e}`);
+      }
+    }
 
     try {
       const res = await uploadEvents({
         writeKey: config.writeKey,
-        url: this.getEndpoint(),
+        url: endpoint,
         events: batch,
         retryCount, // Send X-Retry-Count header
       });
 
+      console.log(`[DEBUG uploadBatch] Response status: ${res.status}`);
+
       // Success case
       if (res.ok) {
-        await this.uploadStateMachine?.reset();
-        if (this.batchUploadManager !== undefined && batchId !== null) {
-          await this.batchUploadManager.removeBatch(batchId);
+        if (this.backoffInitialized) {
+          try {
+            await this.uploadStateMachine?.reset();
+            if (this.batchUploadManager !== undefined && batchId !== null) {
+              await this.batchUploadManager.removeBatch(batchId);
+            }
+          } catch (e) {
+            console.log('[DEBUG uploadBatch] Error cleaning up after success:', e);
+          }
         }
         this.analytics?.logger.info(
           `Batch uploaded successfully (${batch.length} events)`
@@ -160,7 +209,13 @@ export class SegmentDestination extends DestinationPlugin {
             httpConfig.rateLimitConfig?.maxRetryInterval
           ) ?? 60; // Default 60s if missing
 
-        await this.uploadStateMachine?.handle429(retryAfterSeconds);
+        if (this.backoffInitialized && this.uploadStateMachine) {
+          try {
+            await this.uploadStateMachine.handle429(retryAfterSeconds);
+          } catch (e) {
+            console.log('[DEBUG uploadBatch] Error handling 429:', e);
+          }
+        }
 
         this.analytics?.logger.warn(
           `Rate limited (429): retry after ${retryAfterSeconds}s`
@@ -173,8 +228,12 @@ export class SegmentDestination extends DestinationPlugin {
         classification.isRetryable &&
         classification.errorType === 'transient'
       ) {
-        if (this.batchUploadManager !== undefined && batchId !== null) {
-          await this.batchUploadManager.handleRetry(batchId, res.status);
+        if (this.backoffInitialized && this.batchUploadManager !== undefined && batchId !== null) {
+          try {
+            await this.batchUploadManager.handleRetry(batchId, res.status);
+          } catch (e) {
+            console.log('[DEBUG uploadBatch] Error handling retry:', e);
+          }
         }
         return { success: false, halt: false, dropped: false }; // Continue to next batch
       }
@@ -183,14 +242,23 @@ export class SegmentDestination extends DestinationPlugin {
       this.analytics?.logger.warn(
         `Permanent error (${res.status}): dropping batch (${batch.length} events)`
       );
-      if (this.batchUploadManager !== undefined && batchId !== null) {
-        await this.batchUploadManager.removeBatch(batchId);
+      if (this.backoffInitialized && this.batchUploadManager !== undefined && batchId !== null) {
+        try {
+          await this.batchUploadManager.removeBatch(batchId);
+        } catch (e) {
+          console.log('[DEBUG uploadBatch] Error removing batch after permanent error:', e);
+        }
       }
       return { success: false, halt: false, dropped: true };
     } catch (e) {
+      console.log('[DEBUG uploadBatch] Network error:', e);
       // Network error: treat as transient
-      if (this.batchUploadManager !== undefined && batchId !== null) {
-        await this.batchUploadManager.handleRetry(batchId, -1);
+      if (this.backoffInitialized && this.batchUploadManager !== undefined && batchId !== null) {
+        try {
+          await this.batchUploadManager.handleRetry(batchId, -1);
+        } catch (retryError) {
+          console.log('[DEBUG uploadBatch] Error handling network error retry:', retryError);
+        }
       }
       throw e;
     }
@@ -252,31 +320,54 @@ export class SegmentDestination extends DestinationPlugin {
     this.settings = settings;
 
     // Initialize backoff components when settings arrive (using dynamic import to avoid circular dependency)
-    // Works with or without persistence - uses in-memory stores if storePersistor is undefined
+    // CRITICAL: We must await the import and initialization before resolving settingsPromise to avoid race conditions
     const httpConfig = settings.httpConfig ?? defaultHttpConfig;
     const config = this.analytics?.getConfig();
 
-    void import('../backoff').then(
-      ({ UploadStateMachine, BatchUploadManager }) => {
+    console.log('[DEBUG update] Starting backoff component initialization...');
+
+    // Await the import to ensure components are fully initialized before uploads can start
+    import('../backoff')
+      .then(({ UploadStateMachine, BatchUploadManager }) => {
+        console.log('[DEBUG update] Backoff module imported, creating instances...');
         const persistor = config?.storePersistor;
 
-        this.uploadStateMachine = new UploadStateMachine(
-          config?.writeKey ?? '',
-          persistor,
-          httpConfig.rateLimitConfig ?? defaultHttpConfig.rateLimitConfig!,
-          this.analytics?.logger
-        );
+        try {
+          this.uploadStateMachine = new UploadStateMachine(
+            config?.writeKey ?? '',
+            persistor,
+            httpConfig.rateLimitConfig ?? defaultHttpConfig.rateLimitConfig!,
+            this.analytics?.logger
+          );
+          console.log('[DEBUG update] UploadStateMachine created successfully');
 
-        this.batchUploadManager = new BatchUploadManager(
-          config?.writeKey ?? '',
-          persistor,
-          httpConfig.backoffConfig ?? defaultHttpConfig.backoffConfig!,
-          this.analytics?.logger
-        );
-      }
-    );
+          this.batchUploadManager = new BatchUploadManager(
+            config?.writeKey ?? '',
+            persistor,
+            httpConfig.backoffConfig ?? defaultHttpConfig.backoffConfig!,
+            this.analytics?.logger
+          );
+          console.log('[DEBUG update] BatchUploadManager created successfully');
 
-    this.settingsResolve();
+          // Mark as initialized ONLY after both components are created
+          this.backoffInitialized = true;
+          console.log('[DEBUG update] ✅ Backoff components fully initialized');
+        } catch (e) {
+          console.error(`⚠️ CRITICAL: Failed to create backoff components: ${e}`);
+          this.analytics?.logger.error('Failed to initialize backoff components:', e);
+          // Don't set backoffInitialized to true if construction failed
+        }
+
+        // Resolve settings promise after backoff is ready
+        this.settingsResolve();
+        console.log('[DEBUG update] Settings promise resolved');
+      })
+      .catch((e) => {
+        console.error(`⚠️ CRITICAL: Failed to import backoff module: ${e}`);
+        this.analytics?.logger.error('Failed to import backoff module:', e);
+        // Still resolve settings to allow uploads without backoff
+        this.settingsResolve();
+      });
   }
 
   execute(event: SegmentEvent): Promise<SegmentEvent | undefined> {
