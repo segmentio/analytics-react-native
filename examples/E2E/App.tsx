@@ -42,9 +42,10 @@ const segmentClient = createClient({
   collectDeviceId: true,
   debug: true,
   useSegmentEndpoints: true, //if you pass only domain/v1 as proxy setup, use this flag to append segment endpoints. Otherwise you can remove it and customise proxy completely
-  flushPolicies: [
-    new CountFlushPolicy(1), // Auto-flush after every event for E2E tests
-  ],
+  // No flush policies - E2E tests use manual flush for full control
+  // flushPolicies: [
+  //   new CountFlushPolicy(1),
+  // ],
   proxy: Platform.select({
     ios: 'http://localhost:9091/v1',
     android: 'http://10.0.2.2:9091/v1',

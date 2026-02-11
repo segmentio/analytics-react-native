@@ -12,16 +12,18 @@ describe('#backoffTests', () => {
   // Helper to wait for operations to complete
   const wait = (ms = 200) => new Promise(resolve => setTimeout(resolve, ms));
 
-  // Helper to track an event and wait for auto-flush (CountFlushPolicy(1))
+  // Helper to track an event and manually flush
   const trackAndFlush = async () => {
     await trackButton.tap();
-    await wait(800); // Wait for event to be queued + auto-flush to complete
+    await wait(300); // Wait for event to be queued
+    await flushButton.tap();
+    await wait(300); // Wait for flush to complete
   };
 
   // Helper to clear lifecycle events that are automatically tracked on app start
   const clearLifecycleEvents = async () => {
     await flushButton.tap();
-    await wait(500); // Wait longer to ensure lifecycle events are flushed
+    await wait(1000); // Wait for lifecycle events to upload
     mockServerListener.mockClear();
   };
 

@@ -19,9 +19,7 @@ export class CountFlushPolicy extends FlushPolicyBase {
 
   onEvent(_event: SegmentEvent): void {
     this.count += 1;
-    console.log(`[CountFlushPolicy] Event count: ${this.count}/${this.flushAt}`);
     if (this.count >= this.flushAt) {
-      console.log('[CountFlushPolicy] Triggering flush!');
       this.shouldFlush.value = true;
     }
   }
