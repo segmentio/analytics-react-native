@@ -39,18 +39,21 @@ This implementation has three layers of testing:
 **Location:** `/packages/core/src/__tests__/` and `/packages/core/src/backoff/__tests__/`
 
 **Run:**
+
 ```bash
 cd packages/core
 npm test
 ```
 
 **Coverage:**
+
 - ✅ 35 error classification tests
 - ✅ 12 state machine tests
 - ✅ 23 batch manager tests
 - ✅ 13 integration tests
 
 **What It Tests:**
+
 - All HTTP status code classifications (429, 5xx, 4xx)
 - Retry-After header parsing (seconds and HTTP dates)
 - State transitions (READY ↔ WAITING)
@@ -59,6 +62,7 @@ npm test
 - Authorization and X-Retry-Count headers
 
 **Run Specific Test Suites:**
+
 ```bash
 # Error classification
 npm test -- errors.test
@@ -77,11 +81,19 @@ npm test -- SegmentDestination.test
 
 ## 2. E2E Tests with Mock Server (Automated)
 
-**Location:** `/examples/E2E-73/e2e/backoff.e2e.js`
+**Location:** `/examples/E2E/e2e/backoff.e2e.js`
+
+**Note:** This project maintains two E2E environments:
+
+- `/examples/E2E` - Primary E2E testing environment (React Native 0.72.9)
+- `/examples/E2E-73` - RN 0.73 compatibility testing
+
+Use `E2E` for primary development and CI/CD testing. Use `E2E-73` for validating React Native 0.73 compatibility before major releases.
 
 **Run:**
+
 ```bash
-cd examples/E2E-73
+cd examples/E2E
 
 # iOS
 npm run test:e2e:ios
@@ -91,6 +103,7 @@ npm run test:e2e:android
 ```
 
 **What It Tests:**
+
 - 429 halts upload loop immediately
 - Future uploads blocked until retry time passes
 - State resets after successful upload
@@ -105,27 +118,30 @@ npm run test:e2e:android
 The mock server can simulate various TAPI responses:
 
 ```javascript
-setMockBehavior('success');            // 200 OK
-setMockBehavior('rate-limit', {retryAfter: 10}); // 429
-setMockBehavior('timeout');            // 408
-setMockBehavior('bad-request');        // 400
-setMockBehavior('server-error');       // 500
+setMockBehavior('success'); // 200 OK
+setMockBehavior('rate-limit', { retryAfter: 10 }); // 429
+setMockBehavior('timeout'); // 408
+setMockBehavior('bad-request'); // 400
+setMockBehavior('server-error'); // 500
 setMockBehavior('custom', customHandler); // Custom logic
 ```
 
 **Key Test Cases:**
 
 1. **429 Upload Halt:**
+
    - Sends multiple batches
    - Mock returns 429 on first batch
    - Verifies only 1 network call made
 
 2. **Upload Gate Blocking:**
+
    - Triggers 429
    - Attempts immediate flush
    - Verifies no network call (blocked)
 
 3. **State Persistence:**
+
    - Triggers 429 with 30s retry
    - Restarts app
    - Attempts flush
@@ -166,6 +182,7 @@ npm run android
 ### Test Scenarios
 
 The manual test app includes buttons to:
+
 - **Track Event** - Track single events
 - **Spam Events (100)** - Create 100 events to trigger rate limiting
 - **Flush Multiple Times (5x)** - Rapid flush attempts
@@ -180,6 +197,7 @@ The manual test app includes buttons to:
 ### When to Use Manual Tests
 
 Use manual tests to validate:
+
 1. **Pre-production:** Before enabling in Settings CDN
 2. **Staging:** With staging environment
 3. **Production validation:** With 1% canary rollout
@@ -209,7 +227,7 @@ npm test
 
 ```bash
 # Run E2E tests
-cd examples/E2E-73
+cd examples/E2E
 npm run test:e2e:ios
 npm run test:e2e:android
 
@@ -233,6 +251,7 @@ npm run ios
 ```
 
 **Exit Criteria:**
+
 - All critical tests (T1-T5, T8-T9) pass
 - Test execution log completed
 - No blockers identified
@@ -247,6 +266,7 @@ npm run ios
 4. Review metrics
 
 **Exit Criteria:**
+
 - No errors in staging
 - Metrics look healthy
 - Team approval
@@ -264,6 +284,7 @@ npm run ios
    - Drop rates
 
 **Exit Criteria:**
+
 - No increase in event loss
 - No increase in client errors
 - 429 rate same or better
@@ -277,6 +298,7 @@ npm run ios
 3. Watch for first high-traffic event
 
 **Success Metrics:**
+
 - 50%+ reduction in 429 during high-traffic
 - No increase in event loss
 - Positive operations feedback
@@ -285,16 +307,31 @@ npm run ios
 
 ## Test Coverage Summary
 
-| Layer | Test Type | Count | Status |
-|-------|-----------|-------|--------|
-| Unit | Error classification | 31 | ✅ Passing |
-| Unit | API headers | 4 | ✅ Passing |
-| Unit | State machine | 12 | ✅ Passing |
-| Unit | Batch manager | 23 | ✅ Passing |
-| Unit | Integration | 13 | ✅ Passing |
-| **Unit Total** | | **83** | **✅ 95%+** |
-| E2E | Mock server | 10+ | 🟡 Implemented |
-| Manual | Production | 11 | 🟡 Ready |
+| Layer          | Test Type                  | Count   | Status             |
+| -------------- | -------------------------- | ------- | ------------------ |
+| Unit           | Error classification       | 31      | ✅ Passing         |
+| Unit           | API headers                | 4       | ✅ Passing         |
+| Unit           | State machine              | 12      | ✅ Passing         |
+| Unit           | Batch manager              | 23      | ✅ Passing         |
+| Unit           | Integration                | 13      | ✅ Passing         |
+| **Unit Total** |                            | **83**  | **✅ All Passing** |
+| E2E            | Core backoff tests         | 20      | ✅ Implemented     |
+| E2E            | Status code coverage       | 17      | ✅ New             |
+| E2E            | Real persistence tests     | 11      | ✅ New             |
+| E2E            | Retry-After parsing        | 3       | ✅ New             |
+| E2E            | X-Retry-Count edge cases   | 2       | ✅ New             |
+| E2E            | Exponential backoff verify | 1       | ✅ New             |
+| E2E            | Concurrent processing      | 1       | ✅ New             |
+| **E2E Total**  |                            | **55**  | **✅ Complete**    |
+| Manual         | Production validation      | 11      | 🟡 Ready           |
+| **Total**      |                            | **149** | **✅**             |
+
+### E2E Test Files
+
+- `examples/E2E/e2e/backoff.e2e.js` - Core backoff tests (325 → 550 lines, +8 new tests)
+- `examples/E2E/e2e/backoff-status-codes.e2e.js` - HTTP status code tests (291 lines, 17 tests)
+- `examples/E2E/e2e/backoff-persistence.e2e.js` - Persistence tests (355 lines, 11 tests)
+- `examples/E2E/e2e/main.e2e.js` - General SDK tests (existing)
 
 ---
 
@@ -308,7 +345,7 @@ npm run ios
   run: cd packages/core && npm test
 
 - name: Run E2E Tests
-  run: cd examples/E2E-73 && npm run test:e2e:ios
+  run: cd examples/E2E && npm run test:e2e:ios
 
 - name: Check Test Coverage
   run: npm test -- --coverage --coverageThreshold='{"global":{"statements":80}}'

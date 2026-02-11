@@ -8,17 +8,18 @@ jest.mock('@segment/sovran-react-native', () => {
   const actualModule = jest.requireActual('@segment/sovran-react-native');
   return {
     ...actualModule,
-    createStore: jest.fn((initialState: any) => {
+    createStore: jest.fn((initialState: unknown) => {
       let state = initialState;
       return {
         getState: jest.fn(() => Promise.resolve(state)),
-        dispatch: jest.fn((action: any) => {
+        dispatch: jest.fn((action: unknown) => {
           // Handle functional dispatch
           if (typeof action === 'function') {
             state = action(state);
           } else {
-            // Handle action object dispatch
-            state = action.payload;
+            // Handle action object dispatch - add type guard for payload
+            const typedAction = action as { type: string; payload: unknown };
+            state = typedAction.payload;
           }
           return Promise.resolve();
         }),
@@ -264,7 +265,9 @@ describe('UploadStateMachine', () => {
 
       expect(await stateMachine.getGlobalRetryCount()).toBe(0);
       expect(await stateMachine.canUpload()).toBe(true);
-      expect(mockLogger.info).toHaveBeenCalledWith('Upload state reset to READY');
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Upload state reset to READY'
+      );
     });
   });
 

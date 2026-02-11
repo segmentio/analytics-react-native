@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -27,7 +27,7 @@ const segment = createClient({
 });
 
 function TestScreen() {
-  const {track, screen, flush, reset} = useAnalytics();
+  const { track, screen, flush, reset } = useAnalytics();
   const [eventCount, setEventCount] = useState(0);
   const [flushCount, setFlushCount] = useState(0);
 
@@ -98,7 +98,7 @@ function TestScreen() {
     setEventCount(eventCount + 50);
     Alert.alert(
       'Sequential Test',
-      '50 events tracked. Will create 5 batches. Tap Flush.',
+      '50 events tracked. Will create 5 batches. Tap Flush.'
     );
   };
 
@@ -106,7 +106,7 @@ function TestScreen() {
     // Display current state info
     Alert.alert(
       'Test Info',
-      `Events tracked: ${eventCount}\nFlushes: ${flushCount}\n\nCheck console for detailed logs.`,
+      `Events tracked: ${eventCount}\nFlushes: ${flushCount}\n\nCheck console for detailed logs.`
     );
   };
 
@@ -125,33 +125,32 @@ function TestScreen() {
           <TouchableOpacity
             testID="BUTTON_TRACK"
             style={styles.button}
-            onPress={trackEvent}>
+            onPress={trackEvent}
+          >
             <Text style={styles.buttonText}>Track Event</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             testID="BUTTON_SCREEN"
             style={styles.button}
-            onPress={trackScreen}>
+            onPress={trackScreen}
+          >
             <Text style={styles.buttonText}>Track Screen</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             testID="BUTTON_FLUSH"
             style={styles.buttonPrimary}
-            onPress={manualFlush}>
+            onPress={manualFlush}
+          >
             <Text style={styles.buttonTextPrimary}>Flush</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Rate Limiting Tests</Text>
-          <TouchableOpacity
-            style={styles.buttonDanger}
-            onPress={spamEvents}>
-            <Text style={styles.buttonTextDanger}>
-              Spam Events (100)
-            </Text>
+          <TouchableOpacity style={styles.buttonDanger} onPress={spamEvents}>
+            <Text style={styles.buttonTextDanger}>Spam Events (100)</Text>
           </TouchableOpacity>
           <Text style={styles.helperText}>
             Creates 100 events. Use with Flush Multiple Times to trigger 429.
@@ -159,7 +158,8 @@ function TestScreen() {
 
           <TouchableOpacity
             style={styles.buttonDanger}
-            onPress={flushMultipleTimes}>
+            onPress={flushMultipleTimes}
+          >
             <Text style={styles.buttonTextDanger}>
               Flush Multiple Times (5x)
             </Text>
@@ -173,7 +173,8 @@ function TestScreen() {
           <Text style={styles.sectionTitle}>Sequential Processing Test</Text>
           <TouchableOpacity
             style={styles.buttonWarning}
-            onPress={testSequentialBatches}>
+            onPress={testSequentialBatches}
+          >
             <Text style={styles.buttonText}>
               Test Sequential Batches (50 events)
             </Text>
@@ -188,14 +189,16 @@ function TestScreen() {
           <Text style={styles.sectionTitle}>Utilities</Text>
           <TouchableOpacity
             style={styles.buttonSecondary}
-            onPress={testStateInfo}>
+            onPress={testStateInfo}
+          >
             <Text style={styles.buttonText}>Show State Info</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             testID="BUTTON_RESET"
             style={styles.buttonSecondary}
-            onPress={resetClient}>
+            onPress={resetClient}
+          >
             <Text style={styles.buttonText}>Reset Client</Text>
           </TouchableOpacity>
         </View>
@@ -224,8 +227,8 @@ export default function App() {
         <View style={styles.errorContainer}>
           <Text style={styles.errorTitle}>⚠️ Configuration Required</Text>
           <Text style={styles.errorText}>
-            Please edit App.tsx and replace YOUR_WRITE_KEY_HERE with your
-            actual Segment writeKey.
+            Please edit App.tsx and replace YOUR_WRITE_KEY_HERE with your actual
+            Segment writeKey.
           </Text>
         </View>
       </SafeAreaView>
@@ -266,7 +269,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,

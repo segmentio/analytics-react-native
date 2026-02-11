@@ -14,7 +14,7 @@ import { QueueFlushingPlugin } from './QueueFlushingPlugin';
 import { defaultApiHost, defaultHttpConfig } from '../constants';
 import { translateHTTPError, classifyError, parseRetryAfter } from '../errors';
 import { defaultConfig } from '../constants';
-import { UploadStateMachine, BatchUploadManager } from '../backoff';
+import type { UploadStateMachine, BatchUploadManager } from '../backoff';
 
 const MAX_EVENTS_PER_BATCH = 100;
 const MAX_PAYLOAD_SIZE_IN_KB = 500;
@@ -64,6 +64,7 @@ export class SegmentDestination extends DestinationPlugin {
     );
 
     let sentEvents: SegmentEvent[] = [];
+    let eventsToDequeue: SegmentEvent[] = [];
     let numFailedEvents = 0;
 
     // CRITICAL: Process batches SEQUENTIALLY (not parallel)
@@ -73,11 +74,15 @@ export class SegmentDestination extends DestinationPlugin {
 
         if (result.success) {
           sentEvents = sentEvents.concat(batch);
+          eventsToDequeue = eventsToDequeue.concat(batch);
+        } else if (result.dropped) {
+          // Permanent error: dequeue but don't count as sent
+          eventsToDequeue = eventsToDequeue.concat(batch);
         } else if (result.halt) {
           // 429 response: halt upload loop immediately
           break;
         }
-        // Transient error: continue to next batch
+        // Transient error: continue to next batch (don't dequeue, will retry)
       } catch (e) {
         this.analytics?.reportInternalError(translateHTTPError(e));
         this.analytics?.logger.warn(e);
@@ -85,8 +90,8 @@ export class SegmentDestination extends DestinationPlugin {
       }
     }
 
-    // Dequeue successfully sent events
-    await this.queuePlugin.dequeue(sentEvents);
+    // Dequeue both successfully sent events AND permanently dropped events
+    await this.queuePlugin.dequeue(eventsToDequeue);
 
     if (sentEvents.length) {
       if (config.debug === true) {
@@ -103,7 +108,7 @@ export class SegmentDestination extends DestinationPlugin {
 
   private async uploadBatch(
     batch: SegmentEvent[]
-  ): Promise<{ success: boolean; halt: boolean }> {
+  ): Promise<{ success: boolean; halt: boolean; dropped: boolean }> {
     const config = this.analytics?.getConfig() ?? defaultConfig;
     const httpConfig = this.settings?.httpConfig ?? defaultHttpConfig;
 
@@ -112,7 +117,7 @@ export class SegmentDestination extends DestinationPlugin {
 
     // Get retry count (per-batch preferred, fall back to global for 429)
     const batchRetryCount =
-      this.batchUploadManager && batchId
+      this.batchUploadManager !== undefined && batchId !== null
         ? await this.batchUploadManager.getBatchRetryCount(batchId)
         : 0;
     const globalRetryCount = this.uploadStateMachine
@@ -131,13 +136,13 @@ export class SegmentDestination extends DestinationPlugin {
       // Success case
       if (res.ok) {
         await this.uploadStateMachine?.reset();
-        if (this.batchUploadManager && batchId) {
+        if (this.batchUploadManager !== undefined && batchId !== null) {
           await this.batchUploadManager.removeBatch(batchId);
         }
         this.analytics?.logger.info(
           `Batch uploaded successfully (${batch.length} events)`
         );
-        return { success: true, halt: false };
+        return { success: true, halt: false, dropped: false };
       }
 
       // Error classification
@@ -160,29 +165,31 @@ export class SegmentDestination extends DestinationPlugin {
         this.analytics?.logger.warn(
           `Rate limited (429): retry after ${retryAfterSeconds}s`
         );
-        return { success: false, halt: true }; // HALT upload loop
+        return { success: false, halt: true, dropped: false }; // HALT upload loop
       }
 
       // Handle transient errors with exponential backoff
-      if (classification.isRetryable && classification.errorType === 'transient') {
-        if (this.batchUploadManager && batchId) {
+      if (
+        classification.isRetryable &&
+        classification.errorType === 'transient'
+      ) {
+        if (this.batchUploadManager !== undefined && batchId !== null) {
           await this.batchUploadManager.handleRetry(batchId, res.status);
         }
-        return { success: false, halt: false }; // Continue to next batch
+        return { success: false, halt: false, dropped: false }; // Continue to next batch
       }
 
       // Permanent error: drop batch
       this.analytics?.logger.warn(
         `Permanent error (${res.status}): dropping batch (${batch.length} events)`
       );
-      if (this.batchUploadManager && batchId) {
+      if (this.batchUploadManager !== undefined && batchId !== null) {
         await this.batchUploadManager.removeBatch(batchId);
       }
-      return { success: false, halt: false };
-
+      return { success: false, halt: false, dropped: true };
     } catch (e) {
       // Network error: treat as transient
-      if (this.batchUploadManager && batchId) {
+      if (this.batchUploadManager !== undefined && batchId !== null) {
         await this.batchUploadManager.handleRetry(batchId, -1);
       }
       throw e;
@@ -244,25 +251,30 @@ export class SegmentDestination extends DestinationPlugin {
     // Store settings for httpConfig access
     this.settings = settings;
 
-    // Initialize backoff components when settings arrive
+    // Initialize backoff components when settings arrive (using dynamic import to avoid circular dependency)
+    // Works with or without persistence - uses in-memory stores if storePersistor is undefined
     const httpConfig = settings.httpConfig ?? defaultHttpConfig;
     const config = this.analytics?.getConfig();
 
-    if (config?.storePersistor) {
-      this.uploadStateMachine = new UploadStateMachine(
-        config.writeKey,
-        config.storePersistor,
-        httpConfig.rateLimitConfig ?? defaultHttpConfig.rateLimitConfig!,
-        this.analytics?.logger
-      );
+    void import('../backoff').then(
+      ({ UploadStateMachine, BatchUploadManager }) => {
+        const persistor = config?.storePersistor;
 
-      this.batchUploadManager = new BatchUploadManager(
-        config.writeKey,
-        config.storePersistor,
-        httpConfig.backoffConfig ?? defaultHttpConfig.backoffConfig!,
-        this.analytics?.logger
-      );
-    }
+        this.uploadStateMachine = new UploadStateMachine(
+          config?.writeKey ?? '',
+          persistor,
+          httpConfig.rateLimitConfig ?? defaultHttpConfig.rateLimitConfig!,
+          this.analytics?.logger
+        );
+
+        this.batchUploadManager = new BatchUploadManager(
+          config?.writeKey ?? '',
+          persistor,
+          httpConfig.backoffConfig ?? defaultHttpConfig.backoffConfig!,
+          this.analytics?.logger
+        );
+      }
+    );
 
     this.settingsResolve();
   }

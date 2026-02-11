@@ -1,5 +1,5 @@
 import { createStore } from '@segment/sovran-react-native';
-import type { Persistor } from '@segment/sovran-react-native';
+import type { Store, Persistor } from '@segment/sovran-react-native';
 import type { UploadStateData, RateLimitConfig, LoggerType } from '../types';
 
 const INITIAL_STATE: UploadStateData = {
@@ -10,25 +10,31 @@ const INITIAL_STATE: UploadStateData = {
 };
 
 export class UploadStateMachine {
-  private store: any;
+  private store: Store<UploadStateData>;
   private config: RateLimitConfig;
   private logger?: LoggerType;
 
   constructor(
     storeId: string,
-    persistor: Persistor,
+    persistor: Persistor | undefined,
     config: RateLimitConfig,
     logger?: LoggerType
   ) {
     this.config = config;
     this.logger = logger;
 
-    this.store = createStore<UploadStateData>(INITIAL_STATE, {
-      persist: {
-        storeId: `${storeId}-uploadState`,
-        persistor,
-      },
-    });
+    // If persistor is provided, use persistent store; otherwise use in-memory store
+    this.store = createStore<UploadStateData>(
+      INITIAL_STATE,
+      persistor
+        ? {
+            persist: {
+              storeId: `${storeId}-uploadState`,
+              persistor,
+            },
+          }
+        : undefined
+    );
   }
 
   /**

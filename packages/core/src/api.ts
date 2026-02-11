@@ -19,7 +19,7 @@ export const uploadEvents = async ({
     body: JSON.stringify({
       batch: events,
       sentAt: new Date().toISOString(),
-      writeKey: writeKey,  // Keep in body for backwards compatibility
+      writeKey: writeKey, // Keep in body for backwards compatibility
     }),
     headers: {
       'Content-Type': 'application/json; charset=utf-8',

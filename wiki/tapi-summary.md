@@ -9,6 +9,7 @@ This document provides a quick reference for developers working with the TAPI ba
 ### Two-Layer Retry Strategy
 
 1. **Global Rate Limiting (429 responses)**
+
    - Managed by `UploadStateMachine`
    - Blocks entire upload pipeline
    - Uses Retry-After header from server
@@ -35,6 +36,7 @@ if (this.uploadStateMachine) {
 ```
 
 Benefits:
+
 - Saves battery life
 - Prevents memory leaks
 - Simpler implementation
@@ -46,7 +48,7 @@ Benefits:
 
 ```typescript
 // OLD (parallel) - DON'T USE
-await Promise.all(chunkedEvents.map(batch => upload(batch)));
+await Promise.all(chunkedEvents.map((batch) => upload(batch)));
 
 // NEW (sequential) - REQUIRED
 for (const batch of chunkedEvents) {
@@ -134,6 +136,7 @@ All retry behavior is configurable via Settings CDN:
 Two new headers are added to all TAPI requests:
 
 1. **Authorization**: `Basic ${base64(writeKey + ':')}`
+
    - Follows TAPI authentication requirements
    - writeKey still kept in body for backwards compatibility
 
@@ -213,15 +216,14 @@ Both components use Sovran stores for persistence:
 ## Exponential Backoff Formula
 
 ```typescript
-backoffTime = min(
-  baseBackoffInterval * 2^retryCount,
-  maxBackoffInterval
-) + jitter
+backoffTime =
+  min((baseBackoffInterval * 2) ^ retryCount, maxBackoffInterval) + jitter;
 
 // Where jitter = random(0, backoffTime * jitterPercent / 100)
 ```
 
 Example progression (baseBackoffInterval=0.5s, jitterPercent=10):
+
 - Retry 1: ~0.5s + jitter
 - Retry 2: ~1s + jitter
 - Retry 3: ~2s + jitter
@@ -246,19 +248,19 @@ All retry events are logged:
 
 ```typescript
 // Rate limiting
-logger.info('Rate limited (429): waiting 60s before retry 1/100')
-logger.info('Upload blocked: rate limited, retry in 45s (retry 1/100)')
-logger.info('Upload state reset to READY')
+logger.info('Rate limited (429): waiting 60s before retry 1/100');
+logger.info('Upload blocked: rate limited, retry in 45s (retry 1/100)');
+logger.info('Upload state reset to READY');
 
 // Batch retries
-logger.info('Batch abc-123: retry 1/100 scheduled in 0.5s (status 500)')
-logger.warn('Batch abc-123: max retry count exceeded (100), dropping batch')
+logger.info('Batch abc-123: retry 1/100 scheduled in 0.5s (status 500)');
+logger.warn('Batch abc-123: max retry count exceeded (100), dropping batch');
 
 // Success
-logger.info('Batch uploaded successfully (20 events)')
+logger.info('Batch uploaded successfully (20 events)');
 
 // Permanent errors
-logger.warn('Permanent error (400): dropping batch (20 events)')
+logger.warn('Permanent error (400): dropping batch (20 events)');
 ```
 
 ## Common Patterns
@@ -291,7 +293,9 @@ if (result.success) {
 
 ```typescript
 // Prefer per-batch count, fall back to global for 429
-const batchRetryCount = await this.batchUploadManager.getBatchRetryCount(batchId);
+const batchRetryCount = await this.batchUploadManager.getBatchRetryCount(
+  batchId
+);
 const globalRetryCount = await this.uploadStateMachine.getGlobalRetryCount();
 const retryCount = batchRetryCount > 0 ? batchRetryCount : globalRetryCount;
 ```
@@ -307,14 +311,10 @@ nock('https://api.segment.io')
   .reply(429, {}, { 'Retry-After': '10' });
 
 // Mock transient 500 error
-nock('https://api.segment.io')
-  .post('/v1/b')
-  .reply(500);
+nock('https://api.segment.io').post('/v1/b').reply(500);
 
 // Mock success after retry
-nock('https://api.segment.io')
-  .post('/v1/b')
-  .reply(200);
+nock('https://api.segment.io').post('/v1/b').reply(200);
 ```
 
 ### Verifying Sequential Processing

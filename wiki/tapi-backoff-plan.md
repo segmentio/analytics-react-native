@@ -13,26 +13,31 @@ Implement exponential backoff and 429 rate-limiting strategy per the TAPI Backof
 ## Key Architectural Decisions
 
 ### Decision 1: Two-Component Architecture
+
 - **UploadStateMachine**: Manages global READY/WAITING states for 429 rate limiting
 - **BatchUploadManager**: Handles per-batch retry metadata and exponential backoff
 - Both use Sovran stores for persistence, integrate into SegmentDestination
 
 ### Decision 2: Upload Gate Pattern
+
 - No timers/schedulers to check state
 - Check `canUpload()` at flush start, return early if in WAITING state
 - State transitions on response (429 → WAITING, success → READY)
 
 ### Decision 3: Sequential Batch Processing
+
 - Change from `Promise.all()` (parallel) to `for...of` loop (sequential)
 - Required by SDD: "429 responses cause immediate halt of upload loop"
 - Transient errors (5xx) don't block remaining batches
 
 ### Decision 4: Authentication & Headers
+
 - **Authorization header**: Add `Basic ${base64(writeKey + ':')}` header
 - **Keep writeKey in body**: Backwards compatibility with TAPI
 - **X-Retry-Count header**: Send per-batch count when available, global count for 429
 
 ### Decision 5: Logging Strategy
+
 - Verbose logging for all retry events (state transitions, backoff delays, drops)
 - Use existing `analytics.logger.info()` and `.warn()` infrastructure
 - Include retry count, backoff duration, and error codes in logs
@@ -55,17 +60,17 @@ export type HttpConfig = {
 export type RateLimitConfig = {
   enabled: boolean;
   maxRetryCount: number;
-  maxRetryInterval: number;        // seconds
-  maxTotalBackoffDuration: number;  // seconds
+  maxRetryInterval: number; // seconds
+  maxTotalBackoffDuration: number; // seconds
 };
 
 export type BackoffConfig = {
   enabled: boolean;
   maxRetryCount: number;
-  baseBackoffInterval: number;      // seconds
-  maxBackoffInterval: number;       // seconds
-  maxTotalBackoffDuration: number;  // seconds
-  jitterPercent: number;            // 0-100
+  baseBackoffInterval: number; // seconds
+  maxBackoffInterval: number; // seconds
+  maxTotalBackoffDuration: number; // seconds
+  jitterPercent: number; // 0-100
   retryableStatusCodes: number[];
 };
 
@@ -78,13 +83,13 @@ export type SegmentAPISettings = {
   };
   metrics?: MetricsOptions;
   consentSettings?: SegmentAPIConsentSettings;
-  httpConfig?: HttpConfig;  // NEW
+  httpConfig?: HttpConfig; // NEW
 };
 
 // State machine persistence
 export type UploadStateData = {
   state: 'READY' | 'WAITING';
-  waitUntilTime: number;          // timestamp ms
+  waitUntilTime: number; // timestamp ms
   globalRetryCount: number;
   firstFailureTime: number | null; // timestamp ms
 };
@@ -92,10 +97,10 @@ export type UploadStateData = {
 // Per-batch retry metadata
 export type BatchMetadata = {
   batchId: string;
-  events: SegmentEvent[];         // Store events to match batches
+  events: SegmentEvent[]; // Store events to match batches
   retryCount: number;
-  nextRetryTime: number;          // timestamp ms
-  firstFailureTime: number;       // timestamp ms
+  nextRetryTime: number; // timestamp ms
+  firstFailureTime: number; // timestamp ms
 };
 
 // Error classification result
@@ -207,13 +212,14 @@ export const uploadEvents = async ({
   writeKey,
   url,
   events,
-  retryCount = 0,  // NEW: for X-Retry-Count header
+  retryCount = 0, // NEW: for X-Retry-Count header
 }: {
   writeKey: string;
   url: string;
   events: SegmentEvent[];
-  retryCount?: number;  // NEW
-}): Promise<Response> => {  // Changed from void
+  retryCount?: number; // NEW
+}): Promise<Response> => {
+  // Changed from void
   // Create Authorization header (Basic auth format)
   const authHeader = 'Basic ' + btoa(writeKey + ':');
 
@@ -222,16 +228,16 @@ export const uploadEvents = async ({
     body: JSON.stringify({
       batch: events,
       sentAt: new Date().toISOString(),
-      writeKey: writeKey,  // Keep in body for backwards compatibility
+      writeKey: writeKey, // Keep in body for backwards compatibility
     }),
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
-      'Authorization': authHeader,        // NEW
-      'X-Retry-Count': retryCount.toString(),  // NEW
+      'Authorization': authHeader, // NEW
+      'X-Retry-Count': retryCount.toString(), // NEW
     },
   });
 
-  return response;  // Return full response (not just void)
+  return response; // Return full response (not just void)
 };
 ```
 
@@ -269,10 +275,12 @@ Major modifications to integrate state machine and batch manager:
 ### Unit Tests
 
 1. **Error Classification** (`/packages/core/src/__tests__/errors.test.ts`)
+
    - classifyError() for all status codes in SDD tables
    - parseRetryAfter() with seconds, HTTP dates, invalid values
 
 2. **Upload State Machine** (`/packages/core/src/backoff/__tests__/UploadStateMachine.test.ts`)
+
    - canUpload() returns true/false based on state and time
    - handle429() sets waitUntilTime and increments counter
    - Max retry count enforcement
@@ -291,6 +299,7 @@ Major modifications to integrate state machine and batch manager:
 **File**: `/packages/core/src/plugins/__tests__/SegmentDestination.test.ts`
 
 Add test cases for:
+
 - 429 response halts upload loop (remaining batches not processed)
 - 429 response blocks future flush() calls until waitUntilTime
 - Successful upload after 429 resets state machine
@@ -325,11 +334,13 @@ Add test cases for:
 ## Critical Files
 
 ### New Files (3)
+
 1. `/packages/core/src/backoff/UploadStateMachine.ts` - Global rate limiting state machine
 2. `/packages/core/src/backoff/BatchUploadManager.ts` - Per-batch retry and backoff
 3. `/packages/core/src/backoff/index.ts` - Barrel export
 
 ### Modified Files (5)
+
 1. `/packages/core/src/types.ts` - Add HttpConfig, UploadStateData, BatchMetadata types
 2. `/packages/core/src/errors.ts` - Add classifyError() and parseRetryAfter()
 3. `/packages/core/src/api.ts` - Add retryCount param and Authorization header
@@ -337,6 +348,7 @@ Add test cases for:
 5. `/packages/core/src/constants.ts` - Add defaultHttpConfig
 
 ### Test Files (3 new + 1 modified)
+
 1. `/packages/core/src/backoff/__tests__/UploadStateMachine.test.ts`
 2. `/packages/core/src/backoff/__tests__/BatchUploadManager.test.ts`
 3. `/packages/core/src/__tests__/errors.test.ts` - Add classification tests
@@ -363,6 +375,7 @@ Add test cases for:
 **Status**: ✅ COMPLETE (2026-02-09)
 
 All implementation steps have been completed:
+
 - ✅ Type definitions added
 - ✅ Default configuration added
 - ✅ Error classification functions implemented
@@ -373,6 +386,7 @@ All implementation steps have been completed:
 - ✅ TypeScript compilation successful
 
 **Next Steps**:
+
 1. Write unit tests for error classification functions
 2. Write unit tests for UploadStateMachine
 3. Write unit tests for BatchUploadManager

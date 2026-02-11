@@ -158,9 +158,9 @@ export const classifyError = (
  */
 export const parseRetryAfter = (
   retryAfterValue: string | null,
-  maxRetryInterval: number = 300
+  maxRetryInterval = 300
 ): number | undefined => {
-  if (!retryAfterValue) return undefined;
+  if (retryAfterValue === null || retryAfterValue === '') return undefined;
 
   // Try parsing as integer (seconds)
   const seconds = parseInt(retryAfterValue, 10);

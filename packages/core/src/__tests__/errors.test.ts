@@ -111,7 +111,9 @@ describe('parseRetryAfter', () => {
   describe('with HTTP date format', () => {
     beforeEach(() => {
       // Mock Date.now() to return a fixed timestamp
-      jest.spyOn(Date, 'now').mockReturnValue(new Date('2024-01-01T00:00:00Z').getTime());
+      jest
+        .spyOn(Date, 'now')
+        .mockReturnValue(new Date('2024-01-01T00:00:00Z').getTime());
     });
 
     afterEach(() => {

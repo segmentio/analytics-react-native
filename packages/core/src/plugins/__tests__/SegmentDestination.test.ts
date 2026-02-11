@@ -10,6 +10,7 @@ import {
   Config,
   EventType,
   SegmentAPIIntegration,
+  SegmentAPISettings,
   SegmentEvent,
   TrackEventType,
   UpdateType,
@@ -566,7 +567,7 @@ describe('SegmentDestination', () => {
       events,
     }: {
       config?: Config;
-      settings?: any;
+      settings?: SegmentAPISettings;
       events: SegmentEvent[];
     }) => {
       const plugin = new SegmentDestination();
@@ -585,11 +586,27 @@ describe('SegmentDestination', () => {
       plugin.update(
         {
           integrations: {
-            [SEGMENT_DESTINATION_KEY]: settings?.integration ?? {},
+            [SEGMENT_DESTINATION_KEY]:
+              settings?.integrations?.[SEGMENT_DESTINATION_KEY] ?? {},
           },
           httpConfig: settings?.httpConfig ?? {
-            rateLimitConfig: { enabled: true, maxRetryCount: 100, maxRetryInterval: 300, maxTotalBackoffDuration: 43200 },
-            backoffConfig: { enabled: true, maxRetryCount: 100, baseBackoffInterval: 0.5, maxBackoffInterval: 300, maxTotalBackoffDuration: 43200, jitterPercent: 10, retryableStatusCodes: [408, 410, 429, 460, 500, 502, 503, 504, 508] },
+            rateLimitConfig: {
+              enabled: true,
+              maxRetryCount: 100,
+              maxRetryInterval: 300,
+              maxTotalBackoffDuration: 43200,
+            },
+            backoffConfig: {
+              enabled: true,
+              maxRetryCount: 100,
+              baseBackoffInterval: 0.5,
+              maxBackoffInterval: 300,
+              maxTotalBackoffDuration: 43200,
+              jitterPercent: 10,
+              retryableStatusCodes: [
+                408, 410, 429, 460, 500, 502, 503, 504, 508,
+              ],
+            },
           },
         },
         UpdateType.initial
@@ -648,13 +665,11 @@ describe('SegmentDestination', () => {
 
       const { plugin } = createTestWith({ events });
 
-      const sendEventsSpy = jest
-        .spyOn(api, 'uploadEvents')
-        .mockResolvedValue({
-          ok: false,
-          status: 429,
-          headers: new Headers({ 'retry-after': '60' }),
-        } as Response);
+      const sendEventsSpy = jest.spyOn(api, 'uploadEvents').mockResolvedValue({
+        ok: false,
+        status: 429,
+        headers: new Headers({ 'retry-after': '60' }),
+      } as Response);
 
       await plugin.flush();
 
@@ -761,19 +776,21 @@ describe('SegmentDestination', () => {
       const { plugin } = createTestWith({ events });
 
       let callCount = 0;
-      const sendEventsSpy = jest.spyOn(api, 'uploadEvents').mockImplementation(async () => {
-        callCount++;
-        if (callCount === 1) {
-          // First batch fails with 500
-          return {
-            ok: false,
-            status: 500,
-            headers: new Headers(),
-          } as Response;
-        }
-        // Second batch succeeds
-        return { ok: true, status: 200 } as Response;
-      });
+      const sendEventsSpy = jest
+        .spyOn(api, 'uploadEvents')
+        .mockImplementation(async () => {
+          callCount++;
+          if (callCount === 1) {
+            // First batch fails with 500
+            return {
+              ok: false,
+              status: 500,
+              headers: new Headers(),
+            } as Response;
+          }
+          // Second batch succeeds
+          return { ok: true, status: 200 } as Response;
+        });
 
       await plugin.flush();
 
@@ -838,9 +855,25 @@ describe('SegmentDestination', () => {
       const { plugin } = createTestWith({
         events,
         settings: {
+          integrations: {
+            [SEGMENT_DESTINATION_KEY]: {},
+          },
           httpConfig: {
-            rateLimitConfig: { enabled: false },
-            backoffConfig: { enabled: false },
+            rateLimitConfig: {
+              enabled: false,
+              maxRetryCount: 0,
+              maxRetryInterval: 0,
+              maxTotalBackoffDuration: 0,
+            },
+            backoffConfig: {
+              enabled: false,
+              maxRetryCount: 0,
+              baseBackoffInterval: 0,
+              maxBackoffInterval: 0,
+              maxTotalBackoffDuration: 0,
+              jitterPercent: 0,
+              retryableStatusCodes: [],
+            },
           },
         },
       });

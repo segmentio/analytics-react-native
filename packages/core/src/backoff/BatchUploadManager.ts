@@ -1,6 +1,11 @@
 import { createStore } from '@segment/sovran-react-native';
-import type { Persistor } from '@segment/sovran-react-native';
-import type { BatchMetadata, BackoffConfig, SegmentEvent, LoggerType } from '../types';
+import type { Store, Persistor } from '@segment/sovran-react-native';
+import type {
+  BatchMetadata,
+  BackoffConfig,
+  SegmentEvent,
+  LoggerType,
+} from '../types';
 import { getUUID } from '../uuid';
 
 type BatchMetadataStore = {
@@ -8,27 +13,30 @@ type BatchMetadataStore = {
 };
 
 export class BatchUploadManager {
-  private store: any;
+  private store: Store<BatchMetadataStore>;
   private config: BackoffConfig;
   private logger?: LoggerType;
 
   constructor(
     storeId: string,
-    persistor: Persistor,
+    persistor: Persistor | undefined,
     config: BackoffConfig,
     logger?: LoggerType
   ) {
     this.config = config;
     this.logger = logger;
 
+    // If persistor is provided, use persistent store; otherwise use in-memory store
     this.store = createStore<BatchMetadataStore>(
       { batches: {} },
-      {
-        persist: {
-          storeId: `${storeId}-batchMetadata`,
-          persistor,
-        },
-      }
+      persistor
+        ? {
+            persist: {
+              storeId: `${storeId}-batchMetadata`,
+              persistor,
+            },
+          }
+        : undefined
     );
   }
 
@@ -69,7 +77,7 @@ export class BatchUploadManager {
 
     const state = await this.store.getState();
     const metadata = state.batches[batchId];
-    if (!metadata) return;
+    if (metadata === undefined) return;
 
     const now = Date.now();
     const totalBackoffDuration = (now - metadata.firstFailureTime) / 1000;
@@ -123,7 +131,7 @@ export class BatchUploadManager {
 
     const state = await this.store.getState();
     const metadata = state.batches[batchId];
-    if (!metadata) return false;
+    if (metadata === undefined) return false;
 
     return Date.now() >= metadata.nextRetryTime;
   }
@@ -164,7 +172,8 @@ export class BatchUploadManager {
    * Formula: min(baseBackoffInterval * 2^retryCount, maxBackoffInterval) + jitter
    */
   private calculateBackoff(retryCount: number): number {
-    const { baseBackoffInterval, maxBackoffInterval, jitterPercent } = this.config;
+    const { baseBackoffInterval, maxBackoffInterval, jitterPercent } =
+      this.config;
 
     // Exponential backoff
     const backoff = Math.min(

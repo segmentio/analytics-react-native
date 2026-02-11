@@ -5,6 +5,7 @@ This guide helps you manually test the TAPI backoff and rate limiting implementa
 ## Overview
 
 This test project allows you to validate:
+
 - Real 429 responses from TAPI with Retry-After headers
 - Exponential backoff behavior under production conditions
 - State persistence across app restarts
@@ -59,12 +60,14 @@ npm run android
 **Purpose:** Verify events upload successfully under normal conditions.
 
 **Steps:**
+
 1. Launch the app
 2. Tap "Track Event" 5 times
 3. Tap "Flush"
 4. Check Segment debugger - should see 5 events + lifecycle events
 
 **Expected Result:**
+
 - ✅ Events appear in Segment debugger
 - ✅ Console shows "Batch uploaded successfully"
 - ✅ No errors
@@ -76,17 +79,20 @@ npm run android
 **Purpose:** Trigger a 429 response from TAPI and verify rate limiting behavior.
 
 **Steps:**
+
 1. Tap "Spam Events" button (sends 100 events rapidly)
 2. Tap "Flush Multiple Times" (attempts multiple flushes)
 3. Watch console logs
 
 **Expected Result:**
+
 - ✅ Console shows "Rate limited (429): retry after Xs"
 - ✅ Console shows "Upload blocked: rate limited, retry in Xs"
 - ✅ Subsequent flush attempts are blocked
 - ✅ After wait time, uploads resume
 
 **Console Output to Look For:**
+
 ```
 [INFO] Rate limited (429): waiting 60s before retry 1/100
 [INFO] Upload blocked: rate limited, retry in 45s (retry 1/100)
@@ -101,6 +107,7 @@ npm run android
 **Purpose:** Verify rate limit state persists when app restarts.
 
 **Steps:**
+
 1. Trigger rate limiting (see Test 2)
 2. **Immediately** close the app (don't wait for retry time)
 3. Reopen the app
@@ -108,6 +115,7 @@ npm run android
 5. Watch console
 
 **Expected Result:**
+
 - ✅ Upload is still blocked (state persisted)
 - ✅ Console shows "Upload blocked: rate limited"
 - ✅ After original wait time expires, uploads work again
@@ -119,12 +127,14 @@ npm run android
 **Purpose:** Verify batches are processed sequentially when rate limited.
 
 **Steps:**
+
 1. Configure small batch size (tap "Set Small Batch Size")
 2. Track 50 events
 3. Trigger rate limiting
 4. Watch network logs
 
 **Expected Result:**
+
 - ✅ Only 1 network request is made before halting
 - ✅ Remaining batches are not sent
 - ✅ Console shows halt after first 429
@@ -138,10 +148,12 @@ npm run android
 **Note:** This is difficult to trigger with real TAPI unless there's an outage. Best tested with E2E tests.
 
 **Steps:**
+
 1. If you encounter 5xx errors during testing, watch the console
 2. Look for retry scheduling with increasing delays
 
 **Expected Result:**
+
 - ✅ Console shows "Batch X: retry 1/100 scheduled in 0.5s"
 - ✅ Console shows "Batch X: retry 2/100 scheduled in 1.Xs" (exponentially increasing)
 - ✅ Other batches continue processing (not halted)
@@ -153,16 +165,19 @@ npm run android
 **Purpose:** Verify Authorization and X-Retry-Count headers are sent.
 
 **Steps:**
+
 1. Enable network debugging (Charles Proxy, Proxyman, or similar)
 2. Track an event and flush
 3. Inspect the network request to `api.segment.io/v1/b`
 
 **Expected Result:**
+
 - ✅ Header: `Authorization: Basic <base64 encoded writeKey>`
 - ✅ Header: `X-Retry-Count: 0` (for first attempt)
 - ✅ Header: `X-Retry-Count: 1` (for retries)
 
 **How to Decode Authorization Header:**
+
 ```bash
 # Should equal your writeKey followed by colon
 echo "<base64_string>" | base64 -d
@@ -176,7 +191,9 @@ echo "<base64_string>" | base64 -d
 **Purpose:** Test that disabling httpConfig reverts to legacy behavior.
 
 **Steps:**
+
 1. In Segment workspace settings, configure httpConfig:
+
 ```json
 {
   "httpConfig": {
@@ -185,11 +202,13 @@ echo "<base64_string>" | base64 -d
   }
 }
 ```
+
 2. Restart app to fetch new settings
 3. Trigger rate limiting
 4. Attempt another flush immediately
 
 **Expected Result:**
+
 - ✅ No upload blocking occurs
 - ✅ All batches are attempted on every flush
 - ✅ No backoff delays
@@ -201,6 +220,7 @@ echo "<base64_string>" | base64 -d
 ### Console Logs to Watch
 
 **Rate Limiting:**
+
 ```
 [INFO] Rate limited (429): waiting 60s before retry 1/100
 [INFO] Upload blocked: rate limited, retry in 45s (retry 1/100)
@@ -208,17 +228,20 @@ echo "<base64_string>" | base64 -d
 ```
 
 **Batch Retries:**
+
 ```
 [INFO] Batch abc-123: retry 1/100 scheduled in 0.5s (status 500)
 [WARN] Batch abc-123: max retry count exceeded (100), dropping batch
 ```
 
 **Success:**
+
 ```
 [INFO] Batch uploaded successfully (20 events)
 ```
 
 **Permanent Errors:**
+
 ```
 [WARN] Permanent error (400): dropping batch (20 events)
 ```
@@ -226,6 +249,7 @@ echo "<base64_string>" | base64 -d
 ### Segment Debugger
 
 Check your Segment debugger to verify:
+
 - Events are being received
 - No unexpected gaps in event delivery
 - Event ordering is preserved
@@ -233,6 +257,7 @@ Check your Segment debugger to verify:
 ### AsyncStorage Inspection
 
 **iOS:**
+
 ```bash
 # Using Xcode
 # Debug > Open System Log
@@ -240,6 +265,7 @@ Check your Segment debugger to verify:
 ```
 
 **Android:**
+
 ```bash
 adb shell
 run-as com.your.package.name
@@ -277,6 +303,7 @@ Use this checklist to track your testing progress:
 **Cause:** App not fully closing or persistor not configured.
 
 **Solution:**
+
 - Ensure you're force-closing the app (not just backgrounding)
 - Check that `storePersistor` is configured in client setup
 - Verify AsyncStorage is working
@@ -300,6 +327,7 @@ npx react-native log-android
 **Cause:** HTTPS encryption.
 
 **Solution:**
+
 - Use a proxy tool (Charles, Proxyman) with SSL certificate installed
 - Or add console.log in the uploadEvents function temporarily
 
@@ -310,6 +338,7 @@ npx react-native log-android
 ### Testing Max Retry Count
 
 1. Modify `defaultHttpConfig` in your test app:
+
 ```typescript
 httpConfig: {
   rateLimitConfig: {
@@ -327,6 +356,7 @@ httpConfig: {
 ### Testing Max Total Backoff Duration
 
 1. Modify config to use short duration:
+
 ```typescript
 httpConfig: {
   rateLimitConfig: {
@@ -357,6 +387,7 @@ If you encounter unexpected behavior, please report with:
 6. **Segment debugger screenshots**
 
 Include logs like:
+
 ```
 [INFO] Upload blocked: rate limited, retry in 45s (retry 1/100)
 [WARN] Max retry count exceeded (3), resetting rate limiter
@@ -368,6 +399,7 @@ Include logs like:
 ## Next Steps
 
 After manual validation:
+
 1. Document any issues found
 2. Verify metrics in production (429 rate, retry count, drop rate)
 3. Tune configuration parameters based on real-world data

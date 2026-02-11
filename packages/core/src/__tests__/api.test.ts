@@ -153,7 +153,7 @@ describe('#sendEvents', () => {
       'https://api.segment.io/v1/b',
       expect.objectContaining({
         headers: expect.objectContaining({
-          'Authorization': expectedAuthHeader,
+          Authorization: expectedAuthHeader,
         }),
       })
     );

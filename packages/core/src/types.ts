@@ -341,17 +341,17 @@ export type HttpConfig = {
 export type RateLimitConfig = {
   enabled: boolean;
   maxRetryCount: number;
-  maxRetryInterval: number;        // seconds
-  maxTotalBackoffDuration: number;  // seconds
+  maxRetryInterval: number; // seconds
+  maxTotalBackoffDuration: number; // seconds
 };
 
 export type BackoffConfig = {
   enabled: boolean;
   maxRetryCount: number;
-  baseBackoffInterval: number;      // seconds
-  maxBackoffInterval: number;       // seconds
-  maxTotalBackoffDuration: number;  // seconds
-  jitterPercent: number;            // 0-100
+  baseBackoffInterval: number; // seconds
+  maxBackoffInterval: number; // seconds
+  maxTotalBackoffDuration: number; // seconds
+  jitterPercent: number; // 0-100
   retryableStatusCodes: number[];
 };
 
@@ -418,7 +418,7 @@ export type EnrichmentClosure = (event: SegmentEvent) => SegmentEvent;
 // State machine persistence
 export type UploadStateData = {
   state: 'READY' | 'WAITING';
-  waitUntilTime: number;          // timestamp ms
+  waitUntilTime: number; // timestamp ms
   globalRetryCount: number;
   firstFailureTime: number | null; // timestamp ms
 };
@@ -426,10 +426,10 @@ export type UploadStateData = {
 // Per-batch retry metadata
 export type BatchMetadata = {
   batchId: string;
-  events: SegmentEvent[];         // Store events to match batches
+  events: SegmentEvent[]; // Store events to match batches
   retryCount: number;
-  nextRetryTime: number;          // timestamp ms
-  firstFailureTime: number;       // timestamp ms
+  nextRetryTime: number; // timestamp ms
+  firstFailureTime: number; // timestamp ms
 };
 
 // Error classification result

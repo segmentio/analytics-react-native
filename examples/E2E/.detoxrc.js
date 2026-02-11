@@ -88,7 +88,7 @@ module.exports = {
       setupTimeout: 240000,
     },
     detached: !!process.env.CI,
-    retries: 3,
+    retries: 1,
   },
   behavior: {
     init: {

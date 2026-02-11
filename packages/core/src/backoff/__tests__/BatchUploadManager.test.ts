@@ -1,8 +1,21 @@
 import { BatchUploadManager } from '../BatchUploadManager';
 import type { Persistor } from '@segment/sovran-react-native';
-import type { BackoffConfig, SegmentEvent } from '../../types';
+import type { BackoffConfig, SegmentEvent, BatchMetadata } from '../../types';
 import { getMockLogger } from '../../test-helpers';
 import { EventType } from '../../types';
+
+// Type definitions for mock store
+type BatchMetadataStore = {
+  batches: Record<string, BatchMetadata>;
+};
+
+type BatchAction =
+  | { type: 'ADD_BATCH'; payload: { batchId: string; metadata: BatchMetadata } }
+  | {
+      type: 'UPDATE_BATCH';
+      payload: { batchId: string; metadata: BatchMetadata };
+    }
+  | { type: 'REMOVE_BATCH'; payload: { batchId: string } };
 
 // Mock uuid to return unique IDs
 jest.mock('../../uuid', () => {
@@ -17,35 +30,37 @@ jest.mock('@segment/sovran-react-native', () => {
   const actualModule = jest.requireActual('@segment/sovran-react-native');
   return {
     ...actualModule,
-    createStore: jest.fn((initialState: any) => {
-      let state = initialState;
+    createStore: jest.fn((initialState: unknown) => {
+      let state = initialState as BatchMetadataStore;
       return {
         getState: jest.fn(() => Promise.resolve(state)),
-        dispatch: jest.fn((action: any) => {
+        dispatch: jest.fn((action: unknown) => {
           // Handle functional dispatch - update synchronously for tests
           if (typeof action === 'function') {
             state = action(state);
           } else {
-            // Handle action object dispatch (legacy support)
-            if (action.type === 'ADD_BATCH') {
+            // Handle action object dispatch with proper typing
+            const typedAction = action as BatchAction;
+            if (typedAction.type === 'ADD_BATCH') {
               state = {
                 ...state,
                 batches: {
                   ...state.batches,
-                  [action.payload.batchId]: action.payload.metadata,
+                  [typedAction.payload.batchId]: typedAction.payload.metadata,
                 },
               };
-            } else if (action.type === 'UPDATE_BATCH') {
+            } else if (typedAction.type === 'UPDATE_BATCH') {
               state = {
                 ...state,
                 batches: {
                   ...state.batches,
-                  [action.payload.batchId]: action.payload.metadata,
+                  [typedAction.payload.batchId]: typedAction.payload.metadata,
                 },
               };
-            } else if (action.type === 'REMOVE_BATCH') {
-              const { [action.payload.batchId]: removed, ...rest } = state.batches;
-              state = { ...state, batches: rest };
+            } else if (typedAction.type === 'REMOVE_BATCH') {
+              const batches = { ...state.batches };
+              delete batches[typedAction.payload.batchId];
+              state = { ...state, batches };
             }
           }
           // Return resolved promise synchronously
@@ -506,7 +521,8 @@ describe('BatchUploadManager', () => {
         await manager.handleRetry(batchId, 500);
 
         // Check the logged backoff time matches expected
-        const logCall = (mockLogger.info as jest.Mock).mock.calls[0][0] as string;
+        const logCall = (mockLogger.info as jest.Mock).mock
+          .calls[0][0] as string;
         const match = logCall.match(/scheduled in ([\d.]+)s/);
         if (match) {
           const loggedTime = parseFloat(match[1]);
@@ -539,7 +555,9 @@ describe('BatchUploadManager', () => {
 
       // Last retry should have capped backoff
       const infoMock = mockLogger.info as jest.Mock;
-      const lastLog = (infoMock.mock.calls[infoMock.mock.calls.length - 1][0] as string);
+      const lastLog = infoMock.mock.calls[
+        infoMock.mock.calls.length - 1
+      ][0] as string;
       const match = lastLog.match(/scheduled in ([\d.]+)s/);
       if (match) {
         const loggedTime = parseFloat(match[1]);
