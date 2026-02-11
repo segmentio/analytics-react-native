@@ -62,8 +62,10 @@ export class QueueFlushingPlugin extends UtilityPlugin {
   }
 
   async execute(event: SegmentEvent): Promise<SegmentEvent | undefined> {
+    console.log(`[QueueFlushingPlugin] execute: adding event ${event.type} to queue`);
     await this.queueStore?.dispatch((state) => {
       const events = [...state.events, event];
+      console.log(`[QueueFlushingPlugin] Queue now has ${events.length} events`);
       return { events };
     });
     return event;
@@ -73,9 +75,12 @@ export class QueueFlushingPlugin extends UtilityPlugin {
    * Calls the onFlush callback with the events in the queue
    */
   async flush() {
+    console.log('[QueueFlushingPlugin] flush() called');
     // Wait for the queue to be restored
     try {
+      console.log('[QueueFlushingPlugin] Waiting for queue restoration...');
       await this.isRestored;
+      console.log('[QueueFlushingPlugin] Queue restored');
 
       if (this.timeoutWarned === true) {
         this.analytics?.logger.info('Flush triggered successfully.');
@@ -103,13 +108,18 @@ export class QueueFlushingPlugin extends UtilityPlugin {
     }
 
     const events = (await this.queueStore?.getState(true))?.events ?? [];
+    console.log(`[QueueFlushingPlugin] Retrieved ${events.length} events from queue, isPendingUpload=${this.isPendingUpload}`);
     if (!this.isPendingUpload) {
       try {
         this.isPendingUpload = true;
+        console.log(`[QueueFlushingPlugin] Calling onFlush with ${events.length} events`);
         await this.onFlush(events);
+        console.log('[QueueFlushingPlugin] onFlush completed');
       } finally {
         this.isPendingUpload = false;
       }
+    } else {
+      console.log('[QueueFlushingPlugin] Upload already pending, skipping');
     }
   }
 

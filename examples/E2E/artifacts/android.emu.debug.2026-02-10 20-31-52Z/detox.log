@@ -1,0 +1,1806 @@
+14:31:52.708 detox[54226] B node_modules/detox/local-cli/cli.js test e2e/main.e2e.js --configuration android.emu.debug --take-screenshots=failing --record-logs=failing --headless
+  data: {
+    "id": "bd0e0294-5294-1f16-7a38-c1479aea9562",
+    "detoxConfig": {
+      "configurationName": "android.emu.debug",
+      "apps": {
+        "default": {
+          "type": "android.apk",
+          "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
+          "build": "cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug",
+          "reversePorts": [
+            8081
+          ]
+        }
+      },
+      "artifacts": {
+        "rootDir": "artifacts/android.emu.debug.2026-02-10 20-31-52Z",
+        "plugins": {
+          "log": {
+            "enabled": true,
+            "keepOnlyFailedTestsArtifacts": true
+          },
+          "screenshot": {
+            "enabled": true,
+            "shouldTakeAutomaticSnapshots": true,
+            "keepOnlyFailedTestsArtifacts": true
+          },
+          "video": {
+            "enabled": false,
+            "keepOnlyFailedTestsArtifacts": false
+          },
+          "instruments": {
+            "enabled": false,
+            "keepOnlyFailedTestsArtifacts": false
+          },
+          "uiHierarchy": {
+            "enabled": false,
+            "keepOnlyFailedTestsArtifacts": false
+          }
+        }
+      },
+      "behavior": {
+        "init": {
+          "keepLockFile": false,
+          "reinstallApp": true,
+          "exposeGlobals": false
+        },
+        "cleanup": {
+          "shutdownDevice": false
+        },
+        "launchApp": "auto"
+      },
+      "cli": {
+        "recordLogs": "failing",
+        "takeScreenshots": "failing",
+        "configuration": "android.emu.debug",
+        "headless": true,
+        "start": true
+      },
+      "device": {
+        "type": "android.emulator",
+        "device": {
+          "avdName": "medium_phone_API33_arm64_v8a"
+        },
+        "headless": true
+      },
+      "logger": {
+        "level": "info",
+        "overrideConsole": true,
+        "options": {
+          "showLoggerName": true,
+          "showPid": true,
+          "showLevel": false,
+          "showMetadata": false,
+          "basepath": "/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/detox/src",
+          "prefixers": {},
+          "stringifiers": {}
+        }
+      },
+      "testRunner": {
+        "retries": 2,
+        "forwardEnv": false,
+        "detached": false,
+        "bail": false,
+        "jest": {
+          "setupTimeout": 240000,
+          "teardownTimeout": 30000,
+          "retryAfterCircusRetries": false,
+          "reportWorkerAssign": true
+        },
+        "args": {
+          "$0": "jest",
+          "_": [
+            "e2e/main.e2e.js"
+          ],
+          "config": "e2e/jest.config.js",
+          "--": []
+        }
+      },
+      "session": {
+        "autoStart": true,
+        "debugSynchronization": 10000
+      }
+    },
+    "detoxIPCServer": "primary-54226",
+    "testResults": [],
+    "testSessionIndex": 0,
+    "workersCount": 0
+  }
+14:31:52.712 detox[54226] i Server path not specified, so defaulting to ipc.config.socketRoot + ipc.config.appspace + ipc.config.id /tmp/detox.primary-54226
+14:31:52.713 detox[54226] i starting server on  /tmp/detox.primary-54226 
+14:31:52.713 detox[54226] i starting TLS server false
+14:31:52.713 detox[54226] i starting server as Unix || Windows Socket
+14:31:52.715 detox[54226] i Detox server listening on localhost:62371...
+14:31:52.716 detox[54226] i Serialized the session state at: /private/var/folders/4k/82wjl0fd5zvgtwh3hbcrh3rm0000gn/T/bd0e0294-5294-1f16-7a38-c1479aea9562.detox.json
+14:31:52.717 detox[54226] B jest --config e2e/jest.config.js e2e/main.e2e.js
+14:31:52.718 detox[54226] i (node:54226) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+14:31:53.227 detox[54231] i Service path not specified, so defaulting to ipc.config.socketRoot + ipc.config.appspace + id 
+14:31:53.228 detox[54231] i requested connection to  primary-54226 /tmp/detox.primary-54226
+14:31:53.228 detox[54231] i Connecting client on Unix Socket : /tmp/detox.primary-54226
+14:31:53.229 detox[54226] i ## socket connection to server detected ##
+14:31:53.229 detox[54231] i retrying reset
+14:31:53.229 detox[54231] i dispatching event to  primary-54226 /tmp/detox.primary-54226  :  registerContext , { id: 'secondary-54231' }
+14:31:53.230 detox[54226] i received event of :  registerContext { id: 'secondary-54231' }
+14:31:53.230 detox[54226] i dispatching event to socket  :  registerContextDone {
+  testResults: [],
+  testSessionIndex: 0,
+  unsafe_earlyTeardown: undefined
+}
+14:31:53.230 detox[54231] i ## received events ##
+14:31:53.230 detox[54231] i detected event registerContextDone { testResults: [], testSessionIndex: 0 }
+14:31:53.278 detox[54231] B e2e/main.e2e.js
+14:31:53.287 detox[54226] i received event of :  registerWorker { workerId: 'w1' }
+14:31:53.287 detox[54231] B set up environment
+14:31:53.287 detox[54231] i dispatching event to  primary-54226 /tmp/detox.primary-54226  :  registerWorker , { workerId: 'w1' }
+14:31:53.288 detox[54226] i dispatching event to socket  :  registerWorkerDone { workersCount: 1 }
+14:31:53.288 detox[54226] i broadcasting event to all known sockets listening to  /tmp/detox.primary-54226  :   sessionStateUpdate { workersCount: 1 }
+14:31:53.288 detox[54231] i ## received events ##
+14:31:53.288 detox[54231] i detected event registerWorkerDone { workersCount: 1 }
+14:31:53.355 detox[54231] i ## received events ##
+14:31:53.355 detox[54231] i detected event sessionStateUpdate { workersCount: 1 }
+14:31:53.358 detox[54226] B connection :62371<->:62378
+14:31:53.358 detox[54231] i opened web socket to: ws://localhost:62371
+14:31:53.359 detox[54231] i send message
+  data: {"type":"login","params":{"sessionId":"ee32f020-0bf3-4252-fecd-1977aa6b121e","role":"tester"},"messageId":0}
+14:31:53.360 detox[54226] i get
+  data: {"type":"login","params":{"sessionId":"ee32f020-0bf3-4252-fecd-1977aa6b121e","role":"tester"},"messageId":0}
+14:31:53.360 detox[54226] i created session ee32f020-0bf3-4252-fecd-1977aa6b121e
+14:31:53.360 detox[54226] i send
+  data: {
+    "type": "loginSuccess",
+    "params": {
+      "testerConnected": true,
+      "appConnected": false
+    },
+    "messageId": 0
+  }
+14:31:53.360 detox[54226] i tester joined session ee32f020-0bf3-4252-fecd-1977aa6b121e
+14:31:53.361 detox[54231] i get message
+  data: {"type":"loginSuccess","params":{"testerConnected":true,"appConnected":false},"messageId":0}
+   
+14:31:53.398 detox[54226] i received event of :  allocateDevice {
+  deviceConfig: {
+    type: 'android.emulator',
+    device: { avdName: 'medium_phone_API33_arm64_v8a' },
+    headless: true
+  }
+}
+14:31:53.398 detox[54231] i dispatching event to  primary-54226 /tmp/detox.primary-54226  :  allocateDevice , {
+  deviceConfig: {
+    type: 'android.emulator',
+    device: { avdName: 'medium_phone_API33_arm64_v8a' },
+    headless: true
+  }
+}
+14:31:53.415 detox[54226] B init
+  args: ()
+14:31:53.416 detox[54226] E init
+14:31:53.416 detox[54226] B allocate
+  data: {
+    "type": "android.emulator",
+    "device": {
+      "avdName": "medium_phone_API33_arm64_v8a"
+    },
+    "headless": true
+  }
+14:31:53.416 detox[54226] i "/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator" -list-avds --verbose
+14:31:53.462 detox[54226] i medium_phone_API33_arm64_v8a
+pixel_API21_arm64_v8a
+
+14:31:53.462 detox[54226] i "/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator" -version -no-window
+14:31:54.093 detox[54226] i Android emulator version 36.3.10.0 (build_id 14472402) (CL:N/A)
+Copyright (C) 2006-2024 The Android Open Source Project and many others.
+This program is a derivative of the QEMU CPU emulator (www.qemu.org).
+
+  This software is licensed under the terms of the GNU General Public
+  License version 2, as published by the Free Software Foundation, and
+  may be copied, distributed, and modified under those terms.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+
+14:31:54.094 detox[54226] i Detected emulator binary version { major: 36, minor: 3, patch: 10, toString: [Function: toString] }
+14:31:54.094 detox[54226] i "/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/platform-tools/adb"  devices
+14:31:54.116 detox[54226] i List of devices attached
+emulator-5554	device
+
+
+14:31:54.117 detox[54226] i Device emulator-5554 is already taken, skipping...
+14:31:54.117 detox[54226] i /nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a
+14:31:54.118 detox[54226] i "/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/platform-tools/adb" -s emulator-13576 wait-for-device
+14:31:57.429 detox[54226] i `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a` failed with code 1
+  error: true
+14:31:57.429 detox[54226] i INFO         | Android emulator version 36.3.10.0 (build_id 14472402) (CL:N/A)
+INFO         | Graphics backend: gfxstream
+DEBUG   | Current emulator version 36.3.10 is the same as the required version 36.3.10.
+INFO         | Deleting /Users/abueide/.android/avd/../avd/medium_phone_API33_arm64_v8a.avd/bootcompleted.ini done
+INFO         | Found AVD name 'medium_phone_API33_arm64_v8a'
+INFO         | Found AVD target architecture: arm64
+INFO         | argv[0]: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator'; program directory: '/nix/store/6f52kdxs5yfrp315y5csxh29mg8q2zaw-android-sdk-emulator-36.3.10/libexec/android-sdk/emulator'
+INFO         | Found systemPath /nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/system-images/android-33/google_apis/arm64-v8a/
+DEBUG   | autoconfig: -skin 1080x2400
+DEBUG   | autoconfig: -skindir (null)
+DEBUG   | init, loading /nix/store/6f52kdxs5yfrp315y5csxh29mg8q2zaw-android-sdk-emulator-36.3.10/libexec/android-sdk/emulator/lib/advancedFeatures.ini
+DEBUG   | autoconfig: -kernel /nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/system-images/android-33/google_apis/arm64-v8a//kernel-ranchu
+DEBUG   | Target arch = 'arm64'
+DEBUG   | Auto-detect: Kernel image requires new device naming scheme.
+DEBUG   | Auto-detect: Kernel does not support YAFFS2 partitions.
+DEBUG   | autoconfig: -ramdisk /nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/system-images/android-33/google_apis/arm64-v8a//ramdisk.img
+DEBUG   | Using initial system image: /nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/system-images/android-33/google_apis/arm64-v8a//system.img
+DEBUG   | Using initial vendor image: /nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/system-images/android-33/google_apis/arm64-v8a//vendor.img
+DEBUG   | autoconfig: -data /Users/abueide/.android/avd/../avd/medium_phone_API33_arm64_v8a.avd/userdata-qemu.img
+DEBUG   | autoconfig: -initdata /Users/abueide/.android/avd/../avd/medium_phone_API33_arm64_v8a.avd/userdata.img
+DEBUG   | autoconfig: -cache /Users/abueide/.android/avd/../avd/medium_phone_API33_arm64_v8a.avd/cache.img
+DEBUG   | INFO: ignore sdcard for arm at api level >= 30
+INFO         | Increasing RAM size to 2048MB
+DEBUG   | VM heap size 0MB is below hardware specified minimum of 512MB,setting it to that value
+DEBUG   | System image is read only
+DEBUG   | Found 3 DNS servers:
+DEBUG   | 	100.64.0.1
+DEBUG   | 	100.64.0.2
+DEBUG   | 	100.64.0.3
+INFO         | Guest GLES Driver: Auto (ext controls)
+DEBUG   | emuglConfig_init: denylisted=0 has_guest_renderer=0, mode: auto, option: host
+
+library_mode host gpu mode host
+DEBUG   | setCurrentRenderer: host Host
+DEBUG   | emuglConfig_init: GPU emulation enabled using 'host' mode
+
+DEBUG   | GPU emulation enabled using 'host' mode
+INFO         | Checking system compatibility:
+INFO         |   Checking: hasSufficientDiskSpace
+INFO         |      Ok: Disk space requirements to run avd: `medium_phone_API33_arm64_v8a` are met
+INFO         |   Checking: hasSufficientHwGpu
+INFO         |      Ok: Hardware GPU requirements to run avd: `medium_phone_API33_arm64_v8a` are passed
+INFO         |   Checking: hasSufficientSystem
+INFO         |      Ok: System requirements to run avd: `medium_phone_API33_arm64_v8a` are met
+DEBUG   | Starting hostapd main loop.
+WARNING      | Another emulator is still running, wait for a sec...
+WARNING      | Another emulator is still running, wait for a sec...
+WARNING      | Another emulator is still running, wait for a sec...
+ERROR        | Another emulator instance is running. Please close it or run all emulators with -read-only flag.
+
+
+14:31:57.430 detox[54226] E allocate
+  error: ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a` failed with code 1
+      at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)
+      at ChildProcess.emit (node:events:508:28)
+      at maybeClose (node:internal/child_process:1101:16)
+      at ChildProcess._handle.onexit (node:internal/child_process:305:5)
+14:31:57.430 detox[54226] i dispatching event to socket  :  allocateDeviceDone {
+  error: {
+    name: 'ChildProcessError',
+    code: 1,
+    childProcess: {
+      _events: {},
+      _eventsCount: 2,
+      _maxListeners: undefined,
+      _closesNeeded: 1,
+      _closesGot: 1,
+      connected: false,
+      signalCode: null,
+      exitCode: 1,
+      killed: false,
+      spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+      _handle: null,
+      spawnargs: [
+        '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+        '-verbose',
+        '-no-audio',
+        '-no-boot-anim',
+        '-no-window',
+        '-read-only',
+        '-gpu',
+        'host',
+        '-port',
+        '13576',
+        '@medium_phone_API33_arm64_v8a'
+      ],
+      pid: 54265,
+      stdin: null,
+      stdout: null,
+      stderr: null,
+      stdio: [ null, null, null ]
+    },
+    stdout: undefined,
+    stderr: undefined,
+    message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a` failed with code 1',
+    stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+      '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+      '    at ChildProcess.emit (node:events:508:28)\n' +
+      '    at maybeClose (node:internal/child_process:1101:16)\n' +
+      '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+  }
+}
+14:31:57.430 detox[54231] i ## received events ##
+14:31:57.431 detox[54231] i detected event allocateDeviceDone {
+  error: {
+    name: 'ChildProcessError',
+    code: 1,
+    childProcess: {
+      _events: {},
+      _eventsCount: 2,
+      _closesNeeded: 1,
+      _closesGot: 1,
+      connected: false,
+      signalCode: null,
+      exitCode: 1,
+      killed: false,
+      spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+      _handle: null,
+      spawnargs: [
+        '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+        '-verbose',
+        '-no-audio',
+        '-no-boot-anim',
+        '-no-window',
+        '-read-only',
+        '-gpu',
+        'host',
+        '-port',
+        '13576',
+        '@medium_phone_API33_arm64_v8a'
+      ],
+      pid: 54265,
+      stdin: null,
+      stdout: null,
+      stderr: null,
+      stdio: [ null, null, null ]
+    },
+    message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a` failed with code 1',
+    stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+      '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+      '    at ChildProcess.emit (node:events:508:28)\n' +
+      '    at maybeClose (node:internal/child_process:1101:16)\n' +
+      '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+  }
+}
+14:31:57.431 detox[54231] E set up environment
+  error: ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a` failed with code 1
+      at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)
+      at ChildProcess.emit (node:events:508:28)
+      at maybeClose (node:internal/child_process:1101:16)
+      at ChildProcess._handle.onexit (node:internal/child_process:305:5)
+14:31:57.431 detox[54231] B tear down environment
+14:31:57.431 detox[54231] B onBeforeCleanup
+  args: ()
+14:31:57.432 detox[54231] E onBeforeCleanup
+14:31:57.433 detox[54226] i tester exited session ee32f020-0bf3-4252-fecd-1977aa6b121e
+14:31:57.433 detox[54226] E connection :62371<->:62378
+14:31:57.433 detox[54231] E tear down environment
+14:31:57.433 detox[54231] E e2e/main.e2e.js
+14:31:57.441 detox[54226] i received event of :  reportTestResults {
+  testResults: [
+    {
+      success: false,
+      testFilePath: '/Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js',
+      testExecError: {
+        code: 1,
+        childProcess: {
+          _events: {},
+          _eventsCount: 2,
+          _closesNeeded: 1,
+          _closesGot: 1,
+          connected: false,
+          signalCode: null,
+          exitCode: 1,
+          killed: false,
+          spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+          _handle: null,
+          spawnargs: [
+            '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+            '-verbose',
+            '-no-audio',
+            '-no-boot-anim',
+            '-no-window',
+            '-read-only',
+            '-gpu',
+            'host',
+            '-port',
+            '13576',
+            '@medium_phone_API33_arm64_v8a'
+          ],
+          pid: 54265,
+          stdin: null,
+          stdout: null,
+          stderr: null,
+          stdio: [ null, null, null ]
+        },
+        name: 'ChildProcessError',
+        message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a` failed with code 1',
+        stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+          '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+          '    at ChildProcess.emit (node:events:508:28)\n' +
+          '    at maybeClose (node:internal/child_process:1101:16)\n' +
+          '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+      },
+      isPermanentFailure: false
+    }
+  ]
+}
+14:31:57.441 detox[54226] i dispatching event to socket  :  reportTestResultsDone {
+  testResults: [
+    {
+      success: false,
+      testFilePath: '/Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js',
+      testExecError: {
+        code: 1,
+        childProcess: {
+          _events: {},
+          _eventsCount: 2,
+          _closesNeeded: 1,
+          _closesGot: 1,
+          connected: false,
+          signalCode: null,
+          exitCode: 1,
+          killed: false,
+          spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+          _handle: null,
+          spawnargs: [
+            '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+            '-verbose',
+            '-no-audio',
+            '-no-boot-anim',
+            '-no-window',
+            '-read-only',
+            '-gpu',
+            'host',
+            '-port',
+            '13576',
+            '@medium_phone_API33_arm64_v8a'
+          ],
+          pid: 54265,
+          stdin: null,
+          stdout: null,
+          stderr: null,
+          stdio: [ null, null, null ]
+        },
+        name: 'ChildProcessError',
+        message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a` failed with code 1',
+        stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+          '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+          '    at ChildProcess.emit (node:events:508:28)\n' +
+          '    at maybeClose (node:internal/child_process:1101:16)\n' +
+          '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+      },
+      isPermanentFailure: false
+    }
+  ]
+}
+14:31:57.441 detox[54226] i broadcasting event to all known sockets listening to  /tmp/detox.primary-54226  :   sessionStateUpdate {
+  testResults: [
+    {
+      success: false,
+      testFilePath: '/Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js',
+      testExecError: {
+        code: 1,
+        childProcess: {
+          _events: {},
+          _eventsCount: 2,
+          _closesNeeded: 1,
+          _closesGot: 1,
+          connected: false,
+          signalCode: null,
+          exitCode: 1,
+          killed: false,
+          spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+          _handle: null,
+          spawnargs: [
+            '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+            '-verbose',
+            '-no-audio',
+            '-no-boot-anim',
+            '-no-window',
+            '-read-only',
+            '-gpu',
+            'host',
+            '-port',
+            '13576',
+            '@medium_phone_API33_arm64_v8a'
+          ],
+          pid: 54265,
+          stdin: null,
+          stdout: null,
+          stderr: null,
+          stdio: [ null, null, null ]
+        },
+        name: 'ChildProcessError',
+        message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a` failed with code 1',
+        stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+          '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+          '    at ChildProcess.emit (node:events:508:28)\n' +
+          '    at maybeClose (node:internal/child_process:1101:16)\n' +
+          '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+      },
+      isPermanentFailure: false
+    }
+  ]
+}
+14:31:57.441 detox[54231] i dispatching event to  primary-54226 /tmp/detox.primary-54226  :  reportTestResults , {
+  testResults: [
+    {
+      success: false,
+      testFilePath: '/Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js',
+      testExecError: {
+        code: 1,
+        childProcess: {
+          _events: {},
+          _eventsCount: 2,
+          _closesNeeded: 1,
+          _closesGot: 1,
+          connected: false,
+          signalCode: null,
+          exitCode: 1,
+          killed: false,
+          spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+          _handle: null,
+          spawnargs: [
+            '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+            '-verbose',
+            '-no-audio',
+            '-no-boot-anim',
+            '-no-window',
+            '-read-only',
+            '-gpu',
+            'host',
+            '-port',
+            '13576',
+            '@medium_phone_API33_arm64_v8a'
+          ],
+          pid: 54265,
+          stdin: null,
+          stdout: null,
+          stderr: null,
+          stdio: [ null, null, null ]
+        },
+        name: 'ChildProcessError',
+        message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a` failed with code 1',
+        stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+          '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+          '    at ChildProcess.emit (node:events:508:28)\n' +
+          '    at maybeClose (node:internal/child_process:1101:16)\n' +
+          '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+      },
+      isPermanentFailure: false
+    }
+  ]
+}
+14:31:57.441 detox[54231] i ## received events ##
+14:31:57.441 detox[54231] i detected event reportTestResultsDone {
+  testResults: [
+    {
+      success: false,
+      testFilePath: '/Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js',
+      testExecError: {
+        code: 1,
+        childProcess: {
+          _events: {},
+          _eventsCount: 2,
+          _closesNeeded: 1,
+          _closesGot: 1,
+          connected: false,
+          signalCode: null,
+          exitCode: 1,
+          killed: false,
+          spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+          _handle: null,
+          spawnargs: [
+            '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+            '-verbose',
+            '-no-audio',
+            '-no-boot-anim',
+            '-no-window',
+            '-read-only',
+            '-gpu',
+            'host',
+            '-port',
+            '13576',
+            '@medium_phone_API33_arm64_v8a'
+          ],
+          pid: 54265,
+          stdin: null,
+          stdout: null,
+          stderr: null,
+          stdio: [ null, null, null ]
+        },
+        name: 'ChildProcessError',
+        message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a` failed with code 1',
+        stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+          '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+          '    at ChildProcess.emit (node:events:508:28)\n' +
+          '    at maybeClose (node:internal/child_process:1101:16)\n' +
+          '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+      },
+      isPermanentFailure: false
+    }
+  ]
+}
+14:31:57.442 detox[54226] i socket disconnected secondary-54231
+14:31:57.442 detox[54231] i connection closed primary-54226 /tmp/detox.primary-54226 0 tries remaining of 0
+14:31:57.442 detox[54231] i secondary-54231 exceeded connection rety amount of  or stopRetrying flag set.
+14:31:57.547 detox[54226] E Command failed with exit code = 1:
+jest --config e2e/jest.config.js e2e/main.e2e.js
+14:31:57.547 detox[54226] i There were failing tests in the following files:
+  1. e2e/main.e2e.js
+
+Detox CLI is going to restart the test runner with those files...
+
+14:31:57.547 detox[54226] B jest --config e2e/jest.config.js /Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js
+14:31:57.948 detox[54369] i Service path not specified, so defaulting to ipc.config.socketRoot + ipc.config.appspace + id 
+14:31:57.949 detox[54226] i ## socket connection to server detected ##
+14:31:57.949 detox[54369] i requested connection to  primary-54226 /tmp/detox.primary-54226
+14:31:57.949 detox[54369] i Connecting client on Unix Socket : /tmp/detox.primary-54226
+14:31:57.950 detox[54369] i retrying reset
+14:31:57.951 detox[54226] i received event of :  registerContext { id: 'secondary-54369' }
+14:31:57.951 detox[54226] i dispatching event to socket  :  registerContextDone {
+  testResults: [
+    {
+      success: false,
+      testFilePath: '/Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js',
+      testExecError: {
+        code: 1,
+        childProcess: {
+          _events: {},
+          _eventsCount: 2,
+          _closesNeeded: 1,
+          _closesGot: 1,
+          connected: false,
+          signalCode: null,
+          exitCode: 1,
+          killed: false,
+          spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+          _handle: null,
+          spawnargs: [
+            '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+            '-verbose',
+            '-no-audio',
+            '-no-boot-anim',
+            '-no-window',
+            '-read-only',
+            '-gpu',
+            'host',
+            '-port',
+            '13576',
+            '@medium_phone_API33_arm64_v8a'
+          ],
+          pid: 54265,
+          stdin: null,
+          stdout: null,
+          stderr: null,
+          stdio: [ null, null, null ]
+        },
+        name: 'ChildProcessError',
+        message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a` failed with code 1',
+        stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+          '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+          '    at ChildProcess.emit (node:events:508:28)\n' +
+          '    at maybeClose (node:internal/child_process:1101:16)\n' +
+          '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+      },
+      isPermanentFailure: false
+    }
+  ],
+  testSessionIndex: 1,
+  unsafe_earlyTeardown: undefined
+}
+14:31:57.951 detox[54369] i dispatching event to  primary-54226 /tmp/detox.primary-54226  :  registerContext , { id: 'secondary-54369' }
+14:31:57.951 detox[54369] i ## received events ##
+14:31:57.952 detox[54369] i detected event registerContextDone {
+  testResults: [
+    {
+      success: false,
+      testFilePath: '/Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js',
+      testExecError: {
+        code: 1,
+        childProcess: {
+          _events: {},
+          _eventsCount: 2,
+          _closesNeeded: 1,
+          _closesGot: 1,
+          connected: false,
+          signalCode: null,
+          exitCode: 1,
+          killed: false,
+          spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+          _handle: null,
+          spawnargs: [
+            '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+            '-verbose',
+            '-no-audio',
+            '-no-boot-anim',
+            '-no-window',
+            '-read-only',
+            '-gpu',
+            'host',
+            '-port',
+            '13576',
+            '@medium_phone_API33_arm64_v8a'
+          ],
+          pid: 54265,
+          stdin: null,
+          stdout: null,
+          stderr: null,
+          stdio: [ null, null, null ]
+        },
+        name: 'ChildProcessError',
+        message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a` failed with code 1',
+        stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 13576 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+          '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+          '    at ChildProcess.emit (node:events:508:28)\n' +
+          '    at maybeClose (node:internal/child_process:1101:16)\n' +
+          '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+      },
+      isPermanentFailure: false
+    }
+  ],
+  testSessionIndex: 1
+}
+14:31:57.985 detox[54369] B e2e/main.e2e.js
+14:31:57.992 detox[54226] i received event of :  registerWorker { workerId: 'w1' }
+14:31:57.992 detox[54226] i dispatching event to socket  :  registerWorkerDone { workersCount: 1 }
+14:31:57.992 detox[54369] B set up environment
+14:31:57.992 detox[54369] i dispatching event to  primary-54226 /tmp/detox.primary-54226  :  registerWorker , { workerId: 'w1' }
+14:31:57.993 detox[54369] i ## received events ##
+14:31:57.993 detox[54369] i detected event registerWorkerDone { workersCount: 1 }
+14:31:58.062 detox[54226] B connection :62371<->:62391
+14:31:58.063 detox[54369] i opened web socket to: ws://localhost:62371
+14:31:58.064 detox[54226] i get
+  data: {"type":"login","params":{"sessionId":"71b71a4d-e7e8-16b7-81bc-7a14ba6c7c1b","role":"tester"},"messageId":0}
+14:31:58.064 detox[54226] i created session 71b71a4d-e7e8-16b7-81bc-7a14ba6c7c1b
+14:31:58.064 detox[54226] i send
+  data: {
+    "type": "loginSuccess",
+    "params": {
+      "testerConnected": true,
+      "appConnected": false
+    },
+    "messageId": 0
+  }
+14:31:58.064 detox[54226] i tester joined session 71b71a4d-e7e8-16b7-81bc-7a14ba6c7c1b
+14:31:58.064 detox[54369] i send message
+  data: {"type":"login","params":{"sessionId":"71b71a4d-e7e8-16b7-81bc-7a14ba6c7c1b","role":"tester"},"messageId":0}
+14:31:58.065 detox[54369] i get message
+  data: {"type":"loginSuccess","params":{"testerConnected":true,"appConnected":false},"messageId":0}
+   
+14:31:58.083 detox[54226] i received event of :  allocateDevice {
+  deviceConfig: {
+    type: 'android.emulator',
+    device: { avdName: 'medium_phone_API33_arm64_v8a' },
+    headless: true
+  }
+}
+14:31:58.083 detox[54226] B allocate
+  data: {
+    "type": "android.emulator",
+    "device": {
+      "avdName": "medium_phone_API33_arm64_v8a"
+    },
+    "headless": true
+  }
+14:31:58.083 detox[54226] i "/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator" -list-avds --verbose
+14:31:58.083 detox[54369] i dispatching event to  primary-54226 /tmp/detox.primary-54226  :  allocateDevice , {
+  deviceConfig: {
+    type: 'android.emulator',
+    device: { avdName: 'medium_phone_API33_arm64_v8a' },
+    headless: true
+  }
+}
+14:31:58.131 detox[54226] i medium_phone_API33_arm64_v8a
+pixel_API21_arm64_v8a
+
+14:31:58.132 detox[54226] i "/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/platform-tools/adb"  devices
+14:31:58.160 detox[54226] i List of devices attached
+emulator-5554	device
+
+
+14:31:58.161 detox[54226] i Device emulator-5554 is already taken, skipping...
+14:31:58.161 detox[54226] i /nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a
+14:31:58.162 detox[54226] i "/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/platform-tools/adb" -s emulator-14278 wait-for-device
+14:32:01.447 detox[54226] i `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a` failed with code 1
+  error: true
+14:32:01.447 detox[54226] i INFO         | Android emulator version 36.3.10.0 (build_id 14472402) (CL:N/A)
+INFO         | Graphics backend: gfxstream
+DEBUG   | Current emulator version 36.3.10 is the same as the required version 36.3.10.
+INFO         | Found AVD name 'medium_phone_API33_arm64_v8a'
+INFO         | Found AVD target architecture: arm64
+INFO         | argv[0]: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator'; program directory: '/nix/store/6f52kdxs5yfrp315y5csxh29mg8q2zaw-android-sdk-emulator-36.3.10/libexec/android-sdk/emulator'
+INFO         | Found systemPath /nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/system-images/android-33/google_apis/arm64-v8a/
+DEBUG   | autoconfig: -skin 1080x2400
+DEBUG   | autoconfig: -skindir (null)
+DEBUG   | init, loading /nix/store/6f52kdxs5yfrp315y5csxh29mg8q2zaw-android-sdk-emulator-36.3.10/libexec/android-sdk/emulator/lib/advancedFeatures.ini
+DEBUG   | autoconfig: -kernel /nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/system-images/android-33/google_apis/arm64-v8a//kernel-ranchu
+DEBUG   | Target arch = 'arm64'
+DEBUG   | Auto-detect: Kernel image requires new device naming scheme.
+DEBUG   | Auto-detect: Kernel does not support YAFFS2 partitions.
+DEBUG   | autoconfig: -ramdisk /nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/system-images/android-33/google_apis/arm64-v8a//ramdisk.img
+DEBUG   | Using initial system image: /nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/system-images/android-33/google_apis/arm64-v8a//system.img
+DEBUG   | Using initial vendor image: /nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/system-images/android-33/google_apis/arm64-v8a//vendor.img
+DEBUG   | autoconfig: -data /Users/abueide/.android/avd/../avd/medium_phone_API33_arm64_v8a.avd/userdata-qemu.img
+DEBUG   | autoconfig: -initdata /Users/abueide/.android/avd/../avd/medium_phone_API33_arm64_v8a.avd/userdata.img
+DEBUG   | autoconfig: -cache /Users/abueide/.android/avd/../avd/medium_phone_API33_arm64_v8a.avd/cache.img
+DEBUG   | INFO: ignore sdcard for arm at api level >= 30
+INFO         | Increasing RAM size to 2048MB
+DEBUG   | VM heap size 0MB is below hardware specified minimum of 512MB,setting it to that value
+DEBUG   | System image is read only
+DEBUG   | Found 3 DNS servers:
+DEBUG   | 	100.64.0.1
+DEBUG   | 	100.64.0.2
+DEBUG   | 	100.64.0.3
+INFO         | Guest GLES Driver: Auto (ext controls)
+DEBUG   | emuglConfig_init: denylisted=0 has_guest_renderer=0, mode: auto, option: host
+
+library_mode host gpu mode host
+DEBUG   | setCurrentRenderer: host Host
+DEBUG   | emuglConfig_init: GPU emulation enabled using 'host' mode
+
+DEBUG   | GPU emulation enabled using 'host' mode
+INFO         | Checking system compatibility:
+INFO         |   Checking: hasSufficientDiskSpace
+INFO         |      Ok: Disk space requirements to run avd: `medium_phone_API33_arm64_v8a` are met
+INFO         |   Checking: hasSufficientHwGpu
+INFO         |      Ok: Hardware GPU requirements to run avd: `medium_phone_API33_arm64_v8a` are passed
+INFO         |   Checking: hasSufficientSystem
+INFO         |      Ok: System requirements to run avd: `medium_phone_API33_arm64_v8a` are met
+DEBUG   | Starting hostapd main loop.
+WARNING      | Another emulator is still running, wait for a sec...
+WARNING      | Another emulator is still running, wait for a sec...
+WARNING      | Another emulator is still running, wait for a sec...
+ERROR        | Another emulator instance is running. Please close it or run all emulators with -read-only flag.
+
+
+14:32:01.448 detox[54226] E allocate
+  error: ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a` failed with code 1
+      at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)
+      at ChildProcess.emit (node:events:508:28)
+      at maybeClose (node:internal/child_process:1101:16)
+      at ChildProcess._handle.onexit (node:internal/child_process:305:5)
+14:32:01.448 detox[54226] i dispatching event to socket  :  allocateDeviceDone {
+  error: {
+    name: 'ChildProcessError',
+    code: 1,
+    childProcess: {
+      _events: {},
+      _eventsCount: 2,
+      _maxListeners: undefined,
+      _closesNeeded: 1,
+      _closesGot: 1,
+      connected: false,
+      signalCode: null,
+      exitCode: 1,
+      killed: false,
+      spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+      _handle: null,
+      spawnargs: [
+        '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+        '-verbose',
+        '-no-audio',
+        '-no-boot-anim',
+        '-no-window',
+        '-read-only',
+        '-gpu',
+        'host',
+        '-port',
+        '14278',
+        '@medium_phone_API33_arm64_v8a'
+      ],
+      pid: 54398,
+      stdin: null,
+      stdout: null,
+      stderr: null,
+      stdio: [ null, null, null ]
+    },
+    stdout: undefined,
+    stderr: undefined,
+    message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a` failed with code 1',
+    stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+      '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+      '    at ChildProcess.emit (node:events:508:28)\n' +
+      '    at maybeClose (node:internal/child_process:1101:16)\n' +
+      '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+  }
+}
+14:32:01.448 detox[54369] i ## received events ##
+14:32:01.448 detox[54369] i detected event allocateDeviceDone {
+  error: {
+    name: 'ChildProcessError',
+    code: 1,
+    childProcess: {
+      _events: {},
+      _eventsCount: 2,
+      _closesNeeded: 1,
+      _closesGot: 1,
+      connected: false,
+      signalCode: null,
+      exitCode: 1,
+      killed: false,
+      spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+      _handle: null,
+      spawnargs: [
+        '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+        '-verbose',
+        '-no-audio',
+        '-no-boot-anim',
+        '-no-window',
+        '-read-only',
+        '-gpu',
+        'host',
+        '-port',
+        '14278',
+        '@medium_phone_API33_arm64_v8a'
+      ],
+      pid: 54398,
+      stdin: null,
+      stdout: null,
+      stderr: null,
+      stdio: [ null, null, null ]
+    },
+    message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a` failed with code 1',
+    stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+      '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+      '    at ChildProcess.emit (node:events:508:28)\n' +
+      '    at maybeClose (node:internal/child_process:1101:16)\n' +
+      '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+  }
+}
+14:32:01.449 detox[54369] E set up environment
+  error: ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a` failed with code 1
+      at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)
+      at ChildProcess.emit (node:events:508:28)
+      at maybeClose (node:internal/child_process:1101:16)
+      at ChildProcess._handle.onexit (node:internal/child_process:305:5)
+14:32:01.449 detox[54369] B tear down environment
+14:32:01.449 detox[54369] B onBeforeCleanup
+  args: ()
+14:32:01.450 detox[54369] E onBeforeCleanup
+14:32:01.451 detox[54226] i tester exited session 71b71a4d-e7e8-16b7-81bc-7a14ba6c7c1b
+14:32:01.451 detox[54226] E connection :62371<->:62391
+14:32:01.451 detox[54369] E tear down environment
+14:32:01.451 detox[54369] E e2e/main.e2e.js
+14:32:01.460 detox[54226] i received event of :  reportTestResults {
+  testResults: [
+    {
+      success: false,
+      testFilePath: '/Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js',
+      testExecError: {
+        code: 1,
+        childProcess: {
+          _events: {},
+          _eventsCount: 2,
+          _closesNeeded: 1,
+          _closesGot: 1,
+          connected: false,
+          signalCode: null,
+          exitCode: 1,
+          killed: false,
+          spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+          _handle: null,
+          spawnargs: [
+            '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+            '-verbose',
+            '-no-audio',
+            '-no-boot-anim',
+            '-no-window',
+            '-read-only',
+            '-gpu',
+            'host',
+            '-port',
+            '14278',
+            '@medium_phone_API33_arm64_v8a'
+          ],
+          pid: 54398,
+          stdin: null,
+          stdout: null,
+          stderr: null,
+          stdio: [ null, null, null ]
+        },
+        name: 'ChildProcessError',
+        message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a` failed with code 1',
+        stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+          '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+          '    at ChildProcess.emit (node:events:508:28)\n' +
+          '    at maybeClose (node:internal/child_process:1101:16)\n' +
+          '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+      },
+      isPermanentFailure: false
+    }
+  ]
+}
+14:32:01.460 detox[54226] i dispatching event to socket  :  reportTestResultsDone {
+  testResults: [
+    {
+      success: false,
+      testFilePath: '/Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js',
+      testExecError: {
+        code: 1,
+        childProcess: {
+          _events: {},
+          _eventsCount: 2,
+          _closesNeeded: 1,
+          _closesGot: 1,
+          connected: false,
+          signalCode: null,
+          exitCode: 1,
+          killed: false,
+          spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+          _handle: null,
+          spawnargs: [
+            '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+            '-verbose',
+            '-no-audio',
+            '-no-boot-anim',
+            '-no-window',
+            '-read-only',
+            '-gpu',
+            'host',
+            '-port',
+            '14278',
+            '@medium_phone_API33_arm64_v8a'
+          ],
+          pid: 54398,
+          stdin: null,
+          stdout: null,
+          stderr: null,
+          stdio: [ null, null, null ]
+        },
+        name: 'ChildProcessError',
+        message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a` failed with code 1',
+        stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+          '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+          '    at ChildProcess.emit (node:events:508:28)\n' +
+          '    at maybeClose (node:internal/child_process:1101:16)\n' +
+          '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+      },
+      isPermanentFailure: false
+    }
+  ]
+}
+14:32:01.460 detox[54369] i dispatching event to  primary-54226 /tmp/detox.primary-54226  :  reportTestResults , {
+  testResults: [
+    {
+      success: false,
+      testFilePath: '/Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js',
+      testExecError: {
+        code: 1,
+        childProcess: {
+          _events: {},
+          _eventsCount: 2,
+          _closesNeeded: 1,
+          _closesGot: 1,
+          connected: false,
+          signalCode: null,
+          exitCode: 1,
+          killed: false,
+          spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+          _handle: null,
+          spawnargs: [
+            '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+            '-verbose',
+            '-no-audio',
+            '-no-boot-anim',
+            '-no-window',
+            '-read-only',
+            '-gpu',
+            'host',
+            '-port',
+            '14278',
+            '@medium_phone_API33_arm64_v8a'
+          ],
+          pid: 54398,
+          stdin: null,
+          stdout: null,
+          stderr: null,
+          stdio: [ null, null, null ]
+        },
+        name: 'ChildProcessError',
+        message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a` failed with code 1',
+        stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+          '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+          '    at ChildProcess.emit (node:events:508:28)\n' +
+          '    at maybeClose (node:internal/child_process:1101:16)\n' +
+          '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+      },
+      isPermanentFailure: false
+    }
+  ]
+}
+14:32:01.461 detox[54226] i broadcasting event to all known sockets listening to  /tmp/detox.primary-54226  :   sessionStateUpdate {
+  testResults: [
+    {
+      success: false,
+      testFilePath: '/Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js',
+      testExecError: {
+        code: 1,
+        childProcess: {
+          _events: {},
+          _eventsCount: 2,
+          _closesNeeded: 1,
+          _closesGot: 1,
+          connected: false,
+          signalCode: null,
+          exitCode: 1,
+          killed: false,
+          spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+          _handle: null,
+          spawnargs: [
+            '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+            '-verbose',
+            '-no-audio',
+            '-no-boot-anim',
+            '-no-window',
+            '-read-only',
+            '-gpu',
+            'host',
+            '-port',
+            '14278',
+            '@medium_phone_API33_arm64_v8a'
+          ],
+          pid: 54398,
+          stdin: null,
+          stdout: null,
+          stderr: null,
+          stdio: [ null, null, null ]
+        },
+        name: 'ChildProcessError',
+        message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a` failed with code 1',
+        stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+          '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+          '    at ChildProcess.emit (node:events:508:28)\n' +
+          '    at maybeClose (node:internal/child_process:1101:16)\n' +
+          '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+      },
+      isPermanentFailure: false
+    }
+  ]
+}
+14:32:01.461 detox[54369] i ## received events ##
+14:32:01.461 detox[54369] i detected event reportTestResultsDone {
+  testResults: [
+    {
+      success: false,
+      testFilePath: '/Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js',
+      testExecError: {
+        code: 1,
+        childProcess: {
+          _events: {},
+          _eventsCount: 2,
+          _closesNeeded: 1,
+          _closesGot: 1,
+          connected: false,
+          signalCode: null,
+          exitCode: 1,
+          killed: false,
+          spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+          _handle: null,
+          spawnargs: [
+            '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+            '-verbose',
+            '-no-audio',
+            '-no-boot-anim',
+            '-no-window',
+            '-read-only',
+            '-gpu',
+            'host',
+            '-port',
+            '14278',
+            '@medium_phone_API33_arm64_v8a'
+          ],
+          pid: 54398,
+          stdin: null,
+          stdout: null,
+          stderr: null,
+          stdio: [ null, null, null ]
+        },
+        name: 'ChildProcessError',
+        message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a` failed with code 1',
+        stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+          '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+          '    at ChildProcess.emit (node:events:508:28)\n' +
+          '    at maybeClose (node:internal/child_process:1101:16)\n' +
+          '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+      },
+      isPermanentFailure: false
+    }
+  ]
+}
+14:32:01.462 detox[54226] i socket disconnected secondary-54369
+14:32:01.462 detox[54369] i connection closed primary-54226 /tmp/detox.primary-54226 0 tries remaining of 0
+14:32:01.462 detox[54369] i secondary-54369 exceeded connection rety amount of  or stopRetrying flag set.
+14:32:01.566 detox[54226] E Command failed with exit code = 1:
+jest --config e2e/jest.config.js /Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js
+14:32:01.567 detox[54226] i There were failing tests in the following files:
+  1. e2e/main.e2e.js
+
+Detox CLI is going to restart the test runner with those files...
+
+14:32:01.567 detox[54226] B jest --config e2e/jest.config.js /Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js
+14:32:01.967 detox[54412] i Service path not specified, so defaulting to ipc.config.socketRoot + ipc.config.appspace + id 
+14:32:01.968 detox[54412] i requested connection to  primary-54226 /tmp/detox.primary-54226
+14:32:01.968 detox[54412] i Connecting client on Unix Socket : /tmp/detox.primary-54226
+14:32:01.969 detox[54226] i ## socket connection to server detected ##
+14:32:01.969 detox[54226] i received event of :  registerContext { id: 'secondary-54412' }
+14:32:01.969 detox[54412] i retrying reset
+14:32:01.969 detox[54412] i dispatching event to  primary-54226 /tmp/detox.primary-54226  :  registerContext , { id: 'secondary-54412' }
+14:32:01.970 detox[54226] i dispatching event to socket  :  registerContextDone {
+  testResults: [
+    {
+      success: false,
+      testFilePath: '/Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js',
+      testExecError: {
+        code: 1,
+        childProcess: {
+          _events: {},
+          _eventsCount: 2,
+          _closesNeeded: 1,
+          _closesGot: 1,
+          connected: false,
+          signalCode: null,
+          exitCode: 1,
+          killed: false,
+          spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+          _handle: null,
+          spawnargs: [
+            '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+            '-verbose',
+            '-no-audio',
+            '-no-boot-anim',
+            '-no-window',
+            '-read-only',
+            '-gpu',
+            'host',
+            '-port',
+            '14278',
+            '@medium_phone_API33_arm64_v8a'
+          ],
+          pid: 54398,
+          stdin: null,
+          stdout: null,
+          stderr: null,
+          stdio: [ null, null, null ]
+        },
+        name: 'ChildProcessError',
+        message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a` failed with code 1',
+        stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+          '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+          '    at ChildProcess.emit (node:events:508:28)\n' +
+          '    at maybeClose (node:internal/child_process:1101:16)\n' +
+          '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+      },
+      isPermanentFailure: false
+    }
+  ],
+  testSessionIndex: 2,
+  unsafe_earlyTeardown: undefined
+}
+14:32:01.970 detox[54412] i ## received events ##
+14:32:01.970 detox[54412] i detected event registerContextDone {
+  testResults: [
+    {
+      success: false,
+      testFilePath: '/Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js',
+      testExecError: {
+        code: 1,
+        childProcess: {
+          _events: {},
+          _eventsCount: 2,
+          _closesNeeded: 1,
+          _closesGot: 1,
+          connected: false,
+          signalCode: null,
+          exitCode: 1,
+          killed: false,
+          spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+          _handle: null,
+          spawnargs: [
+            '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+            '-verbose',
+            '-no-audio',
+            '-no-boot-anim',
+            '-no-window',
+            '-read-only',
+            '-gpu',
+            'host',
+            '-port',
+            '14278',
+            '@medium_phone_API33_arm64_v8a'
+          ],
+          pid: 54398,
+          stdin: null,
+          stdout: null,
+          stderr: null,
+          stdio: [ null, null, null ]
+        },
+        name: 'ChildProcessError',
+        message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a` failed with code 1',
+        stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 14278 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+          '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+          '    at ChildProcess.emit (node:events:508:28)\n' +
+          '    at maybeClose (node:internal/child_process:1101:16)\n' +
+          '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+      },
+      isPermanentFailure: false
+    }
+  ],
+  testSessionIndex: 2
+}
+14:32:02.004 detox[54412] B e2e/main.e2e.js
+14:32:02.010 detox[54412] B set up environment
+14:32:02.011 detox[54226] i received event of :  registerWorker { workerId: 'w1' }
+14:32:02.011 detox[54226] i dispatching event to socket  :  registerWorkerDone { workersCount: 1 }
+14:32:02.011 detox[54412] i dispatching event to  primary-54226 /tmp/detox.primary-54226  :  registerWorker , { workerId: 'w1' }
+14:32:02.011 detox[54412] i ## received events ##
+14:32:02.011 detox[54412] i detected event registerWorkerDone { workersCount: 1 }
+14:32:02.080 detox[54226] B connection :62371<->:62403
+14:32:02.081 detox[54412] i opened web socket to: ws://localhost:62371
+14:32:02.082 detox[54226] i get
+  data: {"type":"login","params":{"sessionId":"799ad4bc-1cb7-f21f-951f-26c1e0fee5d7","role":"tester"},"messageId":0}
+14:32:02.082 detox[54226] i created session 799ad4bc-1cb7-f21f-951f-26c1e0fee5d7
+14:32:02.082 detox[54226] i send
+  data: {
+    "type": "loginSuccess",
+    "params": {
+      "testerConnected": true,
+      "appConnected": false
+    },
+    "messageId": 0
+  }
+14:32:02.082 detox[54226] i tester joined session 799ad4bc-1cb7-f21f-951f-26c1e0fee5d7
+14:32:02.082 detox[54412] i send message
+  data: {"type":"login","params":{"sessionId":"799ad4bc-1cb7-f21f-951f-26c1e0fee5d7","role":"tester"},"messageId":0}
+14:32:02.082 detox[54412] i get message
+  data: {"type":"loginSuccess","params":{"testerConnected":true,"appConnected":false},"messageId":0}
+   
+14:32:02.100 detox[54226] i received event of :  allocateDevice {
+  deviceConfig: {
+    type: 'android.emulator',
+    device: { avdName: 'medium_phone_API33_arm64_v8a' },
+    headless: true
+  }
+}
+14:32:02.100 detox[54226] B allocate
+  data: {
+    "type": "android.emulator",
+    "device": {
+      "avdName": "medium_phone_API33_arm64_v8a"
+    },
+    "headless": true
+  }
+14:32:02.100 detox[54226] i "/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator" -list-avds --verbose
+14:32:02.100 detox[54412] i dispatching event to  primary-54226 /tmp/detox.primary-54226  :  allocateDevice , {
+  deviceConfig: {
+    type: 'android.emulator',
+    device: { avdName: 'medium_phone_API33_arm64_v8a' },
+    headless: true
+  }
+}
+14:32:02.144 detox[54226] i medium_phone_API33_arm64_v8a
+pixel_API21_arm64_v8a
+
+14:32:02.144 detox[54226] i "/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/platform-tools/adb"  devices
+14:32:02.171 detox[54226] i List of devices attached
+emulator-5554	device
+
+
+14:32:02.172 detox[54226] i Device emulator-5554 is already taken, skipping...
+14:32:02.172 detox[54226] i /nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 15774 @medium_phone_API33_arm64_v8a
+14:32:02.173 detox[54226] i "/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/platform-tools/adb" -s emulator-15774 wait-for-device
+14:32:05.467 detox[54226] i `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 15774 @medium_phone_API33_arm64_v8a` failed with code 1
+  error: true
+14:32:05.468 detox[54226] i INFO         | Android emulator version 36.3.10.0 (build_id 14472402) (CL:N/A)
+INFO         | Graphics backend: gfxstream
+DEBUG   | Current emulator version 36.3.10 is the same as the required version 36.3.10.
+INFO         | Found AVD name 'medium_phone_API33_arm64_v8a'
+INFO         | Found AVD target architecture: arm64
+INFO         | argv[0]: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator'; program directory: '/nix/store/6f52kdxs5yfrp315y5csxh29mg8q2zaw-android-sdk-emulator-36.3.10/libexec/android-sdk/emulator'
+INFO         | Found systemPath /nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/system-images/android-33/google_apis/arm64-v8a/
+DEBUG   | autoconfig: -skin 1080x2400
+DEBUG   | autoconfig: -skindir (null)
+DEBUG   | init, loading /nix/store/6f52kdxs5yfrp315y5csxh29mg8q2zaw-android-sdk-emulator-36.3.10/libexec/android-sdk/emulator/lib/advancedFeatures.ini
+DEBUG   | autoconfig: -kernel /nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/system-images/android-33/google_apis/arm64-v8a//kernel-ranchu
+DEBUG   | Target arch = 'arm64'
+DEBUG   | Auto-detect: Kernel image requires new device naming scheme.
+DEBUG   | Auto-detect: Kernel does not support YAFFS2 partitions.
+DEBUG   | autoconfig: -ramdisk /nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/system-images/android-33/google_apis/arm64-v8a//ramdisk.img
+DEBUG   | Using initial system image: /nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/system-images/android-33/google_apis/arm64-v8a//system.img
+DEBUG   | Using initial vendor image: /nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/system-images/android-33/google_apis/arm64-v8a//vendor.img
+DEBUG   | autoconfig: -data /Users/abueide/.android/avd/../avd/medium_phone_API33_arm64_v8a.avd/userdata-qemu.img
+DEBUG   | autoconfig: -initdata /Users/abueide/.android/avd/../avd/medium_phone_API33_arm64_v8a.avd/userdata.img
+DEBUG   | autoconfig: -cache /Users/abueide/.android/avd/../avd/medium_phone_API33_arm64_v8a.avd/cache.img
+DEBUG   | INFO: ignore sdcard for arm at api level >= 30
+INFO         | Increasing RAM size to 2048MB
+DEBUG   | VM heap size 0MB is below hardware specified minimum of 512MB,setting it to that value
+DEBUG   | System image is read only
+DEBUG   | Found 3 DNS servers:
+DEBUG   | 	100.64.0.1
+DEBUG   | 	100.64.0.2
+DEBUG   | 	100.64.0.3
+INFO         | Guest GLES Driver: Auto (ext controls)
+DEBUG   | emuglConfig_init: denylisted=0 has_guest_renderer=0, mode: auto, option: host
+
+library_mode host gpu mode host
+DEBUG   | setCurrentRenderer: host Host
+DEBUG   | emuglConfig_init: GPU emulation enabled using 'host' mode
+
+DEBUG   | GPU emulation enabled using 'host' mode
+INFO         | Checking system compatibility:
+INFO         |   Checking: hasSufficientDiskSpace
+INFO         |      Ok: Disk space requirements to run avd: `medium_phone_API33_arm64_v8a` are met
+INFO         |   Checking: hasSufficientHwGpu
+INFO         |      Ok: Hardware GPU requirements to run avd: `medium_phone_API33_arm64_v8a` are passed
+INFO         |   Checking: hasSufficientSystem
+INFO         |      Ok: System requirements to run avd: `medium_phone_API33_arm64_v8a` are met
+DEBUG   | Starting hostapd main loop.
+WARNING      | Another emulator is still running, wait for a sec...
+WARNING      | Another emulator is still running, wait for a sec...
+WARNING      | Another emulator is still running, wait for a sec...
+ERROR        | Another emulator instance is running. Please close it or run all emulators with -read-only flag.
+
+
+14:32:05.468 detox[54226] E allocate
+  error: ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 15774 @medium_phone_API33_arm64_v8a` failed with code 1
+      at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)
+      at ChildProcess.emit (node:events:508:28)
+      at maybeClose (node:internal/child_process:1101:16)
+      at ChildProcess._handle.onexit (node:internal/child_process:305:5)
+14:32:05.468 detox[54226] i dispatching event to socket  :  allocateDeviceDone {
+  error: {
+    name: 'ChildProcessError',
+    code: 1,
+    childProcess: {
+      _events: {},
+      _eventsCount: 2,
+      _maxListeners: undefined,
+      _closesNeeded: 1,
+      _closesGot: 1,
+      connected: false,
+      signalCode: null,
+      exitCode: 1,
+      killed: false,
+      spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+      _handle: null,
+      spawnargs: [
+        '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+        '-verbose',
+        '-no-audio',
+        '-no-boot-anim',
+        '-no-window',
+        '-read-only',
+        '-gpu',
+        'host',
+        '-port',
+        '15774',
+        '@medium_phone_API33_arm64_v8a'
+      ],
+      pid: 54441,
+      stdin: null,
+      stdout: null,
+      stderr: null,
+      stdio: [ null, null, null ]
+    },
+    stdout: undefined,
+    stderr: undefined,
+    message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 15774 @medium_phone_API33_arm64_v8a` failed with code 1',
+    stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 15774 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+      '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+      '    at ChildProcess.emit (node:events:508:28)\n' +
+      '    at maybeClose (node:internal/child_process:1101:16)\n' +
+      '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+  }
+}
+14:32:05.469 detox[54412] i ## received events ##
+14:32:05.469 detox[54412] i detected event allocateDeviceDone {
+  error: {
+    name: 'ChildProcessError',
+    code: 1,
+    childProcess: {
+      _events: {},
+      _eventsCount: 2,
+      _closesNeeded: 1,
+      _closesGot: 1,
+      connected: false,
+      signalCode: null,
+      exitCode: 1,
+      killed: false,
+      spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+      _handle: null,
+      spawnargs: [
+        '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+        '-verbose',
+        '-no-audio',
+        '-no-boot-anim',
+        '-no-window',
+        '-read-only',
+        '-gpu',
+        'host',
+        '-port',
+        '15774',
+        '@medium_phone_API33_arm64_v8a'
+      ],
+      pid: 54441,
+      stdin: null,
+      stdout: null,
+      stderr: null,
+      stdio: [ null, null, null ]
+    },
+    message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 15774 @medium_phone_API33_arm64_v8a` failed with code 1',
+    stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 15774 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+      '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+      '    at ChildProcess.emit (node:events:508:28)\n' +
+      '    at maybeClose (node:internal/child_process:1101:16)\n' +
+      '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+  }
+}
+14:32:05.469 detox[54412] E set up environment
+  error: ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 15774 @medium_phone_API33_arm64_v8a` failed with code 1
+      at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)
+      at ChildProcess.emit (node:events:508:28)
+      at maybeClose (node:internal/child_process:1101:16)
+      at ChildProcess._handle.onexit (node:internal/child_process:305:5)
+14:32:05.469 detox[54412] B tear down environment
+14:32:05.470 detox[54412] B onBeforeCleanup
+  args: ()
+14:32:05.470 detox[54412] E onBeforeCleanup
+14:32:05.471 detox[54226] i tester exited session 799ad4bc-1cb7-f21f-951f-26c1e0fee5d7
+14:32:05.471 detox[54226] E connection :62371<->:62403
+14:32:05.471 detox[54412] E tear down environment
+14:32:05.471 detox[54412] E e2e/main.e2e.js
+14:32:05.479 detox[54226] i received event of :  reportTestResults {
+  testResults: [
+    {
+      success: false,
+      testFilePath: '/Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js',
+      testExecError: {
+        code: 1,
+        childProcess: {
+          _events: {},
+          _eventsCount: 2,
+          _closesNeeded: 1,
+          _closesGot: 1,
+          connected: false,
+          signalCode: null,
+          exitCode: 1,
+          killed: false,
+          spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+          _handle: null,
+          spawnargs: [
+            '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+            '-verbose',
+            '-no-audio',
+            '-no-boot-anim',
+            '-no-window',
+            '-read-only',
+            '-gpu',
+            'host',
+            '-port',
+            '15774',
+            '@medium_phone_API33_arm64_v8a'
+          ],
+          pid: 54441,
+          stdin: null,
+          stdout: null,
+          stderr: null,
+          stdio: [ null, null, null ]
+        },
+        name: 'ChildProcessError',
+        message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 15774 @medium_phone_API33_arm64_v8a` failed with code 1',
+        stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 15774 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+          '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+          '    at ChildProcess.emit (node:events:508:28)\n' +
+          '    at maybeClose (node:internal/child_process:1101:16)\n' +
+          '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+      },
+      isPermanentFailure: false
+    }
+  ]
+}
+14:32:05.479 detox[54226] i dispatching event to socket  :  reportTestResultsDone {
+  testResults: [
+    {
+      success: false,
+      testFilePath: '/Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js',
+      testExecError: {
+        code: 1,
+        childProcess: {
+          _events: {},
+          _eventsCount: 2,
+          _closesNeeded: 1,
+          _closesGot: 1,
+          connected: false,
+          signalCode: null,
+          exitCode: 1,
+          killed: false,
+          spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+          _handle: null,
+          spawnargs: [
+            '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+            '-verbose',
+            '-no-audio',
+            '-no-boot-anim',
+            '-no-window',
+            '-read-only',
+            '-gpu',
+            'host',
+            '-port',
+            '15774',
+            '@medium_phone_API33_arm64_v8a'
+          ],
+          pid: 54441,
+          stdin: null,
+          stdout: null,
+          stderr: null,
+          stdio: [ null, null, null ]
+        },
+        name: 'ChildProcessError',
+        message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 15774 @medium_phone_API33_arm64_v8a` failed with code 1',
+        stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 15774 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+          '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+          '    at ChildProcess.emit (node:events:508:28)\n' +
+          '    at maybeClose (node:internal/child_process:1101:16)\n' +
+          '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+      },
+      isPermanentFailure: false
+    }
+  ]
+}
+14:32:05.479 detox[54412] i dispatching event to  primary-54226 /tmp/detox.primary-54226  :  reportTestResults , {
+  testResults: [
+    {
+      success: false,
+      testFilePath: '/Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js',
+      testExecError: {
+        code: 1,
+        childProcess: {
+          _events: {},
+          _eventsCount: 2,
+          _closesNeeded: 1,
+          _closesGot: 1,
+          connected: false,
+          signalCode: null,
+          exitCode: 1,
+          killed: false,
+          spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+          _handle: null,
+          spawnargs: [
+            '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+            '-verbose',
+            '-no-audio',
+            '-no-boot-anim',
+            '-no-window',
+            '-read-only',
+            '-gpu',
+            'host',
+            '-port',
+            '15774',
+            '@medium_phone_API33_arm64_v8a'
+          ],
+          pid: 54441,
+          stdin: null,
+          stdout: null,
+          stderr: null,
+          stdio: [ null, null, null ]
+        },
+        name: 'ChildProcessError',
+        message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 15774 @medium_phone_API33_arm64_v8a` failed with code 1',
+        stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 15774 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+          '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+          '    at ChildProcess.emit (node:events:508:28)\n' +
+          '    at maybeClose (node:internal/child_process:1101:16)\n' +
+          '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+      },
+      isPermanentFailure: false
+    }
+  ]
+}
+14:32:05.480 detox[54226] i broadcasting event to all known sockets listening to  /tmp/detox.primary-54226  :   sessionStateUpdate {
+  testResults: [
+    {
+      success: false,
+      testFilePath: '/Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js',
+      testExecError: {
+        code: 1,
+        childProcess: {
+          _events: {},
+          _eventsCount: 2,
+          _closesNeeded: 1,
+          _closesGot: 1,
+          connected: false,
+          signalCode: null,
+          exitCode: 1,
+          killed: false,
+          spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+          _handle: null,
+          spawnargs: [
+            '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+            '-verbose',
+            '-no-audio',
+            '-no-boot-anim',
+            '-no-window',
+            '-read-only',
+            '-gpu',
+            'host',
+            '-port',
+            '15774',
+            '@medium_phone_API33_arm64_v8a'
+          ],
+          pid: 54441,
+          stdin: null,
+          stdout: null,
+          stderr: null,
+          stdio: [ null, null, null ]
+        },
+        name: 'ChildProcessError',
+        message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 15774 @medium_phone_API33_arm64_v8a` failed with code 1',
+        stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 15774 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+          '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+          '    at ChildProcess.emit (node:events:508:28)\n' +
+          '    at maybeClose (node:internal/child_process:1101:16)\n' +
+          '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+      },
+      isPermanentFailure: false
+    }
+  ]
+}
+14:32:05.480 detox[54412] i ## received events ##
+14:32:05.480 detox[54412] i detected event reportTestResultsDone {
+  testResults: [
+    {
+      success: false,
+      testFilePath: '/Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js',
+      testExecError: {
+        code: 1,
+        childProcess: {
+          _events: {},
+          _eventsCount: 2,
+          _closesNeeded: 1,
+          _closesGot: 1,
+          connected: false,
+          signalCode: null,
+          exitCode: 1,
+          killed: false,
+          spawnfile: '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+          _handle: null,
+          spawnargs: [
+            '/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator',
+            '-verbose',
+            '-no-audio',
+            '-no-boot-anim',
+            '-no-window',
+            '-read-only',
+            '-gpu',
+            'host',
+            '-port',
+            '15774',
+            '@medium_phone_API33_arm64_v8a'
+          ],
+          pid: 54441,
+          stdin: null,
+          stdout: null,
+          stderr: null,
+          stdio: [ null, null, null ]
+        },
+        name: 'ChildProcessError',
+        message: '`/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 15774 @medium_phone_API33_arm64_v8a` failed with code 1',
+        stack: 'ChildProcessError: `/nix/store/bv22rj7bfgqp0gvqfj4hxnaxkj2wxx3l-androidsdk/libexec/android-sdk/emulator/emulator -verbose -no-audio -no-boot-anim -no-window -read-only -gpu host -port 15774 @medium_phone_API33_arm64_v8a` failed with code 1\n' +
+          '    at ChildProcess.<anonymous> (/Users/abueide/code/analytics-react-native/examples/E2E/node_modules/child-process-promise/lib/index.js:132:23)\n' +
+          '    at ChildProcess.emit (node:events:508:28)\n' +
+          '    at maybeClose (node:internal/child_process:1101:16)\n' +
+          '    at ChildProcess._handle.onexit (node:internal/child_process:305:5)'
+      },
+      isPermanentFailure: false
+    }
+  ]
+}
+14:32:05.481 detox[54226] i socket disconnected secondary-54412
+14:32:05.481 detox[54412] i connection closed primary-54226 /tmp/detox.primary-54226 0 tries remaining of 0
+14:32:05.481 detox[54412] i secondary-54412 exceeded connection rety amount of  or stopRetrying flag set.
+14:32:05.589 detox[54226] E Command failed with exit code = 1:
+jest --config e2e/jest.config.js /Users/abueide/code/analytics-react-native/examples/E2E/e2e/main.e2e.js
+14:32:05.590 detox[54226] B cleanup
+  args: ()
+14:32:05.591 detox[54226] E cleanup
+14:32:05.591 detox[54226] i Detox server has been closed gracefully
+14:32:05.591 detox[54226] E node_modules/detox/local-cli/cli.js test e2e/main.e2e.js --configuration android.emu.debug --take-screenshots=failing --record-logs=failing --headless

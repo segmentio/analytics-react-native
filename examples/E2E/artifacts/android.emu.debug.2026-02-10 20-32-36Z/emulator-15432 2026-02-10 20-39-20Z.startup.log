@@ -1,0 +1,370 @@
+--------- beginning of main
+02-10 14:36:16.248  6094  6094 I sReactNativeE2E: Late-enabling -Xcheck:jni
+02-10 14:36:16.275  6094  6094 I sReactNativeE2E: Using CollectorTypeCC GC.
+02-10 14:36:16.290  6094  6094 D CompatibilityChangeReporter: Compat change id reported: 171979766; UID 10180; state: ENABLED
+--------- beginning of system
+02-10 14:36:16.295  6094  6094 W ActivityThread: Package uses different ABI(s) than its instrumentation: package[com.AnalyticsReactNativeE2E]: arm64-v8a, null instrumentation[com.AnalyticsReactNativeE2E.test]: null, null
+02-10 14:36:16.297  6094  6094 W sReactNativeE2E: ClassLoaderContext classpath size mismatch. expected=0, found=1 (PCL[] | PCL[/system/framework/android.test.runner.jar*2649186567])
+02-10 14:36:16.297  6094  6094 W sReactNativeE2E: ClassLoaderContext classpath size mismatch. expected=0, found=2 (PCL[] | PCL[/system/framework/android.test.runner.jar*2649186567:/system/framework/android.test.mock.jar*4109917914])
+02-10 14:36:16.298  6094  6094 W ziparchive: Unable to open '/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/base.dm': No such file or directory
+02-10 14:36:16.298  6094  6094 W ziparchive: Unable to open '/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/base.dm': No such file or directory
+02-10 14:36:16.330  6094  6094 W ziparchive: Unable to open '/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/base.dm': No such file or directory
+02-10 14:36:16.330  6094  6094 W ziparchive: Unable to open '/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/base.dm': No such file or directory
+02-10 14:36:16.397  6094  6094 D nativeloader: Configuring classloader-namespace for other apk /system/framework/android.test.runner.jar:/system/framework/android.test.mock.jar:/system/framework/android.test.base.jar:/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/base.apk:/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/base.apk. target_sdk_version=33, uses_libraries=, library_path=/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/lib/arm64:/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/lib/arm64:/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/base.apk!/lib/arm64-v8a:/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.AnalyticsReactNativeE2E
+02-10 14:36:16.443  6094  6094 V GraphicsEnvironment: ANGLE Developer option for 'com.AnalyticsReactNativeE2E' set to: 'default'
+02-10 14:36:16.443  6094  6094 V GraphicsEnvironment: ANGLE GameManagerService for com.AnalyticsReactNativeE2E: false
+02-10 14:36:16.443  6094  6094 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+02-10 14:36:16.445  6094  6094 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/android.test.base.jar
+02-10 14:36:16.445  6094  6094 D nativeloader: Configuring classloader-namespace for other apk /system/framework/android.test.mock.jar. target_sdk_version=33, uses_libraries=ALL, library_path=/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/lib/arm64:/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/lib/arm64, permitted_path=/data:/mnt/expand
+02-10 14:36:16.445  6094  6094 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/android.test.base.jar
+02-10 14:36:16.446  6094  6094 W sReactNativeE2E: ClassLoaderContext shared library size mismatch. Expected=0, found=2 (PCL[] | PCL[]{PCL[/system/framework/android.test.base.jar*2876549756]#PCL[/system/framework/android.test.mock.jar*4109917914]})
+02-10 14:36:16.446  6094  6094 D nativeloader: Configuring classloader-namespace for other apk /system/framework/android.test.runner.jar. target_sdk_version=33, uses_libraries=ALL, library_path=/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/lib/arm64:/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/lib/arm64, permitted_path=/data:/mnt/expand
+02-10 14:36:16.446  6094  6094 W sReactNativeE2E: ClassLoaderContext shared library size mismatch. Expected=0, found=3 (PCL[] | PCL[]{PCL[/system/framework/android.test.base.jar*2876549756]#PCL[/system/framework/android.test.mock.jar*4109917914]#PCL[/system/framework/android.test.runner.jar*2649186567]{PCL[/system/framework/android.test.base.jar*2876549756]#PCL[/system/framework/android.test.mock.jar*4109917914]}};PCL[/system/framework/android.test.runner.jar*2649186567:/system/framework/android.test.mock.jar*4109917914:/system/framework/android.test.base.jar*2876549756:/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/base.apk*123198235:/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/base.apk!classes2.dex*365042395:/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/base.apk!classes3.dex*4060826598:/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/base.apk!classes4.dex*2397366789:/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/base.apk*447582186:/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/base.apk!classes2.dex*3392552388:/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/base.apk!classes3.dex*3850649583:/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/base.apk!classes4.dex*2056403372:/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/base.apk!classes5.dex*1438771291])
+02-10 14:36:16.446  6094  6094 W sReactNativeE2E: ClassLoaderContext classpath size mismatch. expected=0, found=1 (PCL[] | PCL[/system/framework/android.test.runner.jar*2649186567]{PCL[/system/framework/android.test.base.jar*2876549756]#PCL[/system/framework/android.test.mock.jar*4109917914]#PCL[/system/framework/android.test.runner.jar*2649186567]{PCL[/system/framework/android.test.base.jar*2876549756]#PCL[/system/framework/android.test.mock.jar*4109917914]}};PCL[/system/framework/android.test.runner.jar*2649186567:/system/framework/android.test.mock.jar*4109917914:/system/framework/android.test.base.jar*2876549756:/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/base.apk*123198235:/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/base.apk!classes2.dex*365042395:/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/base.apk!classes3.dex*4060826598:/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/base.apk!classes4.dex*2397366789:/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/base.apk*447582186:/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/base.apk!classes2.dex*3392552388:/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/base.apk!classes3.dex*3850649583:/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/base.apk!classes4.dex*2056403372:/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/base.apk!classes5.dex*1438771291])
+02-10 14:36:16.447  6094  6094 W sReactNativeE2E: ClassLoaderContext classpath size mismatch. expected=0, found=2 (PCL[] | PCL[/system/framework/android.test.runner.jar*2649186567:/system/framework/android.test.mock.jar*4109917914]{PCL[/system/framework/android.test.base.jar*2876549756]#PCL[/system/framework/android.test.mock.jar*4109917914]#PCL[/system/framework/android.test.runner.jar*2649186567]{PCL[/system/framework/android.test.base.jar*2876549756]#PCL[/system/framework/android.test.mock.jar*4109917914]}};PCL[/system/framework/android.test.runner.jar*2649186567:/system/framework/android.test.mock.jar*4109917914:/system/framework/android.test.base.jar*2876549756:/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/base.apk*123198235:/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/base.apk!classes2.dex*365042395:/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/base.apk!classes3.dex*4060826598:/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/base.apk!classes4.dex*2397366789:/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/base.apk*447582186:/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/base.apk!classes2.dex*3392552388:/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/base.apk!classes3.dex*3850649583:/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/base.apk!classes4.dex*2056403372:/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/base.apk!classes5.dex*1438771291])
+02-10 14:36:16.447  6094  6094 W ziparchive: Unable to open '/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/base.dm': No such file or directory
+02-10 14:36:16.447  6094  6094 W ziparchive: Unable to open '/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/base.dm': No such file or directory
+02-10 14:36:16.479  6094  6094 W ziparchive: Unable to open '/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/base.dm': No such file or directory
+02-10 14:36:16.479  6094  6094 W ziparchive: Unable to open '/data/app/~~IiWexyQUb4H92uhBjNSFEQ==/com.AnalyticsReactNativeE2E-OUg4uldFsZb5M-xPVYl2Iw==/base.dm': No such file or directory
+02-10 14:36:16.549  6094  6094 D NetworkSecurityConfig: Using Network Security Config from resource network_security_config debugBuild: true
+02-10 14:36:16.550  6094  6094 D NetworkSecurityConfig: Using Network Security Config from resource network_security_config debugBuild: true
+02-10 14:36:16.550  6094  6094 I MonitoringInstr: newApplication called!
+02-10 14:36:16.555  6094  6094 I MonitoringInstr: Instrumentation started!
+02-10 14:36:16.557  6094  6094 I AndroidJUnitRunner: onCreate Bundle[{debug=false, detoxServer=ws://localhost:62555, detoxSessionId=bdd0c980-8d17-ac26-9b65-c4f06aba69c1}]
+02-10 14:36:16.557  6094  6094 V TestEventClient: No service name argument was given (testDiscoveryService, testRunEventService or orchestratorService)
+02-10 14:36:16.558  6094  6118 D AndroidJUnitRunner: onStart is called.
+02-10 14:36:16.558  6094  6094 V SoLoader: Init System Loader delegate
+02-10 14:36:16.562  6094  6118 D TestRequestBuilder: Using class path scanning to discover tests
+02-10 14:36:16.562  6094  6118 I TestRequestBuilder: Scanning classpath to find tests in paths [/data/app/~~6S9w3CdKX6WSrjcE7b8nSA==/com.AnalyticsReactNativeE2E.test-YZv592ShCvPIFpwxYQaJrQ==/base.apk]
+02-10 14:36:16.562  6094  6118 W sReactNativeE2E: Opening an oat file without a class loader. Are you using the deprecated DexFile APIs?
+02-10 14:36:16.678  6094  6118 D AndroidJUnitRunner: Use the raw file system for managing file I/O.
+02-10 14:36:16.678  6094  6118 D TestExecutor: Adding listener androidx.test.internal.runner.listener.LogRunListener
+02-10 14:36:16.678  6094  6118 D TestExecutor: Adding listener androidx.test.internal.runner.listener.InstrumentationResultPrinter
+02-10 14:36:16.678  6094  6118 D TestExecutor: Adding listener androidx.test.internal.runner.listener.ActivityFinisherRunListener
+02-10 14:36:16.678  6094  6118 D TestExecutor: Adding listener androidx.test.internal.runner.listener.TraceRunListener
+02-10 14:36:16.679  6094  6118 I TestRunner: run started: 1 tests
+02-10 14:36:16.679  6094  6118 I TestRunner: started: runDetoxTests(com.AnalyticsReactNativeE2E.DetoxTest)
+02-10 14:36:16.681  6094  6118 I Detox   : Detox server connection details: url=ws://localhost:62555, sessionId=bdd0c980-8d17-ac26-9b65-c4f06aba69c1
+02-10 14:36:16.683  6094  6118 W FileTestStorage: Output properties is not supported.
+02-10 14:36:16.683  6094  6118 I Tracing : Tracer added: class androidx.test.platform.tracing.AndroidXTracer
+02-10 14:36:16.684  6094  6118 D EventInjectionStrategy: Creating injection strategy with input manager.
+02-10 14:36:16.684  6094  6118 W sReactNativeE2E: Accessing hidden method Landroid/hardware/input/InputManager;->getInstance()Landroid/hardware/input/InputManager; (unsupported, reflection, allowed)
+02-10 14:36:16.684  6094  6118 W sReactNativeE2E: Accessing hidden method Landroid/hardware/input/InputManager;->injectInputEvent(Landroid/view/InputEvent;I)Z (unsupported, reflection, allowed)
+02-10 14:36:16.684  6094  6118 W sReactNativeE2E: Accessing hidden field Landroid/hardware/input/InputManager;->INJECT_INPUT_EVENT_MODE_WAIT_FOR_FINISH:I (unsupported, reflection, allowed)
+02-10 14:36:16.686  6094  6118 W sReactNativeE2E: Accessing hidden field Ljava/lang/reflect/Field;->accessFlags:I (unsupported, reflection, allowed)
+02-10 14:36:16.687  6094  6118 I Detox   : Connecting to server...
+02-10 14:36:16.687  6094  6118 I DetoxWSClient: At connectToServer
+02-10 14:36:16.709  6094  6125 D TrafficStats: tagSocket(77) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:16.712  6094  6125 D DetoxWSClient: At onOpen
+02-10 14:36:16.712  6094  6125 I DetoxWSClient: Sending out action 'login' (ID #0)
+02-10 14:36:16.712  6094  6125 I Detox   : Connected to server!
+02-10 14:36:16.714  6094  6125 D DetoxWSClient: Received action 'loginSuccess' (ID #0, params={"testerConnected":true,"appConnected":true})
+02-10 14:36:16.715  6094  6121 I DetoxDispatcher: Handling action 'loginSuccess' (ID #0)...
+02-10 14:36:16.715  6094  6118 I Detox   : Launching the tested activity!
+02-10 14:36:16.715  6094  6121 I DetoxDispatcher: Done with action 'loginSuccess'
+02-10 14:36:16.757  6094  6125 D DetoxWSClient: Received action 'isReady' (ID #-1000, params={})
+02-10 14:36:16.757  6094  6121 I DetoxDispatcher: Handling action 'isReady' (ID #-1000)...
+02-10 14:36:16.762  6094  6132 D libEGL  : loaded /vendor/lib64/egl/libEGL_emulation.so
+02-10 14:36:16.762  6094  6132 D libEGL  : loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
+02-10 14:36:16.764  6094  6132 D libEGL  : loaded /vendor/lib64/egl/libGLESv2_emulation.so
+02-10 14:36:16.771  6094  6094 D LifecycleMonitor: Lifecycle status change: com.AnalyticsReactNativeE2E.MainActivity@c034932 in: PRE_ON_CREATE
+02-10 14:36:16.778  6094  6094 D Detox.RNMarker: BUILD_REACT_INSTANCE_MANAGER_START (null)
+02-10 14:36:16.783  6094  6094 W unknown:ReactInstanceManagerBuilder: You're not setting the JS Engine Resolution Algorithm. We'll try to load JSC first, and if it fails we'll fallback to Hermes
+02-10 14:36:16.841  6094  6094 D Detox.RNMarker: BUILD_REACT_INSTANCE_MANAGER_END (null)
+02-10 14:36:16.845  6094  6140 D TrafficStats: tagSocket(84) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:16.845  6094  6142 D TrafficStats: tagSocket(86) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:16.846  6094  6141 D TrafficStats: tagSocket(88) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:16.847  6094  6141 W unknown:InspectorPackagerConnection: Couldn't connect to packager, will silently retry
+02-10 14:36:16.848  6094  6142 W unknown:ReconnectingWebSocket: Couldn't connect to "ws://10.0.2.2:8081/message?device=sdk_gphone64_arm64%20-%2013%20-%20API%2033&app=com.AnalyticsReactNativeE2E&clientid=BridgeDevSupportManager", will silently retry
+02-10 14:36:16.849  6094  6140 W unknown:ReactNative: The packager does not seem to be running as we got an IOException requesting its status: Failed to connect to /10.0.2.2:8081
+02-10 14:36:16.852  6094  6094 W sReactNativeE2E: Accessing hidden method Landroid/view/View;->computeFitSystemWindows(Landroid/graphics/Rect;Landroid/graphics/Rect;)Z (unsupported, reflection, allowed)
+02-10 14:36:16.852  6094  6094 W sReactNativeE2E: Accessing hidden method Landroid/view/ViewGroup;->makeOptionalFitsSystemWindows()V (unsupported, reflection, allowed)
+02-10 14:36:16.854  6094  6094 D LifecycleMonitor: Lifecycle status change: com.AnalyticsReactNativeE2E.MainActivity@c034932 in: CREATED
+02-10 14:36:16.854  6094  6094 D LifecycleMonitor: Lifecycle status change: com.AnalyticsReactNativeE2E.MainActivity@c034932 in: STARTED
+02-10 14:36:16.855  6094  6094 D LifecycleMonitor: Lifecycle status change: com.AnalyticsReactNativeE2E.MainActivity@c034932 in: RESUMED
+02-10 14:36:16.858  6094  6094 D CompatibilityChangeReporter: Compat change id reported: 237531167; UID 10180; state: DISABLED
+02-10 14:36:16.860  6094  6131 W Parcel  : Expecting binder but got null!
+02-10 14:36:16.864  6094  6094 D Detox.RNMarker: REACT_BRIDGE_LOADING_START (null)
+02-10 14:36:16.865  6094  6094 W unknown:ReactNative: Packager connection already open, nooping.
+02-10 14:36:16.866  6094  6146 D Detox.RNMarker: CREATE_REACT_CONTEXT_START (HermesExecutorDebug)
+02-10 14:36:16.866  6094  6146 D Detox.RNMarker: PROCESS_PACKAGES_START (null)
+02-10 14:36:16.867  6094  6146 D Detox.RNMarker: CREATE_MODULE_START (JSCHeapCapture)
+02-10 14:36:16.867  6094  6146 D Detox.RNMarker: CREATE_MODULE_END (JSCHeapCapture)
+02-10 14:36:16.867  6094  6146 D Detox.RNMarker: CREATE_MODULE_START (FrescoModule)
+02-10 14:36:16.867  6094  6146 D Detox.RNMarker: CREATE_MODULE_END (FrescoModule)
+02-10 14:36:16.869  6094  6146 D Detox.RNMarker: PROCESS_PACKAGES_END (null)
+02-10 14:36:16.869  6094  6146 D Detox.RNMarker: CREATE_CATALYST_INSTANCE_START (null)
+02-10 14:36:16.881  6094  6131 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_native_sync_v3 ANDROID_EMU_native_sync_v4 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+02-10 14:36:16.882  6094  6148 D Detox.RNMarker: CREATE_REACT_CONTEXT_END (null)
+02-10 14:36:16.883  6094  6131 W OpenGLRenderer: Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+02-10 14:36:16.884  6094  6131 W OpenGLRenderer: Failed to initialize 101010-2 format, error = EGL_SUCCESS
+02-10 14:36:16.884  6094  6131 D EGL_emulation: eglCreateContext: 0xb400007b3816e010: maj 3 min 0 rcv 3
+02-10 14:36:16.886  6094  6131 D EGL_emulation: eglMakeCurrent: 0xb400007b3816e010: ver 3 0 (tinfo 0x7d52bf6080) (first time)
+02-10 14:36:16.889  6094  6146 D Detox.RNMarker: CREATE_CATALYST_INSTANCE_END (null)
+02-10 14:36:16.889  6094  6146 W unknown:ReactContext: initializeMessageQueueThreads() is called.
+02-10 14:36:16.890  6094  6146 D Detox.RNMarker: PRE_RUN_JS_BUNDLE_START (null)
+02-10 14:36:16.891  6094  6146 E unknown:ReactNative: Exception in native call
+02-10 14:36:16.891  6094  6146 E unknown:ReactNative: java.lang.RuntimeException: Unable to load script. Make sure you're either running Metro (run 'npx react-native start') or that your bundle 'index.android.bundle' is packaged correctly for release.
+02-10 14:36:16.891  6094  6146 E unknown:ReactNative: 	at com.facebook.react.bridge.CatalystInstanceImpl.jniLoadScriptFromAssets(Native Method)
+02-10 14:36:16.891  6094  6146 E unknown:ReactNative: 	at com.facebook.react.bridge.CatalystInstanceImpl.loadScriptFromAssets(CatalystInstanceImpl.java:239)
+02-10 14:36:16.891  6094  6146 E unknown:ReactNative: 	at com.facebook.react.bridge.JSBundleLoader$1.loadScript(JSBundleLoader.java:29)
+02-10 14:36:16.891  6094  6146 E unknown:ReactNative: 	at com.facebook.react.bridge.CatalystInstanceImpl.runJSBundle(CatalystInstanceImpl.java:268)
+02-10 14:36:16.891  6094  6146 E unknown:ReactNative: 	at com.facebook.react.ReactInstanceManager.createReactContext(ReactInstanceManager.java:1413)
+02-10 14:36:16.891  6094  6146 E unknown:ReactNative: 	at com.facebook.react.ReactInstanceManager.-$$Nest$mcreateReactContext(Unknown Source:0)
+02-10 14:36:16.891  6094  6146 E unknown:ReactNative: 	at com.facebook.react.ReactInstanceManager$5.run(ReactInstanceManager.java:1111)
+02-10 14:36:16.891  6094  6146 E unknown:ReactNative: 	at java.lang.Thread.run(Thread.java:1012)
+02-10 14:36:16.896  6094  6131 I Gralloc4: mapper 4.x is not supported
+02-10 14:36:16.898  6094  6131 W Gralloc4: allocator 4.x is not supported
+02-10 14:36:16.900  6094  6131 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_native_sync_v3 ANDROID_EMU_native_sync_v4 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+02-10 14:36:16.901  6094  6131 E OpenGLRenderer: Unable to match the desired swap behavior.
+02-10 14:36:16.914  6094  6094 D CompatibilityChangeReporter: Compat change id reported: 171228096; UID 10180; state: ENABLED
+02-10 14:36:16.918  6094  6094 D CompatibilityChangeReporter: Compat change id reported: 210923482; UID 10180; state: ENABLED
+02-10 14:36:16.933  6094  6131 W Parcel  : Expecting binder but got null!
+02-10 14:36:16.956  6094  6131 E OpenGLRenderer: Unable to match the desired swap behavior.
+02-10 14:36:18.569  6094  6131 D EGL_emulation: app_time_stats: avg=397.09ms min=0.91ms max=1539.16ms count=4
+02-10 14:36:18.850  6094  6142 D TrafficStats: tagSocket(123) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:18.850  6094  6141 D TrafficStats: tagSocket(122) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:20.859  6094  6142 D TrafficStats: tagSocket(122) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:20.860  6094  6141 D TrafficStats: tagSocket(136) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:22.865  6094  6142 D TrafficStats: tagSocket(122) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:22.865  6094  6141 D TrafficStats: tagSocket(123) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:24.867  6094  6141 D TrafficStats: tagSocket(122) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:24.867  6094  6142 D TrafficStats: tagSocket(136) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:26.716  6094  6125 D DetoxWSClient: Received action 'currentStatus' (ID #1, params={})
+02-10 14:36:26.717  6094  6122 I DetoxDispatcher: Handling action 'currentStatus' (ID #1)...
+02-10 14:36:26.871  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:26.871  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:28.876  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:28.876  6094  6141 D TrafficStats: tagSocket(110) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:30.880  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:30.880  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:32.884  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:32.884  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:34.888  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:34.888  6094  6141 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:36.891  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:36.891  6094  6141 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:38.898  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:38.898  6094  6141 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:40.905  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:40.906  6094  6142 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:42.915  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:42.915  6094  6142 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:44.920  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:44.922  6094  6141 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:46.926  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:46.926  6094  6141 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:48.931  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:48.931  6094  6141 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:50.935  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:50.935  6094  6141 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:52.942  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:52.942  6094  6141 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:54.948  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:54.948  6094  6141 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:56.953  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:56.953  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:58.961  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:36:58.961  6094  6141 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:00.971  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:00.971  6094  6142 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:02.978  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:02.978  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:04.987  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:04.987  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:06.995  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:06.995  6094  6142 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:08.998  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:08.998  6094  6142 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:11.000  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:11.000  6094  6142 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:13.008  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:13.008  6094  6142 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:15.013  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:15.013  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:17.018  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:17.018  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:19.020  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:19.020  6094  6142 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:21.023  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:21.024  6094  6142 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:23.027  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:23.028  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:25.030  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:25.030  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:27.033  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:27.033  6094  6141 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:29.039  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:29.039  6094  6141 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:31.043  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:31.043  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:33.047  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:33.047  6094  6141 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:35.049  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:35.049  6094  6141 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:37.051  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:37.051  6094  6141 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:39.057  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:39.057  6094  6141 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:41.061  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:41.061  6094  6141 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:43.065  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:43.065  6094  6142 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:45.069  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:45.070  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:47.073  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:47.073  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:49.078  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:49.079  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:51.082  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:51.082  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:53.085  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:53.085  6094  6141 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:55.089  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:55.092  6094  6141 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:57.094  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:57.096  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:59.097  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:37:59.100  6094  6141 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:01.103  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:01.104  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:03.105  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:03.109  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:05.112  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:05.113  6094  6141 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:07.118  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:07.118  6094  6141 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:09.123  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:09.124  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:11.128  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:11.128  6094  6141 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:13.130  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:13.130  6094  6142 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:15.135  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:15.135  6094  6141 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:17.141  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:17.141  6094  6141 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:19.146  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:19.146  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:21.152  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:21.152  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:23.159  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:23.160  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:25.180  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:25.185  6094  6141 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:27.187  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:27.190  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:29.195  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:29.195  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:31.202  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:31.203  6094  6142 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:33.220  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:33.225  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:35.239  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:35.241  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:37.662  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:37.681  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:39.671  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:39.698  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:41.678  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:41.703  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:41.748  6094  6107 D CompatibilityChangeReporter: Compat change id reported: 150939131; UID 10180; state: ENABLED
+02-10 14:38:43.689  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:43.709  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:45.698  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:45.719  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:47.705  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:47.726  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:49.710  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:49.733  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:51.720  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:51.741  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:53.733  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:53.756  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:55.758  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:55.817  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:57.824  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:57.826  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:59.832  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:38:59.832  6094  6141 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:39:01.854  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:39:01.855  6094  6142 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:39:03.871  6094  6141 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:39:03.871  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:39:05.881  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:39:05.883  6094  6141 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:39:07.890  6094  6142 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:39:07.890  6094  6141 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:39:09.912  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:39:09.912  6094  6142 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:39:11.921  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:39:11.923  6094  6142 D TrafficStats: tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+02-10 14:39:13.926  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:39:13.927  6094  6142 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:39:15.936  6094  6141 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+02-10 14:39:15.939  6094  6142 D TrafficStats: tagSocket(87) with statsTag=0xffffffff, statsUid=-1
+02-10 14:39:17.347  6094  6121 W sReactNativeE2E: Long monitor contention with owner Instr: androidx.test.runner.AndroidJUnitRunner (6118) at void com.wix.detox.DetoxMain.launchActivityOnCue(android.content.Context, com.wix.detox.ActivityLaunchHelper)(DetoxMain.kt:51) waiters=0 in void com.wix.detox.DetoxMain$setupActionHandlers$SynchronizedActionHandler.handle(java.lang.String, long) for 180.589s
+02-10 14:39:17.420  6094  6094 W sReactNativeE2E: Accessing hidden field Landroid/app/Activity;->mResultCode:I (unsupported, reflection, allowed)
+02-10 14:39:17.420  6094  6094 W sReactNativeE2E: Accessing hidden field Landroid/app/Activity;->mResultData:Landroid/content/Intent; (unsupported, reflection, allowed)
+02-10 14:39:17.424  6094  6094 W sReactNativeE2E: Accessing hidden method Landroid/os/MessageQueue;->next()Landroid/os/Message; (unsupported, reflection, allowed)
+02-10 14:39:17.424  6094  6094 W sReactNativeE2E: Accessing hidden field Landroid/os/MessageQueue;->mMessages:Landroid/os/Message; (unsupported, reflection, allowed)
+02-10 14:39:17.426  6094  6094 W sReactNativeE2E: Accessing hidden method Landroid/os/Message;->recycleUnchecked()V (unsupported, reflection, allowed)
+02-10 14:39:17.470  6094  6094 D LifecycleMonitor: Lifecycle status change: com.AnalyticsReactNativeE2E.MainActivity@c034932 in: PAUSED
+02-10 14:39:17.481  6094  6094 I Detox   : Wait is over: App is now idle!
+02-10 14:39:17.481  6094  6121 I DetoxWSClient: Sending out action 'ready' (ID #-1000)
+02-10 14:39:17.482  6094  6121 I DetoxDispatcher: Done with action 'isReady'
+02-10 14:39:17.482  6094  6118 E TestRunner: failed: runDetoxTests(com.AnalyticsReactNativeE2E.DetoxTest)
+02-10 14:39:17.482  6094  6118 E TestRunner: ----- begin exception -----
+02-10 14:39:17.485  6094  6122 W sReactNativeE2E: Long monitor contention with owner Instr: androidx.test.runner.AndroidJUnitRunner (6118) at void com.wix.detox.DetoxMain.launchActivityOnCue(android.content.Context, com.wix.detox.ActivityLaunchHelper)(DetoxMain.kt:51) waiters=1 in void com.wix.detox.DetoxMain$setupActionHandlers$SynchronizedActionHandler.handle(java.lang.String, long) for 170.767s
+02-10 14:39:17.488  6094  6118 E TestRunner: com.wix.detox.common.DetoxErrors$DetoxRuntimeException: Waited for the new RN-context for too long! (180 seconds)
+02-10 14:39:17.488  6094  6118 E TestRunner: If you think that's not long enough, consider applying a custom Detox runtime-config in DetoxTest.runTests().
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at com.wix.detox.reactnative.ReactNativeLoadingMonitor.awaitNewRNContext(ReactNativeLoadingMonitor.kt:60)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at com.wix.detox.reactnative.ReactNativeLoadingMonitor.getNewContext(ReactNativeLoadingMonitor.kt:29)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at com.wix.detox.reactnative.ReactNativeExtension.awaitNewReactNativeContext(ReactNativeExtension.kt:129)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at com.wix.detox.reactnative.ReactNativeExtension.waitForRNBootstrap(ReactNativeExtension.kt:36)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at com.wix.detox.DetoxMain.launchActivity(DetoxMain.kt:127)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at com.wix.detox.DetoxMain.launchActivityOnCue(DetoxMain.kt:53)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at com.wix.detox.DetoxMain.run(DetoxMain.kt:33)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at com.wix.detox.Detox.runTests(Detox.java:126)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at com.wix.detox.Detox.runTests(Detox.java:93)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at com.AnalyticsReactNativeE2E.DetoxTest.runDetoxTests(DetoxTest.java:27)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at java.lang.reflect.Method.invoke(Native Method)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at androidx.test.rule.ActivityTestRule$ActivityStatement.evaluate(ActivityTestRule.java:543)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.BlockJUnit4ClassRunner$1.evaluate(BlockJUnit4ClassRunner.java:100)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:366)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:103)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:63)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at androidx.test.ext.junit.runners.AndroidJUnit4.run(AndroidJUnit4.java:162)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.Suite.runChild(Suite.java:128)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.Suite.runChild(Suite.java:27)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runner.JUnitCore.run(JUnitCore.java:137)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at org.junit.runner.JUnitCore.run(JUnitCore.java:115)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at androidx.test.internal.runner.TestExecutor.execute(TestExecutor.java:67)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at androidx.test.internal.runner.TestExecutor.execute(TestExecutor.java:58)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at androidx.test.runner.AndroidJUnitRunner.onStart(AndroidJUnitRunner.java:446)
+02-10 14:39:17.488  6094  6118 E TestRunner: 	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2361)
+02-10 14:39:17.488  6094  6118 E TestRunner: ----- end exception -----
+02-10 14:39:17.489  6094  6118 I TestRunner: finished: runDetoxTests(com.AnalyticsReactNativeE2E.DetoxTest)
+02-10 14:39:17.492  6094  6122 I DetoxWSClient: Sending out action 'currentStatusResult' (ID #1)
+02-10 14:39:17.503  6094  6122 I DetoxDispatcher: Done with action 'currentStatus'
+02-10 14:39:17.526  6094  6118 I MonitoringInstr: Unstopped activity count: 1
+02-10 14:39:17.577  6094  6118 I MonitoringInstr: Unstopped act

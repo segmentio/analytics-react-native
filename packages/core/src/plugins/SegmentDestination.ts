@@ -39,20 +39,29 @@ export class SegmentDestination extends DestinationPlugin {
   }
 
   private sendEvents = async (events: SegmentEvent[]): Promise<void> => {
+    console.log(`[SegmentDestination] sendEvents called with ${events.length} events`);
     if (events.length === 0) {
+      console.log('[SegmentDestination] No events to send, returning');
       return Promise.resolve();
     }
 
     // We're not sending events until Segment has loaded all settings
+    console.log('[SegmentDestination] Waiting for settings...');
     await this.settingsPromise;
+    console.log('[SegmentDestination] Settings loaded');
 
     // Upload gate: check if uploads are allowed
     if (this.uploadStateMachine) {
+      console.log('[SegmentDestination] Checking canUpload...');
       const canUpload = await this.uploadStateMachine.canUpload();
+      console.log(`[SegmentDestination] canUpload: ${canUpload}`);
       if (!canUpload) {
         // Still in WAITING state, defer upload
+        console.log('[SegmentDestination] Upload blocked by rate limiter');
         return Promise.resolve();
       }
+    } else {
+      console.log('[SegmentDestination] uploadStateMachine not initialized yet');
     }
 
     const config = this.analytics?.getConfig() ?? defaultConfig;
@@ -63,12 +72,15 @@ export class SegmentDestination extends DestinationPlugin {
       MAX_PAYLOAD_SIZE_IN_KB
     );
 
+    console.log(`[SegmentDestination] Chunked into ${chunkedEvents.length} batches`);
+
     let sentEvents: SegmentEvent[] = [];
     let eventsToDequeue: SegmentEvent[] = [];
     let numFailedEvents = 0;
 
     // CRITICAL: Process batches SEQUENTIALLY (not parallel)
     for (const batch of chunkedEvents) {
+      console.log(`[SegmentDestination] Processing batch with ${batch.length} events`);
       try {
         const result = await this.uploadBatch(batch);
 
