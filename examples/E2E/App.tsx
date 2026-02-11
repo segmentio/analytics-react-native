@@ -16,7 +16,6 @@ import {
   // @ts-ignore unused for e2e tests
   // TimerFlushPolicy,
 } from '@segment/analytics-react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Home from './Home';
 import SecondPage from './SecondPage';
 import Modal from './Modal';
@@ -42,10 +41,12 @@ const segmentClient = createClient({
   collectDeviceId: true,
   debug: true,
   useSegmentEndpoints: true, //if you pass only domain/v1 as proxy setup, use this flag to append segment endpoints. Otherwise you can remove it and customise proxy completely
-  // No flush policies - E2E tests use manual flush for full control
-  // flushPolicies: [
-  //   new CountFlushPolicy(1),
-  // ],
+  flushPolicies: [
+    new CountFlushPolicy(5),
+    // These are disabled for E2E tests
+    // new TimerFlushPolicy(1000),
+    // new StartupFlushPolicy(),
+  ],
   proxy: Platform.select({
     ios: 'http://localhost:9091/v1',
     android: 'http://10.0.2.2:9091/v1',
@@ -54,17 +55,6 @@ const segmentClient = createClient({
     ios: 'http://localhost:9091/v1',
     android: 'http://10.0.2.2:9091/v1',
   }),
-  // Use in-memory storage for E2E tests (no persistence across restarts)
-  // This avoids module initialization issues with sovran's native bridge
-  // The backoff implementation works identically with in-memory stores
-  // Note: Persistence is tested via unit tests with mocked storage
-  // storePersistor: AsyncStorage,
-});
-
-// Debug: Log when client is ready
-console.log('[E2E DEBUG] Client created, init() called in background');
-segmentClient.isReady.onChange((ready) => {
-  console.log('[E2E DEBUG] Client isReady changed:', ready);
 });
 
 const LoggerPlugin = new Logger();

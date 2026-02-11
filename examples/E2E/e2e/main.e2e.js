@@ -29,7 +29,7 @@ describe('#mainTest', () => {
 
   beforeEach(async () => {
     mockServerListener.mockReset();
-    await device.reloadReactNative();
+    device.reloadReactNative();
   });
 
   afterAll(async () => {
