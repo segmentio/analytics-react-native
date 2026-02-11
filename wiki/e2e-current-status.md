@@ -13,11 +13,13 @@
 **File**: `packages/core/src/plugins/SegmentDestination.ts`
 
 **Problem**: When a batch received a permanent error (400, 401, 403, 404, 413, 422, 501, 505), it was:
+
 1. Removed from `BatchUploadManager` (retry tracking)
 2. ❌ BUT NOT removed from the event queue
 3. ❌ Events retried forever on every flush
 
 **Impact**:
+
 - Events accumulated in queue
 - Wasted network resources
 - Could violate rate limits
@@ -28,18 +30,19 @@
 ```typescript
 // Track both successful and dropped batches for dequeuing
 let sentEvents: SegmentEvent[] = [];
-let eventsToDequeue: SegmentEvent[] = [];  // NEW
+let eventsToDequeue: SegmentEvent[] = []; // NEW
 
 for (const batch of chunkedEvents) {
   const result = await this.uploadBatch(batch);
 
   if (result.success) {
     sentEvents = sentEvents.concat(batch);
-    eventsToDequeue = eventsToDequeue.concat(batch);  // Dequeue successful
-  } else if (result.dropped) {  // NEW: Permanent errors
-    eventsToDequeue = eventsToDequeue.concat(batch);  // Dequeue dropped
+    eventsToDequeue = eventsToDequeue.concat(batch); // Dequeue successful
+  } else if (result.dropped) {
+    // NEW: Permanent errors
+    eventsToDequeue = eventsToDequeue.concat(batch); // Dequeue dropped
   } else if (result.halt) {
-    break;  // 429: don't dequeue
+    break; // 429: don't dequeue
   }
   // Transient errors: don't dequeue, will retry
 }
@@ -51,6 +54,7 @@ await this.queuePlugin.dequeue(eventsToDequeue);
 ### Changes Made
 
 1. **SegmentDestination.ts**:
+
    - Line 67: Added `eventsToDequeue` array
    - Lines 75-84: Updated batch processing logic
    - Line 94: Dequeue both successful and dropped batches
@@ -58,6 +62,7 @@ await this.queuePlugin.dequeue(eventsToDequeue);
    - Line 184: Permanent errors return `{dropped: true}`
 
 2. **App.tsx**:
+
    - Re-added `CountFlushPolicy(1)` for auto-flush behavior
 
 3. **Test Files** (backoff.e2e.js, backoff-status-codes.e2e.js):
@@ -67,12 +72,14 @@ await this.queuePlugin.dequeue(eventsToDequeue);
 ## Current E2E Test Status
 
 ### Passing Tests (2/58) ✅
+
 - Sequential Processing: processes batches sequentially not parallel
 - (1 more test passed but output truncated)
 
 ### Failing Tests (43/58) ❌
 
 Common failure pattern:
+
 ```
 Expected number of calls: >= 1
 Received number of calls: 0
@@ -81,6 +88,7 @@ Received number of calls: 0
 This suggests mock server is not receiving upload requests at all.
 
 ### Test Categories Affected
+
 1. ❌ 429 Rate Limiting tests (4 tests)
 2. ❌ Transient Error tests (2 tests)
 3. ❌ Permanent Error tests (1 test)
@@ -93,23 +101,27 @@ This suggests mock server is not receiving upload requests at all.
 ### Possible Causes
 
 1. **Lifecycle Event Interference**:
+
    - App tracks "Application Opened" on startup
    - Tests call `clearLifecycleEvents()` which flushes
    - But lifecycle events might interfere with test event counts
    - Mock server might receive unexpected calls
 
 2. **Timing Issues**:
+
    - `trackAndFlush()` now waits 800ms for auto-flush
    - May not be long enough for backoff component initialization
    - Dynamic import of backoff components is async (not awaited)
 
 3. **Backoff Component Initialization**:
+
    - `UploadStateMachine` and `BatchUploadManager` are initialized via `void import()`
    - Not awaited, so may not be ready when first events are tracked
    - However, code has checks: `if (this.uploadStateMachine)` etc.
    - Should gracefully handle undefined components
 
 4. **Test Pattern Mismatch**:
+
    - Some tests manually call `flushButton.tap()` (e.g., line 59 in backoff.e2e.js)
    - `trackAndFlush()` no longer calls flush, relies on auto-flush
    - Tests expecting explicit flush timing may fail
@@ -122,6 +134,7 @@ This suggests mock server is not receiving upload requests at all.
 ## Verification
 
 ### Unit Tests ✅
+
 ```bash
 $ devbox run test-unit
 
@@ -130,12 +143,14 @@ Tests:       2 skipped, 1 todo, 423 passed, 426 total
 ```
 
 All unit tests pass, confirming:
+
 - Core backoff logic is correct
 - Permanent errors are handled properly
 - Retry logic works as expected
 - Error classification is correct
 
 ### E2E Tests ⚠️
+
 ```bash
 $ devbox run test-e2e-android
 
@@ -146,8 +161,10 @@ Tests:       43 failed, 13 skipped, 2 passed, 58 total
 ## Next Steps
 
 ### Option 1: Deep Dive on E2E Failures
+
 **Time**: 2-3 hours
 **Approach**:
+
 1. Add extensive logging to SegmentDestination.sendEvents()
 2. Log when events are tracked, queued, flushed
 3. Check if backoff components are initialized
@@ -155,24 +172,30 @@ Tests:       43 failed, 13 skipped, 2 passed, 58 total
 5. Check if events are even reaching `sendEvents()`
 
 ### Option 2: Simplify E2E Test Setup
+
 **Time**: 1-2 hours
 **Approach**:
+
 1. Remove CountFlushPolicy again
 2. Fix `flush()` to work without policies (investigate QueueFlushingPlugin)
 3. Use only manual flush control in tests
 4. Eliminate auto-flush race conditions
 
 ### Option 3: Revert Test Changes, Focus on Critical Bug
+
 **Time**: 30 minutes
 **Approach**:
+
 1. Keep the critical bug fix in SegmentDestination.ts ✅
 2. Revert E2E test changes (backoff.e2e.js, backoff-status-codes.e2e.js)
 3. Revert App.tsx changes (keep original test setup)
 4. Document that E2E tests need separate cleanup effort
 
 ### Option 4: Proceed with PR (Recommended)
+
 **Time**: Now
 **Approach**:
+
 1. Critical bug is fixed ✅
 2. All unit tests pass (423/423) ✅
 3. Implementation matches SDD specification ✅
@@ -209,15 +232,18 @@ Tests:       43 failed, 13 skipped, 2 passed, 58 total
 ## Files Modified
 
 ### Core Implementation
+
 - `packages/core/src/plugins/SegmentDestination.ts` (critical bug fix)
 
 ### E2E Test Setup (may need revert)
+
 - `examples/E2E/App.tsx` (re-added CountFlushPolicy)
 - `examples/E2E/e2e/backoff.e2e.js` (updated trackAndFlush helper)
 - `examples/E2E/e2e/backoff-status-codes.e2e.js` (updated trackAndFlush helper)
 - `examples/E2E/.detoxrc.js` (changed retries: 0 → 1)
 
 ### Documentation
+
 - `wiki/critical-bug-fix-permanent-errors.md` (new)
 - `wiki/e2e-current-status.md` (this document)
 

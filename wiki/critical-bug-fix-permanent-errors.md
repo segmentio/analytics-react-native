@@ -29,6 +29,7 @@ await this.queuePlugin.dequeue(sentEvents);
 ```
 
 **The Problem**:
+
 1. When a batch gets a permanent error (400, 401, 403, etc.), `uploadBatch()` returns `{success: false, halt: false}`
 2. The batch is NOT added to `sentEvents` (line only adds on success)
 3. `queuePlugin.dequeue()` only removes `sentEvents` from the queue
@@ -37,6 +38,7 @@ await this.queuePlugin.dequeue(sentEvents);
 ### Impact on E2E Tests
 
 This bug caused E2E tests to fail because:
+
 1. First event gets a 400 error
 2. Event stays in queue forever
 3. Second event tracked by test
@@ -52,18 +54,19 @@ Added a `dropped` field to track batches that should be permanently removed:
 // SegmentDestination.ts (lines 66-94)
 
 let sentEvents: SegmentEvent[] = [];
-let eventsToDequeue: SegmentEvent[] = [];  // NEW: Track all events to remove
+let eventsToDequeue: SegmentEvent[] = []; // NEW: Track all events to remove
 
 for (const batch of chunkedEvents) {
   const result = await this.uploadBatch(batch);
 
   if (result.success) {
     sentEvents = sentEvents.concat(batch);
-    eventsToDequeue = eventsToDequeue.concat(batch);  // Dequeue successful
-  } else if (result.dropped) {  // NEW: Handle permanent errors
-    eventsToDequeue = eventsToDequeue.concat(batch);  // Dequeue dropped
+    eventsToDequeue = eventsToDequeue.concat(batch); // Dequeue successful
+  } else if (result.dropped) {
+    // NEW: Handle permanent errors
+    eventsToDequeue = eventsToDequeue.concat(batch); // Dequeue dropped
   } else if (result.halt) {
-    break;  // 429: don't dequeue, will retry later
+    break; // 429: don't dequeue, will retry later
   }
   // Transient errors: don't dequeue, will retry
 }
@@ -78,10 +81,10 @@ Updated `uploadBatch()` return type:
 
 ```typescript
 // OLD
-Promise<{ success: boolean; halt: boolean }>
+Promise<{ success: boolean; halt: boolean }>;
 
 // NEW
-Promise<{ success: boolean; halt: boolean; dropped: boolean }>
+Promise<{ success: boolean; halt: boolean; dropped: boolean }>;
 ```
 
 ### Response Patterns
@@ -94,6 +97,7 @@ Promise<{ success: boolean; halt: boolean; dropped: boolean }>
 ## Verification
 
 ### Unit Tests: ✅ ALL PASSING
+
 ```
 Test Suites: 68 passed, 68 total
 Tests:       2 skipped, 1 todo, 423 passed, 426 total
@@ -104,6 +108,7 @@ Unit tests pass because they mock the queue properly and test the logic in isola
 ### E2E Tests: ⚠️ Still Having Issues
 
 E2E tests are still failing due to timing/race condition issues unrelated to this fix:
+
 - Using `CountFlushPolicy(1)` causes auto-flush after every event
 - Tests also call `flush()` manually
 - Creates race conditions between auto-flush and manual flush
