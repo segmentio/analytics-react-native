@@ -8,9 +8,7 @@ export class Logger extends Plugin {
   type = PluginType.before;
 
   execute(event: SegmentEvent) {
-    if (__DEV__) {
-      console.log(event);
-    }
+    console.log('[Logger Plugin]', event);
     return event;
   }
 }
