@@ -14,15 +14,10 @@ describe('Logger', () => {
     expect(logger.isDisabled).toBeFalsy();
   });
 
-  it('create a new logger instance in production', () => {
-    const previousNodeEnv = process.env.NODE_ENV;
-    process.env.NODE_ENV = 'production';
-
-    const logger = new Logger();
+  it('create a new logger instance with explicit disabled state', () => {
+    const logger = new Logger(true);
 
     expect(logger.isDisabled).toBe(true);
-
-    process.env.NODE_ENV = previousNodeEnv;
   });
 
   it('enables the logger', () => {
