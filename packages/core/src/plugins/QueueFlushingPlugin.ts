@@ -62,14 +62,8 @@ export class QueueFlushingPlugin extends UtilityPlugin {
   }
 
   async execute(event: SegmentEvent): Promise<SegmentEvent | undefined> {
-    console.log(
-      `[DEBUG QueueFlushingPlugin.execute] Adding event ${event.type} to queue`
-    );
     await this.queueStore?.dispatch((state) => {
       const events = [...state.events, event];
-      console.log(
-        `[DEBUG QueueFlushingPlugin.execute] Queue now has ${events.length} events`
-      );
       return { events };
     });
     return event;
@@ -79,13 +73,9 @@ export class QueueFlushingPlugin extends UtilityPlugin {
    * Calls the onFlush callback with the events in the queue
    */
   async flush() {
-    console.log('[DEBUG QueueFlushingPlugin.flush] flush() called');
     // Wait for the queue to be restored
     try {
       await this.isRestored;
-      console.log(
-        '[DEBUG QueueFlushingPlugin.flush] Queue restoration promise resolved'
-      );
 
       if (this.timeoutWarned === true) {
         this.analytics?.logger.info('Flush triggered successfully.');
@@ -94,10 +84,6 @@ export class QueueFlushingPlugin extends UtilityPlugin {
       }
     } catch (e) {
       // If the queue is not restored before the timeout, we will notify but not block flushing events
-      console.log(
-        '[DEBUG QueueFlushingPlugin.flush] Queue restoration timed out:',
-        e
-      );
       if (this.timeoutWarned === false) {
         this.analytics?.reportInternalError(
           new SegmentError(
@@ -117,24 +103,13 @@ export class QueueFlushingPlugin extends UtilityPlugin {
     }
 
     const events = (await this.queueStore?.getState(true))?.events ?? [];
-    console.log(
-      `[DEBUG QueueFlushingPlugin.flush] Retrieved ${events.length} events from queue, isPendingUpload=${this.isPendingUpload}`
-    );
     if (!this.isPendingUpload) {
       try {
         this.isPendingUpload = true;
-        console.log(
-          `[DEBUG QueueFlushingPlugin.flush] Calling onFlush callback with ${events.length} events`
-        );
         await this.onFlush(events);
-        console.log('[DEBUG QueueFlushingPlugin.flush] onFlush completed');
       } finally {
         this.isPendingUpload = false;
       }
-    } else {
-      console.log(
-        '[DEBUG QueueFlushingPlugin.flush] ⚠️ Upload already pending, skipping this flush'
-      );
     }
   }
 

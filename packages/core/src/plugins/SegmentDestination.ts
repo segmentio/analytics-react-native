@@ -40,52 +40,36 @@ export class SegmentDestination extends DestinationPlugin {
   }
 
   private sendEvents = async (events: SegmentEvent[]): Promise<void> => {
-    this.analytics?.logger.warn(
-      `🔵 SENDEVE NTS_CALLED: ${events.length} events`
-    );
     if (events.length === 0) {
       return Promise.resolve();
     }
 
     // We're not sending events until Segment has loaded all settings
     await this.settingsPromise;
-    this.analytics?.logger.warn('🟢 SETTINGS_LOADED');
 
     // Upload gate: check if uploads are allowed
     // Only check if backoff is fully initialized to avoid race conditions
-    console.log(`[UPLOAD_GATE] backoffInitialized=${this.backoffInitialized}, uploadStateMachine=${!!this.uploadStateMachine}`);
     if (this.backoffInitialized && this.uploadStateMachine) {
       try {
         const canUpload = await this.uploadStateMachine.canUpload();
-        console.log(`[UPLOAD_GATE] canUpload=${canUpload}`);
-        this.analytics?.logger.warn(
-          `🟡 UPLOAD_GATE_CHECK: canUpload=${canUpload}`
-        );
         if (!canUpload) {
           // Still in WAITING state, defer upload
-          console.log('[UPLOAD_GATE] ❌ UPLOAD BLOCKED - rate limit in effect');
-          this.analytics?.logger.warn(
-            '🔴 UPLOAD_DEFERRED: rate limit in effect'
-          );
+          this.analytics?.logger.info('Upload deferred: rate limit in effect');
           return Promise.resolve();
         }
-        console.log('[UPLOAD_GATE] ✅ UPLOAD ALLOWED - proceeding');
       } catch (e) {
         // If upload gate check fails, log warning but allow upload to proceed
-        console.error(`[UPLOAD_GATE] ⚠️ ERROR in canUpload(): ${e}`);
         this.analytics?.logger.error(
-          `⚠️ CRITICAL: uploadStateMachine.canUpload() threw error: ${e}`
+          `uploadStateMachine.canUpload() threw error: ${e}`
         );
       }
     } else if (!this.backoffInitialized) {
-      console.log('[UPLOAD_GATE] ⚠️ Backoff not initialized - proceeding without rate limiting');
       this.analytics?.logger.warn(
-        `⚠️ BACKOFF_NOT_INITIALIZED: Upload proceeding without rate limiting`
+        'Backoff not initialized: upload proceeding without rate limiting'
       );
     } else if (!this.uploadStateMachine) {
-      console.error('[UPLOAD_GATE] ⚠️ CRITICAL: backoffInitialized=true but uploadStateMachine undefined!');
       this.analytics?.logger.error(
-        `⚠️ CRITICAL: backoffInitialized=true but uploadStateMachine undefined!`
+        'CRITICAL: backoffInitialized=true but uploadStateMachine undefined!'
       );
     }
 
@@ -96,9 +80,6 @@ export class SegmentDestination extends DestinationPlugin {
       config.maxBatchSize ?? MAX_EVENTS_PER_BATCH,
       MAX_PAYLOAD_SIZE_IN_KB
     );
-    this.analytics?.logger.warn(
-      `🔷 CHUNKS_CREATED: ${chunkedEvents.length} batches from ${events.length} events`
-    );
 
     let sentEvents: SegmentEvent[] = [];
     let eventsToDequeue: SegmentEvent[] = [];
@@ -106,12 +87,8 @@ export class SegmentDestination extends DestinationPlugin {
 
     // CRITICAL: Process batches SEQUENTIALLY (not parallel)
     for (const batch of chunkedEvents) {
-      console.log(
-        `[DEBUG sendEvents] Processing batch with ${batch.length} events`
-      );
       try {
         const result = await this.uploadBatch(batch);
-        console.log(`[DEBUG sendEvents] uploadBatch result:`, result);
 
         if (result.success) {
           sentEvents = sentEvents.concat(batch);
@@ -125,16 +102,12 @@ export class SegmentDestination extends DestinationPlugin {
         }
         // Transient error: continue to next batch (don't dequeue, will retry)
       } catch (e) {
-        console.log('[DEBUG sendEvents] uploadBatch threw error:', e);
         this.analytics?.reportInternalError(translateHTTPError(e));
         this.analytics?.logger.warn(e);
         numFailedEvents += batch.length;
       }
     }
 
-    console.log(
-      `[DEBUG sendEvents] Dequeuing ${eventsToDequeue.length} events`
-    );
     // Dequeue both successfully sent events AND permanently dropped events
     await this.queuePlugin.dequeue(eventsToDequeue);
 
@@ -158,24 +131,16 @@ export class SegmentDestination extends DestinationPlugin {
     const httpConfig = this.settings?.httpConfig ?? defaultHttpConfig;
     const endpoint = this.getEndpoint();
 
-    this.analytics?.logger.warn(
-      `🚀 UPLOAD_BATCH_START: ${batch.length} events to ${endpoint}`
-    );
-
     // Create batch metadata for retry tracking (only if backoff is initialized)
     let batchId: string | null = null;
     if (this.backoffInitialized && this.batchUploadManager) {
       try {
         batchId = this.batchUploadManager.createBatch(batch);
       } catch (e) {
-        console.error(
-          `⚠️ CRITICAL: BatchUploadManager.createBatch() failed even though backoffInitialized=true. BatchUploadManager is in a broken state. Error: ${e}`
+        this.analytics?.logger.error(
+          `BatchUploadManager.createBatch() failed: ${e}`
         );
       }
-    } else if (!this.backoffInitialized) {
-      console.log(
-        '[DEBUG uploadBatch] Backoff not initialized - proceeding without batch retry tracking'
-      );
     }
 
     // Get retry count (per-batch preferred, fall back to global for 429)
@@ -191,8 +156,8 @@ export class SegmentDestination extends DestinationPlugin {
           : 0;
         retryCount = batchRetryCount > 0 ? batchRetryCount : globalRetryCount;
       } catch (e) {
-        console.error(
-          `⚠️ CRITICAL: Failed to get retry count from backoff components even though backoffInitialized=true. Components are in a broken state. Error: ${e}`
+        this.analytics?.logger.error(
+          `Failed to get retry count from backoff components: ${e}`
         );
       }
     }
@@ -205,8 +170,6 @@ export class SegmentDestination extends DestinationPlugin {
         retryCount, // Send X-Retry-Count header
       });
 
-      console.log(`[DEBUG uploadBatch] Response status: ${res.status}`);
-
       // Success case
       if (res.ok) {
         if (this.backoffInitialized) {
@@ -216,10 +179,7 @@ export class SegmentDestination extends DestinationPlugin {
               await this.batchUploadManager.removeBatch(batchId);
             }
           } catch (e) {
-            console.log(
-              '[DEBUG uploadBatch] Error cleaning up after success:',
-              e
-            );
+            // Silently handle cleanup errors - not critical
           }
         }
         this.analytics?.logger.info(
@@ -247,7 +207,7 @@ export class SegmentDestination extends DestinationPlugin {
           try {
             await this.uploadStateMachine.handle429(retryAfterSeconds);
           } catch (e) {
-            console.log('[DEBUG uploadBatch] Error handling 429:', e);
+            // Silently handle - already logged in handle429
           }
         }
 
@@ -270,7 +230,7 @@ export class SegmentDestination extends DestinationPlugin {
           try {
             await this.batchUploadManager.handleRetry(batchId, res.status);
           } catch (e) {
-            console.log('[DEBUG uploadBatch] Error handling retry:', e);
+            // Silently handle - not critical
           }
         }
         return { success: false, halt: false, dropped: false }; // Continue to next batch
@@ -288,15 +248,11 @@ export class SegmentDestination extends DestinationPlugin {
         try {
           await this.batchUploadManager.removeBatch(batchId);
         } catch (e) {
-          console.log(
-            '[DEBUG uploadBatch] Error removing batch after permanent error:',
-            e
-          );
+          // Silently handle - not critical
         }
       }
       return { success: false, halt: false, dropped: true };
     } catch (e) {
-      console.log('[DEBUG uploadBatch] Network error:', e);
       // Network error: treat as transient
       if (
         this.backoffInitialized &&
@@ -306,10 +262,7 @@ export class SegmentDestination extends DestinationPlugin {
         try {
           await this.batchUploadManager.handleRetry(batchId, -1);
         } catch (retryError) {
-          console.log(
-            '[DEBUG uploadBatch] Error handling network error retry:',
-            retryError
-          );
+          // Silently handle - not critical
         }
       }
       throw e;
@@ -337,7 +290,7 @@ export class SegmentDestination extends DestinationPlugin {
     try {
       return getURL(baseURL, endpoint);
     } catch (error) {
-      console.error('Error in getEndpoint:', `fallback to ${defaultApiHost}`);
+      this.analytics?.logger.error(`Error in getEndpoint, fallback to ${defaultApiHost}: ${error}`);
       return defaultApiHost;
     }
   }
