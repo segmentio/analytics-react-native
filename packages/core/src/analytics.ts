@@ -502,7 +502,6 @@ export class SegmentClient {
     this.timeline.add(plugin);
     //check for waiting plugin here
     if (plugin instanceof WaitingPlugin) {
-      console.log('add plugin');
       this.pauseEventProcessingForPlugin(plugin);
     }
 
