@@ -41,6 +41,7 @@ type Data = {
   filters: DestinationFilters;
   pendingEvents: SegmentEvent[];
   enabled: boolean;
+  running: boolean;
 };
 
 const INITIAL_VALUES: Data = {
@@ -56,6 +57,7 @@ const INITIAL_VALUES: Data = {
   },
   pendingEvents: [],
   enabled: true,
+  running: false,
 };
 
 const isEverythingReady = (state: ReadinessStore) =>
@@ -190,6 +192,9 @@ export class SovranStorage implements Storage {
   readonly enabledStore: Store<{ enabled: boolean }>; 
   readonly enabled: Watchable<boolean> & Settable<boolean>;
 
+  readonly runningStore: Store<{ running: boolean }>;
+  readonly running: Watchable<boolean> & Settable<boolean>;
+
   constructor(config: StorageConfig) {
     this.storeId = config.storeId;
     this.storePersistor = config.storePersistor;
@@ -201,6 +206,7 @@ export class SovranStorage implements Storage {
       hasRestoredFilters: false,
       hasRestoredPendingEvents: false,
       hasRestoredEnabled: false,
+      hasRestoredRunning: false,
     });
 
     const markAsReadyGenerator = (key: keyof ReadinessStore) => () => {
@@ -536,6 +542,46 @@ export class SovranStorage implements Storage {
       },
     };
 
+
+    this.runningStore = createStore(
+      { running: INITIAL_VALUES.running },
+      {
+        persist: {
+          storeId: `${this.storeId}-running`,
+          persistor: this.storePersistor,
+          saveDelay: this.storePersistorSaveDelay,
+          onInitialized: markAsReadyGenerator('hasRestoredRunning'),
+        },
+      }
+    );
+    // Accessor object for running
+    this.running = {
+      get: createGetter(
+        () => {
+          const state = this.runningStore.getState();
+          return state.running;
+        },
+        async () => {
+          const value = await this.runningStore.getState(true);
+          return value.running;
+        }
+      ),
+
+      onChange: (callback: (value: boolean) => void) => {
+        return this.runningStore.subscribe((store) => {
+          callback(store.running);
+        });
+      },
+
+      set: async (value: boolean | ((prev: boolean) => boolean)) => {
+        const { running } = await this.runningStore.dispatch((state) => {
+          const newRunning =
+            value instanceof Function ? value(state.running) : value;
+          return { running: newRunning };
+        });
+        return running;
+      },
+    };
 
     this.fixAnonymousId();
   }

@@ -122,6 +122,10 @@ export class SegmentClient {
    */
   readonly enabled: Watchable<boolean> & Settable<boolean>;
   /**
+   * Access or subscribe to running state (controls event processing)
+   */
+  readonly running: Watchable<boolean> & Settable<boolean>;
+  /**
    * Access or subscribe to client context
    */
   readonly context: Watchable<DeepPartial<Context> | undefined> &
@@ -201,17 +205,19 @@ export class SegmentClient {
     this.store = store;
     this.timeline = new Timeline();
 
-    // // create and add waiting plugin immediately so early events get buffered.
-    // try {
-    //   this.waitingPlugin = new WaitingPlugin();
-    //   // add directly to timeline via addPlugin to ensure configure() is called immediately
-    //   this.addPlugin(this.waitingPlugin);
-    //   // initial running state false until init completes (mirrors Kotlin semantics)
-    //   this.isRunning = false;
-    // } catch (e) {
-    //   // if WaitingPlugin instantiation or add fails, fallback to running=true
-    //   this.isRunning = true;
-    // }
+    /*
+     * create and add waiting plugin immediately so early events get buffered.
+     * try {
+     *   this.waitingPlugin = new WaitingPlugin();
+     *   // add directly to timeline via addPlugin to ensure configure() is called immediately
+     *   this.addPlugin(this.waitingPlugin);
+     *   // initial running state false until init completes (mirrors Kotlin semantics)
+     *   this.isRunning = false;
+     * } catch (e) {
+     *   // if WaitingPlugin instantiation or add fails, fallback to running=true
+     *   this.isRunning = true;
+     * }
+     */
 
     // Initialize the watchables
     this.context = {
@@ -271,6 +277,12 @@ export class SegmentClient {
       onChange: this.store.enabled.onChange,
     };
 
+    this.running = {
+      get: this.store.running.get,
+      set: this.store.running.set,
+      onChange: this.store.running.onChange,
+    };
+
     // add segment destination plugin unless
     // asked not to via configuration.
     if (this.config.autoAddSegmentDestination === true) {
@@ -321,6 +333,8 @@ export class SegmentClient {
       ]);
       await this.onReady();
       this.isReady.value = true;
+      // Set running to true to start event processing
+      await this.store.running.set(true);
       // Process all pending events
       await this.processPendingEvents();
       // Trigger manual flush
@@ -476,11 +490,9 @@ export class SegmentClient {
         settings
       );
     }
-    console.log('!this.isReady.value', !this.isReady.value);
-    if (!this.isReady.value && !(plugin instanceof WaitingPlugin)) {
+    if (!this.isReady.value) {
       this.pluginsToAdd.push(plugin);
     } else {
-      console.log('this.addPlugin');
       this.addPlugin(plugin);
     }
   }
@@ -1048,7 +1060,7 @@ export class SegmentClient {
   private resumeTimeoutId?: ReturnType<typeof setTimeout>;
   private waitingPlugins = new Set<WaitingPlugin>();
 
-  /**
+  /*
    * Pause event processing globally. Events will be buffered into pendingEvents and WaitingPlugin.
    * An auto-resume will be scheduled after `timeout` ms.
    */
@@ -1071,23 +1083,23 @@ export class SegmentClient {
 
   pauseEventProcessing(timeout = 30000) {
     // IMPORTANT: ignore repeated pauses
-    if (!this.isReady.value) {
+    const running = this.store.running.get();
+    if (!running) {
       return;
     }
 
-    this.isReady.value = false;
+    void this.store.running.set(false);
 
-    // clear previous timeout if any
-    if (this.resumeTimeoutId) {
-      clearTimeout(this.resumeTimeoutId);
+    // Only set timeout if not already set (prevents multiple waiting plugins from overwriting)
+    if (!this.resumeTimeoutId) {
+      this.resumeTimeoutId = setTimeout(async () => {
+        await this.resumeEventProcessing();
+      }, timeout);
     }
-
-    this.resumeTimeoutId = setTimeout(async () => {
-      await this.resumeEventProcessing();
-    }, timeout);
   }
   async resumeEventProcessing() {
-    if (this.isReady.value) {
+    const running = this.store.running.get();
+    if (running) {
       return;
     }
 
@@ -1095,8 +1107,7 @@ export class SegmentClient {
       clearTimeout(this.resumeTimeoutId);
       this.resumeTimeoutId = undefined;
     }
-    // this.waitingPlugins.clear();
-    this.isReady.value = true;
+    await this.store.running.set(true);
     await this.processPendingEvents();
   }
 }

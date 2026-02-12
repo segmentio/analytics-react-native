@@ -41,19 +41,19 @@ describe('WaitingPlugin', () => {
       store,
     });
 
-    client.isReady.value = true;
-    expect(client.isReady.value).toBe(true);
+    await client.store.running.set(true);
+    expect(client.store.running.get()).toBe(true);
 
     client.pauseEventProcessing(1000);
 
-    expect(client.isReady.value).toBe(false);
+    expect(client.store.running.get()).toBe(false);
 
     jest.advanceTimersByTime(2000);
 
     // Allow microtasks from setTimeout → resumeEventProcessing
     await Promise.resolve();
 
-    expect(client.isReady.value).toBe(true);
+    expect(await client.store.running.get(true)).toBe(true);
   });
   test('test manual resume', async () => {
     const client = new SegmentClient({
@@ -62,18 +62,18 @@ describe('WaitingPlugin', () => {
       store,
     });
 
-    client.isReady.value = true;
-    expect(client.isReady.value).toBe(true);
+    await client.store.running.set(true);
+    expect(client.store.running.get()).toBe(true);
 
     client.pauseEventProcessing();
 
-    expect(client.isReady.value).toBe(false);
+    expect(client.store.running.get()).toBe(false);
 
     await client.resumeEventProcessing();
 
-    expect(client.isReady.value).toBe(true);
+    expect(await client.store.running.get(true)).toBe(true);
   });
-  test('pause does not dispatch timeout if already paused', () => {
+  test('pause does not dispatch timeout if already paused', async () => {
     const setTimeoutSpy = jest.spyOn(global, 'setTimeout');
 
     const client = new SegmentClient({
@@ -82,7 +82,7 @@ describe('WaitingPlugin', () => {
       store,
     });
 
-    client.isReady.value = true;
+    await client.store.running.set(true);
 
     client.pauseEventProcessing();
     client.pauseEventProcessing();
@@ -97,8 +97,8 @@ describe('WaitingPlugin', () => {
       store,
     });
 
-    client.isReady.value = true;
-    expect(client.isReady.value).toBe(true);
+    await client.store.running.set(true);
+    expect(client.store.running.get()).toBe(true);
 
     const plugin = new ExampleWaitingPlugin();
 
@@ -109,7 +109,7 @@ describe('WaitingPlugin', () => {
 
     client.track('foo');
 
-    expect(client.isReady.value).toBe(false);
+    expect(client.store.running.get()).toBe(false);
 
     // Event should NOT be processed while paused
     expect(trackSpy).not.toHaveBeenCalled();
@@ -119,7 +119,7 @@ describe('WaitingPlugin', () => {
     jest.advanceTimersByTime(1000);
     await Promise.resolve();
 
-    expect(client.isReady.value).toBe(true);
+    expect(await client.store.running.get(true)).toBe(true);
 
     // Event should now be processed
     expect(trackSpy).toHaveBeenCalledTimes(1);
@@ -132,15 +132,15 @@ describe('WaitingPlugin', () => {
       store,
     });
 
-    client.isReady.value = true;
-    expect(client.isReady.value).toBe(true);
+    await client.store.running.set(true);
+    expect(client.store.running.get()).toBe(true);
 
     const waitingPlugin = new ManualResumeWaitingPlugin();
     client.add({ plugin: waitingPlugin });
 
     client.track('foo');
 
-    expect(client.isReady.value).toBe(false);
+    expect(client.store.running.get()).toBe(false);
     expect(waitingPlugin.tracked).toBe(false);
 
     await jest.advanceTimersByTimeAsync(30000);
@@ -148,7 +148,7 @@ describe('WaitingPlugin', () => {
     await Promise.resolve();
     await Promise.resolve();
 
-    expect(client.isReady.value).toBe(true);
+    expect(await client.store.running.get(true)).toBe(true);
     expect(waitingPlugin.tracked).toBe(true);
   });
   test('multiple WaitingPlugins', async () => {
@@ -159,8 +159,8 @@ describe('WaitingPlugin', () => {
     });
 
     // Initially, analytics is running
-    client.isReady.value = true;
-    expect(client.isReady.value).toBe(true);
+    await client.store.running.set(true);
+    expect(client.store.running.get()).toBe(true);
 
     // Create two waiting plugins
     const plugin1 = new ExampleWaitingPlugin1();
@@ -174,7 +174,7 @@ describe('WaitingPlugin', () => {
     client.track('foo');
 
     // Client should now be paused
-    expect(client.isReady.value).toBe(false);
+    expect(client.store.running.get()).toBe(false);
 
     // Plugins should not have tracked the event yet
     expect(plugin1.tracked).toBe(false);
@@ -187,7 +187,7 @@ describe('WaitingPlugin', () => {
     await Promise.resolve();
 
     // Still paused because plugin2 is waiting
-    expect(client.isReady.value).toBe(false);
+    expect(client.store.running.get()).toBe(false);
     expect(plugin1.tracked).toBe(false);
     expect(plugin2.tracked).toBe(false);
 
@@ -198,7 +198,7 @@ describe('WaitingPlugin', () => {
     await Promise.resolve();
 
     // Now analytics should be running
-    expect(client.isReady.value).toBe(true);
+    expect(await client.store.running.get(true)).toBe(true);
     // Both plugins should have tracked the event
     expect(plugin1.tracked).toBe(true);
     expect(plugin2.tracked).toBe(true);
@@ -213,8 +213,8 @@ describe('WaitingPlugin', () => {
     });
 
     // Initially, analytics is running
-    client.isReady.value = true;
-    expect(client.isReady.value).toBe(true);
+    await client.store.running.set(true);
+    expect(client.store.running.get()).toBe(true);
     const waitingPlugin = new ExampleWaitingPlugin1();
     const stubDestinationPlugin: DestinationPlugin =
       new StubDestinationPlugin();
@@ -227,7 +227,7 @@ describe('WaitingPlugin', () => {
     await client.track('foo');
 
     // Analytics should pause
-    expect(client.isReady.value).toBe(false);
+    expect(client.store.running.get()).toBe(false);
     expect(waitingPlugin.tracked).toBe(false);
     await Promise.resolve();
 
@@ -239,7 +239,7 @@ describe('WaitingPlugin', () => {
     await Promise.resolve();
 
     // Analytics resumed
-    expect(client.isReady.value).toBe(true);
+    expect(await client.store.running.get(true)).toBe(true);
     // Waiting plugin executed
     expect(waitingPlugin.tracked).toBe(true);
 
@@ -253,8 +253,8 @@ describe('WaitingPlugin', () => {
     });
 
     // analytics running initially
-    client.isReady.value = true;
-    expect(client.isReady.value).toBe(true);
+    await client.store.running.set(true);
+    expect(client.store.running.get()).toBe(true);
 
     const waitingPlugin = new ExampleWaitingPlugin1(); // no manual resume
     const destinationPlugin: DestinationPlugin = new StubDestinationPlugin();
@@ -269,7 +269,7 @@ describe('WaitingPlugin', () => {
     await client.track('foo');
 
     // analytics should pause
-    expect(client.isReady.value).toBe(false);
+    expect(client.store.running.get()).toBe(false);
     expect(waitingPlugin.tracked).toBe(false);
 
     await Promise.resolve();
@@ -281,7 +281,7 @@ describe('WaitingPlugin', () => {
     await Promise.resolve();
 
     // analytics resumed
-    expect(client.isReady.value).toBe(true);
+    expect(await client.store.running.get(true)).toBe(true);
 
     // waiting plugin executed
     expect(waitingPlugin.tracked).toBe(true);
@@ -294,8 +294,8 @@ describe('WaitingPlugin', () => {
     });
 
     // analytics running initially
-    client.isReady.value = true;
-    expect(client.isReady.value).toBe(true);
+    await client.store.running.set(true);
+    expect(client.store.running.get()).toBe(true);
 
     const destinationPlugin: DestinationPlugin = new StubDestinationPlugin();
     client.add({ plugin: destinationPlugin });
@@ -310,7 +310,7 @@ describe('WaitingPlugin', () => {
     await client.track('foo');
 
     // analytics paused
-    expect(client.isReady.value).toBe(false);
+    expect(client.store.running.get()).toBe(false);
     expect(plugin1.tracked).toBe(false);
     expect(plugin2.tracked).toBe(false);
     // Resume the first plugin
@@ -320,7 +320,7 @@ describe('WaitingPlugin', () => {
     await Promise.resolve();
 
     // still paused because plugin2 not resumed
-    expect(client.isReady.value).toBe(false);
+    expect(client.store.running.get()).toBe(false);
     expect(plugin1.tracked).toBe(false);
     expect(plugin2.tracked).toBe(false);
     plugin2.resume();
@@ -329,7 +329,7 @@ describe('WaitingPlugin', () => {
     await jest.runAllTimersAsync();
     await Promise.resolve();
     // analytics resumed
-    expect(client.isReady.value).toBe(true);
+    expect(await client.store.running.get(true)).toBe(true);
 
     // both plugins executed
     expect(plugin1.tracked).toBe(true);
