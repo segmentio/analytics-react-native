@@ -1,7 +1,4 @@
-import {
-  WaitingPlugin,
-  PluginType,
-} from '@segment/analytics-react-native';
+import {WaitingPlugin, PluginType} from '@segment/analytics-react-native';
 
 import type {
   SegmentAPISettings,

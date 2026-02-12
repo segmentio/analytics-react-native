@@ -1,4 +1,9 @@
-import { PluginType, SegmentEvent, SegmentAPISettings, UpdateType } from '../types';
+import {
+  PluginType,
+  SegmentEvent,
+  SegmentAPISettings,
+  UpdateType,
+} from '../types';
 import { SegmentClient } from '../analytics';
 import { DestinationPlugin, WaitingPlugin } from '../plugin';
 

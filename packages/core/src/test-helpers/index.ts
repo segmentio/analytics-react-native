@@ -6,4 +6,3 @@ export * from './mockTimeline';
 export * from './setupSegmentClient';
 export * from './utils';
 export * from './exampleWaitingPlugin';
-
