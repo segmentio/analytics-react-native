@@ -73,6 +73,13 @@ export class QueueFlushingPlugin extends UtilityPlugin {
    * Calls the onFlush callback with the events in the queue
    */
   async flush() {
+    // Check if event processing is running
+    const running = this.analytics?.running.get();
+    if (!running) {
+      this.analytics?.logger.info('Event processing is paused, skipping flush');
+      return;
+    }
+
     // Wait for the queue to be restored
     try {
       await this.isRestored;
