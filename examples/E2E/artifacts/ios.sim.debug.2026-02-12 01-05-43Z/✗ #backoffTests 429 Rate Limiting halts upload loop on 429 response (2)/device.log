@@ -1,0 +1,5 @@
+Filtering the log data using "processImagePath BEGINSWITH "/Users/abueide/Library/Developer/CoreSimulator/Devices/651CE25F-D2F4-404C-AC47-0364AA5C94A1/data/Containers/Bundle/Application/3ACFE51E-0B39-4F1A-A6DF-33A2C741C652/AnalyticsReactNativeE2E.app""
+Timestamp               Ty Process[PID:TID]
+2026-02-11 19:10:47.475 Df AnalyticsReactNativeE2E[11980:1aea03a] [com.apple.CoreAnalytics:client] Entering exit handler.
+2026-02-11 19:10:47.475 Df AnalyticsReactNativeE2E[11980:1aea03a] [com.apple.CoreAnalytics:client] Exiting exit handler.
+
