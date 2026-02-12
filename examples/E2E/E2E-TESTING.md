@@ -2,22 +2,28 @@
 
 ## Running Tests
 
-### Release Builds (Fast, No Logs)
+### Release Builds (Fast, No Logs) - Default
 ```bash
 # iOS
 yarn build:ios && yarn test:ios
 
-# Android  
+# Android
 yarn build:android && yarn test:android
 ```
 
 ### Debug Builds (Slower, Console.log Works)
+Use `E2E_DEBUG=1` to enable debug builds:
+
 ```bash
 # iOS - use this for debugging
-yarn build:ios:debug && yarn test:ios:debug
+E2E_DEBUG=1 yarn build:ios && E2E_DEBUG=1 yarn test:ios
 
 # Android - use this for debugging
-yarn build:android:debug && yarn test:android:debug
+E2E_DEBUG=1 yarn build:android && E2E_DEBUG=1 yarn test:android
+
+# Or set it once for multiple commands
+export E2E_DEBUG=1
+yarn build:ios && yarn test:ios
 ```
 
 ## Why Use Debug Builds?
@@ -48,8 +54,16 @@ cat "artifacts/<timestamp>/✗ <test-name>/device.log"
 
 Run a single test with debug build:
 ```bash
-yarn build:ios:debug
-yarn test:ios:debug --testNamePattern="your test name"
+export E2E_DEBUG=1
+yarn build:ios
+yarn test:ios --testNamePattern="your test name"
 ```
 
-The device.log will contain all console.log output from the app.
+The device.log in artifacts will contain all console.log output from the app.
+
+## Integration with Devbox
+
+When running via devbox, set the environment variable:
+```bash
+E2E_DEBUG=1 devbox run test-e2e-ios
+```
