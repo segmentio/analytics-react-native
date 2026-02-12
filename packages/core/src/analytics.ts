@@ -205,20 +205,6 @@ export class SegmentClient {
     this.store = store;
     this.timeline = new Timeline();
 
-    /*
-     * create and add waiting plugin immediately so early events get buffered.
-     * try {
-     *   this.waitingPlugin = new WaitingPlugin();
-     *   // add directly to timeline via addPlugin to ensure configure() is called immediately
-     *   this.addPlugin(this.waitingPlugin);
-     *   // initial running state false until init completes (mirrors Kotlin semantics)
-     *   this.isRunning = false;
-     * } catch (e) {
-     *   // if WaitingPlugin instantiation or add fails, fallback to running=true
-     *   this.isRunning = true;
-     * }
-     */
-
     // Initialize the watchables
     this.context = {
       get: this.store.context.get,
@@ -1065,8 +1051,11 @@ export class SegmentClient {
   private waitingPlugins = new Set<WaitingPlugin>();
 
   /**
-   * Pause event processing for a specific waiting plugin.
+   * Pause event processing for a specific WaitingPlugin.
    * Events will be buffered until all waiting plugins resume.
+   *
+   * @param plugin - The WaitingPlugin requesting the pause
+   * @internal This is called automatically when a WaitingPlugin is added
    */
   pauseEventProcessingForPlugin(plugin?: WaitingPlugin) {
     if (plugin) {
@@ -1074,17 +1063,32 @@ export class SegmentClient {
     }
     this.pauseEventProcessing();
   }
+
+  /**
+   * Resume event processing for a specific WaitingPlugin.
+   * If all waiting plugins have resumed, buffered events will be processed.
+   *
+   * @param plugin - The WaitingPlugin that has completed its async work
+   * @internal This is called automatically when a WaitingPlugin calls resume()
+   */
   async resumeEventProcessingForPlugin(plugin?: WaitingPlugin) {
     if (plugin) {
       this.waitingPlugins.delete(plugin);
     }
     if (this.waitingPlugins.size > 0) {
-      return; // still blocked
+      return; // still blocked by other waiting plugins
     }
 
     await this.resumeEventProcessing();
   }
 
+  /**
+   * Pause event processing globally.
+   * New events will be buffered in memory until resumeEventProcessing() is called.
+   * Automatically resumes after the specified timeout to prevent permanent blocking.
+   *
+   * @param timeout - Milliseconds to wait before auto-resuming (default: 30000)
+   */
   pauseEventProcessing(timeout = 30000) {
     // IMPORTANT: ignore repeated pauses
     const running = this.store.running.get();
@@ -1102,6 +1106,12 @@ export class SegmentClient {
       }, timeout);
     }
   }
+
+  /**
+   * Resume event processing and process all buffered events.
+   * This is called automatically by WaitingPlugins when they complete,
+   * or after the timeout expires.
+   */
   async resumeEventProcessing() {
     const running = this.store.running.get();
     if (running) {

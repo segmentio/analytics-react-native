@@ -219,22 +219,79 @@ export class PlatformPlugin extends Plugin {}
 export { PluginType };
 
 /**
- * WaitingPlugin
- * Buffers events when paused and releases them when resumed.
+ * WaitingPlugin - A base class for plugins that need to pause event processing
+ * until an asynchronous operation completes.
+ *
+ * When a WaitingPlugin is added to the Analytics client, it automatically pauses
+ * event processing. Events are buffered in memory until the plugin calls resume().
+ * If resume() is not called within 30 seconds, event processing automatically resumes.
+ *
+ * @example
+ * ```typescript
+ * class IDFAPlugin extends WaitingPlugin {
+ *   type = PluginType.enrichment;
+ *
+ *   configure(analytics: SegmentClient) {
+ *     super.configure(analytics);
+ *     // Request IDFA permission
+ *     requestTrackingPermission().then((status) => {
+ *       if (status === 'authorized') {
+ *         // Add IDFA to context
+ *       }
+ *       this.resume(); // Resume event processing
+ *     });
+ *   }
+ *
+ *   track(event: SegmentEvent) {
+ *     // Enrich event with IDFA if available
+ *     return event;
+ *   }
+ * }
+ * ```
+ *
+ * Common use cases:
+ * - Waiting for user permissions (IDFA, location, notifications)
+ * - Initializing native SDKs that provide enrichment data
+ * - Loading remote configuration required for event processing
+ * - Waiting for authentication state before sending events
+ *
+ * @remarks
+ * Multiple WaitingPlugins can be active simultaneously. Event processing
+ * only resumes when ALL waiting plugins have called resume() or timed out.
+ *
+ * WaitingPlugins can be added at any plugin type (before, enrichment, destination).
+ * They can also be added to DestinationPlugins to pause only that destination's
+ * event processing.
  */
 export class WaitingPlugin extends Plugin {
   constructor() {
     super();
   }
 
+  /**
+   * Configure the plugin with the Analytics client.
+   * Automatically pauses event processing when called.
+   * Override this method to perform async initialization, then call resume().
+   *
+   * @param analytics - The Analytics client instance
+   */
   configure(analytics: SegmentClient) {
     super.configure(analytics);
   }
 
+  /**
+   * Manually pause event processing.
+   * Generally not needed as adding a WaitingPlugin automatically pauses processing.
+   */
   pause() {
     this.analytics?.pauseEventProcessingForPlugin(this);
   }
 
+  /**
+   * Resume event processing for this plugin.
+   * Call this method when your async operation completes.
+   * If all WaitingPlugins have resumed, buffered events will be processed.
+   */
   async resume() {
     await this.analytics?.resumeEventProcessingForPlugin(this);
   }

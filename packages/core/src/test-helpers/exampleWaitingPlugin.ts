@@ -1,18 +1,20 @@
-import { PluginType, SegmentEvent } from '../types';
+import { PluginType, SegmentEvent, SegmentAPISettings, UpdateType } from '../types';
 import { SegmentClient } from '../analytics';
 import { DestinationPlugin, WaitingPlugin } from '../plugin';
 
+/**
+ * Example WaitingPlugin that automatically resumes after 1 second.
+ * Used for testing the waiting plugin mechanism.
+ */
 export class ExampleWaitingPlugin extends WaitingPlugin {
   public type = PluginType.enrichment;
   public tracked = false;
 
   configure(analytics: SegmentClient) {
-    console.log('exampleWaitingPlugin configure');
     super.configure(analytics);
     // Simulate async work (network, native module init, etc.)
     setTimeout(() => {
-      console.log('ExampleWaitingPlugin: ready!');
-      void analytics.resumeEventProcessing();
+      this.resume();
     }, 1000);
   }
 
@@ -22,23 +24,34 @@ export class ExampleWaitingPlugin extends WaitingPlugin {
     return event;
   }
 }
+
+/**
+ * Example WaitingPlugin that resumes after 3 seconds when settings are updated.
+ * Mimics the Kotlin SDK's ExampleWaitingPlugin behavior.
+ */
 export class ExampleWaitingPlugin1 extends WaitingPlugin {
   public type = PluginType.before;
   public tracked = false;
 
-  constructor() {
-    super();
+  update(_settings: SegmentAPISettings, type: UpdateType) {
+    if (type === UpdateType.initial) {
+      // Simulate async initialization that takes 3 seconds
+      setTimeout(() => {
+        this.resume();
+      }, 3000);
+    }
   }
-  configure(analytics: SegmentClient) {
-    super.configure(analytics);
-  }
+
   execute(event: SegmentEvent): SegmentEvent | undefined {
-    console.log('ExampleWaitingPlugin1 received event', event.type);
     this.tracked = true;
     return event;
   }
 }
 
+/**
+ * Example WaitingPlugin that requires manual resume() call.
+ * Used for testing manual control of event processing.
+ */
 export class ManualResumeWaitingPlugin extends WaitingPlugin {
   public type = PluginType.enrichment;
   public tracked = false;
@@ -48,12 +61,15 @@ export class ManualResumeWaitingPlugin extends WaitingPlugin {
   }
 
   execute(event: SegmentEvent): SegmentEvent | undefined {
-    console.log('ManualResumeWaitingPlugin received event', event.type);
     this.tracked = true;
     return event;
   }
 }
 
+/**
+ * Stub destination plugin for testing.
+ * Always enabled and accepts all events.
+ */
 export class StubDestinationPlugin extends DestinationPlugin {
   key = 'StubDestination';
   protected isEnabled(_event: SegmentEvent): boolean {
