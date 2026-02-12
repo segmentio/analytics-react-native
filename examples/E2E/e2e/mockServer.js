@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const port = 9091;
 
 let server;
+let connections = [];
 let mockBehavior = 'success';
 let mockOptions = {};
 
@@ -31,6 +32,7 @@ export const startServer = async mockServerListener => {
     // Handles batch events
     app.post('/v1/b', (req, res) => {
       console.log(`➡️  Received request with behavior: ${mockBehavior}`);
+      console.log(`   Headers: Authorization=${!!req.headers.authorization}, X-Retry-Count=${req.headers['x-retry-count']}`);
       const body = req.body;
       mockServerListener(body);
 
@@ -107,12 +109,24 @@ export const startServer = async mockServerListener => {
       console.log(`🚀 Started mock server on port ${port}`);
       resolve();
     });
+
+    // Track all connections to forcefully close them on shutdown
+    server.on('connection', connection => {
+      connections.push(connection);
+      connection.on('close', () => {
+        connections = connections.filter(curr => curr !== connection);
+      });
+    });
   });
 };
 
 export const stopServer = async () => {
   return new Promise((resolve, reject) => {
     if (server) {
+      // Destroy all open connections first
+      connections.forEach(connection => connection.destroy());
+      connections = [];
+
       server.close(() => {
         console.log('✋ Mock server has stopped');
         server = undefined;

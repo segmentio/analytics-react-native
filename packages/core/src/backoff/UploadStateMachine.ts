@@ -20,21 +20,41 @@ export class UploadStateMachine {
     config: RateLimitConfig,
     logger?: LoggerType
   ) {
+    console.log('[UploadStateMachine] constructor called', { storeId, hasPersistor: !!persistor });
     this.config = config;
     this.logger = logger;
 
-    // If persistor is provided, use persistent store; otherwise use in-memory store
-    this.store = createStore<UploadStateData>(
-      INITIAL_STATE,
-      persistor
-        ? {
-            persist: {
-              storeId: `${storeId}-uploadState`,
-              persistor,
-            },
-          }
-        : undefined
-    );
+    // If persistor is provided, try persistent store; fall back to in-memory on error
+    console.log('[UploadStateMachine] About to call createStore...');
+    try {
+      this.store = createStore<UploadStateData>(
+        INITIAL_STATE,
+        persistor
+          ? {
+              persist: {
+                storeId: `${storeId}-uploadState`,
+                persistor,
+              },
+            }
+          : undefined
+      );
+      console.log('[UploadStateMachine] createStore succeeded with persistence');
+      this.logger?.info('[UploadStateMachine] Store created with persistence');
+    } catch (e) {
+      console.error('[UploadStateMachine] createStore with persistence FAILED, falling back to in-memory:', e);
+      this.logger?.error(`[UploadStateMachine] Persistence failed, using in-memory store: ${e}`);
+
+      // Fall back to in-memory store (no persistence)
+      try {
+        this.store = createStore<UploadStateData>(INITIAL_STATE);
+        console.log('[UploadStateMachine] Fallback in-memory createStore succeeded');
+        this.logger?.warn('[UploadStateMachine] Using in-memory store (no persistence)');
+      } catch (fallbackError) {
+        console.error('[UploadStateMachine] Even fallback createStore FAILED:', fallbackError);
+        this.logger?.error(`[UploadStateMachine] CRITICAL: In-memory store creation failed: ${fallbackError}`);
+        throw fallbackError;
+      }
+    }
   }
 
   /**
@@ -43,18 +63,23 @@ export class UploadStateMachine {
    */
   async canUpload(): Promise<boolean> {
     if (!this.config.enabled) {
+      this.logger?.info('[canUpload] Rate limiting disabled, allowing upload');
       return true; // Legacy behavior when disabled
     }
 
     const state = await this.store.getState();
     const now = Date.now();
 
+    this.logger?.info(`[canUpload] Current state: ${state.state}, waitUntil: ${state.waitUntilTime}, now: ${now}, globalRetry: ${state.globalRetryCount}`);
+
     if (state.state === 'READY') {
+      this.logger?.info('[canUpload] State is READY, allowing upload');
       return true;
     }
 
     // Check if wait period has elapsed
     if (now >= state.waitUntilTime) {
+      this.logger?.info('[canUpload] Wait period elapsed, transitioning to READY');
       await this.transitionToReady();
       return true;
     }
@@ -71,11 +96,14 @@ export class UploadStateMachine {
    */
   async handle429(retryAfterSeconds: number): Promise<void> {
     if (!this.config.enabled) {
+      this.logger?.info('[handle429] Rate limiting disabled, skipping');
       return; // No-op when disabled
     }
 
     const now = Date.now();
     const state = await this.store.getState();
+
+    this.logger?.info(`[handle429] BEFORE: state=${state.state}, waitUntil=${state.waitUntilTime}, globalRetry=${state.globalRetryCount}`);
 
     const newRetryCount = state.globalRetryCount + 1;
     const firstFailureTime = state.firstFailureTime ?? now;
@@ -101,12 +129,18 @@ export class UploadStateMachine {
 
     const waitUntilTime = now + retryAfterSeconds * 1000;
 
+    this.logger?.info(`[handle429] Setting WAITING state: waitUntil=${waitUntilTime}, newRetryCount=${newRetryCount}`);
+
     await this.store.dispatch(() => ({
       state: 'WAITING' as const,
       waitUntilTime,
       globalRetryCount: newRetryCount,
       firstFailureTime,
     }));
+
+    // Verify state was set
+    const newState = await this.store.getState();
+    this.logger?.info(`[handle429] AFTER: state=${newState.state}, waitUntil=${newState.waitUntilTime}, globalRetry=${newState.globalRetryCount}`);
 
     this.logger?.info(
       `Rate limited (429): waiting ${retryAfterSeconds}s before retry ${newRetryCount}/${this.config.maxRetryCount}`

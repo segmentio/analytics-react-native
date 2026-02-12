@@ -26,18 +26,32 @@ export class BatchUploadManager {
     this.config = config;
     this.logger = logger;
 
-    // If persistor is provided, use persistent store; otherwise use in-memory store
-    this.store = createStore<BatchMetadataStore>(
-      { batches: {} },
-      persistor
-        ? {
-            persist: {
-              storeId: `${storeId}-batchMetadata`,
-              persistor,
-            },
-          }
-        : undefined
-    );
+    // If persistor is provided, try persistent store; fall back to in-memory on error
+    try {
+      this.store = createStore<BatchMetadataStore>(
+        { batches: {} },
+        persistor
+          ? {
+              persist: {
+                storeId: `${storeId}-batchMetadata`,
+                persistor,
+              },
+            }
+          : undefined
+      );
+      this.logger?.info('[BatchUploadManager] Store created with persistence');
+    } catch (e) {
+      this.logger?.error(`[BatchUploadManager] Persistence failed, using in-memory store: ${e}`);
+
+      // Fall back to in-memory store (no persistence)
+      try {
+        this.store = createStore<BatchMetadataStore>({ batches: {} });
+        this.logger?.warn('[BatchUploadManager] Using in-memory store (no persistence)');
+      } catch (fallbackError) {
+        this.logger?.error(`[BatchUploadManager] CRITICAL: In-memory store creation failed: ${fallbackError}`);
+        throw fallbackError;
+      }
+    }
   }
 
   /**

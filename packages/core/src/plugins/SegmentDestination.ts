@@ -51,7 +51,9 @@ export class SegmentDestination extends DestinationPlugin {
     // Only check if backoff is fully initialized to avoid race conditions
     if (this.backoffInitialized && this.uploadStateMachine) {
       try {
+        this.analytics?.logger.info(`[UPLOAD_GATE] Checking canUpload() for ${events.length} events`);
         const canUpload = await this.uploadStateMachine.canUpload();
+        this.analytics?.logger.info(`[UPLOAD_GATE] canUpload() returned: ${canUpload}`);
         if (!canUpload) {
           // Still in WAITING state, defer upload
           this.analytics?.logger.info('Upload deferred: rate limit in effect');
@@ -297,6 +299,8 @@ export class SegmentDestination extends DestinationPlugin {
   configure(analytics: SegmentClient): void {
     super.configure(analytics);
 
+    console.log('[SegmentDestination] configure() called');
+
     // NOTE: We used to resolve settings early here if proxy was configured,
     // but now we must wait for backoff components to initialize in update()
     // before allowing uploads to proceed. The proxy flag is checked in update()
@@ -305,10 +309,13 @@ export class SegmentDestination extends DestinationPlugin {
     // Enrich events with the Destination metadata
     this.add(new DestinationMetadataEnrichment(SEGMENT_DESTINATION_KEY));
     this.add(this.queuePlugin);
+    console.log('[SegmentDestination] configure() complete');
   }
 
   // We block sending stuff to segment until we get the settings
   update(settings: SegmentAPISettings, _type: UpdateType): void {
+    console.log('[SegmentDestination] update() called');
+
     const segmentSettings = settings.integrations[
       this.key
     ] as SegmentAPIIntegration;
@@ -320,6 +327,7 @@ export class SegmentDestination extends DestinationPlugin {
       this.apiHost = `https://${segmentSettings.apiHost}/b`;
     }
 
+    console.log('[SegmentDestination] Storing settings');
     // Store settings for httpConfig access
     this.settings = settings;
 
@@ -328,6 +336,7 @@ export class SegmentDestination extends DestinationPlugin {
     const httpConfig = settings.httpConfig ?? defaultHttpConfig;
     const config = this.analytics?.getConfig();
 
+    console.log('[SegmentDestination] Starting backoff initialization');
     this.analytics?.logger.warn(
       '[BACKOFF_INIT] Starting backoff component initialization'
     );
@@ -335,38 +344,46 @@ export class SegmentDestination extends DestinationPlugin {
     // Await the import to ensure components are fully initialized before uploads can start
     void import('../backoff')
       .then(({ UploadStateMachine, BatchUploadManager }) => {
+        console.log('[SegmentDestination] Backoff module imported');
         this.analytics?.logger.warn(
           '[BACKOFF_INIT] Backoff module imported successfully'
         );
         const persistor = config?.storePersistor;
+        console.log(`[SegmentDestination] persistor available: ${!!persistor}`);
 
         try {
+          console.log('[SegmentDestination] Creating UploadStateMachine...');
           this.uploadStateMachine = new UploadStateMachine(
             config?.writeKey ?? '',
             persistor,
             httpConfig.rateLimitConfig ?? defaultHttpConfig.rateLimitConfig!,
             this.analytics?.logger
           );
+          console.log('[SegmentDestination] UploadStateMachine created');
           this.analytics?.logger.warn(
             '[BACKOFF_INIT] UploadStateMachine created'
           );
 
+          console.log('[SegmentDestination] Creating BatchUploadManager...');
           this.batchUploadManager = new BatchUploadManager(
             config?.writeKey ?? '',
             persistor,
             httpConfig.backoffConfig ?? defaultHttpConfig.backoffConfig!,
             this.analytics?.logger
           );
+          console.log('[SegmentDestination] BatchUploadManager created');
           this.analytics?.logger.warn(
             '[BACKOFF_INIT] BatchUploadManager created'
           );
 
           // Mark as initialized ONLY after both components are created
           this.backoffInitialized = true;
+          console.log('[SegmentDestination] Backoff fully initialized');
           this.analytics?.logger.warn(
             '[BACKOFF_INIT] ✅ Backoff fully initialized'
           );
         } catch (e) {
+          console.error(`[SegmentDestination] CRITICAL: Failed to create backoff components: ${e}`);
           this.analytics?.logger.error(
             `[BACKOFF_INIT] ⚠️ CRITICAL: Failed to create backoff components: ${e}`
           );
@@ -376,16 +393,19 @@ export class SegmentDestination extends DestinationPlugin {
         // ALWAYS resolve settings promise after backoff initialization attempt
         // This allows uploads to proceed either with or without backoff
         this.settingsResolve();
+        console.log('[SegmentDestination] Settings promise resolved');
         this.analytics?.logger.warn(
           '[BACKOFF_INIT] Settings promise resolved - uploads can proceed'
         );
       })
       .catch((e) => {
+        console.error(`[SegmentDestination] CRITICAL: Failed to import backoff module: ${e}`);
         this.analytics?.logger.error(
           `[BACKOFF_INIT] ⚠️ CRITICAL: Failed to import backoff module: ${e}`
         );
         // Still resolve settings to allow uploads without backoff
         this.settingsResolve();
+        console.log('[SegmentDestination] Settings promise resolved despite error');
         this.analytics?.logger.warn(
           '[BACKOFF_INIT] Settings promise resolved despite error - uploads proceeding without backoff'
         );
