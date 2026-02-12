@@ -1,0 +1,645 @@
+Filtering the log data using "processImagePath BEGINSWITH "/Users/abueide/Library/Developer/CoreSimulator/Devices/651CE25F-D2F4-404C-AC47-0364AA5C94A1/data/Containers/Bundle/Application/39A83900-AE1A-4844-B957-82CD27C4CF01/AnalyticsReactNativeE2E.app""
+Timestamp               Ty Process[PID:TID]
+2026-02-11 19:30:52.766 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:30:52.911 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:52.911 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:52.912 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:52.928 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:52.928 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:52.929 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:52.930 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Task <58FC484D-C061-4DBE-9522-D1C709E568AA>.<2> resuming, timeouts(0.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-02-11 19:30:52.930 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:30:52.930 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Domain cfnetwork rate configured in registry as 1 / 20000
+2026-02-11 19:30:52.930 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Domain cfnetwork rate configured after remote default override as 1 / 20000
+2026-02-11 19:30:52.930 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] After reading settings plist, domain cfnetwork rate configured as 1 / 2000000
+2026-02-11 19:30:52.930 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] After settings override, domain cfnetwork rate configured as 1 / 2000000
+2026-02-11 19:30:52.930 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Final domain cfnetwork rate configured as 1 / 2000000
+2026-02-11 19:30:52.930 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] <nw_activity 12:2 [No UUID] (reporting strategy default)> sampled at 1 / 2000000
+2026-02-11 19:30:52.930 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:30:52.930 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:30:52.930 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] [Telemetry]: Activity <nw_activity 12:2 [606BBD76-D78C-4E3E-9F72-69AA5640C647] (reporting strategy default)> on Task <58FC484D-C061-4DBE-9522-D1C709E568AA>.<2> was not selected for reporting
+2026-02-11 19:30:52.930 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.networkextension:] ne_tracker_check_is_hostname_blocked() proceeding with the in_the_app check for hostname: localhost
+2026-02-11 19:30:52.930 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFBundle:resources] Resource lookup at CFBundle 0x600003b081c0 </Users/abueide/Library/Developer/CoreSimulator/Devices/651CE25F-D2F4-404C-AC47-0364AA5C94A1/data/Containers/Bundle/Application/39A83900-AE1A-4844-B957-82CD27C4CF01/AnalyticsReactNativeE2E.app> (executable, loaded)
+	Request       : InfoPlist type: strings
+	Result        : None
+2026-02-11 19:30:52.930 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFBundle:resources] Resource lookup at CFBundle 0x600003b081c0 </Users/abueide/Library/Developer/CoreSimulator/Devices/651CE25F-D2F4-404C-AC47-0364AA5C94A1/data/Containers/Bundle/Application/39A83900-AE1A-4844-B957-82CD27C4CF01/AnalyticsReactNativeE2E.app> (executable, loaded)
+	Request       : InfoPlist type: stringsdict
+	Result        : None
+2026-02-11 19:30:52.930 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.networkextension:] ne_tracker_check_is_hostname_blocked(): hostname localhost is not a tracker. Returning: ne_tracker_status_none
+2026-02-11 19:30:52.930 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:ATS] Uploading ATS exception ATSAllowsLocalNetworking
+2026-02-11 19:30:52.930 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:ATS] Uploading ATS exception ATSExceptionDomains
+2026-02-11 19:30:52.930 A  AnalyticsReactNativeE2E[27152:1afd13b] (Security) SecTrustReportNetworkingAnalytics
+2026-02-11 19:30:52.930 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Connection 11: set is idle true
+2026-02-11 19:30:52.930 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] [C11] event: client:connection_idle @2.193s
+2026-02-11 19:30:52.930 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection idle to protocols
+2026-02-11 19:30:52.930 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:30:52.930 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is true
+2026-02-11 19:30:52.930 E  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:30:52.930 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Task <58FC484D-C061-4DBE-9522-D1C709E568AA>.<2> now using Connection 11
+2026-02-11 19:30:52.930 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:30:52.930 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Incremented estimated bytes to send by 952, total now 952
+2026-02-11 19:30:52.930 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Using lower threshold 12582912, upper threshold 31457280
+2026-02-11 19:30:52.930 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Connection 11: set is idle false
+2026-02-11 19:30:52.930 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] [C11] event: client:connection_reused @2.193s
+2026-02-11 19:30:52.930 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection not idle to protocols
+2026-02-11 19:30:52.931 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:30:52.931 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is false
+2026-02-11 19:30:52.931 E  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:30:52.931 Df AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.CFNetwork:Default] Task <58FC484D-C061-4DBE-9522-D1C709E568AA>.<2> sent request, body S 952
+2026-02-11 19:30:52.931 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.securityd:SecError] SecTrustReportNetworkingAnalytics failed with error: -4
+2026-02-11 19:30:52.931 A  AnalyticsReactNativeE2E[27152:1afd13b] (Security) SecTrustReportNetworkingAnalytics
+2026-02-11 19:30:52.932 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.securityd:SecError] SecTrustReportNetworkingAnalytics failed with error: -4
+2026-02-11 19:30:52.932 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFNetwork:Default] Task <58FC484D-C061-4DBE-9522-D1C709E568AA>.<2> received response, status 200 content K
+2026-02-11 19:30:52.932 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Incremented estimated bytes to receive by 20, total now 395
+2026-02-11 19:30:52.932 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Using lower threshold 12582912, upper threshold 31457280
+2026-02-11 19:30:52.932 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFNetwork:Default] Task <58FC484D-C061-4DBE-9522-D1C709E568AA>.<2> response ended
+2026-02-11 19:30:52.932 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFNetwork:Default] Task <58FC484D-C061-4DBE-9522-D1C709E568AA>.<2> done using Connection 11
+2026-02-11 19:30:52.932 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:30:52.932 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFNetwork:Default] Connection 11: set is idle true
+2026-02-11 19:30:52.932 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] [C11] event: client:connection_idle @2.194s
+2026-02-11 19:30:52.932 I  AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection idle to protocols
+2026-02-11 19:30:52.932 I  AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:30:52.932 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is true
+2026-02-11 19:30:52.932 E  AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:30:52.932 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Summary] Task <58FC484D-C061-4DBE-9522-D1C709E568AA>.<2> summary for task success {transaction_duration_ms=1, response_status=200, connection=11, reused=1, reused_after_ms=0, request_start_ms=0, request_duration_ms=0, response_start_ms=1, response_duration_ms=0, request_bytes=1242, request_throughput_kbps=56777, response_bytes=255, response_throughput_kbps=19056, cache_hit=true}
+2026-02-11 19:30:52.932 I  AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.runningboard:assertion] Acquiring assertion: <RBSAssertionDescriptor| "com.apple.CFNetwork.StorageDB" ID:(null) target:27152>
+2026-02-11 19:30:52.932 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFNetwork:Default] Connection 11: set is idle true
+2026-02-11 19:30:52.932 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Task <58FC484D-C061-4DBE-9522-D1C709E568AA>.<2> finished successfully
+2026-02-11 19:30:52.932 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] [C11] event: client:connection_idle @2.194s
+2026-02-11 19:30:52.932 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:30:52.932 I  AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection idle to protocols
+2026-02-11 19:30:52.932 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:30:52.932 I  AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:30:52.932 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] No threshold for cfnetwork:foreground_task, returning NW_ACTIVITY_DURATION_INVALID
+2026-02-11 19:30:52.932 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is true
+2026-02-11 19:30:52.932 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] No threshold for activity <nw_activity 12:2 [606BBD76-D78C-4E3E-9F72-69AA5640C647] (reporting strategy default) complete (reason success)>
+2026-02-11 19:30:52.932 E  AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:30:52.932 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] Sent 1 events
+2026-02-11 19:30:52.933 Db AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.runningboard:assertion] Adding assertion 1422-27152-1675 to dictionary
+2026-02-11 19:30:53.450 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_association_schedule_deactivation_block_invoke <nw_association Hostname#3f440756:9091> becoming dormant
+2026-02-11 19:30:53.451 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_association_schedule_deactivation_block_invoke <nw_association IPv6#91cc1a5c.9091> becoming dormant
+2026-02-11 19:30:53.451 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Coalescing] removing all entries config 0x60000027dc80
+2026-02-11 19:30:53.451 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:] nw_context_dealloc Deallocating context <nw_context (null) (private)>
+2026-02-11 19:30:53.451 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:] nw_context_purge_endpoints Context <nw_context com.apple.CFNetwork.NSURLSession.{0071A1CC-6C16-4468-AED3-B79A4FB2966E}{(null)}{Y}{2}{0x0} (private)> has more than 0 cache entries, purging 1 from 1 down to 0
+2026-02-11 19:30:53.451 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:endpoint] endpoint IPv6#91cc1a5c.9091 has nothing to cleanup, no protocol instance registrars
+2026-02-11 19:30:53.451 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:endpoint] endpoint Hostname#3f440756:9091 has nothing to cleanup, no protocol instance registrars
+2026-02-11 19:30:53.451 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:] nw_context_dealloc Deallocating context <nw_context (null) (private)>
+2026-02-11 19:30:54.317 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:30:54.462 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:54.462 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:54.462 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:54.478 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:54.478 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:54.478 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:54.479 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] 'TRACK event saved', { type: 'track',
+  event: 'Track pressed',
+  properties: { foo: 'bar' } }
+2026-02-11 19:30:54.867 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:30:54.995 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:54.995 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:54.996 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:55.011 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:55.012 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:55.012 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:55.012 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] 'TRACK event saved', { type: 'track',
+  event: 'Track pressed',
+  properties: { foo: 'bar' } }
+2026-02-11 19:30:55.399 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:30:55.528 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:55.528 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:55.528 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:55.545 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:55.545 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:55.545 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:55.546 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] 'TRACK event saved', { type: 'track',
+  event: 'Track pressed',
+  properties: { foo: 'bar' } }
+2026-02-11 19:30:55.933 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:30:56.078 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:56.079 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:56.079 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:56.095 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:56.095 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:56.095 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:56.096 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] 'TRACK event saved', { type: 'track',
+  event: 'Track pressed',
+  properties: { foo: 'bar' } }
+2026-02-11 19:30:56.483 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:30:56.611 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:56.611 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:56.612 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:56.628 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:56.628 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:56.628 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:56.629 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] 'TRACK event saved', { type: 'track',
+  event: 'Track pressed',
+  properties: { foo: 'bar' } }
+2026-02-11 19:30:56.630 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Task <64347471-F577-45EF-BDD2-3E0555004325>.<3> resuming, timeouts(0.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-02-11 19:30:56.630 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:30:56.630 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Domain cfnetwork rate configured in registry as 1 / 20000
+2026-02-11 19:30:56.630 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Domain cfnetwork rate configured after remote default override as 1 / 20000
+2026-02-11 19:30:56.630 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] After reading settings plist, domain cfnetwork rate configured as 1 / 2000000
+2026-02-11 19:30:56.630 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] After settings override, domain cfnetwork rate configured as 1 / 2000000
+2026-02-11 19:30:56.630 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Final domain cfnetwork rate configured as 1 / 2000000
+2026-02-11 19:30:56.630 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] <nw_activity 12:2 [No UUID] (reporting strategy default)> sampled at 1 / 2000000
+2026-02-11 19:30:56.630 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:30:56.630 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:30:56.630 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] [Telemetry]: Activity <nw_activity 12:2 [E60E9910-7F4F-44B7-B4E6-D12FD22C028A] (reporting strategy default)> on Task <64347471-F577-45EF-BDD2-3E0555004325>.<3> was not selected for reporting
+2026-02-11 19:30:56.630 Db AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.networkextension:] ne_tracker_check_is_hostname_blocked() proceeding with the in_the_app check for hostname: localhost
+2026-02-11 19:30:56.630 Db AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.CFBundle:resources] Resource lookup at CFBundle 0x600003b081c0 </Users/abueide/Library/Developer/CoreSimulator/Devices/651CE25F-D2F4-404C-AC47-0364AA5C94A1/data/Containers/Bundle/Application/39A83900-AE1A-4844-B957-82CD27C4CF01/AnalyticsReactNativeE2E.app> (executable, loaded)
+	Request       : InfoPlist type: strings
+	Result        : None
+2026-02-11 19:30:56.630 Db AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.CFBundle:resources] Resource lookup at CFBundle 0x600003b081c0 </Users/abueide/Library/Developer/CoreSimulator/Devices/651CE25F-D2F4-404C-AC47-0364AA5C94A1/data/Containers/Bundle/Application/39A83900-AE1A-4844-B957-82CD27C4CF01/AnalyticsReactNativeE2E.app> (executable, loaded)
+	Request       : InfoPlist type: stringsdict
+	Result        : None
+2026-02-11 19:30:56.630 Db AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.networkextension:] ne_tracker_check_is_hostname_blocked(): hostname localhost is not a tracker. Returning: ne_tracker_status_none
+2026-02-11 19:30:56.630 Db AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.CFNetwork:ATS] Uploading ATS exception ATSAllowsLocalNetworking
+2026-02-11 19:30:56.630 Db AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.CFNetwork:ATS] Uploading ATS exception ATSExceptionDomains
+2026-02-11 19:30:56.630 A  AnalyticsReactNativeE2E[27152:1afd137] (Security) SecTrustReportNetworkingAnalytics
+2026-02-11 19:30:56.630 Db AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.CFNetwork:Default] Connection 11: set is idle true
+2026-02-11 19:30:56.630 Df AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.network:connection] [C11] event: client:connection_idle @5.892s
+2026-02-11 19:30:56.630 I  AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection idle to protocols
+2026-02-11 19:30:56.630 I  AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:30:56.630 Df AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is true
+2026-02-11 19:30:56.630 E  AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:30:56.630 Df AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.CFNetwork:Default] Task <64347471-F577-45EF-BDD2-3E0555004325>.<3> now using Connection 11
+2026-02-11 19:30:56.630 Db AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:30:56.630 Db AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Incremented estimated bytes to send by 3436, total now 4388
+2026-02-11 19:30:56.630 Db AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Using lower threshold 12582912, upper threshold 31457280
+2026-02-11 19:30:56.630 Db AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.CFNetwork:Default] Connection 11: set is idle false
+2026-02-11 19:30:56.630 Df AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.network:connection] [C11] event: client:connection_reused @5.893s
+2026-02-11 19:30:56.630 I  AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection not idle to protocols
+2026-02-11 19:30:56.630 I  AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:30:56.631 Df AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is false
+2026-02-11 19:30:56.631 E  AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:30:56.631 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFNetwork:Default] Task <64347471-F577-45EF-BDD2-3E0555004325>.<3> sent request, body S 3436
+2026-02-11 19:30:56.632 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.securityd:SecError] SecTrustReportNetworkingAnalytics failed with error: -4
+2026-02-11 19:30:56.632 A  AnalyticsReactNativeE2E[27152:1afd137] (Security) SecTrustReportNetworkingAnalytics
+2026-02-11 19:30:56.632 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.securityd:SecError] SecTrustReportNetworkingAnalytics failed with error: -4
+2026-02-11 19:30:56.732 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Task <64347471-F577-45EF-BDD2-3E0555004325>.<3> received response, status 200 content K
+2026-02-11 19:30:56.732 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Incremented estimated bytes to receive by 20, total now 415
+2026-02-11 19:30:56.732 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Using lower threshold 12582912, upper threshold 31457280
+2026-02-11 19:30:56.732 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Task <64347471-F577-45EF-BDD2-3E0555004325>.<3> response ended
+2026-02-11 19:30:56.732 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Task <64347471-F577-45EF-BDD2-3E0555004325>.<3> done using Connection 11
+2026-02-11 19:30:56.732 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:30:56.732 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Connection 11: set is idle true
+2026-02-11 19:30:56.732 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] [C11] event: client:connection_idle @5.994s
+2026-02-11 19:30:56.732 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection idle to protocols
+2026-02-11 19:30:56.732 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:30:56.732 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is true
+2026-02-11 19:30:56.732 I  AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.runningboard:assertion] Acquiring assertion: <RBSAssertionDescriptor| "com.apple.CFNetwork.StorageDB" ID:(null) target:27152>
+2026-02-11 19:30:56.732 E  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:30:56.732 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFNetwork:Summary] Task <64347471-F577-45EF-BDD2-3E0555004325>.<3> summary for task success {transaction_duration_ms=102, response_status=200, connection=11, reused=1, reused_after_ms=0, request_start_ms=0, request_duration_ms=0, response_start_ms=101, response_duration_ms=0, request_bytes=3727, request_throughput_kbps=162096, response_bytes=255, response_throughput_kbps=7313, cache_hit=true}
+2026-02-11 19:30:56.732 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Connection 11: set is idle true
+2026-02-11 19:30:56.732 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFNetwork:Default] Task <64347471-F577-45EF-BDD2-3E0555004325>.<3> finished successfully
+2026-02-11 19:30:56.732 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] [C11] event: client:connection_idle @5.995s
+2026-02-11 19:30:56.732 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:30:56.732 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection idle to protocols
+2026-02-11 19:30:56.733 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:30:56.733 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:30:56.733 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:activity] No threshold for cfnetwork:foreground_task, returning NW_ACTIVITY_DURATION_INVALID
+2026-02-11 19:30:56.733 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] Sent 4 events
+2026-02-11 19:30:56.733 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:activity] No threshold for activity <nw_activity 12:2 [E60E9910-7F4F-44B7-B4E6-D12FD22C028A] (reporting strategy default) complete (reason success)>
+2026-02-11 19:30:56.733 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is true
+2026-02-11 19:30:56.733 E  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:30:56.733 Db AnalyticsReactNativeE2E[27152:1afd13f] [com.apple.runningboard:assertion] Adding assertion 1422-27152-1676 to dictionary
+2026-02-11 19:30:57.017 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:30:57.162 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:57.162 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:57.162 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:57.178 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:57.178 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:57.178 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:57.179 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] 'TRACK event saved', { type: 'track',
+  event: 'Track pressed',
+  properties: { foo: 'bar' } }
+2026-02-11 19:30:57.566 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:30:57.711 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:57.712 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:57.712 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:57.728 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:57.728 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:57.729 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:57.729 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] 'TRACK event saved', { type: 'track',
+  event: 'Track pressed',
+  properties: { foo: 'bar' } }
+2026-02-11 19:30:58.116 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:30:58.245 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:58.246 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:58.246 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:58.261 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:58.262 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:58.262 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:58.262 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] 'TRACK event saved', { type: 'track',
+  event: 'Track pressed',
+  properties: { foo: 'bar' } }
+2026-02-11 19:30:58.650 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:30:58.778 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:58.778 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:58.778 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:58.795 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:58.795 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:58.795 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:58.796 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] 'TRACK event saved', { type: 'track',
+  event: 'Track pressed',
+  properties: { foo: 'bar' } }
+2026-02-11 19:30:59.183 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:30:59.311 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:59.311 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:59.312 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:59.328 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:59.328 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:59.328 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:59.329 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] 'TRACK event saved', { type: 'track',
+  event: 'Track pressed',
+  properties: { foo: 'bar' } }
+2026-02-11 19:30:59.330 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Task <7795302E-1983-4B5A-97E5-2917ACF37ABD>.<4> resuming, timeouts(0.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-02-11 19:30:59.330 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:30:59.330 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Domain cfnetwork rate configured in registry as 1 / 20000
+2026-02-11 19:30:59.330 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Domain cfnetwork rate configured after remote default override as 1 / 20000
+2026-02-11 19:30:59.330 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] After reading settings plist, domain cfnetwork rate configured as 1 / 2000000
+2026-02-11 19:30:59.330 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] After settings override, domain cfnetwork rate configured as 1 / 2000000
+2026-02-11 19:30:59.330 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Final domain cfnetwork rate configured as 1 / 2000000
+2026-02-11 19:30:59.330 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] <nw_activity 12:2 [No UUID] (reporting strategy default)> sampled at 1 / 2000000
+2026-02-11 19:30:59.330 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:30:59.330 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:30:59.330 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] [Telemetry]: Activity <nw_activity 12:2 [68FC890B-DB69-41AE-BCBA-E682690138E2] (reporting strategy default)> on Task <7795302E-1983-4B5A-97E5-2917ACF37ABD>.<4> was not selected for reporting
+2026-02-11 19:30:59.330 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.networkextension:] ne_tracker_check_is_hostname_blocked() proceeding with the in_the_app check for hostname: localhost
+2026-02-11 19:30:59.330 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFBundle:resources] Resource lookup at CFBundle 0x600003b081c0 </Users/abueide/Library/Developer/CoreSimulator/Devices/651CE25F-D2F4-404C-AC47-0364AA5C94A1/data/Containers/Bundle/Application/39A83900-AE1A-4844-B957-82CD27C4CF01/AnalyticsReactNativeE2E.app> (executable, loaded)
+	Request       : InfoPlist type: strings
+	Result        : None
+2026-02-11 19:30:59.330 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFBundle:resources] Resource lookup at CFBundle 0x600003b081c0 </Users/abueide/Library/Developer/CoreSimulator/Devices/651CE25F-D2F4-404C-AC47-0364AA5C94A1/data/Containers/Bundle/Application/39A83900-AE1A-4844-B957-82CD27C4CF01/AnalyticsReactNativeE2E.app> (executable, loaded)
+	Request       : InfoPlist type: stringsdict
+	Result        : None
+2026-02-11 19:30:59.330 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.networkextension:] ne_tracker_check_is_hostname_blocked(): hostname localhost is not a tracker. Returning: ne_tracker_status_none
+2026-02-11 19:30:59.330 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFNetwork:ATS] Uploading ATS exception ATSAllowsLocalNetworking
+2026-02-11 19:30:59.330 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFNetwork:ATS] Uploading ATS exception ATSExceptionDomains
+2026-02-11 19:30:59.330 A  AnalyticsReactNativeE2E[27152:1afd137] (Security) SecTrustReportNetworkingAnalytics
+2026-02-11 19:30:59.330 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFNetwork:Default] Connection 11: set is idle true
+2026-02-11 19:30:59.330 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] [C11] event: client:connection_idle @8.592s
+2026-02-11 19:30:59.330 I  AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection idle to protocols
+2026-02-11 19:30:59.330 I  AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:30:59.330 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is true
+2026-02-11 19:30:59.330 E  AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:30:59.330 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFNetwork:Default] Task <7795302E-1983-4B5A-97E5-2917ACF37ABD>.<4> now using Connection 11
+2026-02-11 19:30:59.330 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:30:59.330 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Incremented estimated bytes to send by 4279, total now 8667
+2026-02-11 19:30:59.330 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Using lower threshold 12582912, upper threshold 31457280
+2026-02-11 19:30:59.330 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFNetwork:Default] Connection 11: set is idle false
+2026-02-11 19:30:59.330 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] [C11] event: client:connection_reused @8.593s
+2026-02-11 19:30:59.330 I  AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection not idle to protocols
+2026-02-11 19:30:59.330 I  AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:30:59.330 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is false
+2026-02-11 19:30:59.330 E  AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:30:59.331 Df AnalyticsReactNativeE2E[27152:1afd699] [com.apple.CFNetwork:Default] Task <7795302E-1983-4B5A-97E5-2917ACF37ABD>.<4> sent request, body S 4279
+2026-02-11 19:30:59.332 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.securityd:SecError] SecTrustReportNetworkingAnalytics failed with error: -4
+2026-02-11 19:30:59.332 A  AnalyticsReactNativeE2E[27152:1afd137] (Security) SecTrustReportNetworkingAnalytics
+2026-02-11 19:30:59.332 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.securityd:SecError] SecTrustReportNetworkingAnalytics failed with error: -4
+2026-02-11 19:30:59.433 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Task <7795302E-1983-4B5A-97E5-2917ACF37ABD>.<4> received response, status 200 content K
+2026-02-11 19:30:59.433 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Incremented estimated bytes to receive by 20, total now 435
+2026-02-11 19:30:59.433 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Using lower threshold 12582912, upper threshold 31457280
+2026-02-11 19:30:59.433 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Task <7795302E-1983-4B5A-97E5-2917ACF37ABD>.<4> response ended
+2026-02-11 19:30:59.433 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Task <7795302E-1983-4B5A-97E5-2917ACF37ABD>.<4> done using Connection 11
+2026-02-11 19:30:59.433 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:30:59.433 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Connection 11: set is idle true
+2026-02-11 19:30:59.433 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] [C11] event: client:connection_idle @8.695s
+2026-02-11 19:30:59.433 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection idle to protocols
+2026-02-11 19:30:59.433 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:30:59.433 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is true
+2026-02-11 19:30:59.433 E  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:30:59.433 Df AnalyticsReactNativeE2E[27152:1afd699] [com.apple.CFNetwork:Summary] Task <7795302E-1983-4B5A-97E5-2917ACF37ABD>.<4> summary for task success {transaction_duration_ms=103, response_status=200, connection=11, reused=1, reused_after_ms=0, request_start_ms=0, request_duration_ms=0, response_start_ms=102, response_duration_ms=0, request_bytes=4570, request_throughput_kbps=246930, response_bytes=255, response_throughput_kbps=10198, cache_hit=true}
+2026-02-11 19:30:59.433 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Connection 11: set is idle true
+2026-02-11 19:30:59.433 I  AnalyticsReactNativeE2E[27152:1afd134] [com.apple.runningboard:assertion] Acquiring assertion: <RBSAssertionDescriptor| "com.apple.CFNetwork.StorageDB" ID:(null) target:27152>
+2026-02-11 19:30:59.433 Df AnalyticsReactNativeE2E[27152:1afd699] [com.apple.CFNetwork:Default] Task <7795302E-1983-4B5A-97E5-2917ACF37ABD>.<4> finished successfully
+2026-02-11 19:30:59.433 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] [C11] event: client:connection_idle @8.695s
+2026-02-11 19:30:59.433 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:30:59.433 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection idle to protocols
+2026-02-11 19:30:59.433 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:30:59.433 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:30:59.433 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:activity] No threshold for cfnetwork:foreground_task, returning NW_ACTIVITY_DURATION_INVALID
+2026-02-11 19:30:59.434 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] Sent 5 events
+2026-02-11 19:30:59.433 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is true
+2026-02-11 19:30:59.434 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:activity] No threshold for activity <nw_activity 12:2 [68FC890B-DB69-41AE-BCBA-E682690138E2] (reporting strategy default) complete (reason success)>
+2026-02-11 19:30:59.434 E  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:30:59.433 Db AnalyticsReactNativeE2E[27152:1afd134] [com.apple.runningboard:assertion] Adding assertion 1422-27152-1677 to dictionary
+2026-02-11 19:30:59.716 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:30:59.844 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:59.845 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:59.845 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:59.862 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:30:59.862 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:30:59.862 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:30:59.862 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] 'TRACK event saved', { type: 'track',
+  event: 'Track pressed',
+  properties: { foo: 'bar' } }
+2026-02-11 19:31:00.249 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:31:00.378 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:31:00.379 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:31:00.379 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:31:00.395 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:31:00.395 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:31:00.395 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:31:00.395 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] 'TRACK event saved', { type: 'track',
+  event: 'Track pressed',
+  properties: { foo: 'bar' } }
+2026-02-11 19:31:00.720 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_association_schedule_deactivation_block_invoke <nw_association Hostname#3f440756:9091> becoming dormant
+2026-02-11 19:31:00.720 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_association_schedule_deactivation_block_invoke <nw_association IPv6#91cc1a5c.9091> becoming dormant
+2026-02-11 19:31:00.721 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFNetwork:Coalescing] removing all entries config 0x600000224b80
+2026-02-11 19:31:00.721 I  AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:] nw_context_dealloc Deallocating context <nw_context (null) (private)>
+2026-02-11 19:31:00.721 I  AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:] nw_context_purge_endpoints Context <nw_context com.apple.CFNetwork.NSURLSession.{C2BDFBFD-BB0E-4488-AFA2-79B8C819DA48}{(null)}{Y}{2}{0x0} (private)> has more than 0 cache entries, purging 1 from 1 down to 0
+2026-02-11 19:31:00.721 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:endpoint] endpoint IPv6#91cc1a5c.9091 has nothing to cleanup, no protocol instance registrars
+2026-02-11 19:31:00.721 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:endpoint] endpoint Hostname#3f440756:9091 has nothing to cleanup, no protocol instance registrars
+2026-02-11 19:31:00.721 I  AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:] nw_context_dealloc Deallocating context <nw_context (null) (private)>
+2026-02-11 19:31:00.783 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:31:00.911 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:31:00.912 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:31:00.912 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:31:00.928 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:31:00.928 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:31:00.928 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:31:00.928 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] 'TRACK event saved', { type: 'track',
+  event: 'Track pressed',
+  properties: { foo: 'bar' } }
+2026-02-11 19:31:01.316 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:31:01.462 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:31:01.462 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:31:01.462 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:31:01.478 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:31:01.478 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:31:01.478 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:31:01.479 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] 'TRACK event saved', { type: 'track',
+  event: 'Track pressed',
+  properties: { foo: 'bar' } }
+2026-02-11 19:31:01.865 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:31:01.994 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:31:01.995 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:31:01.995 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:31:02.011 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:31:02.011 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:31:02.012 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:31:02.012 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] 'TRACK event saved', { type: 'track',
+  event: 'Track pressed',
+  properties: { foo: 'bar' } }
+2026-02-11 19:31:02.013 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFNetwork:Default] Task <E96151C4-F6B9-49AA-9823-EC8ED688366E>.<5> resuming, timeouts(0.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-02-11 19:31:02.013 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:31:02.013 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:activity] Domain cfnetwork rate configured in registry as 1 / 20000
+2026-02-11 19:31:02.013 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:activity] Domain cfnetwork rate configured after remote default override as 1 / 20000
+2026-02-11 19:31:02.013 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:activity] After reading settings plist, domain cfnetwork rate configured as 1 / 2000000
+2026-02-11 19:31:02.013 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:activity] After settings override, domain cfnetwork rate configured as 1 / 2000000
+2026-02-11 19:31:02.013 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:activity] Final domain cfnetwork rate configured as 1 / 2000000
+2026-02-11 19:31:02.013 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:activity] <nw_activity 12:2 [No UUID] (reporting strategy default)> sampled at 1 / 2000000
+2026-02-11 19:31:02.013 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:31:02.013 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:31:02.013 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFNetwork:Default] [Telemetry]: Activity <nw_activity 12:2 [84379444-18FE-4155-8D74-E6E43BAF3644] (reporting strategy default)> on Task <E96151C4-F6B9-49AA-9823-EC8ED688366E>.<5> was not selected for reporting
+2026-02-11 19:31:02.013 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.networkextension:] ne_tracker_check_is_hostname_blocked() proceeding with the in_the_app check for hostname: localhost
+2026-02-11 19:31:02.013 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFBundle:resources] Resource lookup at CFBundle 0x600003b081c0 </Users/abueide/Library/Developer/CoreSimulator/Devices/651CE25F-D2F4-404C-AC47-0364AA5C94A1/data/Containers/Bundle/Application/39A83900-AE1A-4844-B957-82CD27C4CF01/AnalyticsReactNativeE2E.app> (executable, loaded)
+	Request       : InfoPlist type: strings
+	Result        : None
+2026-02-11 19:31:02.013 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFBundle:resources] Resource lookup at CFBundle 0x600003b081c0 </Users/abueide/Library/Developer/CoreSimulator/Devices/651CE25F-D2F4-404C-AC47-0364AA5C94A1/data/Containers/Bundle/Application/39A83900-AE1A-4844-B957-82CD27C4CF01/AnalyticsReactNativeE2E.app> (executable, loaded)
+	Request       : InfoPlist type: stringsdict
+	Result        : None
+2026-02-11 19:31:02.013 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.networkextension:] ne_tracker_check_is_hostname_blocked(): hostname localhost is not a tracker. Returning: ne_tracker_status_none
+2026-02-11 19:31:02.013 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:ATS] Uploading ATS exception ATSAllowsLocalNetworking
+2026-02-11 19:31:02.013 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:ATS] Uploading ATS exception ATSExceptionDomains
+2026-02-11 19:31:02.013 A  AnalyticsReactNativeE2E[27152:1afd13b] (Security) SecTrustReportNetworkingAnalytics
+2026-02-11 19:31:02.013 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Connection 11: set is idle true
+2026-02-11 19:31:02.013 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] [C11] event: client:connection_idle @11.275s
+2026-02-11 19:31:02.013 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection idle to protocols
+2026-02-11 19:31:02.013 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:31:02.013 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is true
+2026-02-11 19:31:02.013 E  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:31:02.013 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Task <E96151C4-F6B9-49AA-9823-EC8ED688366E>.<5> now using Connection 11
+2026-02-11 19:31:02.013 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:31:02.013 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Incremented estimated bytes to send by 4279, total now 12946
+2026-02-11 19:31:02.013 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Using lower threshold 12582912, upper threshold 31457280
+2026-02-11 19:31:02.013 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Connection 11: set is idle false
+2026-02-11 19:31:02.013 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] [C11] event: client:connection_reused @11.276s
+2026-02-11 19:31:02.013 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection not idle to protocols
+2026-02-11 19:31:02.013 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:31:02.014 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is false
+2026-02-11 19:31:02.014 E  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:31:02.014 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.securityd:SecError] SecTrustReportNetworkingAnalytics failed with error: -4
+2026-02-11 19:31:02.014 A  AnalyticsReactNativeE2E[27152:1afd13b] (Security) SecTrustReportNetworkingAnalytics
+2026-02-11 19:31:02.014 Df AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.CFNetwork:Default] Task <E96151C4-F6B9-49AA-9823-EC8ED688366E>.<5> sent request, body S 4279
+2026-02-11 19:31:02.015 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.securityd:SecError] SecTrustReportNetworkingAnalytics failed with error: -4
+2026-02-11 19:31:02.116 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFNetwork:Default] Task <E96151C4-F6B9-49AA-9823-EC8ED688366E>.<5> received response, status 200 content K
+2026-02-11 19:31:02.116 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Incremented estimated bytes to receive by 20, total now 455
+2026-02-11 19:31:02.116 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Using lower threshold 12582912, upper threshold 31457280
+2026-02-11 19:31:02.116 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFNetwork:Default] Task <E96151C4-F6B9-49AA-9823-EC8ED688366E>.<5> response ended
+2026-02-11 19:31:02.116 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFNetwork:Default] Task <E96151C4-F6B9-49AA-9823-EC8ED688366E>.<5> done using Connection 11
+2026-02-11 19:31:02.116 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:31:02.116 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFNetwork:Default] Connection 11: set is idle true
+2026-02-11 19:31:02.116 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] [C11] event: client:connection_idle @11.379s
+2026-02-11 19:31:02.116 I  AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection idle to protocols
+2026-02-11 19:31:02.116 Df AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.CFNetwork:Summary] Task <E96151C4-F6B9-49AA-9823-EC8ED688366E>.<5> summary for task success {transaction_duration_ms=103, response_status=200, connection=11, reused=1, reused_after_ms=0, request_start_ms=0, request_duration_ms=0, response_start_ms=103, response_duration_ms=0, request_bytes=4570, request_throughput_kbps=252210, response_bytes=255, response_throughput_kbps=10149, cache_hit=true}
+2026-02-11 19:31:02.116 Df AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.CFNetwork:Default] Task <E96151C4-F6B9-49AA-9823-EC8ED688366E>.<5> finished successfully
+2026-02-11 19:31:02.116 I  AnalyticsReactNativeE2E[27152:1afd134] [com.apple.runningboard:assertion] Acquiring assertion: <RBSAssertionDescriptor| "com.apple.CFNetwork.StorageDB" ID:(null) target:27152>
+2026-02-11 19:31:02.116 Db AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:31:02.116 I  AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:31:02.117 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is true
+2026-02-11 19:31:02.117 Db AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:31:02.117 E  AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:31:02.117 Db AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.CFNetwork:Default] Connection 11: set is idle true
+2026-02-11 19:31:02.117 Db AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.network:activity] No threshold for cfnetwork:foreground_task, returning NW_ACTIVITY_DURATION_INVALID
+2026-02-11 19:31:02.117 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] [C11] event: client:connection_idle @11.379s
+2026-02-11 19:31:02.117 Db AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.network:activity] No threshold for activity <nw_activity 12:2 [84379444-18FE-4155-8D74-E6E43BAF3644] (reporting strategy default) complete (reason success)>
+2026-02-11 19:31:02.117 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] Sent 5 events
+2026-02-11 19:31:02.117 I  AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection idle to protocols
+2026-02-11 19:31:02.117 Db AnalyticsReactNativeE2E[27152:1afd134] [com.apple.runningboard:assertion] Adding assertion 1422-27152-1678 to dictionary
+2026-02-11 19:31:02.117 I  AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:31:02.117 Df AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is true
+2026-02-11 19:31:02.117 E  AnalyticsReactNativeE2E[27152:1afd13b] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:31:02.400 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:31:02.528 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:31:02.528 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:31:02.528 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:31:02.545 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:31:02.545 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:31:02.545 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:31:02.546 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] 'TRACK event saved', { type: 'track',
+  event: 'Track pressed',
+  properties: { foo: 'bar' } }
+2026-02-11 19:31:02.934 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:31:03.078 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:31:03.079 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:31:03.079 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:31:03.095 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:31:03.095 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:31:03.095 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:31:03.095 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] 'TRACK event saved', { type: 'track',
+  event: 'Track pressed',
+  properties: { foo: 'bar' } }
+2026-02-11 19:31:03.484 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:31:03.628 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:31:03.629 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:31:03.629 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:31:03.645 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:31:03.645 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:31:03.645 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:31:03.645 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] 'TRACK event saved', { type: 'track',
+  event: 'Track pressed',
+  properties: { foo: 'bar' } }
+2026-02-11 19:31:04.033 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:31:04.178 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:31:04.178 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:31:04.179 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:31:04.195 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:31:04.195 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:31:04.195 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:31:04.195 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] 'TRACK event saved', { type: 'track',
+  event: 'Track pressed',
+  properties: { foo: 'bar' } }
+2026-02-11 19:31:04.584 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:31:04.728 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:31:04.728 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:31:04.728 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:31:04.745 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:31:04.745 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:31:04.745 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:31:04.746 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] 'TRACK event saved', { type: 'track',
+  event: 'Track pressed',
+  properties: { foo: 'bar' } }
+2026-02-11 19:31:04.746 Df AnalyticsReactNativeE2E[27152:1afd699] [com.apple.CFNetwork:Default] Task <27889CB6-A2FD-408A-9F21-6AAC5F5DFB4D>.<6> resuming, timeouts(0.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-02-11 19:31:04.746 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:31:04.746 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:activity] Domain cfnetwork rate configured in registry as 1 / 20000
+2026-02-11 19:31:04.746 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:activity] Domain cfnetwork rate configured after remote default override as 1 / 20000
+2026-02-11 19:31:04.746 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:activity] After reading settings plist, domain cfnetwork rate configured as 1 / 2000000
+2026-02-11 19:31:04.746 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:activity] After settings override, domain cfnetwork rate configured as 1 / 2000000
+2026-02-11 19:31:04.746 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:activity] Final domain cfnetwork rate configured as 1 / 2000000
+2026-02-11 19:31:04.746 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:activity] <nw_activity 12:2 [No UUID] (reporting strategy default)> sampled at 1 / 2000000
+2026-02-11 19:31:04.746 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:31:04.746 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:31:04.746 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.CFNetwork:Default] [Telemetry]: Activity <nw_activity 12:2 [CDC06CF4-3AE4-42F0-A3E0-995494499AE7] (reporting strategy default)> on Task <27889CB6-A2FD-408A-9F21-6AAC5F5DFB4D>.<6> was not selected for reporting
+2026-02-11 19:31:04.747 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.networkextension:] ne_tracker_check_is_hostname_blocked() proceeding with the in_the_app check for hostname: localhost
+2026-02-11 19:31:04.747 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFBundle:resources] Resource lookup at CFBundle 0x600003b081c0 </Users/abueide/Library/Developer/CoreSimulator/Devices/651CE25F-D2F4-404C-AC47-0364AA5C94A1/data/Containers/Bundle/Application/39A83900-AE1A-4844-B957-82CD27C4CF01/AnalyticsReactNativeE2E.app> (executable, loaded)
+	Request       : InfoPlist type: strings
+	Result        : None
+2026-02-11 19:31:04.747 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFBundle:resources] Resource lookup at CFBundle 0x600003b081c0 </Users/abueide/Library/Developer/CoreSimulator/Devices/651CE25F-D2F4-404C-AC47-0364AA5C94A1/data/Containers/Bundle/Application/39A83900-AE1A-4844-B957-82CD27C4CF01/AnalyticsReactNativeE2E.app> (executable, loaded)
+	Request       : InfoPlist type: stringsdict
+	Result        : None
+2026-02-11 19:31:04.747 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.networkextension:] ne_tracker_check_is_hostname_blocked(): hostname localhost is not a tracker. Returning: ne_tracker_status_none
+2026-02-11 19:31:04.747 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:ATS] Uploading ATS exception ATSAllowsLocalNetworking
+2026-02-11 19:31:04.747 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:ATS] Uploading ATS exception ATSExceptionDomains
+2026-02-11 19:31:04.747 A  AnalyticsReactNativeE2E[27152:1afd699] (Security) SecTrustReportNetworkingAnalytics
+2026-02-11 19:31:04.747 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Connection 11: set is idle true
+2026-02-11 19:31:04.747 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] [C11] event: client:connection_idle @14.009s
+2026-02-11 19:31:04.747 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection idle to protocols
+2026-02-11 19:31:04.747 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:31:04.747 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is true
+2026-02-11 19:31:04.747 E  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:31:04.747 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Task <27889CB6-A2FD-408A-9F21-6AAC5F5DFB4D>.<6> now using Connection 11
+2026-02-11 19:31:04.747 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:31:04.747 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Incremented estimated bytes to send by 4279, total now 17225
+2026-02-11 19:31:04.747 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Using lower threshold 12582912, upper threshold 31457280
+2026-02-11 19:31:04.747 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Connection 11: set is idle false
+2026-02-11 19:31:04.747 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] [C11] event: client:connection_reused @14.009s
+2026-02-11 19:31:04.747 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection not idle to protocols
+2026-02-11 19:31:04.747 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:31:04.747 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is false
+2026-02-11 19:31:04.747 E  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:31:04.747 Df AnalyticsReactNativeE2E[27152:1afd699] [com.apple.securityd:SecError] SecTrustReportNetworkingAnalytics failed with error: -4
+2026-02-11 19:31:04.747 A  AnalyticsReactNativeE2E[27152:1afd699] (Security) SecTrustReportNetworkingAnalytics
+2026-02-11 19:31:04.747 Df AnalyticsReactNativeE2E[27152:1afd134] [com.apple.CFNetwork:Default] Task <27889CB6-A2FD-408A-9F21-6AAC5F5DFB4D>.<6> sent request, body S 4279
+2026-02-11 19:31:04.748 Df AnalyticsReactNativeE2E[27152:1afd699] [com.apple.securityd:SecError] SecTrustReportNetworkingAnalytics failed with error: -4
+2026-02-11 19:31:04.849 Df AnalyticsReactNativeE2E[27152:1afd699] [com.apple.CFNetwork:Default] Task <27889CB6-A2FD-408A-9F21-6AAC5F5DFB4D>.<6> received response, status 200 content K
+2026-02-11 19:31:04.849 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Incremented estimated bytes to receive by 20, total now 475
+2026-02-11 19:31:04.849 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Using lower threshold 12582912, upper threshold 31457280
+2026-02-11 19:31:04.849 Df AnalyticsReactNativeE2E[27152:1afd699] [com.apple.CFNetwork:Default] Task <27889CB6-A2FD-408A-9F21-6AAC5F5DFB4D>.<6> response ended
+2026-02-11 19:31:04.849 Df AnalyticsReactNativeE2E[27152:1afd699] [com.apple.CFNetwork:Default] Task <27889CB6-A2FD-408A-9F21-6AAC5F5DFB4D>.<6> done using Connection 11
+2026-02-11 19:31:04.849 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:31:04.849 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.CFNetwork:Default] Connection 11: set is idle true
+2026-02-11 19:31:04.849 Df AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:connection] [C11] event: client:connection_idle @14.112s
+2026-02-11 19:31:04.849 I  AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection idle to protocols
+2026-02-11 19:31:04.850 I  AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:31:04.850 Df AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is true
+2026-02-11 19:31:04.850 E  AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:31:04.850 I  AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.runningboard:assertion] Acquiring assertion: <RBSAssertionDescriptor| "com.apple.CFNetwork.StorageDB" ID:(null) target:27152>
+2026-02-11 19:31:04.850 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Summary] Task <27889CB6-A2FD-408A-9F21-6AAC5F5DFB4D>.<6> summary for task success {transaction_duration_ms=103, response_status=200, connection=11, reused=1, reused_after_ms=0, request_start_ms=0, request_duration_ms=0, response_start_ms=102, response_duration_ms=0, request_bytes=4570, request_throughput_kbps=243789, response_bytes=255, response_throughput_kbps=11393, cache_hit=true}
+2026-02-11 19:31:04.850 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.CFNetwork:Default] Connection 11: set is idle true
+2026-02-11 19:31:04.850 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Task <27889CB6-A2FD-408A-9F21-6AAC5F5DFB4D>.<6> finished successfully
+2026-02-11 19:31:04.850 Df AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:connection] [C11] event: client:connection_idle @14.112s
+2026-02-11 19:31:04.850 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:31:04.850 I  AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection idle to protocols
+2026-02-11 19:31:04.850 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:31:04.850 I  AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:31:04.850 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] Sent 5 events
+2026-02-11 19:31:04.850 Df AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is true
+2026-02-11 19:31:04.850 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] No threshold for cfnetwork:foreground_task, returning NW_ACTIVITY_DURATION_INVALID
+2026-02-11 19:31:04.851 E  AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:31:04.851 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] No threshold for activity <nw_activity 12:2 [CDC06CF4-3AE4-42F0-A3E0-995494499AE7] (reporting strategy default) complete (reason success)>
+2026-02-11 19:31:04.850 Db AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.runningboard:assertion] Adding assertion 1422-27152-1679 to dictionary
+2026-02-11 19:31:05.234 I  AnalyticsReactNativeE2E[27152:1afd08d] [com.wix.Detox:WebSocket] Action received: invoke
+2026-02-11 19:31:05.378 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:31:05.378 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:31:05.379 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:31:05.394 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-02-11 19:31:05.394 Df AnalyticsReactNativeE2E[27152:1afd08d] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x104287910>; contextId: 0x2D1BB332
+2026-02-11 19:31:05.395 A  AnalyticsReactNativeE2E[27152:1afd08d] (UIKitCore) send gesture actions
+2026-02-11 19:31:05.395 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Task <E5476958-7724-4472-B82E-148B877BFCAA>.<7> resuming, timeouts(0.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-02-11 19:31:05.395 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:31:05.395 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Domain cfnetwork rate configured in registry as 1 / 20000
+2026-02-11 19:31:05.395 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Domain cfnetwork rate configured after remote default override as 1 / 20000
+2026-02-11 19:31:05.395 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] After reading settings plist, domain cfnetwork rate configured as 1 / 2000000
+2026-02-11 19:31:05.395 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] After settings override, domain cfnetwork rate configured as 1 / 2000000
+2026-02-11 19:31:05.395 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Final domain cfnetwork rate configured as 1 / 2000000
+2026-02-11 19:31:05.395 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] <nw_activity 12:2 [No UUID] (reporting strategy default)> sampled at 1 / 2000000
+2026-02-11 19:31:05.395 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:31:05.395 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:31:05.395 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] [Telemetry]: Activity <nw_activity 12:2 [6BE05134-B405-4434-BE68-6B08944F6C26] (reporting strategy default)> on Task <E5476958-7724-4472-B82E-148B877BFCAA>.<7> was not selected for reporting
+2026-02-11 19:31:05.396 Db AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.networkextension:] ne_tracker_check_is_hostname_blocked() proceeding with the in_the_app check for hostname: localhost
+2026-02-11 19:31:05.396 Db AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.CFBundle:resources] Resource lookup at CFBundle 0x600003b081c0 </Users/abueide/Library/Developer/CoreSimulator/Devices/651CE25F-D2F4-404C-AC47-0364AA5C94A1/data/Containers/Bundle/Application/39A83900-AE1A-4844-B957-82CD27C4CF01/AnalyticsReactNativeE2E.app> (executable, loaded)
+	Request       : InfoPlist type: strings
+	Result        : None
+2026-02-11 19:31:05.396 Db AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.CFBundle:resources] Resource lookup at CFBundle 0x600003b081c0 </Users/abueide/Library/Developer/CoreSimulator/Devices/651CE25F-D2F4-404C-AC47-0364AA5C94A1/data/Containers/Bundle/Application/39A83900-AE1A-4844-B957-82CD27C4CF01/AnalyticsReactNativeE2E.app> (executable, loaded)
+	Request       : InfoPlist type: stringsdict
+	Result        : None
+2026-02-11 19:31:05.396 Db AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.networkextension:] ne_tracker_check_is_hostname_blocked(): hostname localhost is not a tracker. Returning: ne_tracker_status_none
+2026-02-11 19:31:05.396 Db AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.CFNetwork:ATS] Uploading ATS exception ATSAllowsLocalNetworking
+2026-02-11 19:31:05.396 Db AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.CFNetwork:ATS] Uploading ATS exception ATSExceptionDomains
+2026-02-11 19:31:05.396 A  AnalyticsReactNativeE2E[27152:1afd137] (Security) SecTrustReportNetworkingAnalytics
+2026-02-11 19:31:05.396 Db AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.CFNetwork:Default] Connection 11: set is idle true
+2026-02-11 19:31:05.396 Df AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.network:connection] [C11] event: client:connection_idle @14.658s
+2026-02-11 19:31:05.396 I  AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection idle to protocols
+2026-02-11 19:31:05.396 I  AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:31:05.396 Df AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is true
+2026-02-11 19:31:05.396 E  AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:31:05.396 Df AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.CFNetwork:Default] Task <E5476958-7724-4472-B82E-148B877BFCAA>.<7> now using Connection 11
+2026-02-11 19:31:05.396 Db AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:31:05.396 Db AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Incremented estimated bytes to send by 907, total now 18132
+2026-02-11 19:31:05.396 Db AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Using lower threshold 12582912, upper threshold 31457280
+2026-02-11 19:31:05.396 Db AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.CFNetwork:Default] Connection 11: set is idle false
+2026-02-11 19:31:05.396 Df AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.network:connection] [C11] event: client:connection_reused @14.658s
+2026-02-11 19:31:05.396 I  AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection not idle to protocols
+2026-02-11 19:31:05.396 I  AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:31:05.396 Df AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is false
+2026-02-11 19:31:05.396 E  AnalyticsReactNativeE2E[27152:1afd13e] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:31:05.396 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.securityd:SecError] SecTrustReportNetworkingAnalytics failed with error: -4
+2026-02-11 19:31:05.396 A  AnalyticsReactNativeE2E[27152:1afd137] (Security) SecTrustReportNetworkingAnalytics
+2026-02-11 19:31:05.396 Df AnalyticsReactNativeE2E[27152:1afd699] [com.apple.CFNetwork:Default] Task <E5476958-7724-4472-B82E-148B877BFCAA>.<7> sent request, body S 907
+2026-02-11 19:31:05.397 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.securityd:SecError] SecTrustReportNetworkingAnalytics failed with error: -4
+2026-02-11 19:31:05.498 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Task <E5476958-7724-4472-B82E-148B877BFCAA>.<7> received response, status 200 content K
+2026-02-11 19:31:05.498 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Incremented estimated bytes to receive by 20, total now 495
+2026-02-11 19:31:05.498 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_connection_modify_estimated_bytes_block_invoke [C11] Using lower threshold 12582912, upper threshold 31457280
+2026-02-11 19:31:05.498 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Task <E5476958-7724-4472-B82E-148B877BFCAA>.<7> response ended
+2026-02-11 19:31:05.498 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Task <E5476958-7724-4472-B82E-148B877BFCAA>.<7> done using Connection 11
+2026-02-11 19:31:05.498 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:31:05.498 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Connection 11: set is idle true
+2026-02-11 19:31:05.498 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] [C11] event: client:connection_idle @14.761s
+2026-02-11 19:31:05.499 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection idle to protocols
+2026-02-11 19:31:05.499 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:31:05.499 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is true
+2026-02-11 19:31:05.499 E  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:31:05.499 Db AnalyticsReactNativeE2E[27152:1afd137] [com.apple.CFNetwork:Default] Connection 11: set is idle true
+2026-02-11 19:31:05.499 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] [C11] event: client:connection_idle @14.761s
+2026-02-11 19:31:05.499 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_endpoint_handler_report_connection_idle [C11 IPv6#91cc1a5c.9091 ready parent-flow (satisfied (Path is satisfied), interface: en0[802.11], uses wifi, LQM: unknown)] Reporting connection idle to protocols
+2026-02-11 19:31:05.499 Df AnalyticsReactNativeE2E[27152:1afd699] [com.apple.CFNetwork:Summary] Task <E5476958-7724-4472-B82E-148B877BFCAA>.<7> summary for task success {transaction_duration_ms=103, response_status=200, connection=11, reused=1, reused_after_ms=0, request_start_ms=0, request_duration_ms=0, response_start_ms=102, response_duration_ms=0, request_bytes=1197, request_throughput_kbps=48362, response_bytes=255, response_throughput_kbps=11214, cache_hit=true}
+2026-02-11 19:31:05.499 Df AnalyticsReactNativeE2E[27152:1afd699] [com.apple.CFNetwork:Default] Task <E5476958-7724-4472-B82E-148B877BFCAA>.<7> finished successfully
+2026-02-11 19:31:05.499 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:31:05.499 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:activity] Returning should log: 0 for activity cfnetwork:foreground_task
+2026-02-11 19:31:05.499 I  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_flow_passthrough_notify [C11.1.1 IPv6#91cc1a5c.9091 ready socket-flow (satisfied (Path is satisfied), interface: lo0)] received notification connection_idle
+2026-02-11 19:31:05.499 Df AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_protocol_socket_notify [C11.1.1:2] nw_protocol_notification_type_connection_idle is true
+2026-02-11 19:31:05.499 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:activity] No threshold for cfnetwork:foreground_task, returning NW_ACTIVITY_DURATION_INVALID
+2026-02-11 19:31:05.499 Db AnalyticsReactNativeE2E[27152:1afd699] [com.apple.network:activity] No threshold for activity <nw_activity 12:2 [6BE05134-B405-4434-BE68-6B08944F6C26] (reporting strategy default) complete (reason success)>
+2026-02-11 19:31:05.499 E  AnalyticsReactNativeE2E[27152:1afd137] [com.apple.network:connection] nw_socket_set_connection_idle [C11.1.1:2] setsockopt SO_CONNECTION_IDLE failed [42: Protocol not available]
+2026-02-11 19:31:05.499 I  AnalyticsReactNativeE2E[27152:1afe44f] [com.facebook.react.log:javascript] Sent 1 events
+

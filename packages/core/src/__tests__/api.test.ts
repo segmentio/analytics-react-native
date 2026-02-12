@@ -62,6 +62,8 @@ describe('#sendEvents', () => {
       events: [event],
     });
 
+    const expectedAuthHeader = 'Basic ' + btoa(writeKey + ':');
+
     expect(fetch).toHaveBeenCalledWith(toUrl, {
       method: 'POST',
       body: JSON.stringify({
@@ -71,6 +73,8 @@ describe('#sendEvents', () => {
       }),
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': expectedAuthHeader,
+        'X-Retry-Count': '0',
       },
     });
   }
@@ -87,5 +91,71 @@ describe('#sendEvents', () => {
     const writeKey = 'SEGMENT_KEY';
 
     await sendAnEventPer(writeKey, toProxyUrl);
+  });
+
+  it('sends custom retry count in X-Retry-Count header', async () => {
+    const mockResponse = Promise.resolve('MANOS');
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    global.fetch = jest.fn(() => Promise.resolve(mockResponse));
+
+    const event: TrackEventType = {
+      anonymousId: '3534a492-e975-4efa-a18b-3c70c562fec2',
+      event: 'Awesome event',
+      type: EventType.TrackEvent,
+      properties: {},
+      timestamp: '2000-01-01T00:00:00.000Z',
+      messageId: '1d1744bf-5beb-41ac-ad7a-943eac33babc',
+    };
+
+    await uploadEvents({
+      writeKey: 'SEGMENT_KEY',
+      url: 'https://api.segment.io/v1/b',
+      events: [event],
+      retryCount: 5,
+    });
+
+    expect(fetch).toHaveBeenCalledWith(
+      'https://api.segment.io/v1/b',
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          'X-Retry-Count': '5',
+        }),
+      })
+    );
+  });
+
+  it('includes Authorization header with base64 encoded writeKey', async () => {
+    const mockResponse = Promise.resolve('MANOS');
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    global.fetch = jest.fn(() => Promise.resolve(mockResponse));
+
+    const event: TrackEventType = {
+      anonymousId: '3534a492-e975-4efa-a18b-3c70c562fec2',
+      event: 'Awesome event',
+      type: EventType.TrackEvent,
+      properties: {},
+      timestamp: '2000-01-01T00:00:00.000Z',
+      messageId: '1d1744bf-5beb-41ac-ad7a-943eac33babc',
+    };
+
+    const writeKey = 'SEGMENT_KEY';
+    await uploadEvents({
+      writeKey,
+      url: 'https://api.segment.io/v1/b',
+      events: [event],
+    });
+
+    const expectedAuthHeader = 'Basic ' + btoa(writeKey + ':');
+
+    expect(fetch).toHaveBeenCalledWith(
+      'https://api.segment.io/v1/b',
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: expectedAuthHeader,
+        }),
+      })
+    );
   });
 });

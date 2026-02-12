@@ -96,4 +96,4 @@ packages/core/src/info.ts
 .pnpm/
 
 AGENTS.md
-
+**/artifacts/**

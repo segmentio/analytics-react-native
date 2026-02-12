@@ -34,8 +34,6 @@
       "build": ["bash $SCRIPTS_DIR/build.sh"],
       "format": ["treefmt"],
       "lint": ["treefmt --fail-on-change"],
-      "test-android": ["bash $SCRIPTS_DIR/android/test.sh"],
-      "test-ios": ["bash $SCRIPTS_DIR/ios/test.sh"],
       "act-ci": [
         "bash $SCRIPTS_DIR/act-ci.sh --platform ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-24.04"
       ],
@@ -101,7 +99,13 @@
         "echo \"iOS simulators shutdown (if any were running).\""
       ],
       "stop": ["devbox run stop-android", "devbox run stop-ios"],
-      "test": ["devbox run test-android", "devbox run test-ios"]
+      "test-unit": ["yarn test:unit"],
+      "test-fast": ["yarn test:fast"],
+      "test-e2e-android": ["bash $SCRIPTS_DIR/android/test.sh"],
+      "test-e2e-ios": ["bash $SCRIPTS_DIR/ios/test.sh"],
+      "test-e2e": ["devbox run test-e2e-android", "devbox run test-e2e-ios"],
+      "test-all": ["devbox run test-fast", "devbox run test-e2e"],
+      "test": ["devbox run test-all"]
     }
   }
 }

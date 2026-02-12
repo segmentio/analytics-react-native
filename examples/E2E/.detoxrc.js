@@ -88,7 +88,7 @@ module.exports = {
       setupTimeout: 240000,
     },
     detached: !!process.env.CI,
-    retries: 3,
+    retries: 1, // Run tests exactly twice (1 initial + 1 retry on failure)
   },
   behavior: {
     init: {

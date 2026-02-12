@@ -1,0 +1,66 @@
+--------- beginning of main
+02-10 14:35:52.221  3277  3371 W sReactNativeE2E: Long monitor contention with owner Instr: androidx.test.runner.AndroidJUnitRunner (3358) at void com.wix.detox.DetoxMain.launchActivityOnCue(android.content.Context, com.wix.detox.ActivityLaunchHelper)(DetoxMain.kt:51) waiters=0 in void com.wix.detox.DetoxMain$setupActionHandlers$SynchronizedActionHandler.handle(java.lang.String, long) for 180.599s
+02-10 14:35:52.266  3277  3277 W sReactNativeE2E: Accessing hidden field Landroid/app/Activity;->mResultCode:I (unsupported, reflection, allowed)
+02-10 14:35:52.269  3277  3277 W sReactNativeE2E: Accessing hidden field Landroid/app/Activity;->mResultData:Landroid/content/Intent; (unsupported, reflection, allowed)
+02-10 14:35:52.272  3277  3277 W sReactNativeE2E: Accessing hidden method Landroid/os/MessageQueue;->next()Landroid/os/Message; (unsupported, reflection, allowed)
+02-10 14:35:52.272  3277  3277 W sReactNativeE2E: Accessing hidden field Landroid/os/MessageQueue;->mMessages:Landroid/os/Message; (unsupported, reflection, allowed)
+02-10 14:35:52.272  3277  3277 W sReactNativeE2E: Accessing hidden method Landroid/os/Message;->recycleUnchecked()V (unsupported, reflection, allowed)
+02-10 14:35:52.288  3277  3277 D LifecycleMonitor: Lifecycle status change: com.AnalyticsReactNativeE2E.MainActivity@c5f9683 in: PAUSED
+02-10 14:35:52.294  3277  3277 I Detox   : Wait is over: App is now idle!
+02-10 14:35:52.294  3277  3371 I DetoxWSClient: Sending out action 'ready' (ID #-1000)
+02-10 14:35:52.295  3277  3371 I DetoxDispatcher: Done with action 'isReady'
+02-10 14:35:52.301  3277  3372 W sReactNativeE2E: Long monitor contention with owner Instr: androidx.test.runner.AndroidJUnitRunner (3358) at void com.wix.detox.DetoxMain.launchActivityOnCue(android.content.Context, com.wix.detox.ActivityLaunchHelper)(DetoxMain.kt:51) waiters=1 in void com.wix.detox.DetoxMain$setupActionHandlers$SynchronizedActionHandler.handle(java.lang.String, long) for 170.668s
+02-10 14:35:52.303  3277  3372 I DetoxWSClient: Sending out action 'currentStatusResult' (ID #1)
+02-10 14:35:52.303  3277  3372 I DetoxDispatcher: Done with action 'currentStatus'
+02-10 14:35:52.315  3277  3358 E TestRunner: failed: runDetoxTests(com.AnalyticsReactNativeE2E.DetoxTest)
+02-10 14:35:52.320  3277  3358 E TestRunner: ----- begin exception -----
+02-10 14:35:52.322  3277  3358 E TestRunner: com.wix.detox.common.DetoxErrors$DetoxRuntimeException: Waited for the new RN-context for too long! (180 seconds)
+02-10 14:35:52.322  3277  3358 E TestRunner: If you think that's not long enough, consider applying a custom Detox runtime-config in DetoxTest.runTests().
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at com.wix.detox.reactnative.ReactNativeLoadingMonitor.awaitNewRNContext(ReactNativeLoadingMonitor.kt:60)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at com.wix.detox.reactnative.ReactNativeLoadingMonitor.getNewContext(ReactNativeLoadingMonitor.kt:29)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at com.wix.detox.reactnative.ReactNativeExtension.awaitNewReactNativeContext(ReactNativeExtension.kt:129)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at com.wix.detox.reactnative.ReactNativeExtension.waitForRNBootstrap(ReactNativeExtension.kt:36)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at com.wix.detox.DetoxMain.launchActivity(DetoxMain.kt:127)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at com.wix.detox.DetoxMain.launchActivityOnCue(DetoxMain.kt:53)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at com.wix.detox.DetoxMain.run(DetoxMain.kt:33)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at com.wix.detox.Detox.runTests(Detox.java:126)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at com.wix.detox.Detox.runTests(Detox.java:93)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at com.AnalyticsReactNativeE2E.DetoxTest.runDetoxTests(DetoxTest.java:27)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at java.lang.reflect.Method.invoke(Native Method)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at androidx.test.rule.ActivityTestRule$ActivityStatement.evaluate(ActivityTestRule.java:543)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.BlockJUnit4ClassRunner$1.evaluate(BlockJUnit4ClassRunner.java:100)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:366)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:103)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:63)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at androidx.test.ext.junit.runners.AndroidJUnit4.run(AndroidJUnit4.java:162)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.Suite.runChild(Suite.java:128)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.Suite.runChild(Suite.java:27)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runner.JUnitCore.run(JUnitCore.java:137)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at org.junit.runner.JUnitCore.run(JUnitCore.java:115)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at androidx.test.internal.runner.TestExecutor.execute(TestExecutor.java:67)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at androidx.test.internal.runner.TestExecutor.execute(TestExecutor.java:58)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at androidx.test.runner.AndroidJUnitRunner.onStart(AndroidJUnitRunner.java:446)
+02-10 14:35:52.322  3277  3358 E TestRunner: 	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2361)
+02-10 14:35:52.322  3277  3358 E TestRunner: ----- end exception -----
+02-10 14:35:52.323  3277  3358 I TestRunner: finished: runDetoxTests(com.AnalyticsReactNativeE2E.DetoxTest)
+02-10 14:35:52.327  3277  3358 I MonitoringInstr: Unstopped activity count: 1
+02-10 14:35:52.372  3277  3277 D LifecycleMonitor: Lifecycle status change: 

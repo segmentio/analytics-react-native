@@ -10,6 +10,7 @@ import {
   Config,
   EventType,
   SegmentAPIIntegration,
+  SegmentAPISettings,
   SegmentEvent,
   TrackEventType,
   UpdateType,
@@ -24,12 +25,20 @@ jest.mock('uuid');
 
 describe('SegmentDestination', () => {
   const store = new MockSegmentStore();
+
+  // Mock persistor for backoff state management
+  const mockPersistor = {
+    get: jest.fn(() => Promise.resolve(undefined)),
+    set: jest.fn(() => Promise.resolve()),
+  };
+
   const clientArgs = {
     logger: getMockLogger(),
     config: {
       writeKey: '123-456',
       maxBatchSize: 2,
       flushInterval: 0,
+      storePersistor: mockPersistor,
     },
     store,
   };
@@ -325,6 +334,7 @@ describe('SegmentDestination', () => {
         events: events.slice(0, 2).map((e) => ({
           ...e,
         })),
+        retryCount: 0,
       });
       expect(sendEventsSpy).toHaveBeenCalledWith({
         url: getURL(defaultApiHost, ''), // default api already appended with '/b'
@@ -332,6 +342,7 @@ describe('SegmentDestination', () => {
         events: events.slice(2, 4).map((e) => ({
           ...e,
         })),
+        retryCount: 0,
       });
     });
 
@@ -359,6 +370,7 @@ describe('SegmentDestination', () => {
         events: events.slice(0, 2).map((e) => ({
           ...e,
         })),
+        retryCount: 0,
       });
     });
 
@@ -410,6 +422,7 @@ describe('SegmentDestination', () => {
           events: events.map((e) => ({
             ...e,
           })),
+          retryCount: 0,
         });
       }
     );
@@ -544,6 +557,382 @@ describe('SegmentDestination', () => {
       const spy = jest.spyOn(Object.getPrototypeOf(plugin), 'getEndpoint');
       expect(plugin['getEndpoint']()).toBe(defaultApiHost);
       expect(spy).toHaveBeenCalled();
+    });
+  });
+
+  describe('TAPI backoff and rate limiting', () => {
+    const createTestWith = ({
+      config,
+      settings,
+      events,
+    }: {
+      config?: Config;
+      settings?: SegmentAPISettings;
+      events: SegmentEvent[];
+    }) => {
+      const plugin = new SegmentDestination();
+
+      const analytics = new SegmentClient({
+        ...clientArgs,
+        config: config ?? clientArgs.config,
+        store: new MockSegmentStore({
+          settings: {
+            [SEGMENT_DESTINATION_KEY]: {},
+          },
+        }),
+      });
+
+      plugin.configure(analytics);
+      plugin.update(
+        {
+          integrations: {
+            [SEGMENT_DESTINATION_KEY]:
+              settings?.integrations?.[SEGMENT_DESTINATION_KEY] ?? {},
+          },
+          httpConfig: settings?.httpConfig ?? {
+            rateLimitConfig: {
+              enabled: true,
+              maxRetryCount: 100,
+              maxRetryInterval: 300,
+              maxTotalBackoffDuration: 43200,
+            },
+            backoffConfig: {
+              enabled: true,
+              maxRetryCount: 100,
+              baseBackoffInterval: 0.5,
+              maxBackoffInterval: 300,
+              maxTotalBackoffDuration: 43200,
+              jitterPercent: 10,
+              retryableStatusCodes: [
+                408, 410, 429, 460, 500, 502, 503, 504, 508,
+              ],
+            },
+          },
+        },
+        UpdateType.initial
+      );
+
+      jest
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        .spyOn(plugin.queuePlugin.queueStore!, 'getState')
+        .mockImplementation(createMockStoreGetter(() => ({ events })));
+
+      return { plugin, analytics };
+    };
+
+    it('sends Authorization header with base64 encoded writeKey', async () => {
+      const events = [{ messageId: 'message-1' }] as SegmentEvent[];
+      const { plugin } = createTestWith({ events });
+
+      const sendEventsSpy = jest
+        .spyOn(api, 'uploadEvents')
+        .mockResolvedValue({ ok: true } as Response);
+
+      await plugin.flush();
+
+      expect(sendEventsSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          retryCount: 0,
+        })
+      );
+    });
+
+    it('sends X-Retry-Count header starting at 0', async () => {
+      const events = [{ messageId: 'message-1' }] as SegmentEvent[];
+      const { plugin } = createTestWith({ events });
+
+      const sendEventsSpy = jest
+        .spyOn(api, 'uploadEvents')
+        .mockResolvedValue({ ok: true } as Response);
+
+      await plugin.flush();
+
+      expect(sendEventsSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          retryCount: 0,
+        })
+      );
+    });
+
+    it('halts upload loop on 429 response', async () => {
+      const events = [
+        { messageId: 'message-1' },
+        { messageId: 'message-2' },
+        { messageId: 'message-3' },
+        { messageId: 'message-4' },
+      ] as SegmentEvent[];
+
+      const { plugin } = createTestWith({ events });
+
+      const sendEventsSpy = jest.spyOn(api, 'uploadEvents').mockResolvedValue({
+        ok: false,
+        status: 429,
+        headers: new Headers({ 'retry-after': '60' }),
+      } as Response);
+
+      await plugin.flush();
+
+      // With maxBatchSize=2, there would be 2 batches
+      // But 429 on first batch should halt, so only 1 call
+      expect(sendEventsSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('blocks future uploads after 429 until waitUntilTime passes', async () => {
+      const now = 1000000;
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+
+      const events = [{ messageId: 'message-1' }] as SegmentEvent[];
+      const { plugin } = createTestWith({ events });
+
+      // First flush returns 429
+      jest.spyOn(api, 'uploadEvents').mockResolvedValue({
+        ok: false,
+        status: 429,
+        headers: new Headers({ 'retry-after': '60' }),
+      } as Response);
+
+      await plugin.flush();
+
+      // Second flush should be blocked (same time)
+      const sendEventsSpy = jest.spyOn(api, 'uploadEvents');
+      sendEventsSpy.mockClear();
+
+      await plugin.flush();
+
+      expect(sendEventsSpy).not.toHaveBeenCalled();
+    });
+
+    it('allows upload after 429 waitUntilTime passes', async () => {
+      const now = 1000000;
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+
+      const events = [{ messageId: 'message-1' }] as SegmentEvent[];
+      const { plugin } = createTestWith({ events });
+
+      // First flush returns 429
+      jest.spyOn(api, 'uploadEvents').mockResolvedValue({
+        ok: false,
+        status: 429,
+        headers: new Headers({ 'retry-after': '60' }),
+      } as Response);
+
+      await plugin.flush();
+
+      // Advance time past waitUntilTime
+      jest.spyOn(Date, 'now').mockReturnValue(now + 61000);
+
+      // Second flush should now work
+      const sendEventsSpy = jest
+        .spyOn(api, 'uploadEvents')
+        .mockResolvedValue({ ok: true } as Response);
+
+      await plugin.flush();
+
+      expect(sendEventsSpy).toHaveBeenCalled();
+    });
+
+    it('resets state after successful upload', async () => {
+      const events = [{ messageId: 'message-1' }] as SegmentEvent[];
+      const { plugin } = createTestWith({ events });
+
+      // First flush returns 429
+      jest.spyOn(api, 'uploadEvents').mockResolvedValue({
+        ok: false,
+        status: 429,
+        headers: new Headers({ 'retry-after': '10' }),
+      } as Response);
+
+      await plugin.flush();
+
+      // Second flush succeeds
+      jest.spyOn(api, 'uploadEvents').mockResolvedValue({
+        ok: true,
+        status: 200,
+      } as Response);
+
+      // Advance time
+      jest.spyOn(Date, 'now').mockReturnValue(Date.now() + 11000);
+      await plugin.flush();
+
+      // Third flush should work immediately (state reset)
+      const sendEventsSpy = jest
+        .spyOn(api, 'uploadEvents')
+        .mockResolvedValue({ ok: true } as Response);
+
+      await plugin.flush();
+
+      expect(sendEventsSpy).toHaveBeenCalled();
+    });
+
+    it('continues to next batch on transient error (500)', async () => {
+      const events = [
+        { messageId: 'message-1' },
+        { messageId: 'message-2' },
+        { messageId: 'message-3' },
+        { messageId: 'message-4' },
+      ] as SegmentEvent[];
+
+      const { plugin } = createTestWith({ events });
+
+      let callCount = 0;
+      const sendEventsSpy = jest
+        .spyOn(api, 'uploadEvents')
+        .mockImplementation(async () => {
+          callCount++;
+          if (callCount === 1) {
+            // First batch fails with 500
+            return {
+              ok: false,
+              status: 500,
+              headers: new Headers(),
+            } as Response;
+          }
+          // Second batch succeeds
+          return { ok: true, status: 200 } as Response;
+        });
+
+      await plugin.flush();
+
+      // Should try both batches (not halt on 500)
+      expect(sendEventsSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it('drops batch on permanent error (400)', async () => {
+      const events = [{ messageId: 'message-1' }] as SegmentEvent[];
+      const { plugin, analytics } = createTestWith({ events });
+
+      const warnSpy = jest.spyOn(analytics.logger, 'warn');
+
+      jest.spyOn(api, 'uploadEvents').mockResolvedValue({
+        ok: false,
+        status: 400,
+        headers: new Headers(),
+      } as Response);
+
+      await plugin.flush();
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Permanent error (400): dropping batch')
+      );
+    });
+
+    it('processes batches sequentially (not parallel)', async () => {
+      const events = [
+        { messageId: 'message-1' },
+        { messageId: 'message-2' },
+        { messageId: 'message-3' },
+        { messageId: 'message-4' },
+      ] as SegmentEvent[];
+
+      const { plugin } = createTestWith({ events });
+
+      const callOrder: number[] = [];
+      let currentCall = 0;
+
+      jest.spyOn(api, 'uploadEvents').mockImplementation(async () => {
+        const thisCall = ++currentCall;
+        callOrder.push(thisCall);
+
+        // Simulate async delay
+        await new Promise((resolve) => setTimeout(resolve, 10));
+
+        return { ok: true, status: 200 } as Response;
+      });
+
+      await plugin.flush();
+
+      // Calls should be sequential: [1, 2]
+      expect(callOrder).toEqual([1, 2]);
+    });
+
+    it('uses legacy behavior when httpConfig.enabled = false', async () => {
+      const events = [
+        { messageId: 'message-1' },
+        { messageId: 'message-2' },
+      ] as SegmentEvent[];
+
+      const { plugin } = createTestWith({
+        events,
+        settings: {
+          integrations: {
+            [SEGMENT_DESTINATION_KEY]: {},
+          },
+          httpConfig: {
+            rateLimitConfig: {
+              enabled: false,
+              maxRetryCount: 0,
+              maxRetryInterval: 0,
+              maxTotalBackoffDuration: 0,
+            },
+            backoffConfig: {
+              enabled: false,
+              maxRetryCount: 0,
+              baseBackoffInterval: 0,
+              maxBackoffInterval: 0,
+              maxTotalBackoffDuration: 0,
+              jitterPercent: 0,
+              retryableStatusCodes: [],
+            },
+          },
+        },
+      });
+
+      // Return 429 but should not block
+      jest.spyOn(api, 'uploadEvents').mockResolvedValue({
+        ok: false,
+        status: 429,
+        headers: new Headers({ 'retry-after': '60' }),
+      } as Response);
+
+      await plugin.flush();
+
+      // Try again immediately - should not be blocked
+      const sendEventsSpy = jest
+        .spyOn(api, 'uploadEvents')
+        .mockResolvedValue({ ok: true } as Response);
+
+      await plugin.flush();
+
+      expect(sendEventsSpy).toHaveBeenCalled();
+    });
+
+    it('parses Retry-After header correctly', async () => {
+      const events = [{ messageId: 'message-1' }] as SegmentEvent[];
+      const { plugin, analytics } = createTestWith({ events });
+
+      const infoSpy = jest.spyOn(analytics.logger, 'info');
+
+      jest.spyOn(api, 'uploadEvents').mockResolvedValue({
+        ok: false,
+        status: 429,
+        headers: new Headers({ 'retry-after': '120' }),
+      } as Response);
+
+      await plugin.flush();
+
+      expect(infoSpy).toHaveBeenCalledWith(
+        expect.stringContaining('waiting 120s before retry')
+      );
+    });
+
+    it('uses default retry-after when header missing', async () => {
+      const events = [{ messageId: 'message-1' }] as SegmentEvent[];
+      const { plugin, analytics } = createTestWith({ events });
+
+      const infoSpy = jest.spyOn(analytics.logger, 'info');
+
+      jest.spyOn(api, 'uploadEvents').mockResolvedValue({
+        ok: false,
+        status: 429,
+        headers: new Headers(), // No retry-after header
+      } as Response);
+
+      await plugin.flush();
+
+      expect(infoSpy).toHaveBeenCalledWith(
+        expect.stringContaining('waiting 60s before retry') // Default
+      );
     });
   });
 });

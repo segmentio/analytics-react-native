@@ -16,6 +16,7 @@ import {
   // @ts-ignore unused for e2e tests
   // TimerFlushPolicy,
 } from '@segment/analytics-react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Home from './Home';
 import SecondPage from './SecondPage';
 import Modal from './Modal';
@@ -40,13 +41,14 @@ const segmentClient = createClient({
   autoAddSegmentDestination: true,
   collectDeviceId: true,
   debug: true,
+  storePersistor: AsyncStorage,
   useSegmentEndpoints: true, //if you pass only domain/v1 as proxy setup, use this flag to append segment endpoints. Otherwise you can remove it and customise proxy completely
-  flushPolicies: [
-    new CountFlushPolicy(5),
-    // These are disabled for E2E tests
-    // new TimerFlushPolicy(1000),
-    // new StartupFlushPolicy(),
-  ],
+  // flushPolicies: [
+  //   new CountFlushPolicy(5),
+  //   // These are disabled for E2E tests
+  //   // new TimerFlushPolicy(1000),
+  //   // new StartupFlushPolicy(),
+  // ],
   proxy: Platform.select({
     ios: 'http://localhost:9091/v1',
     android: 'http://10.0.2.2:9091/v1',
