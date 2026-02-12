@@ -524,6 +524,11 @@ export class SegmentClient {
     if (this.enabled.get() === false) {
       return;
     }
+    if (!this.running.get()) {
+      // If not running, queue the event for later processing
+      await this.store.pendingEvents.add(event);
+      return event;
+    }
     if (this.isReady.value) {
       return this.startTimelineProcessing(event);
     } else {
