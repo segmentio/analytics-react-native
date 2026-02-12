@@ -75,7 +75,7 @@ export class QueueFlushingPlugin extends UtilityPlugin {
   async flush() {
     // Check if event processing is running
     const running = this.analytics?.running.get();
-    if (!running) {
+    if (running === false) {
       this.analytics?.logger.info('Event processing is paused, skipping flush');
       return;
     }

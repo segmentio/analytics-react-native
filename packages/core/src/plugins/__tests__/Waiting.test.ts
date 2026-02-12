@@ -13,6 +13,11 @@ import {
 
 jest.useFakeTimers();
 
+// Type for accessing internal client properties in tests
+type ClientWithInternals = SegmentClient & {
+  isReady: { value: boolean };
+};
+
 describe('WaitingPlugin', () => {
   const store = new MockSegmentStore();
   const baseConfig = {
@@ -98,7 +103,7 @@ describe('WaitingPlugin', () => {
     });
 
     // Set isReady so plugins can be added immediately
-    (client as any).isReady.value = true;
+    (client as ClientWithInternals).isReady.value = true;
 
     await client.running.set(true);
     expect(client.running.get()).toBe(true);
@@ -136,7 +141,7 @@ describe('WaitingPlugin', () => {
     });
 
     // Set isReady so plugins can be added immediately
-    (client as any).isReady.value = true;
+    (client as ClientWithInternals).isReady.value = true;
 
     await client.running.set(true);
     expect(client.running.get()).toBe(true);
@@ -165,7 +170,7 @@ describe('WaitingPlugin', () => {
     });
 
     // Set isReady so plugins can be added immediately
-    (client as any).isReady.value = true;
+    (client as ClientWithInternals).isReady.value = true;
 
     // Initially, analytics is running
     await client.running.set(true);
@@ -222,7 +227,7 @@ describe('WaitingPlugin', () => {
     });
 
     // Set isReady so plugins can be added immediately
-    (client as any).isReady.value = true;
+    (client as ClientWithInternals).isReady.value = true;
 
     // Initially, analytics is running
     await client.running.set(true);
@@ -265,7 +270,7 @@ describe('WaitingPlugin', () => {
     });
 
     // Set isReady so plugins can be added immediately
-    (client as any).isReady.value = true;
+    (client as ClientWithInternals).isReady.value = true;
 
     // analytics running initially
     await client.running.set(true);
@@ -309,7 +314,7 @@ describe('WaitingPlugin', () => {
     });
 
     // Set isReady so plugins can be added immediately
-    (client as any).isReady.value = true;
+    (client as ClientWithInternals).isReady.value = true;
 
     // analytics running initially
     await client.running.set(true);
