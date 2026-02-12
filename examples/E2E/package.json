@@ -14,6 +14,8 @@
     "test:ios": "yarn detox test --configuration ios.sim.release --record-logs all",
     "build:ios:debug": "yarn detox build --configuration ios.sim.debug",
     "test:ios:debug": "yarn detox test --configuration ios.sim.debug --record-logs all",
+    "build:android:debug": "yarn detox build --configuration android.emu.debug",
+    "test:android:debug": "yarn detox test --configuration android.emu.debug --record-logs all",
     "start:e2e": "yarn start",
     "android:deeplink": "adb shell am start -a android.intent.action.VIEW -d \"segmentreactnative://hello\" com.example.segmentanalyticsreactnative",
     "ios:deeplink": "xcrun simctl openurl booted segmentreactnative://hello",
