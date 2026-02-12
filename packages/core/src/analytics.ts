@@ -1064,9 +1064,9 @@ export class SegmentClient {
   private resumeTimeoutId?: ReturnType<typeof setTimeout>;
   private waitingPlugins = new Set<WaitingPlugin>();
 
-  /*
-   * Pause event processing globally. Events will be buffered into pendingEvents and WaitingPlugin.
-   * An auto-resume will be scheduled after `timeout` ms.
+  /**
+   * Pause event processing for a specific waiting plugin.
+   * Events will be buffered until all waiting plugins resume.
    */
   pauseEventProcessingForPlugin(plugin?: WaitingPlugin) {
     if (plugin) {
@@ -1092,6 +1092,7 @@ export class SegmentClient {
       return;
     }
 
+    // Fire-and-forget: state is updated synchronously in-memory, persistence happens async
     void this.store.running.set(false);
 
     // Only set timeout if not already set (prevents multiple waiting plugins from overwriting)
