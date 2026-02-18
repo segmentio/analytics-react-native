@@ -10,6 +10,7 @@ import {
   workspaceDestinationFilterKey,
   defaultFlushInterval,
   defaultFlushAt,
+  maxPendingEvents,
 } from './constants';
 import { getContext } from './context';
 import {
@@ -509,10 +510,15 @@ export class SegmentClient {
     if (this.enabled.get() === false) {
       return;
     }
-    if (!this.running.get() || !this.isReady.value) {
+    if (this.running.get() && this.isReady.value) {
       return this.startTimelineProcessing(event);
     } else {
-      this.store.pendingEvents.add(event);
+      this.store.pendingEvents.set((events) => {
+        if (events.length >= maxPendingEvents) {
+          return [...events.slice(1), event];
+        }
+        return [...events, event];
+      });
       return event;
     }
   }

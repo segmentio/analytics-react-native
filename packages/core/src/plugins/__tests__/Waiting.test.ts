@@ -1,7 +1,7 @@
 import { SegmentClient } from '../../analytics';
 import { DestinationPlugin } from '../../plugin';
+import { maxPendingEvents } from '../../constants';
 
-//import { SegmentDestination } from '../SegmentDestination';
 import {
   ExampleWaitingPlugin,
   ExampleWaitingPlugin1,
@@ -10,6 +10,7 @@ import {
   MockSegmentStore,
   StubDestinationPlugin,
 } from '../../test-helpers';
+import { TrackEventType } from '../../types';
 
 jest.useFakeTimers();
 
@@ -357,5 +358,209 @@ describe('WaitingPlugin', () => {
     // both plugins executed
     expect(plugin1.tracked).toBe(true);
     expect(plugin2.tracked).toBe(true);
+  });
+
+  test('events are queued in pendingEvents while paused', async () => {
+    const client = new SegmentClient({
+      config: baseConfig,
+      logger: getMockLogger(),
+      store,
+    });
+
+    (client as ClientWithInternals).isReady.value = true;
+    await client.running.set(true);
+
+    const plugin = new ManualResumeWaitingPlugin();
+    client.add({ plugin });
+
+    expect(client.running.get()).toBe(false);
+
+    client.track('event1');
+    client.track('event2');
+    client.track('event3');
+
+    // Allow promises to settle
+    await Promise.resolve();
+
+    const pending = store.pendingEvents.get();
+    expect(pending).toHaveLength(3);
+    expect((pending[0] as TrackEventType).event).toBe('event1');
+    expect((pending[1] as TrackEventType).event).toBe('event2');
+    expect((pending[2] as TrackEventType).event).toBe('event3');
+  });
+
+  test('pending events are replayed through the pipeline on resume', async () => {
+    const client = new SegmentClient({
+      config: baseConfig,
+      logger: getMockLogger(),
+      store,
+    });
+
+    (client as ClientWithInternals).isReady.value = true;
+    await client.running.set(true);
+
+    const plugin = new ManualResumeWaitingPlugin();
+    client.add({ plugin });
+
+    // Track events while paused
+    client.track('event1');
+    client.track('event2');
+
+    await Promise.resolve();
+
+    expect(store.pendingEvents.get().length).toBeGreaterThan(0);
+    expect(plugin.tracked).toBe(false);
+
+    // Resume and process pending events
+    await plugin.resume();
+
+    expect(await client.running.get(true)).toBe(true);
+    expect(plugin.tracked).toBe(true);
+
+    // Pending events should be drained after processing
+    const remaining = await store.pendingEvents.get(true);
+    expect(remaining).toHaveLength(0);
+  });
+
+  test('flushing still works while paused', async () => {
+    const client = new SegmentClient({
+      config: baseConfig,
+      logger: getMockLogger(),
+      store,
+    });
+
+    (client as ClientWithInternals).isReady.value = true;
+    await client.running.set(true);
+
+    // Add a destination plugin so we can access its queue flushing plugin
+    const destination = new StubDestinationPlugin();
+    client.add({ plugin: destination });
+
+    // Pause processing
+    const waitingPlugin = new ManualResumeWaitingPlugin();
+    client.add({ plugin: waitingPlugin });
+
+    expect(client.running.get()).toBe(false);
+
+    // client.flush() should not throw or be blocked
+    await expect(client.flush()).resolves.not.toThrow();
+  });
+
+  test('timeout is cancelled when resume is called before it fires', async () => {
+    const client = new SegmentClient({
+      config: baseConfig,
+      logger: getMockLogger(),
+      store,
+    });
+
+    await client.running.set(true);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const processPendingSpy = jest.spyOn(
+      client as any,
+      'processPendingEvents'
+    );
+
+    // Pause with 30s timeout
+    client.pauseEventProcessing();
+    expect(client.running.get()).toBe(false);
+
+    // Resume explicitly before timeout
+    await client.resumeEventProcessing();
+    expect(await client.running.get(true)).toBe(true);
+
+    processPendingSpy.mockClear();
+
+    // Advance past the original timeout
+    jest.advanceTimersByTime(35000);
+    await Promise.resolve();
+
+    // processPendingEvents should NOT be called again from the timeout
+    expect(processPendingSpy).not.toHaveBeenCalled();
+
+    // running should still be true (timeout didn't re-trigger)
+    expect(client.running.get()).toBe(true);
+  });
+
+  test('resume is a no-op when already running', async () => {
+    const client = new SegmentClient({
+      config: baseConfig,
+      logger: getMockLogger(),
+      store,
+    });
+
+    await client.running.set(true);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const processPendingSpy = jest.spyOn(
+      client as any,
+      'processPendingEvents'
+    );
+
+    // Calling resume when already running should be a no-op
+    await client.resumeEventProcessing();
+
+    expect(processPendingSpy).not.toHaveBeenCalled();
+    expect(client.running.get()).toBe(true);
+  });
+
+  test('removing a WaitingPlugin does not auto-resume', async () => {
+    const client = new SegmentClient({
+      config: baseConfig,
+      logger: getMockLogger(),
+      store,
+    });
+
+    (client as ClientWithInternals).isReady.value = true;
+    await client.running.set(true);
+
+    const plugin = new ManualResumeWaitingPlugin();
+    client.add({ plugin });
+
+    expect(client.running.get()).toBe(false);
+
+    // Remove the plugin from the timeline
+    client.remove({ plugin });
+
+    // Processing should still be paused — removal doesn't call resume
+    expect(client.running.get()).toBe(false);
+
+    // Only the timeout can recover from this
+    await jest.advanceTimersByTimeAsync(30000);
+    await Promise.resolve();
+
+    expect(await client.running.get(true)).toBe(true);
+  });
+
+  test('pending events queue is capped at maxPendingEvents', async () => {
+    const client = new SegmentClient({
+      config: baseConfig,
+      logger: getMockLogger(),
+      store,
+    });
+
+    (client as ClientWithInternals).isReady.value = true;
+    await client.running.set(true);
+
+    const plugin = new ManualResumeWaitingPlugin();
+    client.add({ plugin });
+
+    expect(client.running.get()).toBe(false);
+
+    // Fill the queue to the cap
+    for (let i = 0; i < maxPendingEvents + 5; i++) {
+      client.track(`event-${i}`);
+    }
+
+    await Promise.resolve();
+
+    const pending = store.pendingEvents.get();
+    expect(pending).toHaveLength(maxPendingEvents);
+
+    // The oldest events should have been dropped
+    expect((pending[0] as TrackEventType).event).toBe('event-5');
+    expect((pending[pending.length - 1] as TrackEventType).event).toBe(
+      `event-${maxPendingEvents + 4}`
+    );
   });
 });
