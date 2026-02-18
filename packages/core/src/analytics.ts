@@ -509,12 +509,7 @@ export class SegmentClient {
     if (this.enabled.get() === false) {
       return;
     }
-    if (!this.running.get()) {
-      // If not running, queue the event for later processing
-      await this.store.pendingEvents.add(event);
-      return event;
-    }
-    if (this.isReady.value) {
+    if (!this.running.get() || !this.isReady.value) {
       return this.startTimelineProcessing(event);
     } else {
       this.store.pendingEvents.add(event);
@@ -532,7 +527,7 @@ export class SegmentClient {
   ): Promise<SegmentEvent | undefined> {
     const event = await this.applyContextData(incomingEvent);
     this.flushPolicyExecuter.notify(event);
-    return await this.timeline.process(event);
+    return this.timeline.process(event);
   }
 
   private async trackDeepLinks() {
