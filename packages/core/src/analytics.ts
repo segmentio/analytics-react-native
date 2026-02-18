@@ -10,6 +10,7 @@ import {
   workspaceDestinationFilterKey,
   defaultFlushInterval,
   defaultFlushAt,
+  maxPendingEvents,
 } from './constants';
 import { getContext } from './context';
 import {
@@ -72,6 +73,7 @@ import {
   translateHTTPError,
 } from './errors';
 import { QueueFlushingPlugin } from './plugins/QueueFlushingPlugin';
+import { WaitingPlugin } from './plugin';
 
 type OnPluginAddedCallback = (plugin: Plugin) => void;
 
@@ -120,6 +122,10 @@ export class SegmentClient {
    * Access or subscribe to client enabled
    */
   readonly enabled: Watchable<boolean> & Settable<boolean>;
+  /**
+   * Access or subscribe to running state (controls event processing)
+   */
+  readonly running: Watchable<boolean> & Settable<boolean>;
   /**
    * Access or subscribe to client context
    */
@@ -258,6 +264,12 @@ export class SegmentClient {
       onChange: this.store.enabled.onChange,
     };
 
+    this.running = {
+      get: this.store.running.get,
+      set: this.store.running.set,
+      onChange: this.store.running.onChange,
+    };
+
     // add segment destination plugin unless
     // asked not to via configuration.
     if (this.config.autoAddSegmentDestination === true) {
@@ -295,7 +307,6 @@ export class SegmentClient {
       if ((await this.store.isReady.get(true)) === false) {
         await this.storageReady();
       }
-
       // Get new settings from segment
       // It's important to run this before checkInstalledVersion and trackDeeplinks to give time for destination plugins
       // which make use of the settings object to initialize
@@ -309,7 +320,8 @@ export class SegmentClient {
       ]);
       await this.onReady();
       this.isReady.value = true;
-
+      // Set running to true to start event processing
+      await this.store.running.set(true);
       // Process all pending events
       await this.processPendingEvents();
       // Trigger manual flush
@@ -465,7 +477,6 @@ export class SegmentClient {
         settings
       );
     }
-
     if (!this.isReady.value) {
       this.pluginsToAdd.push(plugin);
     } else {
@@ -476,6 +487,11 @@ export class SegmentClient {
   private addPlugin(plugin: Plugin) {
     plugin.configure(this);
     this.timeline.add(plugin);
+    //check for waiting plugin here
+    if (plugin instanceof WaitingPlugin) {
+      this.pauseEventProcessingForPlugin(plugin);
+    }
+
     this.triggerOnPluginLoaded(plugin);
   }
 
@@ -494,10 +510,15 @@ export class SegmentClient {
     if (this.enabled.get() === false) {
       return;
     }
-    if (this.isReady.value) {
+    if (this.running.get() && this.isReady.value) {
       return this.startTimelineProcessing(event);
     } else {
-      this.store.pendingEvents.add(event);
+      this.store.pendingEvents.set((events) => {
+        if (events.length >= maxPendingEvents) {
+          return [...events.slice(1), event];
+        }
+        return [...events, event];
+      });
       return event;
     }
   }
@@ -1026,5 +1047,83 @@ export class SegmentClient {
     }
 
     return totalEventsCount;
+  }
+  private resumeTimeoutId?: ReturnType<typeof setTimeout>;
+  private waitingPlugins = new Set<WaitingPlugin>();
+
+  /**
+   * Pause event processing for a specific WaitingPlugin.
+   * Events will be buffered until all waiting plugins resume.
+   *
+   * @param plugin - The WaitingPlugin requesting the pause
+   * @internal This is called automatically when a WaitingPlugin is added
+   */
+  pauseEventProcessingForPlugin(plugin?: WaitingPlugin) {
+    if (plugin) {
+      this.waitingPlugins.add(plugin);
+    }
+    this.pauseEventProcessing();
+  }
+
+  /**
+   * Resume event processing for a specific WaitingPlugin.
+   * If all waiting plugins have resumed, buffered events will be processed.
+   *
+   * @param plugin - The WaitingPlugin that has completed its async work
+   * @internal This is called automatically when a WaitingPlugin calls resume()
+   */
+  async resumeEventProcessingForPlugin(plugin?: WaitingPlugin) {
+    if (plugin) {
+      this.waitingPlugins.delete(plugin);
+    }
+    if (this.waitingPlugins.size > 0) {
+      return; // still blocked by other waiting plugins
+    }
+
+    await this.resumeEventProcessing();
+  }
+
+  /**
+   * Pause event processing globally.
+   * New events will be buffered in memory until resumeEventProcessing() is called.
+   * Automatically resumes after the specified timeout to prevent permanent blocking.
+   *
+   * @param timeout - Milliseconds to wait before auto-resuming (default: 30000)
+   */
+  pauseEventProcessing(timeout = 30000) {
+    // IMPORTANT: ignore repeated pauses
+    const running = this.store.running.get();
+    if (!running) {
+      return;
+    }
+
+    // Fire-and-forget: state is updated synchronously in-memory, persistence happens async
+    void this.store.running.set(false);
+
+    // Only set timeout if not already set (prevents multiple waiting plugins from overwriting)
+    if (!this.resumeTimeoutId) {
+      this.resumeTimeoutId = setTimeout(async () => {
+        await this.resumeEventProcessing();
+      }, timeout);
+    }
+  }
+
+  /**
+   * Resume event processing and process all buffered events.
+   * This is called automatically by WaitingPlugins when they complete,
+   * or after the timeout expires.
+   */
+  async resumeEventProcessing() {
+    const running = this.store.running.get();
+    if (running) {
+      return;
+    }
+
+    if (this.resumeTimeoutId) {
+      clearTimeout(this.resumeTimeoutId);
+      this.resumeTimeoutId = undefined;
+    }
+    await this.store.running.set(true);
+    await this.processPendingEvents();
   }
 }

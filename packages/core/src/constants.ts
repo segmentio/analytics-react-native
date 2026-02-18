@@ -16,3 +16,4 @@ export const workspaceDestinationFilterKey = '';
 
 export const defaultFlushAt = 20;
 export const defaultFlushInterval = 30;
+export const maxPendingEvents = 1000;
