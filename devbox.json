@@ -18,11 +18,7 @@
         "yarn cache clean",
         "find $DEVBOX_PROJECT_DIR -type d -name node_modules -exec rmdir {} \\;"
       ],
-      "build": [
-        "yarn install --immutable",
-        "yarn build",
-        "yarn lint"
-      ],
+      "build": ["yarn install --immutable", "yarn build", "yarn lint"],
       "format": ["treefmt"],
       "lint": ["treefmt --fail-on-change"],
       "test-android": [

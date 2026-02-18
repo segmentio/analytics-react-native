@@ -9,11 +9,7 @@
   },
   "shell": {
     "scripts": {
-      "build": [
-        "yarn install --immutable",
-        "yarn build",
-        "yarn lint"
-      ],
+      "build": ["yarn install --immutable", "yarn build", "yarn lint"],
       "release": [
         "npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}",
         "yarn install --immutable",
