@@ -456,10 +456,7 @@ describe('WaitingPlugin', () => {
     await client.running.set(true);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const processPendingSpy = jest.spyOn(
-      client as any,
-      'processPendingEvents'
-    );
+    const processPendingSpy = jest.spyOn(client as any, 'processPendingEvents');
 
     // Pause with 30s timeout
     client.pauseEventProcessing();
@@ -492,10 +489,7 @@ describe('WaitingPlugin', () => {
     await client.running.set(true);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const processPendingSpy = jest.spyOn(
-      client as any,
-      'processPendingEvents'
-    );
+    const processPendingSpy = jest.spyOn(client as any, 'processPendingEvents');
 
     // Calling resume when already running should be a no-op
     await client.resumeEventProcessing();
