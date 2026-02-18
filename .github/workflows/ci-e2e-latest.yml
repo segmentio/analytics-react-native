@@ -13,6 +13,7 @@ jobs:
     env:
       YARN_ENABLE_HARDENED_MODE: 0
       XCODE_VERSION: '26.2'
+      ANDROID_SKIP_DOWNLOADS: 1
     steps:
       - uses: actions/checkout@v4
       - name: Aggressive disk cleanup (macOS)
@@ -35,20 +36,19 @@ jobs:
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
-          project-path: shells/devbox-ios.json
           enable-cache: 'false'
       - name: Resolve iOS targets
         run: |
-          . scripts/platform-versions.sh
-          echo "DETOX_IOS_DEVICE=${PLATFORM_IOS_MAX_DEVICE}" >> "$GITHUB_ENV"
-          echo "IOS_RUNTIME=${PLATFORM_IOS_MAX_RUNTIME}" >> "$GITHUB_ENV"
+          device_json="devbox.d/segment-integrations.devbox-plugins.ios/devices/max.json"
+          echo "DETOX_IOS_DEVICE=$(jq -r '.name' "$device_json")" >> "$GITHUB_ENV"
       - name: iOS E2E Tests (latest)
-        run: devbox run --config=shells/devbox-ios.json test-ios
+        run: devbox run test-ios
 
   run-e2e-android:
     runs-on: ubuntu-24.04-arm
     env:
       EMU_HEADLESS: 1
+      IOS_SKIP_SETUP: 1
     steps:
       - uses: actions/checkout@v4
       - name: Aggressive disk cleanup (Ubuntu)
@@ -70,14 +70,11 @@ jobs:
       - name: devbox installer
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
-          project-path: shells/devbox-android.json
           enable-cache: 'false'
       - name: Resolve Android targets
         run: |
-          . scripts/platform-versions.sh
-          api="$PLATFORM_ANDROID_MAX_API"
-          device="$PLATFORM_ANDROID_MAX_DEVICE"
-          avd_name="${device}_API${api}_arm64_v8a"
+          device_json="devbox.d/segment-integrations.devbox-plugins.android/devices/max.json"
+          avd_name=$(jq -r '.name' "$device_json")
           echo "DETOX_AVD=${avd_name}" >> "$GITHUB_ENV"
       - name: Android E2E Tests (latest)
-        run: devbox run --config=shells/devbox-android.json test-android
+        run: devbox run test-android
