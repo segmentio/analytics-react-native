@@ -11,6 +11,7 @@ export const uploadEvents = async ({
 }) => {
   return await fetch(url, {
     method: 'POST',
+    keepalive: true,
     body: JSON.stringify({
       batch: events,
       sentAt: new Date().toISOString(),
