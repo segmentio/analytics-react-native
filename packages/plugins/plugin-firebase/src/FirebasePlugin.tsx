@@ -10,14 +10,14 @@ import {
 import screen from './methods/screen';
 import track from './methods/track';
 import reset from './methods/reset';
-import firebaseAnalytics from '@react-native-firebase/analytics';
+import { firebaseAnalytics } from './firebaseAnalytics';
 export class FirebasePlugin extends DestinationPlugin {
   type = PluginType.destination;
   key = 'Firebase';
 
   async identify(event: IdentifyEventType) {
     if (event.userId !== undefined) {
-      await firebaseAnalytics().setUserId(event.userId);
+      await firebaseAnalytics.setUserId(event.userId);
     }
     if (event.traits) {
       const eventTraits = event.traits;
@@ -45,7 +45,7 @@ export class FirebasePlugin extends DestinationPlugin {
         {}
       );
 
-      await firebaseAnalytics().setUserProperties(safeTraits);
+      await firebaseAnalytics.setUserProperties(safeTraits);
     }
     return event;
   }

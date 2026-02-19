@@ -1,11 +1,17 @@
-import type { ScreenEventType } from '@segment/analytics-react-native';
-import screen from '../screen';
-
 const mockScreen = jest.fn();
 
-jest.mock('@react-native-firebase/analytics', () => () => ({
-  logScreenView: mockScreen,
+jest.mock('@react-native-firebase/analytics', () => ({
+  getAnalytics: jest.fn().mockImplementation(() => ({
+    logScreenView: mockScreen,
+  })),
 }));
+
+jest.mock('@react-native-firebase/app', () => ({
+  getApp: jest.fn(),
+}));
+
+import type { ScreenEventType } from '@segment/analytics-react-native';
+import screen from '../screen';
 
 describe('#screen', () => {
   beforeEach(() => {

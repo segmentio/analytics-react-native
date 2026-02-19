@@ -1,8 +1,8 @@
-import firebaseAnalytics from '@react-native-firebase/analytics';
 import {
+  type TrackEventType,
   generateMapTransform,
-  TrackEventType,
 } from '@segment/analytics-react-native';
+import { firebaseAnalytics } from '../firebaseAnalytics';
 import { mapEventProps, transformMap } from './parameterMapping';
 
 const mappedPropNames = generateMapTransform(mapEventProps, transformMap);
@@ -22,5 +22,5 @@ export default async (event: TrackEventType) => {
   if (safeEventName.length > 40) {
     safeEventName = safeEventName.substring(0, 40);
   }
-  await firebaseAnalytics().logEvent(safeEventName, safeProps);
+  await firebaseAnalytics.logEvent(safeEventName, safeProps);
 };

@@ -1,13 +1,19 @@
-import type { IdentifyEventType } from '@segment/analytics-react-native';
-import { FirebasePlugin } from '../../FirebasePlugin';
-
 const mockSetUserId = jest.fn();
 const mockSetUserProperties = jest.fn();
 
-jest.mock('@react-native-firebase/analytics', () => () => ({
-  setUserId: mockSetUserId,
-  setUserProperties: mockSetUserProperties,
+jest.mock('@react-native-firebase/analytics', () => ({
+  getAnalytics: jest.fn().mockImplementation(() => ({
+    setUserId: mockSetUserId,
+    setUserProperties: mockSetUserProperties,
+  })),
+  isString: (a: unknown) => typeof a === 'string',
 }));
+jest.mock('@react-native-firebase/app', () => ({
+  getApp: jest.fn(),
+}));
+
+import type { IdentifyEventType } from '@segment/analytics-react-native';
+import { FirebasePlugin } from '../../FirebasePlugin';
 
 describe('#identify', () => {
   beforeEach(() => {
