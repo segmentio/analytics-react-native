@@ -1,0 +1,7 @@
+{
+  "sdk": "react-native",
+  "test_suites": "basic",
+  "auto_settings": false,
+  "patch": null,
+  "env": {}
+}
