@@ -152,11 +152,8 @@ async function main() {
       for (const evt of sequence.events) {
         switch (evt.type) {
           case 'track':
-            if (!evt.event) {
-              throw new Error('track event requires "event" field');
-            }
             await client.track(
-              evt.event,
+              evt.event as string,
               evt.properties as JsonMap | undefined
             );
             break;
@@ -164,38 +161,20 @@ async function main() {
             await client.identify(evt.userId, evt.traits as JsonMap | undefined);
             break;
           case 'screen':
-            if (!evt.name) {
-              throw new Error('screen event requires "name" field');
-            }
+          case 'page': // React Native SDK has no page method; map to screen
             await client.screen(
-              evt.name,
+              evt.name as string,
               evt.properties as JsonMap | undefined
             );
             break;
           case 'group':
-            if (!evt.groupId) {
-              throw new Error('group event requires "groupId" field');
-            }
             await client.group(
-              evt.groupId,
+              evt.groupId as string,
               evt.traits as JsonMap | undefined
             );
             break;
           case 'alias':
-            if (!evt.userId) {
-              throw new Error('alias event requires "userId" field');
-            }
-            await client.alias(evt.userId);
-            break;
-          case 'page':
-            // React Native SDK has no page method; map to screen
-            if (!evt.name) {
-              throw new Error('page event requires "name" field');
-            }
-            await client.screen(
-              evt.name,
-              evt.properties as JsonMap | undefined
-            );
+            await client.alias(evt.userId as string);
             break;
           default:
             throw new Error(`Unknown event type: ${evt.type}`);
