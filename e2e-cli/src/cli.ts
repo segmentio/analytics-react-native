@@ -19,29 +19,46 @@ import type { Persistor } from '@segment/sovran-react-native';
 // CLI Input/Output Types
 // ============================================================================
 
+interface AnalyticsEvent {
+  type: 'identify' | 'track' | 'page' | 'screen' | 'alias' | 'group';
+  userId?: string;
+  anonymousId?: string;
+  messageId?: string;
+  timestamp?: string;
+  traits?: Record<string, unknown>;
+  event?: string;
+  properties?: Record<string, unknown>;
+  name?: string;
+  category?: string;
+  previousId?: string;
+  groupId?: string;
+  context?: Record<string, unknown>;
+  integrations?: Record<string, boolean | Record<string, unknown>>;
+}
+
+interface EventSequence {
+  delayMs: number;
+  events: AnalyticsEvent[];
+}
+
+interface CLIConfig {
+  flushAt?: number;
+  flushInterval?: number;
+  maxRetries?: number;
+}
+
 interface CLIInput {
   writeKey: string;
   apiHost?: string;
   cdnHost?: string;
-  sequences: Array<{
-    delayMs: number;
-    events: Array<{
-      type: string;
-      event?: string;
-      userId?: string;
-      properties?: Record<string, unknown>;
-      traits?: Record<string, unknown>;
-    }>;
-  }>;
-  config?: {
-    flushAt?: number;
-    flushInterval?: number;
-  };
+  sequences: EventSequence[];
+  config?: CLIConfig;
 }
 
 interface CLIOutput {
   success: boolean;
   error?: string;
+  sentBatches: number;
 }
 
 // ============================================================================
@@ -73,7 +90,7 @@ async function main() {
   }
 
   if (!inputStr) {
-    console.log(JSON.stringify({ success: false, error: 'No input provided' }));
+    console.log(JSON.stringify({ success: false, error: 'No input provided', sentBatches: 0 }));
     process.exit(1);
   }
 
@@ -135,8 +152,11 @@ async function main() {
       for (const evt of sequence.events) {
         switch (evt.type) {
           case 'track':
+            if (!evt.event) {
+              throw new Error('track event requires "event" field');
+            }
             await client.track(
-              evt.event!,
+              evt.event,
               evt.properties as JsonMap | undefined
             );
             break;
@@ -144,20 +164,34 @@ async function main() {
             await client.identify(evt.userId, evt.traits as JsonMap | undefined);
             break;
           case 'screen':
+            if (!evt.name) {
+              throw new Error('screen event requires "name" field');
+            }
             await client.screen(
-              evt.event!,
+              evt.name,
               evt.properties as JsonMap | undefined
             );
             break;
           case 'group':
+            if (!evt.groupId) {
+              throw new Error('group event requires "groupId" field');
+            }
             await client.group(
-              evt.event!,
+              evt.groupId,
               evt.traits as JsonMap | undefined
             );
             break;
           case 'alias':
-            await client.alias(evt.userId!);
+            if (!evt.userId) {
+              throw new Error('alias event requires "userId" field');
+            }
+            await client.alias(evt.userId);
             break;
+          case 'page':
+            // React Native SDK does not have a page method (mobile only)
+            throw new Error('page event type is not supported by React Native SDK');
+          default:
+            throw new Error(`Unknown event type: ${evt.type}`);
         }
       }
     }
@@ -170,16 +204,16 @@ async function main() {
 
     client.cleanup();
 
-    output = { success: true };
+    output = { success: true, sentBatches: 0 };
   } catch (e) {
     const error = e instanceof Error ? e.message : String(e);
-    output = { success: false, error };
+    output = { success: false, error, sentBatches: 0 };
   }
 
   console.log(JSON.stringify(output));
 }
 
 main().catch((e) => {
-  console.log(JSON.stringify({ success: false, error: String(e) }));
+  console.log(JSON.stringify({ success: false, error: String(e), sentBatches: 0 }));
   process.exit(1);
 });

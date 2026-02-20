@@ -10,4 +10,3 @@ export type {
   Persistor,
   PersistenceConfig,
 } from '../../../packages/sovran/src/persistor/persistor';
-export { AsyncStoragePersistor } from '../../../packages/sovran/src/persistor/async-storage-persistor';
