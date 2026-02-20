@@ -188,8 +188,15 @@ async function main() {
             await client.alias(evt.userId);
             break;
           case 'page':
-            // React Native SDK does not have a page method (mobile only)
-            throw new Error('page event type is not supported by React Native SDK');
+            // React Native SDK has no page method; map to screen
+            if (!evt.name) {
+              throw new Error('page event requires "name" field');
+            }
+            await client.screen(
+              evt.name,
+              evt.properties as JsonMap | undefined
+            );
+            break;
           default:
             throw new Error(`Unknown event type: ${evt.type}`);
         }
