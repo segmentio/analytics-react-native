@@ -150,34 +150,97 @@ async function main() {
       }
 
       for (const evt of sequence.events) {
-        switch (evt.type) {
-          case 'track':
-            await client.track(
-              evt.event as string,
-              evt.properties as JsonMap | undefined
-            );
-            break;
-          case 'identify':
-            await client.identify(evt.userId, evt.traits as JsonMap | undefined);
-            break;
-          case 'screen':
-          case 'page': // React Native SDK has no page method; map to screen
-            await client.screen(
-              evt.name as string,
-              evt.properties as JsonMap | undefined
-            );
-            break;
-          case 'group':
-            await client.group(
-              evt.groupId as string,
-              evt.traits as JsonMap | undefined
-            );
-            break;
-          case 'alias':
-            await client.alias(evt.userId as string);
-            break;
-          default:
-            throw new Error(`Unknown event type: ${evt.type}`);
+        // Validate event has a type
+        if (!evt.type) {
+          console.warn('[WARN] Skipping event: missing event type', evt);
+          continue;
+        }
+
+        try {
+          switch (evt.type) {
+            case 'track': {
+              // Required: event name
+              if (!evt.event || typeof evt.event !== 'string') {
+                console.warn(`[WARN] Skipping track event: missing or invalid event name`, evt);
+                continue;
+              }
+
+              // Optional: properties (validate if present)
+              const properties = evt.properties as JsonMap | undefined;
+              if (evt.properties !== undefined && typeof evt.properties !== 'object') {
+                console.warn(`[WARN] Track event "${evt.event}" has invalid properties, proceeding without them`);
+              }
+
+              await client.track(evt.event, properties);
+              break;
+            }
+
+            case 'identify': {
+              // Optional userId (Segment allows anonymous identify)
+              // Optional traits (validate if present)
+              const traits = evt.traits as JsonMap | undefined;
+              if (evt.traits !== undefined && typeof evt.traits !== 'object') {
+                console.warn(`[WARN] Identify event has invalid traits, proceeding without them`);
+              }
+
+              await client.identify(evt.userId, traits);
+              break;
+            }
+
+            case 'screen':
+            case 'page': {
+              // Required: screen/page name
+              if (!evt.name || typeof evt.name !== 'string') {
+                console.warn(`[WARN] Skipping ${evt.type} event: missing or invalid name`, evt);
+                continue;
+              }
+
+              // Optional: properties (validate if present)
+              const properties = evt.properties as JsonMap | undefined;
+              if (evt.properties !== undefined && typeof evt.properties !== 'object') {
+                console.warn(`[WARN] Screen "${evt.name}" has invalid properties, proceeding without them`);
+              }
+
+              await client.screen(evt.name, properties);
+              break;
+            }
+
+            case 'group': {
+              // Required: groupId
+              if (!evt.groupId || typeof evt.groupId !== 'string') {
+                console.warn(`[WARN] Skipping group event: missing or invalid groupId`, evt);
+                continue;
+              }
+
+              // Optional: traits (validate if present)
+              const traits = evt.traits as JsonMap | undefined;
+              if (evt.traits !== undefined && typeof evt.traits !== 'object') {
+                console.warn(`[WARN] Group event for "${evt.groupId}" has invalid traits, proceeding without them`);
+              }
+
+              await client.group(evt.groupId, traits);
+              break;
+            }
+
+            case 'alias': {
+              // Required: userId
+              if (!evt.userId || typeof evt.userId !== 'string') {
+                console.warn(`[WARN] Skipping alias event: missing or invalid userId`, evt);
+                continue;
+              }
+
+              await client.alias(evt.userId);
+              break;
+            }
+
+            default:
+              console.warn(`[WARN] Skipping event: unknown event type "${evt.type}"`, evt);
+              continue;
+          }
+        } catch (error) {
+          // Log but don't fail the entire sequence if one event fails
+          console.error(`[ERROR] Failed to process ${evt.type} event:`, error, evt);
+          continue;
         }
       }
     }
