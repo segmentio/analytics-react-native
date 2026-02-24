@@ -112,6 +112,11 @@ async function main() {
         proxy: input.apiHost,
         useSegmentEndpoints: true,
       }),
+      // When cdnHost is provided (mock tests), use cdnProxy to direct CDN requests there
+      ...(input.cdnHost && {
+        cdnProxy: input.cdnHost,
+        useSegmentEndpoints: true,
+      }),
       // Provide default settings so SDK doesn't require CDN response
       defaultSettings: {
         integrations: {
