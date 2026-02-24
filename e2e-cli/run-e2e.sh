@@ -11,6 +11,7 @@
 #   E2E_TESTS_DIR=../my-e2e-tests ./run-e2e.sh
 #
 
+trap 'echo "Error occurred at line $LINENO while executing: $BASH_COMMAND"' ERR
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
