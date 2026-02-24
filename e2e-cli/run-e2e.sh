@@ -27,6 +27,10 @@ npm run build
 echo ""
 
 # Run tests
+if [ ! -d "$E2E_DIR" ]; then
+  echo "Error: E2E tests directory not found at $E2E_DIR"
+  exit 1
+fi
 cd "$E2E_DIR"
 ./scripts/run-tests.sh \
     --sdk-dir "$SCRIPT_DIR" \
