@@ -258,6 +258,7 @@ async function main() {
 
     client.cleanup();
 
+    // sentBatches: SDK doesn't expose batch count tracking
     output = { success: true, sentBatches: 0 };
   } catch (e) {
     const error = e instanceof Error ? e.message : String(e);

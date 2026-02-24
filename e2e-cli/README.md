@@ -44,11 +44,13 @@ node dist/cli.js --input '{"writeKey":"...", ...}'
 ## Output Format
 
 ```json
-{ "success": true }
+{ "success": true, "sentBatches": 0 }
 ```
 
 On failure:
 
 ```json
-{ "success": false, "error": "description" }
+{ "success": false, "error": "description", "sentBatches": 0 }
 ```
+
+Note: `sentBatches` is always 0 — the React Native SDK does not expose batch count tracking. The field is present for compatibility with the `sdk-e2e-tests` CLIOutput interface.
