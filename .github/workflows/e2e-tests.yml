@@ -29,6 +29,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: segmentio/sdk-e2e-tests
+          # E2E_TESTS_TOKEN is a GitHub Personal Access Token or GitHub App installation token
+          # with read access to the segmentio/sdk-e2e-tests repository. Store it as a repository
+          # or organization secret named E2E_TESTS_TOKEN (see project/internal docs for setup).
           token: ${{ secrets.E2E_TESTS_TOKEN }}
           path: sdk-e2e-tests
 
