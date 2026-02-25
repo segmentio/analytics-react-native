@@ -48,5 +48,6 @@ export const NativeModules: Record<string, unknown> = {
 
 export const Platform = {
   OS: 'node',
-  select: (opts: Record<string, string>): string => opts.default ?? '',
+  select: <T>(opts: Partial<Record<string, T>>): T | undefined =>
+    opts.default as T | undefined,
 };

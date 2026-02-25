@@ -141,7 +141,8 @@ async function main() {
       storePersistorSaveDelay: 0,
     });
 
-    // Create client with logging disabled (suppress SDK internal logs)
+    // Suppress SDK internal logs to keep E2E test output clean.
+    // CLI-level warnings/errors still surface via console.warn/console.error.
     const logger = new Logger(true);
     const client = new SegmentClient({ config, logger, store });
 
@@ -172,7 +173,7 @@ async function main() {
 
               // Optional: properties (validate if present)
               const properties = evt.properties as JsonMap | undefined;
-              if (evt.properties !== undefined && typeof evt.properties !== 'object') {
+              if (evt.properties !== undefined && (evt.properties === null || Array.isArray(evt.properties) || typeof evt.properties !== 'object')) {
                 console.warn(`[WARN] Track event "${evt.event}" has invalid properties, proceeding without them`);
               }
 
@@ -184,7 +185,7 @@ async function main() {
               // Optional userId (Segment allows anonymous identify)
               // Optional traits (validate if present)
               const traits = evt.traits as JsonMap | undefined;
-              if (evt.traits !== undefined && typeof evt.traits !== 'object') {
+              if (evt.traits !== undefined && (evt.traits === null || Array.isArray(evt.traits) || typeof evt.traits !== 'object')) {
                 console.warn(`[WARN] Identify event has invalid traits, proceeding without them`);
               }
 
@@ -193,7 +194,7 @@ async function main() {
             }
 
             case 'screen':
-            case 'page': {
+            case 'page': { // RN SDK has no page(); map to screen for cross-SDK test compat
               // Required: screen/page name
               if (!evt.name || typeof evt.name !== 'string') {
                 console.warn(`[WARN] Skipping ${evt.type} event: missing or invalid name`, evt);
@@ -202,7 +203,7 @@ async function main() {
 
               // Optional: properties (validate if present)
               const properties = evt.properties as JsonMap | undefined;
-              if (evt.properties !== undefined && typeof evt.properties !== 'object') {
+              if (evt.properties !== undefined && (evt.properties === null || Array.isArray(evt.properties) || typeof evt.properties !== 'object')) {
                 console.warn(`[WARN] Screen "${evt.name}" has invalid properties, proceeding without them`);
               }
 
@@ -219,7 +220,7 @@ async function main() {
 
               // Optional: traits (validate if present)
               const traits = evt.traits as JsonMap | undefined;
-              if (evt.traits !== undefined && typeof evt.traits !== 'object') {
+              if (evt.traits !== undefined && (evt.traits === null || Array.isArray(evt.traits) || typeof evt.traits !== 'object')) {
                 console.warn(`[WARN] Group event for "${evt.groupId}" has invalid traits, proceeding without them`);
               }
 
