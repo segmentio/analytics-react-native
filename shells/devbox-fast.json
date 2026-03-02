@@ -18,7 +18,12 @@
         "yarn release"
       ],
       "format": ["treefmt"],
-      "lint": ["treefmt --fail-on-change"]
+      "lint": ["treefmt --fail-on-change"],
+      "update-apps": [
+        "yarn install --no-immutable",
+        "yarn e2e install --no-immutable",
+        "yarn example install --no-immutable"
+      ]
     }
   }
 }
