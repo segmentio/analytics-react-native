@@ -1,0 +1,85 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      type:
+        description: 'Release type'
+        required: true
+        type: choice
+        options:
+          - dry-run
+          - beta
+          - production
+
+concurrency:
+  group: release
+  cancel-in-progress: true
+
+jobs:
+  fast-checks:
+    name: Build + Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: devbox installer
+        uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          project-path: shells/devbox-fast.json
+          enable-cache: 'false'
+      - name: build
+        run: devbox run --config=shells/devbox-fast.json build
+
+  release:
+    name: Release (${{ inputs.type }})
+    needs: [fast-checks]
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.type != 'dry-run' && 'Publish' || '' }}
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ inputs.type != 'dry-run' && secrets.GH_TOKEN || github.token }}
+
+      - name: Point beta branch at current commit
+        if: inputs.type == 'beta'
+        run: |
+          git checkout -B beta HEAD
+          git push origin beta --force
+
+      - name: devbox installer
+        uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          project-path: shells/devbox-fast.json
+          enable-cache: 'false'
+
+      - name: Release (dry-run)
+        if: inputs.type == 'dry-run'
+        run: devbox run --config=shells/devbox-fast.json release-dry-run
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Release (beta)
+        if: inputs.type == 'beta'
+        run: devbox run --config=shells/devbox-fast.json release
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Release (production)
+        if: inputs.type == 'production'
+        run: devbox run --config=shells/devbox-fast.json release
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Update Apps
+        if: inputs.type == 'production'
+        run: devbox run --config=shells/devbox-fast.json update-apps
