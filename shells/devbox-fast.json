@@ -13,7 +13,6 @@
       "build": ["bash $SCRIPTS_DIR/build.sh"],
       "release": [
         "cd \"$PROJECT_ROOT\"",
-        "npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}",
         "yarn install --immutable",
         "yarn build",
         "yarn multi-semantic-release"

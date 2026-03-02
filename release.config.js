@@ -10,7 +10,7 @@ module.exports = {
       { preset: 'conventionalcommits' },
     ],
     ['@semantic-release/changelog', { changelogFile }],
-    ['@semantic-release/npm', { npmPublish: true }],
+    ['@semantic-release/npm', { npmPublish: true, provenance: true }],
     ['@semantic-release/github', { successComment: false }],
     ['@semantic-release/git', { assets: [changelogFile, 'package.json'] }],
   ],
