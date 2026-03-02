@@ -17,8 +17,18 @@
         "yarn build",
         "yarn release"
       ],
+      "release-dry-run": [
+        "yarn install --immutable",
+        "yarn build",
+        "yarn multi-semantic-release --dry-run"
+      ],
       "format": ["treefmt"],
-      "lint": ["treefmt --fail-on-change"]
+      "lint": ["treefmt --fail-on-change"],
+      "update-apps": [
+        "yarn install --no-immutable",
+        "yarn e2e install --no-immutable",
+        "yarn example install --no-immutable"
+      ]
     }
   }
 }

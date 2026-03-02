@@ -1,0 +1,57 @@
+name: Release to Production
+
+on:
+  workflow_dispatch:
+    secrets:
+      GH_TOKEN:
+        required: true
+      NPM_TOKEN:
+        required: true
+
+jobs:
+  fast-checks:
+    name: Build + Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: devbox installer
+        uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          project-path: shells/devbox-fast.json
+          enable-cache: 'false'
+      - name: build
+        run: devbox run --config=shells/devbox-fast.json build
+
+  publish:
+    name: Publish to npm
+    environment: Publish
+    needs: [fast-checks]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: devbox installer
+        uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          project-path: shells/devbox-fast.json
+          enable-cache: 'false'
+
+      - name: Config, Build, Release (PRODUCTION)
+        run: |
+          echo "🚀 Running PRODUCTION release - packages WILL be published!"
+          devbox run --config=shells/devbox-fast.json release
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Update Apps
+        run: |
+          devbox run --config=shells/devbox-fast.json update-apps
