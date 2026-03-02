@@ -12,15 +12,17 @@
     "scripts": {
       "build": ["bash $SCRIPTS_DIR/build.sh"],
       "release": [
+        "cd \"$PROJECT_ROOT\"",
         "npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}",
         "yarn install --immutable",
         "yarn build",
-        "yarn multi-semantic-release --ignore-packages shells"
+        "yarn multi-semantic-release"
       ],
       "release-dry-run": [
+        "cd \"$PROJECT_ROOT\"",
         "yarn install --immutable",
         "yarn build",
-        "yarn multi-semantic-release --dry-run --ignore-packages shells"
+        "yarn multi-semantic-release --dry-run"
       ],
       "format": ["treefmt"],
       "lint": ["treefmt --fail-on-change"],

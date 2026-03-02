@@ -1,34 +1,6 @@
 {
   "lockfile_version": "1",
   "packages": {
-    "cocoapods@latest": {
-      "last_modified": "2025-12-31T03:27:36Z",
-      "resolved": "github:NixOS/nixpkgs/f665af0cdb70ed27e1bd8f9fdfecaf451260fc55#cocoapods",
-      "source": "devbox-search",
-      "version": "1.16.2",
-      "systems": {
-        "aarch64-darwin": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/av5g6hfp0yiir3iavg72js70ian8hxyf-cocoapods-1.16.2",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/av5g6hfp0yiir3iavg72js70ian8hxyf-cocoapods-1.16.2"
-        },
-        "x86_64-darwin": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/har71589bwmh6h6skisd20b3c6lrwmz7-cocoapods-1.16.2",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/har71589bwmh6h6skisd20b3c6lrwmz7-cocoapods-1.16.2"
-        }
-      }
-    },
     "github:NixOS/nixpkgs/nixpkgs-unstable": {
       "last_modified": "2026-01-27T15:18:14Z",
       "resolved": "github:NixOS/nixpkgs/afce96367b2e37fc29afb5543573cd49db3357b7?lastModified=1769527094"
@@ -146,6 +118,150 @@
             }
           ],
           "store_path": "/nix/store/zssasryipb2x4gk2ahzacl4mvvcmk48j-jq-1.8.1-bin"
+        }
+      }
+    },
+    "nixfmt@latest": {
+      "last_modified": "2026-02-23T15:40:43Z",
+      "resolved": "github:NixOS/nixpkgs/80d901ec0377e19ac3f7bb8c035201e2e098cc97#nixfmt",
+      "source": "devbox-search",
+      "version": "1.2.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/igl44md7ljf5c3hx6s6ys6325fkpldny-nixfmt-1.2.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/igl44md7ljf5c3hx6s6ys6325fkpldny-nixfmt-1.2.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/s250gfxr6v1bmxdx9l8z4sn5fjf2bllb-nixfmt-1.2.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/s250gfxr6v1bmxdx9l8z4sn5fjf2bllb-nixfmt-1.2.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/jb1qw3g5hcslahl02v7mjaixwfw725g8-nixfmt-1.2.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/jb1qw3g5hcslahl02v7mjaixwfw725g8-nixfmt-1.2.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/ihzhi2cgjfhvqbap36fx91hbj524ym5l-nixfmt-1.2.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/ihzhi2cgjfhvqbap36fx91hbj524ym5l-nixfmt-1.2.0"
+        }
+      }
+    },
+    "shfmt@latest": {
+      "last_modified": "2026-02-23T15:40:43Z",
+      "resolved": "github:NixOS/nixpkgs/80d901ec0377e19ac3f7bb8c035201e2e098cc97#shfmt",
+      "source": "devbox-search",
+      "version": "3.12.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/sc8kb91395fw69qcmij89m3bxdmj8gwb-shfmt-3.12.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/sc8kb91395fw69qcmij89m3bxdmj8gwb-shfmt-3.12.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/a80kl3brskqmq8k861x8hjwnlw94kyfn-shfmt-3.12.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/a80kl3brskqmq8k861x8hjwnlw94kyfn-shfmt-3.12.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/hax40r2y50jv8z0rlryfc11gvnhfx7hz-shfmt-3.12.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/hax40r2y50jv8z0rlryfc11gvnhfx7hz-shfmt-3.12.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/822axjnnxnscgxwval6lrc1bp5q4n9li-shfmt-3.12.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/822axjnnxnscgxwval6lrc1bp5q4n9li-shfmt-3.12.0"
+        }
+      }
+    },
+    "treefmt@latest": {
+      "last_modified": "2026-02-23T15:40:43Z",
+      "resolved": "github:NixOS/nixpkgs/80d901ec0377e19ac3f7bb8c035201e2e098cc97#treefmt",
+      "source": "devbox-search",
+      "version": "2.4.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/gza41a4j5hypl5vl6f7x5s0xgnx0g06h-treefmt-2.4.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/gza41a4j5hypl5vl6f7x5s0xgnx0g06h-treefmt-2.4.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/rz6d1w4a8gkkrd9gk4nfadskzyz75h4v-treefmt-2.4.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/rz6d1w4a8gkkrd9gk4nfadskzyz75h4v-treefmt-2.4.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/h7xb3dssb16yny6wg713w78lawivzjay-treefmt-2.4.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/h7xb3dssb16yny6wg713w78lawivzjay-treefmt-2.4.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/vp95nd69hq59rqpdlgrg63wncy4yw8fd-treefmt-2.4.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/vp95nd69hq59rqpdlgrg63wncy4yw8fd-treefmt-2.4.0"
         }
       }
     },
