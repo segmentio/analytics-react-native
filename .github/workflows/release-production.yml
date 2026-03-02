@@ -1,13 +1,7 @@
-name: Publish
+name: Release to Production
 
 on:
   workflow_dispatch:
-    inputs:
-      dry-run:
-        description: 'Run in dry-run mode (no actual publishing)'
-        required: false
-        type: boolean
-        default: false
     secrets:
       GH_TOKEN:
         required: true
@@ -49,15 +43,10 @@ jobs:
           project-path: shells/devbox-fast.json
           enable-cache: 'false'
 
-      - name: Config, Build, Release
+      - name: Config, Build, Release (PRODUCTION)
         run: |
-          if [ "${{ inputs.dry-run }}" = "true" ]; then
-            echo "Running in DRY-RUN mode - no actual publishing will occur"
-            devbox run --config=shells/devbox-fast.json release-dry-run
-          else
-            echo "Running PRODUCTION release"
-            devbox run --config=shells/devbox-fast.json release
-          fi
+          echo "🚀 Running PRODUCTION release - packages WILL be published!"
+          devbox run --config=shells/devbox-fast.json release
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
