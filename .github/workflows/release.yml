@@ -34,7 +34,7 @@ jobs:
     name: Release (${{ inputs.type }})
     needs: [fast-checks]
     runs-on: ubuntu-latest
-    environment: ${{ inputs.type != 'dry-run' && 'Publish' || '' }}
+    environment: Publish
     permissions:
       contents: write
       issues: write
