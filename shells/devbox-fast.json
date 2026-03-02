@@ -15,12 +15,12 @@
         "npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}",
         "yarn install --immutable",
         "yarn build",
-        "yarn release"
+        "yarn multi-semantic-release --ignore-packages shells"
       ],
       "release-dry-run": [
         "yarn install --immutable",
         "yarn build",
-        "yarn multi-semantic-release --dry-run"
+        "yarn multi-semantic-release --dry-run --ignore-packages shells"
       ],
       "format": ["treefmt"],
       "lint": ["treefmt --fail-on-change"],

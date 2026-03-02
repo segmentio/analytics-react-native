@@ -22,7 +22,7 @@
     "lint": "eslint .",
     "format": "treefmt --clear-cache",
     "format:check": "treefmt --clear-cache --fail-on-change",
-    "release": "yarn multi-semantic-release"
+    "release": "yarn multi-semantic-release --ignore-packages shells"
   },
   "devDependencies": {
     "@anolilab/multi-semantic-release": "^1.0.3",
