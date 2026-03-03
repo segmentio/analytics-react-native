@@ -44,7 +44,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ inputs.type != 'dry-run' && secrets.GH_TOKEN || github.token }}
+          token: ${{ github.token }}
 
       - name: Point beta branch at current commit
         if: inputs.type == 'beta'
@@ -68,13 +68,13 @@ jobs:
         if: inputs.type == 'beta'
         run: devbox run --config=shells/devbox-fast.json release
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
 
       - name: Release (production)
         if: inputs.type == 'production'
         run: devbox run --config=shells/devbox-fast.json release
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
 
       - name: Update Apps
         if: inputs.type == 'production'
