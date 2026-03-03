@@ -25,6 +25,7 @@
       ],
       "format": ["treefmt"],
       "lint": ["treefmt --fail-on-change"],
+      "sync-versions": ["bash $SCRIPTS_DIR/sync-versions.sh"],
       "update-apps": [
         "yarn install --no-immutable",
         "yarn e2e install --no-immutable",
