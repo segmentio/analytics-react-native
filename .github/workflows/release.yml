@@ -66,10 +66,9 @@ jobs:
 
       - name: Release (beta)
         if: inputs.type == 'beta'
-        run: devbox run --config=shells/devbox-fast.json release
+        run: devbox run -e GITHUB_REF=refs/heads/beta --config=shells/devbox-fast.json release
         env:
           GH_TOKEN: ${{ github.token }}
-          GITHUB_REF: refs/heads/beta
 
       - name: Release (production)
         if: inputs.type == 'production'
