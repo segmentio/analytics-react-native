@@ -342,7 +342,7 @@ export type RateLimitConfig = {
   enabled: boolean;
   maxRetryCount: number;
   maxRetryInterval: number; // seconds
-  maxTotalBackoffDuration: number; // seconds
+  maxRateLimitDuration: number; // seconds
 };
 
 export type BackoffConfig = {
@@ -352,7 +352,9 @@ export type BackoffConfig = {
   maxBackoffInterval: number; // seconds
   maxTotalBackoffDuration: number; // seconds
   jitterPercent: number; // 0-100
-  retryableStatusCodes: number[];
+  default4xxBehavior: 'drop' | 'retry';
+  default5xxBehavior: 'drop' | 'retry';
+  statusCodeOverrides: Record<string, 'drop' | 'retry'>;
 };
 
 export type SegmentAPISettings = {

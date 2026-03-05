@@ -48,7 +48,7 @@ describe('UploadStateMachine', () => {
     enabled: true,
     maxRetryCount: 100,
     maxRetryInterval: 300,
-    maxTotalBackoffDuration: 43200,
+    maxRateLimitDuration: 43200,
   };
 
   let mockPersistor: Persistor;
@@ -220,7 +220,7 @@ describe('UploadStateMachine', () => {
 
       const limitedConfig: RateLimitConfig = {
         ...defaultConfig,
-        maxTotalBackoffDuration: 10, // Only 10 seconds allowed
+        maxRateLimitDuration: 10, // Only 10 seconds allowed
       };
       const stateMachine = new UploadStateMachine(
         'test-key',
@@ -231,7 +231,7 @@ describe('UploadStateMachine', () => {
 
       await stateMachine.handle429(5);
 
-      // Advance time beyond maxTotalBackoffDuration
+      // Advance time beyond maxRateLimitDuration
       jest.spyOn(Date, 'now').mockReturnValue(now + 11000);
 
       await stateMachine.handle429(5);

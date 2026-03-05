@@ -17,7 +17,7 @@ export const defaultHttpConfig: HttpConfig = {
     enabled: true,
     maxRetryCount: 100,
     maxRetryInterval: 300,
-    maxTotalBackoffDuration: 43200, // 12 hours
+    maxRateLimitDuration: 43200, // 12 hours
   },
   backoffConfig: {
     enabled: true,
@@ -26,7 +26,16 @@ export const defaultHttpConfig: HttpConfig = {
     maxBackoffInterval: 300,
     maxTotalBackoffDuration: 43200,
     jitterPercent: 10,
-    retryableStatusCodes: [408, 410, 429, 460, 500, 502, 503, 504, 508],
+    default4xxBehavior: 'drop',
+    default5xxBehavior: 'retry',
+    statusCodeOverrides: {
+      '408': 'retry',
+      '410': 'retry',
+      '429': 'retry',
+      '460': 'retry',
+      '501': 'drop',
+      '505': 'drop',
+    },
   },
 };
 

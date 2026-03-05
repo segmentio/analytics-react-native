@@ -15,6 +15,7 @@ import { defaultApiHost, defaultHttpConfig } from '../constants';
 import { translateHTTPError, classifyError, parseRetryAfter } from '../errors';
 import { defaultConfig } from '../constants';
 import type { UploadStateMachine, BatchUploadManager } from '../backoff';
+import { validateBackoffConfig, validateRateLimitConfig } from '../config-validation';
 
 const MAX_EVENTS_PER_BATCH = 100;
 const MAX_PAYLOAD_SIZE_IN_KB = 500;
@@ -191,10 +192,12 @@ export class SegmentDestination extends DestinationPlugin {
       }
 
       // Error classification
-      const classification = classifyError(
-        res.status,
-        httpConfig.backoffConfig?.retryableStatusCodes
-      );
+      const classification = classifyError(res.status, {
+        default4xxBehavior: httpConfig.backoffConfig?.default4xxBehavior,
+        default5xxBehavior: httpConfig.backoffConfig?.default5xxBehavior,
+        statusCodeOverrides: httpConfig.backoffConfig?.statusCodeOverrides,
+        rateLimitEnabled: httpConfig.rateLimitConfig?.enabled,
+      });
 
       // Handle 429 rate limiting
       if (classification.errorType === 'rate_limit') {
@@ -352,11 +355,21 @@ export class SegmentDestination extends DestinationPlugin {
         console.log(`[SegmentDestination] persistor available: ${!!persistor}`);
 
         try {
+          // Validate configs before passing to constructors
+          const validatedRateLimitConfig = validateRateLimitConfig(
+            httpConfig.rateLimitConfig ?? defaultHttpConfig.rateLimitConfig!,
+            this.analytics?.logger
+          );
+          const validatedBackoffConfig = validateBackoffConfig(
+            httpConfig.backoffConfig ?? defaultHttpConfig.backoffConfig!,
+            this.analytics?.logger
+          );
+
           console.log('[SegmentDestination] Creating UploadStateMachine...');
           this.uploadStateMachine = new UploadStateMachine(
             config?.writeKey ?? '',
             persistor,
-            httpConfig.rateLimitConfig ?? defaultHttpConfig.rateLimitConfig!,
+            validatedRateLimitConfig,
             this.analytics?.logger
           );
           console.log('[SegmentDestination] UploadStateMachine created');
@@ -368,7 +381,7 @@ export class SegmentDestination extends DestinationPlugin {
           this.batchUploadManager = new BatchUploadManager(
             config?.writeKey ?? '',
             persistor,
-            httpConfig.backoffConfig ?? defaultHttpConfig.backoffConfig!,
+            validatedBackoffConfig,
             this.analytics?.logger
           );
           console.log('[SegmentDestination] BatchUploadManager created');

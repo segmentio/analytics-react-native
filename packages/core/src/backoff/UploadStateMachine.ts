@@ -119,9 +119,9 @@ export class UploadStateMachine {
     }
 
     // Check max total backoff duration
-    if (totalBackoffDuration > this.config.maxTotalBackoffDuration) {
+    if (totalBackoffDuration > this.config.maxRateLimitDuration) {
       this.logger?.warn(
-        `Max backoff duration exceeded (${this.config.maxTotalBackoffDuration}s), resetting rate limiter`
+        `Max backoff duration exceeded (${this.config.maxRateLimitDuration}s), resetting rate limiter`
       );
       await this.reset();
       return;
