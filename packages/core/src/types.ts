@@ -339,8 +339,28 @@ export type RateLimitConfig = {
   maxRateLimitDuration: number;
 };
 
+export type BackoffConfig = {
+  enabled: boolean;
+  maxRetryCount: number;
+  baseBackoffInterval: number;
+  maxBackoffInterval: number;
+  maxTotalBackoffDuration: number;
+  jitterPercent: number;
+  default4xxBehavior: 'drop' | 'retry';
+  default5xxBehavior: 'drop' | 'retry';
+  statusCodeOverrides: Record<string, 'drop' | 'retry'>;
+};
+
 export type HttpConfig = {
   rateLimitConfig?: RateLimitConfig;
+  backoffConfig?: BackoffConfig;
+};
+
+export type BackoffStateData = {
+  state: 'READY' | 'BACKING_OFF';
+  retryCount: number;
+  nextRetryTime: number;
+  firstFailureTime: number;
 };
 
 export type UploadStateData = {
