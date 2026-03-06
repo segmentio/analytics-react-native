@@ -117,6 +117,19 @@ export const translateHTTPError = (error: unknown): SegmentError => {
   }
 };
 
+/**
+ * Classify an HTTP status code according to TAPI SDD error handling tables.
+ *
+ * Precedence order:
+ * 1. statusCodeOverrides - explicit overrides for specific codes
+ * 2. 429 special handling - rate limiting (if rateLimitEnabled !== false)
+ * 3. default4xxBehavior/default5xxBehavior - defaults for ranges
+ * 4. fallback - non-retryable permanent error
+ *
+ * @param statusCode - HTTP status code to classify
+ * @param config - Optional configuration for error classification
+ * @returns Classification with isRetryable flag and errorType
+ */
 export const classifyError = (
   statusCode: number,
   config?: {
@@ -159,17 +172,27 @@ export const classifyError = (
   return { isRetryable: false, errorType: 'permanent' };
 };
 
+/**
+ * Parse Retry-After header value from HTTP response.
+ * Supports both seconds format ("60") and HTTP-date format ("Fri, 31 Dec 2026 23:59:59 GMT").
+ *
+ * @param retryAfterValue - Value from Retry-After header (null if not present)
+ * @param maxRetryInterval - Maximum allowed retry interval in seconds (default: 300)
+ * @returns Parsed delay in seconds, clamped to maxRetryInterval, or undefined if invalid
+ */
 export const parseRetryAfter = (
   retryAfterValue: string | null,
   maxRetryInterval = 300
 ): number | undefined => {
   if (retryAfterValue === null || retryAfterValue === '') return undefined;
 
+  // Try parsing as seconds (e.g., "60")
   const seconds = parseInt(retryAfterValue, 10);
   if (!isNaN(seconds)) {
     return Math.min(seconds, maxRetryInterval);
   }
 
+  // Try parsing as HTTP-date (e.g., "Fri, 31 Dec 2026 23:59:59 GMT")
   const retryDate = new Date(retryAfterValue);
   if (!isNaN(retryDate.getTime())) {
     const secondsUntil = Math.ceil((retryDate.getTime() - Date.now()) / 1000);
