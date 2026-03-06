@@ -53,9 +53,6 @@ export class UploadStateMachine {
     }
   }
 
-  /**
-   * Migrates legacy 'WAITING' state to 'RATE_LIMITED'
-   */
   private migrateLegacyState(): void {
     void (async () => {
       try {

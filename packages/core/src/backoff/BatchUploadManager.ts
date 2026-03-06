@@ -180,10 +180,6 @@ export class BatchUploadManager {
     );
   }
 
-  /**
-   * Validates persisted batch metadata on app restart
-   * Drops batches with corrupted or invalid timestamps
-   */
   private async validatePersistedMetadata(): Promise<void> {
     const state = await this.store.getState();
     const now = Date.now();
