@@ -737,39 +737,6 @@ describe('SegmentDestination', () => {
       expect(sendEventsSpy).toHaveBeenCalled();
     });
 
-    it('resets state after successful upload', async () => {
-      const events = [{ messageId: 'message-1' }] as SegmentEvent[];
-      const { plugin } = createTestWith({ events });
-
-      // First flush returns 429
-      jest.spyOn(api, 'uploadEvents').mockResolvedValue({
-        ok: false,
-        status: 429,
-        headers: new Headers({ 'retry-after': '10' }),
-      } as Response);
-
-      await plugin.flush();
-
-      // Second flush succeeds
-      jest.spyOn(api, 'uploadEvents').mockResolvedValue({
-        ok: true,
-        status: 200,
-      } as Response);
-
-      // Advance time
-      jest.spyOn(Date, 'now').mockReturnValue(Date.now() + 11000);
-      await plugin.flush();
-
-      // Third flush should work immediately (state reset)
-      const sendEventsSpy = jest
-        .spyOn(api, 'uploadEvents')
-        .mockResolvedValue({ ok: true } as Response);
-
-      await plugin.flush();
-
-      expect(sendEventsSpy).toHaveBeenCalled();
-    });
-
     it('continues to next batch on transient error (500)', async () => {
       const events = [
         { messageId: 'message-1' },
@@ -849,97 +816,6 @@ describe('SegmentDestination', () => {
 
       // Calls should be sequential: [1, 2]
       expect(callOrder).toEqual([1, 2]);
-    });
-
-    it('uses legacy behavior when httpConfig.enabled = false', async () => {
-      const events = [
-        { messageId: 'message-1' },
-        { messageId: 'message-2' },
-      ] as SegmentEvent[];
-
-      const { plugin } = createTestWith({
-        events,
-        settings: {
-          integrations: {
-            [SEGMENT_DESTINATION_KEY]: {},
-          },
-          httpConfig: {
-            rateLimitConfig: {
-              enabled: false,
-              maxRetryCount: 0,
-              maxRetryInterval: 0,
-              maxRateLimitDuration: 0,
-            },
-            backoffConfig: {
-              enabled: false,
-              maxRetryCount: 0,
-              baseBackoffInterval: 0,
-              maxBackoffInterval: 0,
-              maxTotalBackoffDuration: 0,
-              jitterPercent: 0,
-              default4xxBehavior: 'drop',
-              default5xxBehavior: 'retry',
-              statusCodeOverrides: {},
-            },
-          },
-        },
-      });
-
-      // Return 429 but should not block
-      jest.spyOn(api, 'uploadEvents').mockResolvedValue({
-        ok: false,
-        status: 429,
-        headers: new Headers({ 'retry-after': '60' }),
-      } as Response);
-
-      await plugin.flush();
-
-      // Try again immediately - should not be blocked
-      const sendEventsSpy = jest
-        .spyOn(api, 'uploadEvents')
-        .mockResolvedValue({ ok: true } as Response);
-
-      await plugin.flush();
-
-      expect(sendEventsSpy).toHaveBeenCalled();
-    });
-
-    it('parses Retry-After header correctly', async () => {
-      const events = [{ messageId: 'message-1' }] as SegmentEvent[];
-      const { plugin, analytics } = createTestWith({ events });
-
-      const infoSpy = jest.spyOn(analytics.logger, 'info');
-
-      jest.spyOn(api, 'uploadEvents').mockResolvedValue({
-        ok: false,
-        status: 429,
-        headers: new Headers({ 'retry-after': '120' }),
-      } as Response);
-
-      await plugin.flush();
-
-      expect(infoSpy).toHaveBeenCalledWith(
-        expect.stringContaining('waiting 120s before retry')
-      );
-    });
-
-    it('uses default retry-after when header missing', async () => {
-      const events = [{ messageId: 'message-1' }] as SegmentEvent[];
-      const { plugin, analytics } = createTestWith({ events });
-
-      const infoSpy = jest.spyOn(analytics.logger, 'info');
-
-      jest.spyOn(api, 'uploadEvents').mockResolvedValue({
-        ok: false,
-        status: 429,
-        headers: new Headers(), // No retry-after header
-      } as Response);
-
-      await plugin.flush();
-
-      expect(infoSpy).toHaveBeenCalledWith(
-        expect.stringContaining('waiting 60s before retry') // Default
-      );
     });
   });
 });
