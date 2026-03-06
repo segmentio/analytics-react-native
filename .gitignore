@@ -97,3 +97,6 @@ packages/core/src/info.ts
 
 AGENTS.md
 
+# E2E test artifacts (Detox)
+**/artifacts/**
+
