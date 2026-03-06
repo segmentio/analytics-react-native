@@ -96,4 +96,6 @@ packages/core/src/info.ts
 .pnpm/
 
 AGENTS.md
+
+# E2E test artifacts (Detox)
 **/artifacts/**
