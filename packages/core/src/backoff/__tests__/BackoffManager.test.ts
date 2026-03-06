@@ -122,7 +122,7 @@ describe('BackoffManager', () => {
       expect(await bm.getRetryCount()).toBe(1);
     });
 
-    it('follows exponential backoff progression', async () => {
+    it('follows SDD-specified exponential backoff progression', async () => {
       const now = 1000000;
       jest.spyOn(Date, 'now').mockReturnValue(now);
 
@@ -133,23 +133,67 @@ describe('BackoffManager', () => {
         mockLogger
       );
 
+      // First retry: 0.5s (0.5 * 2^0)
       await bm.handleTransientError(500);
       expect(await bm.canRetry()).toBe(false);
 
-      jest.spyOn(Date, 'now').mockReturnValue(now + 999);
+      jest.spyOn(Date, 'now').mockReturnValue(now + 499);
       expect(await bm.canRetry()).toBe(false);
 
-      jest.spyOn(Date, 'now').mockReturnValue(now + 1000);
+      jest.spyOn(Date, 'now').mockReturnValue(now + 500);
       expect(await bm.canRetry()).toBe(true);
 
-      jest.spyOn(Date, 'now').mockReturnValue(now + 1000);
+      // Second retry: 1.0s (0.5 * 2^1)
+      jest.spyOn(Date, 'now').mockReturnValue(now + 500);
       await bm.handleTransientError(503);
 
-      jest.spyOn(Date, 'now').mockReturnValue(now + 2999);
+      jest.spyOn(Date, 'now').mockReturnValue(now + 1499);
       expect(await bm.canRetry()).toBe(false);
 
-      jest.spyOn(Date, 'now').mockReturnValue(now + 3000);
+      jest.spyOn(Date, 'now').mockReturnValue(now + 1500);
       expect(await bm.canRetry()).toBe(true);
+
+      // Third retry: 2.0s (0.5 * 2^2)
+      jest.spyOn(Date, 'now').mockReturnValue(now + 1500);
+      await bm.handleTransientError(502);
+
+      jest.spyOn(Date, 'now').mockReturnValue(now + 3499);
+      expect(await bm.canRetry()).toBe(false);
+
+      jest.spyOn(Date, 'now').mockReturnValue(now + 3500);
+      expect(await bm.canRetry()).toBe(true);
+    });
+
+    it('follows SDD formula: 0.5s, 1s, 2s, 4s, 8s, 16s, 32s progression', async () => {
+      const now = 1000000;
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+
+      const bm = new BackoffManager(
+        'test-key',
+        mockPersistor,
+        defaultConfig,
+        mockLogger
+      );
+
+      const expectedDelays = [500, 1000, 2000, 4000, 8000, 16000, 32000];
+
+      for (let i = 0; i < expectedDelays.length; i++) {
+        const currentTime = now + (i === 0 ? 0 : expectedDelays[i - 1]);
+        jest.spyOn(Date, 'now').mockReturnValue(currentTime);
+
+        await bm.handleTransientError(500);
+
+        // Should be backing off
+        expect(await bm.canRetry()).toBe(false);
+
+        // Should not be ready 1ms before expected delay
+        jest.spyOn(Date, 'now').mockReturnValue(currentTime + expectedDelays[i] - 1);
+        expect(await bm.canRetry()).toBe(false);
+
+        // Should be ready at expected delay
+        jest.spyOn(Date, 'now').mockReturnValue(currentTime + expectedDelays[i]);
+        expect(await bm.canRetry()).toBe(true);
+      }
     });
 
     it('caps backoff at maxBackoffInterval', async () => {
@@ -194,12 +238,13 @@ describe('BackoffManager', () => {
         mockLogger
       );
 
+      // First retry: 0.5s base + 10% jitter (0.05s) = 0.55s (550ms)
       await bm.handleTransientError(500);
 
-      jest.spyOn(Date, 'now').mockReturnValue(now + 1099);
+      jest.spyOn(Date, 'now').mockReturnValue(now + 549);
       expect(await bm.canRetry()).toBe(false);
 
-      jest.spyOn(Date, 'now').mockReturnValue(now + 1100);
+      jest.spyOn(Date, 'now').mockReturnValue(now + 550);
       expect(await bm.canRetry()).toBe(true);
     });
 
