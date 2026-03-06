@@ -5,10 +5,12 @@ import { getMockLogger } from '../../test-helpers';
 import { createTestPersistor } from './test-helpers';
 
 jest.mock('@segment/sovran-react-native', () => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const helpers = require('./test-helpers');
   return {
     ...jest.requireActual('@segment/sovran-react-native'),
     createStore: jest.fn((initialState: unknown) =>
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       helpers.createMockStore(initialState)
     ),
   };
@@ -263,6 +265,61 @@ describe('BackoffManager', () => {
 
       await bm.handleTransientError(500);
       expect(await bm.getRetryCount()).toBe(0);
+    });
+
+    it('handles multiple different status codes', async () => {
+      const now = 1000000;
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+
+      const bm = new BackoffManager(
+        'test-key',
+        mockPersistor,
+        defaultConfig,
+        mockLogger
+      );
+
+      await bm.handleTransientError(500);
+      expect(await bm.getRetryCount()).toBe(1);
+
+      jest.spyOn(Date, 'now').mockReturnValue(now + 1000);
+      await bm.handleTransientError(503);
+      expect(await bm.getRetryCount()).toBe(2);
+
+      jest.spyOn(Date, 'now').mockReturnValue(now + 3000);
+      await bm.handleTransientError(408);
+      expect(await bm.getRetryCount()).toBe(3);
+    });
+
+    it('preserves state across very long backoff durations', async () => {
+      const now = 1000000;
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+
+      const longDurationConfig: BackoffConfig = {
+        ...defaultConfig,
+        maxBackoffInterval: 86400, // 24 hours
+      };
+      const bm = new BackoffManager(
+        'test-key',
+        mockPersistor,
+        longDurationConfig,
+        mockLogger
+      );
+
+      // Trigger max backoff by retrying many times
+      for (let i = 0; i < 20; i++) {
+        await bm.handleTransientError(500);
+      }
+
+      // Should still be backing off
+      expect(await bm.canRetry()).toBe(false);
+
+      // Advance to just before 24h
+      jest.spyOn(Date, 'now').mockReturnValue(now + 86399000);
+      expect(await bm.canRetry()).toBe(false);
+
+      // Advance past 24h
+      jest.spyOn(Date, 'now').mockReturnValue(now + 86400000);
+      expect(await bm.canRetry()).toBe(true);
     });
   });
 
