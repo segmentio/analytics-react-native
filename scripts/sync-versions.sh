@@ -33,7 +33,7 @@ for pkg_json in "$PROJECT_ROOT"/packages/*/package.json "$PROJECT_ROOT"/packages
     echo "  ok   $name@$current"
     skipped=$((skipped + 1))
   else
-    jq --arg v "$latest" '.version = $v' "$pkg_json" > "$pkg_json.tmp" && mv "$pkg_json.tmp" "$pkg_json"
+    jq --arg v "$latest" '.version = $v' "$pkg_json" >"$pkg_json.tmp" && mv "$pkg_json.tmp" "$pkg_json"
     echo "  bump $name $current -> $latest"
     updated=$((updated + 1))
   fi
