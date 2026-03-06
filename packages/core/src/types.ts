@@ -332,6 +332,24 @@ export interface EdgeFunctionSettings {
   version: string;
 }
 
+export type RateLimitConfig = {
+  enabled: boolean;
+  maxRetryCount: number;
+  maxRetryInterval: number;
+  maxRateLimitDuration: number;
+};
+
+export type HttpConfig = {
+  rateLimitConfig?: RateLimitConfig;
+};
+
+export type UploadStateData = {
+  state: 'READY' | 'RATE_LIMITED';
+  waitUntilTime: number;
+  globalRetryCount: number;
+  firstFailureTime: number | null;
+};
+
 export type SegmentAPISettings = {
   integrations: SegmentAPIIntegrations;
   edgeFunction?: EdgeFunctionSettings;
@@ -340,6 +358,7 @@ export type SegmentAPISettings = {
   };
   metrics?: MetricsOptions;
   consentSettings?: SegmentAPIConsentSettings;
+  httpConfig?: HttpConfig;
 };
 
 export type DestinationMetadata = {
