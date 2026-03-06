@@ -12,6 +12,18 @@ const INITIAL_STATE: BackoffStateData = {
 /**
  * Global backoff manager for transient errors (5xx, 408, 410, 460) per the TAPI SDD.
  * Implements exponential backoff with jitter and enforces retry limits.
+ *
+ * DESIGN NOTE: This implementation uses GLOBAL backoff state rather than per-batch tracking.
+ * The TAPI SDD specifies per-batch backoff with stable file identifiers, but the RN SDK
+ * architecture uses an in-memory queue where chunk() creates new batch arrays on each flush.
+ * Without stable batch identities, global backoff is the practical implementation.
+ *
+ * Behavior difference from SDD:
+ * - SDD: If batch A fails with 503, only batch A waits; batch B uploads immediately
+ * - This: If any batch fails with 503, ALL batches wait the backoff period
+ *
+ * Rationale: During TAPI outages, all batches typically fail anyway, making global backoff
+ * equivalent in practice while being simpler and safer (reduces load on degraded service).
  */
 export class BackoffManager {
   private store: Store<BackoffStateData>;
@@ -137,7 +149,11 @@ export class BackoffManager {
       return;
     }
 
-    const backoffSeconds = this.calculateBackoff(newRetryCount);
+    // Use current retryCount (not newRetryCount) for SDD-compliant progression
+    // Retry 1: retryCount=0 → 0.5 * 2^0 = 0.5s
+    // Retry 2: retryCount=1 → 0.5 * 2^1 = 1.0s
+    // Retry 3: retryCount=2 → 0.5 * 2^2 = 2.0s
+    const backoffSeconds = this.calculateBackoff(state.retryCount);
     const nextRetryTime = now + backoffSeconds * 1000;
 
     await this.store.dispatch(() => ({
