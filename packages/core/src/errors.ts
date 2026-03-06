@@ -121,3 +121,108 @@ export const translateHTTPError = (error: unknown): SegmentError => {
     return new NetworkError(-1, message, error);
   }
 };
+
+/**
+ * Classifies HTTP errors per TAPI SDD v2
+ * Supports both v1 (retryableStatusCodes) and v2 (default behaviors + overrides) APIs
+ */
+export const classifyError = (
+  statusCode: number,
+  configOrCodes?:
+    | number[]
+    | {
+        default4xxBehavior?: 'drop' | 'retry';
+        default5xxBehavior?: 'drop' | 'retry';
+        statusCodeOverrides?: Record<string, 'drop' | 'retry'>;
+        rateLimitEnabled?: boolean;
+      }
+): import('./types').ErrorClassification => {
+  // Handle legacy v1 API (array of status codes)
+  if (Array.isArray(configOrCodes)) {
+    const retryableStatusCodes = configOrCodes;
+    // 429 rate limiting
+    if (statusCode === 429) {
+      return {
+        isRetryable: true,
+        errorType: 'rate_limit',
+      };
+    }
+    // Retryable transient errors
+    if (retryableStatusCodes.includes(statusCode)) {
+      return {
+        isRetryable: true,
+        errorType: 'transient',
+      };
+    }
+    // Non-retryable
+    return {
+      isRetryable: false,
+      errorType: 'permanent',
+    };
+  }
+
+  // v2 API: config object with defaults and overrides
+  const config = configOrCodes;
+
+  // 1. Check statusCodeOverrides first
+  const override = config?.statusCodeOverrides?.[statusCode.toString()];
+  if (override !== undefined) {
+    if (override === 'retry') {
+      return statusCode === 429
+        ? { isRetryable: true, errorType: 'rate_limit' }
+        : { isRetryable: true, errorType: 'transient' };
+    }
+    return { isRetryable: false, errorType: 'permanent' };
+  }
+
+  // 2. Check 429 special handling (if rate limit enabled)
+  if (statusCode === 429 && config?.rateLimitEnabled !== false) {
+    return { isRetryable: true, errorType: 'rate_limit' };
+  }
+
+  // 3. Use default4xx/5xx behavior
+  if (statusCode >= 400 && statusCode < 500) {
+    const behavior = config?.default4xxBehavior ?? 'drop';
+    return {
+      isRetryable: behavior === 'retry',
+      errorType: behavior === 'retry' ? 'transient' : 'permanent',
+    };
+  }
+
+  if (statusCode >= 500 && statusCode < 600) {
+    const behavior = config?.default5xxBehavior ?? 'retry';
+    return {
+      isRetryable: behavior === 'retry',
+      errorType: behavior === 'retry' ? 'transient' : 'permanent',
+    };
+  }
+
+  // 4. Unknown codes → drop
+  return { isRetryable: false, errorType: 'permanent' };
+};
+
+/**
+ * Parses Retry-After header value
+ * Supports both seconds (number) and HTTP date format
+ */
+export const parseRetryAfter = (
+  retryAfterValue: string | null,
+  maxRetryInterval = 300
+): number | undefined => {
+  if (retryAfterValue === null || retryAfterValue === '') return undefined;
+
+  // Try parsing as integer (seconds)
+  const seconds = parseInt(retryAfterValue, 10);
+  if (!isNaN(seconds)) {
+    return Math.min(seconds, maxRetryInterval);
+  }
+
+  // Try parsing as HTTP date
+  const retryDate = new Date(retryAfterValue);
+  if (!isNaN(retryDate.getTime())) {
+    const secondsUntil = Math.ceil((retryDate.getTime() - Date.now()) / 1000);
+    return Math.min(Math.max(secondsUntil, 0), maxRetryInterval);
+  }
+
+  return undefined;
+};
