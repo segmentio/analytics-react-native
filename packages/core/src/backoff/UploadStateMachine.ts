@@ -20,12 +20,10 @@ export class UploadStateMachine {
     config: RateLimitConfig,
     logger?: LoggerType
   ) {
-    console.log('[UploadStateMachine] constructor called', { storeId, hasPersistor: !!persistor });
     this.config = config;
     this.logger = logger;
 
     // If persistor is provided, try persistent store; fall back to in-memory on error
-    console.log('[UploadStateMachine] About to call createStore...');
     try {
       this.store = createStore<UploadStateData>(
         INITIAL_STATE,
@@ -38,23 +36,41 @@ export class UploadStateMachine {
             }
           : undefined
       );
-      console.log('[UploadStateMachine] createStore succeeded with persistence');
       this.logger?.info('[UploadStateMachine] Store created with persistence');
+      this.migrateLegacyState();
     } catch (e) {
-      console.error('[UploadStateMachine] createStore with persistence FAILED, falling back to in-memory:', e);
       this.logger?.error(`[UploadStateMachine] Persistence failed, using in-memory store: ${e}`);
 
       // Fall back to in-memory store (no persistence)
       try {
         this.store = createStore<UploadStateData>(INITIAL_STATE);
-        console.log('[UploadStateMachine] Fallback in-memory createStore succeeded');
         this.logger?.warn('[UploadStateMachine] Using in-memory store (no persistence)');
+        this.migrateLegacyState();
       } catch (fallbackError) {
-        console.error('[UploadStateMachine] Even fallback createStore FAILED:', fallbackError);
         this.logger?.error(`[UploadStateMachine] CRITICAL: In-memory store creation failed: ${fallbackError}`);
         throw fallbackError;
       }
     }
+  }
+
+  /**
+   * Migrates legacy 'WAITING' state to 'RATE_LIMITED'
+   */
+  private migrateLegacyState(): void {
+    void (async () => {
+      try {
+        const state = await this.store.getState();
+        if ((state.state as any) === 'WAITING') {
+          this.logger?.warn('Migrating legacy WAITING state to RATE_LIMITED');
+          await this.store.dispatch(() => ({
+            ...state,
+            state: 'RATE_LIMITED' as const,
+          }));
+        }
+      } catch {
+        // Ignore migration errors
+      }
+    })();
   }
 
   /**
@@ -129,10 +145,10 @@ export class UploadStateMachine {
 
     const waitUntilTime = now + retryAfterSeconds * 1000;
 
-    this.logger?.info(`[handle429] Setting WAITING state: waitUntil=${waitUntilTime}, newRetryCount=${newRetryCount}`);
+    this.logger?.info(`[handle429] Setting RATE_LIMITED state: waitUntil=${waitUntilTime}, newRetryCount=${newRetryCount}`);
 
     await this.store.dispatch(() => ({
-      state: 'WAITING' as const,
+      state: 'RATE_LIMITED' as const,
       waitUntilTime,
       globalRetryCount: newRetryCount,
       firstFailureTime,

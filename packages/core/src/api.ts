@@ -14,8 +14,10 @@ export const uploadEvents = async ({
   // Create Authorization header (Basic auth format)
   const authHeader = 'Basic ' + btoa(writeKey + ':');
 
+  // keepalive ensures upload completes even if app is backgrounded/closed
   return await fetch(url, {
     method: 'POST',
+    keepalive: true,
     body: JSON.stringify({
       batch: events,
       sentAt: new Date().toISOString(),

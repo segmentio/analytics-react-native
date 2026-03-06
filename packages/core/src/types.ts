@@ -419,7 +419,7 @@ export type EnrichmentClosure = (event: SegmentEvent) => SegmentEvent;
 
 // State machine persistence
 export type UploadStateData = {
-  state: 'READY' | 'WAITING';
+  state: 'READY' | 'RATE_LIMITED';
   waitUntilTime: number; // timestamp ms
   globalRetryCount: number;
   firstFailureTime: number | null; // timestamp ms

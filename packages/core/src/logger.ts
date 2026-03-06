@@ -3,7 +3,7 @@ import type { DeactivableLoggerType } from './types';
 export class Logger implements DeactivableLoggerType {
   isDisabled: boolean;
 
-  constructor(isDisabled: boolean = false) {
+  constructor(isDisabled: boolean = process.env.NODE_ENV === 'production') {
     this.isDisabled = isDisabled;
   }
 

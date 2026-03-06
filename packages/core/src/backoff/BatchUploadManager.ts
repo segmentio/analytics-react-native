@@ -6,7 +6,6 @@ import type {
   SegmentEvent,
   LoggerType,
 } from '../types';
-import { getUUID } from '../uuid';
 
 type BatchMetadataStore = {
   batches: Record<string, BatchMetadata>;
@@ -52,13 +51,15 @@ export class BatchUploadManager {
         throw fallbackError;
       }
     }
+
+    // Validate persisted metadata on restart
+    void this.validatePersistedMetadata();
   }
 
   /**
    * Creates metadata for a new batch
    */
-  createBatch(events: SegmentEvent[]): string {
-    const batchId = getUUID();
+  createBatch(events: SegmentEvent[], batchId: string): void {
     const now = Date.now();
 
     const metadata: BatchMetadata = {
@@ -77,8 +78,6 @@ export class BatchUploadManager {
         [batchId]: metadata,
       },
     }));
-
-    return batchId;
   }
 
   /**
@@ -176,9 +175,39 @@ export class BatchUploadManager {
     const state = await this.store.getState();
     const now = Date.now();
 
-    return (Object.values(state.batches) as BatchMetadata[]).filter(
+    return Object.values(state.batches).filter(
       (batch) => now >= batch.nextRetryTime
     );
+  }
+
+  /**
+   * Validates persisted batch metadata on app restart
+   * Drops batches with corrupted or invalid timestamps
+   */
+  private async validatePersistedMetadata(): Promise<void> {
+    const state = await this.store.getState();
+    const now = Date.now();
+    const maxFutureTime = now + 7 * 24 * 60 * 60 * 1000;
+
+    for (const [batchId, metadata] of Object.entries(state.batches)) {
+      let shouldDrop = false;
+      let reason = '';
+
+      if (!metadata.nextRetryTime || metadata.nextRetryTime < 0 || metadata.nextRetryTime > maxFutureTime) {
+        shouldDrop = true;
+        reason = `invalid nextRetryTime ${metadata.nextRetryTime}`;
+      }
+
+      if (!metadata.firstFailureTime || metadata.firstFailureTime < 0 || metadata.firstFailureTime > now) {
+        shouldDrop = true;
+        reason = `invalid firstFailureTime ${metadata.firstFailureTime}`;
+      }
+
+      if (shouldDrop) {
+        this.logger?.warn(`Batch ${batchId}: ${reason}, dropping batch`);
+        await this.removeBatch(batchId);
+      }
+    }
   }
 
   /**

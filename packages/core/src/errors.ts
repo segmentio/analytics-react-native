@@ -176,6 +176,7 @@ export const classifyError = (
   }
 
   // 2. Check 429 special handling (if rate limit enabled)
+  // Rate limiting enabled by default unless explicitly disabled
   if (statusCode === 429 && config?.rateLimitEnabled !== false) {
     return { isRetryable: true, errorType: 'rate_limit' };
   }
