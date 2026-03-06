@@ -6,6 +6,7 @@ export const createMockStore = <T>(initialState: T) => {
     getState: jest.fn(() => Promise.resolve(state)),
     dispatch: jest.fn((action: unknown) => {
       if (typeof action === 'function') {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         state = action(state);
       } else {
         state = (action as { payload: unknown }).payload as T;

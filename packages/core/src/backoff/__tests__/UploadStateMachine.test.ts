@@ -5,10 +5,12 @@ import { getMockLogger } from '../../test-helpers';
 import { createTestPersistor } from './test-helpers';
 
 jest.mock('@segment/sovran-react-native', () => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const helpers = require('./test-helpers');
   return {
     ...jest.requireActual('@segment/sovran-react-native'),
     createStore: jest.fn((initialState: unknown) =>
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       helpers.createMockStore(initialState)
     ),
   };
@@ -194,6 +196,68 @@ describe('UploadStateMachine', () => {
 
       await sm.handle429(60);
       expect(await sm.getGlobalRetryCount()).toBe(0);
+    });
+
+    it('handles negative retryAfterSeconds gracefully', async () => {
+      const now = 1000000;
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+
+      const sm = new UploadStateMachine(
+        'test-key',
+        mockPersistor,
+        defaultConfig,
+        mockLogger
+      );
+
+      await sm.handle429(-10);
+
+      expect(mockLogger.warn).toHaveBeenCalledWith(
+        'Invalid retryAfterSeconds -10, using 0'
+      );
+      expect(await sm.getGlobalRetryCount()).toBe(1);
+      expect(await sm.canUpload()).toBe(true); // No wait time
+    });
+
+    it('handles zero retryAfterSeconds', async () => {
+      const now = 1000000;
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+
+      const sm = new UploadStateMachine(
+        'test-key',
+        mockPersistor,
+        defaultConfig,
+        mockLogger
+      );
+
+      await sm.handle429(0);
+
+      expect(await sm.getGlobalRetryCount()).toBe(1);
+      expect(await sm.canUpload()).toBe(true); // No wait time
+    });
+
+    it('clamps very large retryAfterSeconds to maxRetryInterval', async () => {
+      const now = 1000000;
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+
+      const sm = new UploadStateMachine(
+        'test-key',
+        mockPersistor,
+        defaultConfig,
+        mockLogger
+      );
+
+      await sm.handle429(999999);
+
+      expect(mockLogger.warn).toHaveBeenCalledWith(
+        'retryAfterSeconds 999999s exceeds maxRetryInterval, clamping to 300s'
+      );
+      expect(await sm.getGlobalRetryCount()).toBe(1);
+
+      // Should wait maxRetryInterval, not 999999
+      jest.spyOn(Date, 'now').mockReturnValue(now + 299000);
+      expect(await sm.canUpload()).toBe(false);
+      jest.spyOn(Date, 'now').mockReturnValue(now + 300000);
+      expect(await sm.canUpload()).toBe(true);
     });
   });
 
