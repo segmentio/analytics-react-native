@@ -370,6 +370,12 @@ export type UploadStateData = {
   firstFailureTime: number | null;
 };
 
+export type ErrorClassification = {
+  isRetryable: boolean;
+  errorType: 'rate_limit' | 'transient' | 'permanent';
+  retryAfterSeconds?: number;
+};
+
 export type SegmentAPISettings = {
   integrations: SegmentAPIIntegrations;
   edgeFunction?: EdgeFunctionSettings;
