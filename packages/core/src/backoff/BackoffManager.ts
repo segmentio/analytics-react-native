@@ -117,6 +117,7 @@ export class BackoffManager {
   /**
    * Handle a transient error response by setting exponential backoff.
    * Increments retry count and enforces max retry/duration limits.
+   * Thread-safe: uses atomic dispatch to handle concurrent transient errors.
    *
    * @param statusCode - HTTP status code of the transient error (5xx, 408, 410, 460)
    */
@@ -126,46 +127,48 @@ export class BackoffManager {
     }
 
     const now = Date.now();
-    const state = await this.store.getState();
 
-    const newRetryCount = state.retryCount + 1;
-    const firstFailureTime =
-      state.firstFailureTime > 0 ? state.firstFailureTime : now;
-    const totalDuration = (now - firstFailureTime) / 1000;
+    // Atomic dispatch prevents async interleaving when multiple batches fail
+    await this.store.dispatch((state: BackoffStateData) => {
+      const newRetryCount = state.retryCount + 1;
+      const firstFailureTime =
+        state.firstFailureTime > 0 ? state.firstFailureTime : now;
+      const totalDuration = (now - firstFailureTime) / 1000;
 
-    if (newRetryCount > this.config.maxRetryCount) {
-      this.logger?.warn(
-        `Max retry count exceeded (${this.config.maxRetryCount}), resetting backoff`
+      // Max retry count check
+      if (newRetryCount > this.config.maxRetryCount) {
+        this.logger?.warn(
+          `Max retry count exceeded (${this.config.maxRetryCount}), resetting backoff`
+        );
+        return INITIAL_STATE;
+      }
+
+      // Max duration check
+      if (totalDuration > this.config.maxTotalBackoffDuration) {
+        this.logger?.warn(
+          `Max backoff duration exceeded (${this.config.maxTotalBackoffDuration}s), resetting backoff`
+        );
+        return INITIAL_STATE;
+      }
+
+      // Use current retryCount (not newRetryCount) for SDD-compliant progression
+      // Retry 1: retryCount=0 → 0.5 * 2^0 = 0.5s
+      // Retry 2: retryCount=1 → 0.5 * 2^1 = 1.0s
+      // Retry 3: retryCount=2 → 0.5 * 2^2 = 2.0s
+      const backoffSeconds = this.calculateBackoff(state.retryCount);
+      const nextRetryTime = now + backoffSeconds * 1000;
+
+      this.logger?.info(
+        `Transient error (${statusCode}): backoff ${backoffSeconds.toFixed(1)}s, attempt ${newRetryCount}/${this.config.maxRetryCount}`
       );
-      await this.reset();
-      return;
-    }
 
-    if (totalDuration > this.config.maxTotalBackoffDuration) {
-      this.logger?.warn(
-        `Max backoff duration exceeded (${this.config.maxTotalBackoffDuration}s), resetting backoff`
-      );
-      await this.reset();
-      return;
-    }
-
-    // Use current retryCount (not newRetryCount) for SDD-compliant progression
-    // Retry 1: retryCount=0 → 0.5 * 2^0 = 0.5s
-    // Retry 2: retryCount=1 → 0.5 * 2^1 = 1.0s
-    // Retry 3: retryCount=2 → 0.5 * 2^2 = 2.0s
-    const backoffSeconds = this.calculateBackoff(state.retryCount);
-    const nextRetryTime = now + backoffSeconds * 1000;
-
-    await this.store.dispatch(() => ({
-      state: 'BACKING_OFF' as const,
-      retryCount: newRetryCount,
-      nextRetryTime,
-      firstFailureTime,
-    }));
-
-    this.logger?.info(
-      `Transient error (${statusCode}): backoff ${backoffSeconds.toFixed(1)}s, attempt ${newRetryCount}/${this.config.maxRetryCount}`
-    );
+      return {
+        state: 'BACKING_OFF' as const,
+        retryCount: newRetryCount,
+        nextRetryTime,
+        firstFailureTime,
+      };
+    });
   }
 
   /**

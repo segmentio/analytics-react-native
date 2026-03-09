@@ -15,12 +15,12 @@ export class QueueFlushingPlugin extends UtilityPlugin {
   type = PluginType.after;
 
   private storeKey: string;
-  private isPendingUpload = false;
   private queueStore: Store<{ events: SegmentEvent[] }> | undefined;
   private onFlush: (events: SegmentEvent[]) => Promise<void>;
   private isRestoredResolve: () => void;
   private isRestored: Promise<void>;
   private timeoutWarned = false;
+  private flushPromise?: Promise<void>;
 
   /**
    * @param onFlush callback to execute when the queue is flushed (either by reaching the limit or manually) e.g. code to upload events to your destination
@@ -70,9 +70,26 @@ export class QueueFlushingPlugin extends UtilityPlugin {
   }
 
   /**
-   * Calls the onFlush callback with the events in the queue
+   * Calls the onFlush callback with the events in the queue.
+   * Ensures only one flush operation runs at a time.
    */
   async flush() {
+    // Safety: prevent concurrent flush operations
+    if (this.flushPromise) {
+      this.analytics?.logger.info('Flush already in progress, waiting for completion');
+      await this.flushPromise;
+      return;
+    }
+
+    this.flushPromise = this._doFlush();
+    try {
+      await this.flushPromise;
+    } finally {
+      this.flushPromise = undefined;
+    }
+  }
+
+  private async _doFlush(): Promise<void> {
     // Wait for the queue to be restored
     try {
       await this.isRestored;
@@ -103,14 +120,7 @@ export class QueueFlushingPlugin extends UtilityPlugin {
     }
 
     const events = (await this.queueStore?.getState(true))?.events ?? [];
-    if (!this.isPendingUpload) {
-      try {
-        this.isPendingUpload = true;
-        await this.onFlush(events);
-      } finally {
-        this.isPendingUpload = false;
-      }
-    }
+    await this.onFlush(events);
   }
 
   /**
@@ -130,6 +140,26 @@ export class QueueFlushingPlugin extends UtilityPlugin {
       return { events: filteredEvents };
     });
   }
+
+  /**
+   * Removes events from the queue by their messageId
+   * @param messageIds array of messageId strings to remove
+   */
+  async dequeueByMessageIds(messageIds: string[]): Promise<void> {
+    await this.queueStore?.dispatch((state) => {
+      if (messageIds.length === 0 || state.events.length === 0) {
+        return state;
+      }
+
+      const idsToRemove = new Set(messageIds);
+      const filteredEvents = state.events.filter(
+        (e) => !e.messageId || !idsToRemove.has(e.messageId)
+      );
+
+      return { events: filteredEvents };
+    });
+  }
+
   /**
    * Clear all events from the queue
    */

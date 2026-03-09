@@ -101,6 +101,7 @@ export class UploadStateMachine {
   /**
    * Handle a 429 rate limit response by setting RATE_LIMITED state.
    * Increments global retry count and enforces max retry/duration limits.
+   * Thread-safe: uses atomic dispatch to handle concurrent 429 responses.
    *
    * @param retryAfterSeconds - Delay in seconds from Retry-After header (validated and clamped)
    */
@@ -124,40 +125,47 @@ export class UploadStateMachine {
     }
 
     const now = Date.now();
-    const state = await this.store.getState();
-
-    const newRetryCount = state.globalRetryCount + 1;
-    const firstFailureTime = state.firstFailureTime ?? now;
-    const totalBackoffDuration = (now - firstFailureTime) / 1000;
-
-    if (newRetryCount > this.config.maxRetryCount) {
-      this.logger?.warn(
-        `Max retry count exceeded (${this.config.maxRetryCount}), resetting rate limiter`
-      );
-      await this.reset();
-      return;
-    }
-
-    if (totalBackoffDuration > this.config.maxRateLimitDuration) {
-      this.logger?.warn(
-        `Max backoff duration exceeded (${this.config.maxRateLimitDuration}s), resetting rate limiter`
-      );
-      await this.reset();
-      return;
-    }
-
     const waitUntilTime = now + retryAfterSeconds * 1000;
 
-    await this.store.dispatch(() => ({
-      state: 'RATE_LIMITED' as const,
-      waitUntilTime,
-      globalRetryCount: newRetryCount,
-      firstFailureTime,
-    }));
+    // Atomic dispatch prevents async interleaving when multiple batches get 429
+    await this.store.dispatch((state: UploadStateData) => {
+      const newRetryCount = state.globalRetryCount + 1;
+      const firstFailureTime = state.firstFailureTime ?? now;
+      const totalBackoffDuration = (now - firstFailureTime) / 1000;
 
-    this.logger?.info(
-      `Rate limited (429): waiting ${retryAfterSeconds}s before retry ${newRetryCount}/${this.config.maxRetryCount}`
-    );
+      // Max retry count check
+      if (newRetryCount > this.config.maxRetryCount) {
+        this.logger?.warn(
+          `Max retry count exceeded (${this.config.maxRetryCount}), resetting rate limiter`
+        );
+        return INITIAL_STATE;
+      }
+
+      // Max duration check
+      if (totalBackoffDuration > this.config.maxRateLimitDuration) {
+        this.logger?.warn(
+          `Max backoff duration exceeded (${this.config.maxRateLimitDuration}s), resetting rate limiter`
+        );
+        return INITIAL_STATE;
+      }
+
+      // If already rate limited, take the longest wait time (most conservative)
+      const finalWaitUntilTime =
+        state.state === 'RATE_LIMITED'
+          ? Math.max(state.waitUntilTime, waitUntilTime)
+          : waitUntilTime;
+
+      this.logger?.info(
+        `Rate limited (429): waiting ${Math.ceil((finalWaitUntilTime - now) / 1000)}s before retry ${newRetryCount}/${this.config.maxRetryCount}`
+      );
+
+      return {
+        state: 'RATE_LIMITED' as const,
+        waitUntilTime: finalWaitUntilTime,
+        globalRetryCount: newRetryCount,
+        firstFailureTime,
+      };
+    });
   }
 
   /**
