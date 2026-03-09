@@ -38,6 +38,15 @@ export const validateRateLimitConfig = (
     validated.maxRetryCount = 100;
   }
 
+  // Relational: maxRateLimitDuration >= 2x maxRetryInterval
+  const minRateLimitDuration = validated.maxRetryInterval * 2;
+  if (validated.maxRateLimitDuration < minRateLimitDuration) {
+    logger?.warn(
+      `maxRateLimitDuration ${validated.maxRateLimitDuration}s clamped to ${minRateLimitDuration}s (2x maxRetryInterval)`
+    );
+    validated.maxRateLimitDuration = minRateLimitDuration;
+  }
+
   return validated;
 };
 
@@ -97,6 +106,23 @@ export const validateBackoffConfig = (
   } else if (validated.maxRetryCount > 100) {
     logger?.warn(`maxRetryCount ${validated.maxRetryCount} clamped to 100`);
     validated.maxRetryCount = 100;
+  }
+
+  // Relational: baseBackoffInterval <= maxBackoffInterval
+  if (validated.baseBackoffInterval > validated.maxBackoffInterval) {
+    logger?.warn(
+      `baseBackoffInterval ${validated.baseBackoffInterval}s clamped to maxBackoffInterval ${validated.maxBackoffInterval}s`
+    );
+    validated.baseBackoffInterval = validated.maxBackoffInterval;
+  }
+
+  // Relational: maxTotalBackoffDuration >= 2x maxBackoffInterval
+  const minTotalDuration = validated.maxBackoffInterval * 2;
+  if (validated.maxTotalBackoffDuration < minTotalDuration) {
+    logger?.warn(
+      `maxTotalBackoffDuration ${validated.maxTotalBackoffDuration}s clamped to ${minTotalDuration}s (2x maxBackoffInterval)`
+    );
+    validated.maxTotalBackoffDuration = minTotalDuration;
   }
 
   return validated;

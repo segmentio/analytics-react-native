@@ -10,7 +10,7 @@ jest.mock('@segment/sovran-react-native', () => {
   return {
     ...jest.requireActual('@segment/sovran-react-native'),
     createStore: jest.fn((initialState: unknown) =>
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       helpers.createMockStore(initialState)
     ),
   };
@@ -245,6 +245,37 @@ describe('RetryManager', () => {
       expect(await rm.canRetry()).toBe(true);
     });
 
+    it('ignores 429 when already in BACKING_OFF state', async () => {
+      const now = 1000000;
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+
+      const rm = new RetryManager(
+        'test-key',
+        mockPersistor,
+        defaultRateLimitConfig,
+        defaultBackoffConfig,
+        mockLogger
+      );
+
+      // Trigger transient error first → BACKING_OFF state
+      await rm.handleTransientError();
+      expect(await rm.getRetryCount()).toBe(1);
+
+      // Now trigger 429 → should be ignored
+      await rm.handle429(120);
+
+      // Retry count should NOT have incremented
+      expect(await rm.getRetryCount()).toBe(1);
+
+      // Should still be blocked by original backoff (0.5s), not 120s
+      jest.spyOn(Date, 'now').mockReturnValue(now + 600);
+      expect(await rm.canRetry()).toBe(true);
+
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Ignoring 429 while already backing off (will respect existing backoff)'
+      );
+    });
+
     it('resets when maxRateLimitDuration exceeded', async () => {
       const now = 1000000;
       jest.spyOn(Date, 'now').mockReturnValue(now);
@@ -418,6 +449,221 @@ describe('RetryManager', () => {
 
       expect(await rm.getRetryCount()).toBe(0);
       expect(await rm.canRetry()).toBe(true);
+    });
+  });
+
+  describe('retryStrategy', () => {
+    it('defaults to lazy (uses longest wait time)', async () => {
+      const now = 1000000;
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+
+      // No retryStrategy passed → defaults to 'lazy'
+      const rm = new RetryManager(
+        'test-key',
+        mockPersistor,
+        defaultRateLimitConfig,
+        defaultBackoffConfig,
+        mockLogger
+      );
+
+      await rm.handle429(60);
+      await rm.handle429(120);
+
+      // Lazy: should use 120s (longest)
+      jest.spyOn(Date, 'now').mockReturnValue(now + 61000);
+      expect(await rm.canRetry()).toBe(false);
+
+      jest.spyOn(Date, 'now').mockReturnValue(now + 121000);
+      expect(await rm.canRetry()).toBe(true);
+    });
+
+    it('eager strategy uses shortest wait time', async () => {
+      const now = 1000000;
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+
+      const rm = new RetryManager(
+        'test-key',
+        mockPersistor,
+        defaultRateLimitConfig,
+        defaultBackoffConfig,
+        mockLogger,
+        'eager'
+      );
+
+      await rm.handle429(60);
+      await rm.handle429(120);
+
+      // Eager: should use 60s (shortest)
+      jest.spyOn(Date, 'now').mockReturnValue(now + 61000);
+      expect(await rm.canRetry()).toBe(true);
+    });
+
+    it('lazy strategy uses longest wait time', async () => {
+      const now = 1000000;
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+
+      const rm = new RetryManager(
+        'test-key',
+        mockPersistor,
+        defaultRateLimitConfig,
+        defaultBackoffConfig,
+        mockLogger,
+        'lazy'
+      );
+
+      await rm.handle429(60);
+      await rm.handle429(120);
+
+      // Lazy: should use 120s (longest)
+      jest.spyOn(Date, 'now').mockReturnValue(now + 61000);
+      expect(await rm.canRetry()).toBe(false);
+
+      jest.spyOn(Date, 'now').mockReturnValue(now + 121000);
+      expect(await rm.canRetry()).toBe(true);
+    });
+
+    it('eager strategy applies to transient errors too', async () => {
+      const now = 1000000;
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+
+      const rm = new RetryManager(
+        'test-key',
+        mockPersistor,
+        defaultRateLimitConfig,
+        defaultBackoffConfig,
+        mockLogger,
+        'eager'
+      );
+
+      // First transient: 0.5 * 2^0 = 0.5s → wait until now + 500ms
+      await rm.handleTransientError();
+      // Second transient: 0.5 * 2^1 = 1s → wait until now + 1000ms
+      // Eager: min(now+500, now+1000) = now+500
+      await rm.handleTransientError();
+
+      // Should be retryable after 500ms (eager picks shortest)
+      jest.spyOn(Date, 'now').mockReturnValue(now + 600);
+      expect(await rm.canRetry()).toBe(true);
+    });
+  });
+
+  describe('autoFlush', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it('fires callback when wait period expires', async () => {
+      const now = 1000000;
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+
+      const flushCallback = jest.fn();
+      const rm = new RetryManager(
+        'test-key',
+        mockPersistor,
+        defaultRateLimitConfig,
+        defaultBackoffConfig,
+        mockLogger
+      );
+      rm.setAutoFlushCallback(flushCallback);
+
+      await rm.handle429(10); // Wait 10s
+
+      expect(flushCallback).not.toHaveBeenCalled();
+
+      jest.advanceTimersByTime(10000);
+
+      expect(flushCallback).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not fire when no callback is set', async () => {
+      const now = 1000000;
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+
+      const rm = new RetryManager(
+        'test-key',
+        mockPersistor,
+        defaultRateLimitConfig,
+        defaultBackoffConfig,
+        mockLogger
+      );
+
+      // No callback set — should not throw
+      await rm.handle429(10);
+
+      jest.advanceTimersByTime(10000);
+      // No assertion needed — just verifying no error is thrown
+    });
+
+    it('clears timer on reset', async () => {
+      const now = 1000000;
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+
+      const flushCallback = jest.fn();
+      const rm = new RetryManager(
+        'test-key',
+        mockPersistor,
+        defaultRateLimitConfig,
+        defaultBackoffConfig,
+        mockLogger
+      );
+      rm.setAutoFlushCallback(flushCallback);
+
+      await rm.handle429(10);
+      await rm.reset();
+
+      jest.advanceTimersByTime(10000);
+      expect(flushCallback).not.toHaveBeenCalled();
+    });
+
+    it('clears timer on destroy', async () => {
+      const now = 1000000;
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+
+      const flushCallback = jest.fn();
+      const rm = new RetryManager(
+        'test-key',
+        mockPersistor,
+        defaultRateLimitConfig,
+        defaultBackoffConfig,
+        mockLogger
+      );
+      rm.setAutoFlushCallback(flushCallback);
+
+      await rm.handle429(10);
+      rm.destroy();
+
+      jest.advanceTimersByTime(10000);
+      expect(flushCallback).not.toHaveBeenCalled();
+    });
+
+    it('replaces timer when new error extends wait time', async () => {
+      const now = 1000000;
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+
+      const flushCallback = jest.fn();
+      const rm = new RetryManager(
+        'test-key',
+        mockPersistor,
+        defaultRateLimitConfig,
+        defaultBackoffConfig,
+        mockLogger
+      );
+      rm.setAutoFlushCallback(flushCallback);
+
+      await rm.handle429(10); // Wait 10s
+      await rm.handle429(30); // Wait 30s (lazy: takes max)
+
+      // After 10s, should NOT have fired (timer was replaced)
+      jest.advanceTimersByTime(10000);
+      expect(flushCallback).not.toHaveBeenCalled();
+
+      // After 30s total, should fire
+      jest.advanceTimersByTime(20000);
+      expect(flushCallback).toHaveBeenCalledTimes(1);
     });
   });
 

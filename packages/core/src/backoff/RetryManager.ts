@@ -19,12 +19,42 @@ const INITIAL_STATE: RetryStateData = {
 /**
  * Manages retry state for rate limiting (429) and transient errors (5xx).
  * Handles wait times from server (429 Retry-After) or calculated exponential backoff (5xx).
+ *
+ * State machine: READY → RATE_LIMITED (429) or BACKING_OFF (5xx) → READY
+ * - READY: uploads proceed normally
+ * - RATE_LIMITED: server returned 429 with Retry-After; uploads blocked until wait expires
+ * - BACKING_OFF: transient error (5xx/network); exponential backoff until wait expires
+ *
+ * ARCHITECTURE: Concurrent Batch Submission
+ *
+ * DEVIATION FROM SDD: The SDD specifies sequential batch processing where a 429
+ * halts the upload loop. This implementation is designed for CONCURRENT batch
+ * submission — the RN SDK uploads all batches in parallel via Promise.all().
+ *
+ * This means multiple batches can fail simultaneously with different error codes,
+ * and some may succeed while others fail (partial success). Error aggregation in
+ * SegmentDestination compensates:
+ * - Single retry increment per flush (not per failed batch)
+ * - Longest Retry-After from multiple 429s used (most conservative)
+ * - Partial successes dequeued immediately
+ * - Retry strategy (eager/lazy) controls how concurrent wait times are combined
+ *
+ * ARCHITECTURE: Global Retry Counter
+ *
+ * DEVIATION FROM SDD: Uses a global retry counter instead of per-batch counters.
+ * The RN SDK has no stable batch identities — batches are re-chunked from the
+ * event queue on each flush. During TAPI outages all batches fail together,
+ * making a global counter equivalent in practice. This aligns with the SDK's
+ * ephemeral batch architecture where persistence is at the event level.
  */
 export class RetryManager {
   private store: Store<RetryStateData>;
   private rateLimitConfig?: RateLimitConfig;
   private backoffConfig?: BackoffConfig;
   private logger?: LoggerType;
+  private retryStrategy: 'eager' | 'lazy';
+  private autoFlushCallback?: () => void;
+  private autoFlushTimer?: ReturnType<typeof setTimeout>;
 
   /**
    * Creates a RetryManager instance.
@@ -34,17 +64,20 @@ export class RetryManager {
    * @param rateLimitConfig - Optional rate limit configuration (for 429 handling)
    * @param backoffConfig - Optional backoff configuration (for transient errors)
    * @param logger - Optional logger for debugging
+   * @param retryStrategy - 'lazy' (default, most conservative) or 'eager' (retry sooner)
    */
   constructor(
     storeId: string,
     persistor: Persistor | undefined,
     rateLimitConfig?: RateLimitConfig,
     backoffConfig?: BackoffConfig,
-    logger?: LoggerType
+    logger?: LoggerType,
+    retryStrategy: 'eager' | 'lazy' = 'lazy'
   ) {
     this.rateLimitConfig = rateLimitConfig;
     this.backoffConfig = backoffConfig;
     this.logger = logger;
+    this.retryStrategy = retryStrategy;
 
     try {
       this.store = createStore<RetryStateData>(
@@ -118,6 +151,15 @@ export class RetryManager {
       return;
     }
 
+    // If already backing off from transient errors, ignore 429
+    const currentState = await this.store.getState();
+    if (currentState.state === 'BACKING_OFF') {
+      this.logger?.info(
+        'Ignoring 429 while already backing off (will respect existing backoff)'
+      );
+      return;
+    }
+
     // Validate and clamp input
     if (retryAfterSeconds < 0) {
       this.logger?.warn(
@@ -170,11 +212,27 @@ export class RetryManager {
   }
 
   /**
+   * Set a callback to be invoked when the retry wait period expires.
+   * Used to trigger an automatic flush when transitioning back to READY.
+   */
+  setAutoFlushCallback(callback: () => void): void {
+    this.autoFlushCallback = callback;
+  }
+
+  /**
    * Reset the state machine to READY with retry count 0.
    * Called on successful upload (2xx response).
    */
   async reset(): Promise<void> {
+    this.clearAutoFlushTimer();
     await this.store.dispatch(() => INITIAL_STATE);
+  }
+
+  /**
+   * Clean up timers. Call when the plugin is being destroyed.
+   */
+  destroy(): void {
+    this.clearAutoFlushTimer();
   }
 
   /**
@@ -219,10 +277,10 @@ export class RetryManager {
         return INITIAL_STATE;
       }
 
-      // If already blocked, take the longest wait time (most conservative)
+      // Consolidate wait times when already blocked
       const finalWaitUntilTime =
         state.state !== 'READY'
-          ? Math.max(state.waitUntilTime, waitUntilTime)
+          ? this.applyRetryStrategy(state.waitUntilTime, waitUntilTime)
           : waitUntilTime;
 
       const stateType =
@@ -240,6 +298,9 @@ export class RetryManager {
         firstFailureTime,
       };
     });
+
+    // Schedule auto-flush after state update
+    await this.scheduleAutoFlush();
   }
 
   /**
@@ -264,6 +325,49 @@ export class RetryManager {
     const jitter = (Math.random() * 2 - 1) * jitterRange;
 
     return Math.max(0, clampedBackoff + jitter);
+  }
+
+  /**
+   * Consolidate two wait-until times based on retry strategy.
+   * - 'lazy': take the longer wait (most conservative, default)
+   * - 'eager': take the shorter wait (retry sooner)
+   */
+  private applyRetryStrategy(existing: number, incoming: number): number {
+    return this.retryStrategy === 'eager'
+      ? Math.min(existing, incoming)
+      : Math.max(existing, incoming);
+  }
+
+  /**
+   * Schedule auto-flush callback to fire when the wait period expires.
+   * Replaces any existing timer (e.g., when a longer wait supersedes a shorter one).
+   */
+  private async scheduleAutoFlush(): Promise<void> {
+    if (!this.autoFlushCallback) {
+      return;
+    }
+
+    this.clearAutoFlushTimer();
+
+    const state = await this.store.getState();
+    if (state.state === 'READY') {
+      return;
+    }
+
+    const delay = Math.max(0, state.waitUntilTime - Date.now());
+    this.logger?.info(`Auto-flush scheduled in ${Math.ceil(delay / 1000)}s`);
+
+    this.autoFlushTimer = setTimeout(() => {
+      this.logger?.info('Auto-flush timer fired, triggering flush');
+      this.autoFlushCallback?.();
+    }, delay);
+  }
+
+  private clearAutoFlushTimer(): void {
+    if (this.autoFlushTimer !== undefined) {
+      clearTimeout(this.autoFlushTimer);
+      this.autoFlushTimer = undefined;
+    }
   }
 
   private async transitionToReady(): Promise<void> {

@@ -1,5 +1,6 @@
 import { DestinationPlugin } from '../plugin';
 import {
+  HttpConfig,
   PluginType,
   SegmentAPIIntegration,
   SegmentAPISettings,
@@ -45,6 +46,7 @@ export class SegmentDestination extends DestinationPlugin {
   type = PluginType.destination;
   key = SEGMENT_DESTINATION_KEY;
   private apiHost?: string;
+  private httpConfig?: HttpConfig;
   private settingsResolve: () => void;
   private settingsPromise: Promise<void>;
   private retryManager?: RetryManager;
@@ -66,11 +68,19 @@ export class SegmentDestination extends DestinationPlugin {
       .map((e) => e.messageId)
       .filter((id): id is string => !!id);
 
+    const retryCount = this.retryManager
+      ? await this.retryManager.getRetryCount()
+      : 0;
+
+    // Strip internal metadata before sending upstream
+    const cleanedBatch = batch.map(({ _queuedAt, ...event }) => event);
+
     try {
       const res = await uploadEvents({
         writeKey: config.writeKey,
         url: this.getEndpoint(),
-        events: batch,
+        events: cleanedBatch as SegmentEvent[],
+        retryCount,
       });
 
       if (res.status === 200) {
@@ -87,19 +97,17 @@ export class SegmentDestination extends DestinationPlugin {
         res.status === 429
           ? parseRetryAfter(
               res.headers.get('Retry-After'),
-              config.httpConfig?.rateLimitConfig?.maxRetryInterval
+              this.httpConfig?.rateLimitConfig?.maxRetryInterval
             )
           : undefined;
 
       // Classify error
       const classification = classifyError(res.status, {
-        default4xxBehavior:
-          config.httpConfig?.backoffConfig?.default4xxBehavior,
-        default5xxBehavior:
-          config.httpConfig?.backoffConfig?.default5xxBehavior,
+        default4xxBehavior: this.httpConfig?.backoffConfig?.default4xxBehavior,
+        default5xxBehavior: this.httpConfig?.backoffConfig?.default5xxBehavior,
         statusCodeOverrides:
-          config.httpConfig?.backoffConfig?.statusCodeOverrides,
-        rateLimitEnabled: config.httpConfig?.rateLimitConfig?.enabled,
+          this.httpConfig?.backoffConfig?.statusCodeOverrides,
+        rateLimitEnabled: this.httpConfig?.rateLimitConfig?.enabled,
       });
 
       if (classification.errorType === 'rate_limit') {
@@ -108,7 +116,10 @@ export class SegmentDestination extends DestinationPlugin {
           messageIds,
           status: '429',
           statusCode: res.status,
-          retryAfterSeconds: retryAfterSeconds || 60, // Default to 60s if not provided
+          retryAfterSeconds:
+            retryAfterSeconds !== undefined && retryAfterSeconds > 0
+              ? retryAfterSeconds
+              : 60, // Default to 60s if not provided
         };
       } else if (classification.errorType === 'transient') {
         return {
@@ -157,7 +168,10 @@ export class SegmentDestination extends DestinationPlugin {
 
         case '429':
           aggregation.has429 = true;
-          if (result.retryAfterSeconds) {
+          if (
+            result.retryAfterSeconds !== undefined &&
+            result.retryAfterSeconds > 0
+          ) {
             aggregation.longestRetryAfter = Math.max(
               aggregation.longestRetryAfter,
               result.retryAfterSeconds
@@ -192,6 +206,38 @@ export class SegmentDestination extends DestinationPlugin {
     await this.settingsPromise;
 
     const config = this.analytics?.getConfig() ?? defaultConfig;
+
+    // Prune events that have exceeded maxTotalBackoffDuration
+    const maxAge = this.httpConfig?.backoffConfig?.maxTotalBackoffDuration ?? 0;
+    if (maxAge > 0) {
+      const now = Date.now();
+      const maxAgeMs = maxAge * 1000;
+      const expiredMessageIds: string[] = [];
+      const freshEvents: SegmentEvent[] = [];
+
+      for (const event of events) {
+        if (event._queuedAt !== undefined && now - event._queuedAt > maxAgeMs) {
+          if (event.messageId !== undefined && event.messageId !== '') {
+            expiredMessageIds.push(event.messageId);
+          }
+        } else {
+          freshEvents.push(event);
+        }
+      }
+
+      if (expiredMessageIds.length > 0) {
+        await this.queuePlugin.dequeueByMessageIds(expiredMessageIds);
+        this.analytics?.logger.warn(
+          `Pruned ${expiredMessageIds.length} events older than ${maxAge}s`
+        );
+      }
+
+      events = freshEvents;
+
+      if (events.length === 0) {
+        return Promise.resolve();
+      }
+    }
 
     // Check if blocked by rate limit or backoff
     if (this.retryManager) {
@@ -305,20 +351,6 @@ export class SegmentDestination extends DestinationPlugin {
 
     const config = analytics.getConfig();
 
-    // Initialize retry manager (handles both 429 rate limiting and transient errors)
-    if (
-      config.httpConfig?.rateLimitConfig ||
-      config.httpConfig?.backoffConfig
-    ) {
-      this.retryManager = new RetryManager(
-        config.writeKey,
-        config.storePersistor,
-        config.httpConfig?.rateLimitConfig,
-        config.httpConfig?.backoffConfig,
-        analytics.logger
-      );
-    }
-
     // If the client has a proxy we don't need to await for settings apiHost, we can send events directly
     // Important! If new settings are required in the future you probably want to change this!
     if (config.proxy !== undefined) {
@@ -342,6 +374,34 @@ export class SegmentDestination extends DestinationPlugin {
       //assign the api host from segment settings (domain/v1)
       this.apiHost = `https://${segmentSettings.apiHost}/b`;
     }
+
+    // Initialize httpConfig and retry manager from server-side CDN config
+    const httpConfig = this.analytics?.getHttpConfig();
+    if (httpConfig) {
+      this.httpConfig = httpConfig;
+
+      if (
+        !this.retryManager &&
+        (httpConfig.rateLimitConfig || httpConfig.backoffConfig)
+      ) {
+        const config = this.analytics?.getConfig();
+        this.retryManager = new RetryManager(
+          config?.writeKey ?? '',
+          config?.storePersistor,
+          httpConfig.rateLimitConfig,
+          httpConfig.backoffConfig,
+          this.analytics?.logger,
+          config?.retryStrategy ?? 'lazy'
+        );
+
+        if (config?.autoFlushOnRetryReady === true) {
+          this.retryManager.setAutoFlushCallback(() => {
+            void this.flush();
+          });
+        }
+      }
+    }
+
     this.settingsResolve();
   }
 

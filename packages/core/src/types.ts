@@ -35,6 +35,9 @@ interface BaseEventType {
   integrations?: SegmentAPIIntegrations;
   _metadata?: DestinationMetadata;
   enrichment?: EnrichmentClosure;
+
+  /** Internal: timestamp (ms) when event was added to queue. Stripped before upload. */
+  _queuedAt?: number;
 }
 
 export interface TrackEventType extends BaseEventType {
@@ -151,7 +154,17 @@ export type Config = {
   cdnProxy?: string;
   useSegmentEndpoints?: boolean; // Use if you want to use Segment endpoints
   errorHandler?: (error: SegmentError) => void;
-  httpConfig?: HttpConfig;
+  /**
+   * Controls how concurrent batch errors are consolidated into a single retry delay.
+   * - 'lazy' (default): uses the longest wait time (most conservative, fewer retries)
+   * - 'eager': uses the shortest wait time (more aggressive, retries sooner)
+   */
+  retryStrategy?: 'eager' | 'lazy';
+  /**
+   * When true, automatically triggers a flush when the retry manager's wait
+   * period expires and transitions back to READY. Disabled by default.
+   */
+  autoFlushOnRetryReady?: boolean;
 };
 
 export type ClientMethods = {

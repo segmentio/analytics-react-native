@@ -10,6 +10,8 @@ export const defaultConfig: Config = {
   trackAppLifecycleEvents: false,
   autoAddSegmentDestination: true,
   useSegmentEndpoints: false,
+  retryStrategy: 'lazy',
+  autoFlushOnRetryReady: false,
 };
 
 export const defaultHttpConfig: HttpConfig = {

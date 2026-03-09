@@ -63,7 +63,8 @@ export class QueueFlushingPlugin extends UtilityPlugin {
 
   async execute(event: SegmentEvent): Promise<SegmentEvent | undefined> {
     await this.queueStore?.dispatch((state) => {
-      const events = [...state.events, event];
+      const stampedEvent = { ...event, _queuedAt: Date.now() };
+      const events = [...state.events, stampedEvent];
       return { events };
     });
     return event;

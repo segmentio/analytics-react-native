@@ -9,6 +9,7 @@ import {
 import {
   Config,
   EventType,
+  HttpConfig,
   SegmentAPIIntegration,
   SegmentEvent,
   TrackEventType,
@@ -260,10 +261,12 @@ describe('SegmentDestination', () => {
       config,
       settings,
       events,
+      httpConfig,
     }: {
       config?: Config;
       settings?: SegmentAPIIntegration;
       events: SegmentEvent[];
+      httpConfig?: HttpConfig;
     }) => {
       const plugin = new SegmentDestination();
 
@@ -278,6 +281,13 @@ describe('SegmentDestination', () => {
       });
 
       plugin.configure(analytics);
+
+      if (httpConfig !== undefined) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        plugin.httpConfig = httpConfig;
+      }
+
       // The settings store won't match but that's ok, the plugin should rely only on the settings it receives during update
       plugin.update(
         {
@@ -322,6 +332,7 @@ describe('SegmentDestination', () => {
       expect(sendEventsSpy).toHaveBeenCalledWith({
         url: getURL(defaultApiHost, ''), // default api already appended with '/b'
         writeKey: '123-456',
+        retryCount: 0,
         events: events.slice(0, 2).map((e) => ({
           ...e,
         })),
@@ -329,6 +340,7 @@ describe('SegmentDestination', () => {
       expect(sendEventsSpy).toHaveBeenCalledWith({
         url: getURL(defaultApiHost, ''), // default api already appended with '/b'
         writeKey: '123-456',
+        retryCount: 0,
         events: events.slice(2, 4).map((e) => ({
           ...e,
         })),
@@ -356,6 +368,7 @@ describe('SegmentDestination', () => {
       expect(sendEventsSpy).toHaveBeenCalledWith({
         url: getURL(customEndpoint, '/b'),
         writeKey: '123-456',
+        retryCount: 0,
         events: events.slice(0, 2).map((e) => ({
           ...e,
         })),
@@ -407,13 +420,129 @@ describe('SegmentDestination', () => {
         expect(sendEventsSpy).toHaveBeenCalledWith({
           url: expectedUrl,
           writeKey: '123-456',
+          retryCount: 0,
           events: events.map((e) => ({
             ...e,
           })),
         });
       }
     );
+
+    describe('event age pruning', () => {
+      it('prunes events older than maxTotalBackoffDuration', async () => {
+        const now = Date.now();
+        const events = [
+          { messageId: 'old-1', _queuedAt: now - 50000 * 1000 },
+          { messageId: 'fresh-1' },
+          { messageId: 'fresh-2' },
+        ] as SegmentEvent[];
+
+        const { plugin, sendEventsSpy } = createTestWith({
+          events,
+          httpConfig: {
+            backoffConfig: {
+              enabled: true,
+              maxRetryCount: 100,
+              baseBackoffInterval: 0.5,
+              maxBackoffInterval: 300,
+              maxTotalBackoffDuration: 43200,
+              jitterPercent: 10,
+              default4xxBehavior: 'drop',
+              default5xxBehavior: 'retry',
+              statusCodeOverrides: {},
+            },
+          },
+        });
+
+        await plugin.flush();
+
+        expect(sendEventsSpy).toHaveBeenCalledTimes(1);
+        const sentEvents = sendEventsSpy.mock.calls[0][0].events;
+        expect(sentEvents).toHaveLength(2);
+        expect(sentEvents.map((e: SegmentEvent) => e.messageId)).toEqual([
+          'fresh-1',
+          'fresh-2',
+        ]);
+      });
+
+      it('does not prune when maxTotalBackoffDuration is 0', async () => {
+        const now = Date.now();
+        const events = [
+          { messageId: 'old-1', _queuedAt: now - 50000 * 1000 },
+          { messageId: 'fresh-1' },
+        ] as SegmentEvent[];
+
+        const { plugin, sendEventsSpy } = createTestWith({
+          events,
+          httpConfig: {
+            backoffConfig: {
+              enabled: true,
+              maxRetryCount: 100,
+              baseBackoffInterval: 0.5,
+              maxBackoffInterval: 300,
+              maxTotalBackoffDuration: 0,
+              jitterPercent: 10,
+              default4xxBehavior: 'drop',
+              default5xxBehavior: 'retry',
+              statusCodeOverrides: {},
+            },
+          },
+        });
+
+        await plugin.flush();
+
+        expect(sendEventsSpy).toHaveBeenCalledTimes(1);
+        const sentEvents = sendEventsSpy.mock.calls[0][0].events;
+        expect(sentEvents).toHaveLength(2);
+      });
+
+      it('does not prune events without _queuedAt', async () => {
+        const events = [
+          { messageId: 'old-1' },
+          { messageId: 'fresh-1' },
+        ] as SegmentEvent[];
+
+        const { plugin, sendEventsSpy } = createTestWith({
+          events,
+          httpConfig: {
+            backoffConfig: {
+              enabled: true,
+              maxRetryCount: 100,
+              baseBackoffInterval: 0.5,
+              maxBackoffInterval: 300,
+              maxTotalBackoffDuration: 43200,
+              jitterPercent: 10,
+              default4xxBehavior: 'drop',
+              default5xxBehavior: 'retry',
+              statusCodeOverrides: {},
+            },
+          },
+        });
+
+        await plugin.flush();
+
+        expect(sendEventsSpy).toHaveBeenCalledTimes(1);
+        const sentEvents = sendEventsSpy.mock.calls[0][0].events;
+        expect(sentEvents).toHaveLength(2);
+      });
+
+      it('strips _queuedAt before upload', async () => {
+        const now = Date.now();
+        const events = [
+          { messageId: 'msg-1', _queuedAt: now - 1000 },
+        ] as SegmentEvent[];
+
+        const { plugin, sendEventsSpy } = createTestWith({ events });
+
+        await plugin.flush();
+
+        expect(sendEventsSpy).toHaveBeenCalledTimes(1);
+        const sentEvents = sendEventsSpy.mock.calls[0][0].events;
+        expect(sentEvents[0]).not.toHaveProperty('_queuedAt');
+      });
+    });
   });
+
   describe('getEndpoint', () => {
     it.each([
       ['example.com/v1/', 'https://example.com/v1/'],
