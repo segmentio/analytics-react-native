@@ -151,6 +151,7 @@ export type Config = {
   cdnProxy?: string;
   useSegmentEndpoints?: boolean; // Use if you want to use Segment endpoints
   errorHandler?: (error: SegmentError) => void;
+  httpConfig?: HttpConfig;
 };
 
 export type ClientMethods = {

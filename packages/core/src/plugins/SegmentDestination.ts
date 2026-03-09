@@ -13,7 +13,6 @@ import { DestinationMetadataEnrichment } from './DestinationMetadataEnrichment';
 import { QueueFlushingPlugin } from './QueueFlushingPlugin';
 import { defaultApiHost, defaultConfig } from '../constants';
 import {
-  checkResponseForErrors,
   translateHTTPError,
   classifyError,
   parseRetryAfter,
@@ -97,7 +96,12 @@ export class SegmentDestination extends DestinationPlugin {
           : undefined;
 
       // Classify error
-      const classification = classifyError(res.status, config.httpConfig);
+      const classification = classifyError(res.status, {
+        default4xxBehavior: config.httpConfig?.backoffConfig?.default4xxBehavior,
+        default5xxBehavior: config.httpConfig?.backoffConfig?.default5xxBehavior,
+        statusCodeOverrides: config.httpConfig?.backoffConfig?.statusCodeOverrides,
+        rateLimitEnabled: config.httpConfig?.rateLimitConfig?.enabled,
+      });
 
       if (classification.errorType === 'rate_limit') {
         return {
