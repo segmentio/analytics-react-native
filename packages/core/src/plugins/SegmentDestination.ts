@@ -17,8 +17,7 @@ import {
   classifyError,
   parseRetryAfter,
 } from '../errors';
-import { UploadStateMachine } from '../backoff/UploadStateMachine';
-import { BackoffManager } from '../backoff/BackoffManager';
+import { RetryManager } from '../backoff/RetryManager';
 
 const MAX_EVENTS_PER_BATCH = 100;
 const MAX_PAYLOAD_SIZE_IN_KB = 500;
@@ -52,8 +51,7 @@ export class SegmentDestination extends DestinationPlugin {
   private apiHost?: string;
   private settingsResolve: () => void;
   private settingsPromise: Promise<void>;
-  private uploadStateMachine?: UploadStateMachine;
-  private backoffManager?: BackoffManager;
+  private retryManager?: RetryManager;
 
   constructor() {
     super();
@@ -194,19 +192,11 @@ export class SegmentDestination extends DestinationPlugin {
 
     const config = this.analytics?.getConfig() ?? defaultConfig;
 
-    // Check upload gates before sending
-    if (this.uploadStateMachine) {
-      const canUpload = await this.uploadStateMachine.canUpload();
-      if (!canUpload) {
-        this.analytics?.logger.info('Upload blocked by rate limiter');
-        return;
-      }
-    }
-
-    if (this.backoffManager) {
-      const canRetry = await this.backoffManager.canRetry();
+    // Check if blocked by rate limit or backoff
+    if (this.retryManager) {
+      const canRetry = await this.retryManager.canRetry();
       if (!canRetry) {
-        this.analytics?.logger.info('Upload blocked by backoff');
+        this.analytics?.logger.info('Upload blocked by retry manager');
         return;
       }
     }
@@ -227,8 +217,8 @@ export class SegmentDestination extends DestinationPlugin {
     const aggregation = this.aggregateErrors(results);
 
     // Handle 429 - ONCE per flush with longest retry-after
-    if (aggregation.has429 && this.uploadStateMachine) {
-      await this.uploadStateMachine.handle429(aggregation.longestRetryAfter);
+    if (aggregation.has429 && this.retryManager) {
+      await this.retryManager.handle429(aggregation.longestRetryAfter);
       this.analytics?.logger.warn(
         `Rate limited (429): waiting ${aggregation.longestRetryAfter}s before retry`
       );
@@ -236,8 +226,8 @@ export class SegmentDestination extends DestinationPlugin {
     }
 
     // Handle transient errors - ONCE per flush
-    if (aggregation.hasTransientError && this.backoffManager) {
-      await this.backoffManager.handleTransientError(500);
+    if (aggregation.hasTransientError && this.retryManager) {
+      await this.retryManager.handleTransientError();
       // Events stay in queue
     }
 
@@ -245,12 +235,9 @@ export class SegmentDestination extends DestinationPlugin {
     if (aggregation.successfulMessageIds.length > 0) {
       await this.queuePlugin.dequeueByMessageIds(aggregation.successfulMessageIds);
 
-      // Reset state machines on success
-      if (this.uploadStateMachine) {
-        await this.uploadStateMachine.reset();
-      }
-      if (this.backoffManager) {
-        await this.backoffManager.reset();
+      // Reset retry manager on success
+      if (this.retryManager) {
+        await this.retryManager.reset();
       }
 
       if (config.debug === true) {
@@ -313,21 +300,13 @@ export class SegmentDestination extends DestinationPlugin {
 
     const config = analytics.getConfig();
 
-    // Initialize state machines
-    if (config.httpConfig?.rateLimitConfig) {
-      this.uploadStateMachine = new UploadStateMachine(
+    // Initialize retry manager (handles both 429 rate limiting and transient errors)
+    if (config.httpConfig?.rateLimitConfig || config.httpConfig?.backoffConfig) {
+      this.retryManager = new RetryManager(
         config.writeKey,
         config.storePersistor,
-        config.httpConfig.rateLimitConfig,
-        analytics.logger
-      );
-    }
-
-    if (config.httpConfig?.backoffConfig) {
-      this.backoffManager = new BackoffManager(
-        config.writeKey,
-        config.storePersistor,
-        config.httpConfig.backoffConfig,
+        config.httpConfig?.rateLimitConfig,
+        config.httpConfig?.backoffConfig,
         analytics.logger
       );
     }
