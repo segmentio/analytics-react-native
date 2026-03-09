@@ -11,7 +11,7 @@ const INITIAL_STATE: UploadStateData = {
 
 /**
  * State machine managing global rate limiting for 429 responses per the TAPI SDD.
- * Implements READY/RATE_LIMITED states with persistence across app restarts.
+ * Implements REmplADY/RATE_LIMITED states with persistence across app restarts.
  */
 export class UploadStateMachine {
   private store: Store<UploadStateData>;
