@@ -17,7 +17,7 @@ const INITIAL_STATE: RetryStateData = {
 };
 
 /**
- * Unified retry manager for both rate limiting (429) and transient errors (5xx).
+ * Manages retry state for rate limiting (429) and transient errors (5xx).
  * Handles wait times from server (429 Retry-After) or calculated exponential backoff (5xx).
  */
 export class RetryManager {

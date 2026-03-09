@@ -1,2 +1,1 @@
-export { UploadStateMachine } from './UploadStateMachine';
-export { BackoffManager } from './BackoffManager';
+export { RetryManager } from './RetryManager';
