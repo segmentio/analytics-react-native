@@ -76,7 +76,9 @@ export class QueueFlushingPlugin extends UtilityPlugin {
   async flush() {
     // Safety: prevent concurrent flush operations
     if (this.flushPromise) {
-      this.analytics?.logger.info('Flush already in progress, waiting for completion');
+      this.analytics?.logger.info(
+        'Flush already in progress, waiting for completion'
+      );
       await this.flushPromise;
       return;
     }
@@ -153,7 +155,7 @@ export class QueueFlushingPlugin extends UtilityPlugin {
 
       const idsToRemove = new Set(messageIds);
       const filteredEvents = state.events.filter(
-        (e) => !e.messageId || !idsToRemove.has(e.messageId)
+        (e) => e.messageId == null || !idsToRemove.has(e.messageId)
       );
 
       return { events: filteredEvents };

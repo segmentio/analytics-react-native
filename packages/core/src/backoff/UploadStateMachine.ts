@@ -156,7 +156,9 @@ export class UploadStateMachine {
           : waitUntilTime;
 
       this.logger?.info(
-        `Rate limited (429): waiting ${Math.ceil((finalWaitUntilTime - now) / 1000)}s before retry ${newRetryCount}/${this.config.maxRetryCount}`
+        `Rate limited (429): waiting ${Math.ceil(
+          (finalWaitUntilTime - now) / 1000
+        )}s before retry ${newRetryCount}/${this.config.maxRetryCount}`
       );
 
       return {

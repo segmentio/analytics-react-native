@@ -99,7 +99,8 @@ export class RetryManager {
     }
 
     const waitSeconds = Math.ceil((state.waitUntilTime - now) / 1000);
-    const stateType = state.state === 'RATE_LIMITED' ? 'rate limited' : 'backing off';
+    const stateType =
+      state.state === 'RATE_LIMITED' ? 'rate limited' : 'backing off';
     this.logger?.info(
       `Upload blocked: ${stateType}, retry in ${waitSeconds}s (retry ${state.retryCount})`
     );
@@ -113,7 +114,7 @@ export class RetryManager {
    * @param retryAfterSeconds - Delay in seconds from Retry-After header (validated and clamped)
    */
   async handle429(retryAfterSeconds: number): Promise<void> {
-    if (!this.rateLimitConfig?.enabled) {
+    if (this.rateLimitConfig?.enabled !== true) {
       return;
     }
 
@@ -148,7 +149,7 @@ export class RetryManager {
    * Uses exponential backoff to calculate wait time.
    */
   async handleTransientError(): Promise<void> {
-    if (!this.backoffConfig?.enabled) {
+    if (this.backoffConfig?.enabled !== true) {
       return;
     }
 
@@ -224,9 +225,12 @@ export class RetryManager {
           ? Math.max(state.waitUntilTime, waitUntilTime)
           : waitUntilTime;
 
-      const stateType = newState === 'RATE_LIMITED' ? 'Rate limited (429)' : 'Transient error';
+      const stateType =
+        newState === 'RATE_LIMITED' ? 'Rate limited (429)' : 'Transient error';
       this.logger?.info(
-        `${stateType}: waiting ${Math.ceil((finalWaitUntilTime - now) / 1000)}s before retry ${newRetryCount}`
+        `${stateType}: waiting ${Math.ceil(
+          (finalWaitUntilTime - now) / 1000
+        )}s before retry ${newRetryCount}`
       );
 
       return {
@@ -246,7 +250,8 @@ export class RetryManager {
       return 0;
     }
 
-    const { baseBackoffInterval, maxBackoffInterval, jitterPercent } = this.backoffConfig;
+    const { baseBackoffInterval, maxBackoffInterval, jitterPercent } =
+      this.backoffConfig;
 
     // Base exponential backoff: base * 2^retryCount
     const exponentialBackoff = baseBackoffInterval * Math.pow(2, retryCount);

@@ -12,11 +12,7 @@ import type { SegmentClient } from '../analytics';
 import { DestinationMetadataEnrichment } from './DestinationMetadataEnrichment';
 import { QueueFlushingPlugin } from './QueueFlushingPlugin';
 import { defaultApiHost, defaultConfig } from '../constants';
-import {
-  translateHTTPError,
-  classifyError,
-  parseRetryAfter,
-} from '../errors';
+import { translateHTTPError, classifyError, parseRetryAfter } from '../errors';
 import { RetryManager } from '../backoff/RetryManager';
 
 const MAX_EVENTS_PER_BATCH = 100;
@@ -66,7 +62,9 @@ export class SegmentDestination extends DestinationPlugin {
    */
   private async uploadBatch(batch: SegmentEvent[]): Promise<BatchResult> {
     const config = this.analytics?.getConfig() ?? defaultConfig;
-    const messageIds = batch.map((e) => e.messageId).filter((id): id is string => !!id);
+    const messageIds = batch
+      .map((e) => e.messageId)
+      .filter((id): id is string => !!id);
 
     try {
       const res = await uploadEvents({
@@ -95,9 +93,12 @@ export class SegmentDestination extends DestinationPlugin {
 
       // Classify error
       const classification = classifyError(res.status, {
-        default4xxBehavior: config.httpConfig?.backoffConfig?.default4xxBehavior,
-        default5xxBehavior: config.httpConfig?.backoffConfig?.default5xxBehavior,
-        statusCodeOverrides: config.httpConfig?.backoffConfig?.statusCodeOverrides,
+        default4xxBehavior:
+          config.httpConfig?.backoffConfig?.default4xxBehavior,
+        default5xxBehavior:
+          config.httpConfig?.backoffConfig?.default5xxBehavior,
+        statusCodeOverrides:
+          config.httpConfig?.backoffConfig?.statusCodeOverrides,
         rateLimitEnabled: config.httpConfig?.rateLimitConfig?.enabled,
       });
 
@@ -233,7 +234,9 @@ export class SegmentDestination extends DestinationPlugin {
 
     // Handle successes - dequeue
     if (aggregation.successfulMessageIds.length > 0) {
-      await this.queuePlugin.dequeueByMessageIds(aggregation.successfulMessageIds);
+      await this.queuePlugin.dequeueByMessageIds(
+        aggregation.successfulMessageIds
+      );
 
       // Reset retry manager on success
       if (this.retryManager) {
@@ -249,7 +252,9 @@ export class SegmentDestination extends DestinationPlugin {
 
     // Handle permanent errors - dequeue (drop)
     if (aggregation.permanentErrorMessageIds.length > 0) {
-      await this.queuePlugin.dequeueByMessageIds(aggregation.permanentErrorMessageIds);
+      await this.queuePlugin.dequeueByMessageIds(
+        aggregation.permanentErrorMessageIds
+      );
       this.analytics?.logger.error(
         `Dropped ${aggregation.permanentErrorMessageIds.length} events due to permanent errors`
       );
@@ -301,7 +306,10 @@ export class SegmentDestination extends DestinationPlugin {
     const config = analytics.getConfig();
 
     // Initialize retry manager (handles both 429 rate limiting and transient errors)
-    if (config.httpConfig?.rateLimitConfig || config.httpConfig?.backoffConfig) {
+    if (
+      config.httpConfig?.rateLimitConfig ||
+      config.httpConfig?.backoffConfig
+    ) {
       this.retryManager = new RetryManager(
         config.writeKey,
         config.storePersistor,

@@ -159,7 +159,9 @@ export class BackoffManager {
       const nextRetryTime = now + backoffSeconds * 1000;
 
       this.logger?.info(
-        `Transient error (${statusCode}): backoff ${backoffSeconds.toFixed(1)}s, attempt ${newRetryCount}/${this.config.maxRetryCount}`
+        `Transient error (${statusCode}): backoff ${backoffSeconds.toFixed(
+          1
+        )}s, attempt ${newRetryCount}/${this.config.maxRetryCount}`
       );
 
       return {

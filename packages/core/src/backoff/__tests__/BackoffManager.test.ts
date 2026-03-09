@@ -187,11 +187,15 @@ describe('BackoffManager', () => {
         expect(await bm.canRetry()).toBe(false);
 
         // Should not be ready 1ms before expected delay
-        jest.spyOn(Date, 'now').mockReturnValue(currentTime + expectedDelays[i] - 1);
+        jest
+          .spyOn(Date, 'now')
+          .mockReturnValue(currentTime + expectedDelays[i] - 1);
         expect(await bm.canRetry()).toBe(false);
 
         // Should be ready at expected delay
-        jest.spyOn(Date, 'now').mockReturnValue(currentTime + expectedDelays[i]);
+        jest
+          .spyOn(Date, 'now')
+          .mockReturnValue(currentTime + expectedDelays[i]);
         expect(await bm.canRetry()).toBe(true);
       }
     });
