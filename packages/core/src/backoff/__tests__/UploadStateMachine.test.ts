@@ -2,11 +2,11 @@ import { UploadStateMachine } from '../UploadStateMachine';
 import type { Persistor } from '@segment/sovran-react-native';
 import type { RateLimitConfig } from '../../types';
 import { getMockLogger } from '../../test-helpers';
-import { createTestPersistor } from './test-helpers';
+import { createTestPersistor } from '../test-helpers';
 
 jest.mock('@segment/sovran-react-native', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const helpers = require('./test-helpers');
+  const helpers = require('../test-helpers');
   return {
     ...jest.requireActual('@segment/sovran-react-native'),
     createStore: jest.fn((initialState: unknown) =>
