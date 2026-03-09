@@ -66,7 +66,7 @@ export class SegmentDestination extends DestinationPlugin {
     const config = this.analytics?.getConfig() ?? defaultConfig;
     const messageIds = batch
       .map((e) => e.messageId)
-      .filter((id): id is string => !!id);
+      .filter((id): id is string => id !== undefined && id !== '');
 
     const retryCount = this.retryManager
       ? await this.retryManager.getRetryCount()
