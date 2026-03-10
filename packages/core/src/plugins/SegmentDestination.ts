@@ -284,8 +284,12 @@ export class SegmentDestination extends DestinationPlugin {
         aggregation.successfulMessageIds
       );
 
-      // Reset retry manager on success
-      if (this.retryManager) {
+      // Only reset retry state on full success (no concurrent failures)
+      if (
+        this.retryManager &&
+        !aggregation.has429 &&
+        !aggregation.hasTransientError
+      ) {
         await this.retryManager.reset();
       }
 
