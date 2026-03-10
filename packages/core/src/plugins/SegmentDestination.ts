@@ -199,7 +199,7 @@ export class SegmentDestination extends DestinationPlugin {
 
   private sendEvents = async (events: SegmentEvent[]): Promise<void> => {
     if (events.length === 0) {
-      return Promise.resolve();
+      return;
     }
 
     // We're not sending events until Segment has loaded all settings
@@ -235,7 +235,7 @@ export class SegmentDestination extends DestinationPlugin {
       events = freshEvents;
 
       if (events.length === 0) {
-        return Promise.resolve();
+        return;
       }
     }
 
@@ -316,8 +316,6 @@ export class SegmentDestination extends DestinationPlugin {
         `${failedCount} events will retry (429: ${aggregation.has429}, transient: ${aggregation.hasTransientError})`
       );
     }
-
-    return Promise.resolve();
   };
 
   private readonly queuePlugin = new QueueFlushingPlugin(this.sendEvents);
