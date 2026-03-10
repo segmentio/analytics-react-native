@@ -245,7 +245,7 @@ describe('RetryManager', () => {
       expect(await rm.canRetry()).toBe(true);
     });
 
-    it('ignores 429 when already in BACKING_OFF state', async () => {
+    it('429 overrides BACKING_OFF state (server signal takes precedence)', async () => {
       const now = 1000000;
       jest.spyOn(Date, 'now').mockReturnValue(now);
 
@@ -261,19 +261,18 @@ describe('RetryManager', () => {
       await rm.handleTransientError();
       expect(await rm.getRetryCount()).toBe(1);
 
-      // Now trigger 429 → should be ignored
+      // Now trigger 429 → should override to RATE_LIMITED
       await rm.handle429(120);
 
-      // Retry count should NOT have incremented
-      expect(await rm.getRetryCount()).toBe(1);
+      // Retry count should have incremented
+      expect(await rm.getRetryCount()).toBe(2);
 
-      // Should still be blocked by original backoff (0.5s), not 120s
+      // Should be blocked by 429's 120s, not original backoff's 0.5s
       jest.spyOn(Date, 'now').mockReturnValue(now + 600);
-      expect(await rm.canRetry()).toBe(true);
+      expect(await rm.canRetry()).toBe(false);
 
-      expect(mockLogger.info).toHaveBeenCalledWith(
-        'Ignoring 429 while already backing off (will respect existing backoff)'
-      );
+      jest.spyOn(Date, 'now').mockReturnValue(now + 121000);
+      expect(await rm.canRetry()).toBe(true);
     });
 
     it('resets when maxRateLimitDuration exceeded', async () => {
