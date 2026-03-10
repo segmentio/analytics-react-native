@@ -78,6 +78,7 @@ describe('#sendEvents', () => {
 
     expect(fetch).toHaveBeenCalledWith(toSegmentBatchApi, {
       method: 'POST',
+      keepalive: true,
       body: JSON.stringify({
         batch: [event],
         sentAt: '2001-01-01T00:00:00.000Z',

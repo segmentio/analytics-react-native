@@ -17,22 +17,29 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  fast-checks:
-    name: Build + Lint
+  ci:
+    name: Lint + Build + Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: devbox installer
+      - name: Install devbox
         uses: jetify-com/devbox-install-action@v0.14.0
-        with:
-          project-path: shells/devbox-fast.json
-          enable-cache: 'false'
-      - name: build
-        run: devbox run --config=shells/devbox-fast.json build
+      - name: Install dependencies
+        run: devbox run ci:install
+      - name: Lint (eslint)
+        run: devbox run lint
+      - name: Lint (formatting)
+        run: devbox run format-check
+      - name: Build
+        run: devbox run build
+      - name: Typecheck
+        run: devbox run typecheck
+      - name: Test
+        run: devbox run test
 
   release:
     name: Release (${{ inputs.type }})
-    needs: [fast-checks]
+    needs: [ci]
     runs-on: ubuntu-latest
     environment: Publish
     permissions:
@@ -52,30 +59,27 @@ jobs:
           git checkout -B beta HEAD
           git push origin beta --force
 
-      - name: devbox installer
+      - name: Install devbox
         uses: jetify-com/devbox-install-action@v0.14.0
-        with:
-          project-path: shells/devbox-fast.json
-          enable-cache: 'false'
 
       - name: Release (dry-run)
         if: inputs.type == 'dry-run'
-        run: devbox run --config=shells/devbox-fast.json release-dry-run
+        run: devbox run release-dry-run
         env:
           GH_TOKEN: ${{ github.token }}
 
       - name: Release (beta)
         if: inputs.type == 'beta'
-        run: devbox run -e GITHUB_REF=refs/heads/beta --config=shells/devbox-fast.json release
+        run: devbox run -e GITHUB_REF=refs/heads/beta release
         env:
           GH_TOKEN: ${{ github.token }}
 
       - name: Release (production)
         if: inputs.type == 'production'
-        run: devbox run --config=shells/devbox-fast.json release
+        run: devbox run release
         env:
           GH_TOKEN: ${{ github.token }}
 
       - name: Update Apps
         if: inputs.type == 'production'
-        run: devbox run --config=shells/devbox-fast.json update-apps
+        run: devbox run update-apps
