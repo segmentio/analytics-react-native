@@ -435,4 +435,124 @@ describe('internal #getSettings', () => {
       expect(spy).toHaveBeenCalled();
     });
   });
+
+  describe('httpConfig extraction', () => {
+    it('extracts httpConfig from CDN response and merges with defaults', async () => {
+      const serverHttpConfig = {
+        rateLimitConfig: {
+          enabled: true,
+          maxRetryCount: 50,
+          maxRetryInterval: 120,
+          maxRateLimitDuration: 3600,
+        },
+        backoffConfig: {
+          enabled: true,
+          maxRetryCount: 50,
+          baseBackoffInterval: 1,
+          maxBackoffInterval: 120,
+          maxTotalBackoffDuration: 3600,
+          jitterPercent: 20,
+          default4xxBehavior: 'drop' as const,
+          default5xxBehavior: 'retry' as const,
+          statusCodeOverrides: {},
+        },
+      };
+
+      (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            ...defaultIntegrationSettings,
+            httpConfig: serverHttpConfig,
+          }),
+        status: 200,
+      } as Response);
+
+      const anotherClient = new SegmentClient({
+        ...clientArgs,
+        logger: getMockLogger(),
+      });
+
+      await anotherClient.fetchSettings();
+      const result = anotherClient.getHttpConfig();
+
+      expect(result).toBeDefined();
+      expect(result?.rateLimitConfig?.maxRetryCount).toBe(50);
+      expect(result?.rateLimitConfig?.maxRetryInterval).toBe(120);
+      expect(result?.backoffConfig?.maxRetryCount).toBe(50);
+      expect(result?.backoffConfig?.jitterPercent).toBe(20);
+    });
+
+    it('returns undefined httpConfig when CDN has no httpConfig', async () => {
+      (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(defaultIntegrationSettings),
+        status: 200,
+      } as Response);
+
+      const anotherClient = new SegmentClient({
+        ...clientArgs,
+        logger: getMockLogger(),
+      });
+
+      await anotherClient.fetchSettings();
+      expect(anotherClient.getHttpConfig()).toBeUndefined();
+    });
+
+    it('returns undefined httpConfig when fetch fails', async () => {
+      (fetch as jest.MockedFunction<typeof fetch>).mockRejectedValueOnce(
+        new Error('Network error')
+      );
+
+      const anotherClient = new SegmentClient({
+        ...clientArgs,
+        logger: getMockLogger(),
+      });
+
+      await anotherClient.fetchSettings();
+      expect(anotherClient.getHttpConfig()).toBeUndefined();
+    });
+
+    it('merges partial backoffConfig with defaults', async () => {
+      const partialHttpConfig = {
+        backoffConfig: {
+          enabled: true,
+          maxRetryCount: 25,
+          baseBackoffInterval: 2,
+          maxBackoffInterval: 60,
+          maxTotalBackoffDuration: 1800,
+          jitterPercent: 5,
+          default4xxBehavior: 'drop' as const,
+          default5xxBehavior: 'retry' as const,
+          statusCodeOverrides: { '501': 'drop' as const },
+        },
+      };
+
+      (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            ...defaultIntegrationSettings,
+            httpConfig: partialHttpConfig,
+          }),
+        status: 200,
+      } as Response);
+
+      const anotherClient = new SegmentClient({
+        ...clientArgs,
+        logger: getMockLogger(),
+      });
+
+      await anotherClient.fetchSettings();
+      const result = anotherClient.getHttpConfig();
+
+      expect(result).toBeDefined();
+      // rateLimitConfig should be defaults (no server override)
+      expect(result?.rateLimitConfig?.enabled).toBe(true);
+      expect(result?.rateLimitConfig?.maxRetryCount).toBe(100);
+      // backoffConfig should be merged
+      expect(result?.backoffConfig?.maxRetryCount).toBe(25);
+      expect(result?.backoffConfig?.baseBackoffInterval).toBe(2);
+    });
+  });
 });
