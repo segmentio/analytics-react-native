@@ -199,7 +199,7 @@ export class SegmentDestination extends DestinationPlugin {
 
   private sendEvents = async (events: SegmentEvent[]): Promise<void> => {
     if (events.length === 0) {
-      return Promise.resolve();
+      return;
     }
 
     // We're not sending events until Segment has loaded all settings
@@ -235,7 +235,7 @@ export class SegmentDestination extends DestinationPlugin {
       events = freshEvents;
 
       if (events.length === 0) {
-        return Promise.resolve();
+        return;
       }
     }
 
@@ -263,19 +263,15 @@ export class SegmentDestination extends DestinationPlugin {
     // Aggregate errors
     const aggregation = this.aggregateErrors(results);
 
-    // Handle 429 - ONCE per flush with longest retry-after
+    // Handle 429 - takes precedence over transient errors (blocks entire pipeline)
     if (aggregation.has429 && this.retryManager) {
       await this.retryManager.handle429(aggregation.longestRetryAfter);
       this.analytics?.logger.warn(
         `Rate limited (429): waiting ${aggregation.longestRetryAfter}s before retry`
       );
-      // Events stay in queue
-    }
-
-    // Handle transient errors - ONCE per flush
-    if (aggregation.hasTransientError && this.retryManager) {
+    } else if (aggregation.hasTransientError && this.retryManager) {
+      // Only handle transient backoff if no 429 (429 blocks everything anyway)
       await this.retryManager.handleTransientError();
-      // Events stay in queue
     }
 
     // Handle successes - dequeue
@@ -284,8 +280,12 @@ export class SegmentDestination extends DestinationPlugin {
         aggregation.successfulMessageIds
       );
 
-      // Reset retry manager on success
-      if (this.retryManager) {
+      // Only reset retry state on full success (no concurrent failures)
+      if (
+        this.retryManager &&
+        !aggregation.has429 &&
+        !aggregation.hasTransientError
+      ) {
         await this.retryManager.reset();
       }
 
@@ -316,8 +316,6 @@ export class SegmentDestination extends DestinationPlugin {
         `${failedCount} events will retry (429: ${aggregation.has429}, transient: ${aggregation.hasTransientError})`
       );
     }
-
-    return Promise.resolve();
   };
 
   private readonly queuePlugin = new QueueFlushingPlugin(this.sendEvents);
