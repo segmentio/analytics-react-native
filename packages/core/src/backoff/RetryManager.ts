@@ -311,11 +311,11 @@ export class RetryManager {
     // Clamp to max
     const clampedBackoff = Math.min(exponentialBackoff, maxBackoffInterval);
 
-    // Add jitter: ±jitterPercent
+    // Add jitter: 0 to jitterPercent (additive only, per SDD)
     const jitterRange = clampedBackoff * (jitterPercent / 100);
-    const jitter = (Math.random() * 2 - 1) * jitterRange;
+    const jitter = Math.random() * jitterRange;
 
-    return Math.max(0, clampedBackoff + jitter);
+    return clampedBackoff + jitter;
   }
 
   /**
