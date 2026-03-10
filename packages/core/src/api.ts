@@ -4,10 +4,12 @@ export const uploadEvents = async ({
   writeKey,
   url,
   events,
+  retryCount = 0,
 }: {
   writeKey: string;
   url: string;
   events: SegmentEvent[];
+  retryCount?: number;
 }) => {
   return await fetch(url, {
     method: 'POST',
@@ -19,6 +21,7 @@ export const uploadEvents = async ({
     }),
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
+      'X-Retry-Count': retryCount.toString(),
     },
   });
 };
