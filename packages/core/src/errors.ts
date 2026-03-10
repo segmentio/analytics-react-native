@@ -1,6 +1,5 @@
-/**
- * Error types reported through the errorHandler in the client
- */
+import type { ErrorClassification } from './types';
+
 export enum ErrorType {
   NetworkUnexpectedHTTPCode,
   NetworkServerLimited,
@@ -99,18 +98,14 @@ export const checkResponseForErrors = (response: Response) => {
  * @returns a SegmentError object
  */
 export const translateHTTPError = (error: unknown): SegmentError => {
-  // SegmentError already
   if (error instanceof SegmentError) {
     return error;
-    // JSON Deserialization Errors
   } else if (error instanceof SyntaxError) {
     return new JSONError(
       ErrorType.JsonUnableToDeserialize,
       error.message,
       error
     );
-
-    // HTTP Errors
   } else {
     const message =
       error instanceof Error
@@ -120,4 +115,89 @@ export const translateHTTPError = (error: unknown): SegmentError => {
         : 'Unknown error';
     return new NetworkError(-1, message, error);
   }
+};
+
+/**
+ * Classify an HTTP status code according to TAPI SDD error handling tables.
+ *
+ * Precedence order:
+ * 1. statusCodeOverrides - explicit overrides for specific codes
+ * 2. 429 special handling - rate limiting (if rateLimitEnabled !== false)
+ * 3. default4xxBehavior/default5xxBehavior - defaults for ranges
+ * 4. fallback - non-retryable permanent error
+ *
+ * @param statusCode - HTTP status code to classify
+ * @param config - Optional configuration for error classification
+ * @returns Classification with isRetryable flag and errorType
+ */
+export const classifyError = (
+  statusCode: number,
+  config?: {
+    default4xxBehavior?: 'drop' | 'retry';
+    default5xxBehavior?: 'drop' | 'retry';
+    statusCodeOverrides?: Record<string, 'drop' | 'retry'>;
+    rateLimitEnabled?: boolean;
+  }
+): ErrorClassification => {
+  const override = config?.statusCodeOverrides?.[statusCode.toString()];
+  if (override !== undefined) {
+    if (override === 'retry') {
+      return statusCode === 429
+        ? { isRetryable: true, errorType: 'rate_limit' }
+        : { isRetryable: true, errorType: 'transient' };
+    }
+    return { isRetryable: false, errorType: 'permanent' };
+  }
+
+  if (statusCode === 429 && config?.rateLimitEnabled !== false) {
+    return { isRetryable: true, errorType: 'rate_limit' };
+  }
+
+  if (statusCode >= 400 && statusCode < 500) {
+    const behavior = config?.default4xxBehavior ?? 'drop';
+    return {
+      isRetryable: behavior === 'retry',
+      errorType: behavior === 'retry' ? 'transient' : 'permanent',
+    };
+  }
+
+  if (statusCode >= 500 && statusCode < 600) {
+    const behavior = config?.default5xxBehavior ?? 'retry';
+    return {
+      isRetryable: behavior === 'retry',
+      errorType: behavior === 'retry' ? 'transient' : 'permanent',
+    };
+  }
+
+  return { isRetryable: false, errorType: 'permanent' };
+};
+
+/**
+ * Parse Retry-After header value from HTTP response.
+ * Supports both seconds format ("60") and HTTP-date format ("Fri, 31 Dec 2026 23:59:59 GMT").
+ *
+ * @param retryAfterValue - Value from Retry-After header (null if not present)
+ * @param maxRetryInterval - Maximum allowed retry interval in seconds (default: 300)
+ * @returns Parsed delay in seconds, clamped to maxRetryInterval, or undefined if invalid
+ */
+export const parseRetryAfter = (
+  retryAfterValue: string | null,
+  maxRetryInterval = 300
+): number | undefined => {
+  if (retryAfterValue === null || retryAfterValue === '') return undefined;
+
+  // Try parsing as seconds (e.g., "60")
+  const seconds = parseInt(retryAfterValue, 10);
+  if (!isNaN(seconds) && seconds >= 0) {
+    return Math.min(seconds, maxRetryInterval);
+  }
+
+  // Try parsing as HTTP-date (e.g., "Fri, 31 Dec 2026 23:59:59 GMT")
+  const retryDate = new Date(retryAfterValue);
+  if (!isNaN(retryDate.getTime())) {
+    const secondsUntil = Math.ceil((retryDate.getTime() - Date.now()) / 1000);
+    return Math.min(Math.max(secondsUntil, 0), maxRetryInterval);
+  }
+
+  return undefined;
 };
