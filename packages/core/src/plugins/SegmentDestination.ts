@@ -263,19 +263,15 @@ export class SegmentDestination extends DestinationPlugin {
     // Aggregate errors
     const aggregation = this.aggregateErrors(results);
 
-    // Handle 429 - ONCE per flush with longest retry-after
+    // Handle 429 - takes precedence over transient errors (blocks entire pipeline)
     if (aggregation.has429 && this.retryManager) {
       await this.retryManager.handle429(aggregation.longestRetryAfter);
       this.analytics?.logger.warn(
         `Rate limited (429): waiting ${aggregation.longestRetryAfter}s before retry`
       );
-      // Events stay in queue
-    }
-
-    // Handle transient errors - ONCE per flush
-    if (aggregation.hasTransientError && this.retryManager) {
+    } else if (aggregation.hasTransientError && this.retryManager) {
+      // Only handle transient backoff if no 429 (429 blocks everything anyway)
       await this.retryManager.handleTransientError();
-      // Events stay in queue
     }
 
     // Handle successes - dequeue
