@@ -370,20 +370,6 @@ export type HttpConfig = {
   backoffConfig?: BackoffConfig;
 };
 
-export type BackoffStateData = {
-  state: 'READY' | 'BACKING_OFF';
-  retryCount: number;
-  nextRetryTime: number;
-  firstFailureTime: number;
-};
-
-export type UploadStateData = {
-  state: 'READY' | 'RATE_LIMITED';
-  waitUntilTime: number;
-  globalRetryCount: number;
-  firstFailureTime: number | null;
-};
-
 export type ErrorClassification = {
   isRetryable: boolean;
   errorType: 'rate_limit' | 'transient' | 'permanent';
