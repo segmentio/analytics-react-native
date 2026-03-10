@@ -88,7 +88,6 @@ describe('#sendEvents', () => {
         'Content-Type': 'application/json; charset=utf-8',
         'X-Retry-Count': '0',
       },
-      keepalive: true,
     });
   });
 
