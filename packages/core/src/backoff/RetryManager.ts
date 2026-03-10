@@ -151,15 +151,6 @@ export class RetryManager {
       return;
     }
 
-    // If already backing off from transient errors, ignore 429
-    const currentState = await this.store.getState();
-    if (currentState.state === 'BACKING_OFF') {
-      this.logger?.info(
-        'Ignoring 429 while already backing off (will respect existing backoff)'
-      );
-      return;
-    }
-
     // Validate and clamp input
     if (retryAfterSeconds < 0) {
       this.logger?.warn(
@@ -320,11 +311,11 @@ export class RetryManager {
     // Clamp to max
     const clampedBackoff = Math.min(exponentialBackoff, maxBackoffInterval);
 
-    // Add jitter: ±jitterPercent
+    // Add jitter: 0 to jitterPercent (additive only, per SDD)
     const jitterRange = clampedBackoff * (jitterPercent / 100);
-    const jitter = (Math.random() * 2 - 1) * jitterRange;
+    const jitter = Math.random() * jitterRange;
 
-    return Math.max(0, clampedBackoff + jitter);
+    return clampedBackoff + jitter;
   }
 
   /**
