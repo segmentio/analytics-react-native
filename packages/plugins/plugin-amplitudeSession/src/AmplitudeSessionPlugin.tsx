@@ -31,7 +31,7 @@ export class AmplitudeSessionPlugin extends EventPlugin {
   private _eventSessionId = -1;
   private _lastEventTime = -1;
   private _previousAppState: string = AppState.currentState ?? 'unknown';
-  resetPending = false;
+  private _sessionTransition: Promise<void> | null = null;
 
   get eventSessionId() {
     return this._eventSessionId;
@@ -132,11 +132,6 @@ export class AmplitudeSessionPlugin extends EventPlugin {
   track(event: TrackEventType) {
     const eventName = event.event;
 
-    if (eventName === AMP_SESSION_START_EVENT) {
-      this.resetPending = false;
-      this.eventSessionId = this.sessionId;
-    }
-
     if (
       eventName.startsWith('Amplitude') ||
       eventName === AMP_SESSION_START_EVENT ||
@@ -208,51 +203,40 @@ export class AmplitudeSessionPlugin extends EventPlugin {
   };
 
   private async startNewSessionIfNecessary() {
-    if (this.eventSessionId === -1) {
-      this.eventSessionId = this.sessionId;
-    }
-
-    if (this.resetPending) {
+    if (this._sessionTransition !== null) {
+      await this._sessionTransition;
       return;
     }
 
-    const current = Date.now();
-    const withinSessionLimit = this.withinMinSessionTime(current);
-
-    const isSessionExpired =
-      this.sessionId === -1 || this.lastEventTime === -1 || !withinSessionLimit;
-
-    if (this.sessionId >= 0 && !isSessionExpired) {
-      return;
+    if (this._eventSessionId === -1) {
+      this._eventSessionId = this._sessionId;
     }
 
-    // End old session and start a new one
-    await this.startNewSession();
+    const isExpired =
+      this._sessionId === -1 ||
+      this._lastEventTime === -1 ||
+      !this.withinMinSessionTime(Date.now());
+
+    if (!isExpired) return;
+
+    this._sessionTransition = this.performSessionTransition()
+      .finally(() => { this._sessionTransition = null; });
+    await this._sessionTransition;
   }
 
-  /**
-   * Handles the entire process of starting a new session.
-   * Can be called directly or from startNewSessionIfNecessary()
-   */
-  private async startNewSession() {
-    if (this.resetPending) {
-      return;
-    }
-
-    this.resetPending = true;
-
-    const oldSessionId = this.sessionId;
+  private async performSessionTransition() {
+    const oldSessionId = this._sessionId;
     if (oldSessionId >= 0) {
       await this.endSession(oldSessionId);
     }
 
     const newSessionId = Date.now();
     this.sessionId = newSessionId;
-    this.eventSessionId =
-      this.eventSessionId === -1 ? newSessionId : this.eventSessionId;
     this.lastEventTime = newSessionId;
 
     await this.trackSessionStart(newSessionId);
+
+    this._eventSessionId = newSessionId;
   }
 
   /**
