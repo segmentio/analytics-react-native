@@ -43,9 +43,7 @@ const INITIAL_STATE: RetryStateData = {
  *
  * DEVIATION FROM SDD: Uses a global retry counter instead of per-batch counters.
  * The RN SDK has no stable batch identities — batches are re-chunked from the
- * event queue on each flush. During TAPI outages all batches fail together,
- * making a global counter equivalent in practice. This aligns with the SDK's
- * ephemeral batch architecture where persistence is at the event level.
+ * event queue on each flush.
  */
 export class RetryManager {
   private store: Store<RetryStateData>;
