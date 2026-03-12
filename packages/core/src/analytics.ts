@@ -425,15 +425,24 @@ export class SegmentClient {
           ? {
               ...defaultHttpConfig.backoffConfig!,
               ...resJson.httpConfig.backoffConfig,
+              statusCodeOverrides: {
+                ...defaultHttpConfig.backoffConfig!.statusCodeOverrides,
+                ...resJson.httpConfig.backoffConfig.statusCodeOverrides,
+              },
             }
           : defaultHttpConfig.backoffConfig!;
 
+        const validatedRateLimit = validateRateLimitConfig(
+          mergedRateLimit,
+          this.logger
+        );
         this.httpConfig = {
-          rateLimitConfig: validateRateLimitConfig(
-            mergedRateLimit,
-            this.logger
+          rateLimitConfig: validatedRateLimit,
+          backoffConfig: validateBackoffConfig(
+            mergedBackoff,
+            this.logger,
+            validatedRateLimit
           ),
-          backoffConfig: validateBackoffConfig(mergedBackoff, this.logger),
         };
         this.logger.info('Loaded httpConfig from CDN settings.');
       }

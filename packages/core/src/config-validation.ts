@@ -52,7 +52,8 @@ export const validateRateLimitConfig = (
 
 export const validateBackoffConfig = (
   config: BackoffConfig,
-  logger?: LoggerType
+  logger?: LoggerType,
+  rateLimitConfig?: RateLimitConfig
 ): BackoffConfig => {
   const validated = { ...config };
 
@@ -116,11 +117,15 @@ export const validateBackoffConfig = (
     validated.baseBackoffInterval = validated.maxBackoffInterval;
   }
 
-  // Relational: maxTotalBackoffDuration >= 2x maxBackoffInterval
-  const minTotalDuration = validated.maxBackoffInterval * 2;
+  // Relational: maxTotalBackoffDuration >= 2x max(maxBackoffInterval, rateLimitConfig.maxRetryInterval)
+  const maxInterval = Math.max(
+    validated.maxBackoffInterval,
+    rateLimitConfig?.maxRetryInterval ?? 0
+  );
+  const minTotalDuration = maxInterval * 2;
   if (validated.maxTotalBackoffDuration < minTotalDuration) {
     logger?.warn(
-      `maxTotalBackoffDuration ${validated.maxTotalBackoffDuration}s clamped to ${minTotalDuration}s (2x maxBackoffInterval)`
+      `maxTotalBackoffDuration ${validated.maxTotalBackoffDuration}s clamped to ${minTotalDuration}s (2x max interval)`
     );
     validated.maxTotalBackoffDuration = minTotalDuration;
   }
