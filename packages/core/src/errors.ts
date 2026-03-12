@@ -1,5 +1,8 @@
 import { ErrorClassification } from './types';
 
+/**
+ * Error types reported through the errorHandler in the client
+ */
 export enum ErrorType {
   NetworkUnexpectedHTTPCode,
   NetworkServerLimited,
@@ -98,14 +101,17 @@ export const checkResponseForErrors = (response: Response) => {
  * @returns a SegmentError object
  */
 export const translateHTTPError = (error: unknown): SegmentError => {
+  // SegmentError already
   if (error instanceof SegmentError) {
     return error;
+    // JSON Deserialization Errors
   } else if (error instanceof SyntaxError) {
     return new JSONError(
       ErrorType.JsonUnableToDeserialize,
       error.message,
       error
     );
+    // HTTP Errors
   } else {
     const message =
       error instanceof Error
