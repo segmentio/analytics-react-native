@@ -18,32 +18,18 @@ const INITIAL_STATE: RetryStateData = {
 
 /**
  * Manages retry state for rate limiting (429) and transient errors (5xx).
- * Handles wait times from server (429 Retry-After) or calculated exponential backoff (5xx).
  *
  * State machine: READY → RATE_LIMITED (429) or BACKING_OFF (5xx) → READY
  * - READY: uploads proceed normally
- * - RATE_LIMITED: server returned 429 with Retry-After; uploads blocked until wait expires
- * - BACKING_OFF: transient error (5xx/network); exponential backoff until wait expires
+ * - RATE_LIMITED: server returned 429; uploads blocked until Retry-After expires
+ * - BACKING_OFF: transient error; exponential backoff until wait expires
  *
- * ARCHITECTURE: Concurrent Batch Submission
+ * Designed for concurrent batch uploads (Promise.all). Multiple batches can
+ * fail simultaneously with different errors or partially succeed. The retry
+ * strategy (eager/lazy) controls how concurrent wait times are consolidated.
  *
- * DEVIATION FROM SDD: The SDD specifies sequential batch processing where a 429
- * halts the upload loop. This implementation is designed for CONCURRENT batch
- * submission — the RN SDK uploads all batches in parallel via Promise.all().
- *
- * This means multiple batches can fail simultaneously with different error codes,
- * and some may succeed while others fail (partial success). Error aggregation in
- * SegmentDestination compensates:
- * - Single retry increment per flush (not per failed batch)
- * - Longest Retry-After from multiple 429s used (most conservative)
- * - Partial successes dequeued immediately
- * - Retry strategy (eager/lazy) controls how concurrent wait times are combined
- *
- * ARCHITECTURE: Global Retry Counter
- *
- * DEVIATION FROM SDD: Uses a global retry counter instead of per-batch counters.
- * The RN SDK has no stable batch identities — batches are re-chunked from the
- * event queue on each flush.
+ * Uses a global retry counter since batches are re-chunked from the event
+ * queue on each flush and have no stable identities.
  */
 export class RetryManager {
   private store: Store<RetryStateData>;
@@ -54,16 +40,6 @@ export class RetryManager {
   private autoFlushCallback?: () => void;
   private autoFlushTimer?: ReturnType<typeof setTimeout>;
 
-  /**
-   * Creates a RetryManager instance.
-   *
-   * @param storeId - Unique identifier for the store (typically writeKey)
-   * @param persistor - Optional persistor for state persistence
-   * @param rateLimitConfig - Optional rate limit configuration (for 429 handling)
-   * @param backoffConfig - Optional backoff configuration (for transient errors)
-   * @param logger - Optional logger for debugging
-   * @param retryStrategy - 'lazy' (default, most conservative) or 'eager' (retry sooner)
-   */
   constructor(
     storeId: string,
     persistor: Persistor | undefined,
@@ -111,11 +87,8 @@ export class RetryManager {
   }
 
   /**
-   * Check if retries can proceed based on current state.
-   * Automatically transitions to READY when wait time has passed.
-   * Validates persisted state on load to handle clock changes or corruption.
-   *
-   * @returns true if operations should proceed, false if blocked
+   * Check if uploads can proceed. Transitions to READY if wait time has passed.
+   * Validates persisted state to handle clock changes or corruption.
    */
   async canRetry(): Promise<boolean> {
     const state = await this.store.getState();
@@ -125,7 +98,6 @@ export class RetryManager {
       return true;
     }
 
-    // Validate persisted state (SDD §Metadata Lifecycle: Validation)
     if (!this.isPersistedStateValid(state, now)) {
       this.logger?.warn(
         'Persisted retry state failed validation, resetting to READY'
@@ -151,15 +123,12 @@ export class RetryManager {
   /**
    * Handle a 429 rate limit response.
    * Uses server-specified wait time from Retry-After header.
-   *
-   * @param retryAfterSeconds - Delay in seconds from Retry-After header (validated and clamped)
    */
   async handle429(retryAfterSeconds: number): Promise<void> {
     if (this.rateLimitConfig?.enabled !== true) {
       return;
     }
 
-    // Validate and clamp input
     if (retryAfterSeconds < 0) {
       this.logger?.warn(
         `Invalid retryAfterSeconds ${retryAfterSeconds}, using 0`
@@ -188,7 +157,6 @@ export class RetryManager {
   /**
    * Handle a transient error (5xx, network failure).
    * Uses exponential backoff to calculate wait time.
-   * Backoff is calculated atomically inside the dispatch to avoid stale retryCount.
    */
   async handleTransientError(): Promise<void> {
     if (this.backoffConfig?.enabled !== true) {
@@ -204,44 +172,31 @@ export class RetryManager {
     );
   }
 
-  /**
-   * Set a callback to be invoked when the retry wait period expires.
-   * Used to trigger an automatic flush when transitioning back to READY.
-   */
+  /** Set a callback to invoke when the wait period expires (auto-flush). */
   setAutoFlushCallback(callback: () => void): void {
     this.autoFlushCallback = callback;
   }
 
-  /**
-   * Reset the state machine to READY with retry count 0.
-   * Should be called when all batches in a flush succeed (2xx),
-   * or when the event queue is empty at flush time.
-   */
+  /** Reset the state machine to READY with retry count 0. */
   async reset(): Promise<void> {
     this.clearAutoFlushTimer();
     await this.store.dispatch(() => INITIAL_STATE);
   }
 
-  /**
-   * Clean up timers. Call when the plugin is being destroyed.
-   */
+  /** Clean up timers. */
   destroy(): void {
     this.clearAutoFlushTimer();
   }
 
-  /**
-   * Get the current retry count for X-Retry-Count header.
-   *
-   * @returns Current retry count
-   */
+  /** Get the current retry count (used for X-Retry-Count header). */
   async getRetryCount(): Promise<number> {
     const state = await this.store.getState();
     return state.retryCount;
   }
 
   /**
-   * Core error handling logic for 429 responses - atomic dispatch for thread safety.
-   * 429 (RATE_LIMITED) always takes precedence over BACKING_OFF.
+   * Core error handling for 429 responses.
+   * Dispatches atomically to handle concurrent batch failures.
    */
   private async handleError(
     newState: 'RATE_LIMITED' | 'BACKING_OFF',
@@ -250,13 +205,11 @@ export class RetryManager {
     maxRetryDuration: number,
     now: number
   ): Promise<void> {
-    // Atomic dispatch prevents async interleaving when multiple batches fail
     await this.store.dispatch((state: RetryStateData) => {
       const newRetryCount = state.retryCount + 1;
       const firstFailureTime = state.firstFailureTime ?? now;
       const totalDuration = (now - firstFailureTime) / 1000;
 
-      // Max retry count check
       if (newRetryCount > maxRetryCount) {
         this.logger?.warn(
           `Max retry count exceeded (${maxRetryCount}), resetting retry manager`
@@ -264,7 +217,6 @@ export class RetryManager {
         return INITIAL_STATE;
       }
 
-      // Max duration check
       if (totalDuration > maxRetryDuration) {
         this.logger?.warn(
           `Max retry duration exceeded (${maxRetryDuration}s), resetting retry manager`
@@ -272,14 +224,12 @@ export class RetryManager {
         return INITIAL_STATE;
       }
 
-      // 429 (RATE_LIMITED) takes precedence: a transient error should not
-      // downgrade a RATE_LIMITED state to BACKING_OFF
+      // RATE_LIMITED takes precedence over BACKING_OFF
       const resolvedState =
         state.state === 'RATE_LIMITED' && newState === 'BACKING_OFF'
           ? 'RATE_LIMITED'
           : newState;
 
-      // Consolidate wait times when already blocked
       const finalWaitUntilTime =
         state.state !== 'READY'
           ? this.applyRetryStrategy(state.waitUntilTime, waitUntilTime)
@@ -303,13 +253,12 @@ export class RetryManager {
       };
     });
 
-    // Schedule auto-flush after state update
     await this.scheduleAutoFlush();
   }
 
   /**
-   * Core error handling for transient errors — calculates backoff atomically
-   * inside the dispatch to avoid stale retryCount from concurrent calls.
+   * Core error handling for transient errors.
+   * Calculates backoff atomically inside dispatch to use current retryCount.
    */
   private async handleErrorWithBackoff(
     maxRetryCount: number,
@@ -335,11 +284,10 @@ export class RetryManager {
         return INITIAL_STATE;
       }
 
-      // Calculate backoff using the current retryCount from state (not stale)
       const backoffSeconds = this.calculateBackoff(state.retryCount);
       const waitUntilTime = now + backoffSeconds * 1000;
 
-      // 429 (RATE_LIMITED) takes precedence over BACKING_OFF
+      // RATE_LIMITED takes precedence over BACKING_OFF
       const resolvedState =
         state.state === 'RATE_LIMITED' ? 'RATE_LIMITED' : 'BACKING_OFF';
 
@@ -369,9 +317,6 @@ export class RetryManager {
     await this.scheduleAutoFlush();
   }
 
-  /**
-   * Calculate exponential backoff with jitter
-   */
   private calculateBackoff(retryCount: number): number {
     if (!this.backoffConfig) {
       return 0;
@@ -380,13 +325,10 @@ export class RetryManager {
     const { baseBackoffInterval, maxBackoffInterval, jitterPercent } =
       this.backoffConfig;
 
-    // Base exponential backoff: base * 2^retryCount
     const exponentialBackoff = baseBackoffInterval * Math.pow(2, retryCount);
-
-    // Clamp to max
     const clampedBackoff = Math.min(exponentialBackoff, maxBackoffInterval);
 
-    // Add jitter: 0 to jitterPercent (additive only, per SDD)
+    // Additive-only jitter: adds 0 to jitterPercent of the backoff
     const jitterRange = clampedBackoff * (jitterPercent / 100);
     const jitter = Math.random() * jitterRange;
 
@@ -405,8 +347,8 @@ export class RetryManager {
   }
 
   /**
-   * Schedule auto-flush callback to fire when the wait period expires.
-   * Replaces any existing timer (e.g., when a longer wait supersedes a shorter one).
+   * Schedule auto-flush callback for when the wait period expires.
+   * Replaces any existing timer when a new wait supersedes the previous one.
    */
   private async scheduleAutoFlush(): Promise<void> {
     if (!this.autoFlushCallback) {
@@ -450,7 +392,6 @@ export class RetryManager {
   /**
    * Validate persisted state loaded from storage on app restart.
    * Detects clock changes, corruption, or impossibly stale data.
-   * Per SDD §Metadata Lifecycle: Validation.
    */
   private isPersistedStateValid(state: RetryStateData, now: number): boolean {
     // firstFailureTime must be in the past
