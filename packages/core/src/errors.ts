@@ -178,7 +178,8 @@ export const parseRetryAfter = (
 
   // Try parsing as seconds (e.g., "60")
   const seconds = parseInt(retryAfterValue, 10);
-  if (!isNaN(seconds) && seconds >= 0) {
+  if (!isNaN(seconds)) {
+    if (seconds < 0) return undefined;
     return Math.min(seconds, maxRetryInterval);
   }
 
