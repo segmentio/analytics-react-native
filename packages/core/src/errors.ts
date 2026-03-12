@@ -118,17 +118,13 @@ export const translateHTTPError = (error: unknown): SegmentError => {
 };
 
 /**
- * Classify an HTTP status code according to TAPI SDD error handling tables.
+ * Classify an HTTP status code into rate_limit, transient, or permanent.
  *
- * Precedence order:
- * 1. statusCodeOverrides - explicit overrides for specific codes
- * 2. 429 special handling - rate limiting (if rateLimitEnabled !== false)
- * 3. default4xxBehavior/default5xxBehavior - defaults for ranges
- * 4. fallback - non-retryable permanent error
- *
- * @param statusCode - HTTP status code to classify
- * @param config - Optional configuration for error classification
- * @returns Classification with isRetryable flag and errorType
+ * Precedence:
+ * 1. statusCodeOverrides — explicit per-code overrides
+ * 2. 429 — rate limiting (if rateLimitEnabled !== false)
+ * 3. default4xxBehavior / default5xxBehavior — range defaults
+ * 4. Fallback — permanent (non-retryable)
  */
 export const classifyError = (
   statusCode: number,
