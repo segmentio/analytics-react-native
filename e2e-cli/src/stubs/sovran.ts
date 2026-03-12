@@ -4,7 +4,11 @@
  */
 
 export { createStore } from '../../../packages/sovran/src/store';
-export type { Store, Notify, Unsubscribe } from '../../../packages/sovran/src/store';
+export type {
+  Store,
+  Notify,
+  Unsubscribe,
+} from '../../../packages/sovran/src/store';
 export { registerBridgeStore } from '../../../packages/sovran/src/bridge';
 export type {
   Persistor,
