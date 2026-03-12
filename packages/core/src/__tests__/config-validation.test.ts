@@ -188,7 +188,7 @@ describe('config-validation', () => {
       );
       expect(result.maxTotalBackoffDuration).toBe(600);
       expect(mockLogger.warn).toHaveBeenCalledWith(
-        expect.stringContaining('2x maxBackoffInterval')
+        expect.stringContaining('2x max interval')
       );
     });
 
