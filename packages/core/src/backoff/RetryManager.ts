@@ -200,6 +200,7 @@ export class RetryManager {
   /**
    * Handle a transient error (5xx, network failure).
    * Uses exponential backoff to calculate wait time.
+   * Backoff is calculated atomically inside the dispatch to avoid stale retryCount.
    */
   async handleTransientError(): Promise<RetryResult | undefined> {
     if (this.backoffConfig?.enabled !== true) {
