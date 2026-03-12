@@ -126,7 +126,6 @@ export class RetryManager {
       return true;
     }
 
-    // Validate persisted state (SDD §Metadata Lifecycle: Validation)
     if (!this.isPersistedStateValid(state, now)) {
       this.logger?.warn(
         'Persisted retry state failed validation, resetting to READY'
@@ -201,7 +200,6 @@ export class RetryManager {
   /**
    * Handle a transient error (5xx, network failure).
    * Uses exponential backoff to calculate wait time.
-   * Backoff is calculated atomically inside the dispatch to avoid stale retryCount.
    */
   async handleTransientError(): Promise<RetryResult | undefined> {
     if (this.backoffConfig?.enabled !== true) {
