@@ -13,8 +13,6 @@ import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.core.content.pm.PackageInfoCompat
-import com.facebook.react.ReactActivity
-import com.facebook.react.ReactApplication
 import com.facebook.react.bridge.*
 import com.facebook.react.module.annotations.ReactModule
 import com.sovranreactnative.SovranModule
@@ -217,11 +215,7 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
     }
 
     Log.d(name, "Sending Deeplink data to store: uri=${uri}, referrer=${referrer}")
-    val sovran = (reactApplicationContext.currentActivity?.application as ReactApplication)
-      ?.reactNativeHost
-      ?.reactInstanceManager
-      ?.currentReactContext
-      ?.getNativeModule(SovranModule::class.java)
+    val sovran = reactApplicationContext.getNativeModule(SovranModule::class.java)
     sovran?.dispatch("add-deepLink-data", properties)
 
 
