@@ -1,0 +1,21 @@
+{
+  "name": "@segment/analytics-react-native-e2e-cli",
+  "version": "1.0.0",
+  "private": true,
+  "description": "E2E CLI for React Native analytics SDK — runs the real SDK pipeline on Node.js",
+  "main": "dist/cli.js",
+  "scripts": {
+    "build": "node build.js",
+    "start": "node dist/cli.js"
+  },
+  "dependencies": {
+    "deepmerge": "^4.3.1",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/uuid": "^10.0.0",
+    "esbuild": "^0.20.0",
+    "typescript": "^5.2.2"
+  }
+}

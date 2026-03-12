@@ -2,6 +2,7 @@ node_modules/
 coverage/
 lib/
 e2e/
+e2e-cli/
 examples/
 
 
