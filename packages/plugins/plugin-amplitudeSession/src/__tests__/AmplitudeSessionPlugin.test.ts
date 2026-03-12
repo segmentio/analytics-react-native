@@ -30,6 +30,8 @@ describe('AmplitudeSessionPlugin', () => {
     mockAsyncStorage.getItem.mockResolvedValue(null);
     mockAsyncStorage.setItem.mockResolvedValue();
     mockAsyncStorage.removeItem.mockResolvedValue();
+    mockAsyncStorage.multiSet.mockResolvedValue();
+    mockAsyncStorage.multiRemove.mockResolvedValue();
   });
 
   afterEach(() => {
@@ -487,7 +489,21 @@ describe('AmplitudeSessionPlugin', () => {
       expect(plugin.lastEventTime).toBe(1234567000);
     });
 
-    it('should save session data to AsyncStorage after events', async () => {
+    it('should bootstrap eventSessionId from sessionId on load', async () => {
+      const mockSessionId = '1234567890';
+      const mockLastEventTime = '1234567000';
+
+      mockAsyncStorage.getItem
+        .mockResolvedValueOnce(mockSessionId)
+        .mockResolvedValueOnce(mockLastEventTime);
+
+      const mockClient = { track: jest.fn() } as any;
+      await plugin.configure(mockClient);
+
+      expect(plugin.eventSessionId).toBe(1234567890);
+    });
+
+    it('should batch-persist session fields with multiSet during transition', async () => {
       await setupPluginWithClient();
 
       const mockEvent: TrackEventType = {
@@ -501,26 +517,79 @@ describe('AmplitudeSessionPlugin', () => {
 
       await plugin.execute(mockEvent);
 
-      expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
-        'previous_session_id',
-        plugin.sessionId.toString()
-      );
-      expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
-        'last_event_time',
-        plugin.lastEventTime.toString()
-      );
+      expect(mockAsyncStorage.multiSet).toHaveBeenCalledWith([
+        ['previous_session_id', plugin.sessionId.toString()],
+        ['last_event_time', plugin.sessionId.toString()],
+      ]);
     });
 
-    it('should clear session data on reset', async () => {
+    it('should NOT persist eventSessionId to AsyncStorage', async () => {
       await setupPluginWithClient();
+
+      const mockEvent: TrackEventType = {
+        type: EventType.TrackEvent,
+        event: 'test_event',
+        properties: {},
+        messageId: 'msg-1',
+        timestamp: '2023-01-01T00:00:00.000Z',
+        anonymousId: 'anon-1',
+      };
+
+      await plugin.execute(mockEvent);
+
+      // Check that no setItem or multiSet call includes 'event_session_id'
+      for (const call of mockAsyncStorage.setItem.mock.calls) {
+        expect(call[0]).not.toBe('event_session_id');
+      }
+      for (const call of mockAsyncStorage.multiSet.mock.calls) {
+        for (const pair of call[0]) {
+          expect(pair[0]).not.toBe('event_session_id');
+        }
+      }
+    });
+
+    it('should clear session data on reset and fire session_end', async () => {
+      const { client } = await setupPluginWithClient();
+
+      // Create an active session first
+      const mockEvent: TrackEventType = {
+        type: EventType.TrackEvent,
+        event: 'test_event',
+        properties: {},
+        messageId: 'msg-1',
+        timestamp: '2023-01-01T00:00:00.000Z',
+        anonymousId: 'anon-1',
+      };
+      await plugin.execute(mockEvent);
+
+      const sessionIdBeforeReset = plugin.sessionId;
+      client.track.mockClear();
 
       await plugin.reset();
 
       expect(plugin.sessionId).toBe(-1);
       expect(plugin.lastEventTime).toBe(-1);
       expect(plugin.eventSessionId).toBe(-1);
-      expect(mockAsyncStorage.removeItem).toHaveBeenCalledWith(
-        'previous_session_id'
+      expect(mockAsyncStorage.multiRemove).toHaveBeenCalledWith([
+        'previous_session_id',
+        'last_event_time',
+      ]);
+      expect(client.track).toHaveBeenCalledWith('session_end', {
+        integrations: {
+          'Actions Amplitude': { session_id: sessionIdBeforeReset },
+        },
+      });
+    });
+
+    it('should NOT fire session_end on reset when no active session', async () => {
+      const { client } = await setupPluginWithClient();
+
+      // Reset without creating a session first
+      await plugin.reset();
+
+      expect(client.track).not.toHaveBeenCalledWith(
+        'session_end',
+        expect.any(Object)
       );
     });
   });
