@@ -47,6 +47,7 @@ export class SegmentDestination extends DestinationPlugin {
 
   constructor() {
     super();
+    // We don't timeout this promise. We strictly need the response from Segment before sending things
     const { promise, resolve } = createPromise<void>();
     this.settingsPromise = promise;
     this.settingsResolve = resolve;
@@ -222,6 +223,7 @@ export class SegmentDestination extends DestinationPlugin {
       return;
     }
 
+    // We're not sending events until Segment has loaded all settings
     await this.settingsPromise;
 
     const config = this.analytics?.getConfig() ?? defaultConfig;
@@ -302,6 +304,7 @@ export class SegmentDestination extends DestinationPlugin {
     let baseURL = '';
     let endpoint = '';
     if (hasProxy) {
+      //baseURL is always config?.proxy if hasProxy
       baseURL = config?.proxy ?? '';
       if (useSegmentEndpoints) {
         const isProxyEndsWithSlash = baseURL.endsWith('/');
@@ -323,15 +326,18 @@ export class SegmentDestination extends DestinationPlugin {
 
     const config = analytics.getConfig();
 
-    // Proxy mode bypasses waiting for CDN settings
+    // If the client has a proxy we don't need to await for settings apiHost, we can send events directly
+    // Important! If new settings are required in the future you probably want to change this!
     if (config.proxy !== undefined) {
       this.settingsResolve();
     }
 
+    // Enrich events with the Destination metadata
     this.add(new DestinationMetadataEnrichment(SEGMENT_DESTINATION_KEY));
     this.add(this.queuePlugin);
   }
 
+  // We block sending stuff to segment until we get the settings
   update(settings: SegmentAPISettings, _type: UpdateType): void {
     const segmentSettings = settings.integrations[
       this.key
@@ -340,6 +346,7 @@ export class SegmentDestination extends DestinationPlugin {
       segmentSettings?.apiHost !== undefined &&
       segmentSettings?.apiHost !== null
     ) {
+      //assign the api host from segment settings (domain/v1)
       this.apiHost = `https://${segmentSettings.apiHost}/b`;
     }
 
@@ -373,10 +380,12 @@ export class SegmentDestination extends DestinationPlugin {
   }
 
   execute(event: SegmentEvent): Promise<SegmentEvent | undefined> {
+    // Execute the internal timeline here, the queue plugin will pick up the event and add it to the queue automatically
     return super.execute(event);
   }
 
   async flush() {
+    // Wait until the queue is done restoring before flushing
     return this.queuePlugin.flush();
   }
 
