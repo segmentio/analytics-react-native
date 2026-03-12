@@ -3,7 +3,12 @@ import type { Persistor } from '@segment/sovran-react-native';
 export const createMockStore = <T>(initialState: T) => {
   let state = initialState;
   return {
-    getState: jest.fn(() => Promise.resolve(state)),
+    getState: jest.fn((...args: unknown[]) => {
+      // Both overloads return a Promise in the mock for simplicity.
+      // Supports getState() and getState(true).
+      void args;
+      return Promise.resolve(state);
+    }),
     dispatch: jest.fn((action: unknown) => {
       if (typeof action === 'function') {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -11,7 +16,7 @@ export const createMockStore = <T>(initialState: T) => {
       } else {
         state = (action as { payload: unknown }).payload as T;
       }
-      return Promise.resolve();
+      return Promise.resolve(state);
     }),
   };
 };
