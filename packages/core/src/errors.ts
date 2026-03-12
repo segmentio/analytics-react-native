@@ -151,12 +151,16 @@ export const classifyError = (
 
   if (statusCode >= 400 && statusCode < 500) {
     const behavior = config?.default4xxBehavior ?? 'drop';
-    return new ErrorClassification(behavior === 'retry' ? 'transient' : 'permanent');
+    return new ErrorClassification(
+      behavior === 'retry' ? 'transient' : 'permanent'
+    );
   }
 
   if (statusCode >= 500 && statusCode < 600) {
     const behavior = config?.default5xxBehavior ?? 'retry';
-    return new ErrorClassification(behavior === 'retry' ? 'transient' : 'permanent');
+    return new ErrorClassification(
+      behavior === 'retry' ? 'transient' : 'permanent'
+    );
   }
 
   return new ErrorClassification('permanent');
@@ -176,11 +180,16 @@ export const parseRetryAfter = (
 ): number | undefined => {
   if (retryAfterValue === null || retryAfterValue === '') return undefined;
 
-  // Try parsing as seconds (e.g., "60")
-  const seconds = parseInt(retryAfterValue, 10);
-  if (!isNaN(seconds)) {
-    if (seconds < 0) return undefined;
+  // Try parsing as seconds (e.g., "60") — must be all digits to avoid
+  // misclassifying date strings that start with numbers (e.g., "01 Jan 2026")
+  if (/^\d+$/.test(retryAfterValue)) {
+    const seconds = Number(retryAfterValue);
     return Math.min(seconds, maxRetryInterval);
+  }
+
+  // Reject explicitly negative values
+  if (/^-\d+$/.test(retryAfterValue)) {
+    return undefined;
   }
 
   // Try parsing as HTTP-date (e.g., "Fri, 31 Dec 2026 23:59:59 GMT")
