@@ -370,11 +370,22 @@ export type HttpConfig = {
   backoffConfig?: BackoffConfig;
 };
 
-export type ErrorClassification = {
-  isRetryable: boolean;
-  errorType: 'rate_limit' | 'transient' | 'permanent';
-  retryAfterSeconds?: number;
-};
+export class ErrorClassification {
+  readonly errorType: 'rate_limit' | 'transient' | 'permanent';
+  readonly retryAfterSeconds?: number;
+
+  constructor(
+    errorType: 'rate_limit' | 'transient' | 'permanent',
+    retryAfterSeconds?: number
+  ) {
+    this.errorType = errorType;
+    this.retryAfterSeconds = retryAfterSeconds;
+  }
+
+  get isRetryable(): boolean {
+    return this.errorType !== 'permanent';
+  }
+}
 
 export type SegmentAPISettings = {
   integrations: SegmentAPIIntegrations;

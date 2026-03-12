@@ -1,4 +1,4 @@
-import type { ErrorClassification } from './types';
+import { ErrorClassification } from './types';
 
 export enum ErrorType {
   NetworkUnexpectedHTTPCode,
@@ -143,33 +143,27 @@ export const classifyError = (
   if (override !== undefined) {
     if (override === 'retry') {
       return statusCode === 429
-        ? { isRetryable: true, errorType: 'rate_limit' }
-        : { isRetryable: true, errorType: 'transient' };
+        ? new ErrorClassification('rate_limit')
+        : new ErrorClassification('transient');
     }
-    return { isRetryable: false, errorType: 'permanent' };
+    return new ErrorClassification('permanent');
   }
 
   if (statusCode === 429 && config?.rateLimitEnabled !== false) {
-    return { isRetryable: true, errorType: 'rate_limit' };
+    return new ErrorClassification('rate_limit');
   }
 
   if (statusCode >= 400 && statusCode < 500) {
     const behavior = config?.default4xxBehavior ?? 'drop';
-    return {
-      isRetryable: behavior === 'retry',
-      errorType: behavior === 'retry' ? 'transient' : 'permanent',
-    };
+    return new ErrorClassification(behavior === 'retry' ? 'transient' : 'permanent');
   }
 
   if (statusCode >= 500 && statusCode < 600) {
     const behavior = config?.default5xxBehavior ?? 'retry';
-    return {
-      isRetryable: behavior === 'retry',
-      errorType: behavior === 'retry' ? 'transient' : 'permanent',
-    };
+    return new ErrorClassification(behavior === 'retry' ? 'transient' : 'permanent');
   }
 
-  return { isRetryable: false, errorType: 'permanent' };
+  return new ErrorClassification('permanent');
 };
 
 /**
