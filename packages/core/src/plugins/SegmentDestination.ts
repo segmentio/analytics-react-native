@@ -15,6 +15,7 @@ import { QueueFlushingPlugin } from './QueueFlushingPlugin';
 import { defaultApiHost, defaultConfig } from '../constants';
 import { translateHTTPError, classifyError, parseRetryAfter } from '../errors';
 import { RetryManager } from '../backoff/RetryManager';
+import type { RetryResult } from '../backoff';
 
 const MAX_EVENTS_PER_BATCH = 100;
 const MAX_PAYLOAD_SIZE_IN_KB = 500;
@@ -100,9 +101,19 @@ export class SegmentDestination extends DestinationPlugin {
           retryAfterSeconds: retryAfterSeconds ?? 60,
         };
       } else if (classification.errorType === 'transient') {
-        return { batch, messageIds, status: 'transient', statusCode: res.status };
+        return {
+          batch,
+          messageIds,
+          status: 'transient',
+          statusCode: res.status,
+        };
       } else {
-        return { batch, messageIds, status: 'permanent', statusCode: res.status };
+        return {
+          batch,
+          messageIds,
+          status: 'permanent',
+          statusCode: res.status,
+        };
       }
     } catch (e) {
       this.analytics?.reportInternalError(translateHTTPError(e));
@@ -146,8 +157,7 @@ export class SegmentDestination extends DestinationPlugin {
   private async pruneExpiredEvents(
     events: SegmentEvent[]
   ): Promise<SegmentEvent[]> {
-    const maxAge =
-      this.httpConfig?.backoffConfig?.maxTotalBackoffDuration ?? 0;
+    const maxAge = this.httpConfig?.backoffConfig?.maxTotalBackoffDuration ?? 0;
     if (maxAge <= 0) {
       return events;
     }
@@ -180,26 +190,30 @@ export class SegmentDestination extends DestinationPlugin {
   /**
    * Update retry state based on aggregated batch results.
    * 429 takes precedence over transient errors.
+   * Returns true if retry limits were exceeded (caller should drop events).
    */
   private async updateRetryState(
     aggregation: ErrorAggregation
-  ): Promise<void> {
+  ): Promise<boolean> {
     if (!this.retryManager) {
-      return;
+      return false;
     }
 
     const has429 = aggregation.rateLimitResults.length > 0;
+    let result: RetryResult | undefined;
 
     if (has429) {
       // Each call lets RetryManager.applyRetryStrategy consolidate wait times
-      for (const result of aggregation.rateLimitResults) {
-        await this.retryManager.handle429(result.retryAfterSeconds ?? 60);
+      for (const r of aggregation.rateLimitResults) {
+        result = await this.retryManager.handle429(r.retryAfterSeconds ?? 60);
       }
     } else if (aggregation.hasTransientError) {
-      await this.retryManager.handleTransientError();
+      result = await this.retryManager.handleTransientError();
     } else if (aggregation.successfulMessageIds.length > 0) {
       await this.retryManager.reset();
     }
+
+    return result === 'limit_exceeded';
   }
 
   private sendEvents = async (events: SegmentEvent[]): Promise<void> => {
@@ -235,7 +249,7 @@ export class SegmentDestination extends DestinationPlugin {
 
     const aggregation = this.aggregateErrors(results);
 
-    await this.updateRetryState(aggregation);
+    const limitExceeded = await this.updateRetryState(aggregation);
 
     if (aggregation.successfulMessageIds.length > 0) {
       await this.queuePlugin.dequeueByMessageIds(
@@ -254,6 +268,16 @@ export class SegmentDestination extends DestinationPlugin {
       );
       this.analytics?.logger.error(
         `Dropped ${aggregation.permanentErrorMessageIds.length} events due to permanent errors`
+      );
+    }
+
+    // When retry limits are exceeded, the RetryManager resets to READY.
+    // We do NOT drop events here — individual events are only dropped when
+    // they exceed maxTotalBackoffDuration via pruneExpiredEvents (per-event age).
+    // The global retry counter reset just allows the next flush cycle to retry.
+    if (limitExceeded) {
+      this.analytics?.logger.warn(
+        'Retry limits exceeded, counter reset. Stale events will be pruned by age on next flush.'
       );
     }
 
@@ -356,10 +380,7 @@ export class SegmentDestination extends DestinationPlugin {
     return this.queuePlugin.flush();
   }
 
-  /**
-   * Clean up resources. Clears RetryManager auto-flush timer.
-   */
-  destroy(): void {
+  shutdown(): void {
     this.retryManager?.destroy();
   }
 }
