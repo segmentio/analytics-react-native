@@ -224,12 +224,8 @@ describe('parseRetryAfter', () => {
 
   describe('edge cases', () => {
     it('rejects negative numbers in seconds format', () => {
-      // Negative seconds are rejected, falls through to date parsing
-      // '-10' as a date string may parse to a past date, returning 0
-      const result = parseRetryAfter('-10');
-      expect(result).toBeDefined();
-      // Either undefined (invalid date) or 0 (past date) is acceptable
-      expect(result === undefined || result === 0).toBe(true);
+      expect(parseRetryAfter('-10')).toBeUndefined();
+      expect(parseRetryAfter('-1')).toBeUndefined();
     });
 
     it('uses custom maxRetryInterval', () => {
