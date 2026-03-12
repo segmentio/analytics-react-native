@@ -28,6 +28,10 @@ const INITIAL_STATE: RetryStateData = {
   firstFailureTime: null,
 };
 
+const VALID_STATES = new Set(['READY', 'RATE_LIMITED', 'BACKING_OFF']);
+
+export type RetryResult = 'rate_limited' | 'backed_off' | 'limit_exceeded';
+
 /**
  * Manages retry state for rate limiting (429) and transient errors (5xx).
  *
@@ -200,6 +204,7 @@ export class RetryManager {
   /**
    * Handle a transient error (5xx, network failure).
    * Uses exponential backoff to calculate wait time.
+   * Returns 'limit_exceeded' if retry limits are hit, otherwise 'backed_off'.
    */
   async handleTransientError(): Promise<RetryResult | undefined> {
     if (this.backoffConfig?.enabled !== true) {
@@ -406,6 +411,8 @@ export class RetryManager {
     const { baseBackoffInterval, maxBackoffInterval, jitterPercent } =
       this.backoffConfig;
 
+    // Uses pre-increment retryCount (0-based): first retry gets 2^0 = 1x base,
+    // matching the SDD worked example: 0.5s, 1s, 2s, 4s, ...
     const exponentialBackoff = baseBackoffInterval * Math.pow(2, retryCount);
     const clampedBackoff = Math.min(exponentialBackoff, maxBackoffInterval);
     const jitterRange = clampedBackoff * (jitterPercent / 100);
