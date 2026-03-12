@@ -128,8 +128,8 @@ describe('classifyError', () => {
     });
   });
 
-  describe('SDD-specified overrides', () => {
-    const sddConfig = {
+  describe('statusCodeOverrides', () => {
+    const overrideConfig = {
       default4xxBehavior: 'drop' as const,
       default5xxBehavior: 'retry' as const,
       statusCodeOverrides: {
@@ -142,28 +142,28 @@ describe('classifyError', () => {
       },
     };
 
-    it('retries 408 (per SDD)', () => {
-      const result = classifyError(408, sddConfig);
+    it('retries 408 (override)', () => {
+      const result = classifyError(408, overrideConfig);
       expect(result.isRetryable).toBe(true);
     });
 
-    it('retries 410 (per SDD)', () => {
-      const result = classifyError(410, sddConfig);
+    it('retries 410 (override)', () => {
+      const result = classifyError(410, overrideConfig);
       expect(result.isRetryable).toBe(true);
     });
 
-    it('retries 460 (per SDD)', () => {
-      const result = classifyError(460, sddConfig);
+    it('retries 460 (override)', () => {
+      const result = classifyError(460, overrideConfig);
       expect(result.isRetryable).toBe(true);
     });
 
-    it('drops 501 (per SDD)', () => {
-      const result = classifyError(501, sddConfig);
+    it('drops 501 (override)', () => {
+      const result = classifyError(501, overrideConfig);
       expect(result.isRetryable).toBe(false);
     });
 
-    it('drops 505 (per SDD)', () => {
-      const result = classifyError(505, sddConfig);
+    it('drops 505 (override)', () => {
+      const result = classifyError(505, overrideConfig);
       expect(result.isRetryable).toBe(false);
     });
   });
