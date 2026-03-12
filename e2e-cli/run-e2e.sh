@@ -34,6 +34,6 @@ if [ ! -d "$E2E_DIR" ]; then
 fi
 cd "$E2E_DIR"
 ./scripts/run-tests.sh \
-    --sdk-dir "$SCRIPT_DIR" \
-    --cli "node $SCRIPT_DIR/dist/cli.js" \
-    "$@"
+  --sdk-dir "$SCRIPT_DIR" \
+  --cli "node $SCRIPT_DIR/dist/cli.js" \
+  "$@"

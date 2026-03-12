@@ -23,18 +23,18 @@ node dist/cli.js --input '{"writeKey":"...", ...}'
 
 ```jsonc
 {
-  "writeKey": "your-write-key",       // required
-  "apiHost": "https://...",           // optional — SDK default if omitted
-  "cdnHost": "https://...",           // optional — SDK default if omitted
-  "sequences": [                      // required — event sequences to send
+  "writeKey": "your-write-key", // required
+  "apiHost": "https://...", // optional — SDK default if omitted
+  "cdnHost": "https://...", // optional — SDK default if omitted
+  "sequences": [
+    // required — event sequences to send
     {
       "delayMs": 0,
-      "events": [
-        { "type": "track", "event": "Test", "userId": "user-1" }
-      ]
+      "events": [{ "type": "track", "event": "Test", "userId": "user-1" }]
     }
   ],
-  "config": {                         // optional
+  "config": {
+    // optional
     "flushAt": 20,
     "flushInterval": 30
   }

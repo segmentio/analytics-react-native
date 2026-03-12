@@ -90,7 +90,13 @@ async function main() {
   }
 
   if (!inputStr) {
-    console.log(JSON.stringify({ success: false, error: 'No input provided', sentBatches: 0 }));
+    console.log(
+      JSON.stringify({
+        success: false,
+        error: 'No input provided',
+        sentBatches: 0,
+      })
+    );
     process.exit(1);
   }
 
@@ -167,14 +173,24 @@ async function main() {
             case 'track': {
               // Required: event name
               if (!evt.event || typeof evt.event !== 'string') {
-                console.warn(`[WARN] Skipping track event: missing or invalid event name`, evt);
+                console.warn(
+                  `[WARN] Skipping track event: missing or invalid event name`,
+                  evt
+                );
                 continue;
               }
 
               // Optional: properties (validate if present)
               const properties = evt.properties as JsonMap | undefined;
-              if (evt.properties !== undefined && (evt.properties === null || Array.isArray(evt.properties) || typeof evt.properties !== 'object')) {
-                console.warn(`[WARN] Track event "${evt.event}" has invalid properties, proceeding without them`);
+              if (
+                evt.properties !== undefined &&
+                (evt.properties === null ||
+                  Array.isArray(evt.properties) ||
+                  typeof evt.properties !== 'object')
+              ) {
+                console.warn(
+                  `[WARN] Track event "${evt.event}" has invalid properties, proceeding without them`
+                );
               }
 
               await client.track(evt.event, properties);
@@ -185,8 +201,15 @@ async function main() {
               // Optional userId (Segment allows anonymous identify)
               // Optional traits (validate if present)
               const traits = evt.traits as JsonMap | undefined;
-              if (evt.traits !== undefined && (evt.traits === null || Array.isArray(evt.traits) || typeof evt.traits !== 'object')) {
-                console.warn(`[WARN] Identify event has invalid traits, proceeding without them`);
+              if (
+                evt.traits !== undefined &&
+                (evt.traits === null ||
+                  Array.isArray(evt.traits) ||
+                  typeof evt.traits !== 'object')
+              ) {
+                console.warn(
+                  `[WARN] Identify event has invalid traits, proceeding without them`
+                );
               }
 
               await client.identify(evt.userId, traits);
@@ -194,17 +217,28 @@ async function main() {
             }
 
             case 'screen':
-            case 'page': { // RN SDK has no page(); map to screen for cross-SDK test compat
+            case 'page': {
+              // RN SDK has no page(); map to screen for cross-SDK test compat
               // Required: screen/page name
               if (!evt.name || typeof evt.name !== 'string') {
-                console.warn(`[WARN] Skipping ${evt.type} event: missing or invalid name`, evt);
+                console.warn(
+                  `[WARN] Skipping ${evt.type} event: missing or invalid name`,
+                  evt
+                );
                 continue;
               }
 
               // Optional: properties (validate if present)
               const properties = evt.properties as JsonMap | undefined;
-              if (evt.properties !== undefined && (evt.properties === null || Array.isArray(evt.properties) || typeof evt.properties !== 'object')) {
-                console.warn(`[WARN] Screen "${evt.name}" has invalid properties, proceeding without them`);
+              if (
+                evt.properties !== undefined &&
+                (evt.properties === null ||
+                  Array.isArray(evt.properties) ||
+                  typeof evt.properties !== 'object')
+              ) {
+                console.warn(
+                  `[WARN] Screen "${evt.name}" has invalid properties, proceeding without them`
+                );
               }
 
               await client.screen(evt.name, properties);
@@ -214,14 +248,24 @@ async function main() {
             case 'group': {
               // Required: groupId
               if (!evt.groupId || typeof evt.groupId !== 'string') {
-                console.warn(`[WARN] Skipping group event: missing or invalid groupId`, evt);
+                console.warn(
+                  `[WARN] Skipping group event: missing or invalid groupId`,
+                  evt
+                );
                 continue;
               }
 
               // Optional: traits (validate if present)
               const traits = evt.traits as JsonMap | undefined;
-              if (evt.traits !== undefined && (evt.traits === null || Array.isArray(evt.traits) || typeof evt.traits !== 'object')) {
-                console.warn(`[WARN] Group event for "${evt.groupId}" has invalid traits, proceeding without them`);
+              if (
+                evt.traits !== undefined &&
+                (evt.traits === null ||
+                  Array.isArray(evt.traits) ||
+                  typeof evt.traits !== 'object')
+              ) {
+                console.warn(
+                  `[WARN] Group event for "${evt.groupId}" has invalid traits, proceeding without them`
+                );
               }
 
               await client.group(evt.groupId, traits);
@@ -231,7 +275,10 @@ async function main() {
             case 'alias': {
               // Required: userId
               if (!evt.userId || typeof evt.userId !== 'string') {
-                console.warn(`[WARN] Skipping alias event: missing or invalid userId`, evt);
+                console.warn(
+                  `[WARN] Skipping alias event: missing or invalid userId`,
+                  evt
+                );
                 continue;
               }
 
@@ -240,12 +287,19 @@ async function main() {
             }
 
             default:
-              console.warn(`[WARN] Skipping event: unknown event type "${evt.type}"`, evt);
+              console.warn(
+                `[WARN] Skipping event: unknown event type "${evt.type}"`,
+                evt
+              );
               continue;
           }
         } catch (error) {
           // Log but don't fail the entire sequence if one event fails
-          console.error(`[ERROR] Failed to process ${evt.type} event:`, error, evt);
+          console.error(
+            `[ERROR] Failed to process ${evt.type} event:`,
+            error,
+            evt
+          );
           continue;
         }
       }
@@ -270,6 +324,8 @@ async function main() {
 }
 
 main().catch((e) => {
-  console.log(JSON.stringify({ success: false, error: String(e), sentBatches: 0 }));
+  console.log(
+    JSON.stringify({ success: false, error: String(e), sentBatches: 0 })
+  );
   process.exit(1);
 });
