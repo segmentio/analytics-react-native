@@ -30,6 +30,7 @@ export class AmplitudeSessionPlugin extends EventPlugin {
   private _sessionId = -1;
   private _eventSessionId = -1;
   private _lastEventTime = -1;
+  private _previousAppState: string = AppState.currentState ?? 'unknown';
   resetPending = false;
 
   get eventSessionId() {
@@ -202,8 +203,8 @@ export class AmplitudeSessionPlugin extends EventPlugin {
     this.lastEventTime = Date.now();
   };
 
-  private onForeground = () => {
-    this.startNewSessionIfNecessary();
+  private onForeground = async () => {
+    await this.startNewSessionIfNecessary();
   };
 
   private async startNewSessionIfNecessary() {
@@ -310,10 +311,17 @@ export class AmplitudeSessionPlugin extends EventPlugin {
   }
 
   private handleAppStateChange = (nextAppState: string) => {
-    if (nextAppState === 'active') {
+    if (
+      ['inactive', 'background'].includes(this._previousAppState) &&
+      nextAppState === 'active'
+    ) {
       this.onForeground();
-    } else if (nextAppState === 'background') {
+    } else if (
+      this._previousAppState === 'active' &&
+      ['inactive', 'background'].includes(nextAppState)
+    ) {
       this.onBackground();
     }
+    this._previousAppState = nextAppState;
   };
 }

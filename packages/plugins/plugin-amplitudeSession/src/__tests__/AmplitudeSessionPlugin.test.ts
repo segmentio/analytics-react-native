@@ -590,7 +590,8 @@ describe('AmplitudeSessionPlugin', () => {
         'startNewSessionIfNecessary'
       );
 
-      // Simulate app coming to foreground
+      // Simulate background → foreground transition
+      appStateChangeHandler('background');
       appStateChangeHandler('active');
 
       // Should call startNewSessionIfNecessary
@@ -625,11 +626,63 @@ describe('AmplitudeSessionPlugin', () => {
       plugin.sessionId = baseTime - 1000;
       plugin.lastEventTime = baseTime - 30000;
 
-      // Simulate app going to background
+      // Simulate active → background transition
+      // _previousAppState starts as 'active' (from AppState.currentState mock)
       appStateChangeHandler('background');
 
       expect(plugin.lastEventTime).toBe(baseTime);
       expect(mockAsyncStorage.setItem).toHaveBeenCalled();
+    });
+
+    it('should treat inactive → active as foreground transition', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+
+      plugin.sessionId = baseTime - 1000;
+      plugin.lastEventTime = baseTime - (MAX_SESSION_TIME_IN_MS + 10000);
+
+      const startNewSessionSpy = jest.spyOn(
+        plugin as any,
+        'startNewSessionIfNecessary'
+      );
+
+      // Simulate active → inactive → active (iOS interruption pattern)
+      appStateChangeHandler('inactive');
+      appStateChangeHandler('active');
+
+      expect(startNewSessionSpy).toHaveBeenCalled();
+    });
+
+    it('should treat active → inactive as background transition', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+
+      plugin.sessionId = baseTime - 1000;
+      plugin.lastEventTime = baseTime - 30000;
+
+      // _previousAppState starts as 'active' (from mock)
+      appStateChangeHandler('inactive');
+
+      // Should have recorded lastEventTime (background behavior)
+      expect(plugin.lastEventTime).toBe(baseTime);
+    });
+
+    it('should not double-trigger for active → inactive → background', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+
+      plugin.sessionId = baseTime - 1000;
+      plugin.lastEventTime = baseTime - 30000;
+
+      const onBackgroundSpy = jest.spyOn(plugin as any, 'onBackground');
+
+      // Simulate active → inactive → background (normal iOS backgrounding)
+      appStateChangeHandler('inactive');
+      appStateChangeHandler('background');
+
+      // onBackground should only be called once (for the active → inactive transition)
+      // The inactive → background transition should NOT trigger onBackground again
+      expect(onBackgroundSpy).toHaveBeenCalledTimes(1);
     });
   });
 
