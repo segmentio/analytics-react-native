@@ -186,16 +186,12 @@ export const parseRetryAfter = (
 ): number | undefined => {
   if (retryAfterValue === null || retryAfterValue === '') return undefined;
 
-  // Try parsing as seconds (e.g., "60") — must be all digits to avoid
-  // misclassifying date strings that start with numbers (e.g., "01 Jan 2026")
-  if (/^\d+$/.test(retryAfterValue)) {
-    const seconds = Number(retryAfterValue);
-    return Math.min(seconds, maxRetryInterval);
-  }
-
-  // Reject explicitly negative values
-  if (/^-\d+$/.test(retryAfterValue)) {
-    return undefined;
+  // Number() returns NaN for date strings like "01 Jan 2026",
+  // so this naturally distinguishes seconds from HTTP-date format
+  const asNumber = Number(retryAfterValue);
+  if (Number.isFinite(asNumber)) {
+    if (asNumber < 0) return undefined;
+    return Math.min(asNumber, maxRetryInterval);
   }
 
   // Try parsing as HTTP-date (e.g., "Fri, 31 Dec 2026 23:59:59 GMT")
