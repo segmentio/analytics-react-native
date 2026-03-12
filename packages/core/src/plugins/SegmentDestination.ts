@@ -36,8 +36,7 @@ type BatchResult = {
  */
 type ErrorAggregation = {
   successfulMessageIds: string[];
-  has429: boolean;
-  longestRetryAfter: number;
+  rateLimitResults: BatchResult[];
   hasTransientError: boolean;
   permanentErrorMessageIds: string[];
 };
@@ -83,12 +82,12 @@ export class SegmentDestination extends DestinationPlugin {
         retryCount,
       });
 
-      if (res.status === 200) {
+      if (res.ok) {
         return {
           batch,
           messageIds,
           status: 'success',
-          statusCode: 200,
+          statusCode: res.status,
         };
       }
 
@@ -116,10 +115,7 @@ export class SegmentDestination extends DestinationPlugin {
           messageIds,
           status: '429',
           statusCode: res.status,
-          retryAfterSeconds:
-            retryAfterSeconds !== undefined && retryAfterSeconds > 0
-              ? retryAfterSeconds
-              : 60, // Default to 60s if not provided
+          retryAfterSeconds: retryAfterSeconds ?? 60,
         };
       } else if (classification.errorType === 'transient') {
         return {
@@ -154,8 +150,7 @@ export class SegmentDestination extends DestinationPlugin {
   private aggregateErrors(results: BatchResult[]): ErrorAggregation {
     const aggregation: ErrorAggregation = {
       successfulMessageIds: [],
-      has429: false,
-      longestRetryAfter: 0,
+      rateLimitResults: [],
       hasTransientError: false,
       permanentErrorMessageIds: [],
     };
@@ -167,16 +162,7 @@ export class SegmentDestination extends DestinationPlugin {
           break;
 
         case '429':
-          aggregation.has429 = true;
-          if (
-            result.retryAfterSeconds !== undefined &&
-            result.retryAfterSeconds > 0
-          ) {
-            aggregation.longestRetryAfter = Math.max(
-              aggregation.longestRetryAfter,
-              result.retryAfterSeconds
-            );
-          }
+          aggregation.rateLimitResults.push(result);
           break;
 
         case 'transient':
@@ -199,6 +185,7 @@ export class SegmentDestination extends DestinationPlugin {
 
   private sendEvents = async (events: SegmentEvent[]): Promise<void> => {
     if (events.length === 0) {
+      await this.retryManager?.reset();
       return;
     }
 
@@ -235,6 +222,7 @@ export class SegmentDestination extends DestinationPlugin {
       events = freshEvents;
 
       if (events.length === 0) {
+        await this.retryManager?.reset();
         return;
       }
     }
@@ -262,13 +250,14 @@ export class SegmentDestination extends DestinationPlugin {
 
     // Aggregate errors
     const aggregation = this.aggregateErrors(results);
+    const has429 = aggregation.rateLimitResults.length > 0;
 
-    // Handle 429 - takes precedence over transient errors (blocks entire pipeline)
-    if (aggregation.has429 && this.retryManager) {
-      await this.retryManager.handle429(aggregation.longestRetryAfter);
-      this.analytics?.logger.warn(
-        `Rate limited (429): waiting ${aggregation.longestRetryAfter}s before retry`
-      );
+    // Handle 429 — call handle429 per result so RetryManager.applyRetryStrategy
+    // consolidates wait times according to the configured retry strategy (eager/lazy)
+    if (has429 && this.retryManager) {
+      for (const result of aggregation.rateLimitResults) {
+        await this.retryManager.handle429(result.retryAfterSeconds ?? 60);
+      }
     } else if (aggregation.hasTransientError && this.retryManager) {
       // Only handle transient backoff if no 429 (429 blocks everything anyway)
       await this.retryManager.handleTransientError();
@@ -281,11 +270,7 @@ export class SegmentDestination extends DestinationPlugin {
       );
 
       // Only reset retry state on full success (no concurrent failures)
-      if (
-        this.retryManager &&
-        !aggregation.has429 &&
-        !aggregation.hasTransientError
-      ) {
+      if (this.retryManager && !has429 && !aggregation.hasTransientError) {
         await this.retryManager.reset();
       }
 
@@ -313,7 +298,7 @@ export class SegmentDestination extends DestinationPlugin {
       aggregation.permanentErrorMessageIds.length;
     if (failedCount > 0) {
       this.analytics?.logger.warn(
-        `${failedCount} events will retry (429: ${aggregation.has429}, transient: ${aggregation.hasTransientError})`
+        `${failedCount} events will retry (429: ${has429}, transient: ${aggregation.hasTransientError})`
       );
     }
   };
@@ -412,5 +397,12 @@ export class SegmentDestination extends DestinationPlugin {
   async flush() {
     // Wait until the queue is done restoring before flushing
     return this.queuePlugin.flush();
+  }
+
+  /**
+   * Clean up resources. Clears RetryManager auto-flush timer.
+   */
+  destroy(): void {
+    this.retryManager?.destroy();
   }
 }
