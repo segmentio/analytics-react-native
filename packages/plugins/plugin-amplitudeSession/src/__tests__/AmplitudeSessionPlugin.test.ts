@@ -746,6 +746,34 @@ describe('AmplitudeSessionPlugin', () => {
       });
     });
 
+    it('should use eventSessionId for event enrichment during transition', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+
+      // Set up a session where eventSessionId differs from sessionId
+      // (simulates mid-transition state where new session has started but
+      // eventSessionId still points to the old session)
+      plugin['_sessionId'] = baseTime;
+      plugin['_eventSessionId'] = baseTime - 50000;
+      plugin['_lastEventTime'] = baseTime - 1000;
+
+      const mockEvent: TrackEventType = {
+        type: EventType.TrackEvent,
+        event: 'test_event',
+        properties: {},
+        messageId: 'msg-1',
+        timestamp: '2023-01-01T00:00:00.000Z',
+        anonymousId: 'anon-1',
+      };
+
+      const result = await plugin.execute(mockEvent);
+
+      // insertSession should use eventSessionId, not sessionId
+      expect(result.integrations?.['Actions Amplitude']).toEqual({
+        session_id: baseTime - 50000,
+      });
+    });
+
     it('should NOT modify events when session_id already exists', async () => {
       const mockEvent: TrackEventType = {
         type: EventType.TrackEvent,

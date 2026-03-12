@@ -136,10 +136,6 @@ export class AmplitudeSessionPlugin extends EventPlugin {
       this.eventSessionId = this.sessionId;
     }
 
-    if (eventName === AMP_SESSION_END_EVENT) {
-      console.log(`[AmplitudeSession] EndSession = ${this.eventSessionId}`);
-    }
-
     if (
       eventName.startsWith('Amplitude') ||
       eventName === AMP_SESSION_START_EVENT ||
@@ -197,7 +193,7 @@ export class AmplitudeSessionPlugin extends EventPlugin {
       ...event,
       integrations: {
         ...integrations,
-        [this.key]: { session_id: this.sessionId },
+        [this.key]: { session_id: this.eventSessionId },
       },
     };
   };
@@ -255,8 +251,6 @@ export class AmplitudeSessionPlugin extends EventPlugin {
       this.eventSessionId === -1 ? newSessionId : this.eventSessionId;
     this.lastEventTime = newSessionId;
 
-    console.log(`[AmplitudeSession] startNewSession -> ${newSessionId}`);
-
     await this.trackSessionStart(newSessionId);
   }
 
@@ -275,8 +269,6 @@ export class AmplitudeSessionPlugin extends EventPlugin {
     if (this.sessionId === -1) {
       return;
     }
-
-    console.log(`[AmplitudeSession] endSession -> ${this.sessionId}`);
 
     this.analytics?.track(AMP_SESSION_END_EVENT, {
       integrations: {
