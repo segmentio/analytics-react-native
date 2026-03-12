@@ -127,24 +127,6 @@ export class QueueFlushingPlugin extends UtilityPlugin {
   }
 
   /**
-   * Removes one or multiple events from the queue
-   * @param events events to remove
-   */
-  async dequeue(events: SegmentEvent | SegmentEvent[]) {
-    await this.queueStore?.dispatch((state) => {
-      const eventsToRemove = Array.isArray(events) ? events : [events];
-
-      if (eventsToRemove.length === 0 || state.events.length === 0) {
-        return state;
-      }
-
-      const setToRemove = new Set(eventsToRemove);
-      const filteredEvents = state.events.filter((e) => !setToRemove.has(e));
-      return { events: filteredEvents };
-    });
-  }
-
-  /**
    * Removes events from the queue by their messageId
    * @param messageIds array of messageId strings to remove
    */
