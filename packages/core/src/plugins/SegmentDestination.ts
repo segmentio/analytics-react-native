@@ -20,9 +20,6 @@ const MAX_EVENTS_PER_BATCH = 100;
 const MAX_PAYLOAD_SIZE_IN_KB = 500;
 export const SEGMENT_DESTINATION_KEY = 'Segment.io';
 
-/**
- * Result of uploading a single batch
- */
 type BatchResult = {
   batch: SegmentEvent[];
   messageIds: string[];
@@ -31,9 +28,6 @@ type BatchResult = {
   retryAfterSeconds?: number;
 };
 
-/**
- * Aggregated error information from parallel batch uploads
- */
 type ErrorAggregation = {
   successfulMessageIds: string[];
   rateLimitResults: BatchResult[];
@@ -52,15 +46,11 @@ export class SegmentDestination extends DestinationPlugin {
 
   constructor() {
     super();
-    // We don't timeout this promise. We strictly need the response from Segment before sending things
     const { promise, resolve } = createPromise<void>();
     this.settingsPromise = promise;
     this.settingsResolve = resolve;
   }
 
-  /**
-   * Upload a single batch and return structured result
-   */
   private async uploadBatch(batch: SegmentEvent[]): Promise<BatchResult> {
     const config = this.analytics?.getConfig() ?? defaultConfig;
     const messageIds = batch
@@ -71,7 +61,6 @@ export class SegmentDestination extends DestinationPlugin {
       ? await this.retryManager.getRetryCount()
       : 0;
 
-    // Strip internal metadata before sending upstream
     const cleanedBatch = batch.map(({ _queuedAt, ...event }) => event);
 
     try {
@@ -83,15 +72,9 @@ export class SegmentDestination extends DestinationPlugin {
       });
 
       if (res.ok) {
-        return {
-          batch,
-          messageIds,
-          status: 'success',
-          statusCode: res.status,
-        };
+        return { batch, messageIds, status: 'success', statusCode: res.status };
       }
 
-      // Parse retry-after for 429
       const retryAfterSeconds =
         res.status === 429
           ? parseRetryAfter(
@@ -100,7 +83,6 @@ export class SegmentDestination extends DestinationPlugin {
             )
           : undefined;
 
-      // Classify error
       const classification = classifyError(res.status, {
         default4xxBehavior: this.httpConfig?.backoffConfig?.default4xxBehavior,
         default5xxBehavior: this.httpConfig?.backoffConfig?.default5xxBehavior,
@@ -118,35 +100,16 @@ export class SegmentDestination extends DestinationPlugin {
           retryAfterSeconds: retryAfterSeconds ?? 60,
         };
       } else if (classification.errorType === 'transient') {
-        return {
-          batch,
-          messageIds,
-          status: 'transient',
-          statusCode: res.status,
-        };
+        return { batch, messageIds, status: 'transient', statusCode: res.status };
       } else {
-        // Permanent error
-        return {
-          batch,
-          messageIds,
-          status: 'permanent',
-          statusCode: res.status,
-        };
+        return { batch, messageIds, status: 'permanent', statusCode: res.status };
       }
     } catch (e) {
-      // Network error
       this.analytics?.reportInternalError(translateHTTPError(e));
-      return {
-        batch,
-        messageIds,
-        status: 'network_error',
-      };
+      return { batch, messageIds, status: 'network_error' };
     }
   }
 
-  /**
-   * Aggregate errors from parallel batch results
-   */
   private aggregateErrors(results: BatchResult[]): ErrorAggregation {
     const aggregation: ErrorAggregation = {
       successfulMessageIds: [],
@@ -160,27 +123,83 @@ export class SegmentDestination extends DestinationPlugin {
         case 'success':
           aggregation.successfulMessageIds.push(...result.messageIds);
           break;
-
         case '429':
           aggregation.rateLimitResults.push(result);
           break;
-
         case 'transient':
+        case 'network_error':
           aggregation.hasTransientError = true;
           break;
-
         case 'permanent':
           aggregation.permanentErrorMessageIds.push(...result.messageIds);
-          break;
-
-        case 'network_error':
-          // Treat as transient
-          aggregation.hasTransientError = true;
           break;
       }
     }
 
     return aggregation;
+  }
+
+  /**
+   * Drop events whose _queuedAt exceeds maxTotalBackoffDuration.
+   * Returns the remaining fresh events.
+   */
+  private async pruneExpiredEvents(
+    events: SegmentEvent[]
+  ): Promise<SegmentEvent[]> {
+    const maxAge =
+      this.httpConfig?.backoffConfig?.maxTotalBackoffDuration ?? 0;
+    if (maxAge <= 0) {
+      return events;
+    }
+
+    const now = Date.now();
+    const maxAgeMs = maxAge * 1000;
+    const expiredMessageIds: string[] = [];
+    const freshEvents: SegmentEvent[] = [];
+
+    for (const event of events) {
+      if (event._queuedAt !== undefined && now - event._queuedAt > maxAgeMs) {
+        if (event.messageId !== undefined && event.messageId !== '') {
+          expiredMessageIds.push(event.messageId);
+        }
+      } else {
+        freshEvents.push(event);
+      }
+    }
+
+    if (expiredMessageIds.length > 0) {
+      await this.queuePlugin.dequeueByMessageIds(expiredMessageIds);
+      this.analytics?.logger.warn(
+        `Pruned ${expiredMessageIds.length} events older than ${maxAge}s`
+      );
+    }
+
+    return freshEvents;
+  }
+
+  /**
+   * Update retry state based on aggregated batch results.
+   * 429 takes precedence over transient errors.
+   */
+  private async updateRetryState(
+    aggregation: ErrorAggregation
+  ): Promise<void> {
+    if (!this.retryManager) {
+      return;
+    }
+
+    const has429 = aggregation.rateLimitResults.length > 0;
+
+    if (has429) {
+      // Each call lets RetryManager.applyRetryStrategy consolidate wait times
+      for (const result of aggregation.rateLimitResults) {
+        await this.retryManager.handle429(result.retryAfterSeconds ?? 60);
+      }
+    } else if (aggregation.hasTransientError) {
+      await this.retryManager.handleTransientError();
+    } else if (aggregation.successfulMessageIds.length > 0) {
+      await this.retryManager.reset();
+    }
   }
 
   private sendEvents = async (events: SegmentEvent[]): Promise<void> => {
@@ -189,91 +208,39 @@ export class SegmentDestination extends DestinationPlugin {
       return;
     }
 
-    // We're not sending events until Segment has loaded all settings
     await this.settingsPromise;
 
     const config = this.analytics?.getConfig() ?? defaultConfig;
 
-    // Prune events that have exceeded maxTotalBackoffDuration
-    const maxAge = this.httpConfig?.backoffConfig?.maxTotalBackoffDuration ?? 0;
-    if (maxAge > 0) {
-      const now = Date.now();
-      const maxAgeMs = maxAge * 1000;
-      const expiredMessageIds: string[] = [];
-      const freshEvents: SegmentEvent[] = [];
-
-      for (const event of events) {
-        if (event._queuedAt !== undefined && now - event._queuedAt > maxAgeMs) {
-          if (event.messageId !== undefined && event.messageId !== '') {
-            expiredMessageIds.push(event.messageId);
-          }
-        } else {
-          freshEvents.push(event);
-        }
-      }
-
-      if (expiredMessageIds.length > 0) {
-        await this.queuePlugin.dequeueByMessageIds(expiredMessageIds);
-        this.analytics?.logger.warn(
-          `Pruned ${expiredMessageIds.length} events older than ${maxAge}s`
-        );
-      }
-
-      events = freshEvents;
-
-      if (events.length === 0) {
-        await this.retryManager?.reset();
-        return;
-      }
+    events = await this.pruneExpiredEvents(events);
+    if (events.length === 0) {
+      await this.retryManager?.reset();
+      return;
     }
 
-    // Check if blocked by rate limit or backoff
-    if (this.retryManager) {
-      const canRetry = await this.retryManager.canRetry();
-      if (!canRetry) {
-        this.analytics?.logger.info('Upload blocked by retry manager');
-        return;
-      }
+    if (this.retryManager && !(await this.retryManager.canRetry())) {
+      this.analytics?.logger.info('Upload blocked by retry manager');
+      return;
     }
 
-    // Chunk events into batches
     const batches: SegmentEvent[][] = chunk(
       events,
       config.maxBatchSize ?? MAX_EVENTS_PER_BATCH,
       MAX_PAYLOAD_SIZE_IN_KB
     );
 
-    // Upload all batches in parallel
     const results: BatchResult[] = await Promise.all(
       batches.map((batch) => this.uploadBatch(batch))
     );
 
-    // Aggregate errors
     const aggregation = this.aggregateErrors(results);
-    const has429 = aggregation.rateLimitResults.length > 0;
 
-    // Handle 429 — call handle429 per result so RetryManager.applyRetryStrategy
-    // consolidates wait times according to the configured retry strategy (eager/lazy)
-    if (has429 && this.retryManager) {
-      for (const result of aggregation.rateLimitResults) {
-        await this.retryManager.handle429(result.retryAfterSeconds ?? 60);
-      }
-    } else if (aggregation.hasTransientError && this.retryManager) {
-      // Only handle transient backoff if no 429 (429 blocks everything anyway)
-      await this.retryManager.handleTransientError();
-    }
+    await this.updateRetryState(aggregation);
 
-    // Handle successes - dequeue
     if (aggregation.successfulMessageIds.length > 0) {
       await this.queuePlugin.dequeueByMessageIds(
         aggregation.successfulMessageIds
       );
-
-      // Only reset retry state on full success (no concurrent failures)
-      if (this.retryManager && !has429 && !aggregation.hasTransientError) {
-        await this.retryManager.reset();
-      }
-
       if (config.debug === true) {
         this.analytics?.logger.info(
           `Sent ${aggregation.successfulMessageIds.length} events`
@@ -281,7 +248,6 @@ export class SegmentDestination extends DestinationPlugin {
       }
     }
 
-    // Handle permanent errors - dequeue (drop)
     if (aggregation.permanentErrorMessageIds.length > 0) {
       await this.queuePlugin.dequeueByMessageIds(
         aggregation.permanentErrorMessageIds
@@ -291,12 +257,12 @@ export class SegmentDestination extends DestinationPlugin {
       );
     }
 
-    // Log summary
     const failedCount =
       events.length -
       aggregation.successfulMessageIds.length -
       aggregation.permanentErrorMessageIds.length;
     if (failedCount > 0) {
+      const has429 = aggregation.rateLimitResults.length > 0;
       this.analytics?.logger.warn(
         `${failedCount} events will retry (429: ${has429}, transient: ${aggregation.hasTransientError})`
       );
@@ -312,7 +278,6 @@ export class SegmentDestination extends DestinationPlugin {
     let baseURL = '';
     let endpoint = '';
     if (hasProxy) {
-      //baseURL is always config?.proxy if hasProxy
       baseURL = config?.proxy ?? '';
       if (useSegmentEndpoints) {
         const isProxyEndsWithSlash = baseURL.endsWith('/');
@@ -334,18 +299,15 @@ export class SegmentDestination extends DestinationPlugin {
 
     const config = analytics.getConfig();
 
-    // If the client has a proxy we don't need to await for settings apiHost, we can send events directly
-    // Important! If new settings are required in the future you probably want to change this!
+    // Proxy mode bypasses waiting for CDN settings
     if (config.proxy !== undefined) {
       this.settingsResolve();
     }
 
-    // Enrich events with the Destination metadata
     this.add(new DestinationMetadataEnrichment(SEGMENT_DESTINATION_KEY));
     this.add(this.queuePlugin);
   }
 
-  // We block sending stuff to segment until we get the settings
   update(settings: SegmentAPISettings, _type: UpdateType): void {
     const segmentSettings = settings.integrations[
       this.key
@@ -354,11 +316,9 @@ export class SegmentDestination extends DestinationPlugin {
       segmentSettings?.apiHost !== undefined &&
       segmentSettings?.apiHost !== null
     ) {
-      //assign the api host from segment settings (domain/v1)
       this.apiHost = `https://${segmentSettings.apiHost}/b`;
     }
 
-    // Initialize httpConfig and retry manager from server-side CDN config
     const httpConfig = this.analytics?.getHttpConfig();
     if (httpConfig) {
       this.httpConfig = httpConfig;
@@ -389,13 +349,10 @@ export class SegmentDestination extends DestinationPlugin {
   }
 
   execute(event: SegmentEvent): Promise<SegmentEvent | undefined> {
-    // Execute the internal timeline here, the queue plugin will pick up the event and add it to the queue automatically
-    const enrichedEvent = super.execute(event);
-    return enrichedEvent;
+    return super.execute(event);
   }
 
   async flush() {
-    // Wait until the queue is done restoring before flushing
     return this.queuePlugin.flush();
   }
 
