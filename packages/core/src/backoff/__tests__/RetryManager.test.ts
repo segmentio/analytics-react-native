@@ -275,6 +275,34 @@ describe('RetryManager', () => {
       expect(await rm.canRetry()).toBe(true);
     });
 
+    it('429 Retry-After is authoritative even when shorter than existing backoff', async () => {
+      const now = 1000000;
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+
+      const config: BackoffConfig = {
+        ...defaultBackoffConfig,
+        maxBackoffInterval: 300,
+      };
+      const rm = new RetryManager(
+        'test-key',
+        mockPersistor,
+        defaultRateLimitConfig,
+        config,
+        mockLogger
+      );
+
+      // Drive backoff up high: 0.5, 1, 2, 4, 8, 16, 32, 64, 128, 256s
+      for (let i = 0; i < 10; i++) {
+        await rm.handleTransientError();
+      }
+
+      // Now 429 says "retry after 10s" — should use 10s, not the 256s backoff
+      await rm.handle429(10);
+
+      jest.spyOn(Date, 'now').mockReturnValue(now + 11000);
+      expect(await rm.canRetry()).toBe(true);
+    });
+
     it('resets when maxRateLimitDuration exceeded', async () => {
       const now = 1000000;
       jest.spyOn(Date, 'now').mockReturnValue(now);
@@ -547,11 +575,15 @@ describe('RetryManager', () => {
   });
 
   describe('autoFlush', () => {
+    let activeManager: RetryManager | undefined;
+
     beforeEach(() => {
       jest.useFakeTimers();
     });
 
     afterEach(() => {
+      activeManager?.destroy();
+      activeManager = undefined;
       jest.useRealTimers();
     });
 
@@ -567,6 +599,7 @@ describe('RetryManager', () => {
         defaultBackoffConfig,
         mockLogger
       );
+      activeManager = rm;
       rm.setAutoFlushCallback(flushCallback);
 
       await rm.handle429(10); // Wait 10s
@@ -589,6 +622,7 @@ describe('RetryManager', () => {
         defaultBackoffConfig,
         mockLogger
       );
+      activeManager = rm;
 
       // No callback set — should not throw
       await rm.handle429(10);
@@ -609,6 +643,7 @@ describe('RetryManager', () => {
         defaultBackoffConfig,
         mockLogger
       );
+      activeManager = rm;
       rm.setAutoFlushCallback(flushCallback);
 
       await rm.handle429(10);
@@ -630,6 +665,7 @@ describe('RetryManager', () => {
         defaultBackoffConfig,
         mockLogger
       );
+      activeManager = rm;
       rm.setAutoFlushCallback(flushCallback);
 
       await rm.handle429(10);
@@ -651,6 +687,7 @@ describe('RetryManager', () => {
         defaultBackoffConfig,
         mockLogger
       );
+      activeManager = rm;
       rm.setAutoFlushCallback(flushCallback);
 
       await rm.handle429(10); // Wait 10s
