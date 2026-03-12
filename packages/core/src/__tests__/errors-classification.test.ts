@@ -30,6 +30,16 @@ describe('classifyError', () => {
       expect(result.isRetryable).toBe(false);
       expect(result.errorType).toBe('permanent');
     });
+
+    it('overrides 429 to permanent when set to drop', () => {
+      const config = {
+        rateLimitEnabled: true,
+        statusCodeOverrides: { '429': 'drop' as const },
+      };
+      const result = classifyError(429, config);
+      expect(result.isRetryable).toBe(false);
+      expect(result.errorType).toBe('permanent');
+    });
   });
 
   describe('429 special handling', () => {
@@ -219,6 +229,15 @@ describe('parseRetryAfter', () => {
 
     it('returns undefined for malformed date', () => {
       expect(parseRetryAfter('Not a date')).toBeUndefined();
+    });
+
+    it('does not misparse date strings starting with digits as seconds', () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2026-01-01T00:00:00Z'));
+      // "01 Jan 2026 00:01:00 GMT" starts with digits but is an HTTP-date
+      const result = parseRetryAfter('01 Jan 2026 00:01:00 GMT');
+      expect(result).toBe(60); // parsed as date, not as "1 second"
+      jest.useRealTimers();
     });
   });
 
