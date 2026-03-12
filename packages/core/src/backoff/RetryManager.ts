@@ -230,10 +230,22 @@ export class RetryManager {
           ? 'RATE_LIMITED'
           : newState;
 
-      const finalWaitUntilTime =
-        state.state !== 'READY'
-          ? this.applyRetryStrategy(state.waitUntilTime, waitUntilTime)
-          : waitUntilTime;
+      // Consolidate wait times when already blocked.
+      // 429 Retry-After is authoritative when overriding a transient backoff —
+      // the server is giving an explicit timing signal that supersedes our
+      // calculated backoff. For same-state consolidation (e.g. two 429s),
+      // apply the retry strategy (lazy=max, eager=min).
+      let finalWaitUntilTime: number;
+      if (state.state === 'READY') {
+        finalWaitUntilTime = waitUntilTime;
+      } else if (newState === 'RATE_LIMITED' && state.state === 'BACKING_OFF') {
+        finalWaitUntilTime = waitUntilTime;
+      } else {
+        finalWaitUntilTime = this.applyRetryStrategy(
+          state.waitUntilTime,
+          waitUntilTime
+        );
+      }
 
       const stateType =
         resolvedState === 'RATE_LIMITED'
