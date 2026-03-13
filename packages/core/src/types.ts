@@ -35,6 +35,9 @@ interface BaseEventType {
   integrations?: SegmentAPIIntegrations;
   _metadata?: DestinationMetadata;
   enrichment?: EnrichmentClosure;
+
+  /** Internal: timestamp (ms) when event was added to queue. Stripped before upload. */
+  _queuedAt?: number;
 }
 
 export interface TrackEventType extends BaseEventType {
@@ -151,6 +154,17 @@ export type Config = {
   cdnProxy?: string;
   useSegmentEndpoints?: boolean; // Use if you want to use Segment endpoints
   errorHandler?: (error: SegmentError) => void;
+  /**
+   * Controls how concurrent batch errors are consolidated into a single retry delay.
+   * - 'lazy' (default): uses the longest wait time (most conservative, fewer retries)
+   * - 'eager': uses the shortest wait time (more aggressive, retries sooner)
+   */
+  retryStrategy?: 'eager' | 'lazy';
+  /**
+   * When true, automatically triggers a flush when the retry manager's wait
+   * period expires and transitions back to READY. Disabled by default.
+   */
+  autoFlushOnRetryReady?: boolean;
 };
 
 export type ClientMethods = {
@@ -332,6 +346,47 @@ export interface EdgeFunctionSettings {
   version: string;
 }
 
+export type RateLimitConfig = {
+  enabled: boolean;
+  maxRetryCount: number;
+  maxRetryInterval: number;
+  maxRateLimitDuration: number;
+};
+
+export type BackoffConfig = {
+  enabled: boolean;
+  maxRetryCount: number;
+  baseBackoffInterval: number;
+  maxBackoffInterval: number;
+  maxTotalBackoffDuration: number;
+  jitterPercent: number;
+  default4xxBehavior: 'drop' | 'retry';
+  default5xxBehavior: 'drop' | 'retry';
+  statusCodeOverrides: Record<string, 'drop' | 'retry'>;
+};
+
+export type HttpConfig = {
+  rateLimitConfig?: RateLimitConfig;
+  backoffConfig?: BackoffConfig;
+};
+
+export class ErrorClassification {
+  readonly errorType: 'rate_limit' | 'transient' | 'permanent';
+  readonly retryAfterSeconds?: number;
+
+  constructor(
+    errorType: 'rate_limit' | 'transient' | 'permanent',
+    retryAfterSeconds?: number
+  ) {
+    this.errorType = errorType;
+    this.retryAfterSeconds = retryAfterSeconds;
+  }
+
+  get isRetryable(): boolean {
+    return this.errorType !== 'permanent';
+  }
+}
+
 export type SegmentAPISettings = {
   integrations: SegmentAPIIntegrations;
   edgeFunction?: EdgeFunctionSettings;
@@ -340,6 +395,7 @@ export type SegmentAPISettings = {
   };
   metrics?: MetricsOptions;
   consentSettings?: SegmentAPIConsentSettings;
+  httpConfig?: HttpConfig;
 };
 
 export type DestinationMetadata = {
