@@ -170,7 +170,6 @@ export class RetryManager {
     }
 
     const now = Date.now();
-    // Pre-compute random value outside the dispatch reducer for purity
     const random = Math.random();
 
     return this.handleError(
@@ -241,17 +240,11 @@ export class RetryManager {
 
         const waitUntilTime = computeWaitUntilTime(state);
 
-        // RATE_LIMITED takes precedence over BACKING_OFF
         const resolvedState =
           state.state === 'RATE_LIMITED' && newState === 'BACKING_OFF'
             ? 'RATE_LIMITED'
             : newState;
 
-        // Consolidate wait times when already blocked.
-        // 429 Retry-After is authoritative when overriding a transient backoff —
-        // the server is giving an explicit timing signal that supersedes our
-        // calculated backoff. For same-state consolidation (e.g. two 429s),
-        // apply the retry strategy (lazy=max, eager=min).
         let finalWaitUntilTime: number;
         if (state.state === 'READY') {
           finalWaitUntilTime = waitUntilTime;
@@ -276,7 +269,6 @@ export class RetryManager {
       }
     );
 
-    // Log after dispatch (side-effect-free reducer)
     if (limitExceeded) {
       this.logger?.warn(
         `Max retry limit exceeded (count: ${maxRetryCount}, duration: ${maxRetryDuration}s), resetting retry manager`
@@ -307,12 +299,8 @@ export class RetryManager {
     const { baseBackoffInterval, maxBackoffInterval, jitterPercent } =
       this.backoffConfig;
 
-    // Uses pre-increment retryCount (0-based): first retry gets 2^0 = 1x base,
-    // matching the SDD worked example: 0.5s, 1s, 2s, 4s, ...
     const exponentialBackoff = baseBackoffInterval * Math.pow(2, retryCount);
     const clampedBackoff = Math.min(exponentialBackoff, maxBackoffInterval);
-
-    // Additive-only jitter: adds 0 to jitterPercent of the backoff
     const jitterRange = clampedBackoff * (jitterPercent / 100);
     const jitter = random * jitterRange;
 
