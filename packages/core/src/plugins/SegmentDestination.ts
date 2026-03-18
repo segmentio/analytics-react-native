@@ -208,7 +208,6 @@ export class SegmentDestination extends DestinationPlugin {
     let result: RetryResult | undefined;
 
     if (has429) {
-      // Each call lets RetryManager.applyRetryStrategy consolidate wait times
       for (const r of aggregation.rateLimitResults) {
         result = await this.retryManager.handle429(r.retryAfterSeconds ?? 60);
       }
