@@ -140,6 +140,17 @@ async function main() {
       // the timer to fire frequently so retries aren't bottlenecked by
       // the poll interval. The RetryManager still gates actual uploads.
       flushInterval: input.config?.flushInterval ?? 0.1,
+      // Wire maxRetries from test harness into httpConfig overrides
+      ...(input.config?.maxRetries !== undefined && {
+        httpConfig: {
+          rateLimitConfig: {
+            maxRetryCount: input.config.maxRetries,
+          },
+          backoffConfig: {
+            maxRetryCount: input.config.maxRetries,
+          },
+        },
+      }),
     };
 
     // Create storage with in-memory persistor
@@ -357,7 +368,13 @@ async function main() {
     const success = finalPending === 0 && permanentDropCount === 0;
 
     client.cleanup();
-    output = { success, sentBatches };
+    output = {
+      success,
+      sentBatches,
+      ...(permanentDropCount > 0 && {
+        error: `${permanentDropCount} events permanently dropped`,
+      }),
+    };
   } catch (e) {
     const error = e instanceof Error ? e.message : String(e);
     output = { success: false, error, sentBatches: 0 };

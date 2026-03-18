@@ -3,5 +3,7 @@
   "test_suites": "basic,retry,settings",
   "auto_settings": true,
   "patch": null,
-  "env": {}
+  "env": {
+    "BROWSER_BATCHING": "true"
+  }
 }
