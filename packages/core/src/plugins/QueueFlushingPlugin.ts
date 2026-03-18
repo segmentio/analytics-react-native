@@ -75,7 +75,6 @@ export class QueueFlushingPlugin extends UtilityPlugin {
    * Ensures only one flush operation runs at a time.
    */
   async flush() {
-    // Safety: prevent concurrent flush operations
     if (this.flushPromise) {
       this.analytics?.logger.info(
         'Flush already in progress, waiting for completion'
@@ -126,10 +125,6 @@ export class QueueFlushingPlugin extends UtilityPlugin {
     await this.onFlush(events);
   }
 
-  /**
-   * Removes events from the queue by their messageId
-   * @param messageIds array of messageId strings to remove
-   */
   async dequeueByMessageIds(messageIds: string[]): Promise<void> {
     await this.queueStore?.dispatch((state) => {
       if (messageIds.length === 0 || state.events.length === 0) {
