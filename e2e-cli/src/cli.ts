@@ -12,7 +12,9 @@
 import { SegmentClient } from '../../packages/core/src/analytics';
 import { SovranStorage } from '../../packages/core/src/storage/sovranStorage';
 import { Logger } from '../../packages/core/src/logger';
+import { PluginType } from '../../packages/core/src/types';
 import type { Config, JsonMap } from '../../packages/core/src/types';
+import { SegmentDestination } from '../../packages/core/src/plugins/SegmentDestination';
 import type { Persistor } from '@segment/sovran-react-native';
 
 // ============================================================================
@@ -305,16 +307,100 @@ async function main() {
       }
     }
 
-    // Flush all queued events through the real pipeline
-    await client.flush();
+    // ==================================================================
+    // Flush-retry loop
+    // ==================================================================
+    //
+    // Simulates the flush policy cadence that drives uploads in a real
+    // app. The SDK's flush policies (timer every 30s, count at 20
+    // events) are not active in the CLI, so we drive flush cycles
+    // manually.
+    //
+    // Each cycle: flush → check pending → wait for backoff → repeat
+    // until the queue is empty or maxRetries is exceeded.
 
-    // Brief delay to let async upload operations settle
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    const maxRetries = input.config?.maxRetries ?? 10;
+    let flushAttempts = 0;
+    let permanentDropCount = 0;
+
+    // Intercept logger.error to detect permanently dropped events.
+    // The tapi branch logs "Dropped N events due to permanent errors"
+    // when events receive non-retryable status codes (4xx). On master
+    // this message doesn't occur, so the counter stays at 0.
+    const origLoggerError = logger.error;
+    logger.error = (message?: unknown, ...rest: unknown[]) => {
+      const msg = String(message ?? '');
+      const match = msg.match(/Dropped (\d+) events/);
+      if (match) {
+        permanentDropCount += parseInt(match[1], 10);
+      }
+      origLoggerError.call(logger, message, ...rest);
+    };
+
+    // Find the SegmentDestination to access retry state (if available).
+    const segmentDest = client
+      .getPlugins(PluginType.destination)
+      .find((p): p is SegmentDestination => p instanceof SegmentDestination);
+
+    while (flushAttempts <= maxRetries) {
+      await client.flush();
+      flushAttempts++;
+
+      const pending = await client.pendingEvents();
+      if (pending === 0) break;
+      if (flushAttempts > maxRetries) break;
+
+      // Wait for RetryManager backoff before next flush cycle.
+      // The tapi branch adds a RetryManager that tracks backoff state
+      // (READY / BACKING_OFF / RATE_LIMITED). When available, we sleep
+      // until waitUntilTime so the next flush can proceed.
+      // On master (no RetryManager), we use a short fixed delay.
+      let waited = false;
+      if (segmentDest) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const retryMgr = (segmentDest as any).retryManager;
+        if (retryMgr?.store) {
+          try {
+            const state = await retryMgr.store.getState(true);
+            if (state.state && state.state !== 'READY') {
+              const delay = Math.max(0, state.waitUntilTime - Date.now());
+              await new Promise((r) => setTimeout(r, delay + 50));
+              waited = true;
+            }
+          } catch {
+            // RetryManager state access failed — fall through to fixed delay
+          }
+        }
+      }
+      if (!waited) {
+        await new Promise((r) => setTimeout(r, 100));
+      }
+    }
+
+    // Restore logger
+    logger.error = origLoggerError;
+
+    // Compute results
+    const finalPending = await client.pendingEvents();
+    const totalEvents = input.sequences.reduce(
+      (sum, seq) => sum + seq.events.length,
+      0
+    );
+    const delivered = Math.max(
+      0,
+      totalEvents - finalPending - permanentDropCount
+    );
+    const sentBatches =
+      delivered > 0
+        ? Math.ceil(delivered / Math.max(1, input.config?.flushAt ?? 1))
+        : 0;
+
+    // success: true only when all events were delivered (none remaining,
+    // none permanently dropped).
+    const success = finalPending === 0 && permanentDropCount === 0;
 
     client.cleanup();
-
-    // sentBatches: SDK doesn't expose batch count tracking
-    output = { success: true, sentBatches: 0 };
+    output = { success, sentBatches };
   } catch (e) {
     const error = e instanceof Error ? e.message : String(e);
     output = { success: false, error, sentBatches: 0 };
