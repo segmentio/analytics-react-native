@@ -105,7 +105,6 @@ async function main() {
   try {
     const input: CLIInput = JSON.parse(inputStr);
 
-    // Build SDK config
     const config: Config = {
       writeKey: input.writeKey,
       trackAppLifecycleEvents: false,
@@ -113,17 +112,14 @@ async function main() {
       autoAddSegmentDestination: true,
       storePersistor: MemoryPersistor,
       storePersistorSaveDelay: 0,
-      // When apiHost is provided (mock tests), use proxy to direct events there
       ...(input.apiHost && {
         proxy: input.apiHost,
         useSegmentEndpoints: true,
       }),
-      // When cdnHost is provided (mock tests), use cdnProxy to direct CDN requests there
       ...(input.cdnHost && {
         cdnProxy: input.cdnHost,
         useSegmentEndpoints: true,
       }),
-      // Provide default settings so SDK doesn't require CDN response
       defaultSettings: {
         integrations: {
           'Segment.io': {
@@ -135,12 +131,7 @@ async function main() {
       ...(input.config?.flushAt !== undefined && {
         flushAt: input.config.flushAt,
       }),
-      // Default to short interval so the TimerFlushPolicy drives fast
-      // retry cycles. In production this is 30s; for e2e tests we want
-      // the timer to fire frequently so retries aren't bottlenecked by
-      // the poll interval. The RetryManager still gates actual uploads.
       flushInterval: input.config?.flushInterval ?? 0.1,
-      // Wire maxRetries from test harness into httpConfig overrides
       ...(input.config?.maxRetries !== undefined && {
         httpConfig: {
           rateLimitConfig: {
@@ -153,19 +144,14 @@ async function main() {
       }),
     };
 
-    // Create storage with in-memory persistor
     const store = new SovranStorage({
       storeId: input.writeKey,
       storePersistor: MemoryPersistor,
       storePersistorSaveDelay: 0,
     });
 
-    // Suppress SDK internal logs to keep E2E test output clean.
-    // CLI-level warnings/errors still surface via console.warn/console.error.
     const logger = new Logger(true);
     const client = new SegmentClient({ config, logger, store });
-
-    // Initialize — adds plugins, resolves settings, processes pending events
     await client.init();
 
     // Process event sequences
@@ -307,7 +293,6 @@ async function main() {
               continue;
           }
         } catch (error) {
-          // Log but don't fail the entire sequence if one event fails
           console.error(
             `[ERROR] Failed to process ${evt.type} event:`,
             error,
@@ -318,15 +303,7 @@ async function main() {
       }
     }
 
-    // Let the SDK's flush policies drive uploads and retries.
-    // CountFlushPolicy triggers the initial flush when flushAt events
-    // accumulate. TimerFlushPolicy retries every flushInterval seconds
-    // while events remain queued. On the tapi branch, the RetryManager
-    // gates actual uploads during backoff periods.
     let permanentDropCount = 0;
-
-    // Intercept to detect "Dropped N events due to permanent errors"
-    // logged by SegmentDestination when events get non-retryable codes.
     const origLoggerError = logger.error;
     logger.error = (message?: unknown, ...rest: unknown[]) => {
       const msg = String(message ?? '');
@@ -337,8 +314,6 @@ async function main() {
       origLoggerError.call(logger, message, ...rest);
     };
 
-    // Trigger the initial flush, then wait for the queue to drain.
-    // Subsequent retries are driven by the TimerFlushPolicy.
     await client.flush();
 
     const timeoutMs = 30_000;
