@@ -411,8 +411,6 @@ export class RetryManager {
     const { baseBackoffInterval, maxBackoffInterval, jitterPercent } =
       this.backoffConfig;
 
-    // Uses pre-increment retryCount (0-based): first retry gets 2^0 = 1x base,
-    // matching the SDD worked example: 0.5s, 1s, 2s, 4s, ...
     const exponentialBackoff = baseBackoffInterval * Math.pow(2, retryCount);
     const clampedBackoff = Math.min(exponentialBackoff, maxBackoffInterval);
     const jitterRange = clampedBackoff * (jitterPercent / 100);
