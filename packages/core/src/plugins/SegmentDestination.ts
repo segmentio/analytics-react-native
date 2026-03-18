@@ -34,6 +34,7 @@ type ErrorAggregation = {
   rateLimitResults: BatchResult[];
   hasTransientError: boolean;
   permanentErrorMessageIds: string[];
+  retryableMessageIds: string[];
 };
 
 export class SegmentDestination extends DestinationPlugin {
@@ -128,6 +129,7 @@ export class SegmentDestination extends DestinationPlugin {
       rateLimitResults: [],
       hasTransientError: false,
       permanentErrorMessageIds: [],
+      retryableMessageIds: [],
     };
 
     for (const result of results) {
@@ -137,10 +139,12 @@ export class SegmentDestination extends DestinationPlugin {
           break;
         case '429':
           aggregation.rateLimitResults.push(result);
+          aggregation.retryableMessageIds.push(...result.messageIds);
           break;
         case 'transient':
         case 'network_error':
           aggregation.hasTransientError = true;
+          aggregation.retryableMessageIds.push(...result.messageIds);
           break;
         case 'permanent':
           aggregation.permanentErrorMessageIds.push(...result.messageIds);
@@ -273,13 +277,12 @@ export class SegmentDestination extends DestinationPlugin {
       );
     }
 
-    // When retry limits are exceeded, the RetryManager resets to READY.
-    // We do NOT drop events here — individual events are only dropped when
-    // they exceed maxTotalBackoffDuration via pruneExpiredEvents (per-event age).
-    // The global retry counter reset just allows the next flush cycle to retry.
-    if (limitExceeded) {
-      this.analytics?.logger.warn(
-        'Retry limits exceeded, counter reset. Stale events will be pruned by age on next flush.'
+    if (limitExceeded && aggregation.retryableMessageIds.length > 0) {
+      await this.queuePlugin.dequeueByMessageIds(
+        aggregation.retryableMessageIds
+      );
+      this.analytics?.logger.error(
+        `Dropped ${aggregation.retryableMessageIds.length} events due to retry limit exceeded`
       );
     }
 

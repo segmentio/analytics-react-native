@@ -10,6 +10,7 @@ import {
   workspaceDestinationFilterKey,
   defaultFlushInterval,
   defaultFlushAt,
+  defaultHttpConfig,
   maxPendingEvents,
 } from './constants';
 import { getContext } from './context';
@@ -73,7 +74,11 @@ import {
   SegmentError,
   translateHTTPError,
 } from './errors';
-import { validateIntegrations, extractHttpConfig } from './config-validation';
+import {
+  validateIntegrations,
+  validateRateLimitConfig,
+  validateBackoffConfig,
+} from './config-validation';
 import { QueueFlushingPlugin } from './plugins/QueueFlushingPlugin';
 import { WaitingPlugin } from './plugin';
 
@@ -198,8 +203,8 @@ export class SegmentClient {
   }
 
   /**
-   * Retrieves the server-side httpConfig from CDN settings.
-   * Returns undefined if the CDN did not provide httpConfig (retry features disabled).
+   * Retrieves the merged httpConfig (defaultHttpConfig ← CDN ← config overrides).
+   * Returns undefined only if settings have not yet been fetched.
    */
   getHttpConfig(): HttpConfig | undefined {
     return this.httpConfig;
@@ -418,9 +423,43 @@ export class SegmentClient {
         resJson.middlewareSettings?.routingRules ?? []
       );
 
-      if (resJson.httpConfig) {
-        this.httpConfig = extractHttpConfig(resJson.httpConfig, this.logger);
-        this.logger.info('Loaded httpConfig from CDN settings.');
+      // Merge httpConfig: defaultHttpConfig ← CDN ← config overrides
+      {
+        const cdnConfig = resJson.httpConfig ?? {};
+        const clientConfig = this.config.httpConfig ?? {};
+
+        const mergedRateLimit = {
+          ...defaultHttpConfig.rateLimitConfig!,
+          ...(cdnConfig.rateLimitConfig ?? {}),
+          ...(clientConfig.rateLimitConfig ?? {}),
+        };
+
+        const mergedBackoff = {
+          ...defaultHttpConfig.backoffConfig!,
+          ...(cdnConfig.backoffConfig ?? {}),
+          ...(clientConfig.backoffConfig ?? {}),
+          statusCodeOverrides: {
+            ...defaultHttpConfig.backoffConfig!.statusCodeOverrides,
+            ...(cdnConfig.backoffConfig?.statusCodeOverrides ?? {}),
+            ...(clientConfig.backoffConfig?.statusCodeOverrides ?? {}),
+          },
+        };
+
+        const validatedRateLimit = validateRateLimitConfig(
+          mergedRateLimit,
+          this.logger
+        );
+        this.httpConfig = {
+          rateLimitConfig: validatedRateLimit,
+          backoffConfig: validateBackoffConfig(
+            mergedBackoff,
+            this.logger,
+            validatedRateLimit
+          ),
+        };
+        if (resJson.httpConfig) {
+          this.logger.info('Loaded httpConfig from CDN settings.');
+        }
       }
 
       this.logger.info('Received settings from Segment succesfully.');

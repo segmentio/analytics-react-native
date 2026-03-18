@@ -1,5 +1,5 @@
 import { SegmentClient } from '../../analytics';
-import { settingsCDN } from '../../constants';
+import { settingsCDN, defaultHttpConfig } from '../../constants';
 import { SEGMENT_DESTINATION_KEY } from '../../plugins/SegmentDestination';
 import { getMockLogger, MockSegmentStore } from '../../test-helpers';
 import { getURL } from '../../util';
@@ -483,7 +483,7 @@ describe('internal #getSettings', () => {
       expect(result?.backoffConfig?.jitterPercent).toBe(20);
     });
 
-    it('returns undefined httpConfig when CDN has no httpConfig', async () => {
+    it('returns defaultHttpConfig when CDN has no httpConfig', async () => {
       (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve(defaultIntegrationSettings),
@@ -496,7 +496,17 @@ describe('internal #getSettings', () => {
       });
 
       await anotherClient.fetchSettings();
-      expect(anotherClient.getHttpConfig()).toBeUndefined();
+      const result = anotherClient.getHttpConfig();
+      expect(result).toBeDefined();
+      expect(result?.rateLimitConfig?.enabled).toBe(
+        defaultHttpConfig.rateLimitConfig!.enabled
+      );
+      expect(result?.backoffConfig?.enabled).toBe(
+        defaultHttpConfig.backoffConfig!.enabled
+      );
+      expect(result?.backoffConfig?.statusCodeOverrides).toEqual(
+        defaultHttpConfig.backoffConfig!.statusCodeOverrides
+      );
     });
 
     it('returns undefined httpConfig when fetch fails', async () => {
