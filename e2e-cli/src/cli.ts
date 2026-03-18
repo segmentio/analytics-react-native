@@ -12,9 +12,7 @@
 import { SegmentClient } from '../../packages/core/src/analytics';
 import { SovranStorage } from '../../packages/core/src/storage/sovranStorage';
 import { Logger } from '../../packages/core/src/logger';
-import { PluginType } from '../../packages/core/src/types';
 import type { Config, JsonMap } from '../../packages/core/src/types';
-import { SegmentDestination } from '../../packages/core/src/plugins/SegmentDestination';
 import type { Persistor } from '@segment/sovran-react-native';
 
 // ============================================================================
@@ -137,9 +135,11 @@ async function main() {
       ...(input.config?.flushAt !== undefined && {
         flushAt: input.config.flushAt,
       }),
-      ...(input.config?.flushInterval !== undefined && {
-        flushInterval: input.config.flushInterval,
-      }),
+      // Default to short interval so the TimerFlushPolicy drives fast
+      // retry cycles. In production this is 30s; for e2e tests we want
+      // the timer to fire frequently so retries aren't bottlenecked by
+      // the poll interval. The RetryManager still gates actual uploads.
+      flushInterval: input.config?.flushInterval ?? 0.1,
     };
 
     // Create storage with in-memory persistor
@@ -307,11 +307,11 @@ async function main() {
       }
     }
 
-    // The SDK's flush policies (timer/count) are not active in the CLI,
-    // so we drive flush cycles manually until the queue drains or
-    // maxRetries is exceeded.
-    const maxRetries = input.config?.maxRetries ?? 10;
-    let flushAttempts = 0;
+    // Let the SDK's flush policies drive uploads and retries.
+    // CountFlushPolicy triggers the initial flush when flushAt events
+    // accumulate. TimerFlushPolicy retries every flushInterval seconds
+    // while events remain queued. On the tapi branch, the RetryManager
+    // gates actual uploads during backoff periods.
     let permanentDropCount = 0;
 
     // Intercept to detect "Dropped N events due to permanent errors"
@@ -326,38 +326,17 @@ async function main() {
       origLoggerError.call(logger, message, ...rest);
     };
 
-    const segmentDest = client
-      .getPlugins(PluginType.destination)
-      .find((p): p is SegmentDestination => p instanceof SegmentDestination);
+    // Trigger the initial flush, then wait for the queue to drain.
+    // Subsequent retries are driven by the TimerFlushPolicy.
+    await client.flush();
 
-    while (flushAttempts <= maxRetries) {
-      await client.flush();
-      flushAttempts++;
-
+    const timeoutMs = 30_000;
+    const pollMs = 50;
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
       const pending = await client.pendingEvents();
       if (pending === 0) break;
-      if (flushAttempts > maxRetries) break;
-
-      let waited = false;
-      if (segmentDest) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const retryMgr = (segmentDest as any).retryManager;
-        if (retryMgr?.store) {
-          try {
-            const state = await retryMgr.store.getState(true);
-            if (state.state && state.state !== 'READY') {
-              const delay = Math.max(0, state.waitUntilTime - Date.now());
-              await new Promise((r) => setTimeout(r, delay + 50));
-              waited = true;
-            }
-          } catch {
-            // Fall through to fixed delay
-          }
-        }
-      }
-      if (!waited) {
-        await new Promise((r) => setTimeout(r, 100));
-      }
+      await new Promise((r) => setTimeout(r, pollMs));
     }
 
     logger.error = origLoggerError;
