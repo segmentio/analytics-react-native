@@ -17,10 +17,6 @@ import type { Config, JsonMap } from '../../packages/core/src/types';
 import { SegmentDestination } from '../../packages/core/src/plugins/SegmentDestination';
 import type { Persistor } from '@segment/sovran-react-native';
 
-// ============================================================================
-// CLI Input/Output Types
-// ============================================================================
-
 interface AnalyticsEvent {
   type: 'identify' | 'track' | 'page' | 'screen' | 'alias' | 'group';
   userId?: string;
@@ -63,10 +59,6 @@ interface CLIOutput {
   sentBatches: number;
 }
 
-// ============================================================================
-// In-memory Persistor for Node.js (replaces AsyncStorage)
-// ============================================================================
-
 const memStore = new Map<string, unknown>();
 const MemoryPersistor: Persistor = {
   get: async <T>(key: string): Promise<T | undefined> =>
@@ -75,10 +67,6 @@ const MemoryPersistor: Persistor = {
     memStore.set(key, state);
   },
 };
-
-// ============================================================================
-// Main CLI Logic
-// ============================================================================
 
 async function main() {
   const args = process.argv.slice(2);
@@ -107,7 +95,6 @@ async function main() {
   try {
     const input: CLIInput = JSON.parse(inputStr);
 
-    // Build SDK config
     const config: Config = {
       writeKey: input.writeKey,
       trackAppLifecycleEvents: false,
@@ -115,17 +102,14 @@ async function main() {
       autoAddSegmentDestination: true,
       storePersistor: MemoryPersistor,
       storePersistorSaveDelay: 0,
-      // When apiHost is provided (mock tests), use proxy to direct events there
       ...(input.apiHost && {
         proxy: input.apiHost,
         useSegmentEndpoints: true,
       }),
-      // When cdnHost is provided (mock tests), use cdnProxy to direct CDN requests there
       ...(input.cdnHost && {
         cdnProxy: input.cdnHost,
         useSegmentEndpoints: true,
       }),
-      // Provide default settings so SDK doesn't require CDN response
       defaultSettings: {
         integrations: {
           'Segment.io': {
@@ -142,29 +126,22 @@ async function main() {
       }),
     };
 
-    // Create storage with in-memory persistor
     const store = new SovranStorage({
       storeId: input.writeKey,
       storePersistor: MemoryPersistor,
       storePersistorSaveDelay: 0,
     });
 
-    // Suppress SDK internal logs to keep E2E test output clean.
-    // CLI-level warnings/errors still surface via console.warn/console.error.
     const logger = new Logger(true);
     const client = new SegmentClient({ config, logger, store });
-
-    // Initialize — adds plugins, resolves settings, processes pending events
     await client.init();
 
-    // Process event sequences
     for (const sequence of input.sequences) {
       if (sequence.delayMs > 0) {
         await new Promise((resolve) => setTimeout(resolve, sequence.delayMs));
       }
 
       for (const evt of sequence.events) {
-        // Validate event has a type
         if (!evt.type) {
           console.warn('[WARN] Skipping event: missing event type', evt);
           continue;
@@ -173,7 +150,6 @@ async function main() {
         try {
           switch (evt.type) {
             case 'track': {
-              // Required: event name
               if (!evt.event || typeof evt.event !== 'string') {
                 console.warn(
                   `[WARN] Skipping track event: missing or invalid event name`,
@@ -182,7 +158,6 @@ async function main() {
                 continue;
               }
 
-              // Optional: properties (validate if present)
               const properties = evt.properties as JsonMap | undefined;
               if (
                 evt.properties !== undefined &&
@@ -200,8 +175,6 @@ async function main() {
             }
 
             case 'identify': {
-              // Optional userId (Segment allows anonymous identify)
-              // Optional traits (validate if present)
               const traits = evt.traits as JsonMap | undefined;
               if (
                 evt.traits !== undefined &&
@@ -220,8 +193,7 @@ async function main() {
 
             case 'screen':
             case 'page': {
-              // RN SDK has no page(); map to screen for cross-SDK test compat
-              // Required: screen/page name
+              // RN SDK has no page(); map to screen for cross-SDK compat
               if (!evt.name || typeof evt.name !== 'string') {
                 console.warn(
                   `[WARN] Skipping ${evt.type} event: missing or invalid name`,
@@ -230,7 +202,6 @@ async function main() {
                 continue;
               }
 
-              // Optional: properties (validate if present)
               const properties = evt.properties as JsonMap | undefined;
               if (
                 evt.properties !== undefined &&
@@ -248,7 +219,6 @@ async function main() {
             }
 
             case 'group': {
-              // Required: groupId
               if (!evt.groupId || typeof evt.groupId !== 'string') {
                 console.warn(
                   `[WARN] Skipping group event: missing or invalid groupId`,
@@ -257,7 +227,6 @@ async function main() {
                 continue;
               }
 
-              // Optional: traits (validate if present)
               const traits = evt.traits as JsonMap | undefined;
               if (
                 evt.traits !== undefined &&
@@ -275,7 +244,6 @@ async function main() {
             }
 
             case 'alias': {
-              // Required: userId
               if (!evt.userId || typeof evt.userId !== 'string') {
                 console.warn(
                   `[WARN] Skipping alias event: missing or invalid userId`,
@@ -296,7 +264,6 @@ async function main() {
               continue;
           }
         } catch (error) {
-          // Log but don't fail the entire sequence if one event fails
           console.error(
             `[ERROR] Failed to process ${evt.type} event:`,
             error,
@@ -307,26 +274,15 @@ async function main() {
       }
     }
 
-    // ==================================================================
-    // Flush-retry loop
-    // ==================================================================
-    //
-    // Simulates the flush policy cadence that drives uploads in a real
-    // app. The SDK's flush policies (timer every 30s, count at 20
-    // events) are not active in the CLI, so we drive flush cycles
-    // manually.
-    //
-    // Each cycle: flush → check pending → wait for backoff → repeat
-    // until the queue is empty or maxRetries is exceeded.
-
+    // The SDK's flush policies (timer/count) are not active in the CLI,
+    // so we drive flush cycles manually until the queue drains or
+    // maxRetries is exceeded.
     const maxRetries = input.config?.maxRetries ?? 10;
     let flushAttempts = 0;
     let permanentDropCount = 0;
 
-    // Intercept logger.error to detect permanently dropped events.
-    // The tapi branch logs "Dropped N events due to permanent errors"
-    // when events receive non-retryable status codes (4xx). On master
-    // this message doesn't occur, so the counter stays at 0.
+    // Intercept to detect "Dropped N events due to permanent errors"
+    // logged by SegmentDestination when events get non-retryable codes.
     const origLoggerError = logger.error;
     logger.error = (message?: unknown, ...rest: unknown[]) => {
       const msg = String(message ?? '');
@@ -337,7 +293,6 @@ async function main() {
       origLoggerError.call(logger, message, ...rest);
     };
 
-    // Find the SegmentDestination to access retry state (if available).
     const segmentDest = client
       .getPlugins(PluginType.destination)
       .find((p): p is SegmentDestination => p instanceof SegmentDestination);
@@ -350,11 +305,6 @@ async function main() {
       if (pending === 0) break;
       if (flushAttempts > maxRetries) break;
 
-      // Wait for RetryManager backoff before next flush cycle.
-      // The tapi branch adds a RetryManager that tracks backoff state
-      // (READY / BACKING_OFF / RATE_LIMITED). When available, we sleep
-      // until waitUntilTime so the next flush can proceed.
-      // On master (no RetryManager), we use a short fixed delay.
       let waited = false;
       if (segmentDest) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -368,7 +318,7 @@ async function main() {
               waited = true;
             }
           } catch {
-            // RetryManager state access failed — fall through to fixed delay
+            // Fall through to fixed delay
           }
         }
       }
@@ -377,10 +327,8 @@ async function main() {
       }
     }
 
-    // Restore logger
     logger.error = origLoggerError;
 
-    // Compute results
     const finalPending = await client.pendingEvents();
     const totalEvents = input.sequences.reduce(
       (sum, seq) => sum + seq.events.length,
@@ -394,9 +342,6 @@ async function main() {
       delivered > 0
         ? Math.ceil(delivered / Math.max(1, input.config?.flushAt ?? 1))
         : 0;
-
-    // success: true only when all events were delivered (none remaining,
-    // none permanently dropped).
     const success = finalPending === 0 && permanentDropCount === 0;
 
     client.cleanup();
