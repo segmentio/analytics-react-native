@@ -173,12 +173,8 @@ export const classifyError = (
 };
 
 /**
- * Parse Retry-After header value from HTTP response.
- * Supports both seconds format ("60") and HTTP-date format ("Fri, 31 Dec 2026 23:59:59 GMT").
- *
- * @param retryAfterValue - Value from Retry-After header (null if not present)
- * @param maxRetryInterval - Maximum allowed retry interval in seconds (default: 300)
- * @returns Parsed delay in seconds, clamped to maxRetryInterval, or undefined if invalid
+ * Parse Retry-After header value (seconds or HTTP-date format).
+ * Returns delay in seconds clamped to maxRetryInterval, or undefined if invalid.
  */
 export const parseRetryAfter = (
   retryAfterValue: string | null,
@@ -186,15 +182,12 @@ export const parseRetryAfter = (
 ): number | undefined => {
   if (retryAfterValue === null || retryAfterValue === '') return undefined;
 
-  // Number() returns NaN for date strings like "01 Jan 2026",
-  // so this naturally distinguishes seconds from HTTP-date format
   const asNumber = Number(retryAfterValue);
   if (Number.isFinite(asNumber)) {
     if (asNumber < 0) return undefined;
     return Math.min(asNumber, maxRetryInterval);
   }
 
-  // Try parsing as HTTP-date (e.g., "Fri, 31 Dec 2026 23:59:59 GMT")
   const retryDate = new Date(retryAfterValue);
   if (!isNaN(retryDate.getTime())) {
     const secondsUntil = Math.ceil((retryDate.getTime() - Date.now()) / 1000);
