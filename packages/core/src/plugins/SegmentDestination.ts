@@ -369,12 +369,6 @@ export class SegmentDestination extends DestinationPlugin {
           this.analytics?.logger,
           config?.retryStrategy ?? 'lazy'
         );
-
-        if (config?.autoFlushOnRetryReady === true) {
-          this.retryManager.setAutoFlushCallback(() => {
-            void this.flush();
-          });
-        }
       }
     }
 
@@ -389,9 +383,5 @@ export class SegmentDestination extends DestinationPlugin {
   async flush() {
     // Wait until the queue is done restoring before flushing
     return this.queuePlugin.flush();
-  }
-
-  shutdown(): void {
-    this.retryManager?.destroy();
   }
 }
