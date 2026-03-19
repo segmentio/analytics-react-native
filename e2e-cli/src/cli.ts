@@ -1,8 +1,8 @@
 /**
  * E2E CLI for React Native analytics SDK testing
  *
- * Runs the real SDK pipeline (SegmentClient → Timeline → SegmentDestination →
- * QueueFlushingPlugin → uploadEvents) with stubs for React Native runtime
+ * Runs the real SDK pipeline (SegmentClient -> Timeline -> SegmentDestination ->
+ * QueueFlushingPlugin -> uploadEvents) with stubs for React Native runtime
  * dependencies so everything executes on Node.js.
  *
  * Usage:
@@ -75,13 +75,104 @@ const MemoryPersistor: Persistor = {
 };
 
 // ============================================================================
-// Main CLI Logic
+// Helper Functions
+// ============================================================================
+
+function buildConfig(input: CLIInput): Config {
+  return {
+    writeKey: input.writeKey,
+    trackAppLifecycleEvents: false,
+    trackDeepLinks: false,
+    autoAddSegmentDestination: true,
+    storePersistor: MemoryPersistor,
+    storePersistorSaveDelay: 0,
+    ...(input.apiHost && { proxy: input.apiHost, useSegmentEndpoints: true }),
+    ...(input.cdnHost && {
+      cdnProxy: input.cdnHost,
+      useSegmentEndpoints: true,
+    }),
+    defaultSettings: {
+      integrations: {
+        'Segment.io': {
+          apiKey: input.writeKey,
+          apiHost: 'api.segment.io/v1',
+        },
+      },
+    },
+    ...(input.config?.flushAt !== undefined && {
+      flushAt: input.config.flushAt,
+    }),
+    flushInterval: input.config?.flushInterval ?? 0.1,
+    ...(input.config?.maxRetries !== undefined && {
+      httpConfig: {
+        rateLimitConfig: { maxRetryCount: input.config.maxRetries },
+        backoffConfig: { maxRetryCount: input.config.maxRetries },
+      },
+    }),
+  };
+}
+
+async function dispatchEvent(
+  client: SegmentClient,
+  evt: AnalyticsEvent
+): Promise<void> {
+  switch (evt.type) {
+    case 'track':
+      if (!evt.event) return;
+      await client.track(evt.event, evt.properties as JsonMap | undefined);
+      break;
+    case 'identify':
+      await client.identify(evt.userId, evt.traits as JsonMap | undefined);
+      break;
+    case 'screen':
+    case 'page':
+      if (!evt.name) return;
+      await client.screen(evt.name, evt.properties as JsonMap | undefined);
+      break;
+    case 'group':
+      if (!evt.groupId) return;
+      await client.group(evt.groupId, evt.traits as JsonMap | undefined);
+      break;
+    case 'alias':
+      if (!evt.userId) return;
+      await client.alias(evt.userId);
+      break;
+  }
+}
+
+async function waitForQueueDrain(
+  client: SegmentClient,
+  timeoutMs = 30_000
+): Promise<void> {
+  const pollMs = 50;
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    if ((await client.pendingEvents()) === 0) return;
+    await new Promise((r) => setTimeout(r, pollMs));
+  }
+}
+
+function interceptDropCount(logger: Logger): () => number {
+  let count = 0;
+  const origError = logger.error;
+  logger.error = (message?: unknown, ...rest: unknown[]) => {
+    const match = String(message ?? '').match(/Dropped (\d+) events/);
+    if (match) count += parseInt(match[1], 10);
+    origError.call(logger, message, ...rest);
+  };
+  return () => {
+    logger.error = origError;
+    return count;
+  };
+}
+
+// ============================================================================
+// Main
 // ============================================================================
 
 async function main() {
   const args = process.argv.slice(2);
   let inputStr: string | undefined;
-
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--input' && i + 1 < args.length) {
       inputStr = args[i + 1];
@@ -91,11 +182,7 @@ async function main() {
 
   if (!inputStr) {
     console.log(
-      JSON.stringify({
-        success: false,
-        error: 'No input provided',
-        sentBatches: 0,
-      })
+      JSON.stringify({ success: false, error: 'No input provided', sentBatches: 0 })
     );
     process.exit(1);
   }
@@ -104,228 +191,30 @@ async function main() {
 
   try {
     const input: CLIInput = JSON.parse(inputStr);
-
-    const config: Config = {
-      writeKey: input.writeKey,
-      trackAppLifecycleEvents: false,
-      trackDeepLinks: false,
-      autoAddSegmentDestination: true,
-      storePersistor: MemoryPersistor,
-      storePersistorSaveDelay: 0,
-      ...(input.apiHost && {
-        proxy: input.apiHost,
-        useSegmentEndpoints: true,
-      }),
-      ...(input.cdnHost && {
-        cdnProxy: input.cdnHost,
-        useSegmentEndpoints: true,
-      }),
-      defaultSettings: {
-        integrations: {
-          'Segment.io': {
-            apiKey: input.writeKey,
-            apiHost: 'api.segment.io/v1',
-          },
-        },
-      },
-      ...(input.config?.flushAt !== undefined && {
-        flushAt: input.config.flushAt,
-      }),
-      flushInterval: input.config?.flushInterval ?? 0.1,
-      ...(input.config?.maxRetries !== undefined && {
-        httpConfig: {
-          rateLimitConfig: {
-            maxRetryCount: input.config.maxRetries,
-          },
-          backoffConfig: {
-            maxRetryCount: input.config.maxRetries,
-          },
-        },
-      }),
-    };
+    const config = buildConfig(input);
 
     const store = new SovranStorage({
       storeId: input.writeKey,
       storePersistor: MemoryPersistor,
       storePersistorSaveDelay: 0,
     });
-
     const logger = new Logger(true);
     const client = new SegmentClient({ config, logger, store });
     await client.init();
 
-    // Process event sequences
     for (const sequence of input.sequences) {
       if (sequence.delayMs > 0) {
         await new Promise((resolve) => setTimeout(resolve, sequence.delayMs));
       }
-
       for (const evt of sequence.events) {
-        // Validate event has a type
-        if (!evt.type) {
-          console.warn('[WARN] Skipping event: missing event type', evt);
-          continue;
-        }
-
-        try {
-          switch (evt.type) {
-            case 'track': {
-              // Required: event name
-              if (!evt.event || typeof evt.event !== 'string') {
-                console.warn(
-                  `[WARN] Skipping track event: missing or invalid event name`,
-                  evt
-                );
-                continue;
-              }
-
-              // Optional: properties (validate if present)
-              const properties = evt.properties as JsonMap | undefined;
-              if (
-                evt.properties !== undefined &&
-                (evt.properties === null ||
-                  Array.isArray(evt.properties) ||
-                  typeof evt.properties !== 'object')
-              ) {
-                console.warn(
-                  `[WARN] Track event "${evt.event}" has invalid properties, proceeding without them`
-                );
-              }
-
-              await client.track(evt.event, properties);
-              break;
-            }
-
-            case 'identify': {
-              // Optional userId (Segment allows anonymous identify)
-              // Optional traits (validate if present)
-              const traits = evt.traits as JsonMap | undefined;
-              if (
-                evt.traits !== undefined &&
-                (evt.traits === null ||
-                  Array.isArray(evt.traits) ||
-                  typeof evt.traits !== 'object')
-              ) {
-                console.warn(
-                  `[WARN] Identify event has invalid traits, proceeding without them`
-                );
-              }
-
-              await client.identify(evt.userId, traits);
-              break;
-            }
-
-            case 'screen':
-            case 'page': {
-              // RN SDK has no page(); map to screen for cross-SDK test compat
-              // Required: screen/page name
-              if (!evt.name || typeof evt.name !== 'string') {
-                console.warn(
-                  `[WARN] Skipping ${evt.type} event: missing or invalid name`,
-                  evt
-                );
-                continue;
-              }
-
-              // Optional: properties (validate if present)
-              const properties = evt.properties as JsonMap | undefined;
-              if (
-                evt.properties !== undefined &&
-                (evt.properties === null ||
-                  Array.isArray(evt.properties) ||
-                  typeof evt.properties !== 'object')
-              ) {
-                console.warn(
-                  `[WARN] Screen "${evt.name}" has invalid properties, proceeding without them`
-                );
-              }
-
-              await client.screen(evt.name, properties);
-              break;
-            }
-
-            case 'group': {
-              // Required: groupId
-              if (!evt.groupId || typeof evt.groupId !== 'string') {
-                console.warn(
-                  `[WARN] Skipping group event: missing or invalid groupId`,
-                  evt
-                );
-                continue;
-              }
-
-              // Optional: traits (validate if present)
-              const traits = evt.traits as JsonMap | undefined;
-              if (
-                evt.traits !== undefined &&
-                (evt.traits === null ||
-                  Array.isArray(evt.traits) ||
-                  typeof evt.traits !== 'object')
-              ) {
-                console.warn(
-                  `[WARN] Group event for "${evt.groupId}" has invalid traits, proceeding without them`
-                );
-              }
-
-              await client.group(evt.groupId, traits);
-              break;
-            }
-
-            case 'alias': {
-              // Required: userId
-              if (!evt.userId || typeof evt.userId !== 'string') {
-                console.warn(
-                  `[WARN] Skipping alias event: missing or invalid userId`,
-                  evt
-                );
-                continue;
-              }
-
-              await client.alias(evt.userId);
-              break;
-            }
-
-            default:
-              console.warn(
-                `[WARN] Skipping event: unknown event type "${evt.type}"`,
-                evt
-              );
-              continue;
-          }
-        } catch (error) {
-          console.error(
-            `[ERROR] Failed to process ${evt.type} event:`,
-            error,
-            evt
-          );
-          continue;
-        }
+        await dispatchEvent(client, evt);
       }
     }
 
-    let permanentDropCount = 0;
-    const origLoggerError = logger.error;
-    logger.error = (message?: unknown, ...rest: unknown[]) => {
-      const msg = String(message ?? '');
-      const match = msg.match(/Dropped (\d+) events/);
-      if (match) {
-        permanentDropCount += parseInt(match[1], 10);
-      }
-      origLoggerError.call(logger, message, ...rest);
-    };
-
+    const getDropCount = interceptDropCount(logger);
     await client.flush();
-
-    const timeoutMs = 30_000;
-    const pollMs = 50;
-    const start = Date.now();
-    while (Date.now() - start < timeoutMs) {
-      const pending = await client.pendingEvents();
-      if (pending === 0) break;
-      await new Promise((r) => setTimeout(r, pollMs));
-    }
-
-    logger.error = origLoggerError;
+    await waitForQueueDrain(client);
+    const permanentDropCount = getDropCount();
 
     const finalPending = await client.pendingEvents();
     const totalEvents = input.sequences.reduce(
