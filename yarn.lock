@@ -4573,7 +4573,7 @@ __metadata:
     "@segment/sovran-react-native": ^1.1.0
     react: "*"
     react-native: "*"
-    react-native-get-random-values: 1.x
+    react-native-get-random-values: 2.x
   peerDependenciesMeta:
     "@react-native-async-storage/async-storage":
       optional: true
@@ -4601,7 +4601,7 @@ __metadata:
     ansi-regex: "npm:5.0.1"
     deepmerge: "npm:^4.2.2"
     jest: "npm:^29.7.0"
-    react-native-get-random-values: "npm:1.x"
+    react-native-get-random-values: "npm:2.x"
     semantic-release: "npm:^22.0.8"
     shell-quote: "npm:1.8.0"
     typescript: "npm:^5.2.2"
@@ -15192,14 +15192,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-get-random-values@npm:1.x":
-  version: 1.11.0
-  resolution: "react-native-get-random-values@npm:1.11.0"
+"react-native-get-random-values@npm:2.x":
+  version: 2.0.0
+  resolution: "react-native-get-random-values@npm:2.0.0"
   dependencies:
     fast-base64-decode: "npm:^1.0.0"
   peerDependencies:
-    react-native: ">=0.56"
-  checksum: 10c0/2ce71f1ab7f5b36d4a9dd59cc80b4aa75526f047c6680a7f1a388fa8b9a62efdacaf7b7de3be593c73e882773b2eee74916b00f7c8b158e40b46388998218586
+    react-native: ">=0.81"
+  checksum: 10c0/fd2e10ab3bca54bff8f5844e3314b797e02822e86663bc2dafe00a511b8a8e1c05d96aa0b8dc1ffad428387d44bbf458ce770a429858433d36f58a16e6e52986
   languageName: node
   linkType: hard
 

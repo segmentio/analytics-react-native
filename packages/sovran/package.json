@@ -78,7 +78,7 @@
   "dependencies": {
     "ansi-regex": "5.0.1",
     "deepmerge": "^4.2.2",
-    "react-native-get-random-values": "1.x",
+    "react-native-get-random-values": "2.x",
     "shell-quote": "1.8.0",
     "uuid": "^9.0.1"
   },
