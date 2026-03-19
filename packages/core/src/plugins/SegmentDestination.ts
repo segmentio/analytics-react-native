@@ -271,6 +271,7 @@ export class SegmentDestination extends DestinationPlugin {
       await this.queuePlugin.dequeueByMessageIds(
         aggregation.permanentErrorMessageIds
       );
+      this.droppedEventCount += aggregation.permanentErrorMessageIds.length;
       this.analytics?.logger.error(
         `Dropped ${aggregation.permanentErrorMessageIds.length} events due to permanent errors`
       );
@@ -280,6 +281,7 @@ export class SegmentDestination extends DestinationPlugin {
       await this.queuePlugin.dequeueByMessageIds(
         aggregation.retryableMessageIds
       );
+      this.droppedEventCount += aggregation.retryableMessageIds.length;
       this.analytics?.logger.error(
         `Dropped ${aggregation.retryableMessageIds.length} events due to retry limit exceeded`
       );
