@@ -1048,6 +1048,20 @@ export class SegmentClient {
 
     return totalEventsCount;
   }
+
+  /**
+   * Method to get count of events permanently dropped by SegmentDestination.
+   */
+  droppedEvents(): number {
+    let count = 0;
+    for (const plugin of this.getPlugins()) {
+      if (plugin instanceof SegmentDestination) {
+        count += plugin.droppedEventCount;
+      }
+    }
+    return count;
+  }
+
   private resumeTimeoutId?: ReturnType<typeof setTimeout>;
   private waitingPlugins = new Set<WaitingPlugin>();
 
