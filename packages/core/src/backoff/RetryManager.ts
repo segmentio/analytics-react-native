@@ -41,8 +41,6 @@ export class RetryManager {
   private backoffConfig?: BackoffConfig;
   private logger?: LoggerType;
   private retryStrategy: 'eager' | 'lazy';
-  private autoFlushCallback?: () => void;
-  private autoFlushTimer?: ReturnType<typeof setTimeout>;
 
   constructor(
     storeId: string,
@@ -184,20 +182,9 @@ export class RetryManager {
     );
   }
 
-  /** Set a callback to invoke when the wait period expires (auto-flush). */
-  setAutoFlushCallback(callback: () => void): void {
-    this.autoFlushCallback = callback;
-  }
-
   /** Reset the state machine to READY with retry count 0. */
   async reset(): Promise<void> {
-    this.clearAutoFlushTimer();
     await this.store.dispatch(() => INITIAL_STATE);
-  }
-
-  /** Clean up timers. */
-  destroy(): void {
-    this.clearAutoFlushTimer();
   }
 
   /** Get the current retry count (used for X-Retry-Count header). */
@@ -286,8 +273,6 @@ export class RetryManager {
       )}s before retry ${newStateData.retryCount}`
     );
 
-    await this.scheduleAutoFlush();
-
     return newState === 'RATE_LIMITED' ? 'rate_limited' : 'backed_off';
   }
 
@@ -318,40 +303,7 @@ export class RetryManager {
       : Math.max(existing, incoming);
   }
 
-  /**
-   * Schedule auto-flush callback for when the wait period expires.
-   * Replaces any existing timer when a new wait supersedes the previous one.
-   */
-  private async scheduleAutoFlush(): Promise<void> {
-    if (!this.autoFlushCallback) {
-      return;
-    }
-
-    this.clearAutoFlushTimer();
-
-    const state = await this.store.getState(true);
-    if (state.state === 'READY') {
-      return;
-    }
-
-    const delay = Math.max(0, state.waitUntilTime - Date.now());
-    this.logger?.info(`Auto-flush scheduled in ${Math.ceil(delay / 1000)}s`);
-
-    this.autoFlushTimer = setTimeout(() => {
-      this.logger?.info('Auto-flush timer fired, triggering flush');
-      this.autoFlushCallback?.();
-    }, delay);
-  }
-
-  private clearAutoFlushTimer(): void {
-    if (this.autoFlushTimer !== undefined) {
-      clearTimeout(this.autoFlushTimer);
-      this.autoFlushTimer = undefined;
-    }
-  }
-
   private async transitionToReady(): Promise<void> {
-    this.clearAutoFlushTimer();
     const state = await this.store.getState(true);
     const stateType = state.state === 'RATE_LIMITED' ? 'Rate limit' : 'Backoff';
     this.logger?.info(`${stateType} period expired, resuming uploads`);
