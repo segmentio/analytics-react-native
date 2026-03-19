@@ -118,7 +118,10 @@ async function dispatchEvent(
 ): Promise<void> {
   switch (evt.type) {
     case 'track':
-      if (!evt.event) return;
+      if (!evt.event) {
+        console.warn(`[e2e] skipping track: missing event name`);
+        return;
+      }
       await client.track(evt.event, evt.properties as JsonMap | undefined);
       break;
     case 'identify':
@@ -126,32 +129,51 @@ async function dispatchEvent(
       break;
     case 'screen':
     case 'page':
-      if (!evt.name) return;
+      if (!evt.name) {
+        console.warn(`[e2e] skipping ${evt.type}: missing name`);
+        return;
+      }
       await client.screen(evt.name, evt.properties as JsonMap | undefined);
       break;
     case 'group':
-      if (!evt.groupId) return;
+      if (!evt.groupId) {
+        console.warn(`[e2e] skipping group: missing groupId`);
+        return;
+      }
       await client.group(evt.groupId, evt.traits as JsonMap | undefined);
       break;
     case 'alias':
-      if (!evt.userId) return;
+      if (!evt.userId) {
+        console.warn(`[e2e] skipping alias: missing userId`);
+        return;
+      }
       await client.alias(evt.userId);
       break;
+    default:
+      console.warn(`[e2e] skipping event: unknown type "${evt.type}"`);
   }
 }
 
+/** Polls pendingEvents() until the queue is empty or timeout. Returns true if drained. */
 async function waitForQueueDrain(
   client: SegmentClient,
   timeoutMs = 30_000
-): Promise<void> {
+): Promise<boolean> {
   const pollMs = 50;
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
-    if ((await client.pendingEvents()) === 0) return;
+    if ((await client.pendingEvents()) === 0) return true;
     await new Promise((r) => setTimeout(r, pollMs));
   }
+  return false;
 }
 
+/**
+ * Intercepts logger.error() to count permanently dropped events.
+ * Coupled to the log format in SegmentDestination.ts — matches:
+ *   "Dropped N events due to permanent errors"
+ *   "Dropped N events due to retry limit exceeded"
+ */
 function interceptDropCount(logger: Logger): () => number {
   let count = 0;
   const origError = logger.error;
@@ -213,10 +235,10 @@ async function main() {
 
     const getDropCount = interceptDropCount(logger);
     await client.flush();
-    await waitForQueueDrain(client);
+    const drained = await waitForQueueDrain(client);
     const permanentDropCount = getDropCount();
 
-    const finalPending = await client.pendingEvents();
+    const finalPending = drained ? 0 : await client.pendingEvents();
     const totalEvents = input.sequences.reduce(
       (sum, seq) => sum + seq.events.length,
       0
@@ -225,6 +247,8 @@ async function main() {
       0,
       totalEvents - finalPending - permanentDropCount
     );
+    // Approximate: SDK doesn't expose actual batch count, so we derive it
+    // from delivered event count and configured batch size.
     const sentBatches =
       delivered > 0
         ? Math.ceil(delivered / Math.max(1, input.config?.flushAt ?? 1))
