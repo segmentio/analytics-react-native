@@ -11,7 +11,6 @@ export const defaultConfig: Config = {
   autoAddSegmentDestination: true,
   useSegmentEndpoints: false,
   retryStrategy: 'lazy',
-  autoFlushOnRetryReady: false,
 };
 
 export const defaultHttpConfig: HttpConfig = {
