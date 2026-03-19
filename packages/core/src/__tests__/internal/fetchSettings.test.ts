@@ -436,6 +436,69 @@ describe('internal #getSettings', () => {
     });
   });
 
+  describe('CDN integrations validation', () => {
+    it('falls back to defaults when CDN returns null integrations', async () => {
+      (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ integrations: null }),
+        status: 200,
+      } as Response);
+
+      const client = new SegmentClient(clientArgs);
+      await client.fetchSettings();
+
+      expect(setSettingsSpy).toHaveBeenCalledWith(
+        defaultIntegrationSettings.integrations
+      );
+    });
+
+    it('falls back to defaults when CDN returns integrations as an array', async () => {
+      (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ integrations: ['invalid'] }),
+        status: 200,
+      } as Response);
+
+      const client = new SegmentClient(clientArgs);
+      await client.fetchSettings();
+
+      expect(setSettingsSpy).toHaveBeenCalledWith(
+        defaultIntegrationSettings.integrations
+      );
+    });
+
+    it('falls back to defaults when CDN returns integrations as a string', async () => {
+      (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ integrations: 'invalid' }),
+        status: 200,
+      } as Response);
+
+      const client = new SegmentClient(clientArgs);
+      await client.fetchSettings();
+
+      expect(setSettingsSpy).toHaveBeenCalledWith(
+        defaultIntegrationSettings.integrations
+      );
+    });
+
+    it('does not set settings when CDN returns invalid integrations and no defaults', async () => {
+      (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ integrations: null }),
+        status: 200,
+      } as Response);
+
+      const client = new SegmentClient({
+        ...clientArgs,
+        config: { ...clientArgs.config, defaultSettings: undefined },
+      });
+      await client.fetchSettings();
+
+      expect(setSettingsSpy).not.toHaveBeenCalled();
+    });
+  });
+
   describe('httpConfig extraction', () => {
     it('extracts httpConfig from CDN response and merges with defaults', async () => {
       const serverHttpConfig = {
