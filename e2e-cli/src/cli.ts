@@ -184,7 +184,11 @@ async function main() {
 
   if (!inputStr) {
     console.log(
-      JSON.stringify({ success: false, error: 'No input provided', sentBatches: 0 })
+      JSON.stringify({
+        success: false,
+        error: 'No input provided',
+        sentBatches: 0,
+      })
     );
     process.exit(1);
   }
