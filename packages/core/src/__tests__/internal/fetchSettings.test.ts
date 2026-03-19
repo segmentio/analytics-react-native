@@ -437,7 +437,7 @@ describe('internal #getSettings', () => {
   });
 
   describe('CDN integrations validation', () => {
-    it('falls back to defaults when CDN returns null integrations', async () => {
+    it('treats null integrations as empty (no integrations configured)', async () => {
       (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ integrations: null }),
@@ -447,9 +447,20 @@ describe('internal #getSettings', () => {
       const client = new SegmentClient(clientArgs);
       await client.fetchSettings();
 
-      expect(setSettingsSpy).toHaveBeenCalledWith(
-        defaultIntegrationSettings.integrations
-      );
+      expect(setSettingsSpy).toHaveBeenCalledWith({});
+    });
+
+    it('treats missing integrations as empty (no integrations configured)', async () => {
+      (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({}),
+        status: 200,
+      } as Response);
+
+      const client = new SegmentClient(clientArgs);
+      await client.fetchSettings();
+
+      expect(setSettingsSpy).toHaveBeenCalledWith({});
     });
 
     it('falls back to defaults when CDN returns integrations as an array', async () => {
@@ -482,7 +493,7 @@ describe('internal #getSettings', () => {
       );
     });
 
-    it('does not set settings when CDN returns invalid integrations and no defaults', async () => {
+    it('stores empty integrations when CDN returns null integrations and no defaults', async () => {
       (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ integrations: null }),
@@ -495,7 +506,7 @@ describe('internal #getSettings', () => {
       });
       await client.fetchSettings();
 
-      expect(setSettingsSpy).not.toHaveBeenCalled();
+      expect(setSettingsSpy).toHaveBeenCalledWith({});
     });
   });
 
