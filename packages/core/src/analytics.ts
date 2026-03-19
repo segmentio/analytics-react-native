@@ -10,6 +10,7 @@ import {
   workspaceDestinationFilterKey,
   defaultFlushInterval,
   defaultFlushAt,
+  defaultHttpConfig,
   maxPendingEvents,
 } from './constants';
 import { getContext } from './context';
@@ -49,6 +50,7 @@ import {
   Context,
   DeepPartial,
   GroupTraits,
+  HttpConfig,
   IntegrationSettings,
   JsonMap,
   LoggerType,
@@ -72,6 +74,10 @@ import {
   SegmentError,
   translateHTTPError,
 } from './errors';
+import {
+  validateRateLimitConfig,
+  validateBackoffConfig,
+} from './config-validation';
 import { QueueFlushingPlugin } from './plugins/QueueFlushingPlugin';
 import { WaitingPlugin } from './plugin';
 
@@ -80,6 +86,9 @@ type OnPluginAddedCallback = (plugin: Plugin) => void;
 export class SegmentClient {
   // the config parameters for the client - a merge of user provided and default options
   private config: Config;
+
+  // Server-side httpConfig from CDN (undefined until fetchSettings completes)
+  private httpConfig?: HttpConfig;
 
   // Storage
   private store: Storage;
@@ -190,6 +199,14 @@ export class SegmentClient {
    */
   getConfig() {
     return { ...this.config };
+  }
+
+  /**
+   * Retrieves the server-side httpConfig from CDN settings.
+   * Returns undefined if the CDN did not provide httpConfig (retry features disabled).
+   */
+  getHttpConfig(): HttpConfig | undefined {
+    return this.httpConfig;
   }
 
   constructor({
@@ -388,12 +405,65 @@ export class SegmentClient {
 
       const resJson: SegmentAPISettings =
         (await res.json()) as SegmentAPISettings;
+
+      if (
+        resJson.integrations == null ||
+        typeof resJson.integrations !== 'object' ||
+        Array.isArray(resJson.integrations)
+      ) {
+        this.logger.warn(
+          'CDN response has invalid integrations, falling back to defaults'
+        );
+        if (this.config.defaultSettings) {
+          await this.store.settings.set(
+            this.config.defaultSettings.integrations
+          );
+        }
+        return;
+      }
+
       const integrations = resJson.integrations;
       const consentSettings = resJson.consentSettings;
       const edgeFunctionSettings = resJson.edgeFunction;
       const filters = this.generateFiltersMap(
         resJson.middlewareSettings?.routingRules ?? []
       );
+
+      // Extract httpConfig from CDN, merge with defaults, validate and clamp
+      if (resJson.httpConfig) {
+        const mergedRateLimit = resJson.httpConfig.rateLimitConfig
+          ? {
+              ...defaultHttpConfig.rateLimitConfig!,
+              ...resJson.httpConfig.rateLimitConfig,
+            }
+          : defaultHttpConfig.rateLimitConfig!;
+
+        const mergedBackoff = resJson.httpConfig.backoffConfig
+          ? {
+              ...defaultHttpConfig.backoffConfig!,
+              ...resJson.httpConfig.backoffConfig,
+              statusCodeOverrides: {
+                ...defaultHttpConfig.backoffConfig!.statusCodeOverrides,
+                ...resJson.httpConfig.backoffConfig.statusCodeOverrides,
+              },
+            }
+          : defaultHttpConfig.backoffConfig!;
+
+        const validatedRateLimit = validateRateLimitConfig(
+          mergedRateLimit,
+          this.logger
+        );
+        this.httpConfig = {
+          rateLimitConfig: validatedRateLimit,
+          backoffConfig: validateBackoffConfig(
+            mergedBackoff,
+            this.logger,
+            validatedRateLimit
+          ),
+        };
+        this.logger.info('Loaded httpConfig from CDN settings.');
+      }
+
       this.logger.info('Received settings from Segment succesfully.');
       await Promise.all([
         this.store.settings.set(integrations),
