@@ -405,6 +405,23 @@ export class SegmentClient {
 
       const resJson: SegmentAPISettings =
         (await res.json()) as SegmentAPISettings;
+
+      if (
+        resJson.integrations == null ||
+        typeof resJson.integrations !== 'object' ||
+        Array.isArray(resJson.integrations)
+      ) {
+        this.logger.warn(
+          'CDN response has invalid integrations, falling back to defaults'
+        );
+        if (this.config.defaultSettings) {
+          await this.store.settings.set(
+            this.config.defaultSettings.integrations
+          );
+        }
+        return;
+      }
+
       const integrations = resJson.integrations;
       const consentSettings = resJson.consentSettings;
       const edgeFunctionSettings = resJson.edgeFunction;
