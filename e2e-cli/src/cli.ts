@@ -168,26 +168,6 @@ async function waitForQueueDrain(
   return false;
 }
 
-/**
- * Intercepts logger.error() to count permanently dropped events.
- * Coupled to the log format in SegmentDestination.ts — matches:
- *   "Dropped N events due to permanent errors"
- *   "Dropped N events due to retry limit exceeded"
- */
-function interceptDropCount(logger: Logger): () => number {
-  let count = 0;
-  const origError = logger.error;
-  logger.error = (message?: unknown, ...rest: unknown[]) => {
-    const match = String(message ?? '').match(/Dropped (\d+) events/);
-    if (match) count += parseInt(match[1], 10);
-    origError.call(logger, message, ...rest);
-  };
-  return () => {
-    logger.error = origError;
-    return count;
-  };
-}
-
 // ============================================================================
 // Main
 // ============================================================================
@@ -233,10 +213,9 @@ async function main() {
       }
     }
 
-    const getDropCount = interceptDropCount(logger);
     await client.flush();
     const drained = await waitForQueueDrain(client);
-    const permanentDropCount = getDropCount();
+    const permanentDropCount = client.droppedEvents();
 
     const finalPending = drained ? 0 : await client.pendingEvents();
     const totalEvents = input.sequences.reduce(
