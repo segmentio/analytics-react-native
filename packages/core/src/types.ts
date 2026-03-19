@@ -35,6 +35,9 @@ interface BaseEventType {
   integrations?: SegmentAPIIntegrations;
   _metadata?: DestinationMetadata;
   enrichment?: EnrichmentClosure;
+
+  /** Internal: timestamp (ms) when event was added to queue. Stripped before upload. */
+  _queuedAt?: number;
 }
 
 export interface TrackEventType extends BaseEventType {
@@ -332,6 +335,47 @@ export interface EdgeFunctionSettings {
   version: string;
 }
 
+export type RateLimitConfig = {
+  enabled: boolean;
+  maxRetryCount: number;
+  maxRetryInterval: number;
+  maxRateLimitDuration: number;
+};
+
+export type BackoffConfig = {
+  enabled: boolean;
+  maxRetryCount: number;
+  baseBackoffInterval: number;
+  maxBackoffInterval: number;
+  maxTotalBackoffDuration: number;
+  jitterPercent: number;
+  default4xxBehavior: 'drop' | 'retry';
+  default5xxBehavior: 'drop' | 'retry';
+  statusCodeOverrides: Record<string, 'drop' | 'retry'>;
+};
+
+export type HttpConfig = {
+  rateLimitConfig?: RateLimitConfig;
+  backoffConfig?: BackoffConfig;
+};
+
+export class ErrorClassification {
+  readonly errorType: 'rate_limit' | 'transient' | 'permanent';
+  readonly retryAfterSeconds?: number;
+
+  constructor(
+    errorType: 'rate_limit' | 'transient' | 'permanent',
+    retryAfterSeconds?: number
+  ) {
+    this.errorType = errorType;
+    this.retryAfterSeconds = retryAfterSeconds;
+  }
+
+  get isRetryable(): boolean {
+    return this.errorType !== 'permanent';
+  }
+}
+
 export type SegmentAPISettings = {
   integrations: SegmentAPIIntegrations;
   edgeFunction?: EdgeFunctionSettings;
@@ -340,6 +384,7 @@ export type SegmentAPISettings = {
   };
   metrics?: MetricsOptions;
   consentSettings?: SegmentAPIConsentSettings;
+  httpConfig?: HttpConfig;
 };
 
 export type DestinationMetadata = {

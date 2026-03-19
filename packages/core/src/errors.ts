@@ -1,3 +1,5 @@
+import { ErrorClassification } from './types';
+
 /**
  * Error types reported through the errorHandler in the client
  */
@@ -109,7 +111,6 @@ export const translateHTTPError = (error: unknown): SegmentError => {
       error.message,
       error
     );
-
     // HTTP Errors
   } else {
     const message =
@@ -120,4 +121,78 @@ export const translateHTTPError = (error: unknown): SegmentError => {
         : 'Unknown error';
     return new NetworkError(-1, message, error);
   }
+};
+
+/**
+ * Classify an HTTP status code into rate_limit, transient, or permanent.
+ *
+ * Precedence:
+ * 1. statusCodeOverrides — explicit per-code overrides
+ * 2. 429 — rate limiting (if rateLimitEnabled !== false)
+ * 3. default4xxBehavior / default5xxBehavior — range defaults
+ * 4. Fallback — permanent (non-retryable)
+ */
+export const classifyError = (
+  statusCode: number,
+  config?: {
+    default4xxBehavior?: 'drop' | 'retry';
+    default5xxBehavior?: 'drop' | 'retry';
+    statusCodeOverrides?: Record<string, 'drop' | 'retry'>;
+    rateLimitEnabled?: boolean;
+  }
+): ErrorClassification => {
+  const override = config?.statusCodeOverrides?.[statusCode.toString()];
+  if (override !== undefined) {
+    if (override === 'retry') {
+      return statusCode === 429
+        ? new ErrorClassification('rate_limit')
+        : new ErrorClassification('transient');
+    }
+    return new ErrorClassification('permanent');
+  }
+
+  if (statusCode === 429 && config?.rateLimitEnabled !== false) {
+    return new ErrorClassification('rate_limit');
+  }
+
+  if (statusCode >= 400 && statusCode < 500) {
+    const behavior = config?.default4xxBehavior ?? 'drop';
+    return new ErrorClassification(
+      behavior === 'retry' ? 'transient' : 'permanent'
+    );
+  }
+
+  if (statusCode >= 500 && statusCode < 600) {
+    const behavior = config?.default5xxBehavior ?? 'retry';
+    return new ErrorClassification(
+      behavior === 'retry' ? 'transient' : 'permanent'
+    );
+  }
+
+  return new ErrorClassification('permanent');
+};
+
+/**
+ * Parse Retry-After header value (seconds or HTTP-date format).
+ * Returns delay in seconds clamped to maxRetryInterval, or undefined if invalid.
+ */
+export const parseRetryAfter = (
+  retryAfterValue: string | null,
+  maxRetryInterval = 300
+): number | undefined => {
+  if (retryAfterValue === null || retryAfterValue === '') return undefined;
+
+  const asNumber = Number(retryAfterValue);
+  if (Number.isFinite(asNumber)) {
+    if (asNumber < 0) return undefined;
+    return Math.min(asNumber, maxRetryInterval);
+  }
+
+  const retryDate = new Date(retryAfterValue);
+  if (!isNaN(retryDate.getTime())) {
+    const secondsUntil = Math.ceil((retryDate.getTime() - Date.now()) / 1000);
+    return Math.min(Math.max(secondsUntil, 0), maxRetryInterval);
+  }
+
+  return undefined;
 };
