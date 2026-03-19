@@ -40,6 +40,7 @@ type ErrorAggregation = {
 export class SegmentDestination extends DestinationPlugin {
   type = PluginType.destination;
   key = SEGMENT_DESTINATION_KEY;
+  droppedEventCount = 0;
   private apiHost?: string;
   private httpConfig?: HttpConfig;
   private settingsResolve: () => void;
