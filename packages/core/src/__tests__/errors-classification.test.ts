@@ -1,6 +1,106 @@
 import { classifyError, parseRetryAfter } from '../errors';
 
 describe('classifyError', () => {
+  describe('SDD-default config (statusCodeOverrides per spec)', () => {
+    const sddConfig = {
+      default4xxBehavior: 'drop' as const,
+      default5xxBehavior: 'retry' as const,
+      statusCodeOverrides: {
+        '408': 'retry' as const,
+        '410': 'retry' as const,
+        '429': 'retry' as const,
+        '460': 'retry' as const,
+        '501': 'drop' as const,
+        '505': 'drop' as const,
+      },
+      rateLimitEnabled: true,
+    };
+
+    it('retries 408 (Request Timeout)', () => {
+      const result = classifyError(408, sddConfig);
+      expect(result.isRetryable).toBe(true);
+      expect(result.errorType).toBe('transient');
+    });
+
+    it('retries 410 (Gone)', () => {
+      const result = classifyError(410, sddConfig);
+      expect(result.isRetryable).toBe(true);
+      expect(result.errorType).toBe('transient');
+    });
+
+    it('retries 460 (Client timeout)', () => {
+      const result = classifyError(460, sddConfig);
+      expect(result.isRetryable).toBe(true);
+      expect(result.errorType).toBe('transient');
+    });
+
+    it('rate-limits 429 (Too Many Requests)', () => {
+      const result = classifyError(429, sddConfig);
+      expect(result.isRetryable).toBe(true);
+      expect(result.errorType).toBe('rate_limit');
+    });
+
+    it('drops 400 (Bad Request)', () => {
+      const result = classifyError(400, sddConfig);
+      expect(result.isRetryable).toBe(false);
+      expect(result.errorType).toBe('permanent');
+    });
+
+    it('drops 401 (Unauthorized)', () => {
+      const result = classifyError(401, sddConfig);
+      expect(result.isRetryable).toBe(false);
+      expect(result.errorType).toBe('permanent');
+    });
+
+    it('drops 413 (Payload Too Large)', () => {
+      const result = classifyError(413, sddConfig);
+      expect(result.isRetryable).toBe(false);
+      expect(result.errorType).toBe('permanent');
+    });
+
+    it('drops 501 (Not Implemented)', () => {
+      const result = classifyError(501, sddConfig);
+      expect(result.isRetryable).toBe(false);
+      expect(result.errorType).toBe('permanent');
+    });
+
+    it('drops 505 (HTTP Version Not Supported)', () => {
+      const result = classifyError(505, sddConfig);
+      expect(result.isRetryable).toBe(false);
+      expect(result.errorType).toBe('permanent');
+    });
+
+    it('retries 500 (Internal Server Error)', () => {
+      const result = classifyError(500, sddConfig);
+      expect(result.isRetryable).toBe(true);
+      expect(result.errorType).toBe('transient');
+    });
+
+    it('retries 502 (Bad Gateway)', () => {
+      const result = classifyError(502, sddConfig);
+      expect(result.isRetryable).toBe(true);
+      expect(result.errorType).toBe('transient');
+    });
+
+    it('retries 503 (Service Unavailable)', () => {
+      const result = classifyError(503, sddConfig);
+      expect(result.isRetryable).toBe(true);
+      expect(result.errorType).toBe('transient');
+    });
+
+    it('retries 504 (Gateway Timeout)', () => {
+      const result = classifyError(504, sddConfig);
+      expect(result.isRetryable).toBe(true);
+      expect(result.errorType).toBe('transient');
+    });
+
+    it('retries 508 (Loop Detected)', () => {
+      const result = classifyError(508, sddConfig);
+      expect(result.isRetryable).toBe(true);
+      expect(result.errorType).toBe('transient');
+    });
+  });
+
   describe('statusCodeOverrides precedence', () => {
     it('uses override for specific status code', () => {
       const config = {

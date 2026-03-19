@@ -154,12 +154,6 @@ export type Config = {
   cdnProxy?: string;
   useSegmentEndpoints?: boolean; // Use if you want to use Segment endpoints
   errorHandler?: (error: SegmentError) => void;
-  /**
-   * Controls how concurrent batch errors are consolidated into a single retry delay.
-   * - 'lazy' (default): uses the longest wait time (most conservative, fewer retries)
-   * - 'eager': uses the shortest wait time (more aggressive, retries sooner)
-   */
-  retryStrategy?: 'eager' | 'lazy';
 };
 
 export type ClientMethods = {
