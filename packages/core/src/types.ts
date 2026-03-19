@@ -160,11 +160,6 @@ export type Config = {
    * - 'eager': uses the shortest wait time (more aggressive, retries sooner)
    */
   retryStrategy?: 'eager' | 'lazy';
-  /**
-   * When true, automatically triggers a flush when the retry manager's wait
-   * period expires and transitions back to READY. Disabled by default.
-   */
-  autoFlushOnRetryReady?: boolean;
 };
 
 export type ClientMethods = {
