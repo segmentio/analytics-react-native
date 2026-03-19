@@ -184,6 +184,7 @@ export class SegmentDestination extends DestinationPlugin {
 
     if (expiredMessageIds.length > 0) {
       await this.queuePlugin.dequeueByMessageIds(expiredMessageIds);
+      this.droppedEventCount += expiredMessageIds.length;
       this.analytics?.logger.warn(
         `Pruned ${expiredMessageIds.length} events older than ${maxAge}s`
       );
@@ -368,8 +369,7 @@ export class SegmentDestination extends DestinationPlugin {
           config?.storePersistor,
           httpConfig.rateLimitConfig,
           httpConfig.backoffConfig,
-          this.analytics?.logger,
-          config?.retryStrategy ?? 'lazy'
+          this.analytics?.logger
         );
       }
     }
