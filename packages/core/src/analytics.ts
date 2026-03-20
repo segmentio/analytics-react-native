@@ -1048,6 +1048,7 @@ export class SegmentClient {
 
     return totalEventsCount;
   }
+
   private resumeTimeoutId?: ReturnType<typeof setTimeout>;
   private waitingPlugins = new Set<WaitingPlugin>();
 
