@@ -18,6 +18,7 @@ export enum ErrorType {
   InitializationError,
   ResetError,
   FlushError,
+  EventsDropped,
 }
 
 /**
@@ -27,13 +28,20 @@ export class SegmentError extends Error {
   type: ErrorType;
   message: string;
   innerError?: unknown;
+  metadata?: Record<string, unknown>;
 
-  constructor(type: ErrorType, message: string, innerError?: unknown) {
+  constructor(
+    type: ErrorType,
+    message: string,
+    innerError?: unknown,
+    metadata?: Record<string, unknown>
+  ) {
     super(message);
     Object.setPrototypeOf(this, SegmentError.prototype);
     this.type = type;
     this.message = message;
     this.innerError = innerError;
+    this.metadata = metadata;
   }
 }
 

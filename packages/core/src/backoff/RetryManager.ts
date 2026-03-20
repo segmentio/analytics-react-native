@@ -29,8 +29,9 @@ export type RetryResult = 'rate_limited' | 'backed_off' | 'limit_exceeded';
  * - BACKING_OFF: transient error; exponential backoff until wait expires
  *
  * Designed for concurrent batch uploads (Promise.all). Multiple batches can
- * fail simultaneously with different errors or partially succeed. The retry
- * strategy (eager/lazy) controls how concurrent wait times are consolidated.
+ * fail simultaneously with different errors or partially succeed. When
+ * concurrent wait times conflict, the shorter wait is used (eager strategy)
+ * to retry sooner.
  *
  * Uses a global retry counter since batches are re-chunked from the event
  * queue on each flush and have no stable identities.
@@ -40,20 +41,17 @@ export class RetryManager {
   private rateLimitConfig?: RateLimitConfig;
   private backoffConfig?: BackoffConfig;
   private logger?: LoggerType;
-  private retryStrategy: 'eager' | 'lazy';
 
   constructor(
     storeId: string,
     persistor: Persistor | undefined,
     rateLimitConfig?: RateLimitConfig,
     backoffConfig?: BackoffConfig,
-    logger?: LoggerType,
-    retryStrategy: 'eager' | 'lazy' = 'lazy'
+    logger?: LoggerType
   ) {
     this.rateLimitConfig = rateLimitConfig;
     this.backoffConfig = backoffConfig;
     this.logger = logger;
-    this.retryStrategy = retryStrategy;
 
     try {
       this.store = createStore<RetryStateData>(
@@ -293,14 +291,11 @@ export class RetryManager {
   }
 
   /**
-   * Consolidate two wait-until times based on retry strategy.
-   * - 'lazy': take the longer wait (most conservative, default)
-   * - 'eager': take the shorter wait (retry sooner)
+   * Consolidate two wait-until times using the eager strategy:
+   * take the shorter wait to retry sooner.
    */
   private applyRetryStrategy(existing: number, incoming: number): number {
-    return this.retryStrategy === 'eager'
-      ? Math.min(existing, incoming)
-      : Math.max(existing, incoming);
+    return Math.min(existing, incoming);
   }
 
   private async transitionToReady(): Promise<void> {

@@ -60,6 +60,7 @@ describe('QueueFlushingPlugin', () => {
     const event: SegmentEvent = {
       type: EventType.TrackEvent,
       event: 'test2',
+      messageId: 'msg-dequeue-1',
       properties: {
         test: 'test2',
       },
@@ -72,7 +73,7 @@ describe('QueueFlushingPlugin', () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     expect(queuePlugin.queueStore?.getState().events).toHaveLength(1);
-    await queuePlugin.dequeue(event);
+    await queuePlugin.dequeueByMessageIds(['msg-dequeue-1']);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     expect(queuePlugin.queueStore?.getState().events).toHaveLength(0);
@@ -111,6 +112,7 @@ describe('QueueFlushingPlugin', () => {
     const event1: SegmentEvent = {
       type: EventType.TrackEvent,
       event: 'test1',
+      messageId: 'msg-count-1',
       properties: {
         test: 'test1',
       },
@@ -119,6 +121,7 @@ describe('QueueFlushingPlugin', () => {
     const event2: SegmentEvent = {
       type: EventType.TrackEvent,
       event: 'test2',
+      messageId: 'msg-count-2',
       properties: {
         test: 'test2',
       },
@@ -130,7 +133,7 @@ describe('QueueFlushingPlugin', () => {
     let eventsCount = await queuePlugin.pendingEvents();
     expect(eventsCount).toBe(2);
 
-    await queuePlugin.dequeue(event1);
+    await queuePlugin.dequeueByMessageIds(['msg-count-1']);
 
     eventsCount = await queuePlugin.pendingEvents();
     expect(eventsCount).toBe(1);

@@ -166,7 +166,7 @@ describe('RetryManager', () => {
       expect(await rm.getRetryCount()).toBe(2);
     });
 
-    it('uses longest retry-after when multiple 429s occur', async () => {
+    it('uses shortest retry-after when multiple 429s occur (eager)', async () => {
       const now = 1000000;
       jest.spyOn(Date, 'now').mockReturnValue(now);
 
@@ -181,11 +181,8 @@ describe('RetryManager', () => {
       await rm.handle429(60);
       await rm.handle429(120);
 
-      // Should wait 120s, not 60s
+      // Eager: should use 60s (shortest)
       jest.spyOn(Date, 'now').mockReturnValue(now + 61000);
-      expect(await rm.canRetry()).toBe(false);
-
-      jest.spyOn(Date, 'now').mockReturnValue(now + 121000);
       expect(await rm.canRetry()).toBe(true);
     });
 
@@ -391,20 +388,22 @@ describe('RetryManager', () => {
       jest.spyOn(Date, 'now').mockReturnValue(now + 400);
       expect(await rm.canRetry()).toBe(false);
 
-      // Second error before first expires: 0.5 * 2^1 = 1s
-      jest.spyOn(Date, 'now').mockReturnValue(now + 400);
+      // Advance past first wait → transitions to READY (retryCount preserved)
+      jest.spyOn(Date, 'now').mockReturnValue(now + 600);
+      expect(await rm.canRetry()).toBe(true);
+
+      // Second error: 0.5 * 2^1 = 1s (retryCount is still 1)
       await rm.handleTransientError();
 
-      // Should now wait for the 1s from second error
-      jest.spyOn(Date, 'now').mockReturnValue(now + 1300);
-      expect(await rm.canRetry()).toBe(false);
       jest.spyOn(Date, 'now').mockReturnValue(now + 1500);
+      expect(await rm.canRetry()).toBe(false);
+      jest.spyOn(Date, 'now').mockReturnValue(now + 1700);
       expect(await rm.canRetry()).toBe(true);
     });
 
     it('clamps backoff to maxBackoffInterval', async () => {
-      const now = 1000000;
-      jest.spyOn(Date, 'now').mockReturnValue(now);
+      let t = 1000000;
+      jest.spyOn(Date, 'now').mockReturnValue(t);
 
       const config: BackoffConfig = {
         ...defaultBackoffConfig,
@@ -418,16 +417,21 @@ describe('RetryManager', () => {
         mockLogger
       );
 
-      // Retry many times to exceed maxBackoffInterval
-      // Without moving time forward so they accumulate
-      for (let i = 0; i < 10; i++) {
+      // Advance retryCount high enough that unclamped backoff would exceed 5s
+      // (0.5 * 2^4 = 8s > 5s). Advance time between errors to avoid eager min.
+      for (let i = 0; i < 5; i++) {
         await rm.handleTransientError();
+        t += 10000;
+        jest.spyOn(Date, 'now').mockReturnValue(t);
+        await rm.canRetry(); // transition to READY
       }
 
-      // Should be clamped to 5s
-      jest.spyOn(Date, 'now').mockReturnValue(now + 4000);
+      // Next error: 0.5 * 2^5 = 16s, clamped to 5s
+      await rm.handleTransientError();
+
+      jest.spyOn(Date, 'now').mockReturnValue(t + 4000);
       expect(await rm.canRetry()).toBe(false);
-      jest.spyOn(Date, 'now').mockReturnValue(now + 6000);
+      jest.spyOn(Date, 'now').mockReturnValue(t + 6000);
       expect(await rm.canRetry()).toBe(true);
     });
 
@@ -506,12 +510,11 @@ describe('RetryManager', () => {
     });
   });
 
-  describe('retryStrategy', () => {
-    it('defaults to lazy (uses longest wait time)', async () => {
+  describe('concurrent wait time consolidation', () => {
+    it('uses shortest wait time when multiple 429s occur (eager)', async () => {
       const now = 1000000;
       jest.spyOn(Date, 'now').mockReturnValue(now);
 
-      // No retryStrategy passed → defaults to 'lazy'
       const rm = new RetryManager(
         'test-key',
         mockPersistor,
@@ -523,36 +526,12 @@ describe('RetryManager', () => {
       await rm.handle429(60);
       await rm.handle429(120);
 
-      // Lazy: should use 120s (longest)
-      jest.spyOn(Date, 'now').mockReturnValue(now + 61000);
-      expect(await rm.canRetry()).toBe(false);
-
-      jest.spyOn(Date, 'now').mockReturnValue(now + 121000);
-      expect(await rm.canRetry()).toBe(true);
-    });
-
-    it('eager strategy uses shortest wait time', async () => {
-      const now = 1000000;
-      jest.spyOn(Date, 'now').mockReturnValue(now);
-
-      const rm = new RetryManager(
-        'test-key',
-        mockPersistor,
-        defaultRateLimitConfig,
-        defaultBackoffConfig,
-        mockLogger,
-        'eager'
-      );
-
-      await rm.handle429(60);
-      await rm.handle429(120);
-
       // Eager: should use 60s (shortest)
       jest.spyOn(Date, 'now').mockReturnValue(now + 61000);
       expect(await rm.canRetry()).toBe(true);
     });
 
-    it('lazy strategy uses longest wait time', async () => {
+    it('uses shortest wait time for transient errors too', async () => {
       const now = 1000000;
       jest.spyOn(Date, 'now').mockReturnValue(now);
 
@@ -561,32 +540,7 @@ describe('RetryManager', () => {
         mockPersistor,
         defaultRateLimitConfig,
         defaultBackoffConfig,
-        mockLogger,
-        'lazy'
-      );
-
-      await rm.handle429(60);
-      await rm.handle429(120);
-
-      // Lazy: should use 120s (longest)
-      jest.spyOn(Date, 'now').mockReturnValue(now + 61000);
-      expect(await rm.canRetry()).toBe(false);
-
-      jest.spyOn(Date, 'now').mockReturnValue(now + 121000);
-      expect(await rm.canRetry()).toBe(true);
-    });
-
-    it('eager strategy applies to transient errors too', async () => {
-      const now = 1000000;
-      jest.spyOn(Date, 'now').mockReturnValue(now);
-
-      const rm = new RetryManager(
-        'test-key',
-        mockPersistor,
-        defaultRateLimitConfig,
-        defaultBackoffConfig,
-        mockLogger,
-        'eager'
+        mockLogger
       );
 
       // First transient: 0.5 * 2^0 = 0.5s → wait until now + 500ms
@@ -763,7 +717,7 @@ describe('RetryManager', () => {
   });
 
   describe('mixed 429 and transient errors', () => {
-    it('429 wait time takes precedence over shorter transient backoff', async () => {
+    it('state stays RATE_LIMITED but wait uses shorter time (eager)', async () => {
       const now = 1000000;
       jest.spyOn(Date, 'now').mockReturnValue(now);
 
@@ -775,20 +729,18 @@ describe('RetryManager', () => {
         mockLogger
       );
 
-      // Get a 429 first
+      // Get a 429 first → RATE_LIMITED, waitUntilTime = now + 60s
       await rm.handle429(60);
       expect(await rm.getRetryCount()).toBe(1);
 
-      // Then a transient error before 429 expires
+      // Transient error at t=10s → backoff = 0.5*2^1 = 1s → waitUntil = now+11s
+      // Eager: min(now+60s, now+11s) = now+11s, state stays RATE_LIMITED
       jest.spyOn(Date, 'now').mockReturnValue(now + 10000);
       await rm.handleTransientError();
       expect(await rm.getRetryCount()).toBe(2);
 
-      // Should use the longest wait time (429's 60s)
-      jest.spyOn(Date, 'now').mockReturnValue(now + 50000);
-      expect(await rm.canRetry()).toBe(false);
-
-      jest.spyOn(Date, 'now').mockReturnValue(now + 61000);
+      // Eager picks shorter wait, so retryable after ~11s from original now
+      jest.spyOn(Date, 'now').mockReturnValue(now + 12000);
       expect(await rm.canRetry()).toBe(true);
     });
   });
