@@ -203,7 +203,9 @@ async function main() {
       ...buildConfig(input),
       errorHandler: (error) => {
         if (error.type === ErrorType.EventsDropped) {
-          permanentDropCount++;
+          const count =
+            (error.metadata?.droppedCount as number | undefined) ?? 1;
+          permanentDropCount += count;
         }
       },
     };
