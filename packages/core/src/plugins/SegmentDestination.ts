@@ -13,7 +13,13 @@ import type { SegmentClient } from '../analytics';
 import { DestinationMetadataEnrichment } from './DestinationMetadataEnrichment';
 import { QueueFlushingPlugin } from './QueueFlushingPlugin';
 import { defaultApiHost, defaultConfig } from '../constants';
-import { translateHTTPError, classifyError, parseRetryAfter } from '../errors';
+import {
+  SegmentError,
+  ErrorType,
+  translateHTTPError,
+  classifyError,
+  parseRetryAfter,
+} from '../errors';
 import { RetryManager } from '../backoff/RetryManager';
 import type { RetryResult } from '../backoff';
 
@@ -40,7 +46,6 @@ type ErrorAggregation = {
 export class SegmentDestination extends DestinationPlugin {
   type = PluginType.destination;
   key = SEGMENT_DESTINATION_KEY;
-  droppedEventCount = 0;
   private apiHost?: string;
   private httpConfig?: HttpConfig;
   private settingsResolve: () => void;
@@ -185,7 +190,12 @@ export class SegmentDestination extends DestinationPlugin {
 
     if (expiredMessageIds.length > 0) {
       await this.queuePlugin.dequeueByMessageIds(expiredMessageIds);
-      this.droppedEventCount += expiredMessageIds.length;
+      this.analytics?.reportInternalError(
+        new SegmentError(
+          ErrorType.EventsDropped,
+          `Dropped ${expiredMessageIds.length} events exceeding max age (${maxAge}s)`
+        )
+      );
       this.analytics?.logger.warn(
         `Pruned ${expiredMessageIds.length} events older than ${maxAge}s`
       );
@@ -273,7 +283,12 @@ export class SegmentDestination extends DestinationPlugin {
       await this.queuePlugin.dequeueByMessageIds(
         aggregation.permanentErrorMessageIds
       );
-      this.droppedEventCount += aggregation.permanentErrorMessageIds.length;
+      this.analytics?.reportInternalError(
+        new SegmentError(
+          ErrorType.EventsDropped,
+          `Dropped ${aggregation.permanentErrorMessageIds.length} events due to permanent errors`
+        )
+      );
       this.analytics?.logger.error(
         `Dropped ${aggregation.permanentErrorMessageIds.length} events due to permanent errors`
       );
@@ -283,7 +298,12 @@ export class SegmentDestination extends DestinationPlugin {
       await this.queuePlugin.dequeueByMessageIds(
         aggregation.retryableMessageIds
       );
-      this.droppedEventCount += aggregation.retryableMessageIds.length;
+      this.analytics?.reportInternalError(
+        new SegmentError(
+          ErrorType.EventsDropped,
+          `Dropped ${aggregation.retryableMessageIds.length} events due to retry limit exceeded`
+        )
+      );
       this.analytics?.logger.error(
         `Dropped ${aggregation.retryableMessageIds.length} events due to retry limit exceeded`
       );
