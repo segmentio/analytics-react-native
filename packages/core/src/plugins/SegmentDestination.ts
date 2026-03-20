@@ -193,7 +193,9 @@ export class SegmentDestination extends DestinationPlugin {
       this.analytics?.reportInternalError(
         new SegmentError(
           ErrorType.EventsDropped,
-          `Dropped ${expiredMessageIds.length} events exceeding max age (${maxAge}s)`
+          `Dropped ${expiredMessageIds.length} events exceeding max age (${maxAge}s)`,
+          undefined,
+          { droppedCount: expiredMessageIds.length, reason: 'max_age_exceeded' }
         )
       );
       this.analytics?.logger.warn(
@@ -286,7 +288,12 @@ export class SegmentDestination extends DestinationPlugin {
       this.analytics?.reportInternalError(
         new SegmentError(
           ErrorType.EventsDropped,
-          `Dropped ${aggregation.permanentErrorMessageIds.length} events due to permanent errors`
+          `Dropped ${aggregation.permanentErrorMessageIds.length} events due to permanent errors`,
+          undefined,
+          {
+            droppedCount: aggregation.permanentErrorMessageIds.length,
+            reason: 'permanent_error',
+          }
         )
       );
       this.analytics?.logger.error(
@@ -301,7 +308,12 @@ export class SegmentDestination extends DestinationPlugin {
       this.analytics?.reportInternalError(
         new SegmentError(
           ErrorType.EventsDropped,
-          `Dropped ${aggregation.retryableMessageIds.length} events due to retry limit exceeded`
+          `Dropped ${aggregation.retryableMessageIds.length} events due to retry limit exceeded`,
+          undefined,
+          {
+            droppedCount: aggregation.retryableMessageIds.length,
+            reason: 'retry_limit_exceeded',
+          }
         )
       );
       this.analytics?.logger.error(
