@@ -13,6 +13,7 @@ import { SegmentClient } from '../../packages/core/src/analytics';
 import { SovranStorage } from '../../packages/core/src/storage/sovranStorage';
 import { Logger } from '../../packages/core/src/logger';
 import type { Config, JsonMap } from '../../packages/core/src/types';
+import { ErrorType } from '../../packages/core/src/errors';
 import type { Persistor } from '@segment/sovran-react-native';
 
 // ============================================================================
@@ -197,7 +198,15 @@ async function main() {
 
   try {
     const input: CLIInput = JSON.parse(inputStr);
-    const config = buildConfig(input);
+    let permanentDropCount = 0;
+    const config: Config = {
+      ...buildConfig(input),
+      errorHandler: (error) => {
+        if (error.type === ErrorType.EventsDropped) {
+          permanentDropCount++;
+        }
+      },
+    };
 
     const store = new SovranStorage({
       storeId: input.writeKey,
@@ -219,7 +228,6 @@ async function main() {
 
     await client.flush();
     const drained = await waitForQueueDrain(client);
-    const permanentDropCount = client.droppedEvents();
 
     const finalPending = drained ? 0 : await client.pendingEvents();
     const totalEvents = input.sequences.reduce(

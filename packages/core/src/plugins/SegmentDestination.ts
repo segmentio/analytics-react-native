@@ -22,7 +22,6 @@ export const SEGMENT_DESTINATION_KEY = 'Segment.io';
 export class SegmentDestination extends DestinationPlugin {
   type = PluginType.destination;
   key = SEGMENT_DESTINATION_KEY;
-  droppedEventCount = 0;
   private apiHost?: string;
   private settingsResolve: () => void;
   private settingsPromise: Promise<void>;
