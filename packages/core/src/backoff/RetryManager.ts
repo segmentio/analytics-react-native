@@ -51,38 +51,51 @@ export class RetryManager {
     this.rateLimitConfig = rateLimitConfig;
     this.backoffConfig = backoffConfig;
     this.logger = logger;
+    this.store = this.createStore(storeId, persistor);
+  }
 
-    try {
-      this.store = createStore<RetryStateData>(
-        INITIAL_STATE,
-        persistor
-          ? {
-              persist: {
-                storeId: `${storeId}-retryState`,
-                persistor,
-              },
-            }
-          : undefined
-      );
-    } catch (e) {
-      const errorMessage = e instanceof Error ? e.message : String(e);
-      this.logger?.error(
-        `[RetryManager] Persistence failed, using in-memory store: ${errorMessage}`
-      );
-
+  /**
+   * Create sovran store with persistence fallback.
+   * Tries persisted store first, falls back to in-memory on failure.
+   */
+  private createStore(
+    storeId: string,
+    persistor: Persistor | undefined
+  ): Store<RetryStateData> {
+    // Try persisted store first
+    if (persistor) {
       try {
-        this.store = createStore<RetryStateData>(INITIAL_STATE);
-      } catch (fallbackError) {
-        const fallbackMessage =
-          fallbackError instanceof Error
-            ? fallbackError.message
-            : String(fallbackError);
+        return createStore<RetryStateData>(INITIAL_STATE, {
+          persist: {
+            storeId: `${storeId}-retryState`,
+            persistor,
+          },
+        });
+      } catch (e) {
         this.logger?.error(
-          `[RetryManager] CRITICAL: In-memory store creation failed: ${fallbackMessage}`
+          `[RetryManager] Persistence failed, falling back to in-memory: ${this.getErrorMessage(
+            e
+          )}`
         );
-        throw fallbackError;
       }
     }
+
+    // Fall back to in-memory store
+    try {
+      return createStore<RetryStateData>(INITIAL_STATE);
+    } catch (e) {
+      this.logger?.error(
+        `[RetryManager] CRITICAL: In-memory store creation failed: ${this.getErrorMessage(
+          e
+        )}`
+      );
+      throw e;
+    }
+  }
+
+  /** Extract error message from unknown error type. */
+  private getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
   }
 
   /**
