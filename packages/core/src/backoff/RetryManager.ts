@@ -2,23 +2,37 @@ import { createStore } from '@segment/sovran-react-native';
 import type { Store, Persistor } from '@segment/sovran-react-native';
 import type { LoggerType, RateLimitConfig, BackoffConfig } from '../types';
 
+export enum RetryState {
+  READY = 'READY',
+  RATE_LIMITED = 'RATE_LIMITED',
+  BACKING_OFF = 'BACKING_OFF',
+}
+
+export enum RetryResult {
+  RATE_LIMITED = 'rate_limited',
+  BACKED_OFF = 'backed_off',
+  LIMIT_EXCEEDED = 'limit_exceeded',
+}
+
 type RetryStateData = {
-  state: 'READY' | 'RATE_LIMITED' | 'BACKING_OFF';
+  state: RetryState;
   waitUntilTime: number;
   retryCount: number;
   firstFailureTime: number | null;
 };
 
 const INITIAL_STATE: RetryStateData = {
-  state: 'READY',
+  state: RetryState.READY,
   waitUntilTime: 0,
   retryCount: 0,
   firstFailureTime: null,
 };
 
-const VALID_STATES = new Set(['READY', 'RATE_LIMITED', 'BACKING_OFF']);
-
-export type RetryResult = 'rate_limited' | 'backed_off' | 'limit_exceeded';
+const VALID_STATES = new Set([
+  RetryState.READY,
+  RetryState.RATE_LIMITED,
+  RetryState.BACKING_OFF,
+]);
 
 /**
  * Manages retry state for rate limiting (429) and transient errors (5xx).
@@ -106,7 +120,7 @@ export class RetryManager {
     const state = await this.store.getState(true);
     const now = Date.now();
 
-    if (state.state === 'READY') {
+    if (state.state === RetryState.READY) {
       return true;
     }
 
@@ -124,8 +138,7 @@ export class RetryManager {
     }
 
     const waitSeconds = Math.ceil((state.waitUntilTime - now) / 1000);
-    const stateType =
-      state.state === 'RATE_LIMITED' ? 'rate limited' : 'backing off';
+    const stateType = this.getStateDisplayName(state.state);
     this.logger?.info(
       `Upload blocked: ${stateType}, retry in ${waitSeconds}s (retry ${state.retryCount})`
     );
@@ -135,7 +148,6 @@ export class RetryManager {
   /**
    * Handle a 429 rate limit response.
    * Uses server-specified wait time from Retry-After header.
-   * Returns 'limit_exceeded' if retry limits are hit, otherwise 'rate_limited'.
    */
   async handle429(retryAfterSeconds: number): Promise<RetryResult | undefined> {
     if (this.rateLimitConfig?.enabled !== true) {
@@ -159,7 +171,7 @@ export class RetryManager {
     const waitUntilTime = now + retryAfterSeconds * 1000;
 
     return this.handleError(
-      'RATE_LIMITED',
+      RetryState.RATE_LIMITED,
       (_state) => waitUntilTime,
       this.rateLimitConfig.maxRetryCount,
       this.rateLimitConfig.maxRateLimitDuration,
@@ -170,7 +182,6 @@ export class RetryManager {
   /**
    * Handle a transient error (5xx, network failure).
    * Uses exponential backoff to calculate wait time.
-   * Returns 'limit_exceeded' if retry limits are hit, otherwise 'backed_off'.
    */
   async handleTransientError(): Promise<RetryResult | undefined> {
     if (this.backoffConfig?.enabled !== true) {
@@ -181,7 +192,7 @@ export class RetryManager {
     const random = Math.random();
 
     return this.handleError(
-      'BACKING_OFF',
+      RetryState.BACKING_OFF,
       (state) => {
         const backoffSeconds = this.calculateBackoff(state.retryCount, random);
         return now + backoffSeconds * 1000;
@@ -216,7 +227,7 @@ export class RetryManager {
    * @param now - Current timestamp
    */
   private async handleError(
-    newState: 'RATE_LIMITED' | 'BACKING_OFF',
+    newState: RetryState.RATE_LIMITED | RetryState.BACKING_OFF,
     computeWaitUntilTime: (state: RetryStateData) => number,
     maxRetryCount: number,
     maxRetryDuration: number,
@@ -236,24 +247,16 @@ export class RetryManager {
         }
 
         const waitUntilTime = computeWaitUntilTime(state);
-
-        const resolvedState =
-          state.state === 'RATE_LIMITED' && newState === 'BACKING_OFF'
-            ? 'RATE_LIMITED'
-            : newState;
-
-        let finalWaitUntilTime: number;
-        if (state.state === 'READY') {
-          finalWaitUntilTime = waitUntilTime;
-        } else if (
-          newState === 'RATE_LIMITED' &&
-          state.state === 'BACKING_OFF'
-        ) {
-          finalWaitUntilTime = waitUntilTime;
-        } else {
-          // Eager strategy: take the shorter wait when consolidating concurrent errors
-          finalWaitUntilTime = Math.min(state.waitUntilTime, waitUntilTime);
-        }
+        const resolvedState = this.resolveStatePrecedence(
+          state.state,
+          newState
+        );
+        const finalWaitUntilTime = this.consolidateWaitTime(
+          state.state,
+          newState,
+          state.waitUntilTime,
+          waitUntilTime
+        );
 
         return {
           state: resolvedState,
@@ -268,20 +271,78 @@ export class RetryManager {
       this.logger?.warn(
         `Max retry limit exceeded (count: ${maxRetryCount}, duration: ${maxRetryDuration}s), resetting retry manager`
       );
-      return 'limit_exceeded';
+      return RetryResult.LIMIT_EXCEEDED;
     }
 
-    const stateType =
-      newStateData.state === 'RATE_LIMITED'
-        ? 'Rate limited (429)'
-        : 'Transient error';
+    const stateType = this.getStateDisplayName(newStateData.state);
     this.logger?.info(
       `${stateType}: waiting ${Math.ceil(
         (newStateData.waitUntilTime - now) / 1000
       )}s before retry ${newStateData.retryCount}`
     );
 
-    return newState === 'RATE_LIMITED' ? 'rate_limited' : 'backed_off';
+    return newState === RetryState.RATE_LIMITED
+      ? RetryResult.RATE_LIMITED
+      : RetryResult.BACKED_OFF;
+  }
+
+  /**
+   * Resolve state precedence when multiple errors occur concurrently.
+   * Rule: 429 rate limiting takes precedence over transient backoff.
+   */
+  private resolveStatePrecedence(
+    currentState: RetryState,
+    newState: RetryState.RATE_LIMITED | RetryState.BACKING_OFF
+  ): RetryState.RATE_LIMITED | RetryState.BACKING_OFF {
+    // If currently rate limited and a transient error occurs, stay rate limited
+    if (
+      currentState === RetryState.RATE_LIMITED &&
+      newState === RetryState.BACKING_OFF
+    ) {
+      return RetryState.RATE_LIMITED;
+    }
+    return newState;
+  }
+
+  /**
+   * Consolidate wait times when multiple errors occur.
+   * Uses eager strategy (shorter wait) except when transitioning states.
+   */
+  private consolidateWaitTime(
+    currentState: RetryState,
+    newState: RetryState.RATE_LIMITED | RetryState.BACKING_OFF,
+    currentWaitUntil: number,
+    newWaitUntil: number
+  ): number {
+    switch (currentState) {
+      case RetryState.READY:
+        // First error: use the new wait time
+        return newWaitUntil;
+
+      case RetryState.BACKING_OFF:
+        if (newState === RetryState.RATE_LIMITED) {
+          // 429 overrides backoff: use new wait time
+          return newWaitUntil;
+        }
+        // Both backing off: take shorter wait (eager strategy)
+        return Math.min(currentWaitUntil, newWaitUntil);
+
+      case RetryState.RATE_LIMITED:
+        // Both rate limited: take shorter wait (eager strategy)
+        return Math.min(currentWaitUntil, newWaitUntil);
+    }
+  }
+
+  /** Get display name for logging based on retry state. */
+  private getStateDisplayName(state: RetryState): string {
+    switch (state) {
+      case RetryState.RATE_LIMITED:
+        return 'Rate limited (429)';
+      case RetryState.BACKING_OFF:
+        return 'Transient error';
+      case RetryState.READY:
+        return 'Ready';
+    }
   }
 
   private calculateBackoff(retryCount: number, random: number): number {
@@ -302,12 +363,13 @@ export class RetryManager {
 
   private async transitionToReady(): Promise<void> {
     const state = await this.store.getState(true);
-    const stateType = state.state === 'RATE_LIMITED' ? 'Rate limit' : 'Backoff';
+    const stateType =
+      state.state === RetryState.RATE_LIMITED ? 'Rate limit' : 'Backoff';
     this.logger?.info(`${stateType} period expired, resuming uploads`);
 
-    await this.store.dispatch((state: RetryStateData) => ({
-      ...state,
-      state: 'READY' as const,
+    await this.store.dispatch((s: RetryStateData) => ({
+      ...s,
+      state: RetryState.READY,
     }));
   }
 
@@ -332,7 +394,7 @@ export class RetryManager {
 
     // waitUntilTime must not be impossibly far in the future
     const maxWaitMs =
-      state.state === 'RATE_LIMITED'
+      state.state === RetryState.RATE_LIMITED
         ? (this.rateLimitConfig?.maxRetryInterval ?? 300) * 1000
         : (this.backoffConfig?.maxBackoffInterval ?? 300) * 1000;
 
@@ -340,7 +402,7 @@ export class RetryManager {
     const maxReasonableWait = now + maxWaitMs * 1.1;
     if (state.waitUntilTime > maxReasonableWait) {
       this.logger?.warn(
-        `waitUntilTime is unreasonably far in the future ` +
+        'waitUntilTime is unreasonably far in the future ' +
           `(${Math.ceil((state.waitUntilTime - now) / 1000)}s from now, ` +
           `max expected ~${Math.ceil(maxWaitMs / 1000)}s)`
       );

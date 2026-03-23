@@ -1,2 +1,1 @@
-export { RetryManager } from './RetryManager';
-export type { RetryResult } from './RetryManager';
+export { RetryManager, RetryState, RetryResult } from './RetryManager';
