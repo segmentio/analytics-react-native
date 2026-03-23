@@ -1,4 +1,12 @@
-import type { RateLimitConfig, BackoffConfig, LoggerType } from './types';
+import type {
+  RateLimitConfig,
+  BackoffConfig,
+  HttpConfig,
+  SegmentAPISettings,
+  SegmentAPIIntegrations,
+  LoggerType,
+} from './types';
+import { defaultHttpConfig } from './constants';
 
 export const validateRateLimitConfig = (
   config: RateLimitConfig,
@@ -131,4 +139,68 @@ export const validateBackoffConfig = (
   }
 
   return validated;
+};
+
+/**
+ * Validates and normalizes integrations from CDN response.
+ * Returns null if integrations are malformed (triggers fallback to defaults).
+ */
+export const validateIntegrations = (
+  settings: SegmentAPISettings,
+  logger?: LoggerType
+): SegmentAPIIntegrations | null => {
+  // A valid 200 with missing integrations means "no integrations configured"
+  if (settings.integrations == null) {
+    return {};
+  }
+
+  // Only fall back to defaults for truly malformed types (non-object or array)
+  if (
+    typeof settings.integrations !== 'object' ||
+    Array.isArray(settings.integrations)
+  ) {
+    logger?.warn(
+      'CDN response has invalid integrations, falling back to defaults'
+    );
+    return null;
+  }
+
+  return settings.integrations;
+};
+
+/**
+ * Extracts, merges, and validates httpConfig from CDN response.
+ * Deep-merges with defaults and validates all values.
+ */
+export const extractHttpConfig = (
+  serverConfig: HttpConfig,
+  logger?: LoggerType
+): HttpConfig => {
+  const mergedRateLimit = serverConfig.rateLimitConfig
+    ? {
+        ...defaultHttpConfig.rateLimitConfig!,
+        ...serverConfig.rateLimitConfig,
+      }
+    : defaultHttpConfig.rateLimitConfig!;
+
+  const mergedBackoff = serverConfig.backoffConfig
+    ? {
+        ...defaultHttpConfig.backoffConfig!,
+        ...serverConfig.backoffConfig,
+        statusCodeOverrides: {
+          ...defaultHttpConfig.backoffConfig!.statusCodeOverrides,
+          ...serverConfig.backoffConfig.statusCodeOverrides,
+        },
+      }
+    : defaultHttpConfig.backoffConfig!;
+
+  const validatedRateLimit = validateRateLimitConfig(mergedRateLimit, logger);
+  return {
+    rateLimitConfig: validatedRateLimit,
+    backoffConfig: validateBackoffConfig(
+      mergedBackoff,
+      logger,
+      validatedRateLimit
+    ),
+  };
 };
