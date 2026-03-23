@@ -1,8 +1,8 @@
 /**
  * E2E CLI for React Native analytics SDK testing
  *
- * Runs the real SDK pipeline (SegmentClient → Timeline → SegmentDestination →
- * QueueFlushingPlugin → uploadEvents) with stubs for React Native runtime
+ * Runs the real SDK pipeline (SegmentClient -> Timeline -> SegmentDestination ->
+ * QueueFlushingPlugin -> uploadEvents) with stubs for React Native runtime
  * dependencies so everything executes on Node.js.
  *
  * Usage:
@@ -13,6 +13,7 @@ import { SegmentClient } from '../../packages/core/src/analytics';
 import { SovranStorage } from '../../packages/core/src/storage/sovranStorage';
 import { Logger } from '../../packages/core/src/logger';
 import type { Config, JsonMap } from '../../packages/core/src/types';
+import { ErrorType } from '../../packages/core/src/errors';
 import type { Persistor } from '@segment/sovran-react-native';
 
 // ============================================================================
@@ -75,13 +76,106 @@ const MemoryPersistor: Persistor = {
 };
 
 // ============================================================================
-// Main CLI Logic
+// Helper Functions
+// ============================================================================
+
+function buildConfig(input: CLIInput): Config {
+  return {
+    writeKey: input.writeKey,
+    trackAppLifecycleEvents: false,
+    trackDeepLinks: false,
+    autoAddSegmentDestination: true,
+    storePersistor: MemoryPersistor,
+    storePersistorSaveDelay: 0,
+    ...(input.apiHost && { proxy: input.apiHost, useSegmentEndpoints: true }),
+    ...(input.cdnHost && {
+      cdnProxy: input.cdnHost,
+      useSegmentEndpoints: true,
+    }),
+    defaultSettings: {
+      integrations: {
+        'Segment.io': {
+          apiKey: input.writeKey,
+          apiHost: 'api.segment.io/v1',
+        },
+      },
+    },
+    ...(input.config?.flushAt !== undefined && {
+      flushAt: input.config.flushAt,
+    }),
+    flushInterval: input.config?.flushInterval ?? 0.1,
+    ...(input.config?.maxRetries !== undefined && {
+      httpConfig: {
+        rateLimitConfig: { maxRetryCount: input.config.maxRetries },
+        backoffConfig: { maxRetryCount: input.config.maxRetries },
+      },
+    }),
+  };
+}
+
+async function dispatchEvent(
+  client: SegmentClient,
+  evt: AnalyticsEvent
+): Promise<void> {
+  switch (evt.type) {
+    case 'track':
+      if (!evt.event) {
+        console.warn(`[e2e] skipping track: missing event name`);
+        return;
+      }
+      await client.track(evt.event, evt.properties as JsonMap | undefined);
+      break;
+    case 'identify':
+      await client.identify(evt.userId, evt.traits as JsonMap | undefined);
+      break;
+    case 'screen':
+    case 'page':
+      if (!evt.name) {
+        console.warn(`[e2e] skipping ${evt.type}: missing name`);
+        return;
+      }
+      await client.screen(evt.name, evt.properties as JsonMap | undefined);
+      break;
+    case 'group':
+      if (!evt.groupId) {
+        console.warn(`[e2e] skipping group: missing groupId`);
+        return;
+      }
+      await client.group(evt.groupId, evt.traits as JsonMap | undefined);
+      break;
+    case 'alias':
+      if (!evt.userId) {
+        console.warn(`[e2e] skipping alias: missing userId`);
+        return;
+      }
+      await client.alias(evt.userId);
+      break;
+    default:
+      console.warn(`[e2e] skipping event: unknown type "${evt.type}"`);
+  }
+}
+
+/** Polls pendingEvents() until the queue is empty or timeout. Returns true if drained. */
+async function waitForQueueDrain(
+  client: SegmentClient,
+  timeoutMs = 30_000
+): Promise<boolean> {
+  const pollMs = 50;
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    if ((await client.pendingEvents()) === 0) return true;
+    await new Promise((r) => setTimeout(r, pollMs));
+  }
+  return false;
+}
+
+// ============================================================================
+// Main
 // ============================================================================
 
 async function main() {
   const args = process.argv.slice(2);
   let inputStr: string | undefined;
-
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--input' && i + 1 < args.length) {
       inputStr = args[i + 1];
@@ -104,217 +198,64 @@ async function main() {
 
   try {
     const input: CLIInput = JSON.parse(inputStr);
-
-    // Build SDK config
+    let permanentDropCount = 0;
     const config: Config = {
-      writeKey: input.writeKey,
-      trackAppLifecycleEvents: false,
-      trackDeepLinks: false,
-      autoAddSegmentDestination: true,
-      storePersistor: MemoryPersistor,
-      storePersistorSaveDelay: 0,
-      // When apiHost is provided (mock tests), use proxy to direct events there
-      ...(input.apiHost && {
-        proxy: input.apiHost,
-        useSegmentEndpoints: true,
-      }),
-      // When cdnHost is provided (mock tests), use cdnProxy to direct CDN requests there
-      ...(input.cdnHost && {
-        cdnProxy: input.cdnHost,
-        useSegmentEndpoints: true,
-      }),
-      // Provide default settings so SDK doesn't require CDN response
-      defaultSettings: {
-        integrations: {
-          'Segment.io': {
-            apiKey: input.writeKey,
-            apiHost: 'api.segment.io/v1',
-          },
-        },
+      ...buildConfig(input),
+      errorHandler: (error) => {
+        if (error.type === ErrorType.EventsDropped) {
+          const count =
+            (error.metadata?.droppedCount as number | undefined) ?? 1;
+          permanentDropCount += count;
+        }
       },
-      ...(input.config?.flushAt !== undefined && {
-        flushAt: input.config.flushAt,
-      }),
-      ...(input.config?.flushInterval !== undefined && {
-        flushInterval: input.config.flushInterval,
-      }),
     };
 
-    // Create storage with in-memory persistor
     const store = new SovranStorage({
       storeId: input.writeKey,
       storePersistor: MemoryPersistor,
       storePersistorSaveDelay: 0,
     });
-
-    // Suppress SDK internal logs to keep E2E test output clean.
-    // CLI-level warnings/errors still surface via console.warn/console.error.
     const logger = new Logger(true);
     const client = new SegmentClient({ config, logger, store });
-
-    // Initialize — adds plugins, resolves settings, processes pending events
     await client.init();
 
-    // Process event sequences
     for (const sequence of input.sequences) {
       if (sequence.delayMs > 0) {
         await new Promise((resolve) => setTimeout(resolve, sequence.delayMs));
       }
-
       for (const evt of sequence.events) {
-        // Validate event has a type
-        if (!evt.type) {
-          console.warn('[WARN] Skipping event: missing event type', evt);
-          continue;
-        }
-
-        try {
-          switch (evt.type) {
-            case 'track': {
-              // Required: event name
-              if (!evt.event || typeof evt.event !== 'string') {
-                console.warn(
-                  `[WARN] Skipping track event: missing or invalid event name`,
-                  evt
-                );
-                continue;
-              }
-
-              // Optional: properties (validate if present)
-              const properties = evt.properties as JsonMap | undefined;
-              if (
-                evt.properties !== undefined &&
-                (evt.properties === null ||
-                  Array.isArray(evt.properties) ||
-                  typeof evt.properties !== 'object')
-              ) {
-                console.warn(
-                  `[WARN] Track event "${evt.event}" has invalid properties, proceeding without them`
-                );
-              }
-
-              await client.track(evt.event, properties);
-              break;
-            }
-
-            case 'identify': {
-              // Optional userId (Segment allows anonymous identify)
-              // Optional traits (validate if present)
-              const traits = evt.traits as JsonMap | undefined;
-              if (
-                evt.traits !== undefined &&
-                (evt.traits === null ||
-                  Array.isArray(evt.traits) ||
-                  typeof evt.traits !== 'object')
-              ) {
-                console.warn(
-                  `[WARN] Identify event has invalid traits, proceeding without them`
-                );
-              }
-
-              await client.identify(evt.userId, traits);
-              break;
-            }
-
-            case 'screen':
-            case 'page': {
-              // RN SDK has no page(); map to screen for cross-SDK test compat
-              // Required: screen/page name
-              if (!evt.name || typeof evt.name !== 'string') {
-                console.warn(
-                  `[WARN] Skipping ${evt.type} event: missing or invalid name`,
-                  evt
-                );
-                continue;
-              }
-
-              // Optional: properties (validate if present)
-              const properties = evt.properties as JsonMap | undefined;
-              if (
-                evt.properties !== undefined &&
-                (evt.properties === null ||
-                  Array.isArray(evt.properties) ||
-                  typeof evt.properties !== 'object')
-              ) {
-                console.warn(
-                  `[WARN] Screen "${evt.name}" has invalid properties, proceeding without them`
-                );
-              }
-
-              await client.screen(evt.name, properties);
-              break;
-            }
-
-            case 'group': {
-              // Required: groupId
-              if (!evt.groupId || typeof evt.groupId !== 'string') {
-                console.warn(
-                  `[WARN] Skipping group event: missing or invalid groupId`,
-                  evt
-                );
-                continue;
-              }
-
-              // Optional: traits (validate if present)
-              const traits = evt.traits as JsonMap | undefined;
-              if (
-                evt.traits !== undefined &&
-                (evt.traits === null ||
-                  Array.isArray(evt.traits) ||
-                  typeof evt.traits !== 'object')
-              ) {
-                console.warn(
-                  `[WARN] Group event for "${evt.groupId}" has invalid traits, proceeding without them`
-                );
-              }
-
-              await client.group(evt.groupId, traits);
-              break;
-            }
-
-            case 'alias': {
-              // Required: userId
-              if (!evt.userId || typeof evt.userId !== 'string') {
-                console.warn(
-                  `[WARN] Skipping alias event: missing or invalid userId`,
-                  evt
-                );
-                continue;
-              }
-
-              await client.alias(evt.userId);
-              break;
-            }
-
-            default:
-              console.warn(
-                `[WARN] Skipping event: unknown event type "${evt.type}"`,
-                evt
-              );
-              continue;
-          }
-        } catch (error) {
-          // Log but don't fail the entire sequence if one event fails
-          console.error(
-            `[ERROR] Failed to process ${evt.type} event:`,
-            error,
-            evt
-          );
-          continue;
-        }
+        await dispatchEvent(client, evt);
       }
     }
 
-    // Flush all queued events through the real pipeline
     await client.flush();
+    const drained = await waitForQueueDrain(client);
 
-    // Brief delay to let async upload operations settle
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    const finalPending = drained ? 0 : await client.pendingEvents();
+    const totalEvents = input.sequences.reduce(
+      (sum, seq) => sum + seq.events.length,
+      0
+    );
+    const delivered = Math.max(
+      0,
+      totalEvents - finalPending - permanentDropCount
+    );
+    // Approximate: SDK doesn't expose actual batch count, so we derive it
+    // from delivered event count and configured batch size.
+    const sentBatches =
+      delivered > 0
+        ? Math.ceil(delivered / Math.max(1, input.config?.flushAt ?? 1))
+        : 0;
+    const success = finalPending === 0 && permanentDropCount === 0;
 
     client.cleanup();
-
-    // sentBatches: SDK doesn't expose batch count tracking
-    output = { success: true, sentBatches: 0 };
+    output = {
+      success,
+      sentBatches,
+      ...(permanentDropCount > 0 && {
+        error: `${permanentDropCount} events permanently dropped`,
+      }),
+    };
   } catch (e) {
     const error = e instanceof Error ? e.message : String(e);
     output = { success: false, error, sentBatches: 0 };
