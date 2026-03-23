@@ -1,7 +1,10 @@
 import { DestinationPlugin } from '../plugin';
 import {
+  BackoffConfig,
+  Config,
   HttpConfig,
   PluginType,
+  RateLimitConfig,
   SegmentAPIIntegration,
   SegmentAPISettings,
   SegmentEvent,
@@ -60,6 +63,57 @@ export class SegmentDestination extends DestinationPlugin {
     this.settingsResolve = resolve;
   }
 
+  private getRateLimitConfig(): RateLimitConfig | undefined {
+    return this.httpConfig?.rateLimitConfig;
+  }
+
+  private getBackoffConfig(): BackoffConfig | undefined {
+    return this.httpConfig?.backoffConfig;
+  }
+
+  private classifyBatchResult(
+    res: Response,
+    batch: SegmentEvent[],
+    messageIds: string[],
+    retryAfterSeconds?: number
+  ): BatchResult {
+    if (res.ok) {
+      return { batch, messageIds, status: 'success', statusCode: res.status };
+    }
+
+    const classification = classifyError(res.status, {
+      default4xxBehavior: this.getBackoffConfig()?.default4xxBehavior,
+      default5xxBehavior: this.getBackoffConfig()?.default5xxBehavior,
+      statusCodeOverrides: this.getBackoffConfig()?.statusCodeOverrides,
+      rateLimitEnabled: this.getRateLimitConfig()?.enabled,
+    });
+
+    switch (classification.errorType) {
+      case 'rate_limit':
+        return {
+          batch,
+          messageIds,
+          status: '429',
+          statusCode: res.status,
+          retryAfterSeconds: retryAfterSeconds ?? 60,
+        };
+      case 'transient':
+        return {
+          batch,
+          messageIds,
+          status: 'transient',
+          statusCode: res.status,
+        };
+      default:
+        return {
+          batch,
+          messageIds,
+          status: 'permanent',
+          statusCode: res.status,
+        };
+    }
+  }
+
   private async uploadBatch(batch: SegmentEvent[]): Promise<BatchResult> {
     const config = this.analytics?.getConfig() ?? defaultConfig;
     const messageIds = batch
@@ -80,53 +134,38 @@ export class SegmentDestination extends DestinationPlugin {
         retryCount,
       });
 
-      if (res.ok) {
-        return { batch, messageIds, status: 'success', statusCode: res.status };
-      }
-
       const retryAfterSeconds =
         res.status === 429
           ? parseRetryAfter(
               res.headers.get('Retry-After'),
-              this.httpConfig?.rateLimitConfig?.maxRetryInterval
+              this.getRateLimitConfig()?.maxRetryInterval
             )
           : undefined;
 
-      const classification = classifyError(res.status, {
-        default4xxBehavior: this.httpConfig?.backoffConfig?.default4xxBehavior,
-        default5xxBehavior: this.httpConfig?.backoffConfig?.default5xxBehavior,
-        statusCodeOverrides:
-          this.httpConfig?.backoffConfig?.statusCodeOverrides,
-        rateLimitEnabled: this.httpConfig?.rateLimitConfig?.enabled,
-      });
-
-      if (classification.errorType === 'rate_limit') {
-        return {
-          batch,
-          messageIds,
-          status: '429',
-          statusCode: res.status,
-          retryAfterSeconds: retryAfterSeconds ?? 60,
-        };
-      } else if (classification.errorType === 'transient') {
-        return {
-          batch,
-          messageIds,
-          status: 'transient',
-          statusCode: res.status,
-        };
-      } else {
-        return {
-          batch,
-          messageIds,
-          status: 'permanent',
-          statusCode: res.status,
-        };
-      }
+      return this.classifyBatchResult(
+        res,
+        batch,
+        messageIds,
+        retryAfterSeconds
+      );
     } catch (e) {
       this.analytics?.reportInternalError(translateHTTPError(e));
       return { batch, messageIds, status: 'network_error' };
     }
+  }
+
+  private reportDroppedEvents(
+    count: number,
+    reason: 'max_age_exceeded' | 'permanent_error' | 'retry_limit_exceeded',
+    logMessage: string
+  ): void {
+    this.analytics?.reportInternalError(
+      new SegmentError(ErrorType.EventsDropped, logMessage, undefined, {
+        droppedCount: count,
+        reason,
+      })
+    );
+    this.analytics?.logger.error(logMessage);
   }
 
   private aggregateErrors(results: BatchResult[]): ErrorAggregation {
@@ -190,13 +229,10 @@ export class SegmentDestination extends DestinationPlugin {
 
     if (expiredMessageIds.length > 0) {
       await this.queuePlugin.dequeueByMessageIds(expiredMessageIds);
-      this.analytics?.reportInternalError(
-        new SegmentError(
-          ErrorType.EventsDropped,
-          `Dropped ${expiredMessageIds.length} events exceeding max age (${maxAge}s)`,
-          undefined,
-          { droppedCount: expiredMessageIds.length, reason: 'max_age_exceeded' }
-        )
+      this.reportDroppedEvents(
+        expiredMessageIds.length,
+        'max_age_exceeded',
+        `Dropped ${expiredMessageIds.length} events exceeding max age (${maxAge}s)`
       );
       this.analytics?.logger.warn(
         `Pruned ${expiredMessageIds.length} events older than ${maxAge}s`
@@ -234,42 +270,12 @@ export class SegmentDestination extends DestinationPlugin {
     return result === 'limit_exceeded';
   }
 
-  private sendEvents = async (events: SegmentEvent[]): Promise<void> => {
-    if (events.length === 0) {
-      await this.retryManager?.reset();
-      return;
-    }
-
-    // We're not sending events until Segment has loaded all settings
-    await this.settingsPromise;
-
-    const config = this.analytics?.getConfig() ?? defaultConfig;
-
-    events = await this.pruneExpiredEvents(events);
-    if (events.length === 0) {
-      await this.retryManager?.reset();
-      return;
-    }
-
-    if (this.retryManager && !(await this.retryManager.canRetry())) {
-      this.analytics?.logger.info('Upload blocked by retry manager');
-      return;
-    }
-
-    const batches: SegmentEvent[][] = chunk(
-      events,
-      config.maxBatchSize ?? MAX_EVENTS_PER_BATCH,
-      MAX_PAYLOAD_SIZE_IN_KB
-    );
-
-    const results: BatchResult[] = await Promise.all(
-      batches.map((batch) => this.uploadBatch(batch))
-    );
-
-    const aggregation = this.aggregateErrors(results);
-
-    const limitExceeded = await this.updateRetryState(aggregation);
-
+  private async processUploadResults(
+    events: SegmentEvent[],
+    aggregation: ErrorAggregation,
+    limitExceeded: boolean,
+    config: Config
+  ): Promise<void> {
     if (aggregation.successfulMessageIds.length > 0) {
       await this.queuePlugin.dequeueByMessageIds(
         aggregation.successfulMessageIds
@@ -285,18 +291,9 @@ export class SegmentDestination extends DestinationPlugin {
       await this.queuePlugin.dequeueByMessageIds(
         aggregation.permanentErrorMessageIds
       );
-      this.analytics?.reportInternalError(
-        new SegmentError(
-          ErrorType.EventsDropped,
-          `Dropped ${aggregation.permanentErrorMessageIds.length} events due to permanent errors`,
-          undefined,
-          {
-            droppedCount: aggregation.permanentErrorMessageIds.length,
-            reason: 'permanent_error',
-          }
-        )
-      );
-      this.analytics?.logger.error(
+      this.reportDroppedEvents(
+        aggregation.permanentErrorMessageIds.length,
+        'permanent_error',
         `Dropped ${aggregation.permanentErrorMessageIds.length} events due to permanent errors`
       );
     }
@@ -305,18 +302,9 @@ export class SegmentDestination extends DestinationPlugin {
       await this.queuePlugin.dequeueByMessageIds(
         aggregation.retryableMessageIds
       );
-      this.analytics?.reportInternalError(
-        new SegmentError(
-          ErrorType.EventsDropped,
-          `Dropped ${aggregation.retryableMessageIds.length} events due to retry limit exceeded`,
-          undefined,
-          {
-            droppedCount: aggregation.retryableMessageIds.length,
-            reason: 'retry_limit_exceeded',
-          }
-        )
-      );
-      this.analytics?.logger.error(
+      this.reportDroppedEvents(
+        aggregation.retryableMessageIds.length,
+        'retry_limit_exceeded',
         `Dropped ${aggregation.retryableMessageIds.length} events due to retry limit exceeded`
       );
     }
@@ -331,6 +319,49 @@ export class SegmentDestination extends DestinationPlugin {
         `${failedCount} events will retry (429: ${has429}, transient: ${aggregation.hasTransientError})`
       );
     }
+  }
+
+  private sendEvents = async (events: SegmentEvent[]): Promise<void> => {
+    if (events.length === 0) {
+      await this.retryManager?.reset();
+      return;
+    }
+
+    // We're not sending events until Segment has loaded all settings
+    await this.settingsPromise;
+
+    const config = this.analytics?.getConfig() ?? defaultConfig;
+
+    const freshEvents = await this.pruneExpiredEvents(events);
+    if (freshEvents.length === 0) {
+      await this.retryManager?.reset();
+      return;
+    }
+
+    if (this.retryManager && !(await this.retryManager.canRetry())) {
+      this.analytics?.logger.info('Upload blocked by retry manager');
+      return;
+    }
+
+    const batches: SegmentEvent[][] = chunk(
+      freshEvents,
+      config.maxBatchSize ?? MAX_EVENTS_PER_BATCH,
+      MAX_PAYLOAD_SIZE_IN_KB
+    );
+
+    const results: BatchResult[] = await Promise.all(
+      batches.map((batch) => this.uploadBatch(batch))
+    );
+
+    const aggregation = this.aggregateErrors(results);
+    const limitExceeded = await this.updateRetryState(aggregation);
+
+    await this.processUploadResults(
+      freshEvents,
+      aggregation,
+      limitExceeded,
+      config
+    );
   };
 
   private readonly queuePlugin = new QueueFlushingPlugin(this.sendEvents);
