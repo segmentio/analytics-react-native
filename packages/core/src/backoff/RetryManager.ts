@@ -146,6 +146,30 @@ export class RetryManager {
   }
 
   /**
+   * Clamp retry-after seconds to valid range [0, maxRetryInterval].
+   */
+  private clampRetryAfter(
+    retryAfterSeconds: number,
+    maxInterval: number
+  ): number {
+    if (retryAfterSeconds < 0) {
+      this.logger?.warn(
+        `Invalid retryAfterSeconds ${retryAfterSeconds}, using 0`
+      );
+      return 0;
+    }
+
+    if (retryAfterSeconds > maxInterval) {
+      this.logger?.warn(
+        `retryAfterSeconds ${retryAfterSeconds}s exceeds maxRetryInterval, clamping to ${maxInterval}s`
+      );
+      return maxInterval;
+    }
+
+    return retryAfterSeconds;
+  }
+
+  /**
    * Handle a 429 rate limit response.
    * Uses server-specified wait time from Retry-After header.
    */
@@ -154,18 +178,10 @@ export class RetryManager {
       return undefined;
     }
 
-    if (retryAfterSeconds < 0) {
-      this.logger?.warn(
-        `Invalid retryAfterSeconds ${retryAfterSeconds}, using 0`
-      );
-      retryAfterSeconds = 0;
-    }
-    if (retryAfterSeconds > this.rateLimitConfig.maxRetryInterval) {
-      this.logger?.warn(
-        `retryAfterSeconds ${retryAfterSeconds}s exceeds maxRetryInterval, clamping to ${this.rateLimitConfig.maxRetryInterval}s`
-      );
-      retryAfterSeconds = this.rateLimitConfig.maxRetryInterval;
-    }
+    retryAfterSeconds = this.clampRetryAfter(
+      retryAfterSeconds,
+      this.rateLimitConfig.maxRetryInterval
+    );
 
     const now = Date.now();
     const waitUntilTime = now + retryAfterSeconds * 1000;
@@ -215,6 +231,60 @@ export class RetryManager {
   }
 
   /**
+   * Compute new retry state based on current state and error type.
+   * Returns the new state and whether retry limits were exceeded.
+   */
+  private computeNewState(
+    state: RetryStateData,
+    newState: RetryState.RATE_LIMITED | RetryState.BACKING_OFF,
+    computeWaitUntilTime: (state: RetryStateData) => number,
+    maxRetryCount: number,
+    maxRetryDuration: number,
+    now: number
+  ): { newState: RetryStateData; limitExceeded: boolean } {
+    const newRetryCount = state.retryCount + 1;
+    const firstFailureTime = state.firstFailureTime ?? now;
+    const totalDuration = (now - firstFailureTime) / 1000;
+
+    if (newRetryCount > maxRetryCount || totalDuration > maxRetryDuration) {
+      return { newState: INITIAL_STATE, limitExceeded: true };
+    }
+
+    const waitUntilTime = computeWaitUntilTime(state);
+    const resolvedState = this.resolveStatePrecedence(state.state, newState);
+    const finalWaitUntilTime = this.consolidateWaitTime(
+      state.state,
+      newState,
+      state.waitUntilTime,
+      waitUntilTime
+    );
+
+    return {
+      newState: {
+        state: resolvedState,
+        waitUntilTime: finalWaitUntilTime,
+        retryCount: newRetryCount,
+        firstFailureTime,
+      },
+      limitExceeded: false,
+    };
+  }
+
+  /**
+   * Map retry state to result enum.
+   */
+  private stateToResult(
+    state: RetryState.RATE_LIMITED | RetryState.BACKING_OFF
+  ): RetryResult {
+    switch (state) {
+      case RetryState.RATE_LIMITED:
+        return RetryResult.RATE_LIMITED;
+      case RetryState.BACKING_OFF:
+        return RetryResult.BACKED_OFF;
+    }
+  }
+
+  /**
    * Unified error handler for both 429 and transient errors.
    * Dispatches atomically to handle concurrent batch failures.
    *
@@ -237,33 +307,16 @@ export class RetryManager {
 
     const newStateData = await this.store.dispatch(
       (state: RetryStateData): RetryStateData => {
-        const newRetryCount = state.retryCount + 1;
-        const firstFailureTime = state.firstFailureTime ?? now;
-        const totalDuration = (now - firstFailureTime) / 1000;
-
-        if (newRetryCount > maxRetryCount || totalDuration > maxRetryDuration) {
-          limitExceeded = true;
-          return INITIAL_STATE;
-        }
-
-        const waitUntilTime = computeWaitUntilTime(state);
-        const resolvedState = this.resolveStatePrecedence(
-          state.state,
-          newState
-        );
-        const finalWaitUntilTime = this.consolidateWaitTime(
-          state.state,
+        const result = this.computeNewState(
+          state,
           newState,
-          state.waitUntilTime,
-          waitUntilTime
+          computeWaitUntilTime,
+          maxRetryCount,
+          maxRetryDuration,
+          now
         );
-
-        return {
-          state: resolvedState,
-          waitUntilTime: finalWaitUntilTime,
-          retryCount: newRetryCount,
-          firstFailureTime,
-        };
+        limitExceeded = result.limitExceeded;
+        return result.newState;
       }
     );
 
@@ -281,9 +334,7 @@ export class RetryManager {
       )}s before retry ${newStateData.retryCount}`
     );
 
-    return newState === RetryState.RATE_LIMITED
-      ? RetryResult.RATE_LIMITED
-      : RetryResult.BACKED_OFF;
+    return this.stateToResult(newState);
   }
 
   /**
@@ -373,26 +424,21 @@ export class RetryManager {
     }));
   }
 
-  /**
-   * Validate persisted state loaded from storage on app restart.
-   * Detects clock changes, corruption, or impossibly stale data.
-   */
-  private isPersistedStateValid(state: RetryStateData, now: number): boolean {
-    // State string must be a valid value
-    if (!VALID_STATES.has(state.state)) {
-      this.logger?.warn(`Invalid persisted state: ${state.state}`);
-      return false;
-    }
+  /** Check if state enum is valid. */
+  private isValidStateEnum(state: RetryState): boolean {
+    return VALID_STATES.has(state);
+  }
 
-    // firstFailureTime must be in the past
-    if (state.firstFailureTime !== null && state.firstFailureTime > now) {
-      this.logger?.warn(
-        `firstFailureTime ${state.firstFailureTime} is in the future`
-      );
-      return false;
-    }
+  /** Check if firstFailureTime is in the past or null. */
+  private isValidFirstFailureTime(
+    firstFailureTime: number | null,
+    now: number
+  ): boolean {
+    return firstFailureTime === null || firstFailureTime <= now;
+  }
 
-    // waitUntilTime must not be impossibly far in the future
+  /** Check if waitUntilTime is within reasonable bounds. */
+  private isValidWaitUntilTime(state: RetryStateData, now: number): boolean {
     const maxWaitMs =
       state.state === RetryState.RATE_LIMITED
         ? (this.rateLimitConfig?.maxRetryInterval ?? 300) * 1000
@@ -400,7 +446,36 @@ export class RetryManager {
 
     // Allow up to maxWait + 10% jitter headroom
     const maxReasonableWait = now + maxWaitMs * 1.1;
-    if (state.waitUntilTime > maxReasonableWait) {
+    return state.waitUntilTime <= maxReasonableWait;
+  }
+
+  /** Check if retryCount is non-negative. */
+  private isValidRetryCount(retryCount: number): boolean {
+    return retryCount >= 0;
+  }
+
+  /**
+   * Validate persisted state loaded from storage on app restart.
+   * Detects clock changes, corruption, or impossibly stale data.
+   */
+  private isPersistedStateValid(state: RetryStateData, now: number): boolean {
+    if (!this.isValidStateEnum(state.state)) {
+      this.logger?.warn(`Invalid persisted state: ${state.state}`);
+      return false;
+    }
+
+    if (!this.isValidFirstFailureTime(state.firstFailureTime, now)) {
+      this.logger?.warn(
+        `firstFailureTime ${state.firstFailureTime} is in the future`
+      );
+      return false;
+    }
+
+    if (!this.isValidWaitUntilTime(state, now)) {
+      const maxWaitMs =
+        state.state === RetryState.RATE_LIMITED
+          ? (this.rateLimitConfig?.maxRetryInterval ?? 300) * 1000
+          : (this.backoffConfig?.maxBackoffInterval ?? 300) * 1000;
       this.logger?.warn(
         'waitUntilTime is unreasonably far in the future ' +
           `(${Math.ceil((state.waitUntilTime - now) / 1000)}s from now, ` +
@@ -409,8 +484,7 @@ export class RetryManager {
       return false;
     }
 
-    // retryCount must be non-negative
-    if (state.retryCount < 0) {
+    if (!this.isValidRetryCount(state.retryCount)) {
       this.logger?.warn(`retryCount is negative: ${state.retryCount}`);
       return false;
     }
