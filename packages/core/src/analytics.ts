@@ -73,10 +73,7 @@ import {
   SegmentError,
   translateHTTPError,
 } from './errors';
-import {
-  validateIntegrations,
-  extractHttpConfig,
-} from './config-validation';
+import { validateIntegrations, extractHttpConfig } from './config-validation';
 import { QueueFlushingPlugin } from './plugins/QueueFlushingPlugin';
 import { WaitingPlugin } from './plugin';
 
