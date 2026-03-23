@@ -406,8 +406,13 @@ export class SegmentClient {
       const resJson: SegmentAPISettings =
         (await res.json()) as SegmentAPISettings;
 
+      // A valid 200 with missing integrations means "no integrations configured"
+      // Only fall back to defaults for truly malformed types (non-object or array)
+      if (resJson.integrations == null) {
+        resJson.integrations = {};
+      }
+
       if (
-        resJson.integrations == null ||
         typeof resJson.integrations !== 'object' ||
         Array.isArray(resJson.integrations)
       ) {
