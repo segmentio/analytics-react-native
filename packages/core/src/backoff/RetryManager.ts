@@ -28,12 +28,6 @@ const INITIAL_STATE: RetryStateData = {
   firstFailureTime: null,
 };
 
-const VALID_STATES = new Set([
-  RetryState.READY,
-  RetryState.RATE_LIMITED,
-  RetryState.BACKING_OFF,
-]);
-
 /**
  * Manages retry state for rate limiting (429) and transient errors (5xx).
  *
