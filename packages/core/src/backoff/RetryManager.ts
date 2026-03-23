@@ -28,9 +28,11 @@ const INITIAL_STATE: RetryStateData = {
   firstFailureTime: null,
 };
 
-const VALID_STATES = new Set(['READY', 'RATE_LIMITED', 'BACKING_OFF']);
-
-export type RetryResult = 'rate_limited' | 'backed_off' | 'limit_exceeded';
+const VALID_STATES = new Set([
+  RetryState.READY,
+  RetryState.RATE_LIMITED,
+  RetryState.BACKING_OFF,
+]);
 
 /**
  * Manages retry state for rate limiting (429) and transient errors (5xx).
@@ -212,7 +214,6 @@ export class RetryManager {
   /**
    * Handle a transient error (5xx, network failure).
    * Uses exponential backoff to calculate wait time.
-   * Returns 'limit_exceeded' if retry limits are hit, otherwise 'backed_off'.
    */
   async handleTransientError(): Promise<RetryResult | undefined> {
     if (this.backoffConfig?.enabled !== true) {
