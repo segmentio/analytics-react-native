@@ -402,8 +402,7 @@ export class SegmentDestination extends DestinationPlugin {
           config?.storePersistor,
           httpConfig.rateLimitConfig,
           httpConfig.backoffConfig,
-          this.analytics?.logger,
-          config?.retryStrategy ?? 'lazy'
+          this.analytics?.logger
         );
       }
     }
