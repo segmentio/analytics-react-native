@@ -393,6 +393,68 @@ export class SegmentClient {
     }
   }
 
+  private validateIntegrations(
+    settings: SegmentAPISettings
+  ): SegmentAPIIntegrations | null {
+    // A valid 200 with missing integrations means "no integrations configured"
+    if (settings.integrations == null) {
+      return {};
+    }
+
+    // Only fall back to defaults for truly malformed types (non-object or array)
+    if (
+      typeof settings.integrations !== 'object' ||
+      Array.isArray(settings.integrations)
+    ) {
+      this.logger.warn(
+        'CDN response has invalid integrations, falling back to defaults'
+      );
+      return null;
+    }
+
+    return settings.integrations;
+  }
+
+  private extractHttpConfig(serverConfig: HttpConfig): void {
+    const mergedRateLimit = serverConfig.rateLimitConfig
+      ? {
+          ...defaultHttpConfig.rateLimitConfig!,
+          ...serverConfig.rateLimitConfig,
+        }
+      : defaultHttpConfig.rateLimitConfig!;
+
+    const mergedBackoff = serverConfig.backoffConfig
+      ? {
+          ...defaultHttpConfig.backoffConfig!,
+          ...serverConfig.backoffConfig,
+          statusCodeOverrides: {
+            ...defaultHttpConfig.backoffConfig!.statusCodeOverrides,
+            ...serverConfig.backoffConfig.statusCodeOverrides,
+          },
+        }
+      : defaultHttpConfig.backoffConfig!;
+
+    const validatedRateLimit = validateRateLimitConfig(
+      mergedRateLimit,
+      this.logger
+    );
+    this.httpConfig = {
+      rateLimitConfig: validatedRateLimit,
+      backoffConfig: validateBackoffConfig(
+        mergedBackoff,
+        this.logger,
+        validatedRateLimit
+      ),
+    };
+    this.logger.info('Loaded httpConfig from CDN settings.');
+  }
+
+  private async applyDefaultSettings(): Promise<void> {
+    if (this.config.defaultSettings) {
+      await this.store.settings.set(this.config.defaultSettings.integrations);
+    }
+  }
+
   async fetchSettings() {
     const settingsURL = this.getEndpointForSettings();
     try {
@@ -406,67 +468,20 @@ export class SegmentClient {
       const resJson: SegmentAPISettings =
         (await res.json()) as SegmentAPISettings;
 
-      // A valid 200 with missing integrations means "no integrations configured"
-      // Only fall back to defaults for truly malformed types (non-object or array)
-      if (resJson.integrations == null) {
-        resJson.integrations = {};
-      }
-
-      if (
-        typeof resJson.integrations !== 'object' ||
-        Array.isArray(resJson.integrations)
-      ) {
-        this.logger.warn(
-          'CDN response has invalid integrations, falling back to defaults'
-        );
-        if (this.config.defaultSettings) {
-          await this.store.settings.set(
-            this.config.defaultSettings.integrations
-          );
-        }
+      const integrations = this.validateIntegrations(resJson);
+      if (integrations === null) {
+        await this.applyDefaultSettings();
         return;
       }
 
-      const integrations = resJson.integrations;
       const consentSettings = resJson.consentSettings;
       const edgeFunctionSettings = resJson.edgeFunction;
       const filters = this.generateFiltersMap(
         resJson.middlewareSettings?.routingRules ?? []
       );
 
-      // Extract httpConfig from CDN, merge with defaults, validate and clamp
       if (resJson.httpConfig) {
-        const mergedRateLimit = resJson.httpConfig.rateLimitConfig
-          ? {
-              ...defaultHttpConfig.rateLimitConfig!,
-              ...resJson.httpConfig.rateLimitConfig,
-            }
-          : defaultHttpConfig.rateLimitConfig!;
-
-        const mergedBackoff = resJson.httpConfig.backoffConfig
-          ? {
-              ...defaultHttpConfig.backoffConfig!,
-              ...resJson.httpConfig.backoffConfig,
-              statusCodeOverrides: {
-                ...defaultHttpConfig.backoffConfig!.statusCodeOverrides,
-                ...resJson.httpConfig.backoffConfig.statusCodeOverrides,
-              },
-            }
-          : defaultHttpConfig.backoffConfig!;
-
-        const validatedRateLimit = validateRateLimitConfig(
-          mergedRateLimit,
-          this.logger
-        );
-        this.httpConfig = {
-          rateLimitConfig: validatedRateLimit,
-          backoffConfig: validateBackoffConfig(
-            mergedBackoff,
-            this.logger,
-            validatedRateLimit
-          ),
-        };
-        this.logger.info('Loaded httpConfig from CDN settings.');
+        this.extractHttpConfig(resJson.httpConfig);
       }
 
       this.logger.info('Received settings from Segment succesfully.');
@@ -487,9 +502,7 @@ export class SegmentClient {
         }`
       );
 
-      if (this.config.defaultSettings) {
-        await this.store.settings.set(this.config.defaultSettings.integrations);
-      }
+      await this.applyDefaultSettings();
     }
   }
 
