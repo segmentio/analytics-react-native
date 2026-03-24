@@ -12,6 +12,7 @@ import {
   defaultFlushAt,
   maxPendingEvents,
 } from './constants';
+import { mergeHttpConfig } from './config-validation';
 import { getContext } from './context';
 import {
   createAliasEvent,
@@ -73,7 +74,7 @@ import {
   SegmentError,
   translateHTTPError,
 } from './errors';
-import { validateIntegrations, extractHttpConfig } from './config-validation';
+import { validateIntegrations } from './config-validation';
 import { QueueFlushingPlugin } from './plugins/QueueFlushingPlugin';
 import { WaitingPlugin } from './plugin';
 
@@ -198,8 +199,8 @@ export class SegmentClient {
   }
 
   /**
-   * Retrieves the server-side httpConfig from CDN settings.
-   * Returns undefined if the CDN did not provide httpConfig (retry features disabled).
+   * Retrieves the merged httpConfig (defaultHttpConfig ← CDN ← config overrides).
+   * Returns undefined only if settings have not yet been fetched.
    */
   getHttpConfig(): HttpConfig | undefined {
     return this.httpConfig;
@@ -418,8 +419,13 @@ export class SegmentClient {
         resJson.middlewareSettings?.routingRules ?? []
       );
 
+      // Merge httpConfig: defaultHttpConfig ← CDN ← config overrides
+      this.httpConfig = mergeHttpConfig(
+        resJson.httpConfig,
+        this.config.httpConfig,
+        this.logger
+      );
       if (resJson.httpConfig) {
-        this.httpConfig = extractHttpConfig(resJson.httpConfig, this.logger);
         this.logger.info('Loaded httpConfig from CDN settings.');
       }
 

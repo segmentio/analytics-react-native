@@ -5,6 +5,7 @@ import type {
   SegmentAPISettings,
   SegmentAPIIntegrations,
   LoggerType,
+  DeepPartial,
 } from './types';
 import { defaultHttpConfig } from './constants';
 
@@ -193,6 +194,43 @@ export const extractHttpConfig = (
         },
       }
     : defaultHttpConfig.backoffConfig!;
+
+  const validatedRateLimit = validateRateLimitConfig(mergedRateLimit, logger);
+  return {
+    rateLimitConfig: validatedRateLimit,
+    backoffConfig: validateBackoffConfig(
+      mergedBackoff,
+      logger,
+      validatedRateLimit
+    ),
+  };
+};
+
+/**
+ * Merge httpConfig from 3 sources with priority: default < CDN < client overrides
+ * Used during settings initialization to combine default, CDN, and user configs.
+ */
+export const mergeHttpConfig = (
+  cdnConfig: HttpConfig | undefined,
+  clientConfig: DeepPartial<HttpConfig> | undefined,
+  logger?: LoggerType
+): HttpConfig => {
+  const mergedRateLimit = {
+    ...defaultHttpConfig.rateLimitConfig!,
+    ...(cdnConfig?.rateLimitConfig ?? {}),
+    ...(clientConfig?.rateLimitConfig ?? {}),
+  };
+
+  const mergedBackoff = {
+    ...defaultHttpConfig.backoffConfig!,
+    ...(cdnConfig?.backoffConfig ?? {}),
+    ...(clientConfig?.backoffConfig ?? {}),
+    statusCodeOverrides: {
+      ...defaultHttpConfig.backoffConfig!.statusCodeOverrides,
+      ...(cdnConfig?.backoffConfig?.statusCodeOverrides ?? {}),
+      ...(clientConfig?.backoffConfig?.statusCodeOverrides ?? {}),
+    },
+  };
 
   const validatedRateLimit = validateRateLimitConfig(mergedRateLimit, logger);
   return {

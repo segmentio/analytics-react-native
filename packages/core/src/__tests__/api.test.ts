@@ -25,7 +25,11 @@ describe('#sendEvents', () => {
       .mockReturnValue('2001-01-01T00:00:00.000Z');
   });
 
-  async function sendAnEventPer(writeKey: string, toUrl: string) {
+  async function sendAnEventPer(
+    writeKey: string,
+    toUrl: string,
+    retryCount?: number
+  ) {
     const mockResponse = Promise.resolve('MANOS');
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -60,9 +64,19 @@ describe('#sendEvents', () => {
       writeKey: writeKey,
       url: toUrl,
       events: [event],
+      retryCount,
     });
 
-    expect(fetch).toHaveBeenCalledWith(toUrl, {
+    return event;
+  }
+
+  it('sends an event', async () => {
+    const toSegmentBatchApi = 'https://api.segment.io/v1.b';
+    const writeKey = 'SEGMENT_KEY';
+
+    const event = await sendAnEventPer(writeKey, toSegmentBatchApi);
+
+    expect(fetch).toHaveBeenCalledWith(toSegmentBatchApi, {
       method: 'POST',
       keepalive: true,
       body: JSON.stringify({
@@ -74,19 +88,58 @@ describe('#sendEvents', () => {
         'Content-Type': 'application/json; charset=utf-8',
       },
     });
-  }
-
-  it('sends an event', async () => {
-    const toSegmentBatchApi = 'https://api.segment.io/v1.b';
-    const writeKey = 'SEGMENT_KEY';
-
-    await sendAnEventPer(writeKey, toSegmentBatchApi);
   });
 
   it('sends an event to proxy', async () => {
     const toProxyUrl = 'https://myprox.io/b';
     const writeKey = 'SEGMENT_KEY';
 
-    await sendAnEventPer(writeKey, toProxyUrl);
+    const event = await sendAnEventPer(writeKey, toProxyUrl);
+
+    expect(fetch).toHaveBeenCalledWith(toProxyUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        batch: [event],
+        sentAt: '2001-01-01T00:00:00.000Z',
+        writeKey: 'SEGMENT_KEY',
+      }),
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+      keepalive: true,
+    });
+  });
+
+  it('does not send X-Retry-Count header on first attempt (retryCount=0)', async () => {
+    const url = 'https://api.segment.io/v1.b';
+    await sendAnEventPer('KEY', url);
+
+    const callArgs = (fetch as jest.Mock).mock.calls[0];
+    const headers = callArgs[1].headers;
+    expect(headers['X-Retry-Count']).toBeUndefined();
+  });
+
+  it('sends X-Retry-Count header with provided retry count', async () => {
+    const url = 'https://api.segment.io/v1.b';
+    await sendAnEventPer('KEY', url, 5);
+
+    expect(fetch).toHaveBeenCalledWith(
+      url,
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          'X-Retry-Count': '5',
+        }),
+      })
+    );
+  });
+
+  it('sends X-Retry-Count as string format', async () => {
+    const url = 'https://api.segment.io/v1.b';
+    await sendAnEventPer('KEY', url, 42);
+
+    const callArgs = (fetch as jest.Mock).mock.calls[0];
+    const headers = callArgs[1].headers;
+    expect(typeof headers['X-Retry-Count']).toBe('string');
+    expect(headers['X-Retry-Count']).toBe('42');
   });
 });

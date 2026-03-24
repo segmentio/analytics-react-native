@@ -1,5 +1,5 @@
 import { SegmentClient } from '../../analytics';
-import { settingsCDN } from '../../constants';
+import { settingsCDN, defaultHttpConfig } from '../../constants';
 import { SEGMENT_DESTINATION_KEY } from '../../plugins/SegmentDestination';
 import { getMockLogger, MockSegmentStore } from '../../test-helpers';
 import { getURL } from '../../util';
@@ -436,6 +436,80 @@ describe('internal #getSettings', () => {
     });
   });
 
+  describe('CDN integrations validation', () => {
+    it('treats null integrations as empty (no integrations configured)', async () => {
+      (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ integrations: null }),
+        status: 200,
+      } as Response);
+
+      const client = new SegmentClient(clientArgs);
+      await client.fetchSettings();
+
+      expect(setSettingsSpy).toHaveBeenCalledWith({});
+    });
+
+    it('treats missing integrations as empty (no integrations configured)', async () => {
+      (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({}),
+        status: 200,
+      } as Response);
+
+      const client = new SegmentClient(clientArgs);
+      await client.fetchSettings();
+
+      expect(setSettingsSpy).toHaveBeenCalledWith({});
+    });
+
+    it('falls back to defaults when CDN returns integrations as an array', async () => {
+      (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ integrations: ['invalid'] }),
+        status: 200,
+      } as Response);
+
+      const client = new SegmentClient(clientArgs);
+      await client.fetchSettings();
+
+      expect(setSettingsSpy).toHaveBeenCalledWith(
+        defaultIntegrationSettings.integrations
+      );
+    });
+
+    it('falls back to defaults when CDN returns integrations as a string', async () => {
+      (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ integrations: 'invalid' }),
+        status: 200,
+      } as Response);
+
+      const client = new SegmentClient(clientArgs);
+      await client.fetchSettings();
+
+      expect(setSettingsSpy).toHaveBeenCalledWith(
+        defaultIntegrationSettings.integrations
+      );
+    });
+
+    it('stores empty integrations when CDN returns null integrations and no defaults', async () => {
+      (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ integrations: null }),
+        status: 200,
+      } as Response);
+
+      const client = new SegmentClient({
+        ...clientArgs,
+        config: { ...clientArgs.config, defaultSettings: undefined },
+      });
+      await client.fetchSettings();
+
+      expect(setSettingsSpy).toHaveBeenCalledWith({});
+    });
+  });
+
   describe('httpConfig extraction', () => {
     it('extracts httpConfig from CDN response and merges with defaults', async () => {
       const serverHttpConfig = {
@@ -483,7 +557,7 @@ describe('internal #getSettings', () => {
       expect(result?.backoffConfig?.jitterPercent).toBe(20);
     });
 
-    it('returns undefined httpConfig when CDN has no httpConfig', async () => {
+    it('returns defaultHttpConfig when CDN has no httpConfig', async () => {
       (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve(defaultIntegrationSettings),
@@ -496,7 +570,17 @@ describe('internal #getSettings', () => {
       });
 
       await anotherClient.fetchSettings();
-      expect(anotherClient.getHttpConfig()).toBeUndefined();
+      const result = anotherClient.getHttpConfig();
+      expect(result).toBeDefined();
+      expect(result?.rateLimitConfig?.enabled).toBe(
+        defaultHttpConfig.rateLimitConfig!.enabled
+      );
+      expect(result?.backoffConfig?.enabled).toBe(
+        defaultHttpConfig.backoffConfig!.enabled
+      );
+      expect(result?.backoffConfig?.statusCodeOverrides).toEqual(
+        defaultHttpConfig.backoffConfig!.statusCodeOverrides
+      );
     });
 
     it('returns undefined httpConfig when fetch fails', async () => {
