@@ -657,7 +657,6 @@ describe('RetryManager', () => {
         defaultBackoffConfig,
         mockLogger
       );
-      activeManager = rm;
 
       // Set up a non-READY state
       await rm.handle429(60);
