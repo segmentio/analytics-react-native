@@ -86,7 +86,6 @@ describe('#sendEvents', () => {
       }),
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        'X-Retry-Count': '0',
       },
     });
   });
@@ -106,24 +105,18 @@ describe('#sendEvents', () => {
       }),
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        'X-Retry-Count': '0',
       },
       keepalive: true,
     });
   });
 
-  it('sends X-Retry-Count header with default value 0', async () => {
+  it('does not send X-Retry-Count header on first attempt (retryCount=0)', async () => {
     const url = 'https://api.segment.io/v1.b';
     await sendAnEventPer('KEY', url);
 
-    expect(fetch).toHaveBeenCalledWith(
-      url,
-      expect.objectContaining({
-        headers: expect.objectContaining({
-          'X-Retry-Count': '0',
-        }),
-      })
-    );
+    const callArgs = (fetch as jest.Mock).mock.calls[0];
+    const headers = callArgs[1].headers;
+    expect(headers['X-Retry-Count']).toBeUndefined();
   });
 
   it('sends X-Retry-Count header with provided retry count', async () => {

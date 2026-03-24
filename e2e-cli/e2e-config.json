@@ -1,6 +1,6 @@
 {
   "sdk": "react-native",
-  "test_suites": "basic,settings",
+  "test_suites": "basic,settings,retry",
   "auto_settings": true,
   "patch": null,
   "env": {
