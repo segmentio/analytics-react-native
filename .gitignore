@@ -97,5 +97,8 @@ packages/core/src/info.ts
 
 AGENTS.md
 
+# Local files (not for commit)
+*.local.sh
+
 # Notes and research (not for commit)
 notes/
