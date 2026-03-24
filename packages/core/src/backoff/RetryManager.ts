@@ -126,6 +126,14 @@ export class RetryManager {
       return true;
     }
 
+    if (!this.isPersistedStateValid(state, now)) {
+      this.logger?.warn(
+        'Persisted retry state failed validation, resetting to READY'
+      );
+      await this.reset();
+      return true;
+    }
+
     if (now >= state.waitUntilTime) {
       await this.transitionToReady();
       return true;
