@@ -10,9 +10,9 @@ import {
   workspaceDestinationFilterKey,
   defaultFlushInterval,
   defaultFlushAt,
-  defaultHttpConfig,
   maxPendingEvents,
 } from './constants';
+import { mergeHttpConfig } from './config-validation';
 import { getContext } from './context';
 import {
   createAliasEvent,
@@ -74,11 +74,7 @@ import {
   SegmentError,
   translateHTTPError,
 } from './errors';
-import {
-  validateIntegrations,
-  validateRateLimitConfig,
-  validateBackoffConfig,
-} from './config-validation';
+import { validateIntegrations } from './config-validation';
 import { QueueFlushingPlugin } from './plugins/QueueFlushingPlugin';
 import { WaitingPlugin } from './plugin';
 
@@ -424,42 +420,13 @@ export class SegmentClient {
       );
 
       // Merge httpConfig: defaultHttpConfig ← CDN ← config overrides
-      {
-        const cdnConfig = resJson.httpConfig ?? {};
-        const clientConfig = this.config.httpConfig ?? {};
-
-        const mergedRateLimit = {
-          ...defaultHttpConfig.rateLimitConfig!,
-          ...(cdnConfig.rateLimitConfig ?? {}),
-          ...(clientConfig.rateLimitConfig ?? {}),
-        };
-
-        const mergedBackoff = {
-          ...defaultHttpConfig.backoffConfig!,
-          ...(cdnConfig.backoffConfig ?? {}),
-          ...(clientConfig.backoffConfig ?? {}),
-          statusCodeOverrides: {
-            ...defaultHttpConfig.backoffConfig!.statusCodeOverrides,
-            ...(cdnConfig.backoffConfig?.statusCodeOverrides ?? {}),
-            ...(clientConfig.backoffConfig?.statusCodeOverrides ?? {}),
-          },
-        };
-
-        const validatedRateLimit = validateRateLimitConfig(
-          mergedRateLimit,
-          this.logger
-        );
-        this.httpConfig = {
-          rateLimitConfig: validatedRateLimit,
-          backoffConfig: validateBackoffConfig(
-            mergedBackoff,
-            this.logger,
-            validatedRateLimit
-          ),
-        };
-        if (resJson.httpConfig) {
-          this.logger.info('Loaded httpConfig from CDN settings.');
-        }
+      this.httpConfig = mergeHttpConfig(
+        resJson.httpConfig,
+        this.config.httpConfig,
+        this.logger
+      );
+      if (resJson.httpConfig) {
+        this.logger.info('Loaded httpConfig from CDN settings.');
       }
 
       this.logger.info('Received settings from Segment succesfully.');
