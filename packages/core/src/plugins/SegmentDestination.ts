@@ -427,7 +427,7 @@ export class SegmentDestination extends DestinationPlugin {
       | Record<string, unknown>
       | undefined;
     let httpConfig: HttpConfig | undefined;
-    if (rawIntegration?.httpConfig) {
+    if (rawIntegration?.httpConfig !== undefined) {
       httpConfig = extractHttpConfig(
         rawIntegration.httpConfig as HttpConfig,
         this.analytics?.logger
