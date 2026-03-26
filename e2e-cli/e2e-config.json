@@ -1,9 +1,10 @@
 {
   "sdk": "react-native",
-  "test_suites": "basic,settings,retry",
+  "test_suites": "basic,settings,retry,retry-settings",
   "auto_settings": true,
   "patch": null,
   "env": {
-    "BROWSER_BATCHING": "true"
+    "BROWSER_BATCHING": "true",
+    "HTTP_CONFIG_SETTINGS": "true"
   }
 }
