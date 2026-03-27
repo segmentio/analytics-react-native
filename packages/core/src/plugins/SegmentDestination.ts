@@ -25,6 +25,7 @@ import {
 } from '../errors';
 import { RetryManager } from '../backoff/RetryManager';
 import type { RetryResult } from '../backoff';
+import { extractHttpConfig } from '../config-validation';
 
 const MAX_EVENTS_PER_BATCH = 100;
 const MAX_PAYLOAD_SIZE_IN_KB = 500;
@@ -86,6 +87,7 @@ export class SegmentDestination extends DestinationPlugin {
       default5xxBehavior: this.getBackoffConfig()?.default5xxBehavior,
       statusCodeOverrides: this.getBackoffConfig()?.statusCodeOverrides,
       rateLimitEnabled: this.getRateLimitConfig()?.enabled,
+      backoffEnabled: this.getBackoffConfig()?.enabled,
     });
 
     switch (classification.errorType) {
@@ -419,7 +421,22 @@ export class SegmentDestination extends DestinationPlugin {
       this.apiHost = `https://${segmentSettings.apiHost}/b`;
     }
 
-    const httpConfig = this.analytics?.getHttpConfig();
+    // Read httpConfig: prefer integration-level settings from CDN, fall back to
+    // top-level CDN config merged with client config (via analytics.getHttpConfig()).
+    const rawIntegration = settings.integrations[this.key] as
+      | Record<string, unknown>
+      | undefined;
+    let httpConfig: HttpConfig | undefined;
+    if (rawIntegration?.httpConfig !== undefined) {
+      httpConfig = extractHttpConfig(
+        rawIntegration.httpConfig as HttpConfig,
+        this.analytics?.logger
+      );
+    }
+    if (!httpConfig) {
+      httpConfig = this.analytics?.getHttpConfig();
+    }
+
     if (httpConfig) {
       this.httpConfig = httpConfig;
 

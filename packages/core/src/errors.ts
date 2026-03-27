@@ -147,11 +147,19 @@ export const classifyError = (
     default5xxBehavior?: 'drop' | 'retry';
     statusCodeOverrides?: Record<string, 'drop' | 'retry'>;
     rateLimitEnabled?: boolean;
+    backoffEnabled?: boolean;
   }
 ): ErrorClassification => {
   const override = config?.statusCodeOverrides?.[statusCode.toString()];
   if (override !== undefined) {
     if (override === 'retry') {
+      // If the relevant config is disabled, treat retry overrides as permanent
+      if (statusCode === 429 && config?.rateLimitEnabled === false) {
+        return new ErrorClassification('permanent');
+      }
+      if (statusCode !== 429 && config?.backoffEnabled === false) {
+        return new ErrorClassification('permanent');
+      }
       return statusCode === 429
         ? new ErrorClassification('rate_limit')
         : new ErrorClassification('transient');
@@ -159,12 +167,17 @@ export const classifyError = (
     return new ErrorClassification('permanent');
   }
 
-  if (statusCode === 429 && config?.rateLimitEnabled !== false) {
-    return new ErrorClassification('rate_limit');
+  if (statusCode === 429) {
+    return config?.rateLimitEnabled !== false
+      ? new ErrorClassification('rate_limit')
+      : new ErrorClassification('permanent');
   }
 
   if (statusCode >= 400 && statusCode < 500) {
     const behavior = config?.default4xxBehavior ?? 'drop';
+    if (behavior === 'retry' && config?.backoffEnabled === false) {
+      return new ErrorClassification('permanent');
+    }
     return new ErrorClassification(
       behavior === 'retry' ? 'transient' : 'permanent'
     );
@@ -172,6 +185,9 @@ export const classifyError = (
 
   if (statusCode >= 500 && statusCode < 600) {
     const behavior = config?.default5xxBehavior ?? 'retry';
+    if (behavior === 'retry' && config?.backoffEnabled === false) {
+      return new ErrorClassification('permanent');
+    }
     return new ErrorClassification(
       behavior === 'retry' ? 'transient' : 'permanent'
     );
