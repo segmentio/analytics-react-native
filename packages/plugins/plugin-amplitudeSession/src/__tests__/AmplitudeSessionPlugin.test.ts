@@ -618,6 +618,45 @@ describe('AmplitudeSessionPlugin', () => {
       expect(plugin.analytics?.track).not.toHaveBeenCalled();
     });
 
+    it('should NOT start new session on rapid foreground cycles (iOS Background Fetch)', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+
+      // Session was just created (less than 1 second ago)
+      plugin.sessionId = baseTime - 500; // 500ms ago
+      plugin.lastEventTime = baseTime - (MAX_SESSION_TIME_IN_MS + 10000); // expired lastEventTime
+
+      const startNewSessionSpy = jest.spyOn(
+        plugin as any,
+        'startNewSessionIfNecessary'
+      );
+
+      // Simulate rapid foreground from Background Fetch
+      appStateChangeHandler('active');
+
+      // Should NOT call startNewSessionIfNecessary due to 1-second guard
+      expect(startNewSessionSpy).not.toHaveBeenCalled();
+    });
+
+    it('should allow new session on foreground when session is older than 1 second', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+
+      // Session was created more than 1 second ago and has expired
+      plugin.sessionId = baseTime - 2000; // 2 seconds ago
+      plugin.lastEventTime = baseTime - (MAX_SESSION_TIME_IN_MS + 10000); // expired
+
+      const startNewSessionSpy = jest.spyOn(
+        plugin as any,
+        'startNewSessionIfNecessary'
+      );
+
+      appStateChangeHandler('active');
+
+      // Should call startNewSessionIfNecessary since session is >1s old
+      expect(startNewSessionSpy).toHaveBeenCalled();
+    });
+
     it('should update lastEventTime when app goes to background', async () => {
       const baseTime = Date.now();
       jest.setSystemTime(baseTime);

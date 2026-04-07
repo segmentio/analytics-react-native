@@ -207,6 +207,13 @@ export class AmplitudeSessionPlugin extends EventPlugin {
   };
 
   private onForeground = () => {
+    // Guard against rapid session creation from iOS Background Fetch.
+    // iOS can briefly trigger AppState 'active' during background tasks,
+    // causing 0-second sessions from rapid foreground/background cycles.
+    const now = Date.now();
+    if (this.sessionId > 0 && now - this.sessionId < 1000) {
+      return;
+    }
     this.startNewSessionIfNecessary();
   };
 
