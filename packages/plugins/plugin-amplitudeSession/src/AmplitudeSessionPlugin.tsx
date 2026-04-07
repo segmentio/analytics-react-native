@@ -207,13 +207,6 @@ export class AmplitudeSessionPlugin extends EventPlugin {
   };
 
   private onForeground = () => {
-    // Guard against rapid session creation from iOS Background Fetch.
-    // iOS can briefly trigger AppState 'active' during background tasks,
-    // causing 0-second sessions from rapid foreground/background cycles.
-    const now = Date.now();
-    if (this.sessionId > 0 && now - this.sessionId < 1000) {
-      return;
-    }
     this.startNewSessionIfNecessary();
   };
 
@@ -226,11 +219,18 @@ export class AmplitudeSessionPlugin extends EventPlugin {
       return;
     }
 
+    // If lastEventTime was lost but sessionId is valid (partial persistence
+    // failure, e.g. app killed before all AsyncStorage writes complete),
+    // recover lastEventTime from sessionId to avoid falsely expiring the session.
+    if (this.lastEventTime === -1 && this.sessionId >= 0) {
+      this.lastEventTime = this.sessionId;
+    }
+
     const current = Date.now();
     const withinSessionLimit = this.withinMinSessionTime(current);
 
     const isSessionExpired =
-      this.sessionId === -1 || this.lastEventTime === -1 || !withinSessionLimit;
+      this.sessionId === -1 || !withinSessionLimit;
 
     if (this.sessionId >= 0 && !isSessionExpired) {
       return;
