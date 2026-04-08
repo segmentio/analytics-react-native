@@ -1,0 +1,17 @@
+{
+  "name": "@segment/analytics-react-native-e2e-tests",
+  "version": "1.0.0",
+  "description": "Shared E2E tests for analytics-react-native example apps",
+  "private": true,
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Run tests from example apps\""
+  },
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "express": "^4.20.0"
+  },
+  "devDependencies": {
+    "detox": "^20.17.0"
+  }
+}
