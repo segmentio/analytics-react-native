@@ -5,7 +5,8 @@
     "packages/shared",
     "packages/sovran",
     "packages/core",
-    "packages/plugins/*"
+    "packages/plugins/*",
+    "examples/shared-e2e"
   ],
   "scripts": {
     "core": "yarn workspace @segment/analytics-react-native",
