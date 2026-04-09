@@ -53,12 +53,6 @@ jobs:
           fetch-depth: 0
           token: ${{ github.token }}
 
-      - name: Point beta branch at current commit
-        if: inputs.type == 'beta'
-        run: |
-          git checkout -B beta HEAD
-          git push origin beta --force
-
       - name: Install devbox
         uses: jetify-com/devbox-install-action@v0.14.0
 
@@ -70,7 +64,9 @@ jobs:
 
       - name: Release (beta)
         if: inputs.type == 'beta'
-        run: devbox run -e GITHUB_REF=refs/heads/beta release
+        run: |
+          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+          devbox run -e GITHUB_REF=refs/heads/$BRANCH_NAME release
         env:
           GH_TOKEN: ${{ github.token }}
 
