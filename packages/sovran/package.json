@@ -52,9 +52,9 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
-    "jest": "^29.7.0",
-    "semantic-release": "^22.0.8",
-    "typescript": "^5.2.2"
+    "jest": "^30.3.0",
+    "semantic-release": "^25.0.3",
+    "typescript": "^6.0.2"
   },
   "react-native-builder-bob": {
     "source": "src",
@@ -76,14 +76,14 @@
     }
   },
   "dependencies": {
-    "ansi-regex": "5.0.1",
+    "ansi-regex": "6.2.2",
     "deepmerge": "^4.2.2",
-    "react-native-get-random-values": "1.x",
-    "shell-quote": "1.8.0",
-    "uuid": "^9.0.1"
+    "react-native-get-random-values": "2.x",
+    "shell-quote": "1.8.3",
+    "uuid": "^13.0.0"
   },
   "resolutions": {
     "shell-quote": "1.7.3",
-    "ansi-regex": "5.0.1"
+    "ansi-regex": "6.2.2"
   }
 }
