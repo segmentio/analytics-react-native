@@ -39,6 +39,7 @@ examples/
 ### Running Tests
 
 **E2E-compat (RN 0.72.9):**
+
 ```bash
 cd examples/E2E-compat
 
@@ -52,6 +53,7 @@ yarn test:android
 ```
 
 **E2E-latest (RN 0.84.1):**
+
 ```bash
 cd examples/E2E-latest
 
@@ -70,19 +72,20 @@ Both apps import the shared test suite:
 
 ```javascript
 // examples/E2E-compat/e2e/main.e2e.js
-import {runAnalyticsTests} from '../../shared-e2e/src';
+import { runAnalyticsTests } from '../../shared-e2e/src';
 
 runAnalyticsTests('AnalyticsReactNativeE2E');
 ```
 
 ```javascript
 // examples/E2E-latest/e2e/main.e2e.js
-import {runAnalyticsTests} from '../../shared-e2e/src';
+import { runAnalyticsTests } from '../../shared-e2e/src';
 
 runAnalyticsTests('AnalyticsReactNativeE2ELatest');
 ```
 
 The `runAnalyticsTests()` function:
+
 - Starts a mock Segment API server
 - Runs all E2E test scenarios
 - Validates analytics events
@@ -93,10 +96,12 @@ The `runAnalyticsTests()` function:
 The shared test suite covers:
 
 ✅ **Lifecycle Events**
+
 - Application Opened
 - Application Installed
 
 ✅ **Core Methods**
+
 - `track()` - Track custom events
 - `screen()` - Screen views
 - `identify()` - User identification
@@ -105,6 +110,7 @@ The shared test suite covers:
 - `reset()` - Reset user state
 
 ✅ **Advanced Features**
+
 - Context data validation
 - Data persistence across app restarts
 - Network flush behavior
@@ -115,11 +121,13 @@ The shared test suite covers:
 To add new tests that run on both RN versions:
 
 1. **Edit shared test file:**
+
    ```bash
    vi examples/shared-e2e/src/analyticsTests.js
    ```
 
 2. **Add your test:**
+
    ```javascript
    it('checks my new feature', async () => {
      // Test implementation
@@ -127,6 +135,7 @@ To add new tests that run on both RN versions:
    ```
 
 3. **Run on both apps:**
+
    ```bash
    # Test on RN 0.72.9
    cd examples/E2E-compat && yarn test:ios
@@ -140,16 +149,18 @@ To add new tests that run on both RN versions:
 The shared library provides custom Jest matchers:
 
 ### `toHaveEvent(eventType)`
+
 ```javascript
 expect(events).toHaveEvent('track');
 ```
 
 ### `toHaveEventWith(attributes)`
+
 ```javascript
 expect(events).toHaveEventWith({
   type: 'track',
   event: 'Button Clicked',
-  userId: 'user_123'
+  userId: 'user_123',
 });
 ```
 
@@ -162,6 +173,7 @@ The test suite includes a mock Segment API server:
 - **Settings endpoint:** `GET /v1/projects/yup/settings`
 
 Configure apps to use the mock server:
+
 ```javascript
 const client = createClient({
   writeKey: 'test-write-key',
@@ -175,6 +187,7 @@ const client = createClient({
 ### Tests not finding shared-e2e
 
 Run yarn install in the example app:
+
 ```bash
 cd examples/E2E-compat  # or E2E-latest
 yarn install
@@ -183,6 +196,7 @@ yarn install
 ### Detox build fails
 
 Clean and rebuild:
+
 ```bash
 cd examples/E2E-compat
 yarn clean
@@ -193,6 +207,7 @@ yarn build:ios
 ### Mock server port conflict
 
 The mock server uses port 9091. If blocked:
+
 ```bash
 lsof -ti:9091 | xargs kill -9
 ```
@@ -208,6 +223,7 @@ lsof -ti:9091 | xargs kill -9
 ## CI/CD Integration
 
 GitHub Actions workflow:
+
 ```yaml
 test-e2e:
   strategy:

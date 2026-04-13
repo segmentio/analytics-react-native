@@ -12,7 +12,7 @@ export const setupMatchers = () => {
     toHaveEvent(events, eventType) {
       return {
         message: () => `Expect events to contain a ${eventType} event`,
-        pass: events.some(item => item.type === eventType),
+        pass: events.some((item) => item.type === eventType),
       };
     },
 
@@ -21,7 +21,7 @@ export const setupMatchers = () => {
      * @example expect(events).toHaveEventWith({type: 'track', event: 'Button Clicked'})
      */
     toHaveEventWith(events, eventAtts) {
-      const hasEvent = events.some(item => {
+      const hasEvent = events.some((item) => {
         let isValid = true;
         for (const [key, value] of Object.entries(eventAtts)) {
           if (!(key in item)) {
@@ -36,7 +36,7 @@ export const setupMatchers = () => {
       return {
         message: () =>
           `Expect events to contain an object with attributes: ${JSON.stringify(
-            eventAtts,
+            eventAtts
           )}`,
         pass: hasEvent,
       };

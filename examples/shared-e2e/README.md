@@ -21,7 +21,7 @@ shared-e2e/
 
 ```javascript
 // examples/E2E-compat/e2e/main.e2e.js
-import {runAnalyticsTests} from '../../shared-e2e/src';
+import { runAnalyticsTests } from '../../shared-e2e/src';
 
 runAnalyticsTests('AnalyticsReactNativeE2ECompat');
 ```
@@ -30,7 +30,7 @@ runAnalyticsTests('AnalyticsReactNativeE2ECompat');
 
 ```javascript
 // examples/E2E-latest/e2e/main.e2e.js
-import {runAnalyticsTests} from '../../shared-e2e/src';
+import { runAnalyticsTests } from '../../shared-e2e/src';
 
 runAnalyticsTests('AnalyticsReactNativeE2ELatest');
 ```
@@ -64,6 +64,7 @@ The test suite includes a mock Segment API server (`mockServer.js`) that:
 Provides custom Jest matchers for cleaner test assertions:
 
 ### `toHaveEvent(eventType)`
+
 Checks if events array contains an event of a specific type.
 
 ```javascript
@@ -71,12 +72,13 @@ expect(events).toHaveEvent('track');
 ```
 
 ### `toHaveEventWith(attributes)`
+
 Checks if events array contains an event with specific attributes.
 
 ```javascript
 expect(events).toHaveEventWith({
   type: 'track',
-  event: 'Button Clicked'
+  event: 'Button Clicked',
 });
 ```
 

@@ -3,6 +3,6 @@
  * @module @segment/analytics-react-native-e2e-tests
  */
 
-export {runAnalyticsTests} from './analyticsTests';
-export {setupMatchers} from './matchers';
-export {startServer, stopServer} from './mockServer';
+export { runAnalyticsTests } from './analyticsTests';
+export { setupMatchers } from './matchers';
+export { startServer, stopServer } from './mockServer';
