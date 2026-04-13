@@ -5,6 +5,8 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
+    commit-message:
+      prefix: 'chore(deps)'
     groups:
       production-dependencies:
         patterns:
@@ -22,6 +24,8 @@ updates:
     directory: '/examples/AnalyticsReactNativeExample'
     schedule:
       interval: 'weekly'
+    commit-message:
+      prefix: 'chore(deps/example)'
     groups:
       example-dependencies:
         patterns:
@@ -32,6 +36,8 @@ updates:
     directory: '/examples/E2E-compat'
     schedule:
       interval: 'weekly'
+    commit-message:
+      prefix: 'chore(deps/e2e-compat)'
     groups:
       e2e-dependencies:
         patterns:
@@ -41,6 +47,8 @@ updates:
     directory: '/examples/E2E-latest'
     schedule:
       interval: 'weekly'
+    commit-message:
+      prefix: 'chore(deps/e2e-latest)'
     groups:
       e2e-dependencies:
         patterns:
@@ -51,6 +59,8 @@ updates:
     directory: '/e2e-cli'
     schedule:
       interval: 'weekly'
+    commit-message:
+      prefix: 'chore(deps/e2e-cli)'
     groups:
       e2e-cli-dependencies:
         patterns:
@@ -61,6 +71,8 @@ updates:
     directory: '/examples/E2E-compat'
     schedule:
       interval: 'weekly'
+    commit-message:
+      prefix: 'chore(deps/e2e-compat-ruby)'
     groups:
       ruby-dependencies:
         patterns:
@@ -70,6 +82,8 @@ updates:
     directory: '/examples/E2E-latest'
     schedule:
       interval: 'weekly'
+    commit-message:
+      prefix: 'chore(deps/e2e-latest-ruby)'
     groups:
       ruby-dependencies:
         patterns:
@@ -79,6 +93,8 @@ updates:
     directory: '/examples/AnalyticsReactNativeExample'
     schedule:
       interval: 'weekly'
+    commit-message:
+      prefix: 'chore(deps/example-ruby)'
     groups:
       ruby-dependencies:
         patterns:
