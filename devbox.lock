@@ -33,83 +33,6 @@
       "last_modified": "2026-01-27T15:18:14Z",
       "resolved": "github:NixOS/nixpkgs/afce96367b2e37fc29afb5543573cd49db3357b7?lastModified=1769527094"
     },
-    "gradle@latest": {
-      "last_modified": "2025-12-31T03:27:36Z",
-      "plugin_version": "0.0.1",
-      "resolved": "github:NixOS/nixpkgs/f665af0cdb70ed27e1bd8f9fdfecaf451260fc55#gradle",
-      "source": "devbox-search",
-      "version": "8.14.3",
-      "systems": {
-        "aarch64-darwin": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/v2xbkgrvn0b4g4qq7j5x60va0d4gf0kw-gradle-8.14.3",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/v2xbkgrvn0b4g4qq7j5x60va0d4gf0kw-gradle-8.14.3"
-        },
-        "aarch64-linux": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/mvs8d5c60yyx3sxpppg1r67yjvlrrhhh-gradle-8.14.3",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/mvs8d5c60yyx3sxpppg1r67yjvlrrhhh-gradle-8.14.3"
-        },
-        "x86_64-darwin": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/jy3fpkvcymjaglzi9z2gbpzcyqypgfxh-gradle-8.14.3",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/jy3fpkvcymjaglzi9z2gbpzcyqypgfxh-gradle-8.14.3"
-        },
-        "x86_64-linux": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/80fgl9ffaxlxl9s4i1jb37krcljx669g-gradle-8.14.3",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/80fgl9ffaxlxl9s4i1jb37krcljx669g-gradle-8.14.3"
-        }
-      }
-    },
-    "jdk17@latest": {
-      "last_modified": "2025-10-22T20:59:19Z",
-      "resolved": "github:NixOS/nixpkgs/01b6809f7f9d1183a2b3e081f0a1e6f8f415cb09#jdk17",
-      "source": "devbox-search",
-      "version": "17.0.12",
-      "systems": {
-        "aarch64-darwin": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/hlm8a8cnp4hm8xkg0a2yy4kv7cq44jii-zulu-ca-jdk-17.0.12",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/hlm8a8cnp4hm8xkg0a2yy4kv7cq44jii-zulu-ca-jdk-17.0.12"
-        },
-        "x86_64-darwin": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/i4zgq9685y6284hbf5a7ac9ysb88dvlz-zulu-ca-jdk-17.0.12",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/i4zgq9685y6284hbf5a7ac9ysb88dvlz-zulu-ca-jdk-17.0.12"
-        }
-      }
-    },
     "jq@latest": {
       "last_modified": "2026-01-12T00:44:08Z",
       "resolved": "github:NixOS/nixpkgs/3fbab70c6e69c87ea2b6e48aa6629da2aa6a23b0#jq",
@@ -226,126 +149,6 @@
         }
       }
     },
-    "netcat@latest": {
-      "last_modified": "2026-01-20T02:11:35Z",
-      "resolved": "github:NixOS/nixpkgs/ed142ab1b3a092c4d149245d0c4126a5d7ea00b0#netcat",
-      "source": "devbox-search",
-      "version": "4.2.1",
-      "systems": {
-        "aarch64-darwin": {
-          "outputs": [
-            {
-              "name": "nc",
-              "path": "/nix/store/y2i4f3bwmgpxw4m6dl99dz9d7zp5axz2-libressl-4.2.1-nc",
-              "default": true
-            },
-            {
-              "name": "bin",
-              "path": "/nix/store/ycvwxl29jb6ajjzgkq2jgy1nqpahq5k4-libressl-4.2.1-bin",
-              "default": true
-            },
-            {
-              "name": "man",
-              "path": "/nix/store/2b61bckfnaiw3n5ppjg70avgd9rn60bp-libressl-4.2.1-man",
-              "default": true
-            },
-            {
-              "name": "out",
-              "path": "/nix/store/fm6zdqw6856i2snd4fikcsi9d1qagj5j-libressl-4.2.1"
-            },
-            {
-              "name": "dev",
-              "path": "/nix/store/bz5h2baa7bkpz8sgjc9ld8fr7cg5wapg-libressl-4.2.1-dev"
-            }
-          ],
-          "store_path": "/nix/store/y2i4f3bwmgpxw4m6dl99dz9d7zp5axz2-libressl-4.2.1-nc"
-        },
-        "aarch64-linux": {
-          "outputs": [
-            {
-              "name": "nc",
-              "path": "/nix/store/0dzxkwilv9lgd7j0429s2rmshy7p8gw7-libressl-4.2.1-nc",
-              "default": true
-            },
-            {
-              "name": "bin",
-              "path": "/nix/store/5ama6wp3yi03hbixdcm5jy2ya9ikvzjz-libressl-4.2.1-bin",
-              "default": true
-            },
-            {
-              "name": "man",
-              "path": "/nix/store/vr4wlcvj5ba6wdmhj2aidalzqk33lrph-libressl-4.2.1-man",
-              "default": true
-            },
-            {
-              "name": "dev",
-              "path": "/nix/store/hs5c0yvhf7n60xijr7bmpi592n45pb6i-libressl-4.2.1-dev"
-            },
-            {
-              "name": "out",
-              "path": "/nix/store/fiy9987ph2kqr5drlr136w7hvm3v6rvg-libressl-4.2.1"
-            }
-          ],
-          "store_path": "/nix/store/0dzxkwilv9lgd7j0429s2rmshy7p8gw7-libressl-4.2.1-nc"
-        },
-        "x86_64-darwin": {
-          "outputs": [
-            {
-              "name": "nc",
-              "path": "/nix/store/vmrm6nr9hfhw7x8ln3ms98gszq709bfa-libressl-4.2.1-nc",
-              "default": true
-            },
-            {
-              "name": "bin",
-              "path": "/nix/store/7kafgvpwc6s8pnzar90bd8017wc3cnvx-libressl-4.2.1-bin",
-              "default": true
-            },
-            {
-              "name": "man",
-              "path": "/nix/store/jwdgv2x1a2a84v2jkj964xvm2s0kymps-libressl-4.2.1-man",
-              "default": true
-            },
-            {
-              "name": "dev",
-              "path": "/nix/store/sjiz0iphbc7dvddlrbrk8k7kkqi3swz3-libressl-4.2.1-dev"
-            },
-            {
-              "name": "out",
-              "path": "/nix/store/rn10w2jbdkz3f7p1q1fl6aml9b0352ki-libressl-4.2.1"
-            }
-          ],
-          "store_path": "/nix/store/vmrm6nr9hfhw7x8ln3ms98gszq709bfa-libressl-4.2.1-nc"
-        },
-        "x86_64-linux": {
-          "outputs": [
-            {
-              "name": "nc",
-              "path": "/nix/store/54hijwy3gpc728s3468rv3sdw78ksakh-libressl-4.2.1-nc",
-              "default": true
-            },
-            {
-              "name": "bin",
-              "path": "/nix/store/l5vvbs0vl734mshifahals0054pimlx4-libressl-4.2.1-bin",
-              "default": true
-            },
-            {
-              "name": "man",
-              "path": "/nix/store/j26qyc85gk95bk06dq0fi0c9q8y7livx-libressl-4.2.1-man",
-              "default": true
-            },
-            {
-              "name": "out",
-              "path": "/nix/store/4f21prki98shrvp29r88pnxhzw2y4qr2-libressl-4.2.1"
-            },
-            {
-              "name": "dev",
-              "path": "/nix/store/0dndzgjzx25y7v1942c2rys20narddp8-libressl-4.2.1-dev"
-            }
-          ],
-          "store_path": "/nix/store/54hijwy3gpc728s3468rv3sdw78ksakh-libressl-4.2.1-nc"
-        }
-      }
-    },
     "nixfmt@latest": {
       "last_modified": "2026-01-09T13:41:53Z",
       "resolved": "github:NixOS/nixpkgs/5f02c91314c8ba4afe83b256b023756412218535#nixfmt",
@@ -391,6 +194,55 @@
             }
           ],
           "store_path": "/nix/store/yx338k689yp9hpnl6h5y22f7vbmi5pky-nixfmt-1.2.0"
+        }
+      }
+    },
+    "nodejs@22": {
+      "last_modified": "2026-03-27T11:17:38Z",
+      "plugin_version": "0.0.2",
+      "resolved": "github:NixOS/nixpkgs/832efc09b4caf6b4569fbf9dc01bec3082a00611#nodejs_22",
+      "source": "devbox-search",
+      "version": "22.22.2",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/jp1j44w4fvrxvx62fasairgwv80iw6x3-nodejs-22.22.2",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/jp1j44w4fvrxvx62fasairgwv80iw6x3-nodejs-22.22.2"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/8h77mdsa9py3x9xxx2yak50fl6kqf2ma-nodejs-22.22.2",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/8h77mdsa9py3x9xxx2yak50fl6kqf2ma-nodejs-22.22.2"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/xn66x7bs1winnfa4pakr9lrjamb9bmj3-nodejs-22.22.2",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/xn66x7bs1winnfa4pakr9lrjamb9bmj3-nodejs-22.22.2"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/h2barca1k5pmvcyl9fwrzwrb4cn1b248-nodejs-22.22.2",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/h2barca1k5pmvcyl9fwrzwrb4cn1b248-nodejs-22.22.2"
         }
       }
     },
