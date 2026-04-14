@@ -1,4 +1,6 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-yarn lint && yarn typecheck && yarn test
+# Run all CI checks locally before commit (matches .github/workflows/ci.yml)
+# Uses devbox to ensure exact same environment as CI
+devbox run check
