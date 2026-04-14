@@ -229,8 +229,7 @@ export class AmplitudeSessionPlugin extends EventPlugin {
     const current = Date.now();
     const withinSessionLimit = this.withinMinSessionTime(current);
 
-    const isSessionExpired =
-      this.sessionId === -1 || !withinSessionLimit;
+    const isSessionExpired = this.sessionId === -1 || !withinSessionLimit;
 
     if (this.sessionId >= 0 && !isSessionExpired) {
       return;

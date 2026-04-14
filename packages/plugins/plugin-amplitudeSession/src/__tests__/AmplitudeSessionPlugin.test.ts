@@ -804,7 +804,8 @@ describe('AmplitudeSessionPlugin', () => {
         )
         .map((call: any) => ({
           type: call[0] as string,
-          session_id: call[1]?.integrations?.['Actions Amplitude']?.session_id as number,
+          session_id: call[1]?.integrations?.['Actions Amplitude']
+            ?.session_id as number,
           callOrder: trackMock.mock.calls.indexOf(call),
         }));
     };
@@ -1064,11 +1065,11 @@ describe('AmplitudeSessionPlugin', () => {
         plugin.resetPending = false;
 
         // Rapid state transitions
-        appStateHandler('active');      // foreground — should start new session
+        appStateHandler('active'); // foreground — should start new session
         jest.setSystemTime(baseTime + 10);
-        appStateHandler('background');  // background — updates lastEventTime
+        appStateHandler('background'); // background — updates lastEventTime
         jest.setSystemTime(baseTime + 20);
-        appStateHandler('active');      // foreground again — does this start another?
+        appStateHandler('active'); // foreground again — does this start another?
 
         // Flush microtasks
         jest.advanceTimersByTime(0);
