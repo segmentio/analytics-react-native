@@ -37,8 +37,60 @@ jobs:
       - name: Test
         run: devbox run test
 
-  release:
-    name: Release (${{ inputs.type }})
+  release-dryrun:
+    name: Release (dry-run)
+    if: inputs.type == 'dry-run'
+    needs: [ci]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ github.token }}
+
+      - name: Install devbox
+        uses: jetify-com/devbox-install-action@v0.14.0
+
+      - name: Release (dry-run)
+        run: devbox run release-dry-run
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  release-beta:
+    name: Release (beta)
+    if: inputs.type == 'beta'
+    needs: [ci]
+    runs-on: ubuntu-latest
+    environment: Publish-Beta
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ github.token }}
+
+      - name: Install devbox
+        uses: jetify-com/devbox-install-action@v0.14.0
+
+      - name: Release (beta)
+        run: |
+          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+          devbox run -e GITHUB_REF=refs/heads/$BRANCH_NAME release
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  release-production:
+    name: Release (production)
+    if: inputs.type == 'production'
     needs: [ci]
     runs-on: ubuntu-latest
     environment: Publish
@@ -56,26 +108,10 @@ jobs:
       - name: Install devbox
         uses: jetify-com/devbox-install-action@v0.14.0
 
-      - name: Release (dry-run)
-        if: inputs.type == 'dry-run'
-        run: devbox run release-dry-run
-        env:
-          GH_TOKEN: ${{ github.token }}
-
-      - name: Release (beta)
-        if: inputs.type == 'beta'
-        run: |
-          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
-          devbox run -e GITHUB_REF=refs/heads/$BRANCH_NAME release
-        env:
-          GH_TOKEN: ${{ github.token }}
-
       - name: Release (production)
-        if: inputs.type == 'production'
         run: devbox run release
         env:
           GH_TOKEN: ${{ github.token }}
 
       - name: Update Apps
-        if: inputs.type == 'production'
         run: devbox run update-apps
