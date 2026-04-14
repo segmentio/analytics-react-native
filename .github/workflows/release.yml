@@ -61,7 +61,6 @@ jobs:
         run: devbox run release-dry-run
         env:
           GH_TOKEN: ${{ github.token }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Release (beta)
         if: inputs.type == 'beta'
@@ -70,14 +69,12 @@ jobs:
           devbox run -e GITHUB_REF=refs/heads/$BRANCH_NAME release
         env:
           GH_TOKEN: ${{ github.token }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Release (production)
         if: inputs.type == 'production'
         run: devbox run release
         env:
           GH_TOKEN: ${{ github.token }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Update Apps
         if: inputs.type == 'production'
