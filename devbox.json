@@ -23,6 +23,13 @@
     "scripts": {
       "ci:install": ["yarn install --immutable"],
       "ci:commitlint": ["bash -c 'echo \"$PR_TITLE\" | yarn commitlint'"],
+      "check": [
+        "devbox run lint",
+        "devbox run format-check",
+        "devbox run build",
+        "devbox run typecheck",
+        "devbox run test"
+      ],
       "build": ["yarn build"],
       "test": ["yarn test"],
       "typecheck": ["yarn typecheck"],

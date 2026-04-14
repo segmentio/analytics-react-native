@@ -1,4 +1,12 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-yarn lint && yarn typecheck && yarn test
+# Auto-format files before commit
+devbox run format
+
+# Stage any formatting changes
+git add -u
+
+# Run all CI checks (matches .github/workflows/ci.yml)
+# Uses devbox to ensure exact same environment as CI
+devbox run check
