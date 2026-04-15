@@ -20,11 +20,6 @@ on:
           - latest
         default: 'all'
 
-  # FOR TESTING: Remove before merge - trigger on push to feature branch
-  push:
-    branches:
-      - feat/mobile-devtools-e2e-integration
-
   # Callable by other workflows (e.g., release)
   workflow_call:
 

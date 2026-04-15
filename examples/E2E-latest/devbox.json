@@ -1,6 +1,6 @@
 {
   "include": [
-    "github:segment-integrations/mobile-devtools?dir=plugins/react-native&ref=fix/use-github-urls-for-plugin-includes"
+    "github:segment-integrations/mobile-devtools?dir=plugins/react-native"
   ],
   "packages": ["nodejs@20", "watchman@latest", "jdk17@latest", "gradle@latest"],
   "env": {
