@@ -1,0 +1,31 @@
+name: Devbox Update
+
+on:
+  # Weekly schedule - Monday 10am UTC
+  schedule:
+    - cron: '0 10 * * 1'
+
+  # Manual trigger
+  workflow_dispatch:
+
+concurrency:
+  group: devbox-update-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  update:
+    name: Update Devbox Dependencies
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install devbox
+        uses: jetify-com/devbox-install-action@v0.14.0
+
+      - name: Update devbox packages
+        uses: xiaolutech/devbox-update-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
