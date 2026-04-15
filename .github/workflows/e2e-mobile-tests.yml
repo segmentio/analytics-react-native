@@ -52,7 +52,7 @@ jobs:
 
       - name: Run Android E2E Tests
         working-directory: examples/E2E-compat
-        run: devbox run test:e2e:android
+        run: devbox run --pure test:e2e:android
         env:
           DETOX_AVD: medium_phone_API33_x86_64
 
@@ -83,7 +83,7 @@ jobs:
 
       - name: Run iOS E2E Tests
         working-directory: examples/E2E-compat
-        run: devbox run test:e2e:ios
+        run: devbox run --pure test:e2e:ios
 
       - name: Upload test results
         if: always()
@@ -112,7 +112,7 @@ jobs:
 
       - name: Run Android E2E Tests
         working-directory: examples/E2E-latest
-        run: devbox run test:e2e:android
+        run: devbox run --pure test:e2e:android
         env:
           DETOX_AVD: medium_phone_API35_x86_64
 
@@ -143,7 +143,7 @@ jobs:
 
       - name: Run iOS E2E Tests
         working-directory: examples/E2E-latest
-        run: devbox run test:e2e:ios
+        run: devbox run --pure test:e2e:ios
 
       - name: Upload test results
         if: always()

@@ -1,5 +1,7 @@
 {
   "include": [
+    "github:segment-integrations/mobile-devtools?dir=plugins/android",
+    "github:segment-integrations/mobile-devtools?dir=plugins/ios",
     "github:segment-integrations/mobile-devtools?dir=plugins/react-native"
   ],
   "packages": [
