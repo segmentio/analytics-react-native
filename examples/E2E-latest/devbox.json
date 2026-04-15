@@ -20,24 +20,24 @@
   "shell": {
     "scripts": {
       "install": ["yarn install"],
-      "install:pods": ["cd ios && pod install && cd .."],
+      "install:pods": ["(cd ios && pod install)"],
       "build:android": [
         "yarn install",
-        "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd .."
+        "(cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release)"
       ],
       "build:ios": [
         "yarn install",
-        "cd ios && pod install && cd ..",
+        "(cd ios && pod install)",
         "ios.sh xcodebuild -workspace ios/AnalyticsReactNativeE2E.xcworkspace -scheme AnalyticsReactNativeE2E -configuration Release -sdk iphonesimulator -derivedDataPath ios/build"
       ],
       "test:e2e:android": [
         "yarn install",
-        "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd ..",
+        "(cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release)",
         "yarn detox test --configuration android.emu.release"
       ],
       "test:e2e:ios": [
         "yarn install",
-        "cd ios && pod install && cd ..",
+        "(cd ios && pod install)",
         "ios.sh xcodebuild -workspace ios/AnalyticsReactNativeE2E.xcworkspace -scheme AnalyticsReactNativeE2E -configuration Release -sdk iphonesimulator -derivedDataPath ios/build",
         "yarn detox test --configuration ios.sim.release"
       ],
