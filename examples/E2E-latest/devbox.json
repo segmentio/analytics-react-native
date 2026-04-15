@@ -1,15 +1,8 @@
 {
   "include": [
-    "github:segment-integrations/mobile-devtools?dir=plugins/android",
-    "github:segment-integrations/mobile-devtools?dir=plugins/ios",
-    "github:segment-integrations/mobile-devtools?dir=plugins/react-native"
+    "github:segment-integrations/mobile-devtools?dir=plugins/react-native&ref=fix/use-github-urls-for-plugin-includes"
   ],
-  "packages": [
-    "nodejs@20",
-    "watchman@latest",
-    "jdk17@latest",
-    "gradle@latest"
-  ],
+  "packages": ["nodejs@20", "watchman@latest", "jdk17@latest", "gradle@latest"],
   "env": {
     "IOS_APP_SCHEME": "AnalyticsReactNativeE2E",
     "IOS_APP_BUNDLE_ID": "com.analyticsreactnativeexample",
@@ -20,12 +13,8 @@
   },
   "shell": {
     "scripts": {
-      "install": [
-        "yarn install"
-      ],
-      "install:pods": [
-        "cd ios && pod install --repo-update && cd .."
-      ],
+      "install": ["yarn install"],
+      "install:pods": ["cd ios && pod install --repo-update && cd .."],
       "build:android": [
         "devbox run install",
         "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd .."
@@ -43,24 +32,14 @@
         "devbox run build:ios",
         "yarn detox test --configuration ios.sim.release"
       ],
-      "start:metro": [
-        "metro.sh start ${1:-default}"
-      ],
-      "stop:metro": [
-        "metro.sh stop ${1:-default}"
-      ],
-      "start:sim": [
-        "ios.sh simulator start ${1:-${IOS_DEFAULT_DEVICE:-max}}"
-      ],
-      "stop:sim": [
-        "ios.sh simulator stop"
-      ],
+      "start:metro": ["metro.sh start ${1:-default}"],
+      "stop:metro": ["metro.sh stop ${1:-default}"],
+      "start:sim": ["ios.sh simulator start ${1:-${IOS_DEFAULT_DEVICE:-max}}"],
+      "stop:sim": ["ios.sh simulator stop"],
       "start:emu": [
         "android.sh emulator start ${1:-${ANDROID_DEFAULT_DEVICE:-max}}"
       ],
-      "stop:emu": [
-        "android.sh emulator stop"
-      ]
+      "stop:emu": ["android.sh emulator stop"]
     }
   }
 }

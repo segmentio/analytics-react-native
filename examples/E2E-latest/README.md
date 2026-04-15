@@ -36,7 +36,7 @@ devbox run test:e2e:android
 - `devbox run install` - Install Node dependencies
 - `devbox run install:pods` - Install iOS CocoaPods
 - `devbox run build:android` - Build Android app
-- `devbox run build:ios` - Build iOS app  
+- `devbox run build:ios` - Build iOS app
 - `devbox run test:e2e:android` - Run Android E2E tests
 - `devbox run test:e2e:ios` - Run iOS E2E tests
 - `devbox run start:emu` - Start Android emulator
