@@ -2,7 +2,13 @@
   "include": [
     "github:segment-integrations/mobile-devtools?dir=plugins/react-native"
   ],
-  "packages": ["nodejs@20", "watchman@latest", "jdk17@latest", "gradle@latest"],
+  "packages": [
+    "nodejs@20",
+    "yarn-berry@latest",
+    "watchman@latest",
+    "jdk17@latest",
+    "gradle@latest"
+  ],
   "env": {
     "IOS_APP_SCHEME": "AnalyticsReactNativeE2E",
     "IOS_APP_BUNDLE_ID": "com.analyticsreactnativeexample",
