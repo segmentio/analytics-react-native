@@ -5,6 +5,11 @@ on:
   schedule:
     - cron: '0 9 * * 1'
 
+  # TODO: Remove before merging - for testing only
+  push:
+    branches:
+      - feat/mobile-devtools-e2e-integration
+
   # Manual trigger
   workflow_dispatch:
     inputs:
