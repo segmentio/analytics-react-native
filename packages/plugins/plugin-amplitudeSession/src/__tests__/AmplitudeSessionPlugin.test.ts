@@ -766,4 +766,469 @@ describe('AmplitudeSessionPlugin', () => {
       });
     });
   });
+
+  /**
+   * ============================================================
+   * 0-SECOND SESSION REPRODUCTION TESTS
+   * ============================================================
+   *
+   * A "0-second session" means:
+   *   - session_start(X) is tracked
+   *   - session_end(X) is tracked (with the same session_id)
+   *   - The time between them is < 1 second
+   *
+   * For session_end(X) to fire, startNewSession() must be called
+   * a SECOND time after session X was created, finding it "expired"
+   * or otherwise needing replacement. Each test below attempts a
+   * different hypothesis for how that can happen.
+   */
+  describe('0-second session reproduction', () => {
+    const makeEvent = (id = 'msg-1'): TrackEventType => ({
+      type: EventType.TrackEvent,
+      event: 'test_event',
+      properties: {},
+      messageId: id,
+      timestamp: '2023-01-01T00:00:00.000Z',
+      anonymousId: 'anon-1',
+    });
+
+    /**
+     * Helper: collect all session events from the mock client.
+     * Returns pairs of { type, session_id, time } for analysis.
+     */
+    const getSessionEvents = (trackMock: jest.Mock) => {
+      return trackMock.mock.calls
+        .filter(
+          (call: any) =>
+            call[0] === 'session_start' || call[0] === 'session_end'
+        )
+        .map((call: any) => ({
+          type: call[0] as string,
+          session_id: call[1]?.integrations?.['Actions Amplitude']
+            ?.session_id as number,
+          callOrder: trackMock.mock.calls.indexOf(call),
+        }));
+    };
+
+    /**
+     * Helper: detect 0-second sessions in the event log.
+     * Returns any session_id that has both a start and end.
+     */
+    const findZeroSecondSessions = (trackMock: jest.Mock) => {
+      const events = getSessionEvents(trackMock);
+      const starts = events.filter((e: any) => e.type === 'session_start');
+      const ends = events.filter((e: any) => e.type === 'session_end');
+
+      const zeroSessions: number[] = [];
+      for (const end of ends) {
+        const matchingStart = starts.find(
+          (s: any) => s.session_id === end.session_id
+        );
+        if (matchingStart) {
+          zeroSessions.push(end.session_id);
+        }
+      }
+      return zeroSessions;
+    };
+
+    describe('Hypothesis A: AsyncStorage partial persistence failure', () => {
+      /**
+       * Scenario: App creates session, sessionId is persisted but
+       * lastEventTime write fails (app killed mid-write). On relaunch,
+       * loadSessionData() finds sessionId but lastEventTime = -1.
+       *
+       * With the fix: lastEventTime is recovered from sessionId, so the
+       * session is NOT falsely expired.
+       */
+      it('should recover lastEventTime from sessionId when lastEventTime lost', async () => {
+        const baseTime = 1000000000000;
+        jest.setSystemTime(baseTime);
+
+        // Simulate: previous launch created session at baseTime,
+        // sessionId write succeeded, lastEventTime write failed.
+        mockAsyncStorage.getItem.mockImplementation(async (key: string) => {
+          if (key === 'previous_session_id') return baseTime.toString();
+          if (key === 'last_event_time') return null; // FAILED to persist
+          if (key === 'event_session_id') return baseTime.toString();
+          return null;
+        });
+
+        const { client } = await setupPluginWithClient();
+
+        // Advance time by just 1ms (NOT 5 minutes)
+        jest.setSystemTime(baseTime + 1);
+
+        // First event after relaunch
+        await plugin.execute(makeEvent());
+
+        const events = getSessionEvents(client.track);
+        const zeroSessions = findZeroSecondSessions(client.track);
+
+        // With the fix, the session should be recovered, not expired
+        expect(zeroSessions).toHaveLength(0);
+
+        // The existing session should be continued (no session_end/session_start)
+        expect(events).toHaveLength(0);
+        expect(plugin.sessionId).toBe(baseTime);
+      });
+
+      it('should reproduce: lastEventTime persisted but sessionId lost', async () => {
+        const baseTime = 1000000000000;
+        jest.setSystemTime(baseTime);
+
+        mockAsyncStorage.getItem.mockImplementation(async (key: string) => {
+          if (key === 'previous_session_id') return null; // FAILED
+          if (key === 'last_event_time') return baseTime.toString();
+          if (key === 'event_session_id') return null;
+          return null;
+        });
+
+        const { client } = await setupPluginWithClient();
+        jest.setSystemTime(baseTime + 1);
+
+        await plugin.execute(makeEvent());
+
+        const events = getSessionEvents(client.track);
+        const zeroSessions = findZeroSecondSessions(client.track);
+
+        console.log(
+          '[Hypothesis A2] Session events:',
+          JSON.stringify(events, null, 2)
+        );
+        console.log('[Hypothesis A2] 0-second sessions:', zeroSessions);
+
+        if (zeroSessions.length > 0) {
+          console.error(
+            `REPRODUCED: 0-second session(s): ${zeroSessions.join(', ')}`
+          );
+        }
+      });
+    });
+
+    describe('Hypothesis B: Concurrent execute() calls with lazy loadSessionData()', () => {
+      /**
+       * Scenario: Two events arrive at execute() concurrently while
+       * sessionId === -1. Both call loadSessionData(). The first
+       * creates a session, then loadSessionData() from the second
+       * call overwrites in-memory state with stale AsyncStorage data,
+       * forcing a second session creation.
+       */
+      it('should reproduce: two events race through loadSessionData()', async () => {
+        const baseTime = 1000000000000;
+        jest.setSystemTime(baseTime);
+
+        // Start with empty storage
+        mockAsyncStorage.getItem.mockResolvedValue(null);
+
+        const { client } = await setupPluginWithClient();
+
+        // Force sessionId back to -1 to trigger lazy load path
+        (plugin as any)._sessionId = -1;
+        (plugin as any)._lastEventTime = -1;
+
+        // Fire two events concurrently — both should see sessionId === -1
+        const p1 = plugin.execute(makeEvent('msg-1'));
+        const p2 = plugin.execute(makeEvent('msg-2'));
+        await Promise.all([p1, p2]);
+
+        const events = getSessionEvents(client.track);
+        const zeroSessions = findZeroSecondSessions(client.track);
+
+        console.log(
+          '[Hypothesis B] Session events:',
+          JSON.stringify(events, null, 2)
+        );
+        console.log('[Hypothesis B] 0-second sessions:', zeroSessions);
+
+        if (zeroSessions.length > 0) {
+          console.error(
+            `REPRODUCED: 0-second session(s): ${zeroSessions.join(', ')}`
+          );
+        }
+      });
+
+      it('should reproduce: loadSessionData() returns stale data after session creation', async () => {
+        const baseTime = 1000000000000;
+        jest.setSystemTime(baseTime);
+
+        // Simulate: AsyncStorage reads are slow, return stale null
+        // even after the plugin has set sessionId in memory.
+        mockAsyncStorage.getItem.mockImplementation(async () => {
+          return null;
+        });
+
+        const { client } = await setupPluginWithClient();
+
+        // Force uninitialized state
+        (plugin as any)._sessionId = -1;
+        (plugin as any)._lastEventTime = -1;
+
+        // First event creates a session
+        await plugin.execute(makeEvent('msg-1'));
+        void plugin.sessionId; // session A is now active
+
+        // Force state back to -1 to simulate loadSessionData()
+        // overwriting state (as if a concurrent call read stale storage)
+        (plugin as any)._sessionId = -1;
+        (plugin as any)._lastEventTime = -1;
+        plugin.resetPending = false;
+
+        // Second event sees -1, creates another session
+        jest.setSystemTime(baseTime + 50); // 50ms later
+        await plugin.execute(makeEvent('msg-2'));
+
+        const events = getSessionEvents(client.track);
+        const zeroSessions = findZeroSecondSessions(client.track);
+
+        console.log(
+          '[Hypothesis B2] Session events:',
+          JSON.stringify(events, null, 2)
+        );
+        console.log('[Hypothesis B2] 0-second sessions:', zeroSessions);
+
+        if (zeroSessions.length > 0) {
+          console.error(
+            `REPRODUCED: 0-second session(s): ${zeroSessions.join(', ')}`
+          );
+        }
+      });
+    });
+
+    describe('Hypothesis C: onForeground() + execute() race with expired session', () => {
+      /**
+       * Scenario: AppState changes to 'active' after >5 min.
+       * onForeground() fires (not awaited) and execute() processes
+       * a lifecycle event concurrently. Both call
+       * startNewSessionIfNecessary() with the same expired state.
+       */
+      it('should reproduce: simultaneous onForeground and execute after expiry', async () => {
+        const baseTime = 1000000000000;
+        jest.setSystemTime(baseTime);
+
+        const addEventListenerSpy = jest.spyOn(AppState, 'addEventListener');
+        const { client } = await setupPluginWithClient();
+        const appStateHandler = addEventListenerSpy.mock.calls[0][1];
+
+        // Set up expired session
+        plugin.sessionId = baseTime - (MAX_SESSION_TIME_IN_MS + 5000);
+        plugin.lastEventTime = baseTime - (MAX_SESSION_TIME_IN_MS + 5000);
+        plugin.resetPending = false;
+
+        // Simulate what happens when AppState changes to 'active':
+        // 1. onForeground() fires (via AppState handler) — not awaited
+        // 2. An "Application Opened" event arrives at execute()
+        // Both happen in the same event loop tick.
+        appStateHandler('active');
+        const executePromise = plugin.execute(makeEvent());
+        await executePromise;
+
+        // Flush microtasks (use advanceTimersByTime with fake timers)
+        jest.advanceTimersByTime(0);
+        await Promise.resolve();
+
+        const events = getSessionEvents(client.track);
+        const zeroSessions = findZeroSecondSessions(client.track);
+
+        console.log(
+          '[Hypothesis C] Session events:',
+          JSON.stringify(events, null, 2)
+        );
+        console.log('[Hypothesis C] 0-second sessions:', zeroSessions);
+
+        if (zeroSessions.length > 0) {
+          console.error(
+            `REPRODUCED: 0-second session(s): ${zeroSessions.join(', ')}`
+          );
+        }
+      });
+    });
+
+    describe('Hypothesis D: Rapid active→background→active with expired session', () => {
+      /**
+       * Scenario: User opens app, immediately backgrounds, immediately
+       * re-opens — all within milliseconds. Session was expired.
+       * First foreground creates session A, background updates
+       * lastEventTime, second foreground might create session B
+       * (ending A immediately).
+       */
+      it('should reproduce: rapid foreground/background/foreground cycle', async () => {
+        const baseTime = 1000000000000;
+        jest.setSystemTime(baseTime);
+
+        const addEventListenerSpy = jest.spyOn(AppState, 'addEventListener');
+        const { client } = await setupPluginWithClient();
+        const appStateHandler = addEventListenerSpy.mock.calls[0][1];
+
+        // Set up expired session
+        plugin.sessionId = baseTime - (MAX_SESSION_TIME_IN_MS + 5000);
+        plugin.lastEventTime = baseTime - (MAX_SESSION_TIME_IN_MS + 5000);
+        plugin.resetPending = false;
+
+        // Rapid state transitions
+        appStateHandler('active'); // foreground — should start new session
+        jest.setSystemTime(baseTime + 10);
+        appStateHandler('background'); // background — updates lastEventTime
+        jest.setSystemTime(baseTime + 20);
+        appStateHandler('active'); // foreground again — does this start another?
+
+        // Flush microtasks
+        jest.advanceTimersByTime(0);
+        await Promise.resolve();
+
+        const events = getSessionEvents(client.track);
+        const zeroSessions = findZeroSecondSessions(client.track);
+
+        console.log(
+          '[Hypothesis D] Session events:',
+          JSON.stringify(events, null, 2)
+        );
+        console.log('[Hypothesis D] 0-second sessions:', zeroSessions);
+
+        if (zeroSessions.length > 0) {
+          console.error(
+            `REPRODUCED: 0-second session(s): ${zeroSessions.join(', ')}`
+          );
+        }
+      });
+    });
+
+    describe('Hypothesis E: resetPending cleared then immediate re-entry', () => {
+      /**
+       * Scenario: After session A starts, the session_start event
+       * re-enters execute() and track() clears resetPending. Then,
+       * before any user event updates lastEventTime, onForeground()
+       * fires again (or another code path) and finds the session
+       * in a state where it appears expired.
+       */
+      it('should reproduce: session_start processing clears lock, then state appears expired', async () => {
+        const baseTime = 1000000000000;
+        jest.setSystemTime(baseTime);
+
+        const { client } = await setupPluginWithClient();
+
+        // Create session A
+        plugin.sessionId = -1;
+        plugin.lastEventTime = -1;
+        plugin.resetPending = false;
+
+        await plugin.execute(makeEvent('trigger-session-a'));
+
+        void plugin.sessionId; // session A created
+
+        // Now simulate: session_start event re-enters track() which
+        // clears resetPending. Then something corrupts lastEventTime.
+        // This simulates what might happen if loadSessionData() runs
+        // again and reads stale storage.
+        plugin.resetPending = false; // As if session_start was processed
+        (plugin as any)._lastEventTime = -1; // Stale storage overwrite
+
+        jest.setSystemTime(baseTime + 100); // 100ms later
+
+        await plugin.execute(makeEvent('trigger-session-b'));
+
+        const events = getSessionEvents(client.track);
+        const zeroSessions = findZeroSecondSessions(client.track);
+
+        console.log(
+          '[Hypothesis E] Session events:',
+          JSON.stringify(events, null, 2)
+        );
+        console.log('[Hypothesis E] 0-second sessions:', zeroSessions);
+
+        if (zeroSessions.length > 0) {
+          console.error(
+            `REPRODUCED: 0-second session(s): ${zeroSessions.join(', ')}`
+          );
+        }
+      });
+    });
+
+    describe('Hypothesis F: Background Fetch cold-launch lifecycle', () => {
+      /**
+       * Root cause scenario: When Background Fetch cold-launches the app,
+       * AsyncStorage writes are non-atomic. If the app is killed before
+       * all writes complete, sessionId may persist while lastEventTime
+       * is lost. On the next launch, lastEventTime === -1 with a valid
+       * sessionId previously caused isSessionExpired = true, ending the
+       * just-created session immediately (0-second session).
+       *
+       * The fix recovers lastEventTime from sessionId when persistence
+       * is partial, preventing the false expiration.
+       */
+      it('should NOT create 0-second session with partial storage persistence', async () => {
+        const baseTime = 1000000000000;
+        jest.setSystemTime(baseTime);
+
+        // Previous session partially persisted
+        const oldSession = baseTime - 1000; // 1 second ago (NOT expired by time)
+        mockAsyncStorage.getItem.mockImplementation(async (key: string) => {
+          if (key === 'previous_session_id') return oldSession.toString();
+          if (key === 'last_event_time') return null; // Lost
+          if (key === 'event_session_id') return oldSession.toString();
+          return null;
+        });
+
+        const addEventListenerSpy = jest.spyOn(AppState, 'addEventListener');
+        const { client } = await setupPluginWithClient();
+        const appStateHandler = addEventListenerSpy.mock.calls[0][1];
+
+        // "Application Opened" event from core client during init
+        const appOpenedEvent: TrackEventType = {
+          type: EventType.TrackEvent,
+          event: 'Application Opened',
+          properties: { from_background: false },
+          messageId: 'init-1',
+          timestamp: new Date(baseTime).toISOString(),
+          anonymousId: 'anon-1',
+        };
+
+        await plugin.execute(appOpenedEvent);
+
+        // AppState reports 'background' (Background Fetch)
+        jest.setSystemTime(baseTime + 50);
+        appStateHandler('background');
+
+        // Later: another cold-launch from Background Fetch
+        // Simulate reload by loading stale session data again
+        jest.setSystemTime(baseTime + 100);
+
+        // The new session that was just created — its lastEventTime
+        // was set by execute() at line 122. But if the app is killed
+        // before AsyncStorage persists, next load sees old data.
+        // Simulate: force load from storage that has the NEW sessionId
+        // but missing lastEventTime
+        const newSession = plugin.sessionId;
+        mockAsyncStorage.getItem.mockImplementation(async (key: string) => {
+          if (key === 'previous_session_id') return newSession.toString();
+          if (key === 'last_event_time') return null; // Again lost
+          if (key === 'event_session_id') return newSession.toString();
+          return null;
+        });
+
+        // Force re-load (simulating new cold launch)
+        (plugin as any)._sessionId = -1;
+        (plugin as any)._lastEventTime = -1;
+        plugin.resetPending = false;
+
+        // Second "Application Opened" from second cold launch
+        jest.setSystemTime(baseTime + 200);
+        await plugin.execute({
+          ...appOpenedEvent,
+          messageId: 'init-2',
+          timestamp: new Date(baseTime + 200).toISOString(),
+        });
+
+        const events = getSessionEvents(client.track);
+        const zeroSessions = findZeroSecondSessions(client.track);
+
+        // With the fix, no 0-second sessions should be created
+        expect(zeroSessions).toHaveLength(0);
+
+        // The fix recovers lastEventTime from sessionId, so the existing
+        // session is continued on both launches — no session_end or
+        // session_start events are fired at all.
+        expect(events).toHaveLength(0);
+      });
+    });
+  });
 });

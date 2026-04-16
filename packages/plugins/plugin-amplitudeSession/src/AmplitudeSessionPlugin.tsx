@@ -219,11 +219,17 @@ export class AmplitudeSessionPlugin extends EventPlugin {
       return;
     }
 
+    // If lastEventTime was lost but sessionId is valid (partial persistence
+    // failure, e.g. app killed before all AsyncStorage writes complete),
+    // recover lastEventTime from sessionId to avoid falsely expiring the session.
+    if (this.lastEventTime === -1 && this.sessionId >= 0) {
+      this.lastEventTime = this.sessionId;
+    }
+
     const current = Date.now();
     const withinSessionLimit = this.withinMinSessionTime(current);
 
-    const isSessionExpired =
-      this.sessionId === -1 || this.lastEventTime === -1 || !withinSessionLimit;
+    const isSessionExpired = this.sessionId === -1 || !withinSessionLimit;
 
     if (this.sessionId >= 0 && !isSessionExpired) {
       return;

@@ -2,7 +2,9 @@ module.exports = {
   branches: [
     'master',
     { name: '+([0-9])?(.{+([0-9]),x}).x', prerelease: true }, // support branches (e.g., 1.x, 1.2.x)
-    { name: '*', prerelease: 'beta' }, // any other branch = beta prerelease (fixes SemVer compliance)
+    { name: 'beta', prerelease: 'beta' }, // explicit beta channel
+    { name: 'fix/*', prerelease: 'fix' }, // fix branches → x.x.x-fix.N
+    { name: 'feat/*', prerelease: 'feat' }, // feature branches → x.x.x-feat.N
   ],
   tagFormat: '${name}-v${version}',
   plugins: [
