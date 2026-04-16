@@ -1,0 +1,156 @@
+name: E2E Mobile Tests
+
+on:
+  # Weekly schedule - Monday 9am UTC
+  schedule:
+    - cron: '0 9 * * 1'
+
+  # TODO: Remove before merging - for testing only
+  push:
+    branches:
+      - feat/mobile-devtools-e2e-integration
+
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      test_matrix:
+        description: 'Test matrix to run'
+        required: false
+        type: choice
+        options:
+          - all
+          - android
+          - ios
+          - compat
+          - latest
+        default: 'all'
+
+  # Callable by other workflows (e.g., release)
+  workflow_call:
+
+concurrency:
+  group: e2e-mobile-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-android-compat:
+    name: E2E Android (RN 0.72)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: |
+      inputs.test_matrix == 'all' ||
+      inputs.test_matrix == 'android' ||
+      inputs.test_matrix == 'compat' ||
+      github.event_name != 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install devbox
+        uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          project-path: examples/E2E-compat
+
+      - name: Run Android E2E Tests
+        working-directory: examples/E2E-compat
+        run: devbox run --pure test:e2e:android
+        env:
+          DETOX_AVD: medium_phone_API33_x86_64
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-android-compat-results
+          path: examples/E2E-compat/reports/
+          if-no-files-found: ignore
+
+  e2e-ios-compat:
+    name: E2E iOS (RN 0.72)
+    runs-on: macos-latest
+    timeout-minutes: 30
+    if: |
+      inputs.test_matrix == 'all' ||
+      inputs.test_matrix == 'ios' ||
+      inputs.test_matrix == 'compat' ||
+      github.event_name != 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install devbox
+        uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          project-path: examples/E2E-compat
+
+      - name: Run iOS E2E Tests
+        working-directory: examples/E2E-compat
+        run: devbox run --pure test:e2e:ios
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-ios-compat-results
+          path: examples/E2E-compat/reports/
+          if-no-files-found: ignore
+
+  e2e-android-latest:
+    name: E2E Android (RN 0.84)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    continue-on-error: true # TODO: Remove when RN 0.84 support is complete
+    if: |
+      inputs.test_matrix == 'all' ||
+      inputs.test_matrix == 'android' ||
+      inputs.test_matrix == 'latest' ||
+      github.event_name != 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install devbox
+        uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          project-path: examples/E2E-latest
+
+      - name: Run Android E2E Tests
+        working-directory: examples/E2E-latest
+        run: devbox run --pure test:e2e:android
+        env:
+          DETOX_AVD: medium_phone_API35_x86_64
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-android-latest-results
+          path: examples/E2E-latest/reports/
+          if-no-files-found: ignore
+
+  e2e-ios-latest:
+    name: E2E iOS (RN 0.84)
+    runs-on: macos-latest
+    timeout-minutes: 30
+    continue-on-error: true # TODO: Remove when RN 0.84 support is complete
+    if: |
+      inputs.test_matrix == 'all' ||
+      inputs.test_matrix == 'ios' ||
+      inputs.test_matrix == 'latest' ||
+      github.event_name != 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install devbox
+        uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          project-path: examples/E2E-latest
+
+      - name: Run iOS E2E Tests
+        working-directory: examples/E2E-latest
+        run: devbox run --pure test:e2e:ios
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-ios-latest-results
+          path: examples/E2E-latest/reports/
+          if-no-files-found: ignore

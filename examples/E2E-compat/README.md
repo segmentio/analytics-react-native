@@ -1,8 +1,56 @@
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
-# Getting Started
+# E2E Test App - React Native 0.72 (Compat)
 
-> **Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+This example app tests SDK compatibility with React Native 0.72.9 + React 18.3.1.
+
+## Developer Setup (Devbox)
+
+### Prerequisites
+
+```bash
+# Install devbox
+curl -fsSL https://get.jetify.com/devbox | bash
+```
+
+### Quick Start
+
+```bash
+cd examples/E2E-compat
+
+# Enter devbox shell (downloads SDKs on first run)
+devbox shell
+
+# Install dependencies
+devbox run install
+
+# Start Android emulator
+devbox run start:emu
+
+# Run E2E tests
+devbox run test:e2e:android
+```
+
+### Available Commands
+
+- `devbox run install` - Install Node dependencies
+- `devbox run install:pods` - Install iOS CocoaPods
+- `devbox run build:android` - Build Android app
+- `devbox run build:ios` - Build iOS app
+- `devbox run test:e2e:android` - Run Android E2E tests
+- `devbox run test:e2e:ios` - Run iOS E2E tests
+- `devbox run start:emu` - Start Android emulator
+- `devbox run start:sim` - Start iOS simulator
+- `devbox run stop:emu` - Stop Android emulator
+- `devbox run stop:sim` - Stop iOS simulator
+
+See [mobile-devtools](https://github.com/segment-integrations/mobile-devtools) for more details.
+
+---
+
+# Getting Started (Manual Setup)
+
+> **Note**: The devbox setup above is recommended. For manual setup, follow the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
 
 ## Step 1: Start the Metro Server
 

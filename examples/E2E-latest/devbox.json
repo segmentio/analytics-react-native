@@ -1,0 +1,54 @@
+{
+  "include": [
+    "github:segment-integrations/mobile-devtools?dir=plugins/react-native"
+  ],
+  "packages": [
+    "nodejs@20",
+    "yarn-berry@latest",
+    "watchman@latest",
+    "jdk17@latest",
+    "gradle@latest"
+  ],
+  "env": {
+    "IOS_APP_SCHEME": "AnalyticsReactNativeE2E",
+    "IOS_APP_BUNDLE_ID": "com.analyticsreactnativeexample",
+    "ANDROID_APP_ID": "com.analyticsreactnativeexample",
+    "ANDROID_APP_APK": "android/app/build/outputs/apk/release/app-release.apk",
+    "ANDROID_MAX_API": "35",
+    "ANDROID_SDK_REQUIRED": "0"
+  },
+  "shell": {
+    "scripts": {
+      "install": ["yarn install"],
+      "install:pods": ["(cd ios && pod install)"],
+      "build:android": [
+        "yarn install",
+        "(cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release)"
+      ],
+      "build:ios": [
+        "yarn install",
+        "(cd ios && pod install)",
+        "ios.sh xcodebuild -workspace ios/AnalyticsReactNativeE2E.xcworkspace -scheme AnalyticsReactNativeE2E -configuration Release -sdk iphonesimulator -derivedDataPath ios/build"
+      ],
+      "test:e2e:android": [
+        "yarn install",
+        "(cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release)",
+        "yarn detox test --configuration android.emu.release"
+      ],
+      "test:e2e:ios": [
+        "yarn install",
+        "(cd ios && pod install)",
+        "ios.sh xcodebuild -workspace ios/AnalyticsReactNativeE2E.xcworkspace -scheme AnalyticsReactNativeE2E -configuration Release -sdk iphonesimulator -derivedDataPath ios/build",
+        "yarn detox test --configuration ios.sim.release"
+      ],
+      "start:metro": ["metro.sh start ${1:-default}"],
+      "stop:metro": ["metro.sh stop ${1:-default}"],
+      "start:sim": ["ios.sh simulator start ${1:-${IOS_DEFAULT_DEVICE:-max}}"],
+      "stop:sim": ["ios.sh simulator stop"],
+      "start:emu": [
+        "android.sh emulator start ${1:-${ANDROID_DEFAULT_DEVICE:-max}}"
+      ],
+      "stop:emu": ["android.sh emulator stop"]
+    }
+  }
+}

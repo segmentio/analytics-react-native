@@ -37,6 +37,12 @@ jobs:
       - name: Test
         run: devbox run test
 
+  e2e-tests:
+    name: E2E Mobile Tests
+    needs: [ci]
+    if: inputs.type == 'beta' || inputs.type == 'production'
+    uses: ./.github/workflows/e2e-mobile-tests.yml
+
   release-dryrun:
     name: Release (dry-run)
     if: inputs.type == 'dry-run'
@@ -64,7 +70,7 @@ jobs:
   release-beta:
     name: Release (beta)
     if: inputs.type == 'beta'
-    needs: [ci]
+    needs: [ci, e2e-tests]
     runs-on: ubuntu-latest
     environment: Publish-Beta
     permissions:
@@ -91,7 +97,7 @@ jobs:
   release-production:
     name: Release (production)
     if: inputs.type == 'production'
-    needs: [ci]
+    needs: [ci, e2e-tests]
     runs-on: ubuntu-latest
     environment: Publish
     permissions:
