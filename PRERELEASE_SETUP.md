@@ -2,12 +2,13 @@
 
 ## Overview
 
-This repository uses branch-specific prerelease channels for publishing packages from feature branches, fix branches, etc. Each branch category gets its own npm dist-tag:
+This repository uses branch-specific prerelease channels for publishing packages from feature branches and fix branches. Each branch category gets its own npm dist-tag:
 
 - `fix/*` → `2.22.1-fix.1` (dist-tag: `fix`)
 - `feat/*` → `2.22.1-feat.1` (dist-tag: `feat`)
-- `chore/*` → `2.22.1-chore.1` (dist-tag: `chore`)
 - `beta` → `2.22.1-beta.1` (dist-tag: `beta`)
+
+Note: `chore/*` branches do not publish - they're for internal changes not meant for client distribution.
 
 ## GitHub Environment Setup
 
@@ -28,7 +29,7 @@ Since semantic-release now controls which branches can publish based on `release
 
 **Option B: Restrict to specific patterns**
 - Select "Protected branches and tags only"
-- Add patterns: `fix/*`, `feat/*`, `chore/*`, `beta`
+- Add patterns: `fix/*`, `feat/*`, `beta`
 
 ### 3. Add Required Reviewers (Optional)
 
@@ -143,12 +144,13 @@ npm install @segment/analytics-react-native@2.22.1-fix.1
 ### "semantic-release says no version will be published"
 
 Check that your branch name matches one of the configured patterns in `release.config.js`:
-- `fix/*`
-- `feat/*`
-- `chore/*`
-- `beta`
-- `master`
-- Version branches like `1.x` or `1.2.x`
+- `fix/*` - bug fixes for client distribution
+- `feat/*` - new features for client distribution  
+- `beta` - explicit beta channel
+- `master` - production releases
+- Version branches like `1.x` or `1.2.x` - maintenance releases
+
+Note: `chore/*` branches intentionally don't publish as they're for internal changes.
 
 ### "npm publish failed with 403"
 

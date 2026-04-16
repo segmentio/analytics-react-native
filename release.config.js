@@ -5,7 +5,6 @@ module.exports = {
     { name: 'beta', prerelease: 'beta' }, // explicit beta channel
     { name: 'fix/*', prerelease: 'fix' }, // fix branches → x.x.x-fix.N
     { name: 'feat/*', prerelease: 'feat' }, // feature branches → x.x.x-feat.N
-    { name: 'chore/*', prerelease: 'chore' }, // chore branches → x.x.x-chore.N
   ],
   tagFormat: '${name}-v${version}',
   plugins: [
