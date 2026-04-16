@@ -9,7 +9,7 @@ on:
         type: choice
         options:
           - dry-run
-          - beta
+          - prerelease
           - production
 
 concurrency:
@@ -63,7 +63,7 @@ jobs:
 
   release-beta:
     name: Release (prerelease)
-    if: inputs.type == 'beta'
+    if: inputs.type == 'prerelease'
     needs: [ci]
     runs-on: ubuntu-latest
     environment: Publish-Prerelease

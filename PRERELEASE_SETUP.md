@@ -94,7 +94,7 @@ To verify OIDC is configured:
 
 ```bash
 # From your feature branch
-gh workflow run release.yml -f type=dry-run
+gh workflow run release.yml -f type=dry-run --ref fix/your-branch
 ```
 
 This will:
@@ -105,8 +105,8 @@ This will:
 ### 2. Publish a Prerelease
 
 ```bash
-# From a fix/feat/chore branch
-gh workflow run release.yml -f type=beta
+# From a fix/feat branch
+gh workflow run release.yml -f type=prerelease --ref fix/your-branch
 ```
 
 This will:
