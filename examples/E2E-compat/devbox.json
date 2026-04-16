@@ -14,7 +14,7 @@
     "IOS_APP_BUNDLE_ID": "com.analyticsreactnativeexample",
     "ANDROID_APP_ID": "com.analyticsreactnativeexample",
     "ANDROID_APP_APK": "android/app/build/outputs/apk/release/app-release.apk",
-    "ANDROID_MAX_API": "33",
+    "ANDROID_MAX_API": "35",
     "ANDROID_SDK_REQUIRED": "0"
   },
   "shell": {
