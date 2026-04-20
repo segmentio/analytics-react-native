@@ -64,7 +64,7 @@ jobs:
 
       - name: Run Android E2E Tests
         working-directory: examples/E2E-compat
-        run: devbox run --pure test:e2e:android
+        run: devbox run --pure --env ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT test:e2e:android
         env:
           DETOX_AVD: medium_phone_API33_x86_64
 
@@ -137,7 +137,7 @@ jobs:
 
       - name: Run Android E2E Tests
         working-directory: examples/E2E-latest
-        run: devbox run --pure test:e2e:android
+        run: devbox run --pure --env ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT test:e2e:android
         env:
           DETOX_AVD: medium_phone_API35_x86_64
 
