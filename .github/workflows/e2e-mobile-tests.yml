@@ -62,6 +62,10 @@ jobs:
           cp -r $ANDROID_SDK_PATH/* $HOME/android-sdk/
           echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
 
+      - name: Update local.properties for writable SDK
+        run: |
+          echo "sdk.dir=$HOME/android-sdk" > examples/E2E-compat/local.properties  # Adjust path if needed
+
       - name: Run Android E2E Tests
         working-directory: examples/E2E-compat
         run: devbox run --pure --env ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT test:e2e:android
@@ -134,6 +138,10 @@ jobs:
           mkdir -p $HOME/android-sdk
           cp -r $ANDROID_SDK_PATH/* $HOME/android-sdk/
           echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
+
+      - name: Update local.properties for writable SDK
+        run: |
+          echo "sdk.dir=$HOME/android-sdk" > examples/E2E-latest/local.properties  # Adjust path if needed
 
       - name: Run Android E2E Tests
         working-directory: examples/E2E-latest
