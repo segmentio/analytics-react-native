@@ -15,7 +15,8 @@
     "ANDROID_APP_ID": "com.analyticsreactnativeexample",
     "ANDROID_APP_APK": "android/app/build/outputs/apk/release/app-release.apk",
     "ANDROID_MAX_API": "35",
-    "ANDROID_SDK_REQUIRED": "0"
+    "ANDROID_SDK_REQUIRED": "0",
+    "GRADLE_OPTS": "-Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_SDK_ROOT/build-tools/36.1.0/aapt2"
   },
   "shell": {
     "scripts": {
