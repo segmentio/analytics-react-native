@@ -65,11 +65,11 @@ jobs:
 
       - name: Update local.properties for writable SDK
         run: |
-          echo "sdk.dir=$HOME/android-sdk" > examples/E2E-compat/local.properties  # Adjust path if needed
+          echo "sdk.dir=$HOME/android-sdk" > examples/E2E-compat/android/local.properties
 
       - name: Run Android E2E Tests
         working-directory: examples/E2E-compat
-        run: devbox run --env ANDROID_SDK_ROOT=$HOME/android-sdk test:e2e:android
+        run: devbox run --env ANDROID_SDK_ROOT=$HOME/android-sdk --env ANDROID_HOME=$HOME/android-sdk test:e2e:android
         env:
           DETOX_AVD: medium_phone_API33_x86_64
 
@@ -143,11 +143,11 @@ jobs:
 
       - name: Update local.properties for writable SDK
         run: |
-          echo "sdk.dir=$HOME/android-sdk" > examples/E2E-latest/local.properties  # Adjust path if needed
+          echo "sdk.dir=$HOME/android-sdk" > examples/E2E-latest/android/local.properties
 
       - name: Run Android E2E Tests
         working-directory: examples/E2E-latest
-        run: devbox run --env ANDROID_SDK_ROOT=$HOME/android-sdk test:e2e:android
+        run: devbox run --env ANDROID_SDK_ROOT=$HOME/android-sdk --env ANDROID_HOME=$HOME/android-sdk test:e2e:android
         env:
           DETOX_AVD: medium_phone_API35_x86_64
 
