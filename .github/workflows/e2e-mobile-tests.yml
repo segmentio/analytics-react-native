@@ -62,6 +62,15 @@ jobs:
           cp -r $ANDROID_SDK_PATH/* $HOME/android-sdk/
           chmod -R 755 $HOME/android-sdk
           echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
+          echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+
+      - name: Install required Android SDK packages
+        working-directory: examples/E2E-compat
+        run: |
+          devbox run --env ANDROID_SDK_ROOT=$HOME/android-sdk --env ANDROID_HOME=$HOME/android-sdk \
+            sdkmanager --sdk_root=$HOME/android-sdk "platform-tools" "platforms;android-35" "build-tools;30.0.3"
+          yes | devbox run --env ANDROID_SDK_ROOT=$HOME/android-sdk --env ANDROID_HOME=$HOME/android-sdk \
+            sdkmanager --sdk_root=$HOME/android-sdk --licenses
 
       - name: Update local.properties for writable SDK
         run: |
@@ -140,6 +149,15 @@ jobs:
           cp -r $ANDROID_SDK_PATH/* $HOME/android-sdk/
           chmod -R 755 $HOME/android-sdk
           echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
+          echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+
+      - name: Install required Android SDK packages
+        working-directory: examples/E2E-latest
+        run: |
+          devbox run --env ANDROID_SDK_ROOT=$HOME/android-sdk --env ANDROID_HOME=$HOME/android-sdk \
+            sdkmanager --sdk_root=$HOME/android-sdk "platform-tools" "platforms;android-35" "build-tools;30.0.3"
+          yes | devbox run --env ANDROID_SDK_ROOT=$HOME/android-sdk --env ANDROID_HOME=$HOME/android-sdk \
+            sdkmanager --sdk_root=$HOME/android-sdk --licenses
 
       - name: Update local.properties for writable SDK
         run: |
