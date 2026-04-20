@@ -53,7 +53,7 @@ jobs:
       # Add these new steps to handle the read-only SDK issue
       - name: Find Android SDK path
         run: |
-          SDK_PATH=$(find /nix/store -name "android-sdk" -type d | head -1)/libexec/android-sdk
+          SDK_PATH=$(find /nix/store -name "android-sdk" -type d | grep libexec | head -1)
           echo "ANDROID_SDK_PATH=$SDK_PATH" >> $GITHUB_ENV
 
       - name: Copy Android SDK to writable location
@@ -126,7 +126,7 @@ jobs:
       # Add these new steps to handle the read-only SDK issue
       - name: Find Android SDK path
         run: |
-          SDK_PATH=$(find /nix/store -name "android-sdk" -type d | head -1)/libexec/android-sdk
+          SDK_PATH=$(find /nix/store -name "android-sdk" -type d | grep libexec | head -1)
           echo "ANDROID_SDK_PATH=$SDK_PATH" >> $GITHUB_ENV
 
       - name: Copy Android SDK to writable location
