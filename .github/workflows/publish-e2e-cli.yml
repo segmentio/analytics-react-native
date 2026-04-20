@@ -1,0 +1,61 @@
+# Publish E2E CLI build to sdk-e2e-tests cli-builds branch
+#
+# On merge to master, builds the e2e-cli and pushes it
+# to the cli-builds branch of sdk-e2e-tests.
+
+name: Publish E2E CLI
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'e2e-cli/**'
+      - 'packages/core/src/**'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout SDK
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build e2e-cli
+        working-directory: e2e-cli
+        run: |
+          npm install
+          npm run build
+
+      - name: Checkout sdk-e2e-tests (cli-builds branch)
+        uses: actions/checkout@v4
+        with:
+          repository: segmentio/sdk-e2e-tests
+          ref: cli-builds
+          token: ${{ secrets.E2E_TESTS_TOKEN }}
+          path: sdk-e2e-tests-builds
+          fetch-depth: 1
+
+      - name: Copy CLI artifacts
+        run: |
+          rm -rf sdk-e2e-tests-builds/analytics-react-native
+          mkdir -p sdk-e2e-tests-builds/analytics-react-native
+          cp -r e2e-cli/dist sdk-e2e-tests-builds/analytics-react-native/
+          cp e2e-cli/package.json sdk-e2e-tests-builds/analytics-react-native/
+
+      - name: Push to cli-builds branch
+        working-directory: sdk-e2e-tests-builds
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to CLI build"
+          else
+            git commit -m "update analytics-react-native CLI build (${GITHUB_SHA::8})"
+            git push
+          fi
