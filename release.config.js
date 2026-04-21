@@ -25,9 +25,9 @@ const branches = [
   { name: 'beta', prerelease: 'beta' }, // explicit beta channel
 ];
 
-// Add current branch explicitly with a sanitized (semver-safe) prerelease identifier
+// Add current branch explicitly with sanitized (semver-safe) prerelease and dist-tag channel
 if (!isStableBranch && !isBetaBranch) {
-  branches.push({ name: currentBranch, prerelease });
+  branches.push({ name: currentBranch, prerelease, channel: prerelease });
 }
 
 module.exports = {
