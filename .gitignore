@@ -102,3 +102,7 @@ AGENTS.md
 
 # Notes and research (not for commit)
 notes/
+
+# Devbox runtime data
+.devbox/
+**/.devbox/

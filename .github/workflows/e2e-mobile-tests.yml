@@ -35,7 +35,7 @@ concurrency:
 jobs:
   e2e-android-compat:
     name: E2E Android (RN 0.72)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     if: |
       inputs.test_matrix == 'all' ||
@@ -43,10 +43,16 @@ jobs:
       inputs.test_matrix == 'compat' ||
       github.event_name != 'workflow_dispatch'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
 
       - name: Install devbox
-        uses: jetify-com/devbox-install-action@v0.14.0
+        uses: jetify-com/devbox-install-action@v0.15.0
         with:
           project-path: examples/E2E-compat
 
@@ -58,7 +64,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: e2e-android-compat-results
           path: examples/E2E-compat/reports/
@@ -66,7 +72,7 @@ jobs:
 
   e2e-ios-compat:
     name: E2E iOS (RN 0.72)
-    runs-on: macos-latest
+    runs-on: macos-14
     timeout-minutes: 30
     if: |
       inputs.test_matrix == 'all' ||
@@ -74,10 +80,10 @@ jobs:
       inputs.test_matrix == 'compat' ||
       github.event_name != 'workflow_dispatch'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install devbox
-        uses: jetify-com/devbox-install-action@v0.14.0
+        uses: jetify-com/devbox-install-action@v0.15.0
         with:
           project-path: examples/E2E-compat
 
@@ -87,7 +93,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: e2e-ios-compat-results
           path: examples/E2E-compat/reports/
@@ -95,7 +101,7 @@ jobs:
 
   e2e-android-latest:
     name: E2E Android (RN 0.84)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     continue-on-error: true # TODO: Remove when RN 0.84 support is complete
     if: |
@@ -104,10 +110,16 @@ jobs:
       inputs.test_matrix == 'latest' ||
       github.event_name != 'workflow_dispatch'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
 
       - name: Install devbox
-        uses: jetify-com/devbox-install-action@v0.14.0
+        uses: jetify-com/devbox-install-action@v0.15.0
         with:
           project-path: examples/E2E-latest
 
@@ -119,7 +131,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: e2e-android-latest-results
           path: examples/E2E-latest/reports/
@@ -127,7 +139,7 @@ jobs:
 
   e2e-ios-latest:
     name: E2E iOS (RN 0.84)
-    runs-on: macos-latest
+    runs-on: macos-14
     timeout-minutes: 30
     continue-on-error: true # TODO: Remove when RN 0.84 support is complete
     if: |
@@ -136,10 +148,10 @@ jobs:
       inputs.test_matrix == 'latest' ||
       github.event_name != 'workflow_dispatch'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install devbox
-        uses: jetify-com/devbox-install-action@v0.14.0
+        uses: jetify-com/devbox-install-action@v0.15.0
         with:
           project-path: examples/E2E-latest
 
@@ -149,8 +161,40 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: e2e-ios-latest-results
           path: examples/E2E-latest/reports/
           if-no-files-found: ignore
+
+  e2e-summary:
+    name: E2E Test Summary
+    runs-on: ubuntu-latest
+    needs:
+      [e2e-android-compat, e2e-ios-compat, e2e-android-latest, e2e-ios-latest]
+    if: always()
+    steps:
+      - name: Check results
+        run: |
+          echo "📊 E2E Test Results:"
+          echo "  Android (RN 0.72): ${{ needs.e2e-android-compat.result }}"
+          echo "  iOS (RN 0.72): ${{ needs.e2e-ios-compat.result }}"
+          echo "  Android (RN 0.84): ${{ needs.e2e-android-latest.result }}"
+          echo "  iOS (RN 0.84): ${{ needs.e2e-ios-latest.result }}"
+          echo ""
+
+          # Check for failures, treating continue-on-error jobs as non-blocking
+          if [[ "${{ needs.e2e-android-compat.result }}" != "success" && "${{ needs.e2e-android-compat.result }}" != "skipped" ]] || \
+             [[ "${{ needs.e2e-ios-compat.result }}" != "success" && "${{ needs.e2e-ios-compat.result }}" != "skipped" ]]; then
+            echo "::error::One or more E2E test suites failed"
+            echo "::error::Check the individual job logs for details"
+            exit 1
+          fi
+
+          # Note: android-latest and ios-latest have continue-on-error, so we don't fail on them
+          if [[ "${{ needs.e2e-android-latest.result }}" == "failure" ]] || \
+             [[ "${{ needs.e2e-ios-latest.result }}" == "failure" ]]; then
+            echo "::warning::RN 0.84 tests failed but are allowed to fail (continue-on-error)"
+          fi
+
+          echo "::notice::✅ E2E tests passed successfully!"
