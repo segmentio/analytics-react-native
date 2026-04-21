@@ -1,6 +1,6 @@
 {
   "include": [
-    "github:segment-integrations/mobile-devtools?dir=plugins/react-native"
+    "github:segment-integrations/mobile-devtools/feat/move-flake-to-devbox-d?dir=plugins/react-native"
   ],
   "packages": [
     "nodejs@20",
