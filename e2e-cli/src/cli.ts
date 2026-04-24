@@ -46,6 +46,7 @@ interface CLIConfig {
   flushAt?: number;
   flushInterval?: number;
   maxRetries?: number;
+  timeout?: number;
 }
 
 interface CLIInput {
@@ -229,7 +230,8 @@ async function main() {
     }
 
     await client.flush();
-    const drained = await waitForQueueDrain(client);
+    const drainTimeoutMs = (input.config?.timeout ?? 120) * 1000;
+    const drained = await waitForQueueDrain(client, drainTimeoutMs);
 
     const finalPending = drained ? 0 : await client.pendingEvents();
     const totalEvents = input.sequences.reduce(
