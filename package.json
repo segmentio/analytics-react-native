@@ -59,5 +59,26 @@
     "ts-jest": "^29.1.1",
     "typescript": "^5.2.2"
   },
-  "packageManager": "yarn@4.1.0"
+  "packageManager": "yarn@4.1.0",
+  "resolutions": {
+    "ip": "2.0.1",
+    "picomatch": "4.0.4",
+    "brace-expansion": "5.0.5",
+    "minimatch": "10.2.5",
+    "js-yaml": "4.1.1",
+    "ws": "8.20.0",
+    "yaml": "2.8.3",
+    "fast-xml-parser": "4.5.6",
+    "lodash": "4.18.1",
+    "braces": "3.0.3",
+    "flatted": "3.4.2",
+    "@babel/helpers": "7.29.2",
+    "micromatch": "4.0.8",
+    "cross-spawn": "7.0.6",
+    "nanoid": "3.3.11",
+    "ajv": "6.15.0",
+    "on-headers": "1.1.0",
+    "serve-static": "1.16.3",
+    "send": "0.19.2"
+  }
 }
