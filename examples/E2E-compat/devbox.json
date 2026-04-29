@@ -56,9 +56,18 @@
         "android.sh emulator start ${1:-${ANDROID_DEFAULT_DEVICE:-max}}"
       ],
       "stop:emu": ["android.sh emulator stop"],
-      "start:ios": ["ios.sh simulator start ${1:-${IOS_DEFAULT_DEVICE:-max}}"],
-      "start:android": [
-        "android.sh emulator start ${1:-${ANDROID_DEFAULT_DEVICE:-max}}"
+      "dev:ios": [
+        "export ANDROID_SKIP_SETUP=1",
+        "yarn install",
+        "(cd ios && pod install)",
+        "ios.sh run ${1:-max}"
+      ],
+      "dev:android": [
+        "export IOS_SKIP_SETUP=1",
+        "yarn install",
+        "(cd android && ./gradlew assembleDebug)",
+        "android.sh emulator start ${1:-max}",
+        "android.sh deploy"
       ]
     }
   }
