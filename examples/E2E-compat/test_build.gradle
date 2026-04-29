@@ -1,0 +1,11 @@
+// Simulate the buildscript setup
+ext {
+    def ndkVersionEnv = System.getenv("ANDROID_NDK_VERSION")
+    if (ndkVersionEnv) {
+        ndkVersion = ndkVersionEnv
+    }
+}
+
+// Test accessing the property
+println "Has ndkVersion property: " + ext.has("ndkVersion")
+println "ndkVersion value: " + (ext.has("ndkVersion") ? ext.ndkVersion : "NOT SET")

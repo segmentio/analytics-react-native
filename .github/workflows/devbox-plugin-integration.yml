@@ -1,0 +1,312 @@
+name: Devbox Plugin Integration Tests
+
+on:
+  # Run on PRs that modify devbox plugin integration
+  pull_request:
+    branches:
+      - feat/rn-devbox-plugin
+    paths:
+      - 'examples/E2E-compat/devbox.json'
+      - 'examples/E2E-compat/devbox.lock'
+      - 'examples/E2E-latest/devbox.json'
+      - 'examples/E2E-latest/devbox.lock'
+      - '.github/workflows/devbox-plugin-integration.yml'
+
+  # Weekly schedule - Monday at 10am UTC
+  schedule:
+    - cron: '0 10 * * 1'
+
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      example:
+        description: 'Which example to test (E2E-compat, E2E-latest, all)'
+        required: false
+        default: 'all'
+      platform:
+        description: 'Which platform to test (android, ios, both)'
+        required: false
+        default: 'both'
+
+  # Called from release workflow as prerequisite
+  workflow_call:
+    inputs:
+      example:
+        type: string
+        description: 'Which example to test'
+        default: 'all'
+
+concurrency:
+  group: devbox-plugin-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Validate devbox configuration
+  validate-config:
+    name: Validate Devbox Configuration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install devbox
+        uses: jetify-com/devbox-install-action@v0.15.0
+
+      - name: Validate E2E-compat devbox.json
+        working-directory: examples/E2E-compat
+        run: |
+          echo "Validating devbox.json..."
+          devbox version
+          devbox info
+
+          # Check if mobile-devtools plugin is included
+          if ! grep -q "mobile-devtools" devbox.json; then
+            echo "ERROR: mobile-devtools plugin not found in devbox.json"
+            exit 1
+          fi
+          echo "✓ Configuration valid"
+
+      - name: Validate E2E-latest devbox.json
+        working-directory: examples/E2E-latest
+        run: |
+          echo "Validating devbox.json..."
+          devbox version
+          devbox info
+
+          # Check if mobile-devtools plugin is included
+          if ! grep -q "mobile-devtools" devbox.json; then
+            echo "ERROR: mobile-devtools plugin not found in devbox.json"
+            exit 1
+          fi
+          echo "✓ Configuration valid"
+
+  # Test Android integration
+  test-android-compat:
+    name: Android E2E-compat Build Test
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' && 
+      (inputs.example == 'E2E-compat' || inputs.example == 'all') &&
+      (inputs.platform == 'android' || inputs.platform == 'both') ||
+      github.event_name != 'workflow_dispatch'
+    needs: validate-config
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+          cache-dependency-path: examples/E2E-compat/yarn.lock
+
+      - name: Install devbox
+        uses: jetify-com/devbox-install-action@v0.15.0
+
+      - name: Test devbox shell initialization
+        working-directory: examples/E2E-compat
+        run: |
+          echo "Testing devbox shell initialization..."
+          devbox run --pure echo "Shell initialized successfully"
+
+      - name: Verify Android tools available
+        working-directory: examples/E2E-compat
+        run: |
+          echo "Checking Android tools..."
+          devbox run --pure android.sh version || echo "Android tools will be installed on first use"
+
+      - name: Test yarn install
+        working-directory: examples/E2E-compat
+        run: |
+          echo "Testing yarn install..."
+          devbox run install
+
+      - name: Test Android build
+        working-directory: examples/E2E-compat
+        run: |
+          echo "Testing Android build..."
+          devbox run build:android
+
+  test-android-latest:
+    name: Android E2E-latest Build Test
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' && 
+      (inputs.example == 'E2E-latest' || inputs.example == 'all') &&
+      (inputs.platform == 'android' || inputs.platform == 'both') ||
+      github.event_name != 'workflow_dispatch'
+    needs: validate-config
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+          cache-dependency-path: examples/E2E-latest/yarn.lock
+
+      - name: Install devbox
+        uses: jetify-com/devbox-install-action@v0.15.0
+
+      - name: Test devbox shell initialization
+        working-directory: examples/E2E-latest
+        run: |
+          echo "Testing devbox shell initialization..."
+          devbox run --pure echo "Shell initialized successfully"
+
+      - name: Verify Android tools available
+        working-directory: examples/E2E-latest
+        run: |
+          echo "Checking Android tools..."
+          devbox run --pure android.sh version || echo "Android tools will be installed on first use"
+
+      - name: Test yarn install
+        working-directory: examples/E2E-latest
+        run: |
+          echo "Testing yarn install..."
+          devbox run install
+
+      - name: Test Android build
+        working-directory: examples/E2E-latest
+        run: |
+          echo "Testing Android build..."
+          devbox run build:android
+
+  # Test iOS integration
+  test-ios-compat:
+    name: iOS E2E-compat Build Test
+    runs-on: macos-14
+    if: |
+      github.event_name == 'workflow_dispatch' && 
+      (inputs.example == 'E2E-compat' || inputs.example == 'all') &&
+      (inputs.platform == 'ios' || inputs.platform == 'both') ||
+      github.event_name != 'workflow_dispatch'
+    needs: validate-config
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+          cache-dependency-path: examples/E2E-compat/yarn.lock
+
+      - name: Install devbox
+        uses: jetify-com/devbox-install-action@v0.15.0
+
+      - name: Test devbox shell initialization
+        working-directory: examples/E2E-compat
+        run: |
+          echo "Testing devbox shell initialization..."
+          devbox run --pure echo "Shell initialized successfully"
+
+      - name: Verify iOS tools available
+        working-directory: examples/E2E-compat
+        run: |
+          echo "Checking iOS tools..."
+          devbox run --pure ios.sh version
+
+      - name: Test yarn install
+        working-directory: examples/E2E-compat
+        run: |
+          echo "Testing yarn install..."
+          devbox run install
+
+      - name: Test pod install
+        working-directory: examples/E2E-compat
+        run: |
+          echo "Testing pod install..."
+          devbox run install:pods
+
+      - name: Test iOS build
+        working-directory: examples/E2E-compat
+        run: |
+          echo "Testing iOS build..."
+          devbox run build:ios
+
+  test-ios-latest:
+    name: iOS E2E-latest Build Test
+    runs-on: macos-14
+    if: |
+      github.event_name == 'workflow_dispatch' && 
+      (inputs.example == 'E2E-latest' || inputs.example == 'all') &&
+      (inputs.platform == 'ios' || inputs.platform == 'both') ||
+      github.event_name != 'workflow_dispatch'
+    needs: validate-config
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+          cache-dependency-path: examples/E2E-latest/yarn.lock
+
+      - name: Install devbox
+        uses: jetify-com/devbox-install-action@v0.15.0
+
+      - name: Test devbox shell initialization
+        working-directory: examples/E2E-latest
+        run: |
+          echo "Testing devbox shell initialization..."
+          devbox run --pure echo "Shell initialized successfully"
+
+      - name: Verify iOS tools available
+        working-directory: examples/E2E-latest
+        run: |
+          echo "Checking iOS tools..."
+          devbox run --pure ios.sh version
+
+      - name: Test yarn install
+        working-directory: examples/E2E-latest
+        run: |
+          echo "Testing yarn install..."
+          devbox run install
+
+      - name: Test pod install
+        working-directory: examples/E2E-latest
+        run: |
+          echo "Testing pod install..."
+          devbox run install:pods
+
+      - name: Test iOS build
+        working-directory: examples/E2E-latest
+        run: |
+          echo "Testing iOS build..."
+          devbox run build:ios
+
+  # Summary job
+  integration-summary:
+    name: Integration Test Summary
+    runs-on: ubuntu-latest
+    needs:
+      - validate-config
+      - test-android-compat
+      - test-android-latest
+      - test-ios-compat
+      - test-ios-latest
+    if: always()
+    steps:
+      - name: Check results
+        run: |
+          echo "Integration Test Results:"
+          echo "========================="
+          echo "Validation: ${{ needs.validate-config.result }}"
+          echo "Android E2E-compat: ${{ needs.test-android-compat.result }}"
+          echo "Android E2E-latest: ${{ needs.test-android-latest.result }}"
+          echo "iOS E2E-compat: ${{ needs.test-ios-compat.result }}"
+          echo "iOS E2E-latest: ${{ needs.test-ios-latest.result }}"
+
+          # Fail if any job failed
+          if [[ "${{ needs.validate-config.result }}" == "failure" ]] || \
+             [[ "${{ needs.test-android-compat.result }}" == "failure" ]] || \
+             [[ "${{ needs.test-android-latest.result }}" == "failure" ]] || \
+             [[ "${{ needs.test-ios-compat.result }}" == "failure" ]] || \
+             [[ "${{ needs.test-ios-latest.result }}" == "failure" ]]; then
+            echo "One or more integration tests failed"
+            exit 1
+          fi
+
+          echo "All integration tests passed!"
