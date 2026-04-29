@@ -2570,11 +2570,11 @@ __metadata:
 
 "@segment/analytics-react-native-e2e-tests@file:../shared-e2e::locator=AnalyticsReactNativeE2ELatest%40workspace%3A.":
   version: 1.0.0
-  resolution: "@segment/analytics-react-native-e2e-tests@file:../shared-e2e#../shared-e2e::hash=61b310&locator=AnalyticsReactNativeE2ELatest%40workspace%3A."
+  resolution: "@segment/analytics-react-native-e2e-tests@file:../shared-e2e#../shared-e2e::hash=f007df&locator=AnalyticsReactNativeE2ELatest%40workspace%3A."
   dependencies:
     body-parser: "npm:^1.20.0"
     express: "npm:^4.20.0"
-  checksum: 10c0/fe934efd7bfae1ed2957914e8f293429e61d045da1540d3096af2ea42585f3f7e78aef416fabec6b9fc04d6d691d7ec96ff6312d5e9e6f0521b25bfd5b0dbbb6
+  checksum: 10c0/47e624884c4e4200213f27607fbe5f96ce42ee63cbb17013f0139d3bc43f10ed06367f51bb02bd073a348ebb5e695f855ae0be308bde889e82bc28b5b1419e11
   languageName: node
   linkType: hard
 
