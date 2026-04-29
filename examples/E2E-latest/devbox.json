@@ -26,10 +26,12 @@
       "install:pods": ["(cd ios && pod install)"],
       "start:app": ["yarn start"],
       "build:android": [
+        "export IOS_SKIP_SETUP=1",
         "yarn install",
         "(cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release)"
       ],
       "build:ios": [
+        "export ANDROID_SKIP_SETUP=1",
         "yarn install",
         "(cd ios && pod install)",
         "ios.sh xcodebuild -workspace ios/AnalyticsReactNativeE2E.xcworkspace -scheme AnalyticsReactNativeE2E -configuration Release -sdk iphonesimulator -derivedDataPath ios/build"
@@ -52,7 +54,11 @@
       "start:emu": [
         "android.sh emulator start ${1:-${ANDROID_DEFAULT_DEVICE:-max}}"
       ],
-      "stop:emu": ["android.sh emulator stop"]
+      "stop:emu": ["android.sh emulator stop"],
+      "start:ios": ["ios.sh simulator start ${1:-${IOS_DEFAULT_DEVICE:-max}}"],
+      "start:android": [
+        "android.sh emulator start ${1:-${ANDROID_DEFAULT_DEVICE:-max}}"
+      ]
     }
   }
 }
