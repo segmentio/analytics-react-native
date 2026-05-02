@@ -50,7 +50,7 @@
     "@stdlib/number-float64-base-normalize": "0.0.8",
     "deepmerge": "^4.3.1",
     "js-base64": "^3.7.5",
-    "uuid": "^9.0.1"
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@segment/sovran-react-native": "^1.1.0",
