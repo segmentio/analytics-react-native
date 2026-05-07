@@ -1,0 +1,13 @@
+{
+  "devices": [
+    {
+      "name": "iPhone 15",
+      "runtime": "17.5"
+    },
+    {
+      "name": "iPhone 13",
+      "runtime": "15.4"
+    }
+  ],
+  "checksum": "1ff9065e7756899a711531becf6f9e5c5ec29e9d6774637dab095850e65e6a21"
+}

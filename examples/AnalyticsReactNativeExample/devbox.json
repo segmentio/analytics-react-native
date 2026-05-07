@@ -1,0 +1,23 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.2/.schema/devbox.schema.json",
+  "include": [
+    "github:segment-integrations/mobile-devtools?dir=plugins/react-native&ref=main"
+  ],
+  "packages": {
+    "yarn-berry": "latest"
+  },
+  "env": {
+    "ANDROID_APP_APK": "android/app/build/outputs/apk/debug/app-debug.apk",
+    "IOS_APP_ARTIFACT": "ios/build/Build/Products/Debug-iphonesimulator/*.app"
+  },
+  "shell": {
+    "scripts": {
+      "install": ["yarn install"],
+      "install:pods": ["cd ios && pod install && cd .."],
+      "build:android": ["cd android && ./gradlew assembleDebug && cd .."],
+      "build:ios": [
+        "xcodebuild -workspace ios/AnalyticsReactNativeExample.xcworkspace -scheme AnalyticsReactNativeExample -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build build"
+      ]
+    }
+  }
+}
