@@ -2570,11 +2570,11 @@ __metadata:
 
 "@segment/analytics-react-native-e2e-tests@file:../shared-e2e::locator=AnalyticsReactNativeE2ELatest%40workspace%3A.":
   version: 1.0.0
-  resolution: "@segment/analytics-react-native-e2e-tests@file:../shared-e2e#../shared-e2e::hash=61b310&locator=AnalyticsReactNativeE2ELatest%40workspace%3A."
+  resolution: "@segment/analytics-react-native-e2e-tests@file:../shared-e2e#../shared-e2e::hash=f007df&locator=AnalyticsReactNativeE2ELatest%40workspace%3A."
   dependencies:
     body-parser: "npm:^1.20.0"
     express: "npm:^4.20.0"
-  checksum: 10c0/fe934efd7bfae1ed2957914e8f293429e61d045da1540d3096af2ea42585f3f7e78aef416fabec6b9fc04d6d691d7ec96ff6312d5e9e6f0521b25bfd5b0dbbb6
+  checksum: 10c0/47e624884c4e4200213f27607fbe5f96ce42ee63cbb17013f0139d3bc43f10ed06367f51bb02bd073a348ebb5e695f855ae0be308bde889e82bc28b5b1419e11
   languageName: node
   linkType: hard
 
@@ -7226,9 +7226,9 @@ __metadata:
   linkType: hard
 
 "ip-address@npm:^10.0.1":
-  version: 10.1.0
-  resolution: "ip-address@npm:10.1.0"
-  checksum: 10c0/0103516cfa93f6433b3bd7333fa876eb21263912329bfa47010af5e16934eeeff86f3d2ae700a3744a137839ddfad62b900c7a445607884a49b5d1e32a3d7566
+  version: 10.2.0
+  resolution: "ip-address@npm:10.2.0"
+  checksum: 10c0/5a00aada6e922c9c69dfc800ed5d0fa3348675ebdeed0e1575f503f27ca385b5f534363c9af7ad1daf64c1f1409388cdd3cc2e9b9b0fe1c924a431378d55075a
   languageName: node
   linkType: hard
 
@@ -11867,11 +11867,11 @@ __metadata:
 
 "typescript@patch:typescript@npm%3A^5.2.2#optional!builtin<compat/typescript>":
   version: 5.9.3
-  resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"
+  resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=d69c25"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/ad09fdf7a756814dce65bc60c1657b40d44451346858eea230e10f2e95a289d9183b6e32e5c11e95acc0ccc214b4f36289dcad4bf1886b0adb84d711d336a430
+  checksum: 10c0/6f7e53bf0d9702350deeb6f35e08b69cbc8b958c33e0ec77bdc0ad6a6c8e280f3959dcbfde6f5b0848bece57810696489deaaa53d75de3578ff255d168c1efbd
   languageName: node
   linkType: hard
 
