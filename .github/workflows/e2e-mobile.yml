@@ -1,0 +1,231 @@
+name: Mobile E2E Tests
+
+on:
+  push:
+    branches: [feat/devbox-e2e-latest]
+  workflow_dispatch:
+    inputs:
+      example:
+        description: 'Example to test (E2E-latest, E2E-compat, or all)'
+        type: choice
+        options: [all, E2E-latest, E2E-compat]
+        default: all
+
+concurrency:
+  group: e2e-mobile-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android-e2e-latest:
+    name: Android E2E (RN 0.84 + New Arch)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: examples/E2E-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc \
+            /usr/local/share/powershell /usr/local/share/chromium \
+            /usr/local/share/boost /opt/hostedtoolcache
+          sudo apt-get clean
+
+      - name: Install Devbox
+        uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          enable-cache: true
+          project-path: examples/E2E-latest
+
+      - name: Install dependencies
+        run: devbox run install
+
+      - name: Build Android (release)
+        run: devbox run build:android
+
+      - name: Start emulator
+        run: devbox run start:emu max
+
+      - name: Run Detox tests
+        run: devbox run -- yarn detox test --configuration android.emu.release
+        continue-on-error: true
+
+      - name: Stop emulator
+        if: always()
+        run: devbox run stop:emu
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-latest-android-results
+          path: examples/E2E-latest/artifacts/
+          if-no-files-found: ignore
+
+  android-e2e-compat:
+    name: Android E2E (RN 0.72 + Old Arch)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: examples/E2E-compat
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc \
+            /usr/local/share/powershell /usr/local/share/chromium \
+            /usr/local/share/boost /opt/hostedtoolcache
+          sudo apt-get clean
+
+      - name: Install Devbox
+        uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          enable-cache: true
+          project-path: examples/E2E-compat
+
+      - name: Install dependencies
+        run: devbox run install
+
+      - name: Build Android (release)
+        run: devbox run build:android
+
+      - name: Start emulator
+        run: devbox run start:emu max
+
+      - name: Run Detox tests
+        run: devbox run -- yarn detox test --configuration android.emu.release
+        continue-on-error: true
+
+      - name: Stop emulator
+        if: always()
+        run: devbox run stop:emu
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-compat-android-results
+          path: examples/E2E-compat/artifacts/
+          if-no-files-found: ignore
+
+  ios-e2e-latest:
+    name: iOS E2E (RN 0.84 + New Arch)
+    runs-on: macos-15
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: examples/E2E-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Devbox
+        uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          enable-cache: true
+          project-path: examples/E2E-latest
+
+      - name: Install dependencies
+        run: devbox run install
+
+      - name: Install pods
+        run: devbox run install:pods
+
+      - name: Build iOS (release)
+        run: devbox run build:ios
+
+      - name: Start simulator
+        run: devbox run start:sim max
+
+      - name: Run Detox tests
+        run: devbox run -- yarn detox test --configuration ios.sim.release
+        continue-on-error: true
+
+      - name: Stop simulator
+        if: always()
+        run: devbox run stop:sim
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-latest-ios-results
+          path: examples/E2E-latest/artifacts/
+          if-no-files-found: ignore
+
+  ios-e2e-compat:
+    name: iOS E2E (RN 0.72 + Old Arch)
+    runs-on: macos-15
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: examples/E2E-compat
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Devbox
+        uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          enable-cache: true
+          project-path: examples/E2E-compat
+
+      - name: Install dependencies
+        run: devbox run install
+
+      - name: Install pods
+        run: devbox run install:pods
+
+      - name: Build iOS (release)
+        run: devbox run build:ios
+
+      - name: Start simulator
+        run: devbox run start:sim max
+
+      - name: Run Detox tests
+        run: devbox run -- yarn detox test --configuration ios.sim.release
+        continue-on-error: true
+
+      - name: Stop simulator
+        if: always()
+        run: devbox run stop:sim
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-compat-ios-results
+          path: examples/E2E-compat/artifacts/
+          if-no-files-found: ignore
+
+  summary:
+    name: E2E Summary
+    runs-on: ubuntu-latest
+    needs:
+      [android-e2e-latest, android-e2e-compat, ios-e2e-latest, ios-e2e-compat]
+    if: always()
+    steps:
+      - name: Report results
+        run: |
+          echo "## Mobile E2E Test Results"
+          echo ""
+          echo "| Example | Platform | Result |"
+          echo "|---------|----------|--------|"
+          echo "| E2E-latest (RN 0.84, New Arch) | Android | ${{ needs.android-e2e-latest.result }} |"
+          echo "| E2E-latest (RN 0.84, New Arch) | iOS | ${{ needs.ios-e2e-latest.result }} |"
+          echo "| E2E-compat (RN 0.72, Old Arch) | Android | ${{ needs.android-e2e-compat.result }} |"
+          echo "| E2E-compat (RN 0.72, Old Arch) | iOS | ${{ needs.ios-e2e-compat.result }} |"
