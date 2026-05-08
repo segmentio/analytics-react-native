@@ -5,7 +5,8 @@ buildscript {
         def compileSdkEnv = System.getenv("ANDROID_COMPILE_SDK") ?: System.getenv("ANDROID_MAX_API") ?: "33"
         def targetSdkEnv = System.getenv("ANDROID_TARGET_SDK") ?: System.getenv("ANDROID_MAX_API") ?: "33"
         buildToolsVersion = System.getenv("ANDROID_BUILD_TOOLS_VERSION") ?: "36.1.0"
-        minSdkVersion = 21
+        def minSdkEnv = System.getenv("ANDROID_MIN_SDK") ?: "21"
+        minSdkVersion = minSdkEnv.toInteger()
         compileSdkVersion = compileSdkEnv.toInteger()
         targetSdkVersion = targetSdkEnv.toInteger()
         kotlinVersion = "1.7.20"
