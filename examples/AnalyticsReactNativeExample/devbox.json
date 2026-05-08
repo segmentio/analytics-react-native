@@ -12,7 +12,7 @@
   },
   "shell": {
     "scripts": {
-      "install": ["yarn install"],
+      "install": ["yarn install --no-immutable"],
       "install:pods": ["cd ios && pod install && cd .."],
       "build:android": ["cd android && ./gradlew assembleDebug && cd .."],
       "build:ios": [

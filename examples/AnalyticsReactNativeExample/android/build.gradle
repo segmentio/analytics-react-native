@@ -1,11 +1,18 @@
 buildscript {
     ext {
-        buildToolsVersion = "35.0.0"
+        def compileSdkEnv = System.getenv("ANDROID_COMPILE_SDK") ?: System.getenv("ANDROID_MAX_API") ?: "35"
+        def targetSdkEnv = System.getenv("ANDROID_TARGET_SDK") ?: System.getenv("ANDROID_MAX_API") ?: "35"
+        buildToolsVersion = System.getenv("ANDROID_BUILD_TOOLS_VERSION") ?: "35.0.0"
         minSdkVersion = 24
-        compileSdkVersion = 35
-        targetSdkVersion = 34
-        ndkVersion = "26.1.10909125"
-        kotlinVersion = "1.9.24"
+        compileSdkVersion = compileSdkEnv.toInteger()
+        targetSdkVersion = targetSdkEnv.toInteger()
+        kotlinVersion = "2.1.20"
+        def ndkVersionEnv = System.getenv("ANDROID_NDK_VERSION")
+        if (ndkVersionEnv) {
+            ndkVersion = ndkVersionEnv
+        } else {
+            ndkVersion = "26.1.10909125"
+        }
     }
     repositories {
         google()
