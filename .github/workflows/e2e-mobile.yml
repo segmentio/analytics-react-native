@@ -45,6 +45,10 @@ jobs:
           enable-cache: true
           project-path: examples/E2E-latest
 
+      - name: Install root dependencies
+        working-directory: .
+        run: yarn install --no-immutable
+
       - name: Install dependencies
         run: devbox run -- yarn install --no-immutable
 
@@ -99,6 +103,10 @@ jobs:
           enable-cache: true
           project-path: examples/E2E-compat
 
+      - name: Install root dependencies
+        working-directory: .
+        run: yarn install --no-immutable
+
       - name: Install dependencies
         run: devbox run -- yarn install --no-immutable
 
@@ -139,6 +147,10 @@ jobs:
         with:
           enable-cache: true
           project-path: examples/E2E-latest
+
+      - name: Install root dependencies
+        working-directory: .
+        run: yarn install --no-immutable
 
       - name: Install dependencies
         run: devbox run -- yarn install --no-immutable
@@ -183,6 +195,10 @@ jobs:
         with:
           enable-cache: true
           project-path: examples/E2E-compat
+
+      - name: Install root dependencies
+        working-directory: .
+        run: yarn install --no-immutable
 
       - name: Install dependencies
         run: devbox run -- yarn install --no-immutable

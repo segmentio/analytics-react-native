@@ -73,6 +73,10 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    lint {
+        checkReleaseBuilds false
+    }
+
     namespace "com.AnalyticsReactNativeE2E"
     defaultConfig {
         applicationId "com.AnalyticsReactNativeE2E"

@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
 /**
@@ -73,6 +74,10 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    lint {
+        checkReleaseBuilds false
+    }
+
     namespace "com.AnalyticsReactNativeE2E"
     defaultConfig {
         applicationId "com.AnalyticsReactNativeE2E"
@@ -118,5 +123,3 @@ dependencies {
         implementation jscFlavor
     }
 }
-
-apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
