@@ -144,15 +144,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install applesimutils
-        working-directory: .
-        run: brew tap wix/brew && brew install applesimutils
-
       - name: Install Devbox
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
           enable-cache: true
           project-path: examples/E2E-latest
+
+      - name: Install iOS dependencies
+        run: devbox run --pure -- segkit doctor --fix
 
       - name: Install root dependencies
         working-directory: .
@@ -196,15 +195,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install applesimutils
-        working-directory: .
-        run: brew tap wix/brew && brew install applesimutils
-
       - name: Install Devbox
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
           enable-cache: true
           project-path: examples/E2E-compat
+
+      - name: Install iOS dependencies
+        run: devbox run --pure -- segkit doctor --fix
 
       - name: Install root dependencies
         working-directory: .
