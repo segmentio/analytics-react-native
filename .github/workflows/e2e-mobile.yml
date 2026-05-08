@@ -48,7 +48,7 @@ jobs:
 
       - name: Install root dependencies
         working-directory: .
-        run: yarn install --no-immutable
+        run: corepack enable && yarn install --no-immutable
 
       - name: Install dependencies
         run: devbox run -- yarn install --no-immutable
@@ -106,7 +106,7 @@ jobs:
 
       - name: Install root dependencies
         working-directory: .
-        run: yarn install --no-immutable
+        run: corepack enable && yarn install --no-immutable
 
       - name: Install dependencies
         run: devbox run -- yarn install --no-immutable
@@ -152,7 +152,7 @@ jobs:
 
       - name: Install root dependencies
         working-directory: .
-        run: yarn install --no-immutable
+        run: corepack enable && yarn install --no-immutable
 
       - name: Install dependencies
         run: devbox run -- yarn install --no-immutable
@@ -200,7 +200,7 @@ jobs:
 
       - name: Install root dependencies
         working-directory: .
-        run: yarn install --no-immutable
+        run: corepack enable && yarn install --no-immutable
 
       - name: Install dependencies
         run: devbox run -- yarn install --no-immutable
