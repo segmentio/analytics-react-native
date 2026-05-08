@@ -151,7 +151,7 @@ jobs:
           project-path: examples/E2E-latest
 
       - name: Install iOS dependencies
-        run: nix run github:segment-integrations/mobile-devtools?dir=segkit -- doctor --fix
+        run: devbox run --pure -- segkit doctor --fix
 
       - name: Install root dependencies
         working-directory: .
@@ -202,7 +202,7 @@ jobs:
           project-path: examples/E2E-compat
 
       - name: Install iOS dependencies
-        run: nix run github:segment-integrations/mobile-devtools?dir=segkit -- doctor --fix
+        run: devbox run --pure -- segkit doctor --fix
 
       - name: Install root dependencies
         working-directory: .
