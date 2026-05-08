@@ -5,9 +5,9 @@
       "runtime": "17.5"
     },
     {
-      "name": "iPhone 13",
-      "runtime": "15.4"
+      "name": "iPhone 15",
+      "runtime": "18.5"
     }
   ],
-  "checksum": "cfea2ffd323617190afd22df26d070379994448c180931ce422158056dfc5a17"
+  "checksum": "5b3841050527be79dbe7c9bc4c4268702250486230737c8d1f8636160df0f3fa"
 }

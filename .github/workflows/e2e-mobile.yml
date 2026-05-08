@@ -16,72 +16,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  android-e2e-latest:
-    if: false # Disabled until E2E-latest fixes land in separate PR
-    name: Android E2E (RN 0.84 + New Arch)
-    runs-on: ubuntu-24.04
-    timeout-minutes: 45
-    defaults:
-      run:
-        working-directory: examples/E2E-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Enable KVM
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-
-      - name: Free disk space
-        run: |
-          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc \
-            /usr/local/share/powershell /usr/local/share/chromium \
-            /usr/local/share/boost /opt/hostedtoolcache
-          sudo apt-get clean
-
-      - name: Install Devbox
-        uses: jetify-com/devbox-install-action@v0.14.0
-        with:
-          enable-cache: true
-          project-path: examples/E2E-latest
-
-      - name: Install root dependencies
-        working-directory: .
-        run: devbox run --pure -- yarn install --no-immutable
-
-      - name: Install dependencies
-        run: devbox run --pure -- yarn install --no-immutable
-
-      - name: Build Android (release)
-        run: devbox run --pure build:android
-
-      - name: Start emulator
-        run: devbox run --pure start:emu max
-
-      - name: Run Detox tests
-        run: devbox run --pure -- yarn detox test --configuration android.emu.release
-        continue-on-error: true
-
-      - name: Stop emulator
-        if: always()
-        run: devbox run --pure stop:emu || true
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: e2e-latest-android-results
-          path: examples/E2E-latest/artifacts/
-          if-no-files-found: ignore
-
   android-e2e-compat:
-    name: Android E2E (RN 0.72 + Old Arch)
+    name: Android E2E (RN 0.72 + Old Arch, API 24)
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     defaults:
       run:
         working-directory: examples/E2E-compat
+    env:
+      ANDROID_DEVICES: min
+      ANDROID_DEFAULT_DEVICE: min
     steps:
       - uses: actions/checkout@v4
 
@@ -97,6 +41,17 @@ jobs:
             /usr/local/share/powershell /usr/local/share/chromium \
             /usr/local/share/boost /opt/hostedtoolcache
           sudo apt-get clean
+          df -h /
+
+      - name: Setup Gradle cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-compat-${{ hashFiles('examples/E2E-compat/android/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-compat-
 
       - name: Install Devbox
         uses: jetify-com/devbox-install-action@v0.14.0
@@ -115,7 +70,7 @@ jobs:
         run: devbox run --pure build:android
 
       - name: Start emulator
-        run: devbox run --pure start:emu max
+        run: devbox run --pure -e EMU_HEADLESS=1 start:emu min
 
       - name: Run Detox tests
         run: devbox run --pure -- yarn detox test --configuration android.emu.release
@@ -133,25 +88,49 @@ jobs:
           path: examples/E2E-compat/artifacts/
           if-no-files-found: ignore
 
-  ios-e2e-latest:
+  android-e2e-latest:
     if: false # Disabled until E2E-latest fixes land in separate PR
-    name: iOS E2E (RN 0.84 + New Arch)
-    runs-on: macos-15
+    name: Android E2E (RN 0.84 + New Arch, API 36)
+    runs-on: ubuntu-24.04
     timeout-minutes: 45
     defaults:
       run:
         working-directory: examples/E2E-latest
+    env:
+      ANDROID_DEVICES: max
+      ANDROID_DEFAULT_DEVICE: max
     steps:
       - uses: actions/checkout@v4
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc \
+            /usr/local/share/powershell /usr/local/share/chromium \
+            /usr/local/share/boost /opt/hostedtoolcache
+          sudo apt-get clean
+          df -h /
+
+      - name: Setup Gradle cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-latest-${{ hashFiles('examples/E2E-latest/android/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-latest-
 
       - name: Install Devbox
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
           enable-cache: true
           project-path: examples/E2E-latest
-
-      - name: Install iOS dependencies
-        run: devbox run --pure -- segkit doctor --fix || true
 
       - name: Install root dependencies
         working-directory: .
@@ -160,40 +139,62 @@ jobs:
       - name: Install dependencies
         run: devbox run --pure -- yarn install --no-immutable
 
-      - name: Install pods
-        run: devbox run --pure install:pods
+      - name: Build Android (release)
+        run: devbox run --pure build:android
 
-      - name: Build iOS (release)
-        run: devbox run --pure build:ios
-
-      - name: Start simulator
-        run: devbox run --pure start:sim max
+      - name: Start emulator
+        run: devbox run --pure -e EMU_HEADLESS=1 start:emu max
 
       - name: Run Detox tests
-        run: devbox run --pure -- yarn detox test --configuration ios.sim.release
+        run: devbox run --pure -- yarn detox test --configuration android.emu.release
         continue-on-error: true
 
-      - name: Stop simulator
+      - name: Stop emulator
         if: always()
-        run: devbox run --pure stop:sim || true
+        run: devbox run --pure stop:emu || true
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-latest-ios-results
+          name: e2e-latest-android-results
           path: examples/E2E-latest/artifacts/
           if-no-files-found: ignore
 
   ios-e2e-compat:
-    name: iOS E2E (RN 0.72 + Old Arch)
+    name: iOS E2E (RN 0.72 + Old Arch, iOS 18.5)
     runs-on: macos-15
     timeout-minutes: 45
     defaults:
       run:
         working-directory: examples/E2E-compat
+    env:
+      IOS_DEVICES: min
+      IOS_DEFAULT_DEVICE: min
+      IOS_DOWNLOAD_RUNTIME: '0'
     steps:
       - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          XCODE_APP=$(ls -d /Applications/Xcode_16*.app 2>/dev/null | sort -V | tail -1)
+          if [ -z "$XCODE_APP" ]; then
+            XCODE_APP="/Applications/Xcode.app"
+          fi
+          echo "Selecting: $XCODE_APP"
+          sudo xcode-select -s "$XCODE_APP/Contents/Developer"
+          xcodebuild -version
+          xcrun simctl list runtimes | grep -i ios
+
+      - name: Setup CocoaPods cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cocoapods/repos
+            ~/Library/Caches/CocoaPods
+          key: ${{ runner.os }}-pods-compat-${{ hashFiles('examples/E2E-compat/ios/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-compat-
 
       - name: Install Devbox
         uses: jetify-com/devbox-install-action@v0.14.0
@@ -218,7 +219,7 @@ jobs:
         run: devbox run --pure build:ios
 
       - name: Start simulator
-        run: devbox run --pure start:sim max
+        run: devbox run --pure -e SIM_HEADLESS=1 start:sim min
 
       - name: Run Detox tests
         run: devbox run --pure -- yarn detox test --configuration ios.sim.release
@@ -236,6 +237,83 @@ jobs:
           path: examples/E2E-compat/artifacts/
           if-no-files-found: ignore
 
+  ios-e2e-latest:
+    if: false # Disabled until E2E-latest fixes land in separate PR
+    name: iOS E2E (RN 0.84 + New Arch, iOS 26.2)
+    runs-on: macos-26
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: examples/E2E-latest
+    env:
+      IOS_DEVICES: max
+      IOS_DEFAULT_DEVICE: max
+      IOS_DOWNLOAD_RUNTIME: '0'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          XCODE_APP=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -z "$XCODE_APP" ]; then
+            XCODE_APP="/Applications/Xcode.app"
+          fi
+          echo "Selecting: $XCODE_APP"
+          sudo xcode-select -s "$XCODE_APP/Contents/Developer"
+          xcodebuild -version
+          xcrun simctl list runtimes | grep -i ios
+
+      - name: Setup CocoaPods cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cocoapods/repos
+            ~/Library/Caches/CocoaPods
+          key: ${{ runner.os }}-pods-latest-${{ hashFiles('examples/E2E-latest/ios/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-latest-
+
+      - name: Install Devbox
+        uses: jetify-com/devbox-install-action@v0.14.0
+        with:
+          enable-cache: true
+          project-path: examples/E2E-latest
+
+      - name: Install iOS dependencies
+        run: devbox run --pure -- segkit doctor --fix || true
+
+      - name: Install root dependencies
+        working-directory: .
+        run: devbox run --pure -- yarn install --no-immutable
+
+      - name: Install dependencies
+        run: devbox run --pure -- yarn install --no-immutable
+
+      - name: Install pods
+        run: devbox run --pure install:pods
+
+      - name: Build iOS (release)
+        run: devbox run --pure build:ios
+
+      - name: Start simulator
+        run: devbox run --pure -e SIM_HEADLESS=1 start:sim max
+
+      - name: Run Detox tests
+        run: devbox run --pure -- yarn detox test --configuration ios.sim.release
+        continue-on-error: true
+
+      - name: Stop simulator
+        if: always()
+        run: devbox run --pure stop:sim || true
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-latest-ios-results
+          path: examples/E2E-latest/artifacts/
+          if-no-files-found: ignore
+
   summary:
     name: E2E Summary
     runs-on: ubuntu-latest
@@ -248,5 +326,5 @@ jobs:
           echo ""
           echo "| Example | Platform | Result |"
           echo "|---------|----------|--------|"
-          echo "| E2E-compat (RN 0.72, Old Arch) | Android | ${{ needs.android-e2e-compat.result }} |"
-          echo "| E2E-compat (RN 0.72, Old Arch) | iOS | ${{ needs.ios-e2e-compat.result }} |"
+          echo "| E2E-compat (RN 0.72, Old Arch) | Android (API 24) | ${{ needs.android-e2e-compat.result }} |"
+          echo "| E2E-compat (RN 0.72, Old Arch) | iOS (18.5) | ${{ needs.ios-e2e-compat.result }} |"
