@@ -3,11 +3,7 @@
     {
       "name": "iPhone 17",
       "runtime": "26.2"
-    },
-    {
-      "name": "iPhone 16",
-      "runtime": "18.5"
     }
   ],
-  "checksum": "6945c0accab2f840186ef5ad96b7a2df5748f900db0647aff15d1e40301cd9aa"
+  "checksum": "7d4b3ac2354a9fd80740d7f9ab5313b3e39fc87d59174e154e04c4996c332186"
 }
