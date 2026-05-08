@@ -48,24 +48,24 @@ jobs:
 
       - name: Install root dependencies
         working-directory: .
-        run: corepack enable && yarn install --no-immutable
+        run: devbox run --pure -- yarn install --no-immutable
 
       - name: Install dependencies
-        run: devbox run -- yarn install --no-immutable
+        run: devbox run --pure -- yarn install --no-immutable
 
       - name: Build Android (release)
-        run: devbox run build:android
+        run: devbox run --pure build:android
 
       - name: Start emulator
-        run: devbox run start:emu max
+        run: devbox run --pure start:emu max
 
       - name: Run Detox tests
-        run: devbox run -- yarn detox test --configuration android.emu.release
+        run: devbox run --pure -- yarn detox test --configuration android.emu.release
         continue-on-error: true
 
       - name: Stop emulator
         if: always()
-        run: devbox run stop:emu || true
+        run: devbox run --pure stop:emu || true
 
       - name: Upload test results
         if: always()
@@ -106,24 +106,24 @@ jobs:
 
       - name: Install root dependencies
         working-directory: .
-        run: corepack enable && yarn install --no-immutable
+        run: devbox run --pure -- yarn install --no-immutable
 
       - name: Install dependencies
-        run: devbox run -- yarn install --no-immutable
+        run: devbox run --pure -- yarn install --no-immutable
 
       - name: Build Android (release)
-        run: devbox run build:android
+        run: devbox run --pure build:android
 
       - name: Start emulator
-        run: devbox run start:emu max
+        run: devbox run --pure start:emu max
 
       - name: Run Detox tests
-        run: devbox run -- yarn detox test --configuration android.emu.release
+        run: devbox run --pure -- yarn detox test --configuration android.emu.release
         continue-on-error: true
 
       - name: Stop emulator
         if: always()
-        run: devbox run stop:emu || true
+        run: devbox run --pure stop:emu || true
 
       - name: Upload test results
         if: always()
@@ -144,6 +144,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install applesimutils
+        working-directory: .
+        run: brew tap wix/brew && brew install applesimutils
+
       - name: Install Devbox
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
@@ -152,27 +156,27 @@ jobs:
 
       - name: Install root dependencies
         working-directory: .
-        run: corepack enable && yarn install --no-immutable
+        run: devbox run --pure -- yarn install --no-immutable
 
       - name: Install dependencies
-        run: devbox run -- yarn install --no-immutable
+        run: devbox run --pure -- yarn install --no-immutable
 
       - name: Install pods
-        run: devbox run install:pods
+        run: devbox run --pure install:pods
 
       - name: Build iOS (release)
-        run: devbox run build:ios
+        run: devbox run --pure build:ios
 
       - name: Start simulator
-        run: devbox run start:sim max
+        run: devbox run --pure start:sim max
 
       - name: Run Detox tests
-        run: devbox run -- yarn detox test --configuration ios.sim.release
+        run: devbox run --pure -- yarn detox test --configuration ios.sim.release
         continue-on-error: true
 
       - name: Stop simulator
         if: always()
-        run: devbox run stop:sim || true
+        run: devbox run --pure stop:sim || true
 
       - name: Upload test results
         if: always()
@@ -192,6 +196,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install applesimutils
+        working-directory: .
+        run: brew tap wix/brew && brew install applesimutils
+
       - name: Install Devbox
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
@@ -200,27 +208,27 @@ jobs:
 
       - name: Install root dependencies
         working-directory: .
-        run: corepack enable && yarn install --no-immutable
+        run: devbox run --pure -- yarn install --no-immutable
 
       - name: Install dependencies
-        run: devbox run -- yarn install --no-immutable
+        run: devbox run --pure -- yarn install --no-immutable
 
       - name: Install pods
-        run: devbox run install:pods
+        run: devbox run --pure install:pods
 
       - name: Build iOS (release)
-        run: devbox run build:ios
+        run: devbox run --pure build:ios
 
       - name: Start simulator
-        run: devbox run start:sim max
+        run: devbox run --pure start:sim max
 
       - name: Run Detox tests
-        run: devbox run -- yarn detox test --configuration ios.sim.release
+        run: devbox run --pure -- yarn detox test --configuration ios.sim.release
         continue-on-error: true
 
       - name: Stop simulator
         if: always()
-        run: devbox run stop:sim || true
+        run: devbox run --pure stop:sim || true
 
       - name: Upload test results
         if: always()
