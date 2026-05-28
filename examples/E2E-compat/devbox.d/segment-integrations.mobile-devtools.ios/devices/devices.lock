@@ -1,0 +1,9 @@
+{
+  "devices": [
+    {
+      "name": "iPhone 16",
+      "runtime": "18.5"
+    }
+  ],
+  "checksum": "a862ccf7e6d2fd79e25925e43a32c553bcec00fbf288dc494cf4d499e1a20731"
+}

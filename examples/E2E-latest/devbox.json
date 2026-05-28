@@ -1,0 +1,38 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.2/.schema/devbox.schema.json",
+  "include": [
+    "github:segment-integrations/mobile-devtools?dir=plugins/react-native&ref=main"
+  ],
+  "packages": {
+    "yarn-berry": "latest",
+    "jdk": "17",
+    "gradle_9": "9.3.1"
+  },
+  "env": {
+    "ANDROID_APP_APK": "android/app/build/outputs/apk/release/app-release.apk",
+    "IOS_APP_ARTIFACT": "ios/build/Build/Products/Release-iphonesimulator/*.app",
+    "ANDROID_COMPILE_SDK": "36",
+    "ANDROID_BUILD_TOOLS_VERSION": "36.1.0",
+    "CMAKE_VERSION": "4.1.2"
+  },
+  "shell": {
+    "scripts": {
+      "install": ["yarn install --no-immutable"],
+      "install:pods": ["cd ios && pod install && cd .."],
+      "build:android": [
+        "cd android && gradle generateCodegenArtifactsFromSchema --rerun-tasks && gradle assembleRelease && cd .."
+      ],
+      "build:ios": [
+        "xcodebuild -workspace ios/AnalyticsReactNativeE2E.xcworkspace -scheme AnalyticsReactNativeE2E -configuration Release -sdk iphonesimulator -derivedDataPath ios/build build"
+      ],
+      "test:android": [
+        "devbox run start:emu",
+        "yarn detox test --configuration android.emu.release"
+      ],
+      "test:ios": [
+        "devbox run start:sim",
+        "yarn detox test --configuration ios.sim.release"
+      ]
+    }
+  }
+}
