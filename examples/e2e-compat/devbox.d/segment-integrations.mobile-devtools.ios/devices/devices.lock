@@ -1,9 +1,13 @@
 {
   "devices": [
     {
+      "name": "iPhone 17",
+      "runtime": "26.5"
+    },
+    {
       "name": "iPhone 16",
       "runtime": "18.5"
     }
   ],
-  "checksum": "a862ccf7e6d2fd79e25925e43a32c553bcec00fbf288dc494cf4d499e1a20731"
+  "checksum": "cd8d2ecd59ca49cf969d68a8e3e1e61e316e1ad2b6f2efdd48ddb13827c7261d"
 }

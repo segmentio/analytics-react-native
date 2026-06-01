@@ -1,11 +1,17 @@
 {
   "devices": [
     {
+      "name": "medium_phone_api36",
+      "api": 36,
+      "device": "medium_phone",
+      "tag": "google_apis"
+    },
+    {
       "name": "pixel_api24",
       "api": 24,
       "device": "pixel",
       "tag": "google_apis"
     }
   ],
-  "checksum": "93099557d956ddc4fcf2e273706fb7ccb066c63f2ff5c2316db3e2edab36ff9d"
+  "checksum": "9c9adf202cb494e4d6554d790fab9455481658cf70e7d0a0abcdb0ae9824ddc0"
 }

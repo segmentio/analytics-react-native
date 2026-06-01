@@ -3,7 +3,7 @@ const path = require('path');
 const escape = require('escape-string-regexp');
 const exclusionList = require('metro-config/src/defaults/exclusionList');
 const {peerDeps} = require('./workspace');
-const modules = [...peerDeps];
+const modules = [...peerDeps, 'uuid'];
 const root = path.resolve(__dirname, '..', '..');
 
 const defaultSourceExts =

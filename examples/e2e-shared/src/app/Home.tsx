@@ -276,6 +276,13 @@ const Home = ({ navigation }: { navigation: any }) => {
 
           {statsExpanded && (
             <View style={styles.eventLog}>
+              <View style={styles.versionRow}>
+                <Text style={styles.versionText}>
+                  RN {Platform.constants.reactNativeVersion.major}.
+                  {Platform.constants.reactNativeVersion.minor}.
+                  {Platform.constants.reactNativeVersion.patch} · {Platform.OS}
+                </Text>
+              </View>
               {events.length === 0 && (
                 <Text style={styles.emptyText}>No events yet</Text>
               )}
@@ -411,6 +418,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 8,
   },
+  versionRow: {
+    paddingVertical: 6,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(255,255,255,0.1)',
+    marginBottom: 4,
+  },
+  versionText: { color: '#888', fontSize: 12, textAlign: 'center' },
   eventLog: { marginTop: 8 },
   emptyText: { color: '#666', textAlign: 'center', fontSize: 13 },
   eventRow: {

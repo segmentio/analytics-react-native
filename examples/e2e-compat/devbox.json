@@ -6,7 +6,8 @@
   "packages": {
     "nodejs": "22",
     "yarn-berry": "latest",
-    "jdk": "17"
+    "jdk": "17",
+    "watchman": "2024.11.18.00"
   },
   "env": {
     "ANDROID_APP_APK": "android/app/build/outputs/apk/release/app-release.apk",
@@ -21,6 +22,7 @@
       "install:pods": ["cd ios && pod install && cd .."],
       "build:android": ["cd android && ./gradlew assembleRelease && cd .."],
       "build:ios": [
+        "echo \"export NODE_BINARY=$(which node)\" > ios/.xcode.env.local",
         "xcodebuild -workspace ios/AnalyticsReactNativeE2E.xcworkspace -scheme AnalyticsReactNativeE2E -configuration Release -sdk iphonesimulator -derivedDataPath ios/build build"
       ],
       "test:android": [
