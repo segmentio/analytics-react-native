@@ -1,7 +1,7 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
-const Modal = () => {
+const SecondPage = () => {
   return (
     <View style={styles.page}>
       <Text style={styles.text}>Hello! 👋</Text>
@@ -22,4 +22,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Modal;
+export default SecondPage;
