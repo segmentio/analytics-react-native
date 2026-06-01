@@ -4,6 +4,7 @@
     "github:segment-integrations/mobile-devtools?dir=plugins/react-native&ref=main"
   ],
   "packages": {
+    "nodejs": "22",
     "yarn-berry": "latest",
     "jdk": "17"
   },
