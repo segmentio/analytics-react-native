@@ -6,9 +6,9 @@ on:
   workflow_dispatch:
     inputs:
       example:
-        description: 'Example to test (E2E-latest, E2E-compat, or all)'
+        description: 'Example to test (e2e-latest, e2e-compat, or all)'
         type: choice
-        options: [all, E2E-latest, E2E-compat]
+        options: [all, e2e-latest, e2e-compat]
         default: all
 
 concurrency:
@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 45
     defaults:
       run:
-        working-directory: examples/E2E-compat
+        working-directory: examples/e2e-compat
     env:
       ANDROID_DEVICES: min
       ANDROID_DEFAULT_DEVICE: min
@@ -49,7 +49,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-compat-${{ hashFiles('examples/E2E-compat/android/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-compat-${{ hashFiles('examples/e2e-compat/android/gradle/wrapper/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-compat-
 
@@ -57,7 +57,7 @@ jobs:
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
           enable-cache: true
-          project-path: examples/E2E-compat
+          project-path: examples/e2e-compat
 
       - name: Install root dependencies
         working-directory: .
@@ -85,17 +85,17 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: e2e-compat-android-results
-          path: examples/E2E-compat/artifacts/
+          path: examples/e2e-compat/artifacts/
           if-no-files-found: ignore
 
   android-e2e-latest:
-    if: false # Disabled until E2E-latest fixes land in separate PR
+    if: false # Disabled until e2e-latest fixes land in separate PR
     name: Android E2E (RN 0.84 + New Arch, API 36)
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     defaults:
       run:
-        working-directory: examples/E2E-latest
+        working-directory: examples/e2e-latest
     env:
       ANDROID_DEVICES: max
       ANDROID_DEFAULT_DEVICE: max
@@ -122,7 +122,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-latest-${{ hashFiles('examples/E2E-latest/android/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-latest-${{ hashFiles('examples/e2e-latest/android/gradle/wrapper/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-latest-
 
@@ -130,7 +130,7 @@ jobs:
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
           enable-cache: true
-          project-path: examples/E2E-latest
+          project-path: examples/e2e-latest
 
       - name: Install root dependencies
         working-directory: .
@@ -158,7 +158,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: e2e-latest-android-results
-          path: examples/E2E-latest/artifacts/
+          path: examples/e2e-latest/artifacts/
           if-no-files-found: ignore
 
   ios-e2e-compat:
@@ -167,7 +167,7 @@ jobs:
     timeout-minutes: 45
     defaults:
       run:
-        working-directory: examples/E2E-compat
+        working-directory: examples/e2e-compat
     env:
       IOS_DEVICES: min
       IOS_DEFAULT_DEVICE: min
@@ -192,7 +192,7 @@ jobs:
           path: |
             ~/.cocoapods/repos
             ~/Library/Caches/CocoaPods
-          key: ${{ runner.os }}-pods-compat-${{ hashFiles('examples/E2E-compat/ios/Podfile.lock') }}
+          key: ${{ runner.os }}-pods-compat-${{ hashFiles('examples/e2e-compat/ios/Podfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-pods-compat-
 
@@ -200,7 +200,7 @@ jobs:
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
           enable-cache: true
-          project-path: examples/E2E-compat
+          project-path: examples/e2e-compat
 
       - name: Install iOS dependencies
         run: devbox run --pure -- segkit doctor --fix || true
@@ -234,17 +234,17 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: e2e-compat-ios-results
-          path: examples/E2E-compat/artifacts/
+          path: examples/e2e-compat/artifacts/
           if-no-files-found: ignore
 
   ios-e2e-latest:
-    if: false # Disabled until E2E-latest fixes land in separate PR
+    if: false # Disabled until e2e-latest fixes land in separate PR
     name: iOS E2E (RN 0.84 + New Arch, iOS 26.2)
     runs-on: macos-26
     timeout-minutes: 45
     defaults:
       run:
-        working-directory: examples/E2E-latest
+        working-directory: examples/e2e-latest
     env:
       IOS_DEVICES: max
       IOS_DEFAULT_DEVICE: max
@@ -269,7 +269,7 @@ jobs:
           path: |
             ~/.cocoapods/repos
             ~/Library/Caches/CocoaPods
-          key: ${{ runner.os }}-pods-latest-${{ hashFiles('examples/E2E-latest/ios/Podfile.lock') }}
+          key: ${{ runner.os }}-pods-latest-${{ hashFiles('examples/e2e-latest/ios/Podfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-pods-latest-
 
@@ -277,7 +277,7 @@ jobs:
         uses: jetify-com/devbox-install-action@v0.14.0
         with:
           enable-cache: true
-          project-path: examples/E2E-latest
+          project-path: examples/e2e-latest
 
       - name: Install iOS dependencies
         run: devbox run --pure -- segkit doctor --fix || true
@@ -311,7 +311,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: e2e-latest-ios-results
-          path: examples/E2E-latest/artifacts/
+          path: examples/e2e-latest/artifacts/
           if-no-files-found: ignore
 
   summary:
@@ -326,5 +326,5 @@ jobs:
           echo ""
           echo "| Example | Platform | Result |"
           echo "|---------|----------|--------|"
-          echo "| E2E-compat (RN 0.72, Old Arch) | Android (API 24) | ${{ needs.android-e2e-compat.result }} |"
-          echo "| E2E-compat (RN 0.72, Old Arch) | iOS (18.5) | ${{ needs.ios-e2e-compat.result }} |"
+          echo "| e2e-compat (RN 0.72, Old Arch) | Android (API 24) | ${{ needs.android-e2e-compat.result }} |"
+          echo "| e2e-compat (RN 0.72, Old Arch) | iOS (18.5) | ${{ needs.ios-e2e-compat.result }} |"
