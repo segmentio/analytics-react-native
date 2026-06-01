@@ -24,6 +24,7 @@
         "cd android && gradle generateCodegenArtifactsFromSchema --rerun-tasks && gradle assembleRelease && cd .."
       ],
       "build:ios": [
+        "echo \"export NODE_BINARY=$(which node)\" > ios/.xcode.env.local",
         "xcodebuild -workspace ios/AnalyticsReactNativeE2E.xcworkspace -scheme AnalyticsReactNativeE2E -configuration Release -sdk iphonesimulator -derivedDataPath ios/build build"
       ],
       "test:android": [
