@@ -1,0 +1,11 @@
+{
+  "devices": [
+    {
+      "name": "pixel_api24",
+      "api": 24,
+      "device": "pixel",
+      "tag": "google_apis"
+    }
+  ],
+  "checksum": "93099557d956ddc4fcf2e273706fb7ccb066c63f2ff5c2316db3e2edab36ff9d"
+}

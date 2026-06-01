@@ -1,0 +1,15 @@
+{
+  "ANDROID_BUILD_TOOLS_VERSION": "36.1.0",
+  "ANDROID_CMDLINE_TOOLS_VERSION": "19.0",
+  "ANDROID_MIN_SDK": 21,
+  "ANDROID_COMPILE_SDK": 33,
+  "ANDROID_TARGET_SDK": 33,
+  "ANDROID_SYSTEM_IMAGE_TAG": "google_apis",
+  "ANDROID_INCLUDE_NDK": true,
+  "ANDROID_NDK_VERSION": "29.0.14206865",
+  "ANDROID_INCLUDE_CMAKE": true,
+  "ANDROID_CMAKE_VERSION": "4.1.2",
+  "hash_overrides": {
+    "https://dl.google.com/android/repository/platform-tools_r37.0.0-darwin.zip": "8c4c926d0ca192376b2a04b0318484724319e67c"
+  }
+}
