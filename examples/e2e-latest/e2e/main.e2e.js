@@ -1,4 +1,4 @@
-import {runAnalyticsTests} from '../../shared-e2e/src';
+import {runAnalyticsTests} from '../../e2e-shared/src';
 
 /**
  * E2E tests for E2E-latest (React Native 0.84.1 + React 19.0.0)

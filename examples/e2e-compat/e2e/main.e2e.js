@@ -1,4 +1,4 @@
-import {runAnalyticsTests} from '../../shared-e2e/src';
+import {runAnalyticsTests} from '../../e2e-shared/src';
 
 /**
  * E2E tests for E2E-compat (React Native 0.72.9 + React 18.3.1)
