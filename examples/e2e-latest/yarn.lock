@@ -2568,9 +2568,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@segment/analytics-react-native-e2e-tests@file:../shared-e2e::locator=AnalyticsReactNativeE2ELatest%40workspace%3A.":
+"@segment/analytics-react-native-e2e-tests@file:../e2e-shared::locator=AnalyticsReactNativeE2ELatest%40workspace%3A.":
   version: 1.0.0
-  resolution: "@segment/analytics-react-native-e2e-tests@file:../shared-e2e#../shared-e2e::hash=f007df&locator=AnalyticsReactNativeE2ELatest%40workspace%3A."
+  resolution: "@segment/analytics-react-native-e2e-tests@file:../e2e-shared#../e2e-shared::hash=f007df&locator=AnalyticsReactNativeE2ELatest%40workspace%3A."
   dependencies:
     body-parser: "npm:^1.20.0"
     express: "npm:^4.20.0"
@@ -4277,7 +4277,7 @@ __metadata:
     "@react-navigation/native": "npm:^6.1.9"
     "@react-navigation/stack": "npm:^6.3.20"
     "@segment/analytics-react-native": "npm:^2.20.0"
-    "@segment/analytics-react-native-e2e-tests": "file:../shared-e2e"
+    "@segment/analytics-react-native-e2e-tests": "file:../e2e-shared"
     "@segment/sovran-react-native": "npm:^1.1.0"
     "@tsconfig/react-native": "npm:^3.0.0"
     "@types/jest": "npm:^29.5.8"
@@ -11613,9 +11613,9 @@ __metadata:
   linkType: hard
 
 "tmp@npm:^0.2.1, tmp@npm:^0.2.3":
-  version: 0.2.5
-  resolution: "tmp@npm:0.2.5"
-  checksum: 10c0/cee5bb7d674bb4ba3ab3f3841c2ca7e46daeb2109eec395c1ec7329a91d52fcb21032b79ac25161a37b2565c4858fefab927af9735926a113ef7bac9091a6e0e
+  version: 0.2.7
+  resolution: "tmp@npm:0.2.7"
+  checksum: 10c0/59eb55584f2f07210d3231b6a1f6b5c2b9794d8a7b509c8ee867ed2acad6d2245ee2448b7937b676ffbff3155a70077edde8a69f9d7cf0f90c86a62e8910c357
   languageName: node
   linkType: hard
 
