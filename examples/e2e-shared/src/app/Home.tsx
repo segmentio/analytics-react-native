@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   TextInput,
+  Switch,
   StyleSheet,
   Platform,
   UIManager,
@@ -22,7 +23,16 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-type ConnectionStatus = 'connected' | 'error' | 'unknown';
+type ConnectionStatus =
+  | 'connected'
+  | 'network_error'
+  | 'server_error'
+  | 'unknown';
+
+interface ErrorInfo {
+  message: string;
+  trace: string;
+}
 
 const Home = ({ navigation }: { navigation: any }) => {
   const { screen, track, identify, group, alias, reset, flush } =
@@ -35,7 +45,7 @@ const Home = ({ navigation }: { navigation: any }) => {
   const [events, setEvents] = useState<EventEntry[]>([]);
   const [connectionStatus, setConnectionStatus] =
     useState<ConnectionStatus>('unknown');
-  const [lastError, setLastError] = useState<string | null>(null);
+  const [lastError, setLastError] = useState<ErrorInfo | null>(null);
 
   useEffect(() => {
     const unsub = logger.subscribe(setEvents);
@@ -44,8 +54,21 @@ const Home = ({ navigation }: { navigation: any }) => {
 
   useEffect(() => {
     const unsub = onError((error: any) => {
-      setConnectionStatus('error');
-      setLastError(error?.message ?? String(error));
+      const statusCode = error?.statusCode ?? -1;
+      const isServerError = statusCode > 0;
+      setConnectionStatus(isServerError ? 'server_error' : 'network_error');
+
+      const message = error?.message ?? String(error);
+      const parts = [message];
+      if (statusCode > 0) parts.push(`HTTP ${statusCode}`);
+      if (error?.type !== undefined) parts.push(`type: ${error.type}`);
+      if (error?.innerError) {
+        const inner = error.innerError;
+        parts.push(inner?.stack ?? inner?.message ?? String(inner));
+      } else if (error?.stack) {
+        parts.push(error.stack);
+      }
+      setLastError({ message, trace: parts.join('\n') });
     });
     return unsub;
   }, []);
@@ -89,8 +112,10 @@ const Home = ({ navigation }: { navigation: any }) => {
   const statusColor =
     connectionStatus === 'connected'
       ? colors.green
-      : connectionStatus === 'error'
+      : connectionStatus === 'network_error'
       ? colors.red
+      : connectionStatus === 'server_error'
+      ? colors.orange
       : colors.yellow;
 
   return (
@@ -103,24 +128,17 @@ const Home = ({ navigation }: { navigation: any }) => {
             style={styles.sectionHeader}
             onPress={() => toggleSection(setSettingsExpanded)}
           >
-            <Text style={styles.sectionTitle}>
-              {settingsExpanded ? '▼' : '▶'} Settings
-            </Text>
+            <Text style={styles.sectionTitle}>Settings</Text>
           </TouchableOpacity>
 
           <View style={styles.quickSettings}>
-            <TouchableOpacity
-              style={[
-                styles.toggle,
-                { backgroundColor: autoFlush ? colors.green : colors.red },
-              ]}
-              onPress={toggleAutoFlush}
+            <Text style={styles.toggleLabel}>AutoFlush</Text>
+            <Switch
+              value={autoFlush}
+              onValueChange={toggleAutoFlush}
+              trackColor={{ false: colors.red, true: colors.green }}
               testID="TOGGLE_AUTOFLUSH"
-            >
-              <Text style={styles.toggleText}>
-                AutoFlush: {autoFlush ? 'ON' : 'OFF'}
-              </Text>
-            </TouchableOpacity>
+            />
           </View>
 
           {settingsExpanded && (
@@ -236,9 +254,7 @@ const Home = ({ navigation }: { navigation: any }) => {
             style={styles.sectionHeader}
             onPress={() => toggleSection(setStatsExpanded)}
           >
-            <Text style={styles.sectionTitle}>
-              {statsExpanded ? '▼' : '▶'} Stats
-            </Text>
+            <Text style={styles.sectionTitle}>Stats</Text>
           </TouchableOpacity>
 
           <View style={styles.statsRow}>
@@ -261,21 +277,46 @@ const Home = ({ navigation }: { navigation: any }) => {
               <Text style={styles.statLabel}>
                 {connectionStatus === 'connected'
                   ? 'OK'
-                  : connectionStatus === 'error'
-                  ? 'Error'
+                  : connectionStatus === 'network_error'
+                  ? 'Unreachable'
+                  : connectionStatus === 'server_error'
+                  ? 'Rejected'
                   : 'Idle'}
               </Text>
             </View>
           </View>
 
           {lastError && (
-            <Text style={styles.errorText} numberOfLines={2}>
-              {lastError}
+            <Text
+              style={[
+                styles.errorText,
+                {
+                  color:
+                    connectionStatus === 'network_error'
+                      ? colors.red
+                      : colors.orange,
+                },
+              ]}
+              numberOfLines={2}
+            >
+              {lastError.message}
             </Text>
           )}
 
           {statsExpanded && (
             <View style={styles.eventLog}>
+              <View style={styles.versionRow}>
+                <Text style={styles.versionText}>
+                  RN {Platform.constants.reactNativeVersion.major}.
+                  {Platform.constants.reactNativeVersion.minor}.
+                  {Platform.constants.reactNativeVersion.patch} · {Platform.OS}
+                </Text>
+              </View>
+              {lastError && (
+                <View style={styles.errorTrace}>
+                  <Text style={styles.errorTraceText}>{lastError.trace}</Text>
+                </View>
+              )}
               {events.length === 0 && (
                 <Text style={styles.emptyText}>No events yet</Text>
               )}
@@ -342,14 +383,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18,
     marginBottom: 4,
+    textAlign: 'center',
   },
-  quickSettings: { flexDirection: 'row', marginBottom: 4 },
-  toggle: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 8,
+  quickSettings: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
   },
-  toggleText: { color: 'white', fontWeight: 'bold', fontSize: 14 },
+  toggleLabel: { color: '#ccc', fontSize: 14, marginRight: 8 },
   settingsBody: { marginTop: 12 },
   label: { color: '#ccc', fontSize: 13, marginBottom: 4 },
   row: { flexDirection: 'row', alignItems: 'center' },
@@ -406,11 +447,28 @@ const styles = StyleSheet.create({
   statLabel: { color: '#ccc', fontSize: 12, marginTop: 2 },
   statusDot: { width: 20, height: 20, borderRadius: 10, marginBottom: 2 },
   errorText: {
-    color: colors.red,
     fontSize: 12,
     textAlign: 'center',
     marginBottom: 8,
   },
+  errorTrace: {
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    borderRadius: 6,
+    padding: 8,
+    marginBottom: 8,
+  },
+  errorTraceText: {
+    color: '#ccc',
+    fontSize: 11,
+    fontFamily: Platform.select({ ios: 'Menlo', android: 'monospace' }),
+  },
+  versionRow: {
+    paddingVertical: 6,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(255,255,255,0.1)',
+    marginBottom: 4,
+  },
+  versionText: { color: '#888', fontSize: 12, textAlign: 'center' },
   eventLog: { marginTop: 8 },
   emptyText: { color: '#666', textAlign: 'center', fontSize: 13 },
   eventRow: {
