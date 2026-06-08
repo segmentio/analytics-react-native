@@ -23,7 +23,7 @@
       "build:android": ["cd android && ./gradlew assembleRelease && cd .."],
       "build:ios": [
         "echo \"export NODE_BINARY=$(which node)\" > ios/.xcode.env.local",
-        "SKIP_BUNDLING=1 xcodebuild -workspace ios/AnalyticsReactNativeE2E.xcworkspace -scheme AnalyticsReactNativeE2E -configuration Release -sdk iphonesimulator -derivedDataPath ios/build build",
+        "RCT_NO_LAUNCH_PACKAGER=1 SKIP_BUNDLING=1 xcodebuild -workspace ios/AnalyticsReactNativeE2E.xcworkspace -scheme AnalyticsReactNativeE2E -configuration Release -sdk iphonesimulator -derivedDataPath ios/build build",
         "node node_modules/react-native/cli.js bundle --entry-file index.js --platform ios --dev false --bundle-output ios/build/Build/Products/Release-iphonesimulator/AnalyticsReactNativeE2E.app/main.jsbundle --assets-dest ios/build/Build/Products/Release-iphonesimulator/AnalyticsReactNativeE2E.app"
       ],
       "test:android": [
