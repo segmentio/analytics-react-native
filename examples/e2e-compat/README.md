@@ -1,79 +1,69 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# e2e-compat
 
-# Getting Started
+End-to-end test app running **React Native 0.72.9** with the **Old Architecture** (Bridge mode).
 
-> **Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+| Stack              | Version                     |
+| ------------------ | --------------------------- |
+| React Native       | 0.72.9                      |
+| React              | 18.2.0                      |
+| Hermes             | enabled                     |
+| New Architecture   | disabled                    |
+| Gradle             | 8.x (wrapper)               |
+| Min iOS            | 12.4                        |
+| Min Android SDK    | 24 (env: `ANDROID_MIN_SDK`) |
+| Target Android SDK | 33                          |
 
-## Step 1: Start the Metro Server
+## Prerequisites
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+- [Devbox](https://www.jetify.com/devbox/docs/installing_devbox/) installed
+- Xcode 16+ (for iOS)
+- Android SDK with API 33 (managed by devbox plugin)
 
-To start Metro, run the following command from the _root_ of your React Native project:
-
-```bash
-# using npm
-npm start
-
-# OR using Yarn
-yarn start
-```
-
-## Step 2: Start your Application
-
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
+## Quick Start
 
 ```bash
-# using npm
-npm run android
+cd examples/e2e-compat
 
-# OR using Yarn
-yarn android
+# Install dependencies
+devbox run install
+devbox run install:pods   # iOS only
+
+# Build
+devbox run build:android
+devbox run build:ios
+
+# Deploy to emulator/simulator
+devbox run start:android
+devbox run start:ios
 ```
 
-### For iOS
+## Build Scripts (devbox)
 
-```bash
-# using npm
-npm run ios
+| Script          | Description                              |
+| --------------- | ---------------------------------------- |
+| `install`       | Yarn install (no-immutable for monorepo) |
+| `install:pods`  | CocoaPods install                        |
+| `build:android` | Release APK via gradle wrapper           |
+| `build:ios`     | xcodebuild release + JS bundle into .app |
+| `start:android` | Start emulator + deploy APK              |
+| `start:ios`     | Start simulator + deploy .app            |
+| `test:android`  | Start emulator + run Detox tests         |
+| `test:ios`      | Start simulator + run Detox tests        |
 
-# OR using Yarn
-yarn ios
-```
+## Architecture Notes
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+### Android
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+- Uses `native_modules.gradle` for autolinking (RN 0.72 style)
+- `MainApplication.java` (Java)
+- `newArchEnabled=false` in `gradle.properties`
+- Builds all architectures: `armeabi-v7a,arm64-v8a,x86,x86_64`
 
-## Step 3: Modifying your App
+### iOS
 
-Now that you have successfully run the app, let's modify it.
+- Standard RN 0.72 Podfile with `use_react_native!`
+- JS bundle created separately via `react-native bundle` (SKIP_BUNDLING=1 during xcodebuild)
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+### Navigation
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+Uses `@react-navigation/stack` v6 (JS-based stack navigator, requires gesture-handler).
