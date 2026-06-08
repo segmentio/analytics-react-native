@@ -2,7 +2,7 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 8
+  version: 9
   cacheKey: 10c0
 
 "@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.12.13, @babel/code-frame@npm:^7.28.6, @babel/code-frame@npm:^7.29.0":
@@ -2584,13 +2584,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@segment/analytics-react-native-e2e-tests@file:../shared-e2e::locator=AnalyticsReactNativeE2ELatest%40workspace%3A.":
+"@segment/analytics-react-native-e2e-tests@file:../e2e-shared::locator=AnalyticsReactNativeE2ELatest%40workspace%3A.":
   version: 1.0.0
-  resolution: "@segment/analytics-react-native-e2e-tests@file:../shared-e2e#../shared-e2e::hash=f007df&locator=AnalyticsReactNativeE2ELatest%40workspace%3A."
+  resolution: "@segment/analytics-react-native-e2e-tests@file:../e2e-shared#../e2e-shared::hash=921a08&locator=AnalyticsReactNativeE2ELatest%40workspace%3A."
   dependencies:
     body-parser: "npm:^1.20.0"
     express: "npm:^4.20.0"
-  checksum: 10c0/47e624884c4e4200213f27607fbe5f96ce42ee63cbb17013f0139d3bc43f10ed06367f51bb02bd073a348ebb5e695f855ae0be308bde889e82bc28b5b1419e11
+  checksum: 10c0/c22ce71f0805fae267d2105ae70e7144b1049224fec77c3f4175f345da6c29007bc0ef997a8ad9d3e2097a579d00d54ec2be804e021e6f702d91cb81ff3efb20
   languageName: node
   linkType: hard
 
@@ -4319,7 +4319,7 @@ __metadata:
     "@react-navigation/native": "npm:^7.0.0"
     "@react-navigation/native-stack": "npm:^7.0.0"
     "@segment/analytics-react-native": "npm:^2.20.0"
-    "@segment/analytics-react-native-e2e-tests": "file:../shared-e2e"
+    "@segment/analytics-react-native-e2e-tests": "file:../e2e-shared"
     "@segment/sovran-react-native": "npm:^1.1.0"
     "@tsconfig/react-native": "npm:^3.0.0"
     "@types/jest": "npm:^29.5.8"
@@ -11868,11 +11868,11 @@ __metadata:
 
 "typescript@patch:typescript@npm%3A^5.2.2#optional!builtin<compat/typescript>":
   version: 5.9.3
-  resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=d69c25"
+  resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/6f7e53bf0d9702350deeb6f35e08b69cbc8b958c33e0ec77bdc0ad6a6c8e280f3959dcbfde6f5b0848bece57810696489deaaa53d75de3578ff255d168c1efbd
+  checksum: 10c0/ad09fdf7a756814dce65bc60c1657b40d44451346858eea230e10f2e95a289d9183b6e32e5c11e95acc0ccc214b4f36289dcad4bf1886b0adb84d711d336a430
   languageName: node
   linkType: hard
 

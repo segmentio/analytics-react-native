@@ -1,4 +1,3 @@
-import 'react-native-gesture-handler';
 import * as React from 'react';
 import {useState, useEffect} from 'react';
 import {
@@ -6,7 +5,7 @@ import {
   NavigationState,
   PartialState,
 } from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {AnalyticsProvider} from '@segment/analytics-react-native';
 import {
   Home,
@@ -16,8 +15,8 @@ import {
   onClientChange,
 } from '../e2e-shared/src/app';
 
-const MainStack = createStackNavigator();
-const RootStack = createStackNavigator();
+const MainStack = createNativeStackNavigator();
+const RootStack = createNativeStackNavigator();
 
 function MainStackScreen() {
   return (
