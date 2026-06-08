@@ -2,15 +2,13 @@
 
 Internal documentation for analytics-react-native contributors.
 
-## Development Environment
+## Getting Started
 
-- [Devbox](devbox.md) — Getting started with the Nix-based dev environment
-- [Nix + Platform Versions](nix.md) — How SDK versions are pinned and flow through the build
-- [Scripts](scripts.md) — Layout and conventions for `scripts/` and devbox commands
+- [Devbox](devbox.md) — Nix-based dev environment setup and per-app build commands
 
 ## E2E Testing
 
-- [E2E Overview](e2e-overview.md) — Example apps, devbox scripts, and shared test infrastructure
+- [E2E Overview](e2e-overview.md) — Example apps, shared test infrastructure, and devbox scripts
 - [E2E Setup](e2e-setup.md) — Shared test architecture, mock server, and running tests
 - [E2E Changelog](e2e-changelog.md) — History of E2E infrastructure changes
 
@@ -21,4 +19,4 @@ Internal documentation for analytics-react-native contributors.
 
 ## Release
 
-- [Release Guide](release.md) — How to cut releases with semantic-release
+- [Release Guide](release.md) — Cutting releases with semantic-release and multi-semantic-release

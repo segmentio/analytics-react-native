@@ -98,7 +98,7 @@ In your app's `AndroidManifest.xml` add the below line between the `<manifest>` 
 
 ## Migrating
 
-See the [Migration Guide](MIGRATION_GUIDE.md) for a detailed walkthrough of the changes you will need to make when upgrading to `analytics-react-native 2.0`
+See the [Migration Guide](wiki/migration-v2.md) for a detailed walkthrough of the changes you will need to make when upgrading to `analytics-react-native 2.0`
 
 ## Usage
 
@@ -929,7 +929,7 @@ try {
 
 ## Contributing
 
-See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
+See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow. Internal documentation for development environment setup, E2E testing, and releases is in the [wiki](wiki/README.md).
 
 ## Code of Conduct
 
