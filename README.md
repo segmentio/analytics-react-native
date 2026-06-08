@@ -63,7 +63,7 @@ In your app's `AndroidManifest.xml` add the below line between the `<manifest>` 
 
 ## Migrating
 
-See the [Migration Guide](wiki/migration-v2.md) for a detailed walkthrough of the changes you will need to make when upgrading to `analytics-react-native 2.0`
+See the [Migration Guide](wiki/guides/migration-v2.md) for a detailed walkthrough of the changes you will need to make when upgrading to `analytics-react-native 2.0`
 
 ## Usage
 

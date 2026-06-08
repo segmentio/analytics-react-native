@@ -8,14 +8,14 @@ Internal documentation for analytics-react-native contributors.
 
 ## E2E Testing
 
-- [E2E Overview](e2e-overview.md) — Example apps, shared test infrastructure, and devbox scripts
-- [E2E Setup](e2e-setup.md) — Shared test architecture, mock server, and running tests
-- [E2E Changelog](e2e-changelog.md) — History of E2E infrastructure changes
+- [Overview](e2e/overview.md) — Example apps, shared test infrastructure, and devbox scripts
+- [Setup](e2e/setup.md) — Shared test architecture, mock server, and running tests
+- [Changelog](e2e/changelog.md) — History of E2E infrastructure changes
 
 ## Guides
 
-- [New Architecture Migration](new-arch-migration.md) — RN 0.84 + New Arch migration for the e2e-latest example app
-- [Migration to v2](migration-v2.md) — Migrating from analytics-react-native 1.x to 2.x
+- [New Architecture Migration](guides/new-arch-migration.md) — RN 0.84 + New Arch migration for the e2e-latest example app
+- [Migration to v2](guides/migration-v2.md) — Migrating from analytics-react-native 1.x to 2.x
 
 ## Release
 
