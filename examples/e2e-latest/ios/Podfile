@@ -17,14 +17,8 @@ end
 target 'AnalyticsReactNativeE2E' do
   config = use_native_modules!
 
-  # Flags change depending on the env values.
-  flags = get_default_flags()
-
   use_react_native!(
     :path => config[:reactNativePath],
-    # Hermes is now enabled by default. Disable by setting this flag to false.
-    :hermes_enabled => flags[:hermes_enabled],
-    :fabric_enabled => flags[:fabric_enabled],
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
@@ -35,18 +29,23 @@ target 'AnalyticsReactNativeE2E' do
   end
 
   post_install do |installer|
-    installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.4'
-      end
-    end
     # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
       installer,
       config[:reactNativePath],
       :mac_catalyst_enabled => false
     )
-    # BREAKING CHANGE: __apply_Xcode_12_5_M1_post_install_workaround removed in RN 0.84
-    # __apply_Xcode_12_5_M1_post_install_workaround(installer)
+    # Xcode 26 enables C++20 coroutines by default, but the prebuilt RN
+    # dependencies don't ship folly/coro headers. Disable folly coroutines.
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |bc|
+        defs = bc.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] || ['$(inherited)']
+        defs = [defs] if defs.is_a?(String)
+        unless defs.include?('FOLLY_CFG_NO_COROUTINES=1')
+          defs << 'FOLLY_CFG_NO_COROUTINES=1'
+          bc.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = defs
+        end
+      end
+    end
   end
 end

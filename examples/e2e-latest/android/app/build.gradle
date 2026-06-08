@@ -1,5 +1,10 @@
 apply plugin: "com.android.application"
+apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+
+react {
+    autolinkLibrariesWithApp()
+}
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -73,6 +78,25 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    externalNativeBuild {
+        cmake {
+            version System.getenv("CMAKE_VERSION") ?: "3.22.1"
+        }
+    }
+
+    defaultConfig {
+        externalNativeBuild {
+            cmake {
+                cppFlags "-Wno-error=deprecated-declarations -fno-lto"
+                arguments "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF"
+            }
+        }
+    }
+
+    lint {
+        checkReleaseBuilds false
+    }
+
     namespace "com.AnalyticsReactNativeE2E"
     defaultConfig {
         applicationId "com.AnalyticsReactNativeE2E"
@@ -118,5 +142,3 @@ dependencies {
         implementation jscFlavor
     }
 }
-
-apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
