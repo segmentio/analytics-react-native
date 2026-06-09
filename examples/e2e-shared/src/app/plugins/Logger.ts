@@ -4,11 +4,14 @@ import {
   SegmentEvent,
 } from '@segment/analytics-react-native';
 
+export type EventStatus = 'queued' | 'sent' | 'failed';
+
 export type EventEntry = {
   type: string;
   name: string;
   timestamp: string;
-  sent: boolean;
+  status: EventStatus;
+  statusCode?: number;
 };
 
 type Listener = (events: EventEntry[]) => void;
@@ -26,15 +29,34 @@ export class Logger extends Plugin {
       type: event.type,
       name: this.getEventName(event),
       timestamp: event.timestamp ?? new Date().toISOString(),
-      sent: false,
+      status: 'queued',
     };
     this.events = [...this.events, entry];
     this.notify();
     return event;
   }
 
-  markAllSent() {
-    this.events = this.events.map((e) => (e.sent ? e : { ...e, sent: true }));
+  markSent(count: number) {
+    this.updateQueued(count, 'sent', 200);
+  }
+
+  markFailed(count: number, statusCode?: number) {
+    this.updateQueued(count, 'failed', statusCode);
+  }
+
+  private updateQueued(
+    count: number,
+    newStatus: EventStatus,
+    statusCode?: number
+  ) {
+    let remaining = count;
+    this.events = this.events.map((e) => {
+      if (remaining > 0 && e.status === 'queued') {
+        remaining--;
+        return { ...e, status: newStatus, statusCode };
+      }
+      return e;
+    });
     this.notify();
   }
 

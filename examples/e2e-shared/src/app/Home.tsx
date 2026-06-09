@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { useAnalytics } from '@segment/analytics-react-native';
 import { segmentClient, logger, reconnect, onError } from './client';
-import type { EventEntry } from './plugins/Logger';
+import type { EventEntry, EventStatus } from './plugins/Logger';
 
 if (
   Platform.OS === 'android' &&
@@ -23,11 +23,7 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-type ConnectionStatus =
-  | 'connected'
-  | 'network_error'
-  | 'server_error'
-  | 'unknown';
+type ConnectionStatus = 'connected' | 'network_error' | 'server_error' | 'idle';
 
 interface ErrorInfo {
   message: string;
@@ -44,7 +40,7 @@ const Home = ({ navigation }: { navigation: any }) => {
   const [writeKey, setWriteKey] = useState('yup');
   const [events, setEvents] = useState<EventEntry[]>([]);
   const [connectionStatus, setConnectionStatus] =
-    useState<ConnectionStatus>('unknown');
+    useState<ConnectionStatus>('idle');
   const [lastError, setLastError] = useState<ErrorInfo | null>(null);
 
   useEffect(() => {
@@ -55,8 +51,8 @@ const Home = ({ navigation }: { navigation: any }) => {
   useEffect(() => {
     const unsub = onError((error: any) => {
       const statusCode = error?.statusCode ?? -1;
-      const isServerError = statusCode > 0;
-      setConnectionStatus(isServerError ? 'server_error' : 'network_error');
+      const hasServerResponse = statusCode > 0;
+      setConnectionStatus(hasServerResponse ? 'server_error' : 'network_error');
 
       const message = error?.message ?? String(error);
       const parts = [message];
@@ -75,7 +71,17 @@ const Home = ({ navigation }: { navigation: any }) => {
 
   useEffect(() => {
     if (autoFlush) {
-      segmentClient.flush();
+      let hadError = false;
+      const unsub = onError(() => {
+        hadError = true;
+      });
+      segmentClient.flush().then(() => {
+        unsub();
+        if (!hadError) {
+          const hasSent = logger.getEvents().some((e) => e.status === 'sent');
+          if (hasSent) setConnectionStatus('connected');
+        }
+      });
     }
   }, [autoFlush]);
 
@@ -92,11 +98,23 @@ const Home = ({ navigation }: { navigation: any }) => {
     setAutoFlush(newValue);
   }, [autoFlush]);
 
+  const handleFlush = useCallback(async () => {
+    let hadError = false;
+    const unsub = onError(() => {
+      hadError = true;
+    });
+    await flush();
+    unsub();
+    if (!hadError) {
+      const hasSent = logger.getEvents().some((e) => e.status === 'sent');
+      if (hasSent) setConnectionStatus('connected');
+    }
+  }, [flush]);
+
   const handleReconnect = useCallback(() => {
-    setConnectionStatus('unknown');
+    setConnectionStatus('idle');
     setLastError(null);
     reconnect(writeKey);
-    setConnectionStatus('connected');
   }, [writeKey]);
 
   const toggleSection = (
@@ -106,8 +124,9 @@ const Home = ({ navigation }: { navigation: any }) => {
     setter((prev) => !prev);
   };
 
-  const sentCount = events.filter((e) => e.sent).length;
-  const queuedCount = events.filter((e) => !e.sent).length;
+  const sentCount = events.filter((e) => e.status === 'sent').length;
+  const failedCount = events.filter((e) => e.status === 'failed').length;
+  const queuedCount = events.filter((e) => e.status === 'queued').length;
 
   const statusColor =
     connectionStatus === 'connected'
@@ -117,6 +136,13 @@ const Home = ({ navigation }: { navigation: any }) => {
       : connectionStatus === 'server_error'
       ? colors.orange
       : colors.yellow;
+
+  const eventColor = (status: EventStatus) =>
+    status === 'sent'
+      ? colors.green
+      : status === 'failed'
+      ? colors.red
+      : colors.orange;
 
   return (
     <View style={styles.container}>
@@ -219,7 +245,7 @@ const Home = ({ navigation }: { navigation: any }) => {
           <View style={styles.buttonRow}>
             <TouchableOpacity
               style={[styles.wideButton, { backgroundColor: colors.pink }]}
-              onPress={() => flush()}
+              onPress={handleFlush}
               testID="BUTTON_FLUSH"
             >
               <Text style={styles.buttonText}>Flush</Text>
@@ -271,6 +297,12 @@ const Home = ({ navigation }: { navigation: any }) => {
               <Text style={styles.statLabel}>Queued</Text>
             </View>
             <View style={styles.stat}>
+              <Text style={[styles.statNumber, { color: colors.red }]}>
+                {failedCount}
+              </Text>
+              <Text style={styles.statLabel}>Failed</Text>
+            </View>
+            <View style={styles.stat}>
               <View
                 style={[styles.statusDot, { backgroundColor: statusColor }]}
               />
@@ -288,15 +320,7 @@ const Home = ({ navigation }: { navigation: any }) => {
 
           {lastError && (
             <Text
-              style={[
-                styles.errorText,
-                {
-                  color:
-                    connectionStatus === 'network_error'
-                      ? colors.red
-                      : colors.orange,
-                },
-              ]}
+              style={[styles.errorText, { color: statusColor }]}
               numberOfLines={2}
             >
               {lastError.message}
@@ -325,17 +349,16 @@ const Home = ({ navigation }: { navigation: any }) => {
                   <View
                     style={[
                       styles.eventDot,
-                      {
-                        backgroundColor: entry.sent
-                          ? colors.green
-                          : colors.orange,
-                      },
+                      { backgroundColor: eventColor(entry.status) },
                     ]}
                   />
                   <Text style={styles.eventType}>{entry.type}</Text>
                   <Text style={styles.eventName} numberOfLines={1}>
                     {entry.name}
                   </Text>
+                  {entry.statusCode !== undefined && (
+                    <Text style={styles.eventStatus}>{entry.statusCode}</Text>
+                  )}
                   <Text style={styles.eventTime}>
                     {new Date(entry.timestamp).toLocaleTimeString()}
                   </Text>
@@ -481,6 +504,7 @@ const styles = StyleSheet.create({
   eventDot: { width: 8, height: 8, borderRadius: 4, marginRight: 8 },
   eventType: { color: '#aaa', fontSize: 11, width: 50 },
   eventName: { color: 'white', fontSize: 13, flex: 1, marginRight: 8 },
+  eventStatus: { color: '#aaa', fontSize: 11, marginRight: 6 },
   eventTime: { color: '#888', fontSize: 11 },
 });
 
