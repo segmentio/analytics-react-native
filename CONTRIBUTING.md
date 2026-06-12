@@ -15,14 +15,20 @@ React Native requires different versions of the tools/languages you might be usi
 
 ## Development workflow
 
-To get started with the project, run `yarn bootstrap` in the root directory to install the required dependencies for each package:
+To get started with the project, install the dependencies for each package. The recommended path is to enter the Devbox shell, whose init hook runs `yarn install` for you (see [wiki/devbox.md](/wiki/devbox.md)):
 
 ```sh
-yarn bootstrap
+devbox shell
 ```
 
-While developing, you can run the [example app](/example/) to test your changes.
-code
+If you are not using Devbox, install dependencies directly with:
+
+```sh
+yarn install
+```
+
+While developing, you can run the [example app](/examples/AnalyticsReactNativeExample/) to test your changes.
+
 To start the packager:
 
 ```sh
@@ -44,7 +50,7 @@ yarn example ios
 Make sure your code passes TypeScript and ESLint. Run the following to verify:
 
 ```sh
-yarn typescript
+yarn typecheck
 yarn lint
 ```
 
@@ -60,24 +66,25 @@ Remember to add tests for your change if possible. Run the unit tests by:
 yarn test
 ```
 
-The are also end-to-end tests. First you will have to build the app and then run the tests:
+There are also end-to-end tests, driven by Detox through Devbox in the example workspaces under `examples/` (`e2e-latest` and `e2e-compat`). The E2E scripts live in each example's `devbox.json`, not the repo root. From an example directory you build, then test:
 
-```
-# Start the server (*note there's a separate e2e command*)
-yarn e2e start:e2e
+```sh
+cd examples/e2e-latest   # or examples/e2e-compat
 
 # iOS
-yarn e2e e2e:build:ios
-yarn e2e e2e:test:ios
+devbox run build:ios
+devbox run test:ios
 
 # Android
-yarn e2e e2e:build:android
-yarn e2e e2e:test:android
+devbox run build:android
+devbox run test:android
 ```
 
-To edit the Objective-C / Swift files, open `example/ios/AnalyticsReactNativeExample.xcworkspace` in XCode and find the source files at `Pods > Development Pods > @segment/analytics-react-native`.
+See [wiki/e2e/setup.md](/wiki/e2e/setup.md) for the full setup, and `.github/workflows/e2e-tests.yml` for how CI orchestrates these runs.
 
-To edit the Kotlin files, open `example/android` in Android studio and find the source files at `segmentanalyticsreactnative` under `Android`.
+To edit the Objective-C / Swift files, open `examples/AnalyticsReactNativeExample/ios/AnalyticsReactNativeExample.xcworkspace` in XCode and find the source files at `Pods > Development Pods > @segment/analytics-react-native`.
+
+To edit the Kotlin files, open `examples/AnalyticsReactNativeExample/android` in Android studio and find the source files at `segmentanalyticsreactnative` under `Android`.
 
 ### Commit message convention
 
@@ -102,21 +109,20 @@ Our pre-commit hooks verify that the linter and tests pass when committing.
 
 ### Scripts
 
-The `package.json` file contains various scripts for common tasks:
+The root `package.json` file contains various scripts for common tasks:
 
-- `yarn bootstrap`: setup project by installing all dependencies and pods.
-- `yarn typescript`: type-check files with TypeScript.
+- `yarn typecheck`: type-check files with TypeScript.
 - `yarn lint`: lint files with ESLint.
 - `yarn test`: run unit tests with Jest.
+- `yarn build`: build all public workspaces.
 - `yarn example start`: start the Metro server for the example app.
 - `yarn example android`: run the example app on Android.
 - `yarn example ios`: run the example app on iOS.
-- `yarn e2e e2e:build:ios`: builds the e2e app using detox
-- `yarn e2e e2e:test:ios`: runs the e2e on a simulator(headless if not ran manually)
-- `yarn e2e e2e:build:android`: builds the e2e app using detox
-- `yarn e2e e2e:test:android`: runs the e2e on an emulator
-- `yarn e2e ios:deeplink`: opens the ios app via deep link (example app must already be installed)
-- `yarn e2e android:deeplink`: opens the Android app via deep link (example app must already be installed)
+
+End-to-end tests are run from the example workspaces via Devbox (see above and `examples/<example>/devbox.json`):
+
+- `devbox run build:ios` / `devbox run test:ios`: build and run the iOS E2E suite with Detox.
+- `devbox run build:android` / `devbox run test:android`: build and run the Android E2E suite with Detox.
 
 ### Sending a pull request
 
@@ -132,10 +138,10 @@ When you're sending a pull request:
 
 ## Release
 
-Release is automated in GHA. By default `yarn release` won't let you trigger a release from your personal computer.
+Release is automated in GitHub Actions. By default `yarn release` won't let you trigger a release from your personal computer.
 
-To trigger a release go to Actions. Select the `Publish` workflow and trigger a new job.
+To trigger a release, go to Actions, select the `Release` workflow, click "Run workflow", and choose a release type (`dry-run`, `beta`, or `production`).
 
-Automatically the workflow will analyze the commits, bump versions, create changesets, build and release to NPM the packages that need so.
+The workflow analyzes the conventional-commit history, bumps versions, builds, and publishes to npm the packages that need it. See [RELEASING.md](/RELEASING.md) for the full release guide (release types, beta/fix-candidate flow, and version syncing).
 
-The CI/CD is automated using [semantic-release](https://github.com/semantic-release/semantic-release).
+The CI/CD is automated using [semantic-release](https://github.com/semantic-release/semantic-release) and [multi-semantic-release](https://github.com/qiwi/multi-semantic-release).
