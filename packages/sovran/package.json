@@ -68,7 +68,8 @@
   "peerDependencies": {
     "@react-native-async-storage/async-storage": "2.x",
     "react": "*",
-    "react-native": "*"
+    "react-native": "*",
+    "react-native-get-random-values": "1.x || 2.x"
   },
   "peerDependenciesMeta": {
     "@react-native-async-storage/async-storage": {
@@ -78,7 +79,6 @@
   "dependencies": {
     "ansi-regex": "5.0.1",
     "deepmerge": "^4.2.2",
-    "react-native-get-random-values": "1.x",
     "shell-quote": "1.8.0",
     "uuid": "^14.0.0"
   },
