@@ -10,52 +10,17 @@ The hassle-free way to add Segment analytics to your React-Native app.
 
 ## Table of Contents
 
-- [@segment/analytics-react-native](#segmentanalytics-react-native)
-  - [Table of Contents](#table-of-contents)
-  - [Installation](#installation)
-    - [Expo](#expo)
-    - [Permissions](#permissions)
-  - [Migrating](#migrating)
-  - [Usage](#usage)
-    - [Setting up the client](#setting-up-the-client)
-    - [Client Options](#client-options)
-    - [iOS Deep Link Tracking Setup](#ios-deep-link-tracking-setup)
-    - [Native AnonymousId](#native-anonymousid)
-    - [Usage with hooks](#usage-with-hooks)
-    - [useAnalytics()](#useanalytics)
-    - [Usage without hooks](#usage-without-hooks)
-  - [Client methods](#client-methods)
-    - [Track](#track)
-    - [Screen](#screen)
-    - [Identify](#identify)
-    - [Group](#group)
-    - [Alias](#alias)
-    - [Reset](#reset)
-    - [Flush](#flush)
-    - [(Advanced) Cleanup](#advanced-cleanup)
-  - [Automatic screen tracking](#automatic-screen-tracking)
-    - [React Navigation](#react-navigation)
-    - [React Native Navigation](#react-native-navigation)
-  - [Consent Management](#consent-management)
-    - [Segment CMP](#segment-managed-cmp)
-    - [Event Stamping](#event-stamping)
-    - [Segment Consent Preference Updated Event](#segment-consent-preference-updated-event)
-    - [Event Flow](#event-flow)
-    - [Getting Started](#getting-started)
-  - [Plugins + Timeline architecture](#plugins--timeline-architecture)
-    - [Plugin Types](#plugin-types)
-    - [Destination Plugins](#destination-plugins)
-    - [Adding Plugins](#adding-plugins)
-    - [Writing your own Plugins](#writing-your-own-plugins)
-    - [Supported Plugins](#supported-plugins)
-  - [Controlling Upload With Flush Policies](#controlling-upload-with-flush-policies)
-  - [Adding or removing policies](#adding-or-removing-policies)
-    - [Creating your own flush policies](#creating-your-own-flush-policies)
-  - [Handling errors](#handling-errors)
-    - [Reporting errors from plugins](#reporting-errors-from-plugins)
-  - [Contributing](#contributing)
-  - [Code of Conduct](#code-of-conduct)
-  - [License](#license)
+- [Installation](#installation)
+- [Migrating](#migrating)
+- [Usage](#usage)
+- [Client methods](#client-methods)
+- [Automatic screen tracking](#automatic-screen-tracking)
+- [Consent Management](#consent-management)
+- [Plugins + Timeline architecture](#plugins--timeline-architecture)
+- [Controlling Upload With Flush Policies](#controlling-upload-with-flush-policies)
+- [Handling errors](#handling-errors)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Installation
 
@@ -98,7 +63,7 @@ In your app's `AndroidManifest.xml` add the below line between the `<manifest>` 
 
 ## Migrating
 
-See the [Migration Guide](MIGRATION_GUIDE.md) for a detailed walkthrough of the changes you will need to make when upgrading to `analytics-react-native 2.0`
+See the [Migration Guide](wiki/guides/migration-v2.md) for a detailed walkthrough of the changes you will need to make when upgrading to `analytics-react-native 2.0`
 
 ## Usage
 
@@ -929,7 +894,7 @@ try {
 
 ## Contributing
 
-See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
+See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow. Internal documentation for development environment setup, E2E testing, and releases is in the [wiki](wiki/README.md).
 
 ## Code of Conduct
 

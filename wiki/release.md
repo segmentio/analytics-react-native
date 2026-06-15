@@ -32,11 +32,11 @@ This repo uses semantic-release with multi-semantic-release to version and publi
 - No branch management or syncing required
 - Each feature branch gets its own npm dist-tag
 
-Note: version bumps and changelogs are **not** committed back to the repo. The source of truth for versions is the git tags and npm registry. To sync the repo's `package.json` versions with npm, run `devbox run --config=shells/devbox-fast.json sync-versions` and include the changes in a PR.
+Note: version bumps and changelogs are **not** committed back to the repo. The source of truth for versions is the git tags and npm registry. To sync the repo's `package.json` versions with npm, run `devbox run sync-versions` and include the changes in a PR.
 
 ### Local dry run
 
-1. `GH_TOKEN=<token> devbox run --config=shells/devbox-fast.json release-dry-run` (GH token needs `contents` read).
+1. `GH_TOKEN=<token> devbox run release-dry-run` (GH token needs `contents` read).
 2. Omit `--dry-run` to actually publish (only do this if you intend to release from your machine; npm auth is handled via OIDC in CI).
 
 ### Tips and gotchas
