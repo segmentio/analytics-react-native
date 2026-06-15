@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@anolilab/multi-semantic-release": "^1.0.3",
-    "@babel/core": "^7.23.3",
+    "@babel/core": "^7.29.6",
     "@babel/runtime": "^7.26.10",
     "@changesets/cli": "^2.26.2",
     "@commitlint/config-conventional": "^18.4.2",
