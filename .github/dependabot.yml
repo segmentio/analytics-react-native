@@ -1,6 +1,9 @@
 version: 2
 updates:
-  # GitHub Actions - pin and group all action updates together
+  # GitHub Actions - pin and group all action updates together.
+  # Two groups so BOTH scheduled version bumps and Dependabot security
+  # updates get batched into a single PR (groups default to version-updates
+  # only, which is why security advisories were leaking out individually).
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
@@ -9,10 +12,16 @@ updates:
       prefix: 'chore(deps)'
     groups:
       actions:
+        applies-to: version-updates
+        patterns:
+          - '*'
+      actions-security:
+        applies-to: security-updates
         patterns:
           - '*'
 
-  # Root workspace (monorepo packages)
+  # Root workspace (monorepo packages) - covers the root package.json and all
+  # yarn workspace members (packages/*). Weekly.
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
@@ -21,50 +30,55 @@ updates:
       prefix: 'chore(deps)'
     groups:
       all-dependencies:
+        applies-to: version-updates
+        patterns:
+          - '*'
+      all-dependencies-security:
+        applies-to: security-updates
         patterns:
           - '*'
 
-  # Examples and tooling - group all into single PR per directory
+  # Examples and tooling (npm) - one grouped PR per directory, monthly.
+  # Directory names are case-sensitive: the real dirs are lowercase
+  # (e2e-compat / e2e-latest), not E2E-*.
   - package-ecosystem: 'npm'
-    directory: '/examples/AnalyticsReactNativeExample'
+    directories:
+      - '/e2e-cli'
+      - '/examples/AnalyticsReactNativeExample'
+      - '/examples/e2e-compat'
+      - '/examples/e2e-latest'
     schedule:
       interval: 'monthly'
     commit-message:
       prefix: 'chore(deps)'
     groups:
       all-dependencies:
+        applies-to: version-updates
+        patterns:
+          - '*'
+      all-dependencies-security:
+        applies-to: security-updates
         patterns:
           - '*'
 
-  - package-ecosystem: 'npm'
-    directory: '/examples/E2E-compat'
+  # Ruby tooling (CocoaPods/Fastlane) in the example apps. Without a bundler
+  # entry, gem security advisories (e.g. activesupport/addressable CVEs) open
+  # one ungrouped PR each. Group them, monthly.
+  - package-ecosystem: 'bundler'
+    directories:
+      - '/examples/AnalyticsReactNativeExample'
+      - '/examples/e2e-compat'
+      - '/examples/e2e-latest'
     schedule:
       interval: 'monthly'
     commit-message:
       prefix: 'chore(deps)'
     groups:
       all-dependencies:
+        applies-to: version-updates
         patterns:
           - '*'
-
-  - package-ecosystem: 'npm'
-    directory: '/examples/E2E-latest'
-    schedule:
-      interval: 'monthly'
-    commit-message:
-      prefix: 'chore(deps)'
-    groups:
-      all-dependencies:
-        patterns:
-          - '*'
-
-  - package-ecosystem: 'npm'
-    directory: '/e2e-cli'
-    schedule:
-      interval: 'monthly'
-    commit-message:
-      prefix: 'chore(deps)'
-    groups:
-      all-dependencies:
+      all-dependencies-security:
+        applies-to: security-updates
         patterns:
           - '*'
