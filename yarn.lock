@@ -4637,7 +4637,7 @@ __metadata:
     deepmerge: "npm:^4.2.2"
     jest: "npm:^29.7.0"
     semantic-release: "npm:^22.0.8"
-    shell-quote: "npm:1.8.0"
+    shell-quote: "npm:1.8.4"
     typescript: "npm:^5.2.2"
     uuid: "npm:^14.0.0"
   peerDependencies:
@@ -17063,10 +17063,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"shell-quote@npm:1.8.0":
-  version: 1.8.0
-  resolution: "shell-quote@npm:1.8.0"
-  checksum: 10c0/651a201a1af981d49326fac8c005bbe2af97bc56fcabded0b22944c08eea0ba3bccfa497168d4bcb70508ca5802fe1cb83ca89a7e121eb0701d4c8b1d6c71a5d
+"shell-quote@npm:1.8.4":
+  version: 1.8.4
+  resolution: "shell-quote@npm:1.8.4"
+  checksum: 10c0/86c93678bc394cb81f5ddcdc87df9c95d279ef9652775cd1cd1eed361404169a8d8cbaacaeed232ab09919e36ee1e5363863570390d78571f8c22b7f6312fb40
   languageName: node
   linkType: hard
 
