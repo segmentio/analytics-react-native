@@ -2,6 +2,7 @@ import {
   createClient,
   CountFlushPolicy,
   SegmentClient,
+  ErrorType,
 } from '@segment/analytics-react-native';
 import { Platform } from 'react-native';
 import { Logger } from './plugins/Logger';
@@ -16,6 +17,9 @@ const errorListeners: ErrorListener[] = [];
 
 function buildClient(writeKey: string): SegmentClient {
   const useProxy = writeKey === 'yup';
+  let pendingDropCount = 0;
+  let lastStatusCode: number | undefined;
+
   const client = createClient({
     writeKey,
     maxBatchSize: 1000,
@@ -25,6 +29,12 @@ function buildClient(writeKey: string): SegmentClient {
     collectDeviceId: true,
     debug: true,
     errorHandler: (error: any) => {
+      if (error?.type === ErrorType.EventsDropped) {
+        pendingDropCount += error.metadata?.droppedCount ?? 0;
+      }
+      if (error?.statusCode !== undefined) {
+        lastStatusCode = error.statusCode;
+      }
       errorListeners.forEach((fn) => fn(error));
     },
     ...(useProxy
@@ -47,8 +57,21 @@ function buildClient(writeKey: string): SegmentClient {
 
   const originalFlush = client.flush.bind(client);
   client.flush = async () => {
+    const queuedCount = logger
+      .getEvents()
+      .filter((e) => e.status === 'queued').length;
+    pendingDropCount = 0;
+    lastStatusCode = undefined;
+
     await originalFlush();
-    logger.markAllSent();
+
+    if (pendingDropCount > 0) {
+      logger.markFailed(pendingDropCount, lastStatusCode);
+    }
+    const sentCount = queuedCount - pendingDropCount;
+    if (sentCount > 0) {
+      logger.markSent(sentCount);
+    }
   };
 
   return client;
