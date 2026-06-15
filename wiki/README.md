@@ -19,4 +19,4 @@ Internal documentation for analytics-react-native contributors.
 
 ## Release
 
-- [Release Guide](release.md) — Cutting releases with semantic-release and multi-semantic-release
+- [Release Guide](../RELEASING.md) — Cutting releases with semantic-release and multi-semantic-release
