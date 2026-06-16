@@ -146,6 +146,75 @@ describe('RetryManager', () => {
     });
   });
 
+  describe('handleRetryAfter (generic server-directed wait)', () => {
+    it('waits the server-directed time for a non-429 code', async () => {
+      const now = 1000000;
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+
+      const rm = new RetryManager(
+        'test-key',
+        mockPersistor,
+        defaultRateLimitConfig,
+        defaultBackoffConfig,
+        mockLogger
+      );
+
+      // e.g. a 529 with Retry-After: 30
+      expect(await rm.handleRetryAfter(30)).toBe('rate_limited');
+
+      jest.spyOn(Date, 'now').mockReturnValue(now + 29000);
+      expect(await rm.canRetry()).toBe(false);
+      jest.spyOn(Date, 'now').mockReturnValue(now + 31000);
+      expect(await rm.canRetry()).toBe(true);
+    });
+
+    it('clamps the wait to maxRetryInterval', async () => {
+      const rm = new RetryManager(
+        'test-key',
+        mockPersistor,
+        defaultRateLimitConfig,
+        defaultBackoffConfig,
+        mockLogger
+      );
+
+      await rm.handleRetryAfter(500); // exceeds maxRetryInterval of 300
+
+      expect(mockLogger.warn).toHaveBeenCalledWith(
+        expect.stringContaining('exceeds maxRetryInterval')
+      );
+    });
+
+    it('returns undefined when rate limit config is disabled', async () => {
+      const disabledConfig: RateLimitConfig = {
+        ...defaultRateLimitConfig,
+        enabled: false,
+      };
+      const rm = new RetryManager(
+        'test-key',
+        mockPersistor,
+        disabledConfig,
+        defaultBackoffConfig,
+        mockLogger
+      );
+
+      expect(await rm.handleRetryAfter(30)).toBeUndefined();
+    });
+
+    it('handle429 delegates to the same path', async () => {
+      const rm = new RetryManager(
+        'test-key',
+        mockPersistor,
+        defaultRateLimitConfig,
+        defaultBackoffConfig,
+        mockLogger
+      );
+
+      const spy = jest.spyOn(rm, 'handleRetryAfter');
+      await rm.handle429(15);
+      expect(spy).toHaveBeenCalledWith(15);
+    });
+  });
+
   describe('handle429', () => {
     it('increments retry count', async () => {
       const now = 1000000;

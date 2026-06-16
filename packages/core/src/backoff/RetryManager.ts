@@ -164,10 +164,18 @@ export class RetryManager {
   }
 
   /**
-   * Handle a 429 rate limit response.
-   * Uses server-specified wait time from Retry-After header.
+   * Handle a response that carries a server-directed wait via the Retry-After
+   * header. Originally added for 429 rate limiting, this is the authoritative
+   * "the server told us exactly how long to wait" path and is reused for any
+   * retryable status code (429, 529, 503, 408, …) that includes Retry-After.
+   *
+   * Uses the server-specified wait time (clamped to maxRetryInterval), pauses
+   * all uploads, and enforces the same maxRetryCount / maxRateLimitDuration
+   * safety valves as the 429 path.
    */
-  async handle429(retryAfterSeconds: number): Promise<RetryResult | undefined> {
+  async handleRetryAfter(
+    retryAfterSeconds: number
+  ): Promise<RetryResult | undefined> {
     if (this.rateLimitConfig?.enabled !== true) {
       return undefined;
     }
@@ -187,6 +195,14 @@ export class RetryManager {
       this.rateLimitConfig.maxRateLimitDuration,
       now
     );
+  }
+
+  /**
+   * Handle a 429 rate limit response.
+   * Delegates to the shared Retry-After (server-directed wait) path.
+   */
+  async handle429(retryAfterSeconds: number): Promise<RetryResult | undefined> {
+    return this.handleRetryAfter(retryAfterSeconds);
   }
 
   /**

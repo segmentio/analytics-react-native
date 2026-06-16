@@ -5,6 +5,7 @@
   "patch": null,
   "env": {
     "BROWSER_BATCHING": "true",
-    "HTTP_CONFIG_SETTINGS": "true"
+    "HTTP_CONFIG_SETTINGS": "true",
+    "GENERIC_RETRY_AFTER": "true"
   }
 }
