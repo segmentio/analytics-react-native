@@ -34,14 +34,22 @@ export const SEGMENT_DESTINATION_KEY = 'Segment.io';
 type BatchResult = {
   batch: SegmentEvent[];
   messageIds: string[];
-  status: 'success' | '429' | 'transient' | 'permanent' | 'network_error';
+  // 'retry_after' = a retryable response that carried a Retry-After header
+  // (429 or any other retryable code), so we wait the server-directed time
+  // instead of computing exponential backoff.
+  status:
+    | 'success'
+    | 'retry_after'
+    | 'transient'
+    | 'permanent'
+    | 'network_error';
   statusCode?: number;
   retryAfterSeconds?: number;
 };
 
 type ErrorAggregation = {
   successfulMessageIds: string[];
-  rateLimitResults: BatchResult[];
+  serverDirectedResults: BatchResult[];
   hasTransientError: boolean;
   permanentErrorMessageIds: string[];
   retryableMessageIds: string[];
@@ -92,14 +100,28 @@ export class SegmentDestination extends DestinationPlugin {
 
     switch (classification.errorType) {
       case 'rate_limit':
+        // 429: always a server-directed wait. Default to 60s when the header
+        // is missing/invalid, preserving prior behavior.
         return {
           batch,
           messageIds,
-          status: '429',
+          status: 'retry_after',
           statusCode: res.status,
           retryAfterSeconds: retryAfterSeconds ?? 60,
         };
       case 'transient':
+        // Any other retryable code (529, 503, 408, …): if the server sent a
+        // valid Retry-After, honor it as a server-directed wait. Otherwise use
+        // exponential backoff (unchanged behavior).
+        if (retryAfterSeconds !== undefined) {
+          return {
+            batch,
+            messageIds,
+            status: 'retry_after',
+            statusCode: res.status,
+            retryAfterSeconds,
+          };
+        }
         return {
           batch,
           messageIds,
@@ -107,6 +129,7 @@ export class SegmentDestination extends DestinationPlugin {
           statusCode: res.status,
         };
       default:
+        // Permanent: drop. Retry-After is ignored on non-retryable codes.
         return {
           batch,
           messageIds,
@@ -136,13 +159,16 @@ export class SegmentDestination extends DestinationPlugin {
         retryCount,
       });
 
-      const retryAfterSeconds =
-        res.status === 429
-          ? parseRetryAfter(
-              res.headers.get('Retry-After'),
-              this.getRateLimitConfig()?.maxRetryInterval
-            )
-          : undefined;
+      // Parse Retry-After on any error response (not just 429). The header —
+      // regardless of which retryable status code carries it — is the
+      // authoritative signal for how long to wait. classifyBatchResult decides
+      // whether to honor it (retryable codes) or ignore it (permanent codes).
+      const retryAfterSeconds = res.ok
+        ? undefined
+        : parseRetryAfter(
+            res.headers.get('Retry-After'),
+            this.getRateLimitConfig()?.maxRetryInterval
+          );
 
       return this.classifyBatchResult(
         res,
@@ -173,7 +199,7 @@ export class SegmentDestination extends DestinationPlugin {
   private aggregateErrors(results: BatchResult[]): ErrorAggregation {
     const aggregation: ErrorAggregation = {
       successfulMessageIds: [],
-      rateLimitResults: [],
+      serverDirectedResults: [],
       hasTransientError: false,
       permanentErrorMessageIds: [],
       retryableMessageIds: [],
@@ -184,8 +210,8 @@ export class SegmentDestination extends DestinationPlugin {
         case 'success':
           aggregation.successfulMessageIds.push(...result.messageIds);
           break;
-        case '429':
-          aggregation.rateLimitResults.push(result);
+        case 'retry_after':
+          aggregation.serverDirectedResults.push(result);
           aggregation.retryableMessageIds.push(...result.messageIds);
           break;
         case 'transient':
@@ -256,12 +282,14 @@ export class SegmentDestination extends DestinationPlugin {
       return false;
     }
 
-    const has429 = aggregation.rateLimitResults.length > 0;
+    const hasServerDirectedWait = aggregation.serverDirectedResults.length > 0;
     let result: RetryResult | undefined;
 
-    if (has429) {
-      for (const r of aggregation.rateLimitResults) {
-        result = await this.retryManager.handle429(r.retryAfterSeconds ?? 60);
+    if (hasServerDirectedWait) {
+      for (const r of aggregation.serverDirectedResults) {
+        result = await this.retryManager.handleRetryAfter(
+          r.retryAfterSeconds ?? 60
+        );
       }
     } else if (aggregation.hasTransientError) {
       result = await this.retryManager.handleTransientError();
@@ -316,9 +344,10 @@ export class SegmentDestination extends DestinationPlugin {
       aggregation.successfulMessageIds.length -
       aggregation.permanentErrorMessageIds.length;
     if (failedCount > 0) {
-      const has429 = aggregation.rateLimitResults.length > 0;
+      const hasServerDirectedWait =
+        aggregation.serverDirectedResults.length > 0;
       this.analytics?.logger.warn(
-        `${failedCount} events will retry (429: ${has429}, transient: ${aggregation.hasTransientError})`
+        `${failedCount} events will retry (retry-after: ${hasServerDirectedWait}, transient: ${aggregation.hasTransientError})`
       );
     }
   }
