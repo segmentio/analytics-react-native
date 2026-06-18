@@ -8,10 +8,10 @@
     "test": "echo \"Run tests from example apps\""
   },
   "dependencies": {
-    "body-parser": "^1.20.0",
-    "express": "^4.20.0"
+    "body-parser": "^2.3.0",
+    "express": "^5.2.1"
   },
   "devDependencies": {
-    "detox": "^20.17.0"
+    "detox": "^20.51.4"
   }
 }
