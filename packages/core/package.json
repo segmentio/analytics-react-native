@@ -68,6 +68,9 @@
   "peerDependenciesMeta": {
     "@react-native-async-storage/async-storage": {
       "optional": true
+    },
+    "react-native-get-random-values": {
+      "optional": true
     }
   },
   "engines": {
