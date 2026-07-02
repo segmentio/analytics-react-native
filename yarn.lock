@@ -4584,7 +4584,6 @@ __metadata:
     deepmerge: "npm:^4.2.2"
     jest: "npm:^29.7.0"
     semantic-release: "npm:^22.0.8"
-    shell-quote: "npm:1.8.0"
     typescript: "npm:^5.2.2"
     uuid: "npm:^14.0.0"
   peerDependencies:
