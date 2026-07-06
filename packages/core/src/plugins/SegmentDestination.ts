@@ -414,7 +414,7 @@ export class SegmentDestination extends DestinationPlugin {
       baseURL = this.apiHost ?? defaultApiHost;
     }
     try {
-      return getURL(baseURL, endpoint);
+      return getURL(baseURL, endpoint, config?.allowInsecureProxy);
     } catch (error) {
       console.error('Error in getEndpoint:', `fallback to ${defaultApiHost}`);
       return defaultApiHost;

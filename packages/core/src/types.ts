@@ -152,6 +152,13 @@ export type Config = {
   storePersistorSaveDelay?: number;
   proxy?: string;
   cdnProxy?: string;
+  /**
+   * Allow http:// proxy/cdnProxy URLs. By default the SDK rejects cleartext
+   * HTTP because the write key and all event PII travel in the request body.
+   * Only set this if your proxy terminates TLS internally and you understand
+   * the risk of on-path exposure.
+   */
+  allowInsecureProxy?: boolean;
   useSegmentEndpoints?: boolean; // Use if you want to use Segment endpoints
   errorHandler?: (error: SegmentError) => void;
   /** Client-side httpConfig overrides (highest precedence over defaults and CDN). */

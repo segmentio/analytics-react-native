@@ -197,4 +197,16 @@ describe('getURL function', () => {
       'Invalid URL has been passed'
     );
   });
+
+  it('should throw when an explicit http:// host is passed without opt-in', () => {
+    expect(() => getURL('http://proxy.example.com', '/path')).toThrow(
+      'Insecure HTTP proxy URL rejected'
+    );
+  });
+
+  it('should allow http:// host when allowInsecure is true', () => {
+    expect(getURL('http://proxy.example.com', '/path', true)).toBe(
+      'http://proxy.example.com/path'
+    );
+  });
 });

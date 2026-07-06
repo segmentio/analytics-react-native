@@ -258,9 +258,19 @@ export const createPromise = <T>(
   };
 };
 
-export function getURL(host: string, path: string) {
+export function getURL(host: string, path: string, allowInsecure = false) {
   if (!host.startsWith('https://') && !host.startsWith('http://')) {
     host = 'https://' + host;
+  }
+  if (host.startsWith('http://')) {
+    if (!allowInsecure) {
+      throw new Error(
+        'Insecure HTTP proxy URL rejected. The write key and event PII travel in the request body. Use an https:// URL, or set allowInsecureProxy: true to suppress this error.'
+      );
+    }
+    console.warn(
+      '[Segment] Warning: proxy/cdnProxy is using http:// — the write key and all event PII will be sent in cleartext.'
+    );
   }
   const s = `${host}${path}`;
   if (!validateURL(s)) {
