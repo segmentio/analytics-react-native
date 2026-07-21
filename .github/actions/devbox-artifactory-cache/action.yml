@@ -1,0 +1,54 @@
+name: 'Devbox Artifactory Nix Cache'
+description: 'Route devbox/Nix package resolution through Artifactory instead of cache.nixos.org'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Configure Nix substituter
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        NIX_CACHE_URL="https://otk.artifactory.twilio.com/artifactory/remote-nix-cache-nixos"
+
+        # User-level nix.conf (merged with any system config) - no sudo needed,
+        # works regardless of how the Nix install in the previous step laid
+        # out its system config.
+        mkdir -p "$HOME/.config/nix"
+        {
+          echo "substituters = https://cache.nixos.org ${NIX_CACHE_URL}"
+          echo "trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+        } >> "$HOME/.config/nix/nix.conf"
+
+        # Read by our patched devbox binary (see below) as the fromStore for
+        # fetchClosure - stock devbox hardcodes cache.nixos.org and ignores this.
+        echo "DEVBOX_NIX_BINARY_CACHE=${NIX_CACHE_URL}" >> "$GITHUB_ENV"
+
+    # Upstream devbox always fetches package outputs from cache.nixos.org
+    # (https://github.com/jetify-com/devbox/pull/2891 proposes the same
+    # DEVBOX_NIX_BINARY_CACHE override upstream, not yet merged). Until then,
+    # build a patched binary from the exact devbox version this repo's
+    # devbox.lock nixpkgs pin already provides (0.16.0 @ nixpkgs-unstable
+    # afce96367b2e37fc29afb5543573cd49db3357b7), same patch already in use by
+    # segmentio/ajs-renderer - and overwrite whatever devbox-install-action
+    # just put on PATH, so every later `devbox run` call picks it up
+    # regardless of PATH ordering.
+    - name: Build and install patched devbox
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        STOCK_DEVBOX="$(command -v devbox)"
+
+        nix --extra-experimental-features 'nix-command flakes' profile install \
+          --impure --expr '
+            let
+              pkgs = import (builtins.fetchTarball "https://github.com/NixOS/nixpkgs/archive/afce96367b2e37fc29afb5543573cd49db3357b7.tar.gz") {};
+            in
+            pkgs.devbox.overrideAttrs (o: {
+              patches = (o.patches or [ ]) ++ [ ${{ github.action_path }}/configurable-nix-binary-cache.patch ];
+            })
+          '
+
+        cp -f "$(command -v devbox)" "$STOCK_DEVBOX"
+        devbox version
