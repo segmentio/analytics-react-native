@@ -16,12 +16,20 @@ concurrency:
   group: release
   cancel-in-progress: true
 
+env:
+  ARTIFACTORY_URL: ${{ vars.ARTIFACTORY_URL }}
+
 jobs:
   ci:
     name: Lint + Build + Test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Artifactory OIDC Auth
+        uses: ./.github/actions/artifactory-oidc
       - name: Install devbox
         uses: jetify-com/devbox-install-action@a0d2d53632934ae004f878c840055956d9f741b0 # v0.14.0
       - name: Install dependencies
@@ -53,6 +61,9 @@ jobs:
           fetch-depth: 0
           token: ${{ github.token }}
 
+      - name: Artifactory OIDC Auth
+        uses: ./.github/actions/artifactory-oidc
+
       - name: Install devbox
         uses: jetify-com/devbox-install-action@a0d2d53632934ae004f878c840055956d9f741b0 # v0.14.0
 
@@ -78,6 +89,9 @@ jobs:
           fetch-depth: 0
           token: ${{ github.token }}
 
+      - name: Artifactory OIDC Auth
+        uses: ./.github/actions/artifactory-oidc
+
       - name: Install devbox
         uses: jetify-com/devbox-install-action@a0d2d53632934ae004f878c840055956d9f741b0 # v0.14.0
 
@@ -87,6 +101,7 @@ jobs:
           devbox run -e GITHUB_REF=refs/heads/$BRANCH_NAME release
         env:
           GH_TOKEN: ${{ github.token }}
+          NPM_CONFIG_IGNORE_SCRIPTS: 'true'
 
   release-production:
     name: Release (production)
@@ -105,6 +120,9 @@ jobs:
           fetch-depth: 0
           token: ${{ github.token }}
 
+      - name: Artifactory OIDC Auth
+        uses: ./.github/actions/artifactory-oidc
+
       - name: Install devbox
         uses: jetify-com/devbox-install-action@a0d2d53632934ae004f878c840055956d9f741b0 # v0.14.0
 
@@ -112,6 +130,7 @@ jobs:
         run: devbox run release
         env:
           GH_TOKEN: ${{ github.token }}
+          NPM_CONFIG_IGNORE_SCRIPTS: 'true'
 
       - name: Update Apps
         run: devbox run update-apps

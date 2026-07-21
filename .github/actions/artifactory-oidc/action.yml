@@ -1,0 +1,58 @@
+name: 'Artifactory OIDC Auth'
+description: 'Exchange GitHub OIDC token for an Artifactory access token and configure Yarn Berry to resolve through it'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Exchange OIDC token for Artifactory access token
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        if ! command -v jq >/dev/null 2>&1; then
+          echo "::error::jq is required by the artifactory-oidc action but was not found on the runner."
+          exit 1
+        fi
+
+        BASE_URL=$(echo "${ARTIFACTORY_URL}" | sed -E 's#/+$##')
+        if [ -z "$BASE_URL" ]; then
+          echo "::error::ARTIFACTORY_URL is empty."
+          exit 1
+        fi
+
+        GITHUB_JWT=$(curl -sS \
+          -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+          "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=${BASE_URL}" \
+          | jq -r '.value')
+
+        RESP=$(curl -sS "${BASE_URL}/access/api/v1/oidc/token" \
+          -H 'Content-Type: application/json' \
+          -d "{\"grant_type\":\"urn:ietf:params:oauth:grant-type:token-exchange\",
+               \"subject_token_type\":\"urn:ietf:params:oauth:token-type:id_token\",
+               \"subject_token\":\"${GITHUB_JWT}\",
+               \"provider_name\":\"github-actions-segmentio\"}")
+        ART_TOKEN=$(echo "$RESP" | jq -r '.access_token // empty')
+
+        if [ -z "$ART_TOKEN" ]; then
+          echo "::error::OIDC token exchange failed. Redacted response below:"
+          echo "$RESP" | jq 'walk(if type == "object" then with_entries(if (.key | test("token"; "i")) then .value = "<redacted>" else . end) else . end)' 2>/dev/null \
+            || echo "::error::(response withheld — not valid JSON)"
+          exit 1
+        fi
+        echo "::add-mask::$ART_TOKEN"
+
+        REGISTRY="${BASE_URL}/artifactory/api/npm/virtual-npm-thirdparty/"
+        {
+          echo "YARN_NPM_REGISTRY_SERVER=${REGISTRY}"
+          echo "YARN_NPM_AUTH_TOKEN=${ART_TOKEN}"
+          echo "YARN_NPM_ALWAYS_AUTH=true"
+        } >> "$GITHUB_ENV"
+
+        cat >> .yarnrc.yml <<YAML
+        npmRegistries:
+          "${REGISTRY}":
+            npmAuthToken: "${ART_TOKEN}"
+            npmAlwaysAuth: true
+        YAML
+
+        echo "::notice::Yarn configured to use Artifactory registry"
