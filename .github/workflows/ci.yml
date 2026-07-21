@@ -17,9 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Install devbox
-        uses: jetify-com/devbox-install-action@a0d2d53632934ae004f878c840055956d9f741b0 # v0.14.0
-      - name: Route Nix/devbox packages through Artifactory
-        uses: ./.github/actions/devbox-artifactory-cache
+        uses: ./.github/actions/install-devbox
       - name: Install dependencies
         run: devbox run ci:install
       - name: Lint (eslint)
@@ -40,9 +38,7 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Install devbox
-        uses: jetify-com/devbox-install-action@a0d2d53632934ae004f878c840055956d9f741b0 # v0.14.0
-      - name: Route Nix/devbox packages through Artifactory
-        uses: ./.github/actions/devbox-artifactory-cache
+        uses: ./.github/actions/install-devbox
       - name: Install dependencies
         run: devbox run ci:install
       - name: Validate PR title
