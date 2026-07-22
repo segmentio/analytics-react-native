@@ -22,7 +22,7 @@ env:
 jobs:
   ci:
     name: Lint + Build + Test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-large
     permissions:
       contents: read
       id-token: write
@@ -51,7 +51,7 @@ jobs:
     name: Release (dry-run)
     if: inputs.type == 'dry-run'
     needs: [ci]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-large
     permissions:
       contents: write
       issues: write
@@ -83,7 +83,7 @@ jobs:
     name: Release (beta)
     if: inputs.type == 'beta'
     needs: [ci]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-large
     environment: Publish-Beta
     permissions:
       contents: write
@@ -118,7 +118,7 @@ jobs:
     name: Release (production)
     if: inputs.type == 'production'
     needs: [ci]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-large
     environment: Publish
     permissions:
       contents: write

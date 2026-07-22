@@ -16,7 +16,7 @@ env:
 jobs:
   ci:
     name: Lint + Build + Test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-large
     permissions:
       contents: read
       id-token: write
@@ -44,7 +44,7 @@ jobs:
   commitlint:
     name: Commitlint
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-large
     permissions:
       contents: read
       id-token: write
