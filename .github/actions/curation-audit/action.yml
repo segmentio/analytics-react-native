@@ -19,14 +19,16 @@ runs:
         WORKDIR=$(mktemp -d)
         echo "AUDIT_WORKDIR=$WORKDIR" >> "$GITHUB_ENV"
 
-        # yarn logs each curation 403 as three lines:
+        # yarn logs each curation 403 as three lines, and prints the same
+        # failure twice: once in the resolution tree (with a │/└ prefix) and
+        # once more in the final summary (no prefix) - the prefix is
+        # optional here so both forms normalize to the same name@version
+        # and collapse into one entry via sort -u below.
         #   ➤ YN0035: │ <name>@npm:<version>: The remote server failed to provide...
         #   ➤ YN0035: │   Response Code: 403 (Forbidden)
-        # Strip ANSI color codes first, pull name@npm:version off the first line,
-        # then normalize to name@version for the audit script below.
         sed -E 's/\x1b\[[0-9;]*m//g' "$INSTALL_LOG" \
           | grep "npm:.*: The remote server failed" \
-          | sed -E 's/.*YN0035: [│└] //' \
+          | sed -E 's/.*YN0035: ([│└] )?//' \
           | sed -E 's/(@npm:[^:]+): The remote.*/\1/' \
           | sed -E 's/@npm:/@/' \
           | sort -u > "$WORKDIR/packages.txt" || true
