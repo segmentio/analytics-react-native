@@ -30,22 +30,22 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Artifactory OIDC Auth
         uses: ./.github/actions/artifactory-oidc
-      - name: Install devbox
-        uses: jetify-com/devbox-install-action@a0d2d53632934ae004f878c840055956d9f741b0 # v0.14.0
-      - name: Route Nix/devbox packages through Artifactory
-        uses: ./.github/actions/devbox-artifactory-cache
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+      - run: corepack enable
       - name: Install dependencies
-        run: devbox run ci:install
+        run: yarn install --immutable
       - name: Lint (eslint)
-        run: devbox run lint
+        run: yarn lint
       - name: Lint (formatting)
-        run: devbox run format-check
+        run: yarn format:check
       - name: Build
-        run: devbox run build
+        run: yarn build
       - name: Typecheck
-        run: devbox run typecheck
+        run: yarn typecheck
       - name: Test
-        run: devbox run test
+        run: yarn test
 
   release-dryrun:
     name: Release (dry-run)
@@ -66,13 +66,16 @@ jobs:
       - name: Artifactory OIDC Auth
         uses: ./.github/actions/artifactory-oidc
 
-      - name: Install devbox
-        uses: jetify-com/devbox-install-action@a0d2d53632934ae004f878c840055956d9f741b0 # v0.14.0
-      - name: Route Nix/devbox packages through Artifactory
-        uses: ./.github/actions/devbox-artifactory-cache
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+      - run: corepack enable
 
       - name: Release (dry-run)
-        run: devbox run release-dry-run
+        run: |
+          yarn install --immutable
+          yarn build
+          yarn multi-semantic-release --dry-run
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -96,17 +99,19 @@ jobs:
       - name: Artifactory OIDC Auth
         uses: ./.github/actions/artifactory-oidc
 
-      - name: Install devbox
-        uses: jetify-com/devbox-install-action@a0d2d53632934ae004f878c840055956d9f741b0 # v0.14.0
-      - name: Route Nix/devbox packages through Artifactory
-        uses: ./.github/actions/devbox-artifactory-cache
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+      - run: corepack enable
 
       - name: Release (beta)
         run: |
-          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
-          devbox run -e GITHUB_REF=refs/heads/$BRANCH_NAME release
+          yarn install --immutable
+          yarn build
+          yarn release
         env:
           GH_TOKEN: ${{ github.token }}
+          GITHUB_REF: refs/heads/${{ github.ref_name }}
           NPM_CONFIG_IGNORE_SCRIPTS: 'true'
 
   release-production:
@@ -129,16 +134,21 @@ jobs:
       - name: Artifactory OIDC Auth
         uses: ./.github/actions/artifactory-oidc
 
-      - name: Install devbox
-        uses: jetify-com/devbox-install-action@a0d2d53632934ae004f878c840055956d9f741b0 # v0.14.0
-      - name: Route Nix/devbox packages through Artifactory
-        uses: ./.github/actions/devbox-artifactory-cache
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+      - run: corepack enable
 
       - name: Release (production)
-        run: devbox run release
+        run: |
+          yarn install --immutable
+          yarn build
+          yarn release
         env:
           GH_TOKEN: ${{ github.token }}
           NPM_CONFIG_IGNORE_SCRIPTS: 'true'
 
       - name: Update Apps
-        run: devbox run update-apps
+        run: |
+          yarn install --no-immutable
+          yarn --cwd examples/AnalyticsReactNativeExample install --no-immutable
