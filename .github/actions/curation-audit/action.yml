@@ -1,20 +1,20 @@
 name: 'Curation Audit'
-description: 'Pre-flight JFrog curation audit of every package resolved in yarn.lock, so a blocked package fails fast with a clear policy reason instead of a multi-minute yarn install hang'
+description: 'Pre-flight JFrog curation audit of every package resolved in yarn.lock, checked one at a time so a hard-blocked package cannot hide the rest, so a blocked package fails fast with a clear policy reason instead of a multi-minute yarn install hang'
 
 runs:
   using: 'composite'
   steps:
-    - name: Extract resolved npm packages from yarn.lock
+    - name: Prepare audit inputs
       shell: bash
       run: |
         set -euo pipefail
         WORKDIR=$(mktemp -d)
         echo "AUDIT_WORKDIR=$WORKDIR" >> "$GITHUB_ENV"
 
-        python3 - yarn.lock "$WORKDIR" <<'PYEOF'
-        import sys, json, os
+        python3 - yarn.lock "$WORKDIR/packages.txt" <<'PYEOF'
+        import sys
 
-        lockfile, workdir = sys.argv[1], sys.argv[2]
+        lockfile, outfile = sys.argv[1], sys.argv[2]
         deps = {}
         with open(lockfile, encoding="utf-8") as f:
             for line in f:
@@ -25,22 +25,46 @@ runs:
                         name, version = val.rsplit("@npm:", 1)
                         deps[name] = version
 
-        pkg = {
-            "name": "curation-audit-synthetic",
-            "version": "1.0.0",
-            "private": True,
-            "dependencies": deps,
-        }
-        with open(os.path.join(workdir, "package.json"), "w") as f:
-            json.dump(pkg, f, indent=2)
-        print(f"Extracted {len(deps)} resolved npm package(s) from yarn.lock")
+        with open(outfile, "w") as f:
+            for name, version in sorted(deps.items()):
+                f.write(f"{name}@{version}\n")
+        print(f"Found {len(deps)} resolved npm package(s) in yarn.lock")
         PYEOF
 
         host=$(echo "${ARTIFACTORY_URL}" | sed -E 's#https?://##')
-        cat > "$WORKDIR/.npmrc" <<EOF
+        cat > "$WORKDIR/base.npmrc" <<EOF
         registry=${ARTIFACTORY_URL}/artifactory/api/npm/virtual-npm-thirdparty/
         //${host}/artifactory/api/npm/virtual-npm-thirdparty/:_authToken=${YARN_NPM_AUTH_TOKEN}
         EOF
+
+        cat > "$WORKDIR/check_one.sh" <<'SCRIPT'
+        #!/usr/bin/env bash
+        set -uo pipefail
+
+        pkg="$1"
+        name="${pkg%@*}"
+        version="${pkg##*@}"
+
+        tmpdir=$(mktemp -d)
+        cp "${AUDIT_WORKDIR}/base.npmrc" "$tmpdir/.npmrc"
+        python3 -c '
+        import json, sys
+        name, version, out = sys.argv[1], sys.argv[2], sys.argv[3]
+        json.dump({"name": "curation-audit-synthetic", "version": "1.0.0", "private": True, "dependencies": {name: version}}, open(out, "w"))
+        ' "$name" "$version" "$tmpdir/package.json"
+
+        out=$(cd "$tmpdir" && jf ca --run-native --legacy-peer-deps --format=table 2>&1)
+        exit_status=$?
+        rm -rf "$tmpdir"
+
+        if [ $exit_status -ne 0 ]; then
+          echo "::group::BLOCKED: $pkg"
+          echo "$out"
+          echo "::endgroup::"
+        fi
+        exit $exit_status
+        SCRIPT
+        chmod +x "$WORKDIR/check_one.sh"
 
     - name: Install jf CLI
       shell: bash
@@ -58,10 +82,19 @@ runs:
           --overwrite
         jf c use curation-audit-server
 
-    - name: Run curation audit
+    - name: Curation audit every resolved package (parallel, isolated per package)
       shell: bash
-      working-directory: ${{ env.AUDIT_WORKDIR }}
       run: |
-        echo "::group::Pre-flight curation audit of every package resolved in yarn.lock"
-        jf ca --run-native --legacy-peer-deps --format=table
-        echo "::endgroup::"
+        set -uo pipefail
+        total=$(wc -l < "${AUDIT_WORKDIR}/packages.txt" | tr -d ' ')
+        echo "Auditing $total resolved package(s), 16 at a time..."
+
+        xargs -P 16 -n 1 "${AUDIT_WORKDIR}/check_one.sh" < "${AUDIT_WORKDIR}/packages.txt"
+        exit_status=$?
+
+        if [ $exit_status -eq 0 ]; then
+          echo "No curation blocks found across $total resolved package(s)."
+        else
+          echo "::error::Curation blocked one or more packages - see the BLOCKED groups above for the policy reason on each."
+          exit 1
+        fi
