@@ -29,7 +29,9 @@ jobs:
           node-version: 22
       - run: corepack enable
       - name: Install dependencies
-        run: yarn install --immutable 2>&1 | tee /tmp/yarn-install.log
+        run: |
+          set -o pipefail
+          yarn install --immutable 2>&1 | tee /tmp/yarn-install.log
       - name: Curation Audit (on install failure)
         if: failure()
         uses: ./.github/actions/curation-audit
@@ -62,7 +64,9 @@ jobs:
           node-version: 22
       - run: corepack enable
       - name: Install dependencies
-        run: yarn install --immutable 2>&1 | tee /tmp/yarn-install.log
+        run: |
+          set -o pipefail
+          yarn install --immutable 2>&1 | tee /tmp/yarn-install.log
       - name: Curation Audit (on install failure)
         if: failure()
         uses: ./.github/actions/curation-audit
