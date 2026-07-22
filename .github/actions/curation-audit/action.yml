@@ -63,5 +63,5 @@ runs:
       working-directory: ${{ env.AUDIT_WORKDIR }}
       run: |
         echo "::group::Pre-flight curation audit of every package resolved in yarn.lock"
-        jf ca --run-native --format=table
+        jf ca --run-native --legacy-peer-deps --format=table
         echo "::endgroup::"
