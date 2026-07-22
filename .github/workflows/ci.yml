@@ -28,10 +28,15 @@ jobs:
         with:
           node-version: 22
       - run: corepack enable
-      - name: Curation Audit (pre-flight)
-        uses: ./.github/actions/curation-audit
       - name: Install dependencies
-        run: yarn install --immutable
+        run: |
+          set -o pipefail
+          yarn install --immutable 2>&1 | tee /tmp/yarn-install.log
+      - name: Curation Audit (on install failure)
+        if: failure()
+        uses: ./.github/actions/curation-audit
+        with:
+          install-log: /tmp/yarn-install.log
       - name: Lint (eslint)
         run: yarn lint
       - name: Lint (formatting)
@@ -58,10 +63,15 @@ jobs:
         with:
           node-version: 22
       - run: corepack enable
-      - name: Curation Audit (pre-flight)
-        uses: ./.github/actions/curation-audit
       - name: Install dependencies
-        run: yarn install --immutable
+        run: |
+          set -o pipefail
+          yarn install --immutable 2>&1 | tee /tmp/yarn-install.log
+      - name: Curation Audit (on install failure)
+        if: failure()
+        uses: ./.github/actions/curation-audit
+        with:
+          install-log: /tmp/yarn-install.log
       - name: Validate PR title
         run: echo "$PR_TITLE" | yarn commitlint
         env:

@@ -1,35 +1,40 @@
 name: 'Curation Audit'
-description: 'Pre-flight JFrog curation audit of every package resolved in yarn.lock, checked one at a time so a hard-blocked package cannot hide the rest, so a blocked package fails fast with a clear policy reason instead of a multi-minute yarn install hang'
+description: 'On install failure, run a JFrog curation audit against just the packages yarn actually 403d, for a clear policy reason instead of a raw 403'
+
+inputs:
+  install-log:
+    description: 'Path to the captured yarn install output'
+    required: true
 
 runs:
   using: 'composite'
   steps:
-    - name: Prepare audit inputs
+    - name: Extract 403d packages from the install log
       shell: bash
+      id: extract
+      env:
+        INSTALL_LOG: ${{ inputs.install-log }}
       run: |
         set -euo pipefail
         WORKDIR=$(mktemp -d)
         echo "AUDIT_WORKDIR=$WORKDIR" >> "$GITHUB_ENV"
 
-        python3 - yarn.lock "$WORKDIR/packages.txt" <<'PYEOF'
-        import sys
+        # yarn logs each curation 403 as three lines:
+        #   ➤ YN0035: │ <name>@npm:<version>: The remote server failed to provide...
+        #   ➤ YN0035: │   Response Code: 403 (Forbidden)
+        # Strip ANSI color codes first, pull name@npm:version off the first line,
+        # then normalize to name@version for the audit script below.
+        sed -E 's/\x1b\[[0-9;]*m//g' "$INSTALL_LOG" \
+          | grep "npm:.*: The remote server failed" \
+          | sed -E 's/.*YN0035: [│└] //' \
+          | sed -E 's/(@npm:[^:]+): The remote.*/\1/' \
+          | sed -E 's/@npm:/@/' \
+          | sort -u > "$WORKDIR/packages.txt" || true
 
-        lockfile, outfile = sys.argv[1], sys.argv[2]
-        deps = {}
-        with open(lockfile, encoding="utf-8") as f:
-            for line in f:
-                line = line.rstrip("\n")
-                if line.startswith("  resolution:"):
-                    val = line.split(":", 1)[1].strip().strip('"')
-                    if "@npm:" in val:
-                        name, version = val.rsplit("@npm:", 1)
-                        deps[name] = version
-
-        with open(outfile, "w") as f:
-            for name, version in sorted(deps.items()):
-                f.write(f"{name}@{version}\n")
-        print(f"Found {len(deps)} resolved npm package(s) in yarn.lock")
-        PYEOF
+        count=$(wc -l < "$WORKDIR/packages.txt" | tr -d ' ')
+        echo "count=$count" >> "$GITHUB_OUTPUT"
+        echo "Found $count curation-blocked package(s):"
+        cat "$WORKDIR/packages.txt"
 
         host=$(echo "${ARTIFACTORY_URL}" | sed -E 's#https?://##')
         cat > "$WORKDIR/base.npmrc" <<EOF
@@ -57,22 +62,33 @@ runs:
         exit_status=$?
         rm -rf "$tmpdir"
 
-        if [ $exit_status -ne 0 ]; then
+        # jf's own exit code doesn't distinguish a real curation block from noise
+        # (e.g. npm ls ELSPROBLEMS when a package's own peer deps aren't declared
+        # in this single-package synthetic project) - only treat it as a real
+        # block when the output actually says so.
+        if echo "$out" | grep -qE "download blocking policy|Found [1-9][0-9]* blocked packages?"; then
           echo "::group::BLOCKED: $pkg"
           echo "$out"
           echo "::endgroup::"
+          exit 1
+        elif [ $exit_status -ne 0 ]; then
+          echo "::group::Audit inconclusive for $pkg (non-curation resolution error, ignoring)"
+          echo "$out"
+          echo "::endgroup::"
         fi
-        exit $exit_status
+        exit 0
         SCRIPT
         chmod +x "$WORKDIR/check_one.sh"
 
     - name: Install jf CLI
+      if: steps.extract.outputs.count != '0'
       shell: bash
       run: |
         curl -fkL https://getcli.jfrog.io/v2-jf | sh
         sudo mv jf /usr/local/bin/jf
 
     - name: Configure jf against the SDK build lane
+      if: steps.extract.outputs.count != '0'
       shell: bash
       run: |
         jf c add curation-audit-server \
@@ -82,19 +98,14 @@ runs:
           --overwrite
         jf c use curation-audit-server
 
-    - name: Curation audit every resolved package (parallel, isolated per package)
+    - name: Curation audit each blocked package
+      if: steps.extract.outputs.count != '0'
       shell: bash
       run: |
         set -uo pipefail
-        total=$(wc -l < "${AUDIT_WORKDIR}/packages.txt" | tr -d ' ')
-        echo "Auditing $total resolved package(s), 16 at a time..."
-
-        xargs -P 16 -n 1 "${AUDIT_WORKDIR}/check_one.sh" < "${AUDIT_WORKDIR}/packages.txt"
+        xargs -P 8 -n 1 "${AUDIT_WORKDIR}/check_one.sh" < "${AUDIT_WORKDIR}/packages.txt"
         exit_status=$?
-
-        if [ $exit_status -eq 0 ]; then
-          echo "No curation blocks found across $total resolved package(s)."
-        else
+        if [ $exit_status -ne 0 ]; then
           echo "::error::Curation blocked one or more packages - see the BLOCKED groups above for the policy reason on each."
           exit 1
         fi
