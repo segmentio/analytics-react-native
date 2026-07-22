@@ -35,7 +35,12 @@ jobs:
           node-version: 22
       - run: corepack enable
       - name: Install dependencies
-        run: yarn install --immutable
+        run: yarn install --immutable 2>&1 | tee /tmp/yarn-install.log
+      - name: Curation Audit (on install failure)
+        if: failure()
+        uses: ./.github/actions/curation-audit
+        with:
+          install-log: /tmp/yarn-install.log
       - name: Lint (eslint)
         run: yarn lint
       - name: Lint (formatting)
@@ -71,9 +76,16 @@ jobs:
           node-version: 22
       - run: corepack enable
 
+      - name: Install dependencies
+        run: yarn install --immutable 2>&1 | tee /tmp/yarn-install.log
+      - name: Curation Audit (on install failure)
+        if: failure()
+        uses: ./.github/actions/curation-audit
+        with:
+          install-log: /tmp/yarn-install.log
+
       - name: Release (dry-run)
         run: |
-          yarn install --immutable
           yarn build
           yarn multi-semantic-release --dry-run
         env:
@@ -104,9 +116,16 @@ jobs:
           node-version: 22
       - run: corepack enable
 
+      - name: Install dependencies
+        run: yarn install --immutable 2>&1 | tee /tmp/yarn-install.log
+      - name: Curation Audit (on install failure)
+        if: failure()
+        uses: ./.github/actions/curation-audit
+        with:
+          install-log: /tmp/yarn-install.log
+
       - name: Release (beta)
         run: |
-          yarn install --immutable
           yarn build
           yarn release
         env:
@@ -139,9 +158,16 @@ jobs:
           node-version: 22
       - run: corepack enable
 
+      - name: Install dependencies
+        run: yarn install --immutable 2>&1 | tee /tmp/yarn-install.log
+      - name: Curation Audit (on install failure)
+        if: failure()
+        uses: ./.github/actions/curation-audit
+        with:
+          install-log: /tmp/yarn-install.log
+
       - name: Release (production)
         run: |
-          yarn install --immutable
           yarn build
           yarn release
         env:

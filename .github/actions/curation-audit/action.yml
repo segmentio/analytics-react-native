@@ -1,0 +1,95 @@
+name: 'Curation Audit'
+description: 'On install failure, run a JFrog curation audit against just the packages yarn actually 403d, for a clear policy reason instead of a raw 403'
+
+inputs:
+  install-log:
+    description: 'Path to the captured yarn install output'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Extract 403d packages from the install log
+      shell: bash
+      id: extract
+      run: |
+        set -euo pipefail
+
+        # yarn logs each curation 403 as three lines:
+        #   ➤ YN0035: │ <name>@npm:<version>: The remote server failed to provide...
+        #   ➤ YN0035: │   Response Code: 403 (Forbidden)
+        # Strip ANSI color codes first, then pull name@version off the first line.
+        sed -E 's/\x1b\[[0-9;]*m//g' "${{ inputs.install-log }}" \
+          | grep "npm:.*: The remote server failed" \
+          | sed -E 's/.*YN0035: [│└] //' \
+          | sed -E 's/(@npm:[^:]+): The remote.*/\1/' \
+          | sort -u > /tmp/curation-blocked-packages.txt || true
+
+        count=$(wc -l < /tmp/curation-blocked-packages.txt | tr -d ' ')
+        echo "count=$count" >> "$GITHUB_OUTPUT"
+        echo "Found $count curation-blocked package(s):"
+        cat /tmp/curation-blocked-packages.txt
+
+    - name: Install jf CLI
+      if: steps.extract.outputs.count != '0'
+      shell: bash
+      run: |
+        curl -fkL https://getcli.jfrog.io/v2-jf | sh
+        sudo mv jf /usr/local/bin/jf
+
+    - name: Configure jf against the SDK build lane
+      if: steps.extract.outputs.count != '0'
+      shell: bash
+      run: |
+        jf c add curation-audit-server \
+          --url="${ARTIFACTORY_URL}" \
+          --access-token="${YARN_NPM_AUTH_TOKEN}" \
+          --interactive=false \
+          --overwrite
+        jf c use curation-audit-server
+
+    - name: Build a synthetic npm project for just the blocked packages
+      if: steps.extract.outputs.count != '0'
+      shell: bash
+      run: |
+        set -euo pipefail
+        WORKDIR=$(mktemp -d)
+        echo "AUDIT_WORKDIR=$WORKDIR" >> "$GITHUB_ENV"
+
+        python3 - /tmp/curation-blocked-packages.txt "$WORKDIR" <<'PYEOF'
+        import sys, json, os
+
+        list_file, workdir = sys.argv[1], sys.argv[2]
+        deps = {}
+        with open(list_file) as f:
+            for line in f:
+                line = line.strip()
+                if not line or "@npm:" not in line:
+                    continue
+                name, version = line.rsplit("@npm:", 1)
+                deps[name] = version
+
+        pkg = {
+            "name": "curation-audit-synthetic",
+            "version": "1.0.0",
+            "private": True,
+            "dependencies": deps,
+        }
+        with open(os.path.join(workdir, "package.json"), "w") as f:
+            json.dump(pkg, f, indent=2)
+        PYEOF
+
+        host=$(echo "${ARTIFACTORY_URL}" | sed -E 's#https?://##')
+        cat > "$WORKDIR/.npmrc" <<EOF
+        registry=${ARTIFACTORY_URL}/artifactory/api/npm/virtual-npm-thirdparty/
+        //${host}/artifactory/api/npm/virtual-npm-thirdparty/:_authToken=${YARN_NPM_AUTH_TOKEN}
+        EOF
+
+    - name: Run curation audit
+      if: steps.extract.outputs.count != '0'
+      shell: bash
+      working-directory: ${{ env.AUDIT_WORKDIR }}
+      run: |
+        echo "::group::Curation audit for the packages that actually failed"
+        jf ca --run-native --format=table || true
+        echo "::endgroup::"
