@@ -8,11 +8,10 @@
 
 name: E2E Tests
 
+# Push/pull_request triggers disabled for now - runs have been stuck queued
+# (not a code/action problem here specifically, unlike ci.yml's devbox
+# startup_failure). Re-enable once confirmed healthy.
 on:
-  push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
   workflow_dispatch:
     inputs:
       e2e_tests_ref:

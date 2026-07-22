@@ -10,42 +10,55 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  ARTIFACTORY_URL: ${{ vars.ARTIFACTORY_URL }}
+
 jobs:
   ci:
     name: Lint + Build + Test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - name: Install devbox
-        uses: jetify-com/devbox-install-action@a0d2d53632934ae004f878c840055956d9f741b0 # v0.14.0
-      - name: Route Nix/devbox packages through Artifactory
-        uses: ./.github/actions/devbox-artifactory-cache
+      - name: Artifactory OIDC Auth
+        uses: ./.github/actions/artifactory-oidc
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+      - run: corepack enable
       - name: Install dependencies
-        run: devbox run ci:install
+        run: yarn install --immutable
       - name: Lint (eslint)
-        run: devbox run lint
+        run: yarn lint
       - name: Lint (formatting)
-        run: devbox run format-check
+        run: yarn format:check
       - name: Build
-        run: devbox run build
+        run: yarn build
       - name: Typecheck
-        run: devbox run typecheck
+        run: yarn typecheck
       - name: Test
-        run: devbox run test
+        run: yarn test
 
   commitlint:
     name: Commitlint
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - name: Install devbox
-        uses: jetify-com/devbox-install-action@a0d2d53632934ae004f878c840055956d9f741b0 # v0.14.0
-      - name: Route Nix/devbox packages through Artifactory
-        uses: ./.github/actions/devbox-artifactory-cache
+      - name: Artifactory OIDC Auth
+        uses: ./.github/actions/artifactory-oidc
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+      - run: corepack enable
       - name: Install dependencies
-        run: devbox run ci:install
+        run: yarn install --immutable
       - name: Validate PR title
-        run: devbox run ci:commitlint
+        run: echo "$PR_TITLE" | yarn commitlint
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
