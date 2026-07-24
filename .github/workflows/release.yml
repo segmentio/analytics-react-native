@@ -22,7 +22,7 @@ env:
 jobs:
   ci:
     name: Lint + Build + Test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-large
     permissions:
       contents: read
       id-token: write
@@ -35,9 +35,21 @@ jobs:
           node-version: 22
       - run: corepack enable
       - name: Install dependencies
-        run: yarn install --immutable
+        run: |
+          set -o pipefail
+          yarn install --immutable 2>&1 | tee /tmp/yarn-install.log
+      - name: Curation Audit (on install failure)
+        if: failure()
+        uses: ./.github/actions/curation-audit
+        with:
+          install-log: /tmp/yarn-install.log
       - name: Lint (eslint)
         run: yarn lint
+      - name: Install treefmt + shfmt
+        run: |
+          curl -fsSL https://github.com/numtide/treefmt/releases/download/v2.5.0/treefmt_2.5.0_linux_amd64.tar.gz | sudo tar -xz -C /usr/local/bin treefmt
+          sudo curl -fsSL -o /usr/local/bin/shfmt https://github.com/mvdan/sh/releases/download/v3.13.1/shfmt_v3.13.1_linux_amd64
+          sudo chmod +x /usr/local/bin/shfmt
       - name: Lint (formatting)
         run: yarn format:check
       - name: Build
@@ -51,7 +63,7 @@ jobs:
     name: Release (dry-run)
     if: inputs.type == 'dry-run'
     needs: [ci]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-large
     permissions:
       contents: write
       issues: write
@@ -71,9 +83,18 @@ jobs:
           node-version: 22
       - run: corepack enable
 
+      - name: Install dependencies
+        run: |
+          set -o pipefail
+          yarn install --immutable 2>&1 | tee /tmp/yarn-install.log
+      - name: Curation Audit (on install failure)
+        if: failure()
+        uses: ./.github/actions/curation-audit
+        with:
+          install-log: /tmp/yarn-install.log
+
       - name: Release (dry-run)
         run: |
-          yarn install --immutable
           yarn build
           yarn multi-semantic-release --dry-run
         env:
@@ -83,7 +104,7 @@ jobs:
     name: Release (beta)
     if: inputs.type == 'beta'
     needs: [ci]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-large
     environment: Publish-Beta
     permissions:
       contents: write
@@ -104,9 +125,18 @@ jobs:
           node-version: 22
       - run: corepack enable
 
+      - name: Install dependencies
+        run: |
+          set -o pipefail
+          yarn install --immutable 2>&1 | tee /tmp/yarn-install.log
+      - name: Curation Audit (on install failure)
+        if: failure()
+        uses: ./.github/actions/curation-audit
+        with:
+          install-log: /tmp/yarn-install.log
+
       - name: Release (beta)
         run: |
-          yarn install --immutable
           yarn build
           yarn release
         env:
@@ -118,7 +148,7 @@ jobs:
     name: Release (production)
     if: inputs.type == 'production'
     needs: [ci]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-large
     environment: Publish
     permissions:
       contents: write
@@ -139,9 +169,18 @@ jobs:
           node-version: 22
       - run: corepack enable
 
+      - name: Install dependencies
+        run: |
+          set -o pipefail
+          yarn install --immutable 2>&1 | tee /tmp/yarn-install.log
+      - name: Curation Audit (on install failure)
+        if: failure()
+        uses: ./.github/actions/curation-audit
+        with:
+          install-log: /tmp/yarn-install.log
+
       - name: Release (production)
         run: |
-          yarn install --immutable
           yarn build
           yarn release
         env:

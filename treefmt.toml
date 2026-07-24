@@ -1,11 +1,11 @@
-[formatter.nix]
-command = "nixfmt"
-includes = ["*.nix"]
-
 [formatter.prettier]
 command = "prettier"
 options = ["--write"]
 includes = ["*.js", "*.jsx", "*.ts", "*.tsx", "*.md", "*.yml", "*.yaml", "*.json"]
+# .yarnrc.yml gets an auth block appended at CI runtime (Artifactory OIDC Auth
+# step, before this check runs) - that injected content isn't prettier-
+# formatted and shouldn't be, so don't flag it as a real formatting diff.
+excludes = [".yarnrc.yml"]
 
 [formatter.shfmt]
 command = "shfmt"
