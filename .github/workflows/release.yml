@@ -45,6 +45,11 @@ jobs:
           install-log: /tmp/yarn-install.log
       - name: Lint (eslint)
         run: yarn lint
+      - name: Install treefmt + shfmt
+        run: |
+          curl -fsSL https://github.com/numtide/treefmt/releases/download/v2.5.0/treefmt_2.5.0_linux_amd64.tar.gz | sudo tar -xz -C /usr/local/bin treefmt
+          sudo curl -fsSL -o /usr/local/bin/shfmt https://github.com/mvdan/sh/releases/download/v3.13.1/shfmt_v3.13.1_linux_amd64
+          sudo chmod +x /usr/local/bin/shfmt
       - name: Lint (formatting)
         run: yarn format:check
       - name: Build
