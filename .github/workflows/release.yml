@@ -186,8 +186,3 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           NPM_CONFIG_IGNORE_SCRIPTS: 'true'
-
-      - name: Update Apps
-        run: |
-          yarn install --no-immutable
-          yarn --cwd examples/AnalyticsReactNativeExample install --no-immutable
