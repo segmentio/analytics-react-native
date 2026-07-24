@@ -4,20 +4,36 @@ description: 'Install nix (via apt) and a patched devbox, resolving everything t
 runs:
   using: 'composite'
   steps:
-    - name: Diagnose which auth scheme the new repos actually accept
+    - name: Diagnose the new repos' auth scheme and URL layout
       shell: bash
       run: |
         set -uo pipefail
-        url="${ARTIFACTORY_URL}/artifactory/virtual-debian-thirdparty/dists/noble/InRelease"
+        AUTH=(-H "Authorization: Bearer ${YARN_NPM_AUTH_TOKEN}")
 
-        echo "--- Basic auth (any username, token as password) ---"
-        curl -sS -o /dev/null -w "HTTP %{http_code}\n" -u "artifactory-build-token:${YARN_NPM_AUTH_TOKEN}" "$url" || true
+        check() {
+          local desc="$1" url="$2"
+          shift 2
+          local code
+          code=$(curl -sS -o /tmp/probe-body -w "%{http_code}" "$@" "$url")
+          echo "$desc -> HTTP $code ($url)"
+          if [ "$code" != "401" ] && [ "$code" != "404" ]; then
+            head -c 300 /tmp/probe-body; echo
+          fi
+        }
 
-        echo "--- Bearer token header ---"
-        curl -sS -o /dev/null -w "HTTP %{http_code}\n" -H "Authorization: Bearer ${YARN_NPM_AUTH_TOKEN}" "$url" || true
+        check "debian, bearer, dists/noble/InRelease"        "${ARTIFACTORY_URL}/artifactory/virtual-debian-thirdparty/dists/noble/InRelease" "${AUTH[@]}"
+        check "debian, bearer, dists/jammy/InRelease"        "${ARTIFACTORY_URL}/artifactory/virtual-debian-thirdparty/dists/jammy/InRelease" "${AUTH[@]}"
+        check "debian, bearer, api/deb prefix, jammy"        "${ARTIFACTORY_URL}/artifactory/api/deb/virtual-debian-thirdparty/dists/jammy/InRelease" "${AUTH[@]}"
+        check "debian, bearer, repo root listing"            "${ARTIFACTORY_URL}/artifactory/virtual-debian-thirdparty/" "${AUTH[@]}"
+        check "debian, bearer, dists/ listing"                "${ARTIFACTORY_URL}/artifactory/virtual-debian-thirdparty/dists/" "${AUTH[@]}"
 
-        echo "--- No auth (confirm it's actually gated) ---"
-        curl -sS -o /dev/null -w "HTTP %{http_code}\n" "$url" || true
+        check "nix, bearer, nix-cache-info"                  "${ARTIFACTORY_URL}/artifactory/virtual-nix-thirdparty/nix-cache-info" "${AUTH[@]}"
+        check "nix, bearer, api/nix prefix, nix-cache-info"  "${ARTIFACTORY_URL}/artifactory/api/nix/virtual-nix-thirdparty/nix-cache-info" "${AUTH[@]}"
+        check "nix, bearer, repo root listing"               "${ARTIFACTORY_URL}/artifactory/virtual-nix-thirdparty/" "${AUTH[@]}"
+
+        echo "--- storage API listing (introspects actual repo contents) ---"
+        check "storage api, debian root"  "${ARTIFACTORY_URL}/artifactory/api/storage/virtual-debian-thirdparty" "${AUTH[@]}"
+        check "storage api, nix root"     "${ARTIFACTORY_URL}/artifactory/api/storage/virtual-nix-thirdparty" "${AUTH[@]}"
 
     - name: Point apt + nix at the Artifactory pull-through caches
       shell: bash
