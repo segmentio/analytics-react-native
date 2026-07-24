@@ -1,0 +1,95 @@
+name: 'Devbox Bootstrap (Artifactory-only)'
+description: 'Install nix (via apt) and a patched devbox, resolving everything through the SDK build lane Artifactory instance only - no nixos.org, no get.jetify.com, no direct archive.ubuntu.com'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Point apt + nix at the Artifactory pull-through caches
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        host=$(echo "${ARTIFACTORY_URL}" | sed -E 's#https?://##; s#/+$##')
+        codename=$(. /etc/os-release && echo "${VERSION_CODENAME}")
+        echo "Detected Ubuntu codename: ${codename}"
+
+        # Shared credentials for both apt and nix: any username works, the
+        # Artifactory access token is the password (standard JFrog convention).
+        sudo mkdir -p /etc/apt/auth.conf.d
+        printf 'machine %s\nlogin artifactory-build-token\npassword %s\n' \
+          "${host}" "${YARN_NPM_AUTH_TOKEN}" | sudo tee /etc/apt/auth.conf.d/twilio-artifactory.conf > /dev/null
+        sudo chmod 600 /etc/apt/auth.conf.d/twilio-artifactory.conf
+
+        sudo mkdir -p /etc/nix
+        printf 'machine %s\nlogin artifactory-build-token\npassword %s\n' \
+          "${host}" "${YARN_NPM_AUTH_TOKEN}" | sudo tee /etc/nix/netrc > /dev/null
+        sudo chmod 600 /etc/nix/netrc
+
+        # Debian/Ubuntu pull-through cache (remote-debian-thirdparty-filtered):
+        # mirrors archive.ubuntu.com's main archive only (no -security, a
+        # separate upstream host) - fine for the one-off nix-bin install below.
+        printf 'deb %s/artifactory/virtual-debian-thirdparty %s main universe\ndeb %s/artifactory/virtual-debian-thirdparty %s-updates main universe\n' \
+          "${ARTIFACTORY_URL}" "${codename}" "${ARTIFACTORY_URL}" "${codename}" \
+          | sudo tee /etc/apt/sources.list.d/twilio-artifactory.list > /dev/null
+        sudo rm -f /etc/apt/sources.list
+        sudo rm -f /etc/apt/sources.list.d/ubuntu.sources
+
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends nix-bin ca-certificates
+
+        # nix-bin's postinst creates /nix owned by root. We run nix DAEMONLESS
+        # and as the normal (non-root) runner user for every step after this
+        # one, so hand the store to that user now instead of prefixing every
+        # later nix/devbox/yarn invocation with sudo.
+        sudo chown -R "$(id -u):$(id -g)" /nix
+
+        # Nix global config: substituter is the nix pull-through cache
+        # (remote-nix-thirdparty, mirroring cache.nixos.org byte-for-byte, so
+        # the standard public key still verifies it). flake-registry empty:
+        # channels.nixos.org is not proxied - devbox.lock resolves straight to
+        # substitutable store paths without it. build-users-group empty +
+        # sandbox off: daemonless single-user nix has no nixbld group, and the
+        # one local build we do (patched devbox) can't use nix's sandbox
+        # without the namespaces/privileges a plain runner VM doesn't have.
+        printf '%s\n' \
+          'experimental-features = nix-command flakes' \
+          "substituters = ${ARTIFACTORY_URL}/artifactory/api/nix/virtual-nix-thirdparty" \
+          'trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=' \
+          'netrc-file = /etc/nix/netrc' \
+          'flake-registry = ' \
+          'build-users-group = ' \
+          'sandbox = false' \
+          | sudo tee /etc/nix/nix.conf > /dev/null
+
+        {
+          echo "NIX_REMOTE="
+          echo "DEVBOX_NIX_BINARY_CACHE=${ARTIFACTORY_URL}/artifactory/api/nix/virtual-nix-thirdparty"
+        } >> "$GITHUB_ENV"
+
+        echo "$HOME/.nix-profile/bin" >> "$GITHUB_PATH"
+        echo "/nix/var/nix/profiles/default/bin" >> "$GITHUB_PATH"
+
+    - name: Install a patched devbox (honors DEVBOX_NIX_BINARY_CACHE)
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        # devbox is a nixpkgs package; `nixpkgs#devbox` needs the flake registry
+        # (channels.nixos.org, not proxied) and `github:NixOS/nixpkgs/<rev>`
+        # fetches from github (not proxied) even though the resulting NAR is in
+        # Artifactory - so name the nixpkgs SOURCE by its STORE PATH directly
+        # (content-addressed by revision, substitutable from Artifactory).
+        # overrideAttrs applies the same patch ajs-renderer already proved
+        # (jetify-com/devbox#2891, rebased onto nixpkgs' devbox 0.17.2), making
+        # devbox read its binary cache from DEVBOX_NIX_BINARY_CACHE instead of
+        # the hardcoded https://cache.nixos.org - without it, `devbox run` does
+        # a fatal narinfo HEAD to cache.nixos.org on every invocation.
+        NIXPKGS_SRC=/nix/store/p9rjycrjhya7jbi9759vf7xql9cm8xqh-source
+        PATCH="$(cd "${{ github.action_path }}/../../devbox-overlay" && pwd)/configurable-nix-binary-cache.patch"
+
+        nix-store --realise "${NIXPKGS_SRC}"
+        nix --extra-experimental-features 'nix-command flakes' \
+          profile install --impure --expr \
+          "let p = import ${NIXPKGS_SRC} {}; in p.devbox.overrideAttrs (o: { patches = (o.patches or []) ++ [ ${PATCH} ]; })"
+
+        devbox version

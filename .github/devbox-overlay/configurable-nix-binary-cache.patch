@@ -1,0 +1,148 @@
+diff --git a/internal/devpkg/narinfo_cache.go b/internal/devpkg/narinfo_cache.go
+index e39fd2a..5c79300 100644
+--- a/internal/devpkg/narinfo_cache.go
++++ b/internal/devpkg/narinfo_cache.go
+@@ -15,15 +15,29 @@
+ 	"github.com/pkg/errors"
+ 	"go.jetify.com/devbox/internal/debug"
+ 	"go.jetify.com/devbox/internal/devbox/providers/nixcache"
++	"go.jetify.com/devbox/internal/envir"
+ 	"go.jetify.com/devbox/internal/goutil"
+ 	"go.jetify.com/devbox/internal/lock"
+ 	"go.jetify.com/devbox/internal/nix"
+ 	"golang.org/x/sync/errgroup"
+ )
+ 
+-// binaryCache is the store from which to fetch this package's binaries.
+-// It is used as FromStore in builtins.fetchClosure.
+-const binaryCache = "https://cache.nixos.org"
++// defaultBinaryCache is the public Nix binary cache that Devbox queries by
++// default for prebuilt package outputs.
++const defaultBinaryCache = "https://cache.nixos.org"
++
++// BinaryCache is the store from which to fetch a package's binaries. It is
++// used as the FromStore in builtins.fetchClosure and as the first cache
++// queried when checking whether a package's outputs are already built.
++//
++// It defaults to the public cache (https://cache.nixos.org) but can be
++// overridden with the DEVBOX_NIX_BINARY_CACHE environment variable. This is
++// useful in network-restricted environments where the public cache is
++// unreachable and an internal mirror/proxy serving the same store paths must
++// be used instead.
++func BinaryCache() string {
++	return envir.GetValueOrDefault(envir.DevboxNixBinaryCache, defaultBinaryCache)
++}
+ 
+ // useDefaultOutputs is a special value for the outputName parameter of
+ // fetchNarInfoStatusOnce, which indicates that the default outputs should be
+@@ -320,7 +334,7 @@ func(o *s3.Options) {
+ var nixCacheIsConfigured = goutil.OnceValueWithContext(nixcache.IsConfigured)
+ 
+ func readCaches(ctx context.Context) ([]string, error) {
+-	cacheURIs := []string{binaryCache}
++	cacheURIs := []string{BinaryCache()}
+ 	if !nixCacheIsConfigured.Do(ctx) {
+ 		return cacheURIs, nil
+ 	}
+diff --git a/internal/envir/env.go b/internal/envir/env.go
+index 5cf0c37..382ec20 100644
+--- a/internal/envir/env.go
++++ b/internal/envir/env.go
+@@ -6,6 +6,13 @@
+ const (
+ 	DevboxCache   = "DEVBOX_CACHE"
+ 	DevboxGateway = "DEVBOX_GATEWAY"
++	// DevboxNixBinaryCache overrides the default Nix binary cache that Devbox
++	// queries for prebuilt package outputs (https://cache.nixos.org). This is
++	// useful in network-restricted environments where the public cache is
++	// unreachable and an internal mirror/proxy must be used instead. The value
++	// should be a substituter URL serving the same store paths (e.g. an
++	// Artifactory/Nexus generic remote that mirrors cache.nixos.org).
++	DevboxNixBinaryCache = "DEVBOX_NIX_BINARY_CACHE"
+ 	// DevboxLatestVersion is the latest version available of the devbox CLI binary.
+ 	// NOTE: it should NOT start with v (like 0.4.8)
+ 	DevboxLatestVersion  = "DEVBOX_LATEST_VERSION"
+diff --git a/internal/shellgen/generate.go b/internal/shellgen/generate.go
+index 838152f..16c3052 100644
+--- a/internal/shellgen/generate.go
++++ b/internal/shellgen/generate.go
+@@ -17,6 +17,7 @@
+ 	"github.com/pkg/errors"
+ 	"go.jetify.com/devbox/internal/cuecfg"
+ 	"go.jetify.com/devbox/internal/debug"
++	"go.jetify.com/devbox/internal/devpkg"
+ 	"go.jetify.com/devbox/internal/redact"
+ )
+ 
+@@ -161,9 +162,41 @@ func toJSON(a any) string {
+ }
+ 
+ var templateFuncs = template.FuncMap{
+-	"json":     toJSON,
+-	"contains": strings.Contains,
+-	"debug":    debug.IsEnabled,
++	"json":              toJSON,
++	"contains":          strings.Contains,
++	"debug":             debug.IsEnabled,
++	"fetchClosureStore": fetchClosureStore,
++	"nixString":         nixString,
++}
++
++// fetchClosureStore returns the store URL to use as the fromStore of a
++// builtins.fetchClosure in the generated flake.
++//
++// fetchClosure only supports http(s) stores, so when a package's outputs were
++// found in an http(s) cache we use that cache directly (it's where the path
++// actually lives, which may be the public cache or a configured mirror via
++// DEVBOX_NIX_BINARY_CACHE). For s3 caches fetchClosure can't fetch directly, so
++// we fall back to the configured binary cache as a placeholder store — the path
++// is already built locally, so fetchClosure won't actually fetch from it.
++func fetchClosureStore(cacheURI string) string {
++	if strings.HasPrefix(cacheURI, "http://") || strings.HasPrefix(cacheURI, "https://") {
++		return cacheURI
++	}
++	return devpkg.BinaryCache()
++}
++
++// nixString renders s as a double-quoted Nix string literal, escaping the
++// characters that are special inside one: backslash, double quote, and the
++// "${" antiquotation (interpolation) start. This keeps values that originate
++// from configuration (e.g. a cache URL from DEVBOX_NIX_BINARY_CACHE) from
++// breaking flake evaluation or being interpreted as Nix interpolation.
++func nixString(s string) string {
++	r := strings.NewReplacer(
++		`\`, `\\`,
++		`"`, `\"`,
++		`${`, `\${`,
++	)
++	return `"` + r.Replace(s) + `"`
+ }
+ 
+ func makeFlakeFile(d devboxer, plan *flakePlan) error {
+diff --git a/internal/shellgen/tmpl/flake.nix.tmpl b/internal/shellgen/tmpl/flake.nix.tmpl
+index 3bd0513..cbe1321 100644
+--- a/internal/shellgen/tmpl/flake.nix.tmpl
++++ b/internal/shellgen/tmpl/flake.nix.tmpl
+@@ -42,13 +42,16 @@
+             {{ if $output.CacheURI -}}
+             (builtins.trace "downloading {{ $pkg.Versioned }}" (builtins.fetchClosure {
+               {{/*
+-                HACK HACK HACK! fetchClosure only supports http(s) caches and not
+-                s3 caches. Until we implement that, we put a fake store here.
+-                Since we pre-build everything, fetchClosure will not actually
+-                fetch anything and just use the local version. This may break
+-                if user somehow removes the local store path.
++                fetchClosure only supports http(s) caches and not s3 caches.
++                fetchClosureStore returns the http(s) cache the output was found
++                in (the public cache or a configured mirror via
++                DEVBOX_NIX_BINARY_CACHE), falling back to the default binary
++                cache for s3 caches. Since we pre-build everything, fetchClosure
++                will not actually fetch anything for an s3 cache and just use the
++                local version. This may break if the user somehow removes the
++                local store path.
+               */}}
+-              fromStore = "https://cache.nixos.org";
++              fromStore = {{ fetchClosureStore $output.CacheURI | nixString }};
+               fromPath = "{{ $pkg.InputAddressedPathForOutput $output.Name }}";
+               inputAddressed = true;
+             }))

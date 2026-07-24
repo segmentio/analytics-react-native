@@ -24,29 +24,27 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Artifactory OIDC Auth
         uses: ./.github/actions/artifactory-oidc
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: 22
-      - run: corepack enable
+      - name: Devbox Bootstrap (Artifactory-only)
+        uses: ./.github/actions/devbox-bootstrap
       - name: Install dependencies
         run: |
           set -o pipefail
-          yarn install --immutable 2>&1 | tee /tmp/yarn-install.log
+          devbox run --pure ci:install 2>&1 | tee /tmp/yarn-install.log
       - name: Curation Audit (on install failure)
         if: failure()
         uses: ./.github/actions/curation-audit
         with:
           install-log: /tmp/yarn-install.log
       - name: Lint (eslint)
-        run: yarn lint
+        run: devbox run --pure lint
       - name: Lint (formatting)
-        run: yarn format:check
+        run: devbox run --pure format-check
       - name: Build
-        run: yarn build
+        run: devbox run --pure build
       - name: Typecheck
-        run: yarn typecheck
+        run: devbox run --pure typecheck
       - name: Test
-        run: yarn test
+        run: devbox run --pure test
 
   commitlint:
     name: Commitlint
@@ -59,20 +57,18 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Artifactory OIDC Auth
         uses: ./.github/actions/artifactory-oidc
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: 22
-      - run: corepack enable
+      - name: Devbox Bootstrap (Artifactory-only)
+        uses: ./.github/actions/devbox-bootstrap
       - name: Install dependencies
         run: |
           set -o pipefail
-          yarn install --immutable 2>&1 | tee /tmp/yarn-install.log
+          devbox run --pure ci:install 2>&1 | tee /tmp/yarn-install.log
       - name: Curation Audit (on install failure)
         if: failure()
         uses: ./.github/actions/curation-audit
         with:
           install-log: /tmp/yarn-install.log
       - name: Validate PR title
-        run: echo "$PR_TITLE" | yarn commitlint
+        run: devbox run --pure ci:commitlint
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
