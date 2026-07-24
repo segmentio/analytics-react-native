@@ -1,7 +1,3 @@
-[formatter.nix]
-command = "nixfmt"
-includes = ["*.nix"]
-
 [formatter.prettier]
 command = "prettier"
 options = ["--write"]
