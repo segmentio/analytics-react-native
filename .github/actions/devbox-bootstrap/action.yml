@@ -21,19 +21,15 @@ runs:
           fi
         }
 
-        check "debian, bearer, dists/noble/InRelease"        "${ARTIFACTORY_URL}/artifactory/virtual-debian-thirdparty/dists/noble/InRelease" "${AUTH[@]}"
-        check "debian, bearer, dists/jammy/InRelease"        "${ARTIFACTORY_URL}/artifactory/virtual-debian-thirdparty/dists/jammy/InRelease" "${AUTH[@]}"
-        check "debian, bearer, api/deb prefix, jammy"        "${ARTIFACTORY_URL}/artifactory/api/deb/virtual-debian-thirdparty/dists/jammy/InRelease" "${AUTH[@]}"
-        check "debian, bearer, repo root listing"            "${ARTIFACTORY_URL}/artifactory/virtual-debian-thirdparty/" "${AUTH[@]}"
-        check "debian, bearer, dists/ listing"                "${ARTIFACTORY_URL}/artifactory/virtual-debian-thirdparty/dists/" "${AUTH[@]}"
+        check "debian, bearer, dists/jammy/InRelease (virtual)"  "${ARTIFACTORY_URL}/artifactory/virtual-debian-thirdparty/dists/jammy/InRelease" "${AUTH[@]}"
+        check "debian, bearer, dists/jammy/InRelease (remote)"   "${ARTIFACTORY_URL}/artifactory/remote-debian-thirdparty-filtered/dists/jammy/InRelease" "${AUTH[@]}"
+        check "debian, token-as-user basic, dists/jammy/InRelease (remote)" "${ARTIFACTORY_URL}/artifactory/remote-debian-thirdparty-filtered/dists/jammy/InRelease" -u "${YARN_NPM_AUTH_TOKEN}:"
 
         check "nix, bearer, nix-cache-info"                  "${ARTIFACTORY_URL}/artifactory/virtual-nix-thirdparty/nix-cache-info" "${AUTH[@]}"
-        check "nix, bearer, api/nix prefix, nix-cache-info"  "${ARTIFACTORY_URL}/artifactory/api/nix/virtual-nix-thirdparty/nix-cache-info" "${AUTH[@]}"
-        check "nix, bearer, repo root listing"               "${ARTIFACTORY_URL}/artifactory/virtual-nix-thirdparty/" "${AUTH[@]}"
+        check "nix, token-as-user basic, nix-cache-info"     "${ARTIFACTORY_URL}/artifactory/virtual-nix-thirdparty/nix-cache-info" -u "${YARN_NPM_AUTH_TOKEN}:"
 
         echo "--- storage API listing (introspects actual repo contents) ---"
-        check "storage api, debian root"  "${ARTIFACTORY_URL}/artifactory/api/storage/virtual-debian-thirdparty" "${AUTH[@]}"
-        check "storage api, nix root"     "${ARTIFACTORY_URL}/artifactory/api/storage/virtual-nix-thirdparty" "${AUTH[@]}"
+        check "storage api, debian remote"  "${ARTIFACTORY_URL}/artifactory/api/storage/remote-debian-thirdparty-filtered" "${AUTH[@]}"
 
     - name: Point apt + nix at the Artifactory pull-through caches
       shell: bash
