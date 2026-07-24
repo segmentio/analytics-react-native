@@ -4,6 +4,21 @@ description: 'Install nix (via apt) and a patched devbox, resolving everything t
 runs:
   using: 'composite'
   steps:
+    - name: Diagnose which auth scheme the new repos actually accept
+      shell: bash
+      run: |
+        set -uo pipefail
+        url="${ARTIFACTORY_URL}/artifactory/virtual-debian-thirdparty/dists/noble/InRelease"
+
+        echo "--- Basic auth (any username, token as password) ---"
+        curl -sS -o /dev/null -w "HTTP %{http_code}\n" -u "artifactory-build-token:${YARN_NPM_AUTH_TOKEN}" "$url" || true
+
+        echo "--- Bearer token header ---"
+        curl -sS -o /dev/null -w "HTTP %{http_code}\n" -H "Authorization: Bearer ${YARN_NPM_AUTH_TOKEN}" "$url" || true
+
+        echo "--- No auth (confirm it's actually gated) ---"
+        curl -sS -o /dev/null -w "HTTP %{http_code}\n" "$url" || true
+
     - name: Point apt + nix at the Artifactory pull-through caches
       shell: bash
       run: |
