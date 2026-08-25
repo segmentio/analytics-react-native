@@ -1,9 +1,16 @@
 name: Sync docs on merged PRs
 
-# Runs after every merged PR and asks Claude to check whether any
+# Runs after a PR merges into master and asks Claude to check whether any
 # documentation (root README, package READMEs, /docs) needs updating to
 # reflect the change, opening a follow-up PR only if it finds something to
 # update.
+#
+# Gated to keep run volume (and cost) down: only master-targeted merges
+# (branches: [master] below) that also carry an approving review
+# (reviewDecision == APPROVED, checked in the gate step) trigger a Claude run.
+# master requires 1 approval by branch protection, but enforce_admins is off,
+# so an admin can still merge without one - this gate closes that gap rather
+# than assuming protection alone guarantees a review happened.
 #
 # Uses pull_request_target (not pull_request) so the workflow runs with this
 # repo's own permissions even when the merged PR came from a fork - this repo
@@ -15,6 +22,7 @@ name: Sync docs on merged PRs
 on:
   pull_request_target:
     types: [closed]
+    branches: [master]
 
 permissions:
   contents: write
@@ -25,13 +33,29 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
+      - name: Require an approved review
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          decision=$(gh pr view "$PR_NUMBER" --repo "${{ github.repository }}" --json reviewDecision -q .reviewDecision)
+          echo "review decision for #$PR_NUMBER: ${decision:-<empty>}"
+          if [ "$decision" = "APPROVED" ]; then
+            echo "approved=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "approved=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Checkout base branch
+        if: steps.gate.outputs.approved == 'true'
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           ref: ${{ github.event.pull_request.base.ref }}
           fetch-depth: 0
 
       - name: Sync docs with Claude
+        if: steps.gate.outputs.approved == 'true'
         uses: anthropics/claude-code-action@16b3b310c3d7b5279df73130324d5205aeea8eac # v1
         with:
           prompt: |
