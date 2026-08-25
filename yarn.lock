@@ -4559,6 +4559,8 @@ __metadata:
   peerDependenciesMeta:
     "@react-native-async-storage/async-storage":
       optional: true
+    react-native-get-random-values:
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -4594,6 +4596,8 @@ __metadata:
     react-native-get-random-values: 1.x || 2.x
   peerDependenciesMeta:
     "@react-native-async-storage/async-storage":
+      optional: true
+    react-native-get-random-values:
       optional: true
   languageName: unknown
   linkType: soft
