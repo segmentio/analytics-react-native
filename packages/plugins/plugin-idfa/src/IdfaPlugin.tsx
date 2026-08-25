@@ -60,7 +60,7 @@ make additional tracking decisions based on the user response
   }
 
   getTrackingStatus() {
-    getTrackingAuthorizationStatus()
+    return getTrackingAuthorizationStatus()
       .then((idfa: IdfaData) => {
         // update our context with the idfa data
         void this.analytics?.context.set({ device: { ...idfa } });
