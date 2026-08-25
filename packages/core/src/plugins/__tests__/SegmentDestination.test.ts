@@ -556,6 +556,7 @@ describe('SegmentDestination', () => {
           ...clientArgs.config,
           useSegmentEndpoints: true,
           proxy: proxy,
+          allowInsecureProxy: true,
         };
         plugin.analytics = new SegmentClient({
           ...clientArgs,
@@ -578,6 +579,7 @@ describe('SegmentDestination', () => {
           ...clientArgs.config,
           useSegmentEndpoints: true,
           proxy: proxy,
+          allowInsecureProxy: true,
         };
         plugin.analytics = new SegmentClient({
           ...clientArgs,
@@ -601,6 +603,7 @@ describe('SegmentDestination', () => {
           ...clientArgs.config,
           useSegmentEndpoints: true,
           proxy: proxy,
+          allowInsecureProxy: true,
         };
         plugin.analytics = new SegmentClient({
           ...clientArgs,
