@@ -1,35 +1,9 @@
 name: Sync docs on merged PRs
 
-# Runs after a PR merges into master and asks Claude to check whether any
-# EXISTING documentation (root README, package READMEs, /docs) needs updating
-# to reflect the change, opening a follow-up PR only if it finds something to
-# update. Claude is instructed to only edit docs that already exist - never to
-# create new documentation - and if nothing needs updating, to record that
-# decision in doc-sync-decision.md, uploaded as a job artifact instead of a PR.
-#
-# Gated to keep run volume (and cost) down: only master-targeted merges
-# (branches: [master] below) that also carry an approving review
-# (reviewDecision == APPROVED, checked in the gate step) trigger a Claude run.
-# master requires 1 approval by branch protection, but enforce_admins is off,
-# so an admin can still merge without one - this gate closes that gap rather
-# than assuming protection alone guarantees a review happened.
-#
-# Uses pull_request_target (not pull_request) so the workflow runs with this
-# repo's own permissions even when the merged PR came from a fork - this repo
-# takes plenty of external contributions and a plain `pull_request` trigger
-# gets a read-only token for fork-authored PRs, which would make `gh pr
-# create` fail below. This is safe here because we only ever check out
-# base.ref (the already-reviewed, already-merged default branch), never the
-# PR's own head ref - we never build or execute the contributor's code.
-#
-# Installs the Claude Code CLI directly via npm rather than using
-# `uses: anthropics/claude-code-action` - this repo's Actions policy is
-# allowed_actions: selected with an empty patterns_allowed list (only
-# GitHub-owned actions are permitted), so a third-party `uses:` reference
-# fails at startup before any job runs. Installing and invoking the CLI
-# ourselves only needs actions/checkout and actions/setup-node, both
-# GitHub-owned and already allowed, so it sidesteps that policy without
-# requiring an org/repo policy change.
+# On merge to master, has Claude update existing docs affected by the change (never creating new ones); records a no-op decision as an artifact if nothing needs updating.
+# Requires an approving review before running, since master's approval requirement can be bypassed by admins.
+# Uses pull_request_target (not pull_request) for write access on fork-authored PRs too; safe since we only check out the already-merged base branch, never the PR's own head.
+# Installs the Claude Code CLI directly instead of using a third-party action, since this repo's Actions policy only allows GitHub-owned actions.
 on:
   pull_request_target:
     types: [closed]
@@ -109,9 +83,7 @@ jobs:
           claude -p "$(cat "$RUNNER_TEMP/claude-prompt.txt")" \
             --allowedTools "Edit,MultiEdit,Write,Read,Glob,Grep,Bash(git:*),Bash(gh:*)"
 
-      # Only exists when Claude decided nothing needed updating (step 4 above) -
-      # if-no-files-found: ignore covers the normal case where it opened a PR
-      # instead and never wrote this file.
+      # Only exists if Claude decided nothing needed updating; ignored otherwise.
       - name: Upload no-op decision artifact
         if: always() && steps.gate.outputs.approved == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
