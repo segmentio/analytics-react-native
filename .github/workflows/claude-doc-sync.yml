@@ -30,48 +30,18 @@ name: Sync docs on merged PRs
 # ourselves only needs actions/checkout and actions/setup-node, both
 # GitHub-owned and already allowed, so it sidesteps that policy without
 # requiring an org/repo policy change.
-# The smoke-test job below runs on push to abueide/** so we can check
-# ANTHROPIC_API_KEY/CLI auth without merging a real PR each time - it's a
-# separate job because push events have no PR to gate on or diff against.
-# Adjust the branch pattern if you're testing from a different branch prefix.
 on:
   pull_request_target:
     types: [closed]
     branches: [master]
-  push:
-    branches: ['abueide/**']
 
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
-  smoke-test:
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest-large
-    steps:
-      - name: Setup Node
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: 22
-
-      - name: Install Claude Code CLI
-        run: npm install -g @anthropic-ai/claude-code
-
-      - name: Check ANTHROPIC_API_KEY length
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: |
-          echo "ANTHROPIC_API_KEY length: ${#ANTHROPIC_API_KEY}"
-
-      - name: Smoke test Claude auth
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: |
-          claude -p "Reply with exactly the word OK and nothing else."
-
   doc-sync:
-    if: github.event_name == 'pull_request_target' && github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest-large
     steps:
       - name: Require an approved review
