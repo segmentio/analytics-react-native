@@ -1,9 +1,6 @@
 name: Sync docs on merged PRs
 
-# On merge to master, has Claude update existing docs affected by the change (never creating new ones); records a no-op decision as an artifact if nothing needs updating.
-# Requires an approving review before running, since master's approval requirement can be bypassed by admins.
-# Uses pull_request_target (not pull_request) for write access on fork-authored PRs too; safe since we only check out the already-merged base branch, never the PR's own head.
-# Installs the Claude Code CLI directly instead of using a third-party action, since this repo's Actions policy only allows GitHub-owned actions.
+# pull_request_target (not pull_request) for write access on fork-authored PRs too; safe since we only check out the already-merged base branch, never the PR's own head.
 on:
   pull_request_target:
     types: [closed]
@@ -18,6 +15,7 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest-large
     steps:
+      # Gates on approval since master's review requirement can be bypassed by admins.
       - name: Require an approved review
         id: gate
         env:
@@ -45,6 +43,7 @@ jobs:
         with:
           node-version: 22
 
+      # Installed directly rather than via a third-party action, since this repo's Actions policy only allows GitHub-owned actions.
       - name: Install Claude Code CLI
         if: steps.gate.outputs.approved == 'true'
         run: npm install -g @anthropic-ai/claude-code
