@@ -12,6 +12,8 @@ import {
 } from '../../test-helpers';
 import { TrackEventType } from '../../types';
 
+jest.mock('../../api');
+
 jest.useFakeTimers();
 
 // Type for accessing internal client properties in tests
@@ -524,6 +526,65 @@ describe('WaitingPlugin', () => {
     await Promise.resolve();
 
     expect(await client.running.get(true)).toBe(true);
+  });
+
+  test('WaitingPlugin added before init keeps events buffered until resume', async () => {
+    // Mirrors the real createClient() flow: the plugin is added before init() finishes
+    const preInitStore = new MockSegmentStore({
+      isReady: true,
+      running: false,
+    });
+
+    const client = new SegmentClient({
+      config: baseConfig,
+      logger: getMockLogger(),
+      store: preInitStore,
+    });
+
+    const plugin = new ManualResumeWaitingPlugin();
+    client.add({ plugin });
+
+    client.track('Application Opened');
+    await Promise.resolve();
+
+    expect(plugin.tracked).toBe(false);
+
+    await client.init();
+
+    expect(await client.running.get(true)).toBe(false);
+    expect(plugin.tracked).toBe(false);
+
+    await plugin.resume();
+
+    expect(await client.running.get(true)).toBe(true);
+    expect(plugin.tracked).toBe(true);
+    expect(await preInitStore.pendingEvents.get(true)).toHaveLength(0);
+  });
+
+  test('WaitingPlugin added before init still force resumes on timeout', async () => {
+    const preInitStore = new MockSegmentStore({
+      isReady: true,
+      running: false,
+    });
+
+    const client = new SegmentClient({
+      config: baseConfig,
+      logger: getMockLogger(),
+      store: preInitStore,
+    });
+
+    const plugin = new ManualResumeWaitingPlugin();
+    client.add({ plugin });
+
+    client.track('Application Opened');
+    await client.init();
+
+    expect(plugin.tracked).toBe(false);
+
+    await jest.advanceTimersByTimeAsync(30000);
+
+    expect(await client.running.get(true)).toBe(true);
+    expect(plugin.tracked).toBe(true);
   });
 
   test('pending events queue is capped at maxPendingEvents', async () => {

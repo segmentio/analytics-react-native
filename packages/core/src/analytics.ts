@@ -334,10 +334,14 @@ export class SegmentClient {
       ]);
       await this.onReady();
       this.isReady.value = true;
-      // Set running to true to start event processing
-      await this.store.running.set(true);
-      // Process all pending events
-      await this.processPendingEvents();
+      if (this.waitingPlugins.size === 0) {
+        // Set running to true to start event processing
+        await this.store.running.set(true);
+      }
+      if (this.store.running.get()) {
+        // Process all pending events
+        await this.processPendingEvents();
+      }
       // Trigger manual flush
       this.flushPolicyExecuter.manualFlush();
     } catch (error) {
@@ -1131,14 +1135,10 @@ export class SegmentClient {
    * @param timeout - Milliseconds to wait before auto-resuming (default: 30000)
    */
   pauseEventProcessing(timeout = 30000) {
-    // IMPORTANT: ignore repeated pauses
-    const running = this.store.running.get();
-    if (!running) {
-      return;
+    if (this.store.running.get()) {
+      // Fire-and-forget: state is updated synchronously in-memory, persistence happens async
+      void this.store.running.set(false);
     }
-
-    // Fire-and-forget: state is updated synchronously in-memory, persistence happens async
-    void this.store.running.set(false);
 
     // Only set timeout if not already set (prevents multiple waiting plugins from overwriting)
     if (!this.resumeTimeoutId) {
@@ -1164,6 +1164,9 @@ export class SegmentClient {
       this.resumeTimeoutId = undefined;
     }
     await this.store.running.set(true);
-    await this.processPendingEvents();
+    if (this.isReady.value) {
+      // Before init the timeline isn't configured yet, init() drains the buffer instead
+      await this.processPendingEvents();
+    }
   }
 }
