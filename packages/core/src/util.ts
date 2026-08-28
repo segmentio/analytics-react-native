@@ -29,34 +29,29 @@ export const chunk = <T>(array: T[], count: number, maxKB?: number): T[][] => {
     return [];
   }
 
-  let currentChunk = 0;
   let rollingKBSize = 0;
-  const result: T[][] = array.reduce(
-    (chunks: T[][], item: T, index: number) => {
-      if (maxKB !== undefined) {
-        rollingKBSize += sizeOf(item);
-        // If we overflow chunk until the previous index, else keep going
-        if (rollingKBSize >= maxKB) {
-          chunks[++currentChunk] = [item];
-          return chunks;
-        }
-      }
 
-      if (index !== 0 && index % count === 0) {
-        chunks[++currentChunk] = [item];
-      } else {
-        if (chunks[currentChunk] === undefined) {
-          chunks[currentChunk] = [];
-        }
-        chunks[currentChunk].push(item);
-      }
+  return array.reduce((chunks: T[][], item: T) => {
+    const itemKBSize = maxKB === undefined ? 0 : sizeOf(item);
+    const currentChunk = chunks[chunks.length - 1];
+    const isOverMaxKB =
+      maxKB !== undefined && rollingKBSize + itemKBSize >= maxKB;
 
+    // Always append rather than assign by index, otherwise an item that alone exceeds maxKB leaves a hole at index 0
+    if (
+      currentChunk === undefined ||
+      currentChunk.length >= count ||
+      isOverMaxKB
+    ) {
+      rollingKBSize = itemKBSize;
+      chunks.push([item]);
       return chunks;
-    },
-    []
-  );
+    }
 
-  return result;
+    rollingKBSize += itemKBSize;
+    currentChunk.push(item);
+    return chunks;
+  }, []);
 };
 
 export const getAllPlugins = (timeline: Timeline) => {
