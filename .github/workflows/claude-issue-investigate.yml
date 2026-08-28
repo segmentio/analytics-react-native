@@ -6,7 +6,8 @@ on:
     types: [labeled]
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
   issues: read
   id-token: write
 
@@ -34,6 +35,12 @@ jobs:
       - name: Install Claude Code CLI
         run: npm install -g @anthropic-ai/claude-code
 
+      # New commits need an author - Claude never has repo write access outside this job.
+      - name: Configure git identity for Claude's commits
+        run: |
+          git config --global user.email "claude-bot@users.noreply.github.com"
+          git config --global user.name "claude-bot"
+
       # ISSUE_NUMBER only - title/body are untrusted, so Claude fetches them itself via gh rather than us splicing them into this script.
       - name: Write prompt
         env:
@@ -45,9 +52,10 @@ jobs:
           1. Run \`gh issue view $ISSUE_NUMBER\` to read the full issue (title, body, comments).
           2. Based on the description, actually try to reproduce the reported problem using this repository's existing code and test tooling - write and run a small script or test case that exercises the described behavior, don't just reason about whether it would fail.
           3. If you reproduce it, identify the root cause in the source code.
-          4. If you cannot reproduce it, explain exactly what you tried, why it didn't reproduce, and what additional information (exact repro steps, versions, environment) would help.
-          5. Do not commit, push, open a PR, or comment on the issue - your only output is the report file below.
-          6. Write your findings to investigation-report.md in the repository root: a summary, the exact reproduction steps you tried, whether it reproduced, your root-cause diagnosis if found, and a suggested fix approach if you have one.
+          4. If you can reproduce it and you're confident the fix is small, narrow, and clearly correct, implement it, create a new branch off master named \`fix/issue-$ISSUE_NUMBER\`, commit, push it, and open a pull request against master with \`gh pr create\` that includes "Fixes #$ISSUE_NUMBER" in the body. If the right fix is unclear, would need broader changes, or you're not confident it's correct, do not open a PR - note that in the report instead.
+          5. If you cannot reproduce it, explain exactly what you tried, why it didn't reproduce, and what additional information (exact repro steps, versions, environment) would help.
+          6. Do not comment on the issue itself.
+          7. Always write your findings to investigation-report.md in the repository root: a summary, the exact reproduction steps you tried, whether it reproduced, your root-cause diagnosis if found, and whether you opened a fix PR (with its number) or why you decided not to.
           EOF
 
       - name: Investigate with Claude
