@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
   issues: read
   id-token: write
 
@@ -45,6 +44,7 @@ jobs:
       - name: Write prompt
         env:
           ISSUE_NUMBER: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
         run: |
           cat > "$RUNNER_TEMP/claude-prompt.txt" <<EOF
           Investigate GitHub issue #$ISSUE_NUMBER in this repository.
@@ -52,10 +52,11 @@ jobs:
           1. Run \`gh issue view $ISSUE_NUMBER\` to read the full issue (title, body, comments).
           2. Based on the description, actually try to reproduce the reported problem using this repository's existing code and test tooling - write and run a small script or test case that exercises the described behavior, don't just reason about whether it would fail.
           3. If you reproduce it, identify the root cause in the source code.
-          4. If you can reproduce it and you're confident the fix is small, narrow, and clearly correct, implement it, create a new branch off master named \`fix/issue-$ISSUE_NUMBER\`, commit, push it, and open a pull request against master with \`gh pr create\` that includes "Fixes #$ISSUE_NUMBER" in the body. If the right fix is unclear, would need broader changes, or you're not confident it's correct, do not open a PR - note that in the report instead.
-          5. If you cannot reproduce it, explain exactly what you tried, why it didn't reproduce, and what additional information (exact repro steps, versions, environment) would help.
-          6. Do not comment on the issue itself.
-          7. Always write your findings to investigation-report.md in the repository root: a summary, the exact reproduction steps you tried, whether it reproduced, your root-cause diagnosis if found, and whether you opened a fix PR (with its number) or why you decided not to.
+          4. If you can reproduce it and you're confident the fix is small, narrow, and clearly correct, implement it, create a new branch off master named \`fix/issue-$ISSUE_NUMBER\`, commit, and push it. Do not run \`gh pr create\` or attempt to open a pull request - GitHub Actions is not permitted to create pull requests in this organization and it will fail. Instead, include the branch name and this link in the report so a maintainer can open the PR themselves: https://github.com/$REPO/compare/master...fix/issue-$ISSUE_NUMBER?expand=1
+          5. If the right fix is unclear, would need broader changes, or you're not confident it's correct, do not push anything - note that in the report instead.
+          6. If you cannot reproduce the issue at all, explain exactly what you tried, why it didn't reproduce, and what additional information (exact repro steps, versions, environment) would help.
+          7. Do not comment on the issue itself.
+          8. Always write your findings to investigation-report.md in the repository root: a summary, the exact reproduction steps you tried, whether it reproduced, your root-cause diagnosis if found, and whether you pushed a fix branch (with its name and compare link) or why you decided not to.
           EOF
 
       - name: Investigate with Claude
