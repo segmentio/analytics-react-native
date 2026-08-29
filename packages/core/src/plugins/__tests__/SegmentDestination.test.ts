@@ -347,6 +347,55 @@ describe('SegmentDestination', () => {
       });
     });
 
+    it('flushes successfully when first event exceeds max payload size', async () => {
+      const oversizedPayload = 'x'.repeat(600 * 1024); // > 500 KB MAX_PAYLOAD_SIZE_IN_KB
+      const events = [
+        {
+          messageId: 'message-oversized',
+          type: EventType.TrackEvent,
+          event: 'Oversized Event',
+          properties: { data: oversizedPayload },
+        },
+        {
+          messageId: 'message-normal',
+          type: EventType.TrackEvent,
+          event: 'Normal Event',
+        },
+      ] as SegmentEvent[];
+
+      const { plugin, sendEventsSpy } = createTestWith({
+        events: events,
+      });
+
+      await expect(plugin.flush()).resolves.not.toThrow();
+      expect(sendEventsSpy).toHaveBeenCalledTimes(2);
+      expect(sendEventsSpy).toHaveBeenCalledWith({
+        url: getURL(defaultApiHost, ''),
+        writeKey: '123-456',
+        retryCount: 0,
+        events: [
+          {
+            messageId: 'message-oversized',
+            type: EventType.TrackEvent,
+            event: 'Oversized Event',
+            properties: { data: oversizedPayload },
+          },
+        ],
+      });
+      expect(sendEventsSpy).toHaveBeenCalledWith({
+        url: getURL(defaultApiHost, ''),
+        writeKey: '123-456',
+        retryCount: 0,
+        events: [
+          {
+            messageId: 'message-normal',
+            type: EventType.TrackEvent,
+            event: 'Normal Event',
+          },
+        ],
+      });
+    });
+
     it('uses segment settings apiHost for uploading events', async () => {
       const customEndpoint = 'events.eu1.segmentapis.com';
       const events = [
