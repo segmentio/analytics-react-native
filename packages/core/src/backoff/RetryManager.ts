@@ -229,6 +229,18 @@ export class RetryManager {
     );
   }
 
+  /**
+   * Replace the retry configuration, keeping the current retry state.
+   * Used when settings arrive after the manager was built from local config.
+   */
+  updateConfig(
+    rateLimitConfig?: RateLimitConfig,
+    backoffConfig?: BackoffConfig
+  ): void {
+    this.rateLimitConfig = rateLimitConfig;
+    this.backoffConfig = backoffConfig;
+  }
+
   /** Reset the state machine to READY with retry count 0. */
   async reset(): Promise<void> {
     await this.store.dispatch(() => INITIAL_STATE);

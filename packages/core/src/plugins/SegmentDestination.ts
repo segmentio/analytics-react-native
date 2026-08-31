@@ -25,7 +25,7 @@ import {
 } from '../errors';
 import { RetryManager } from '../backoff/RetryManager';
 import type { RetryResult } from '../backoff';
-import { extractHttpConfig } from '../config-validation';
+import { extractHttpConfig, mergeHttpConfig } from '../config-validation';
 
 const MAX_EVENTS_PER_BATCH = 100;
 const MAX_PAYLOAD_SIZE_IN_KB = 500;
@@ -78,6 +78,33 @@ export class SegmentDestination extends DestinationPlugin {
 
   private getBackoffConfig(): BackoffConfig | undefined {
     return this.httpConfig?.backoffConfig;
+  }
+
+  /**
+   * Creates the RetryManager, or reconfigures the existing one so retry state
+   * survives a settings refresh.
+   */
+  private setupRetryManager(httpConfig: HttpConfig): void {
+    if (!httpConfig.rateLimitConfig && !httpConfig.backoffConfig) {
+      return;
+    }
+
+    if (this.retryManager) {
+      this.retryManager.updateConfig(
+        httpConfig.rateLimitConfig,
+        httpConfig.backoffConfig
+      );
+      return;
+    }
+
+    const config = this.analytics?.getConfig();
+    this.retryManager = new RetryManager(
+      config?.writeKey ?? '',
+      config?.storePersistor,
+      httpConfig.rateLimitConfig,
+      httpConfig.backoffConfig,
+      this.analytics?.logger
+    );
   }
 
   private classifyBatchResult(
@@ -432,6 +459,13 @@ export class SegmentDestination extends DestinationPlugin {
       this.settingsResolve();
     }
 
+    // Backoff can't wait on settings: if the settings fetch fails update() never runs and uploads would retry with no delay
+    const localHttpConfig =
+      analytics.getHttpConfig() ??
+      mergeHttpConfig(undefined, config.httpConfig, analytics.logger);
+    this.httpConfig = localHttpConfig;
+    this.setupRetryManager(localHttpConfig);
+
     // Enrich events with the Destination metadata
     this.add(new DestinationMetadataEnrichment(SEGMENT_DESTINATION_KEY));
     this.add(this.queuePlugin);
@@ -473,20 +507,7 @@ export class SegmentDestination extends DestinationPlugin {
 
     if (httpConfig) {
       this.httpConfig = httpConfig;
-
-      if (
-        !this.retryManager &&
-        (httpConfig.rateLimitConfig || httpConfig.backoffConfig)
-      ) {
-        const config = this.analytics?.getConfig();
-        this.retryManager = new RetryManager(
-          config?.writeKey ?? '',
-          config?.storePersistor,
-          httpConfig.rateLimitConfig,
-          httpConfig.backoffConfig,
-          this.analytics?.logger
-        );
-      }
+      this.setupRetryManager(httpConfig);
     }
 
     this.settingsResolve();
