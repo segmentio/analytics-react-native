@@ -17,8 +17,10 @@ export class QueueFlushingPlugin extends UtilityPlugin {
   private storeKey: string;
   private queueStore: Store<{ events: SegmentEvent[] }> | undefined;
   private onFlush: (events: SegmentEvent[]) => Promise<void>;
-  private isRestoredResolve: () => void;
-  private isRestored: Promise<void>;
+  // Both are assigned by resetRestorePromise, called from the constructor
+  private isRestoredResolve!: () => void;
+  private isRestored!: Promise<void>;
+  private restoreTimeout: number;
   private timeoutWarned = false;
   private flushPromise?: Promise<void>;
 
@@ -35,7 +37,13 @@ export class QueueFlushingPlugin extends UtilityPlugin {
     super();
     this.onFlush = onFlush;
     this.storeKey = storeKey;
-    const { promise, resolve } = createPromise<void>(restoreTimeout);
+    this.restoreTimeout = restoreTimeout;
+    this.resetRestorePromise();
+  }
+
+  // The timeout only starts counting once this is called, so it must be called when restoration actually starts
+  private resetRestorePromise() {
+    const { promise, resolve } = createPromise<void>(this.restoreTimeout);
     this.isRestored = promise;
     this.isRestoredResolve = resolve;
   }
@@ -44,6 +52,9 @@ export class QueueFlushingPlugin extends UtilityPlugin {
     super.configure(analytics);
 
     const config = analytics?.getConfig() ?? defaultConfig;
+
+    // Restart the timeout so it only covers the store restoration below, not the time the plugin spent waiting to be added to the timeline (which includes the settings fetch)
+    this.resetRestorePromise();
 
     // Create its own storage per SegmentDestination instance to support multiple instances
     this.queueStore = createStore(
