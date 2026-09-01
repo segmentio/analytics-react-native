@@ -1,5 +1,25 @@
 const {execSync} = require('child_process');
 
+const ANDROID_DEVICES_DIR =
+  './devbox.d/segment-integrations.mobile-devtools.android/devices';
+
+// The plugin creates project-local AVDs named by the "name" field of these
+// definitions (see mobile-devtools wiki/guides/device-management.md), so read
+// the name from there instead of duplicating it.
+const resolveAndroidAvdName = () => {
+  if (process.env.DETOX_AVD) return process.env.DETOX_AVD;
+  const which = process.env.ANDROID_DEFAULT_DEVICE || 'max';
+  try {
+    return require(`${ANDROID_DEVICES_DIR}/${which}.json`).name;
+  } catch (_) {
+    throw new Error(
+      `Could not resolve an AVD: no device definition "${which}.json" in ` +
+        `${ANDROID_DEVICES_DIR}. Run "devbox run android.sh devices list" to ` +
+        `see what is defined, or set DETOX_AVD to an AVD name directly.`,
+    );
+  }
+};
+
 const defaultIOSDeviceCandidates = (() => {
   const fromEnv = (process.env.IOS_DEVICE_NAMES || 'iPhone 14')
     .split(',')
@@ -146,14 +166,13 @@ module.exports = {
     emulator: {
       type: 'android.emulator',
       device: {
-        // Default to latest AVD name (arch-aware); override via DETOX_AVD. For minsdk testing, set DETOX_AVD to an API 21 AVD.
-        avdName: (() => {
-          if (process.env.DETOX_AVD) return process.env.DETOX_AVD;
-          const arch = require('os').arch();
-          return arch === 'arm64'
-            ? 'medium_phone_API33_arm64_v8a'
-            : 'medium_phone_API33_x86_64';
-        })(),
+        // Resolved from the mobile-devtools device definitions, which are the
+        // source of truth the plugin creates the project-local AVDs from -
+        // hardcoding a name here drifts from them the moment min/max changes.
+        // Selection order: DETOX_AVD (explicit override) > the definition
+        // named by ANDROID_DEFAULT_DEVICE > max. Use ANDROID_DEFAULT_DEVICE=min
+        // for minsdk runs.
+        avdName: resolveAndroidAvdName(),
       },
     },
   },
