@@ -14,7 +14,11 @@
     "IOS_APP_ARTIFACT": "ios/build/Build/Products/Release-iphonesimulator/*.app",
     "ANDROID_COMPILE_SDK": "33",
     "ANDROID_TARGET_SDK": "33",
-    "ANDROID_BUILD_TOOLS_VERSION": "36.1.0"
+    "ANDROID_BUILD_TOOLS_VERSION": "36.1.0",
+    "ANDROID_DEVICES": "min,max",
+    "IOS_DEVICES": "min,max",
+    "ANDROID_DEFAULT_DEVICE": "max",
+    "IOS_DEFAULT_DEVICE": "max"
   },
   "shell": {
     "scripts": {
