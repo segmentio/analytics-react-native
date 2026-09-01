@@ -74,7 +74,16 @@ def enableProguardInReleaseBuilds = false
 def jscFlavor = 'org.webkit:android-jsc:+'
 
 android {
-    ndkVersion rootProject.ext.ndkVersion
+    // Only pin the NDK when one was supplied via ANDROID_NDK_VERSION (the
+    // devbox plugin sets it). Reading it unconditionally failed the whole
+    // build with "Cannot get property 'ndkVersion'" whenever that env var was
+    // absent, which is every build outside devbox. Falling through instead
+    // lets the React Native gradle plugin pick the NDK it was tested against
+    // - unlike e2e-compat, this app cannot use a hardcoded fallback, since
+    // RN 0.84's bundled folly needs C++20 support that older NDKs lack.
+    if (rootProject.ext.has('ndkVersion')) {
+        ndkVersion rootProject.ext.ndkVersion
+    }
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
