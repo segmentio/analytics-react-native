@@ -19,6 +19,10 @@ on:
         required: false
         default: 'main'
 
+concurrency:
+  group: e2e-tests-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   e2e-tests:
     # Skip on fork PRs and Dependabot PRs where repo secrets aren't available
