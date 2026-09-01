@@ -258,9 +258,29 @@ export const createPromise = <T>(
   };
 };
 
-export function getURL(host: string, path: string) {
+// Accepts a bare host[/path] value (e.g. "api.segment.io/v1") as supplied by
+// the settings CDN. Rejects anything that contains a scheme, credentials,
+// query string, or fragment — all of which could redirect uploads to an
+// attacker-controlled endpoint when interpolated into `https://${apiHost}/b`.
+export function validateApiHost(apiHost: string): boolean {
+  return /^[a-zA-Z0-9][a-zA-Z0-9._-]*(:\d{2,5})?(\/[a-zA-Z0-9._\-/]*)?$/.test(
+    apiHost
+  );
+}
+
+export function getURL(host: string, path: string, allowInsecure = false) {
   if (!host.startsWith('https://') && !host.startsWith('http://')) {
     host = 'https://' + host;
+  }
+  if (host.startsWith('http://')) {
+    if (!allowInsecure) {
+      throw new Error(
+        'Insecure HTTP proxy URL rejected. The write key and event PII travel in the request body. Use an https:// URL, or set allowInsecureProxy: true to suppress this error.'
+      );
+    }
+    console.warn(
+      '[Segment] Warning: proxy/cdnProxy is using http:// — the write key and all event PII will be sent in cleartext.'
+    );
   }
   const s = `${host}${path}`;
   if (!validateURL(s)) {

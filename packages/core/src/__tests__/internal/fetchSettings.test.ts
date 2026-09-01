@@ -293,6 +293,7 @@ describe('internal #getSettings', () => {
           ...clientArgs.config,
           useSegmentEndpoints: true,
           cdnProxy: cdnProxy,
+          allowInsecureProxy: true,
         };
         const anotherClient = new SegmentClient({
           ...clientArgs,
@@ -319,6 +320,7 @@ describe('internal #getSettings', () => {
           ...clientArgs.config,
           useSegmentEndpoints: true,
           cdnProxy: cdnProxy,
+          allowInsecureProxy: true,
         };
         const anotherClient = new SegmentClient({
           ...clientArgs,
@@ -346,6 +348,7 @@ describe('internal #getSettings', () => {
           ...clientArgs.config,
           useSegmentEndpoints: true,
           cdnProxy: cdnProxy,
+          allowInsecureProxy: true,
         };
         const anotherClient = new SegmentClient({
           ...clientArgs,

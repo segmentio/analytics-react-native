@@ -380,7 +380,11 @@ export class SegmentClient {
       settingsEndpoint = `/${this.config.writeKey}/settings`;
     }
     try {
-      return getURL(settingsPrefix, settingsEndpoint);
+      return getURL(
+        settingsPrefix,
+        settingsEndpoint,
+        this.config.allowInsecureProxy
+      );
     } catch (error) {
       console.error(
         'Error in getEndpointForSettings:',

@@ -1,0 +1,76 @@
+name: Investigate issue
+
+# Gated on a maintainer-added label rather than issues: opened, since this is a public repo and anyone can open an issue - this way a human triages first before spending budget on a Claude session.
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  issues: read
+  id-token: write
+
+jobs:
+  investigate:
+    if: github.event.label.name == 'investigate'
+    runs-on: ubuntu-latest-large
+    env:
+      ARTIFACTORY_URL: ${{ vars.ARTIFACTORY_URL }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Artifactory OIDC Auth
+        uses: ./.github/actions/artifactory-oidc
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+
+      - run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      # New commits need an author - Claude never has repo write access outside this job.
+      - name: Configure git identity for Claude's commits
+        run: |
+          git config --global user.email "claude-bot@users.noreply.github.com"
+          git config --global user.name "claude-bot"
+
+      # ISSUE_NUMBER only - title/body are untrusted, so Claude fetches them itself via gh rather than us splicing them into this script.
+      - name: Write prompt
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          cat > "$RUNNER_TEMP/claude-prompt.txt" <<EOF
+          Investigate GitHub issue #$ISSUE_NUMBER in this repository.
+
+          1. Run \`gh issue view $ISSUE_NUMBER\` to read the full issue (title, body, comments).
+          2. Based on the description, actually try to reproduce the reported problem using this repository's existing code and test tooling - don't just reason about whether it would fail. If it's reproducible, write a real regression test in the appropriate existing test file, following this repo's existing test conventions, and confirm it fails on the current code for the same reason the issue describes.
+          3. If you reproduce it, identify the root cause in the source code using actual evidence from your reproduction - do not guess. If you cannot pin down the root cause with real evidence, say so plainly in the report instead of presenting a guess as a diagnosis, and state what information or access would let you confirm it.
+          4. If you found the root cause and you're confident the fix is small, narrow, and clearly correct, implement it. Include the regression test from step 2 in the same change, run it again to confirm it now passes, and report both results (failing before, passing after) as proof the fix addresses what you diagnosed. Then create a new branch off master named \`fix/issue-$ISSUE_NUMBER\`, commit, and push it. Do not run \`gh pr create\` or attempt to open a pull request - GitHub Actions is not permitted to create pull requests in this organization and it will fail. Instead, include the branch name and this link in the report so a maintainer can open the PR themselves: https://github.com/$REPO/compare/master...fix/issue-$ISSUE_NUMBER?expand=1
+          5. If the right fix is unclear, would need broader changes, or you're not confident it's correct, do not push anything and do not guess at a fix - state plainly in the report what's unclear and what you'd need (from the reporter, a maintainer, or elsewhere) to move forward.
+          6. If you cannot reproduce the issue at all, explain exactly what you tried, why it didn't reproduce, and what additional information (exact repro steps, versions, environment) would help - do not assume it isn't real just because you couldn't trigger it.
+          7. Do not comment on the issue itself.
+          8. Always write your findings to investigation-report.md in the repository root: a summary, the exact reproduction steps you tried, whether it reproduced, your root-cause diagnosis (or an explicit statement that you couldn't confirm one and what's missing), the regression test's before/after results if you wrote a fix, and whether you pushed a fix branch (with its name and compare link) or why you decided not to. Never present a guess as a finding anywhere in the report - be explicit about what you verified versus what remains uncertain.
+          EOF
+
+      - name: Investigate with Claude
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          claude -p "$(cat "$RUNNER_TEMP/claude-prompt.txt")" \
+            --allowedTools "Edit,MultiEdit,Write,Read,Glob,Grep,Bash(git:*),Bash(gh:*),Bash(yarn:*),Bash(npm:*),Bash(node:*)"
+
+      - name: Upload investigation report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: issue-${{ github.event.issue.number }}-investigation
+          path: investigation-report.md
+          if-no-files-found: warn

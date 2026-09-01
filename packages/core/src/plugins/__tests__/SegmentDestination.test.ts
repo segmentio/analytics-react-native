@@ -375,6 +375,28 @@ describe('SegmentDestination', () => {
       });
     });
 
+    it('ignores a tampered apiHost containing a scheme or query string and falls back to default', async () => {
+      const events = [{ messageId: 'msg-1' }] as SegmentEvent[];
+
+      for (const badHost of [
+        'https://attacker.com/collect',
+        'http://attacker.com',
+        'attacker.com/collect?x=',
+        'user:pass@attacker.com',
+      ]) {
+        const { plugin, sendEventsSpy } = createTestWith({
+          events,
+          settings: { apiKey: '', apiHost: badHost },
+        });
+        jest.spyOn(console, 'error').mockImplementation(jest.fn());
+        await plugin.flush();
+        expect(sendEventsSpy).toHaveBeenCalledWith(
+          expect.objectContaining({ url: defaultApiHost })
+        );
+        sendEventsSpy.mockClear();
+      }
+    });
+
     it.each([
       [false, false], // No proxy, No segment endpoint
       [false, true], // No proxy, Yes segment endpoint
@@ -556,6 +578,7 @@ describe('SegmentDestination', () => {
           ...clientArgs.config,
           useSegmentEndpoints: true,
           proxy: proxy,
+          allowInsecureProxy: true,
         };
         plugin.analytics = new SegmentClient({
           ...clientArgs,
@@ -578,6 +601,7 @@ describe('SegmentDestination', () => {
           ...clientArgs.config,
           useSegmentEndpoints: true,
           proxy: proxy,
+          allowInsecureProxy: true,
         };
         plugin.analytics = new SegmentClient({
           ...clientArgs,
@@ -601,6 +625,7 @@ describe('SegmentDestination', () => {
           ...clientArgs.config,
           useSegmentEndpoints: true,
           proxy: proxy,
+          allowInsecureProxy: true,
         };
         plugin.analytics = new SegmentClient({
           ...clientArgs,

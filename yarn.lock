@@ -4559,6 +4559,8 @@ __metadata:
   peerDependenciesMeta:
     "@react-native-async-storage/async-storage":
       optional: true
+    react-native-get-random-values:
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -4584,7 +4586,6 @@ __metadata:
     deepmerge: "npm:^4.2.2"
     jest: "npm:^29.7.0"
     semantic-release: "npm:^22.0.8"
-    shell-quote: "npm:1.8.0"
     typescript: "npm:^5.2.2"
     uuid: "npm:^14.0.0"
   peerDependencies:
@@ -4594,6 +4595,8 @@ __metadata:
     react-native-get-random-values: 1.x || 2.x
   peerDependenciesMeta:
     "@react-native-async-storage/async-storage":
+      optional: true
+    react-native-get-random-values:
       optional: true
   languageName: unknown
   linkType: soft

@@ -10,7 +10,7 @@ import {
   SegmentEvent,
   UpdateType,
 } from '../types';
-import { chunk, createPromise, getURL } from '../util';
+import { chunk, createPromise, getURL, validateApiHost } from '../util';
 import { uploadEvents } from '../api';
 import type { SegmentClient } from '../analytics';
 import { DestinationMetadataEnrichment } from './DestinationMetadataEnrichment';
@@ -414,7 +414,7 @@ export class SegmentDestination extends DestinationPlugin {
       baseURL = this.apiHost ?? defaultApiHost;
     }
     try {
-      return getURL(baseURL, endpoint);
+      return getURL(baseURL, endpoint, config?.allowInsecureProxy);
     } catch (error) {
       console.error('Error in getEndpoint:', `fallback to ${defaultApiHost}`);
       return defaultApiHost;
@@ -446,8 +446,13 @@ export class SegmentDestination extends DestinationPlugin {
       segmentSettings?.apiHost !== undefined &&
       segmentSettings?.apiHost !== null
     ) {
-      //assign the api host from segment settings (domain/v1)
-      this.apiHost = `https://${segmentSettings.apiHost}/b`;
+      if (validateApiHost(segmentSettings.apiHost)) {
+        this.apiHost = `https://${segmentSettings.apiHost}/b`;
+      } else {
+        console.error(
+          `[Segment] Invalid apiHost "${segmentSettings.apiHost}" received from settings — ignoring, using default endpoint.`
+        );
+      }
     }
 
     // Read httpConfig: prefer integration-level settings from CDN, fall back to

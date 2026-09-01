@@ -1,5 +1,11 @@
 import { UserTraits } from '../types';
-import { chunk, allSettled, deepCompare, getURL } from '../util';
+import {
+  chunk,
+  allSettled,
+  deepCompare,
+  getURL,
+  validateApiHost,
+} from '../util';
 
 describe('#chunk', () => {
   it('handles empty array', () => {
@@ -196,5 +202,53 @@ describe('getURL function', () => {
     expect(() => getURL('invalid host.com', '/path')).toThrow(
       'Invalid URL has been passed'
     );
+  });
+
+  it('should throw when an explicit http:// host is passed without opt-in', () => {
+    expect(() => getURL('http://proxy.example.com', '/path')).toThrow(
+      'Insecure HTTP proxy URL rejected'
+    );
+  });
+
+  it('should allow http:// host when allowInsecure is true', () => {
+    expect(getURL('http://proxy.example.com', '/path', true)).toBe(
+      'http://proxy.example.com/path'
+    );
+  });
+});
+
+describe('validateApiHost', () => {
+  it('accepts a bare hostname', () => {
+    expect(validateApiHost('api.segment.io')).toBe(true);
+  });
+
+  it('accepts hostname with path (normal Segment format)', () => {
+    expect(validateApiHost('api.segment.io/v1')).toBe(true);
+    expect(validateApiHost('events.eu1.segmentapis.com')).toBe(true);
+  });
+
+  it('accepts hostname with port', () => {
+    expect(validateApiHost('api.segment.io:443/v1')).toBe(true);
+  });
+
+  it('rejects values with a scheme', () => {
+    expect(validateApiHost('https://api.segment.io/v1')).toBe(false);
+    expect(validateApiHost('http://api.segment.io/v1')).toBe(false);
+  });
+
+  it('rejects values with credentials', () => {
+    expect(validateApiHost('user:pass@api.segment.io')).toBe(false);
+  });
+
+  it('rejects values with a query string', () => {
+    expect(validateApiHost('attacker.com/collect?x=')).toBe(false);
+  });
+
+  it('rejects values with a fragment', () => {
+    expect(validateApiHost('attacker.com/path#fragment')).toBe(false);
+  });
+
+  it('rejects empty string', () => {
+    expect(validateApiHost('')).toBe(false);
   });
 });
