@@ -146,14 +146,8 @@ module.exports = {
     emulator: {
       type: 'android.emulator',
       device: {
-        // Default to latest AVD name (arch-aware); override via DETOX_AVD. For minsdk testing, set DETOX_AVD to an API 21 AVD.
-        avdName: (() => {
-          if (process.env.DETOX_AVD) return process.env.DETOX_AVD;
-          const arch = require('os').arch();
-          return arch === 'arm64'
-            ? 'medium_phone_API33_arm64_v8a'
-            : 'medium_phone_API33_x86_64';
-        })(),
+        // Override via DETOX_AVD if needed (e.g. for minsdk testing).
+        avdName: process.env.DETOX_AVD || 'medium_phone_api36',
       },
     },
   },

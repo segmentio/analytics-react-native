@@ -20,7 +20,7 @@
       "install": ["yarn install --no-immutable"],
       "install:pods": ["cd ios && pod install && cd .."],
       "build:android": [
-        "cd android && ./gradlew generateCodegenArtifactsFromSchema --rerun-tasks && ./gradlew assembleRelease && cd .."
+        "cd android && ./gradlew generateCodegenArtifactsFromSchema --rerun-tasks && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd .."
       ],
       "build:ios": [
         "echo \"export NODE_BINARY=$(which node)\" > ios/.xcode.env.local",

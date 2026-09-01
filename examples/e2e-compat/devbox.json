@@ -20,7 +20,9 @@
     "scripts": {
       "install": ["yarn install --no-immutable"],
       "install:pods": ["cd ios && pod install && cd .."],
-      "build:android": ["cd android && ./gradlew assembleRelease && cd .."],
+      "build:android": [
+        "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd .."
+      ],
       "build:ios": [
         "echo \"export NODE_BINARY=$(which node)\" > ios/.xcode.env.local",
         "RCT_NO_LAUNCH_PACKAGER=1 SKIP_BUNDLING=1 xcodebuild -workspace ios/AnalyticsReactNativeE2E.xcworkspace -scheme AnalyticsReactNativeE2E -configuration Release -sdk iphonesimulator -derivedDataPath ios/build build",
