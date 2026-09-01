@@ -54,20 +54,6 @@ jobs:
           npm install
           npm run build
 
-      # TEMPORARY - remove before merge.
-      # The suite passes 88/90 locally on macOS (node 20/22/26, with and
-      # without the monorepo node_modules) but fails 83/90 in CI with every
-      # assertion reporting zero requests received. The only variable left is
-      # Linux. sdk-e2e-tests' MockServer binds 127.0.0.1 explicitly while the
-      # tests hand the SDK http://localhost:PORT, so if localhost resolves to
-      # ::1 first here, every request is refused - which is exactly the
-      # signature. This runs the CLI against both spellings of the same
-      # server; if localhost fails and 127.0.0.1 succeeds, that's the cause.
-      - name: 'DIAGNOSTIC: localhost vs 127.0.0.1'
-        run: node "${{ github.workspace }}/sdk/.github/diagnose-e2e-host.js"
-        env:
-          CLI_PATH: ${{ github.workspace }}/sdk/e2e-cli/dist/cli.js
-
       - name: Run E2E tests
         working-directory: sdk-e2e-tests
         run: |
