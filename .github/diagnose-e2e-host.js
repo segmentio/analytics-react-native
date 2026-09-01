@@ -94,15 +94,8 @@ async function main() {
     console.log(`\n--- CLI against ${host} ---`);
     const r = await runCLI(host);
     console.log(`  exit/err : ${r.err}`);
-    console.log(`  stdout   : ${r.stdout || '(empty)'}`);
-    if (r.stderr) {
-      console.log(
-        `  stderr   : ${r.stderr
-          .split('\n')
-          .slice(0, 8)
-          .join('\n             ')}`
-      );
-    }
+    console.log(`  --- full stdout ---\n${r.stdout || '(empty)'}`);
+    console.log(`  --- full stderr ---\n${r.stderr || '(empty)'}`);
     console.log(
       `  requests received: ${received.length}  ${JSON.stringify(received)}`
     );
@@ -112,10 +105,72 @@ async function main() {
   }
 
   server.close();
-  console.log(
-    '\nIf localhost shows ZERO REQUESTS and 127.0.0.1 REACHED SERVER, the\n' +
-      'harness must bind :: (or the tests must use 127.0.0.1) to work on Linux.'
-  );
+
+  // The first run showed both spellings falling back to production Segment
+  // endpoints, meaning getURL() threw - but without its own "Invalid URL has
+  // been passed" log, which should have preceded the fallback. Probe the real
+  // helpers directly to see what they actually return here.
+  console.log('\n=== Direct probe of core getURL/validateURL ===');
+  try {
+    const path = require('path');
+    const os = require('os');
+    const fs = require('fs');
+    const repoRoot = path.resolve(__dirname, '..');
+    const esbuild = require(path.join(
+      repoRoot,
+      'e2e-cli/node_modules/esbuild'
+    ));
+    const stubs = path.join(repoRoot, 'e2e-cli/src/stubs');
+    const out = path.join(os.tmpdir(), 'core-url-probe.js');
+
+    esbuild.buildSync({
+      stdin: {
+        contents: `export { getURL, validateURL } from './packages/core/src/util';`,
+        resolveDir: repoRoot,
+        loader: 'ts',
+      },
+      bundle: true,
+      platform: 'node',
+      format: 'cjs',
+      outfile: out,
+      alias: {
+        'react-native': path.join(stubs, 'react-native.ts'),
+        '@segment/sovran-react-native': path.join(stubs, 'sovran.ts'),
+        'react-native-get-random-values': path.join(
+          stubs,
+          'react-native-get-random-values.ts'
+        ),
+      },
+      external: [
+        'uuid',
+        'deepmerge',
+        '@react-native-async-storage/async-storage',
+      ],
+      logLevel: 'silent',
+    });
+
+    const { getURL, validateURL } = require(out);
+    const cases = [
+      [`http://localhost:${port}`, '/b'],
+      [`http://127.0.0.1:${port}`, '/b'],
+      [`http://localhost:${port}`, '/projects/diagnostic-key/settings'],
+      ['http://localhost:12345', '/b'],
+    ];
+    for (const [host, p] of cases) {
+      const joined = `${host}${p}`;
+      let result;
+      try {
+        result = `getURL -> ${getURL(host, p)}`;
+      } catch (e) {
+        result = `getURL THREW: ${e.message}`;
+      }
+      console.log(`  validateURL(${joined}) = ${validateURL(joined)}`);
+      console.log(`    ${result}`);
+    }
+    fs.unlinkSync(out);
+  } catch (e) {
+    console.log(`  probe failed to build/run: ${e.message}`);
+  }
 }
 
 main();
