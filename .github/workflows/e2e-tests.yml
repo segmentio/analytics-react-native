@@ -1,5 +1,4 @@
 # E2E Tests for analytics-react-native
-# Copy this file to: analytics-react-native/.github/workflows/e2e-tests.yml
 #
 # This workflow:
 # 1. Checks out the SDK and sdk-e2e-tests repos
@@ -8,10 +7,11 @@
 
 name: E2E Tests
 
-# Push/pull_request triggers disabled for now - runs have been stuck queued
-# (not a code/action problem here specifically, unlike ci.yml's devbox
-# startup_failure). Re-enable once confirmed healthy.
 on:
+  push:
+    branches: [master, beta]
+  pull_request:
+    branches: [master, beta]
   workflow_dispatch:
     inputs:
       e2e_tests_ref:
