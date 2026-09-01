@@ -201,15 +201,12 @@ class AnalyticsReactNativeModule : ReactContextBaseJavaModule, ActivityEventList
 
     val uri = intent.data
     try {
-      properties["url"] = uri.toString()
-      for (parameter in uri!!.queryParameterNames) {
-        val value = uri.getQueryParameter(parameter)
-        if (value != null && value.trim { it <= ' ' }.isNotEmpty()) {
-          properties[parameter] = value
-        }
-      }
+      // Strip query string — deep-link params routinely carry secrets
+      // (OAuth codes, magic-link tokens). The JS layer applies further
+      // sanitization via deepLinkPropertiesDecorator if configured.
+      val sanitizedUrl = uri!!.buildUpon().clearQuery().fragment(null).build().toString()
+      properties["url"] = sanitizedUrl
     } catch (e: Exception) {
-      // handle error
       Log.d(name, "Error getting URL: ${e.message}")
       return
     }

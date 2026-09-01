@@ -258,6 +258,11 @@ export const createPromise = <T>(
   };
 };
 
+export function stripQueryString(url: string): string {
+  const q = url.indexOf('?');
+  return q === -1 ? url : url.slice(0, q);
+}
+
 // Accepts a bare host[/path] value (e.g. "api.segment.io/v1") as supplied by
 // the settings CDN. Rejects anything that contains a scheme, credentials,
 // query string, or fragment — all of which could redirect uploads to an

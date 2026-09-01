@@ -65,6 +65,7 @@ import {
   getPluginsWithFlush,
   getPluginsWithReset,
   getURL,
+  stripQueryString,
 } from './util';
 import { getUUID } from './uuid';
 import type { FlushPolicy } from './flushPolicies';
@@ -588,11 +589,17 @@ export class SegmentClient {
 
   private trackDeepLinkEvent(deepLinkProperties: DeepLinkData) {
     if (deepLinkProperties.url !== '') {
+      const decorator = this.config.deepLinkPropertiesDecorator;
+      const sanitized = decorator
+        ? decorator({ ...deepLinkProperties })
+        : {
+            ...deepLinkProperties,
+            url: stripQueryString(deepLinkProperties.url),
+          };
+
       const event = createTrackEvent({
         event: 'Deep Link Opened',
-        properties: {
-          ...deepLinkProperties,
-        },
+        properties: { ...sanitized },
       });
 
       void this.process(event);
