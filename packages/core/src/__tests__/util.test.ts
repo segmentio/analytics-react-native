@@ -42,6 +42,76 @@ describe('#chunk', () => {
       chunk([about500bString, about500bString, about500bString], 2, 1)
     ).toEqual([[about500bString, about500bString], [about500bString]]);
   });
+
+  it('handles oversized first item without creating a sparse array', () => {
+    const oversizedString = 'x'.repeat(2000); // ~2KB > 1KB maxKB
+    const result = chunk([oversizedString, 'small1', 'small2'], 5, 1);
+
+    expect(0 in result).toBe(true);
+    expect(result.length).toBe(2);
+    expect(result).toEqual([[oversizedString], ['small1', 'small2']]);
+  });
+
+  it('resets rolling size accumulator when starting a new chunk', () => {
+    const item400b = 'x'.repeat(400); // ~0.4KB
+    const result = chunk([item400b, item400b, item400b, item400b], 5, 1);
+
+    expect(result.length).toBe(2);
+    expect(result).toEqual([
+      [item400b, item400b],
+      [item400b, item400b],
+    ]);
+  });
+
+  it('handles multiple consecutive oversized items', () => {
+    const oversizedString = 'x'.repeat(2000);
+    const result = chunk(
+      [oversizedString, oversizedString, 'small1', 'small2'],
+      5,
+      1
+    );
+
+    expect(result).toEqual([
+      [oversizedString],
+      [oversizedString],
+      ['small1', 'small2'],
+    ]);
+  });
+
+  it('handles oversized item in the middle of normal items', () => {
+    const oversizedString = 'x'.repeat(2000);
+    const result = chunk(
+      ['small1', 'small2', oversizedString, 'small3'],
+      5,
+      1
+    );
+
+    expect(result).toEqual([
+      ['small1', 'small2'],
+      [oversizedString],
+      ['small3'],
+    ]);
+  });
+
+  it('handles exact max kb boundary', () => {
+    const halfKBString = 'a'.repeat(510); // exactly 0.5 KB (512 bytes with JSON quotes)
+    const result = chunk([halfKBString, halfKBString, halfKBString], 5, 1);
+
+    expect(result).toEqual([
+      [halfKBString, halfKBString],
+      [halfKBString],
+    ]);
+  });
+
+  it('handles single item exactly at max kb boundary', () => {
+    const exact1KBString = 'a'.repeat(1022); // exactly 1.0 KB (1024 bytes with JSON quotes)
+    const result = chunk([exact1KBString, 'small'], 5, 1);
+
+    expect(result).toEqual([
+      [exact1KBString],
+      ['small'],
+    ]);
+  });
 });
 
 describe('allSettled', () => {
