@@ -13,14 +13,18 @@
     "IOS_APP_ARTIFACT": "ios/build/Build/Products/Release-iphonesimulator/*.app",
     "ANDROID_COMPILE_SDK": "36",
     "ANDROID_BUILD_TOOLS_VERSION": "36.1.0",
-    "CMAKE_VERSION": "4.1.2"
+    "CMAKE_VERSION": "4.1.2",
+    "ANDROID_DEVICES": "min,max",
+    "IOS_DEVICES": "min,max",
+    "ANDROID_DEFAULT_DEVICE": "max",
+    "IOS_DEFAULT_DEVICE": "max"
   },
   "shell": {
     "scripts": {
       "install": ["yarn install --no-immutable"],
       "install:pods": ["cd ios && pod install && cd .."],
       "build:android": [
-        "cd android && ./gradlew generateCodegenArtifactsFromSchema --rerun-tasks && ./gradlew assembleRelease && cd .."
+        "cd android && ./gradlew generateCodegenArtifactsFromSchema --rerun-tasks && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd .."
       ],
       "build:ios": [
         "echo \"export NODE_BINARY=$(which node)\" > ios/.xcode.env.local",

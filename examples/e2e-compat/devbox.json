@@ -14,13 +14,19 @@
     "IOS_APP_ARTIFACT": "ios/build/Build/Products/Release-iphonesimulator/*.app",
     "ANDROID_COMPILE_SDK": "33",
     "ANDROID_TARGET_SDK": "33",
-    "ANDROID_BUILD_TOOLS_VERSION": "36.1.0"
+    "ANDROID_BUILD_TOOLS_VERSION": "36.1.0",
+    "ANDROID_DEVICES": "min,max",
+    "IOS_DEVICES": "min,max",
+    "ANDROID_DEFAULT_DEVICE": "max",
+    "IOS_DEFAULT_DEVICE": "max"
   },
   "shell": {
     "scripts": {
       "install": ["yarn install --no-immutable"],
       "install:pods": ["cd ios && pod install && cd .."],
-      "build:android": ["cd android && ./gradlew assembleRelease && cd .."],
+      "build:android": [
+        "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd .."
+      ],
       "build:ios": [
         "echo \"export NODE_BINARY=$(which node)\" > ios/.xcode.env.local",
         "RCT_NO_LAUNCH_PACKAGER=1 SKIP_BUNDLING=1 xcodebuild -workspace ios/AnalyticsReactNativeE2E.xcworkspace -scheme AnalyticsReactNativeE2E -configuration Release -sdk iphonesimulator -derivedDataPath ios/build build",
