@@ -148,6 +148,13 @@ export type Config = {
   defaultSettings?: SegmentAPISettings;
   autoAddSegmentDestination?: boolean;
   collectDeviceId?: boolean;
+  /**
+   * Custom persistor for the store. When omitted, the SDK defaults to
+   * AsyncStorage, which persists state (userId, `identify` traits, and the
+   * pending event queue) as plaintext JSON with no encryption. Apps handling
+   * sensitive PII should supply a `storePersistor` backed by encrypted
+   * storage (e.g. Keychain/Keystore via `react-native-encrypted-storage`).
+   */
   storePersistor?: Persistor;
   storePersistorSaveDelay?: number;
   proxy?: string;

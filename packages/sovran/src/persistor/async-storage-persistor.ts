@@ -31,7 +31,14 @@ function warnIfMissingPackage() {
 }
 
 /**
- * Persistor implementation using AsyncStorage
+ * Persistor implementation using AsyncStorage.
+ *
+ * ⚠️ AsyncStorage is unencrypted: state is written as plaintext JSON and is
+ * readable on rooted/jailbroken devices, via ADB backup, or forensic
+ * extraction. This includes userId, `identify` traits (email/name/etc.), and
+ * the pending event queue. Apps handling sensitive PII should pass their own
+ * `storePersistor` backed by encrypted storage (Keychain/Keystore, e.g. via
+ * `react-native-encrypted-storage`) instead of relying on this default.
  */
 export const AsyncStoragePersistor: Persistor = {
   get: async <T>(key: string): Promise<T | undefined> => {
