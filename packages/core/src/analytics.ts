@@ -80,6 +80,23 @@ import { WaitingPlugin } from './plugin';
 
 type OnPluginAddedCallback = (plugin: Plugin) => void;
 
+// Deep link URLs can carry secrets/tokens in their query string, so strip it before
+// the full event is logged (only reachable when `debugPayloads` is enabled).
+const redactDeepLinkUrl = (event: SegmentEvent): SegmentEvent => {
+  if (
+    event.type === EventType.TrackEvent &&
+    event.event === 'Deep Link Opened' &&
+    typeof event.properties?.url === 'string'
+  ) {
+    const [urlWithoutQuery] = event.properties.url.split('?');
+    return {
+      ...event,
+      properties: { ...event.properties, url: urlWithoutQuery },
+    };
+  }
+  return event;
+};
+
 export class SegmentClient {
   // the config parameters for the client - a merge of user provided and default options
   private config: Config;
@@ -296,6 +313,12 @@ export class SegmentClient {
 
     // set up tracking for lifecycle events
     this.setupLifecycleEvents();
+
+    if (this.config.debugPayloads === true) {
+      this.logger.warn(
+        'debugPayloads is enabled: full event payloads (which may include PII and deep-link tokens) will be logged at info level. Do not enable this in production.'
+      );
+    }
   }
 
   // Watch for isReady so that we can handle any pending events
@@ -600,7 +623,38 @@ export class SegmentClient {
       });
 
       void this.process(event);
-      this.logger.info('TRACK (Deep Link Opened) event saved', event);
+      this.logEventSaved('TRACK (Deep Link Opened)', event);
+    }
+  }
+
+  /**
+   * Builds the safe-to-log metadata for an event: type, messageId and the event/screen
+   * name. Deliberately excludes userId, traits, properties and context, which may hold PII.
+   */
+  private getEventLogMetadata(event: SegmentEvent): Record<string, unknown> {
+    const name =
+      event.type === EventType.TrackEvent
+        ? event.event
+        : event.type === EventType.ScreenEvent
+        ? event.name
+        : undefined;
+    return {
+      type: event.type,
+      messageId: event.messageId,
+      ...(name !== undefined ? { name } : {}),
+    };
+  }
+
+  /**
+   * Logs that an event was saved. Only non-sensitive metadata is logged by default;
+   * the full payload (which may include PII, or a deep-link URL with query tokens)
+   * is only logged when `debugPayloads` is explicitly enabled in the config.
+   */
+  private logEventSaved(label: string, event: SegmentEvent) {
+    this.logger.info(`${label} event saved`, this.getEventLogMetadata(event));
+
+    if (this.getConfig().debugPayloads === true) {
+      this.logger.info(`${label} event payload`, redactDeepLinkUrl(event));
     }
   }
 
@@ -677,8 +731,8 @@ export class SegmentClient {
       properties: options,
     });
 
-    await this.process(event, enrichment);
-    this.logger.info('SCREEN event saved', event);
+    const processedEvent = await this.process(event, enrichment);
+    this.logEventSaved('SCREEN', processedEvent ?? event);
   }
 
   async track(
@@ -691,8 +745,8 @@ export class SegmentClient {
       properties: options,
     });
 
-    await this.process(event, enrichment);
-    this.logger.info('TRACK event saved', event);
+    const processedEvent = await this.process(event, enrichment);
+    this.logEventSaved('TRACK', processedEvent ?? event);
   }
 
   async identify(
@@ -705,8 +759,8 @@ export class SegmentClient {
       userTraits: userTraits,
     });
 
-    await this.process(event, enrichment);
-    this.logger.info('IDENTIFY event saved', event);
+    const processedEvent = await this.process(event, enrichment);
+    this.logEventSaved('IDENTIFY', processedEvent ?? event);
   }
 
   async group(
@@ -719,8 +773,8 @@ export class SegmentClient {
       groupTraits,
     });
 
-    await this.process(event, enrichment);
-    this.logger.info('GROUP event saved', event);
+    const processedEvent = await this.process(event, enrichment);
+    this.logEventSaved('GROUP', processedEvent ?? event);
   }
 
   async alias(newUserId: string, enrichment?: EnrichmentClosure) {
@@ -734,8 +788,8 @@ export class SegmentClient {
       newUserId,
     });
 
-    await this.process(event, enrichment);
-    this.logger.info('ALIAS event saved', event);
+    const processedEvent = await this.process(event, enrichment);
+    this.logEventSaved('ALIAS', processedEvent ?? event);
   }
 
   /**
