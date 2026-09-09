@@ -80,18 +80,19 @@ import { WaitingPlugin } from './plugin';
 
 type OnPluginAddedCallback = (plugin: Plugin) => void;
 
-// Deep link URLs can carry secrets/tokens in their query string, so strip it before
-// the full event is logged (only reachable when `debugPayloads` is enabled).
+// Deep link URLs can carry secrets/tokens in their query string or fragment (mobile OAuth
+// callbacks use both), so strip both before the full event is logged (only reachable when
+// `debugPayloads` is enabled).
 const redactDeepLinkUrl = (event: SegmentEvent): SegmentEvent => {
   if (
     event.type === EventType.TrackEvent &&
     event.event === 'Deep Link Opened' &&
     typeof event.properties?.url === 'string'
   ) {
-    const [urlWithoutQuery] = event.properties.url.split('?');
+    const [urlWithoutQueryOrFragment] = event.properties.url.split(/[?#]/);
     return {
       ...event,
-      properties: { ...event.properties, url: urlWithoutQuery },
+      properties: { ...event.properties, url: urlWithoutQueryOrFragment },
     };
   }
   return event;
@@ -622,8 +623,9 @@ export class SegmentClient {
         },
       });
 
-      void this.process(event);
-      this.logEventSaved('TRACK (Deep Link Opened)', event);
+      void this.process(event).then((processedEvent) => {
+        this.logEventResult('TRACK (Deep Link Opened)', event, processedEvent);
+      });
     }
   }
 
@@ -656,6 +658,26 @@ export class SegmentClient {
     if (this.getConfig().debugPayloads === true) {
       this.logger.info(`${label} event payload`, redactDeepLinkUrl(event));
     }
+  }
+
+  /**
+   * Logs the outcome of processing an event. `processedEvent` is `undefined` when
+   * analytics is disabled or a before/enrichment plugin (e.g. consent gating) dropped
+   * the event, in which case that's logged as "dropped" rather than misreported as saved.
+   */
+  private logEventResult(
+    label: string,
+    event: SegmentEvent,
+    processedEvent: SegmentEvent | undefined
+  ) {
+    if (processedEvent === undefined) {
+      this.logger.info(
+        `${label} event dropped`,
+        this.getEventLogMetadata(event)
+      );
+      return;
+    }
+    this.logEventSaved(label, processedEvent);
   }
 
   /**
@@ -732,7 +754,7 @@ export class SegmentClient {
     });
 
     const processedEvent = await this.process(event, enrichment);
-    this.logEventSaved('SCREEN', processedEvent ?? event);
+    this.logEventResult('SCREEN', event, processedEvent);
   }
 
   async track(
@@ -746,7 +768,7 @@ export class SegmentClient {
     });
 
     const processedEvent = await this.process(event, enrichment);
-    this.logEventSaved('TRACK', processedEvent ?? event);
+    this.logEventResult('TRACK', event, processedEvent);
   }
 
   async identify(
@@ -760,7 +782,7 @@ export class SegmentClient {
     });
 
     const processedEvent = await this.process(event, enrichment);
-    this.logEventSaved('IDENTIFY', processedEvent ?? event);
+    this.logEventResult('IDENTIFY', event, processedEvent);
   }
 
   async group(
@@ -774,7 +796,7 @@ export class SegmentClient {
     });
 
     const processedEvent = await this.process(event, enrichment);
-    this.logEventSaved('GROUP', processedEvent ?? event);
+    this.logEventResult('GROUP', event, processedEvent);
   }
 
   async alias(newUserId: string, enrichment?: EnrichmentClosure) {
@@ -789,7 +811,7 @@ export class SegmentClient {
     });
 
     const processedEvent = await this.process(event, enrichment);
-    this.logEventSaved('ALIAS', processedEvent ?? event);
+    this.logEventResult('ALIAS', event, processedEvent);
   }
 
   /**

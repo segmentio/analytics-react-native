@@ -139,7 +139,7 @@ export type Config = {
   logger?: DeactivableLoggerType;
   /**
    * By default, the SDK only logs non-sensitive event metadata (type, messageId, event/name)
-   * at info level. Set this to log the full event payload instead, which can include PII
+   * at info level. Set this to also log the full event payload, which can include PII
    * (userId, traits, properties) and, for deep link events, the full URL with any query
    * string tokens. Only enable this for local debugging - never in production.
    */

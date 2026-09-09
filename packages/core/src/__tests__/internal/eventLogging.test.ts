@@ -138,4 +138,65 @@ describe('event logging', () => {
 
     client.cleanup();
   });
+
+  it('redacts the deep-link URL fragment (e.g. OAuth callback tokens) too', async () => {
+    const logger = getMockLogger();
+    const deepLinkData = {
+      url: 'myapp://callback#access_token=super-secret',
+      referring_application: 'Safari',
+    };
+    jest
+      .spyOn(store.deepLinkData, 'get')
+      .mockImplementation(createMockStoreGetter(() => deepLinkData));
+
+    const client = new SegmentClient({
+      config: {
+        ...baseConfig,
+        trackDeepLinks: true,
+        trackAppLifecycleEvents: false,
+        debugPayloads: true,
+      },
+      logger,
+      store,
+    });
+
+    await client.init();
+
+    const payloadCall = (logger.info as jest.Mock).mock.calls.find(
+      ([message]) => message === 'TRACK (Deep Link Opened) event payload'
+    ) as [string, { properties: { url: string } }];
+
+    expect(payloadCall).toBeDefined();
+    expect(payloadCall[1].properties.url).toBe('myapp://callback');
+    expect(JSON.stringify(payloadCall)).not.toContain('super-secret');
+
+    client.cleanup();
+  });
+
+  it('logs an event as dropped, not saved, when analytics is disabled', async () => {
+    const logger = getMockLogger();
+    const disabledStore = new MockSegmentStore({
+      enabled: false,
+      userInfo: {
+        userId: 'current-user-id',
+        anonymousId: 'very-anonymous',
+      },
+    });
+    const client = new SegmentClient({
+      config: baseConfig,
+      logger,
+      store: disabledStore,
+    });
+
+    await client.track('Some Event', { id: 1 });
+
+    expect(logger.info).toHaveBeenCalledTimes(1);
+    expect(logger.info).toHaveBeenCalledWith(
+      'TRACK event dropped',
+      expect.objectContaining({
+        type: EventType.TrackEvent,
+        name: 'Some Event',
+      })
+    );
+  });
 });
