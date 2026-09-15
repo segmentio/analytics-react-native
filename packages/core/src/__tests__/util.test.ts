@@ -42,6 +42,27 @@ describe('#chunk', () => {
       chunk([about500bString, about500bString, about500bString], 2, 1)
     ).toEqual([[about500bString, about500bString], [about500bString]]);
   });
+
+  it('returns a dense array when a single item exceeds max kb', () => {
+    const overMaxKBString = 'x'.repeat(2 * 1024);
+    const batches = chunk([overMaxKBString, 'b', 'c'], 100, 1);
+
+    expect(0 in batches).toBe(true);
+    expect(batches).toEqual([[overMaxKBString], ['b', 'c']]);
+  });
+
+  it('keeps honouring count after a max kb overflow', () => {
+    const about500bString = 'x'.repeat(500);
+    const items = new Array<string>(10).fill(about500bString);
+
+    expect(chunk(items, 2, 1)).toEqual([
+      [about500bString, about500bString],
+      [about500bString, about500bString],
+      [about500bString, about500bString],
+      [about500bString, about500bString],
+      [about500bString, about500bString],
+    ]);
+  });
 });
 
 describe('allSettled', () => {

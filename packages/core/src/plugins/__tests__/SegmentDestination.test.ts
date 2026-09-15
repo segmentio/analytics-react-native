@@ -347,6 +347,26 @@ describe('SegmentDestination', () => {
       });
     });
 
+    it('drains the queue when a single event exceeds the max payload size', async () => {
+      const events = [
+        { messageId: 'big', properties: { blob: 'x'.repeat(520 * 1024) } },
+        { messageId: 'small-1' },
+        { messageId: 'small-2' },
+      ] as unknown as SegmentEvent[];
+
+      const { plugin } = createTestWith({ events });
+
+      const dequeueSpy = jest.spyOn(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        plugin.queuePlugin,
+        'dequeueByMessageIds'
+      );
+
+      await expect(plugin.flush()).resolves.not.toThrow();
+      expect(dequeueSpy).toHaveBeenCalledWith(['big', 'small-1', 'small-2']);
+    });
+
     it('uses segment settings apiHost for uploading events', async () => {
       const customEndpoint = 'events.eu1.segmentapis.com';
       const events = [
