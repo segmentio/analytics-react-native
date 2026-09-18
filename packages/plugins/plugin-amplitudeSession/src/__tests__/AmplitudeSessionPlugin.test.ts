@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AmplitudeSessionPlugin } from '../AmplitudeSessionPlugin';
-// Import the constant for consistent timeout values
-const MAX_SESSION_TIME_IN_MS = 300000;
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   EventType,
@@ -10,680 +8,496 @@ import {
   IdentifyEventType,
   ScreenEventType,
   SegmentAPISettings,
+  SegmentEvent,
   UpdateType,
 } from '@segment/analytics-react-native';
 import { AppState } from 'react-native';
 
-// AppState will be mocked by the base setup, we'll spy on it in the tests
+const MAX_SESSION_TIME_IN_MS = 300000;
+const KEY = 'Actions Amplitude';
+
+interface EmittedSessionEvent {
+  name: string;
+  sessionId?: number;
+  timestamp?: string;
+}
+
+type Enrichment = (event: SegmentEvent) => SegmentEvent;
+
+const sessionIdOf = (event: SegmentEvent) =>
+  (event.integrations?.[KEY] as { session_id?: number } | undefined)
+    ?.session_id;
+
+const makeTrackEvent = (
+  event: string,
+  overrides: Partial<TrackEventType> = {}
+): TrackEventType => ({
+  type: EventType.TrackEvent,
+  event,
+  properties: {},
+  messageId: `msg-${event}`,
+  timestamp: '2023-01-01T00:00:00.000Z',
+  anonymousId: 'anon-1',
+  ...overrides,
+});
 
 describe('AmplitudeSessionPlugin', () => {
   let plugin: AmplitudeSessionPlugin;
   let mockAsyncStorage: jest.Mocked<typeof AsyncStorage>;
+  let emitted: EmittedSessionEvent[];
+  let client: any;
 
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers();
 
     plugin = new AmplitudeSessionPlugin();
+    emitted = [];
 
     mockAsyncStorage = AsyncStorage as jest.Mocked<typeof AsyncStorage>;
     mockAsyncStorage.getItem.mockResolvedValue(null);
     mockAsyncStorage.setItem.mockResolvedValue();
     mockAsyncStorage.removeItem.mockResolvedValue();
+
+    client = {
+      logger: { warn: jest.fn(), info: jest.fn() },
+      // Mirrors the timeline: enrichment plugins run, then the closure is applied to the result
+      track: jest.fn(
+        (name: string, _props: unknown, enrichment?: Enrichment) => {
+          const raw = makeTrackEvent(name, {
+            messageId: `msg-${emitted.length}`,
+            // Core stamps this at process() entry, before the closure runs
+            timestamp: new Date(Date.now()).toISOString(),
+          });
+          const enriched = enrichment === undefined ? raw : enrichment(raw);
+          emitted.push({
+            name,
+            sessionId: sessionIdOf(enriched),
+            timestamp: enriched.timestamp,
+          });
+          return Promise.resolve();
+        }
+      ),
+    };
   });
 
   afterEach(() => {
+    plugin.cleanup();
     jest.useRealTimers();
   });
 
   const setupPluginWithClient = async () => {
-    const mockClient = {
-      track: jest.fn(),
-    } as any;
-
-    await plugin.configure(mockClient);
+    await plugin.configure(client);
     plugin.update(
-      { integrations: { 'Actions Amplitude': {} } } as SegmentAPISettings,
+      { integrations: { [KEY]: {} } } as SegmentAPISettings,
       UpdateType.initial
     );
-
-    return { client: mockClient };
+    return { client };
   };
 
-  describe('startNewSession scenarios', () => {
-    beforeEach(async () => {
+  const named = (name: string) => emitted.filter((e) => e.name === name);
+  const starts = () => named('session_start');
+  const ends = () => named('session_end');
+
+  describe('session lifecycle', () => {
+    it('starts exactly one session on a cold start', async () => {
       await setupPluginWithClient();
-    });
-
-    it('should start a new session when sessionId is -1', async () => {
-      plugin.sessionId = -1;
-      plugin.lastEventTime = -1;
-      plugin.resetPending = false;
-
-      const mockEvent: TrackEventType = {
-        type: EventType.TrackEvent,
-        event: 'test_event',
-        properties: {},
-        messageId: 'msg-1',
-        timestamp: '2023-01-01T00:00:00.000Z',
-        anonymousId: 'anon-1',
-      };
-
-      await plugin.execute(mockEvent);
 
       expect(plugin.sessionId).toBeGreaterThan(0);
-      expect(plugin.analytics?.track).toHaveBeenCalledWith('session_start', {
-        integrations: {
-          'Actions Amplitude': { session_id: plugin.sessionId },
-        },
-      });
+      expect(starts()).toHaveLength(1);
+      expect(ends()).toHaveLength(0);
+      expect(starts()[0].sessionId).toBe(plugin.sessionId);
     });
 
-    it('should start a new session when session has expired (>MAX_SESSION_TIME_IN_MS)', async () => {
+    it('does not start a new session while the current one is live', async () => {
       const baseTime = Date.now();
       jest.setSystemTime(baseTime);
-      plugin.active = true;
-      plugin.sessionId = baseTime - 1000;
-      plugin.lastEventTime = baseTime - (MAX_SESSION_TIME_IN_MS + 1000); // 61 seconds ago
-      plugin.resetPending = false;
-
-      const mockEvent: TrackEventType = {
-        type: EventType.TrackEvent,
-        event: 'test_event',
-        properties: {},
-        messageId: 'msg-1',
-        timestamp: '2023-01-01T00:00:00.000Z',
-        anonymousId: 'anon-1',
-      };
-
-      const oldSessionId = plugin.sessionId;
-      await plugin.execute(mockEvent);
-
-      expect(plugin.sessionId).not.toBe(oldSessionId);
-      expect(plugin.sessionId).toBeGreaterThan(oldSessionId);
-      expect(plugin.analytics?.track).toHaveBeenCalledWith('session_end', {
-        integrations: {
-          'Actions Amplitude': { session_id: oldSessionId },
-        },
-      });
-      expect(plugin.analytics?.track).toHaveBeenCalledWith('session_start', {
-        integrations: {
-          'Actions Amplitude': { session_id: plugin.sessionId },
-        },
-      });
-    });
-
-    it('should NOT start a new session when session is still active', async () => {
-      const baseTime = Date.now();
-      jest.setSystemTime(baseTime);
-
-      plugin.sessionId = baseTime - 1000;
-      plugin.lastEventTime = baseTime - 30000; // 30 seconds ago
-      plugin.resetPending = false;
-
-      const mockEvent: TrackEventType = {
-        type: EventType.TrackEvent,
-        event: 'test_event',
-        properties: {},
-        messageId: 'msg-1',
-        timestamp: '2023-01-01T00:00:00.000Z',
-        anonymousId: 'anon-1',
-      };
-
-      const oldSessionId = plugin.sessionId;
-      await plugin.execute(mockEvent);
-
-      expect(plugin.sessionId).toBe(oldSessionId);
-      expect(plugin.analytics?.track).not.toHaveBeenCalledWith(
-        'session_start',
-        expect.any(Object)
-      );
-    });
-  });
-
-  describe('bug detection: multiple startNewSession calls', () => {
-    beforeEach(async () => {
       await setupPluginWithClient();
-    });
 
-    it('BUG: should detect multiple session starts for rapid events (currently masked by 1000ms guard)', async () => {
-      const baseTime = Date.now();
-      jest.setSystemTime(baseTime);
-
-      plugin.sessionId = -1;
-      plugin.lastEventTime = -1;
-      plugin.resetPending = false;
-
-      const mockEvent: TrackEventType = {
-        type: EventType.TrackEvent,
-        event: 'test_event',
-        properties: {},
-        messageId: 'msg-1',
-        timestamp: '2023-01-01T00:00:00.000Z',
-        anonymousId: 'anon-1',
-      };
-
-      // First call should start session
-      await plugin.execute(mockEvent);
-      const firstSessionId = plugin.sessionId;
-
-      expect(plugin.analytics?.track).toHaveBeenCalledWith('session_start', {
-        integrations: {
-          'Actions Amplitude': { session_id: firstSessionId },
-        },
-      });
-
-      // Advance time by only 500ms
-      jest.setSystemTime(baseTime + 500);
-
-      // Force expired condition artificially - this should be impossible in real scenarios
-      plugin.lastEventTime = baseTime - (MAX_SESSION_TIME_IN_MS + 10000); // MAX_SESSION_TIME_IN_MS + 10 seconds ago, definitely expired
-
-      // This scenario should NEVER happen in practice, but if it does, it's a bug
-      // The current implementation prevents this with a 1000ms guard, masking the bug
-      await plugin.execute(mockEvent);
-
-      // CURRENT BEHAVIOR (with guard): Only one session_start
-      // EXPECTED BEHAVIOR (without bugs): Should never reach this scenario
-      expect(plugin.analytics?.track).toHaveBeenCalledTimes(1);
-
-      // This test documents the current guard behavior but highlights it's a bug mask
-      console.warn(
-        '🐛 BUG MASKED: Multiple session start attempts should never occur'
-      );
-    });
-
-    it('BUG: should detect race conditions in parallel event execution', async () => {
-      const baseTime = Date.now();
-      jest.setSystemTime(baseTime);
-
-      plugin.sessionId = -1;
-      plugin.lastEventTime = -1;
-      plugin.resetPending = false;
-
-      const mockEvents = Array.from({ length: 5 }, (_, i) => ({
-        type: EventType.TrackEvent,
-        event: `test_event_${i}`,
-        properties: {},
-        messageId: `msg-${i}`,
-        timestamp: '2023-01-01T00:00:00.000Z',
-        anonymousId: 'anon-1',
-      })) as TrackEventType[];
-
-      // Execute multiple events in parallel - this could cause race conditions
-      const promises = mockEvents.map((event) => plugin.execute(event));
-      await Promise.all(promises);
-
-      // Count session_start calls
-      const trackMock = plugin.analytics?.track as jest.Mock;
-      const sessionStartCalls = trackMock.mock.calls.filter(
-        (call: any) => call[0] === 'session_start'
-      );
-
-      // IDEAL: Should only have 1 session_start call
-      // REALITY: May have multiple due to race conditions
-      if (sessionStartCalls.length > 1) {
-        console.error(
-          `🐛 BUG DETECTED: ${sessionStartCalls.length} session_start calls for parallel events`
-        );
-        // This test will fail if the bug exists, which is expected
-        expect(sessionStartCalls).toHaveLength(1);
-      } else {
-        // If this passes, the implementation handles parallel calls correctly
-        expect(sessionStartCalls).toHaveLength(1);
-      }
-    });
-
-    // it('BUG: should detect session restart loops from app state changes', async () => {
-    //   const baseTime = Date.now();
-    //   jest.setSystemTime(baseTime);
-
-    //   // Start with an active session
-    //   plugin.sessionId = baseTime;
-    //   plugin.lastEventTime = baseTime;
-
-    //   // Spy on startNewSessionIfNecessary to detect multiple calls
-    //   const startNewSessionSpy = jest.spyOn(plugin as any, 'startNewSessionIfNecessary');
-    //   const endSessionSpy = jest.spyOn(plugin as any, 'endSession');
-    //   const startSessionSpy = jest.spyOn(plugin as any, 'startNewSession');
-
-    //   // Simulate rapid app state changes
-    //   const addEventListenerSpy = jest.spyOn(AppState, 'addEventListener');
-    //   await setupPluginWithClient();
-    //   const appStateChangeHandler = addEventListenerSpy.mock.calls[0][1];
-
-    //   // Rapid background/foreground cycles
-    //   appStateChangeHandler('background');
-    //   appStateChangeHandler('active');
-    //   appStateChangeHandler('background');
-    //   appStateChangeHandler('active');
-
-    //   // Wait for any async operations
-    //   await new Promise(resolve => setTimeout(resolve, 0));
-
-    //   // Should not cause multiple session operations for non-expired session
-    //   const startNewSessionCalls = startNewSessionSpy.mock.calls.length;
-    //   const endSessionCalls = endSessionSpy.mock.calls.length;
-    //   const startSessionCalls = startSessionSpy.mock.calls.length;
-
-    //   if (startNewSessionCalls > 2 || endSessionCalls > 0 || startSessionCalls > 0) {
-    //     console.error(`🐛 BUG DETECTED: Unnecessary session operations - startNewSessionIfNecessary: ${startNewSessionCalls}, endSession: ${endSessionCalls}, startNewSession: ${startSessionCalls}`);
-    //   }
-
-    //   // For a non-expired session, we shouldn't have any actual session restarts
-    //   expect(endSessionCalls).toBe(0);
-    //   expect(startSessionCalls).toBe(0);
-    // });
-
-    it('BUG: should detect inconsistent session state', async () => {
-      const baseTime = Date.now();
-      jest.setSystemTime(baseTime);
-
-      // Set up inconsistent state that should never happen
-      plugin.sessionId = baseTime;
-      plugin.lastEventTime = -1; // Inconsistent: have sessionId but no lastEventTime
-      plugin.resetPending = false;
-
-      const mockEvent: TrackEventType = {
-        type: EventType.TrackEvent,
-        event: 'test_event',
-        properties: {},
-        messageId: 'msg-1',
-        timestamp: '2023-01-01T00:00:00.000Z',
-        anonymousId: 'anon-1',
-      };
-
-      // This inconsistent state might cause unexpected behavior
-      await plugin.execute(mockEvent);
-
-      // Check if the plugin handled inconsistent state correctly
-      const trackMock = plugin.analytics?.track as jest.Mock;
-      const sessionStartCalls = trackMock.mock.calls.filter(
-        (call: any) => call[0] === 'session_start'
-      );
-      const sessionEndCalls = trackMock.mock.calls.filter(
-        (call: any) => call[0] === 'session_end'
-      );
-
-      // Inconsistent state should be resolved without multiple session events
-      if (sessionStartCalls.length > 1 || sessionEndCalls.length > 1) {
-        console.error(
-          `🐛 BUG DETECTED: Inconsistent state caused multiple session events - starts: ${sessionStartCalls.length}, ends: ${sessionEndCalls.length}`
-        );
-      }
-
-      // Should have resolved to a consistent state
-      expect(plugin.sessionId).toBeGreaterThan(0);
-      expect(plugin.lastEventTime).toBeGreaterThan(0);
-    });
-
-    it('BUG: should detect async race conditions in startNewSessionIfNecessary', async () => {
-      const baseTime = Date.now();
-      jest.setSystemTime(baseTime);
-
-      plugin.sessionId = -1;
-      plugin.lastEventTime = -1;
-
-      const mockEvent: TrackEventType = {
-        type: EventType.TrackEvent,
-        event: 'test_event',
-        properties: {},
-        messageId: 'msg-1',
-        timestamp: '2023-01-01T00:00:00.000Z',
-        anonymousId: 'anon-1',
-      };
-
-      // Spy on the async methods to detect overlapping calls
-      const startNewSessionIfNecessarySpy = jest.spyOn(
-        plugin as any,
-        'startNewSessionIfNecessary'
-      );
-      const endSessionSpy = jest.spyOn(plugin as any, 'endSession');
-      const startNewSessionSpy = jest.spyOn(plugin as any, 'startNewSession');
-
-      // Call execute multiple times rapidly before any async operations complete
-      // This tests if the implementation properly handles concurrent calls to startNewSessionIfNecessary
-      const promises = [
-        plugin.execute({ ...mockEvent, messageId: 'msg-1' }),
-        plugin.execute({ ...mockEvent, messageId: 'msg-2' }),
-        plugin.execute({ ...mockEvent, messageId: 'msg-3' }),
-      ];
-
-      await Promise.all(promises);
-
-      const startNewSessionIfNecessaryCalls =
-        startNewSessionIfNecessarySpy.mock.calls.length;
-      const endSessionCalls = endSessionSpy.mock.calls.length;
-      const startNewSessionCalls = startNewSessionSpy.mock.calls.length;
-
-      // For initial session creation, we should only have:
-      // - Multiple calls to startNewSessionIfNecessary (one per execute)
-      // - But only ONE actual startNewSession call
-      // - Zero endSession calls (no existing session to end)
-
-      console.log(
-        `📊 Session operations: startNewSessionIfNecessary: ${startNewSessionIfNecessaryCalls}, endSession: ${endSessionCalls}, startNewSession: ${startNewSessionCalls}`
-      );
-
-      if (startNewSessionCalls > 1) {
-        console.error(
-          `🐛 CRITICAL BUG DETECTED: ${startNewSessionCalls} startNewSession calls from concurrent execute operations`
-        );
-        // This should fail if there are race conditions
-        expect(startNewSessionCalls).toBe(1);
-      }
-
-      if (endSessionCalls > 1) {
-        console.error(
-          `🐛 BUG DETECTED: ${endSessionCalls} endSession calls from concurrent operations`
-        );
-        expect(endSessionCalls).toBeLessThanOrEqual(1);
-      }
-
-      // Should have properly created exactly one session
-      expect(plugin.sessionId).toBeGreaterThan(0);
-      expect(plugin.lastEventTime).toBeGreaterThan(0);
-    });
-
-    it('BUG: should detect overlapping session end/start operations', async () => {
-      const baseTime = Date.now();
-      jest.setSystemTime(baseTime);
-
-      // Start with an existing session that will expire
-      plugin.sessionId = baseTime - 1000;
-      plugin.lastEventTime = baseTime - (MAX_SESSION_TIME_IN_MS + 10000); // MAX_SESSION_TIME_IN_MS + 10 seconds ago, expired
-
-      const mockEvent: TrackEventType = {
-        type: EventType.TrackEvent,
-        event: 'test_event',
-        properties: {},
-        messageId: 'msg-1',
-        timestamp: '2023-01-01T00:00:00.000Z',
-        anonymousId: 'anon-1',
-      };
-
-      // Spy on session operations
-      const endSessionSpy = jest.spyOn(plugin as any, 'endSession');
-      const startNewSessionSpy = jest.spyOn(plugin as any, 'startNewSession');
-
-      // Execute multiple events that should all trigger session restart
-      const promises = [
-        plugin.execute({ ...mockEvent, messageId: 'msg-1' }),
-        plugin.execute({ ...mockEvent, messageId: 'msg-2' }),
-        plugin.execute({ ...mockEvent, messageId: 'msg-3' }),
-      ];
-
-      await Promise.all(promises);
-
-      const endSessionCalls = endSessionSpy.mock.calls.length;
-      const startNewSessionCalls = startNewSessionSpy.mock.calls.length;
-
-      // For session restart, we should have:
-      // - Exactly ONE endSession call (to end the expired session)
-      // - Exactly ONE startNewSession call (to start the new session)
-
-      if (endSessionCalls > 1) {
-        console.error(
-          `🐛 BUG DETECTED: ${endSessionCalls} endSession calls from concurrent operations`
-        );
-        expect(endSessionCalls).toBe(1);
-      }
-
-      if (startNewSessionCalls > 1) {
-        console.error(
-          `🐛 CRITICAL BUG DETECTED: ${startNewSessionCalls} startNewSession calls from concurrent operations`
-        );
-        expect(startNewSessionCalls).toBe(1);
-      }
-
-      // Verify the track calls
-      const trackMock = plugin.analytics?.track as jest.Mock;
-      const sessionEndCalls = trackMock.mock.calls.filter(
-        (call: any) => call[0] === 'session_end'
-      );
-      const sessionStartCalls = trackMock.mock.calls.filter(
-        (call: any) => call[0] === 'session_start'
-      );
-
-      if (sessionEndCalls.length > 1 || sessionStartCalls.length > 1) {
-        console.error(
-          `🐛 BUG DETECTED: Multiple session events - ends: ${sessionEndCalls.length}, starts: ${sessionStartCalls.length}`
-        );
-      }
-
-      expect(sessionEndCalls).toHaveLength(1);
-      expect(sessionStartCalls).toHaveLength(1);
-    });
-
-    it('EXPECTED BEHAVIOR: single session for sequential events within session timeout', async () => {
-      const baseTime = Date.now();
-      jest.setSystemTime(baseTime);
-
-      plugin.sessionId = -1;
-      plugin.lastEventTime = -1;
-
-      const mockEvents = Array.from({ length: 5 }, (_, i) => ({
-        type: EventType.TrackEvent,
-        event: `test_event_${i}`,
-        properties: {},
-        messageId: `msg-${i}`,
-        timestamp: '2023-01-01T00:00:00.000Z',
-        anonymousId: 'anon-1',
-      })) as TrackEventType[];
-
-      // Execute events sequentially with small time gaps (within session timeout)
-      for (let i = 0; i < mockEvents.length; i++) {
-        jest.setSystemTime(baseTime + i * 10000); // 10 seconds apart
-        await plugin.execute(mockEvents[i]);
-      }
-
-      // Should only have one session_start call for all events
-      const trackMock = plugin.analytics?.track as jest.Mock;
-      const sessionStartCalls = trackMock.mock.calls.filter(
-        (call: any) => call[0] === 'session_start'
-      );
-
-      expect(sessionStartCalls).toHaveLength(1);
-
-      // All events should have the same session ID
       const sessionId = plugin.sessionId;
-      expect(sessionId).toBeGreaterThan(0);
+      jest.setSystemTime(baseTime + 30000);
+      await plugin.execute(makeTrackEvent('test_event'));
+
+      expect(plugin.sessionId).toBe(sessionId);
+      expect(starts()).toHaveLength(1);
+    });
+
+    it('rotates the session once it has expired', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+      await setupPluginWithClient();
+
+      const oldSessionId = plugin.sessionId;
+      jest.setSystemTime(baseTime + MAX_SESSION_TIME_IN_MS + 1000);
+      await plugin.execute(makeTrackEvent('test_event'));
+
+      expect(plugin.sessionId).toBeGreaterThan(oldSessionId);
+      expect(starts()).toHaveLength(2);
+      expect(ends()).toHaveLength(1);
+      expect(ends()[0].sessionId).toBe(oldSessionId);
+      expect(starts()[1].sessionId).toBe(plugin.sessionId);
+    });
+
+    it('expires exactly at MAX_SESSION_TIME_IN_MS', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+      await setupPluginWithClient();
+
+      const oldSessionId = plugin.sessionId;
+      jest.setSystemTime(baseTime + MAX_SESSION_TIME_IN_MS);
+      await plugin.execute(makeTrackEvent('test_event'));
+
+      expect(plugin.sessionId).not.toBe(oldSessionId);
+      expect(ends()[0].sessionId).toBe(oldSessionId);
+    });
+
+    it('does not expire one millisecond before the limit', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+      await setupPluginWithClient();
+
+      const sessionId = plugin.sessionId;
+      jest.setSystemTime(baseTime + MAX_SESSION_TIME_IN_MS - 1);
+      await plugin.execute(makeTrackEvent('test_event'));
+
+      expect(plugin.sessionId).toBe(sessionId);
+      expect(starts()).toHaveLength(1);
+      expect(ends()).toHaveLength(0);
     });
   });
 
-  describe('session expiration scenarios', () => {
-    beforeEach(async () => {
-      await setupPluginWithClient();
-    });
-
-    it('should expire session exactly at MAX_SESSION_TIME_IN_MS', async () => {
+  describe('regressions: duplicate and mismatched sessions', () => {
+    it('mints one session for concurrent events on a cold start', async () => {
       const baseTime = Date.now();
       jest.setSystemTime(baseTime);
+      await setupPluginWithClient();
 
-      plugin.sessionId = baseTime - 1000;
-      plugin.lastEventTime = baseTime - MAX_SESSION_TIME_IN_MS; // Exactly 60 seconds
-      plugin.resetPending = false;
+      const events = Array.from({ length: 5 }, (_, i) =>
+        makeTrackEvent(`test_event_${i}`, { messageId: `msg-${i}` })
+      );
+      const results = await Promise.all(
+        events.map((event) => plugin.execute(event))
+      );
 
-      const mockEvent: TrackEventType = {
-        type: EventType.TrackEvent,
-        event: 'test_event',
-        properties: {},
-        messageId: 'msg-1',
-        timestamp: '2023-01-01T00:00:00.000Z',
-        anonymousId: 'anon-1',
-      };
-
-      const oldSessionId = plugin.sessionId;
-      await plugin.execute(mockEvent);
-
-      expect(plugin.sessionId).not.toBe(oldSessionId);
-      expect(plugin.analytics?.track).toHaveBeenCalledWith('session_end', {
-        integrations: {
-          'Actions Amplitude': { session_id: oldSessionId },
-        },
+      expect(starts()).toHaveLength(1);
+      results.forEach((result) => {
+        expect(sessionIdOf(result)).toBe(plugin.sessionId);
       });
     });
 
-    it('should NOT expire session at MAX_SESSION_TIME_IN_MS - 1 second', async () => {
-      // ✅ Freeze Date.now for this test only
-      const fixedNow = 1761550980000;
-      const nowSpy = jest.spyOn(Date, 'now').mockImplementation(() => fixedNow);
+    it('never stamps a session id of -1', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+      await setupPluginWithClient();
 
-      plugin.sessionId = fixedNow - 1000;
-      plugin.lastEventTime = fixedNow - (MAX_SESSION_TIME_IN_MS - 2); // within limit
+      const results = await Promise.all(
+        Array.from({ length: 5 }, (_, i) =>
+          plugin.execute(makeTrackEvent(`e_${i}`, { messageId: `msg-${i}` }))
+        )
+      );
 
-      const mockEvent: TrackEventType = {
-        type: EventType.TrackEvent,
-        event: 'test_event',
-        properties: {},
-        messageId: 'msg-1',
-        timestamp: '2023-01-01T00:00:00.000Z',
-        anonymousId: 'anon-1',
-      };
+      results.forEach((result) =>
+        expect(sessionIdOf(result)).toBeGreaterThan(0)
+      );
+      emitted.forEach((event) => expect(event.sessionId).toBeGreaterThan(0));
+    });
+
+    it('ends the old session with the old id, not the newly started one', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+      await setupPluginWithClient();
 
       const oldSessionId = plugin.sessionId;
+      jest.setSystemTime(baseTime + MAX_SESSION_TIME_IN_MS + 1);
+      await plugin.execute(makeTrackEvent('test_event'));
 
-      await plugin.execute(mockEvent);
+      expect(ends()[0].sessionId).toBe(oldSessionId);
+      expect(ends()[0].sessionId).not.toBe(plugin.sessionId);
+    });
 
-      expect(plugin.sessionId).toBe(oldSessionId);
-      expect(plugin.analytics?.track).not.toHaveBeenCalledWith(
-        'session_start',
-        expect.any(Object)
+    it('dates session_end to the last activity, not to when it was delivered', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+      await setupPluginWithClient();
+
+      jest.setSystemTime(baseTime + 60000);
+      await plugin.execute(makeTrackEvent('last_real_activity'));
+
+      // App killed for an hour; the rotation only happens on relaunch
+      jest.setSystemTime(baseTime + 3600000);
+      await plugin.execute(makeTrackEvent('after_relaunch'));
+
+      expect(ends()).toHaveLength(1);
+      expect(ends()[0].timestamp).toBe(
+        new Date(baseTime + 60000).toISOString()
       );
-      expect(plugin.analytics?.track).not.toHaveBeenCalledWith(
-        'session_end',
-        expect.any(Object)
+    });
+
+    it('leaves session_start dated when it actually happened', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+      await setupPluginWithClient();
+
+      expect(starts()[0].timestamp).toBe(new Date(baseTime).toISOString());
+    });
+
+    it('does not backdate session_end when there was no prior activity', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+      mockAsyncStorage.getItem.mockImplementation((key: string) =>
+        Promise.resolve(key === 'previous_session_id' ? '12345' : null)
       );
 
-      nowSpy.mockRestore(); // ✅ restores Date.now, unaffected by useRealTimers
+      const resumed = new AmplitudeSessionPlugin();
+      await resumed.configure(client);
+
+      expect(ends()).toHaveLength(1);
+      expect(ends()[0].timestamp).toBe(new Date(baseTime).toISOString());
+      resumed.cleanup();
+    });
+
+    it('emits one session_end per rotation under concurrent events', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+      await setupPluginWithClient();
+
+      const oldSessionId = plugin.sessionId;
+      jest.setSystemTime(baseTime + MAX_SESSION_TIME_IN_MS + 1);
+
+      await Promise.all(
+        Array.from({ length: 3 }, (_, i) =>
+          plugin.execute(makeTrackEvent(`e_${i}`, { messageId: `msg-${i}` }))
+        )
+      );
+
+      expect(ends()).toHaveLength(1);
+      expect(starts()).toHaveLength(2);
+      expect(ends()[0].sessionId).toBe(oldSessionId);
+    });
+
+    it('gives session markers the same id as the events around them', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+      await setupPluginWithClient();
+
+      const before = await plugin.execute(makeTrackEvent('before'));
+      jest.setSystemTime(baseTime + MAX_SESSION_TIME_IN_MS + 1);
+      const after = await plugin.execute(makeTrackEvent('after'));
+
+      expect(sessionIdOf(before)).toBe(starts()[0].sessionId);
+      expect(ends()[0].sessionId).toBe(sessionIdOf(before));
+      expect(sessionIdOf(after)).toBe(starts()[1].sessionId);
+    });
+
+    it('keeps rotating sessions when a session_start is dropped downstream', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+      await setupPluginWithClient();
+
+      // Simulate a downstream plugin swallowing the session_start event
+      client.track.mockImplementation(() => Promise.resolve());
+
+      jest.setSystemTime(baseTime + MAX_SESSION_TIME_IN_MS + 1);
+      await plugin.execute(makeTrackEvent('one'));
+      const secondSessionId = plugin.sessionId;
+
+      jest.setSystemTime(baseTime + 2 * (MAX_SESSION_TIME_IN_MS + 1));
+      await plugin.execute(makeTrackEvent('two'));
+
+      expect(plugin.sessionId).toBeGreaterThan(secondSessionId);
+    });
+
+    it('round-trips its own session events without cascading', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+
+      // Feed emitted session events back through the plugin, as the timeline does
+      client.track.mockImplementation(
+        async (name: string, _props: unknown, enrichment?: Enrichment) => {
+          const raw = makeTrackEvent(name, {
+            messageId: `msg-${emitted.length}`,
+          });
+          const processed = await plugin.execute(raw);
+          const enriched =
+            enrichment === undefined ? processed : enrichment(processed);
+          emitted.push({ name, sessionId: sessionIdOf(enriched) });
+        }
+      );
+
+      await setupPluginWithClient();
+      await plugin.execute(makeTrackEvent('test_event'));
+
+      expect(starts()).toHaveLength(1);
+      expect(starts()[0].sessionId).toBe(plugin.sessionId);
     });
   });
 
-  describe('app state change scenarios', () => {
-    let appStateChangeHandler: (nextAppState: any) => void;
+  describe('app state changes', () => {
+    let handler: (nextAppState: any) => void;
 
     beforeEach(async () => {
-      // Spy on AppState methods
-      const addEventListenerSpy = jest.spyOn(AppState, 'addEventListener');
-
+      const spy = jest.spyOn(AppState, 'addEventListener');
       await setupPluginWithClient();
-
-      // Capture the app state change handler
-      expect(addEventListenerSpy).toHaveBeenCalledWith(
-        'change',
-        expect.any(Function)
-      );
-      appStateChangeHandler = addEventListenerSpy.mock.calls[0][1];
+      expect(spy).toHaveBeenCalledWith('change', expect.any(Function));
+      handler = spy.mock.calls[0][1];
     });
 
-    it('should start new session when app comes to foreground after expiration', async () => {
+    it('starts a new session when foregrounding after expiry', () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+      const oldSessionId = plugin.sessionId;
+
+      handler('background');
+      jest.setSystemTime(baseTime + MAX_SESSION_TIME_IN_MS + 1000);
+      handler('active');
+
+      expect(plugin.sessionId).toBeGreaterThan(oldSessionId);
+      expect(ends()[0].sessionId).toBe(oldSessionId);
+    });
+
+    it('does not start a new session when foregrounding before expiry', () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+      const sessionId = plugin.sessionId;
+
+      handler('background');
+      jest.setSystemTime(baseTime + 20000);
+      handler('active');
+
+      expect(plugin.sessionId).toBe(sessionId);
+      expect(starts()).toHaveLength(1);
+    });
+
+    it('ignores inactive/active churn without a real backgrounding', () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+      const sessionId = plugin.sessionId;
+
+      // iOS fires these for Control Center, notification banners and permission dialogs
+      handler('inactive');
+      handler('active');
+      handler('inactive');
+      handler('active');
+
+      expect(plugin.sessionId).toBe(sessionId);
+      expect(starts()).toHaveLength(1);
+      expect(ends()).toHaveLength(0);
+    });
+
+    it('records lastEventTime when backgrounding', () => {
       const baseTime = Date.now();
       jest.setSystemTime(baseTime);
 
-      // Set up an active session that will be expired
-      plugin.sessionId = baseTime - 1000;
-      plugin.lastEventTime = baseTime - (MAX_SESSION_TIME_IN_MS + 10000); // MAX_SESSION_TIME_IN_MS + 10 seconds ago, already expired
-
-      // Spy on the startNewSessionIfNecessary method to ensure it gets called
-      const startNewSessionSpy = jest.spyOn(
-        plugin as any,
-        'startNewSessionIfNecessary'
-      );
-
-      // Simulate app coming to foreground
-      appStateChangeHandler('active');
-
-      // Should call startNewSessionIfNecessary
-      expect(startNewSessionSpy).toHaveBeenCalled();
-    });
-
-    it('should NOT start new session when app comes to foreground before expiration', async () => {
-      const baseTime = Date.now();
-      jest.setSystemTime(baseTime);
-
-      // Set up an active session
-      plugin.sessionId = baseTime - 1000;
-      plugin.lastEventTime = baseTime - 30000; // 30 seconds ago, still active
-
-      // Simulate app going to background
-      appStateChangeHandler('background');
-
-      // Advance time but not beyond session timeout
-      jest.setSystemTime(baseTime + 20000); // 20 seconds later (total 50 seconds)
-
-      // Simulate app coming to foreground
-      appStateChangeHandler('active');
-
-      // Should NOT trigger new session
-      expect(plugin.analytics?.track).not.toHaveBeenCalled();
-    });
-
-    it('should update lastEventTime when app goes to background', async () => {
-      const baseTime = Date.now();
-      jest.setSystemTime(baseTime);
-
-      plugin.sessionId = baseTime - 1000;
-      plugin.lastEventTime = baseTime - 30000;
-
-      // Simulate app going to background
-      appStateChangeHandler('background');
+      handler('background');
 
       expect(plugin.lastEventTime).toBe(baseTime);
-      expect(mockAsyncStorage.setItem).toHaveBeenCalled();
+      expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
+        'last_event_time',
+        baseTime.toString()
+      );
+    });
+
+    it('stops responding to app state changes after cleanup', () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+      const sessionId = plugin.sessionId;
+
+      plugin.cleanup();
+      jest.setSystemTime(baseTime + MAX_SESSION_TIME_IN_MS + 1000);
+      handler('background');
+      handler('active');
+
+      expect(plugin.sessionId).toBe(sessionId);
     });
   });
 
-  describe('session data persistence', () => {
-    it('should load session data from AsyncStorage on configure', async () => {
-      const mockSessionId = '1234567890';
-      const mockLastEventTime = '1234567000';
+  describe('persistence', () => {
+    it('resumes a live session from storage without starting a new one', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
 
       mockAsyncStorage.getItem
-        .mockResolvedValueOnce(mockSessionId) // SESSION_ID_KEY
-        .mockResolvedValueOnce(mockLastEventTime); // LAST_EVENT_TIME_KEY
+        .mockResolvedValueOnce(String(baseTime - 1000))
+        .mockResolvedValueOnce(String(baseTime - 1000));
 
-      const mockClient = { track: jest.fn() } as any;
-      await plugin.configure(mockClient);
+      await plugin.configure(client);
 
-      expect(plugin.sessionId).toBe(1234567890);
-      expect(plugin.lastEventTime).toBe(1234567000);
+      expect(plugin.sessionId).toBe(baseTime - 1000);
+      expect(plugin.lastEventTime).toBe(baseTime - 1000);
+      expect(starts()).toHaveLength(0);
     });
 
-    it('should save session data to AsyncStorage after events', async () => {
+    it('rotates a stored session that expired while the app was killed', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+      const storedSessionId = baseTime - 3 * 24 * 60 * 60 * 1000;
+
+      mockAsyncStorage.getItem
+        .mockResolvedValueOnce(String(storedSessionId))
+        .mockResolvedValueOnce(String(storedSessionId));
+
+      await plugin.configure(client);
+
+      expect(ends()).toHaveLength(1);
+      expect(ends()[0].sessionId).toBe(storedSessionId);
+      expect(starts()).toHaveLength(1);
+      expect(starts()[0].sessionId).toBe(baseTime);
+    });
+
+    it('persists the session id', async () => {
       await setupPluginWithClient();
 
-      const mockEvent: TrackEventType = {
-        type: EventType.TrackEvent,
-        event: 'test_event',
-        properties: {},
-        messageId: 'msg-1',
-        timestamp: '2023-01-01T00:00:00.000Z',
-        anonymousId: 'anon-1',
-      };
-
-      await plugin.execute(mockEvent);
-
       expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
-        'event_session_id',
+        'previous_session_id',
         plugin.sessionId.toString()
       );
-      expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
-        'last_event_time',
-        plugin.lastEventTime.toString()
-      );
     });
 
-    it('should clear session data on reset', async () => {
+    it('does not reload storage once initialised', async () => {
+      await setupPluginWithClient();
+      const callsAfterInit = mockAsyncStorage.getItem.mock.calls.length;
+
+      await plugin.execute(makeTrackEvent('a'));
+      await plugin.execute(makeTrackEvent('b'));
+
+      expect(mockAsyncStorage.getItem).toHaveBeenCalledTimes(callsAfterInit);
+    });
+
+    it('throttles lastEventTime writes across rapid events', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
       await setupPluginWithClient();
 
+      mockAsyncStorage.setItem.mockClear();
+      for (let i = 0; i < 5; i++) {
+        jest.setSystemTime(baseTime + i * 100);
+        await plugin.execute(makeTrackEvent(`e_${i}`));
+      }
+
+      expect(mockAsyncStorage.setItem).not.toHaveBeenCalled();
+    });
+
+    it('clears all session keys on reset', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+      await setupPluginWithClient();
+      const oldSessionId = plugin.sessionId;
+
+      jest.setSystemTime(baseTime + 1000);
       await plugin.reset();
 
-      expect(plugin.sessionId).toBe(-1);
-      expect(plugin.lastEventTime).toBe(-1);
-      expect(plugin.eventSessionId).toBe(-1);
       expect(mockAsyncStorage.removeItem).toHaveBeenCalledWith(
         'previous_session_id'
       );
+      expect(mockAsyncStorage.removeItem).toHaveBeenCalledWith(
+        'last_event_time'
+      );
+      expect(mockAsyncStorage.removeItem).toHaveBeenCalledWith(
+        'event_session_id'
+      );
+      expect(ends()[0].sessionId).toBe(oldSessionId);
+      expect(plugin.sessionId).not.toBe(oldSessionId);
+      expect(plugin.sessionId).toBeGreaterThan(0);
     });
   });
 
@@ -692,25 +506,15 @@ describe('AmplitudeSessionPlugin', () => {
       await setupPluginWithClient();
     });
 
-    it('should add session_id to track events', async () => {
-      const mockEvent: TrackEventType = {
-        type: EventType.TrackEvent,
-        event: 'test_event',
-        properties: {},
-        messageId: 'msg-1',
-        timestamp: '2023-01-01T00:00:00.000Z',
-        anonymousId: 'anon-1',
-      };
-
-      const result = await plugin.execute(mockEvent);
-
-      expect(result.integrations?.['Actions Amplitude']).toEqual({
+    it('adds session_id to track events', async () => {
+      const result = await plugin.execute(makeTrackEvent('test_event'));
+      expect(result.integrations?.[KEY]).toEqual({
         session_id: plugin.sessionId,
       });
     });
 
-    it('should add session_id to identify events', async () => {
-      const mockEvent: IdentifyEventType = {
+    it('adds session_id to identify events', async () => {
+      const event: IdentifyEventType = {
         type: EventType.IdentifyEvent,
         traits: {},
         messageId: 'msg-1',
@@ -718,15 +522,14 @@ describe('AmplitudeSessionPlugin', () => {
         anonymousId: 'anon-1',
       };
 
-      const result = await plugin.execute(mockEvent);
-
-      expect(result.integrations?.['Actions Amplitude']).toEqual({
+      const result = await plugin.execute(event);
+      expect(result.integrations?.[KEY]).toEqual({
         session_id: plugin.sessionId,
       });
     });
 
-    it('should add name property to screen events', async () => {
-      const mockEvent: ScreenEventType = {
+    it('adds the screen name to screen event properties', async () => {
+      const event: ScreenEventType = {
         type: EventType.ScreenEvent,
         name: 'Home Screen',
         properties: { existing: 'prop' },
@@ -735,35 +538,65 @@ describe('AmplitudeSessionPlugin', () => {
         anonymousId: 'anon-1',
       };
 
-      const result = (await plugin.execute(mockEvent)) as ScreenEventType;
+      const result = (await plugin.execute(event)) as ScreenEventType;
 
       expect(result.properties).toEqual({
         existing: 'prop',
         name: 'Home Screen',
       });
-      expect(result.integrations?.['Actions Amplitude']).toEqual({
+      expect(result.integrations?.[KEY]).toEqual({
         session_id: plugin.sessionId,
       });
     });
 
-    it('should NOT modify events when session_id already exists', async () => {
-      const mockEvent: TrackEventType = {
-        type: EventType.TrackEvent,
-        event: 'test_event',
-        properties: {},
-        messageId: 'msg-1',
-        timestamp: '2023-01-01T00:00:00.000Z',
-        anonymousId: 'anon-1',
-        integrations: {
-          'Actions Amplitude': { session_id: 999999 },
-        },
-      };
+    it('preserves an existing session_id', async () => {
+      const result = await plugin.execute(
+        makeTrackEvent('test_event', {
+          integrations: { [KEY]: { session_id: 999999 } },
+        })
+      );
 
-      const result = await plugin.execute(mockEvent);
+      expect(result.integrations?.[KEY]).toEqual({ session_id: 999999 });
+    });
 
-      expect(result.integrations?.['Actions Amplitude']).toEqual({
-        session_id: 999999, // Should preserve existing session_id
+    it('disables other integrations for Amplitude cloud-mode events', async () => {
+      const result = await plugin.execute(
+        makeTrackEvent('[Amplitude] Application Opened', {
+          integrations: { Braze: true, Mixpanel: true },
+        })
+      );
+
+      expect(result.integrations).toEqual({
+        All: false,
+        [KEY]: { session_id: plugin.sessionId },
       });
+    });
+
+    it('does not disable integrations for an ordinary event named after Amplitude', async () => {
+      const result = await plugin.execute(
+        makeTrackEvent('Amplitude Settings Changed', {
+          integrations: { Braze: true },
+        })
+      );
+
+      expect(result.integrations).toEqual({
+        Braze: true,
+        [KEY]: { session_id: plugin.sessionId },
+      });
+    });
+
+    it('leaves events untouched when the destination is not configured', async () => {
+      const inactive = new AmplitudeSessionPlugin();
+      await inactive.configure(client);
+      inactive.update(
+        { integrations: {} } as SegmentAPISettings,
+        UpdateType.initial
+      );
+
+      const result = await inactive.execute(makeTrackEvent('test_event'));
+
+      expect(result.integrations?.[KEY]).toBeUndefined();
+      inactive.cleanup();
     });
   });
 });
