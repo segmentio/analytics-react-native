@@ -307,6 +307,28 @@ describe('AmplitudeSessionPlugin', () => {
       expect(plugin.sessionId).toBeGreaterThan(secondSessionId);
     });
 
+    it('falls back to the ended session id if a session_end event loses its enrichment closure', async () => {
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+      await setupPluginWithClient();
+
+      const oldSessionId = plugin.sessionId;
+      jest.setSystemTime(baseTime + MAX_SESSION_TIME_IN_MS + 1);
+      // Triggers the real endSession()/trackSessionStart() calls, which record
+      // lastEndedSessionId as a side effect - same as any other rotation.
+      (
+        plugin as unknown as { startNewSessionIfNecessary: () => void }
+      ).startNewSessionIfNecessary();
+
+      // Simulate the timeline handing session_end to track() before its enrichment
+      // closure has run (as core always does), and imagine that closure is then
+      // never applied - e.g. dropped by pre-init buffering or a downstream plugin.
+      const bareSessionEnd = plugin.track(makeTrackEvent('session_end'));
+
+      expect(sessionIdOf(bareSessionEnd)).toBe(oldSessionId);
+      expect(sessionIdOf(bareSessionEnd)).not.toBe(plugin.sessionId);
+    });
+
     it('round-trips its own session events without cascading', async () => {
       const baseTime = Date.now();
       jest.setSystemTime(baseTime);
@@ -403,6 +425,21 @@ describe('AmplitudeSessionPlugin', () => {
       const sessionId = plugin.sessionId;
 
       plugin.cleanup();
+      jest.setSystemTime(baseTime + MAX_SESSION_TIME_IN_MS + 1000);
+      handler('background');
+      handler('active');
+
+      expect(plugin.sessionId).toBe(sessionId);
+    });
+
+    it('stops responding to app state changes after shutdown', () => {
+      // shutdown() is the documented Plugin teardown hook; nothing in core calls it
+      // yet, but this plugin should behave correctly if that ever changes.
+      const baseTime = Date.now();
+      jest.setSystemTime(baseTime);
+      const sessionId = plugin.sessionId;
+
+      plugin.shutdown();
       jest.setSystemTime(baseTime + MAX_SESSION_TIME_IN_MS + 1000);
       handler('background');
       handler('active');
@@ -575,6 +612,21 @@ describe('AmplitudeSessionPlugin', () => {
     it('does not disable integrations for an ordinary event named after Amplitude', async () => {
       const result = await plugin.execute(
         makeTrackEvent('Amplitude Settings Changed', {
+          integrations: { Braze: true },
+        })
+      );
+
+      expect(result.integrations).toEqual({
+        Braze: true,
+        [KEY]: { session_id: plugin.sessionId },
+      });
+    });
+
+    it('does not disable integrations when the Amplitude prefix appears mid-string', async () => {
+      // A customer event name that merely contains the substring must not match -
+      // only a real cloud-mode event, which has it as a prefix, should.
+      const result = await plugin.execute(
+        makeTrackEvent('User clicked [Amplitude] banner', {
           integrations: { Braze: true },
         })
       );

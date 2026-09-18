@@ -45,6 +45,7 @@ export class AmplitudeSessionPlugin extends EventPlugin {
   private appStateSubscription?: NativeEventSubscription;
   private appState: AppStateStatus | 'unknown' = 'unknown';
   private lastPersistedEventTime = -1;
+  private lastEndedSessionId = -1;
 
   configure = (analytics: SegmentClient): Promise<void> => {
     this.analytics = analytics;
@@ -101,7 +102,7 @@ export class AmplitudeSessionPlugin extends EventPlugin {
     const eventName = event.event;
 
     if (
-      eventName.includes(AMP_PREFIX) ||
+      eventName.startsWith(AMP_PREFIX) ||
       eventName === AMP_SESSION_START_EVENT ||
       eventName === AMP_SESSION_END_EVENT
     ) {
@@ -156,6 +157,12 @@ export class AmplitudeSessionPlugin extends EventPlugin {
     this.appStateSubscription = undefined;
   }
 
+  // Nothing in core calls this yet, but it's the documented Plugin teardown hook -
+  // wired to cleanup() so this plugin does the right thing if that ever changes.
+  shutdown() {
+    this.cleanup();
+  }
+
   private async initialize() {
     try {
       const [storedSessionId, storedLastEventTime] = await Promise.all([
@@ -207,6 +214,8 @@ export class AmplitudeSessionPlugin extends EventPlugin {
   }
 
   private endSession(sessionId: number, endedAt: number) {
+    // Remembered so readSessionId() can recover if the enrichment closure below never runs
+    this.lastEndedSessionId = sessionId;
     void this.analytics?.track(AMP_SESSION_END_EVENT, undefined, (event) =>
       this.withSessionId(event, sessionId, endedAt)
     );
@@ -253,11 +262,22 @@ export class AmplitudeSessionPlugin extends EventPlugin {
     );
   }
 
-  // Falls back to the current id if the enrichment closure was dropped by pre-init buffering
-  private readSessionId(event: SegmentEvent) {
+  // Falls back if the enrichment closure was dropped (e.g. pre-init buffering, or a
+  // downstream plugin swallowing it). For session_end this must resolve to the session
+  // that just ended, not the new one - this.sessionId has already moved on by the time
+  // track() runs. Doesn't help across a process restart: a buffered session_end that
+  // survives a crash loses its closure on replay in a fresh instance with no memory of
+  // lastEndedSessionId, so it still falls back to the (wrong) current id in that case.
+  private readSessionId(event: TrackEventType) {
     const existing = event.integrations?.[this.key];
     if (this.hasSessionId(event)) {
       return (existing as { session_id: number }).session_id;
+    }
+    if (
+      event.event === AMP_SESSION_END_EVENT &&
+      this.lastEndedSessionId !== -1
+    ) {
+      return this.lastEndedSessionId;
     }
     return this.sessionId;
   }
