@@ -40,6 +40,12 @@ function buildClient(writeKey: string): SegmentClient {
     ...(useProxy
       ? {
           useSegmentEndpoints: true,
+          // These point at the local Detox mock server over http. Since #1300
+          // the SDK rejects insecure proxy URLs and silently falls back to the
+          // production Segment endpoints, which would send this example app's
+          // events to the real API and leave the mock server with nothing to
+          // assert on. Same opt-in the e2e-cli needs, for the same reason.
+          allowInsecureProxy: true,
           proxy: Platform.select({
             ios: 'http://localhost:9091/v1',
             android: 'http://10.0.2.2:9091/v1',

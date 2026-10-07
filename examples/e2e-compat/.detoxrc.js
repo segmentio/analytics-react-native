@@ -1,11 +1,56 @@
 const {execSync} = require('child_process');
 
+const DEVICES_DIR = './devbox.d/segment-integrations.mobile-devtools';
+const ANDROID_DEVICES_DIR = `${DEVICES_DIR}.android/devices`;
+const IOS_DEVICES_DIR = `${DEVICES_DIR}.ios/devices`;
+
+const readDeviceDefinition = (dir, which) => {
+  try {
+    return require(`${dir}/${which}.json`);
+  } catch (_) {
+    return null;
+  }
+};
+
+// The plugin creates project-local AVDs named by the "name" field of these
+// definitions (see mobile-devtools wiki/guides/device-management.md), so read
+// the name from there instead of duplicating it.
+const resolveAndroidAvdName = () => {
+  if (process.env.DETOX_AVD) return process.env.DETOX_AVD;
+  const which = process.env.ANDROID_DEFAULT_DEVICE || 'max';
+  const definition = readDeviceDefinition(ANDROID_DEVICES_DIR, which);
+  if (!definition) {
+    throw new Error(
+      `Could not resolve an AVD: no device definition "${which}.json" in ` +
+        `${ANDROID_DEVICES_DIR}. Run "devbox run android.sh devices list" to ` +
+        `see what is defined, or set DETOX_AVD to an AVD name directly.`,
+    );
+  }
+  return definition.name;
+};
+
+// Same idea for iOS: prefer the simulator named by the definitions, in
+// IOS_DEFAULT_DEVICE order, before falling back to whatever is installed.
 const defaultIOSDeviceCandidates = (() => {
-  const fromEnv = (process.env.IOS_DEVICE_NAMES || 'iPhone 14')
+  const preferred = process.env.IOS_DEFAULT_DEVICE || 'max';
+  const fromDefinitions = [preferred, 'max', 'min']
+    .map(which => readDeviceDefinition(IOS_DEVICES_DIR, which))
+    .filter(Boolean)
+    .map(definition => definition.name)
+    .filter(Boolean);
+  const fromEnv = (process.env.IOS_DEVICE_NAMES || '')
     .split(',')
     .map(name => name.trim())
     .filter(Boolean);
-  return Array.from(new Set(['iPhone 17', ...fromEnv, 'iPhone 14']));
+  const candidates = Array.from(new Set([...fromDefinitions, ...fromEnv]));
+  if (candidates.length === 0) {
+    throw new Error(
+      `Could not resolve an iOS simulator: no device definitions in ` +
+        `${IOS_DEVICES_DIR}. Run "devbox run ios.sh devices list" to see what ` +
+        `is defined, or set DETOX_IOS_DEVICE / IOS_DEVICE_NAMES directly.`,
+    );
+  }
+  return candidates;
 })();
 
 const safeParseJSON = cmd => {
@@ -146,14 +191,13 @@ module.exports = {
     emulator: {
       type: 'android.emulator',
       device: {
-        // Default to latest AVD name (arch-aware); override via DETOX_AVD. For minsdk testing, set DETOX_AVD to an API 21 AVD.
-        avdName: (() => {
-          if (process.env.DETOX_AVD) return process.env.DETOX_AVD;
-          const arch = require('os').arch();
-          return arch === 'arm64'
-            ? 'medium_phone_API33_arm64_v8a'
-            : 'medium_phone_API33_x86_64';
-        })(),
+        // Resolved from the mobile-devtools device definitions, which are the
+        // source of truth the plugin creates the project-local AVDs from -
+        // hardcoding a name here drifts from them the moment min/max changes.
+        // Selection order: DETOX_AVD (explicit override) > the definition
+        // named by ANDROID_DEFAULT_DEVICE > max. Use ANDROID_DEFAULT_DEVICE=min
+        // for minsdk runs.
+        avdName: resolveAndroidAvdName(),
       },
     },
   },

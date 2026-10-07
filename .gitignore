@@ -104,5 +104,8 @@ AGENTS.md
 notes/
 
 # Devbox
+# .devbox/ is generated state (nix profile, virtenv, project-local AVDs).
+# devbox.lock is NOT ignored - it pins resolved nix package versions and is
+# what makes the environment reproducible across machines and CI. The root
+# lock was already tracked; ignoring it only ever hid the per-example ones.
 .devbox/
-devbox.lock
