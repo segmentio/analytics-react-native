@@ -20,11 +20,13 @@ import group from './methods/group';
 import alias from './methods/alias';
 import track from './methods/track';
 
-export const EU_SERVER = 'api.eu.mixpanel.com';
+export const EU_SERVER = 'https://api-eu.mixpanel.com';
+export const US_SERVER = 'https://api.mixpanel.com';
 export class MixpanelPlugin extends DestinationPlugin {
   type = PluginType.destination;
   key = 'Mixpanel';
   trackScreens = false;
+  serverURL = US_SERVER;
   private mixpanel: Mixpanel | undefined;
   private settings: SegmentMixpanelSettings | undefined;
   private isInitialized = () =>
@@ -41,8 +43,11 @@ export class MixpanelPlugin extends DestinationPlugin {
     if (mixpanelSettings.token.length === 0) {
       return;
     }
+    if (mixpanelSettings.enableEuropeanEndpoint === true) {
+      this.serverURL = EU_SERVER;
+    }
     this.mixpanel = new Mixpanel(mixpanelSettings.token, false);
-    this.mixpanel.init().catch((error) => {
+    this.mixpanel.init(undefined, undefined, this.serverURL).catch((error) => {
       this.analytics?.reportInternalError(
         new SegmentError(
           ErrorType.PluginError,
@@ -52,10 +57,6 @@ export class MixpanelPlugin extends DestinationPlugin {
       );
     });
     this.settings = mixpanelSettings;
-
-    if (mixpanelSettings.enableEuropeanEndpoint === true) {
-      this.mixpanel?.setServerURL(EU_SERVER);
-    }
   }
 
   identify(event: IdentifyEventType) {
