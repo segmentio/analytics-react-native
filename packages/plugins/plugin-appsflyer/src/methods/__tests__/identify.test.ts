@@ -19,7 +19,7 @@ describe('#identify', () => {
 
     identify(payload as IdentifyEventType);
 
-    expect(setCustomerUserId).toHaveBeenCalledWith('user');
+    expect(setCustomerUserId).toHaveBeenCalledWith({ customerId: 'user' });
   });
 
   it('sets custom data', () => {
@@ -36,9 +36,11 @@ describe('#identify', () => {
     identify(payload as IdentifyEventType);
 
     expect(setAdditionalData).toHaveBeenCalledWith({
-      email: 'john.smith@email.com',
-      firstName: 'John',
-      lastName: 'Smith',
+      customData: {
+        email: 'john.smith@email.com',
+        firstName: 'John',
+        lastName: 'Smith',
+      },
     });
   });
 
@@ -52,6 +54,6 @@ describe('#identify', () => {
 
     identify(payload as IdentifyEventType);
 
-    expect(setCurrencyCode).toHaveBeenCalledWith('JPY');
+    expect(setCurrencyCode).toHaveBeenCalledWith({ currencyCode: 'JPY' });
   });
 });

@@ -15,7 +15,10 @@ describe('#identify', () => {
 
     await track(payload as TrackEventType);
 
-    expect(logEvent).toHaveBeenCalledWith('Some Event', {});
+    expect(logEvent).toHaveBeenCalledWith({
+      eventName: 'Some Event',
+      eventValues: {},
+    });
   });
 
   it('logs an event with revenue as string and currency', async () => {
@@ -31,10 +34,13 @@ describe('#identify', () => {
 
     await track(payload as TrackEventType);
 
-    expect(logEvent).toHaveBeenCalledWith('Some Event', {
-      foo: 'bar',
-      af_revenue: 1,
-      af_currency: 'JPY',
+    expect(logEvent).toHaveBeenCalledWith({
+      eventName: 'Some Event',
+      eventValues: {
+        foo: 'bar',
+        af_revenue: 1,
+        af_currency: 'JPY',
+      },
     });
   });
 
@@ -51,10 +57,13 @@ describe('#identify', () => {
 
     await track(payload as TrackEventType);
 
-    expect(logEvent).toHaveBeenCalledWith('Some Event', {
-      foo: 'bar',
-      af_revenue: 1,
-      af_currency: 'JPY',
+    expect(logEvent).toHaveBeenCalledWith({
+      eventName: 'Some Event',
+      eventValues: {
+        foo: 'bar',
+        af_revenue: 1,
+        af_currency: 'JPY',
+      },
     });
   });
 
@@ -71,10 +80,13 @@ describe('#identify', () => {
 
     await track(payload as TrackEventType);
 
-    expect(logEvent).toHaveBeenCalledWith('Some Event', {
-      currency: 'JPY',
-      revenue: true,
-      foo: 'bar',
+    expect(logEvent).toHaveBeenCalledWith({
+      eventName: 'Some Event',
+      eventValues: {
+        currency: 'JPY',
+        revenue: true,
+        foo: 'bar',
+      },
     });
   });
 
@@ -90,10 +102,13 @@ describe('#identify', () => {
 
     await track(payload as TrackEventType);
 
-    expect(logEvent).toHaveBeenCalledWith('Some Event', {
-      foo: 'bar',
-      af_revenue: 1,
-      af_currency: 'USD',
+    expect(logEvent).toHaveBeenCalledWith({
+      eventName: 'Some Event',
+      eventValues: {
+        foo: 'bar',
+        af_revenue: 1,
+        af_currency: 'USD',
+      },
     });
   });
 });

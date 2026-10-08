@@ -84,6 +84,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@appsflyer-sdk/js-core-plugin@npm:7.0.15":
+  version: 7.0.15
+  resolution: "@appsflyer-sdk/js-core-plugin@npm:7.0.15"
+  checksum: 10c0/e4288ad809e1f18e00e91e2ba0365d90bf0f62bc1ba48fe665ca2e4b759342462f767ceab9defebf29d917b3d3822340aa30b82b8c86a81b2fe3b8de1c11415c
+  languageName: node
+  linkType: hard
+
 "@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.12.13, @babel/code-frame@npm:^7.21.4, @babel/code-frame@npm:^7.22.13, @babel/code-frame@npm:^7.23.5":
   version: 7.23.5
   resolution: "@babel/code-frame@npm:7.23.5"
@@ -4322,14 +4329,14 @@ __metadata:
     "@segment/analytics-rn-shared": "workspace:^"
     "@segment/sovran-react-native": "npm:^1.1.0"
     jest: "npm:^29.7.0"
-    react-native-appsflyer: "npm:^6.9.4"
+    react-native-appsflyer: "npm:^7.0.2-0"
     react-native-builder-bob: "npm:^0.23.1"
     rimraf: "npm:^5.0.5"
     semantic-release: "npm:^22.0.8"
     typescript: "npm:^5.2.2"
   peerDependencies:
     "@segment/analytics-react-native": ^2.18.0
-    react-native-appsflyer: ^6.9.4
+    react-native-appsflyer: ^7.0.2-0
   languageName: unknown
   linkType: soft
 
@@ -15275,10 +15282,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-appsflyer@npm:^6.9.4":
-  version: 6.12.2
-  resolution: "react-native-appsflyer@npm:6.12.2"
-  checksum: 10c0/e8487481c00bbacefcb516fd17c5133b25382bdcdffd82b0b09a5765d67b1704e7604d8a9f95cc454c709b121bc167ae224bb93bce962b7bd0970f29f72b468e
+"react-native-appsflyer@npm:^7.0.2-0":
+  version: 7.0.2
+  resolution: "react-native-appsflyer@npm:7.0.2"
+  dependencies:
+    "@appsflyer-sdk/js-core-plugin": "npm:7.0.15"
+  peerDependencies:
+    react-native: ">=0.76.0"
+  checksum: 10c0/9ae15a7d17d3b18a313069090fa76791731fbcaa9870178861ba515ef6a8c713c9977f93ec17fbbe49eb670c75b1e2b08d329e6acf8d28dc715979175be8802c
   languageName: node
   linkType: hard
 

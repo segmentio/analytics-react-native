@@ -22,13 +22,19 @@ export default async (event: TrackEventType) => {
         return acc;
       }, {});
 
-    await appsFlyer.logEvent(event.event, {
-      ...otherProperties,
-      af_revenue: revenue,
-      af_currency: currency,
+    await appsFlyer.logEvent({
+      eventName: event.event,
+      eventValues: {
+        ...otherProperties,
+        af_revenue: revenue,
+        af_currency: currency,
+      },
     });
   } else {
-    await appsFlyer.logEvent(event.event, properties);
+    await appsFlyer.logEvent({
+      eventName: event.event,
+      eventValues: properties,
+    });
   }
 };
 
