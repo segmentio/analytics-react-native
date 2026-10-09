@@ -145,6 +145,17 @@ export type Config = {
   trackAppLifecycleEvents?: boolean;
   maxBatchSize?: number;
   trackDeepLinks?: boolean;
+  /**
+   * Optional hook called before a "Deep Link Opened" event is built. Use it
+   * to redact or transform deep-link properties — e.g. to preserve specific
+   * query params while dropping secrets (OAuth codes, magic-link tokens).
+   * By default the SDK strips the entire query string from the URL, keeping
+   * only the scheme, host, and path.
+   */
+  deepLinkPropertiesDecorator?: (properties: {
+    referring_application: string;
+    url: string;
+  }) => { referring_application: string; url: string };
   defaultSettings?: SegmentAPISettings;
   autoAddSegmentDestination?: boolean;
   collectDeviceId?: boolean;

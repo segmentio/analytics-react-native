@@ -4,6 +4,7 @@ import {
   allSettled,
   deepCompare,
   getURL,
+  stripQueryString,
   validateApiHost,
 } from '../util';
 
@@ -214,6 +215,30 @@ describe('getURL function', () => {
     expect(getURL('http://proxy.example.com', '/path', true)).toBe(
       'http://proxy.example.com/path'
     );
+  });
+});
+
+describe('stripQueryString', () => {
+  it('returns the URL unchanged when there is no query string', () => {
+    expect(stripQueryString('myapp://example.com/reset')).toBe(
+      'myapp://example.com/reset'
+    );
+  });
+
+  it('strips the query string, keeping scheme, host and path', () => {
+    expect(stripQueryString('myapp://example.com/reset?token=abc123')).toBe(
+      'myapp://example.com/reset'
+    );
+  });
+
+  it('strips multiple query params', () => {
+    expect(stripQueryString('https://example.com/cb?code=xyz&state=abc')).toBe(
+      'https://example.com/cb'
+    );
+  });
+
+  it('handles a URL with no path, only query string', () => {
+    expect(stripQueryString('myapp://?token=secret')).toBe('myapp://');
   });
 });
 

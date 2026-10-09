@@ -87,6 +87,72 @@ describe('#trackDeepLinks', () => {
     client.cleanup();
   });
 
+  it('strips query string from url by default to avoid leaking secrets', async () => {
+    const deepLinkData = {
+      url: 'myapp://reset?token=secret123&session=abc',
+      referring_application: 'Safari',
+    };
+    jest
+      .spyOn(store.deepLinkData, 'get')
+      .mockImplementation(createMockStoreGetter(() => deepLinkData));
+    const client = new SegmentClient(clientArgs);
+    jest.spyOn(client, 'process');
+
+    await client.init();
+
+    expect(client.process).toHaveBeenCalledWith({
+      event: 'Deep Link Opened',
+      properties: {
+        url: 'myapp://reset',
+        referring_application: 'Safari',
+      },
+      type: EventType.TrackEvent,
+    });
+    client.cleanup();
+  });
+
+  it('uses deepLinkPropertiesDecorator when provided, instead of default stripping', async () => {
+    const deepLinkData = {
+      url: 'myapp://reset?token=secret123&utm_source=email',
+      referring_application: 'Safari',
+    };
+    jest
+      .spyOn(store.deepLinkData, 'get')
+      .mockImplementation(createMockStoreGetter(() => deepLinkData));
+
+    const decorator = jest.fn(
+      (props: { url: string; referring_application: string }) => {
+        const u = new URL(
+          props.url.replace('myapp://', 'https://placeholder/')
+        );
+        return {
+          ...props,
+          url: `myapp://${u.pathname}`,
+          utm_source: u.searchParams.get('utm_source') ?? '',
+        };
+      }
+    );
+
+    const client = new SegmentClient({
+      ...clientArgs,
+      config: { ...clientArgs.config, deepLinkPropertiesDecorator: decorator },
+    });
+    jest.spyOn(client, 'process');
+
+    await client.init();
+
+    expect(decorator).toHaveBeenCalledWith(deepLinkData);
+    expect(client.process).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'Deep Link Opened',
+        properties: expect.objectContaining({
+          utm_source: 'email',
+        }),
+      })
+    );
+    client.cleanup();
+  });
+
   it('does not send a track event when trackDeepLinks is not enabled', async () => {
     const client = new SegmentClient({
       ...clientArgs,
