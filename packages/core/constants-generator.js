@@ -1,17 +1,16 @@
 const fs = require('fs');
 const packageJson = require('./package.json');
 
+// The release passes the computed version here because package.json on master is not bumped (see release-stamp-version.js).
+const version = process.env.SEGMENT_LIBRARY_VERSION || packageJson.version;
+
 const body = `
 export const libraryInfo = {
   name: '${packageJson.name}',
-  version: '${packageJson.version}',
+  version: '${version}',
 }
 `;
 
-fs.writeFile('./src/info.ts', body, function (err) {
-  if (err) {
-    return console.log(err);
-  }
+fs.writeFileSync('./src/info.ts', body);
 
-  console.log('Configuration file has generated');
-});
+console.log(`Configuration file has generated (version ${version})`);

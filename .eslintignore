@@ -10,3 +10,4 @@ examples/
 **/*.config.base.js
 .eslintrc.js
 constants-generator.js
+release-stamp-version.js
