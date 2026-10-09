@@ -19,6 +19,9 @@ on:
         required: false
         default: 'main'
 
+permissions:
+  contents: read
+
 jobs:
   e2e-tests:
     # Skip on fork PRs and Dependabot PRs where repo secrets aren't available
