@@ -32,7 +32,7 @@ yarn add @segment/analytics-react-native @segment/sovran-react-native react-nati
 npm install --save @segment/analytics-react-native @segment/sovran-react-native react-native-get-random-values @react-native-async-storage/async-storage
 ```
 
-_Note: `@react-native-async-storage/async-storage` is an optional dependency. If you wish to use your own persistence layer you can use the `storePersistor` option when initializing the client. Make sure you always have a persistor (either by having AsyncStorage package installed or by explicitly passing a value), else you might get unexpected side-effects like multiple 'Application Installed' events. Read more [Client Options](#client-options)_
+_Note: `@react-native-async-storage/async-storage` is an optional dependency. If you wish to use your own persistence layer you can use the `storePersistor` option when initializing the client. Make sure you always have a persistor (either by having AsyncStorage package installed or by explicitly passing a value), else you might get unexpected side-effects like multiple 'Application Installed' events. Read more [Client Options](#client-options). ⚠️ AsyncStorage is unencrypted—see [Data Storage & Security](#data-storage--security) before storing sensitive PII._
 
 For iOS, install native modules with:
 
@@ -98,13 +98,40 @@ You must pass at least the `writeKey`. Additional configuration options are list
 | `trackDeepLinks`            | false       | Enable automatic tracking for when the user opens the app via a deep link (Note: Requires additional setup on iOS, [see instructions](#ios-deep-link-tracking-setup)).                                                                                                                                                                                                                                                                                                                                                                |
 | `defaultSettings`           | undefined   | Settings that will be used if the request to get the settings from Segment fails. Type: [SegmentAPISettings](https://github.com/segmentio/analytics-react-native/blob/c0a5895c0c57375f18dd20e492b7d984393b7bc4/packages/core/src/types.ts#L293-L299)                                                                                                                                                                                                                                                                                  |
 | `autoAddSegmentDestination` | true        | Set to false to skip adding the SegmentDestination plugin.                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| `storePersistor`            | undefined   | A custom persistor for the store that `analytics-react-native` leverages. Must match [`Persistor`](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran/src/persistor/persistor.ts#L1-L18) interface exported from [sovran-react-native](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran).                                                                                                                                                                                 |
+| `storePersistor`            | undefined   | A custom persistor for the store that `analytics-react-native` leverages. Must match [`Persistor`](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran/src/persistor/persistor.ts#L1-L18) interface exported from [sovran-react-native](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran). ⚠️ The default (AsyncStorage) persistor is unencrypted, see [Data Storage & Security](#data-storage--security).                                                                 |
 | `proxy`                     | undefined   | `proxy` is a batch URL to post the events. Enable `useSegmentEndpoint` if proxy domain is provided and you want to append the Segment endpoints automatically. If you want to completely customize the proxy by providing a custom URL, disable `useSegmentEndpoint`. Default value is `false`.                                                                                                                                                                                                                                       |
 | `errorHandler`              | undefined   | Create custom actions when errors happen, see [Handling errors](#handling-errors).                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `cdnProxy`                  | undefined   | Sets an alternative CDN host for settings retrieval. Enable `useSegmentEndpoint` if `cdnProxy` domain is provided and you want to append the Segment endpoints automatically. <br><br>⚠️ **IMPORTANT NOTE:** _Prior to version 2.20.4, any value provided for `cdnProxy` was automatically appended with `/write-key/settings`. **Starting from v2.20.4**, this behavior has **CHANGED**—the SDK will now behave based on the `useSegmentEndpoint` flag._ Please update your configuration accordingly to avoid unexpected issues. ⚠️ |
 | `useSegmentEndpoint`        | false       | Set to `true` to automatically append the Segment endpoints when using `proxy` or `cdnProxy` to send or fetch settings. This will enable automatic routing to the appropriate endpoints.                                                                                                                                                                                                                                                                                                                                              |
 
 \* The default value of `debug` will be false in production.
+
+### Data Storage & Security
+
+By default, `analytics-react-native` persists its state—`userId`, `identify` traits, and the queue of events pending upload—to disk using [`@react-native-async-storage/async-storage`](https://github.com/react-native-async-storage/async-storage). **This default persistor stores data as plaintext JSON with no encryption.** On a rooted/jailbroken device, via an ADB backup, or through forensic extraction, that data—including any PII passed to `identify` or `track` calls—can be read.
+
+If your app handles sensitive PII (email, name, government IDs, etc.), supply your own `storePersistor` backed by encrypted storage, such as the OS Keychain/Keystore via [`react-native-encrypted-storage`](https://github.com/emeraldsanto/react-native-encrypted-storage) or [`react-native-keychain`](https://github.com/oblador/react-native-keychain). Your persistor must implement the [`Persistor`](https://github.com/segmentio/analytics-react-native/blob/master/packages/sovran/src/persistor/persistor.ts#L1-L18) interface:
+
+```ts
+import EncryptedStorage from 'react-native-encrypted-storage';
+import type { Persistor } from '@segment/sovran-react-native';
+import { createClient } from '@segment/analytics-react-native';
+
+const EncryptedStoragePersistor: Persistor = {
+  get: async (key) => {
+    const value = await EncryptedStorage.getItem(key);
+    return value ? JSON.parse(value) : undefined;
+  },
+  set: async (key, state) => {
+    await EncryptedStorage.setItem(key, JSON.stringify(state));
+  },
+};
+
+const segmentClient = createClient({
+  writeKey: 'SEGMENT_API_KEY',
+  storePersistor: EncryptedStoragePersistor,
+});
+```
 
 ### iOS Deep Link Tracking Setup
 
