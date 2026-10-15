@@ -1,9 +1,10 @@
 const mockReset = jest.fn();
+const mockDeprecatedReset = jest.fn();
+const mockAnalytics = { resetAnalyticsData: mockDeprecatedReset };
 
 jest.mock('@react-native-firebase/analytics', () => ({
-  getAnalytics: jest.fn().mockImplementation(() => ({
-    resetAnalyticsData: mockReset,
-  })),
+  getAnalytics: jest.fn().mockImplementation(() => mockAnalytics),
+  resetAnalyticsData: mockReset,
 }));
 
 jest.mock('@react-native-firebase/app', () => ({
@@ -21,6 +22,7 @@ describe('#reset', () => {
     await reset();
 
     expect(mockReset).toHaveBeenCalledTimes(1);
-    expect(mockReset).toHaveBeenCalledWith();
+    expect(mockReset).toHaveBeenCalledWith(mockAnalytics);
+    expect(mockDeprecatedReset).not.toHaveBeenCalled();
   });
 });

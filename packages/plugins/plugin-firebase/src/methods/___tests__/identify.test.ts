@@ -1,11 +1,16 @@
 const mockSetUserId = jest.fn();
 const mockSetUserProperties = jest.fn();
+const mockDeprecatedSetUserId = jest.fn();
+const mockDeprecatedSetUserProperties = jest.fn();
+const mockAnalytics = {
+  setUserId: mockDeprecatedSetUserId,
+  setUserProperties: mockDeprecatedSetUserProperties,
+};
 
 jest.mock('@react-native-firebase/analytics', () => ({
-  getAnalytics: jest.fn().mockImplementation(() => ({
-    setUserId: mockSetUserId,
-    setUserProperties: mockSetUserProperties,
-  })),
+  getAnalytics: jest.fn().mockImplementation(() => mockAnalytics),
+  setUserId: mockSetUserId,
+  setUserProperties: mockSetUserProperties,
   isString: (a: unknown) => typeof a === 'string',
 }));
 jest.mock('@react-native-firebase/app', () => ({
@@ -34,7 +39,7 @@ describe('#identify', () => {
 
     expect(mockSetUserId).toHaveBeenCalledTimes(1);
     expect(mockSetUserProperties).not.toHaveBeenCalled();
-    expect(mockSetUserId).toHaveBeenCalledWith('123');
+    expect(mockSetUserId).toHaveBeenCalledWith(mockAnalytics, '123');
   });
 
   it('forwards the identify event with ID and properties', async () => {
@@ -54,8 +59,12 @@ describe('#identify', () => {
 
     expect(mockSetUserId).toHaveBeenCalledTimes(1);
     expect(mockSetUserProperties).toHaveBeenCalledTimes(1);
-    expect(mockSetUserId).toHaveBeenCalledWith('123');
-    expect(mockSetUserProperties).toHaveBeenCalledWith({ name: 'Mary' });
+    expect(mockSetUserId).toHaveBeenCalledWith(mockAnalytics, '123');
+    expect(mockSetUserProperties).toHaveBeenCalledWith(mockAnalytics, {
+      name: 'Mary',
+    });
+    expect(mockDeprecatedSetUserId).not.toHaveBeenCalled();
+    expect(mockDeprecatedSetUserProperties).not.toHaveBeenCalled();
   });
 
   it('forwards the identify event without ID', async () => {
@@ -74,6 +83,8 @@ describe('#identify', () => {
 
     expect(mockSetUserId).not.toHaveBeenCalled();
     expect(mockSetUserProperties).toHaveBeenCalledTimes(1);
-    expect(mockSetUserProperties).toHaveBeenCalledWith({ name: 'Mary' });
+    expect(mockSetUserProperties).toHaveBeenCalledWith(mockAnalytics, {
+      name: 'Mary',
+    });
   });
 });
