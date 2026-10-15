@@ -1,9 +1,10 @@
 const mockLogEvent = jest.fn();
+const mockDeprecatedLogEvent = jest.fn();
+const mockAnalytics = { logEvent: mockDeprecatedLogEvent };
 
 jest.mock('@react-native-firebase/analytics', () => ({
-  getAnalytics: jest.fn().mockImplementation(() => ({
-    logEvent: mockLogEvent,
-  })),
+  getAnalytics: jest.fn().mockImplementation(() => mockAnalytics),
+  logEvent: mockLogEvent,
   isString: (a: unknown) => typeof a === 'string',
 }));
 jest.mock('@react-native-firebase/app', () => ({
@@ -32,7 +33,22 @@ describe('#track', () => {
     await track(event);
 
     expect(mockLogEvent).toHaveBeenCalledTimes(1);
-    expect(mockLogEvent).toHaveBeenCalledWith('test_event', {});
+    expect(mockLogEvent).toHaveBeenCalledWith(mockAnalytics, 'test_event', {});
+  });
+
+  it('uses the modular API instead of the deprecated instance method', async () => {
+    const event = {
+      type: EventType.TrackEvent,
+      event: 'test_event',
+      anonymousId: 'anon',
+      messageId: 'message-id',
+      timestamp: '00000',
+      properties: {},
+    } as TrackEventType;
+
+    await track(event);
+
+    expect(mockDeprecatedLogEvent).not.toHaveBeenCalled();
   });
 
   it('forwards a track event with name and properties', async () => {
@@ -48,9 +64,13 @@ describe('#track', () => {
     await track(event);
 
     expect(mockLogEvent).toHaveBeenCalledTimes(1);
-    expect(mockLogEvent).toHaveBeenCalledWith('another_test_event', {
-      foo: 'bar',
-    });
+    expect(mockLogEvent).toHaveBeenCalledWith(
+      mockAnalytics,
+      'another_test_event',
+      {
+        foo: 'bar',
+      }
+    );
   });
 
   it('removes non-alphanumeric characters from', async () => {
@@ -67,6 +87,7 @@ describe('#track', () => {
 
     expect(mockLogEvent).toHaveBeenCalledTimes(1);
     expect(mockLogEvent).toHaveBeenCalledWith(
+      mockAnalytics,
       'yet_another__test____event_CAPS',
       {}
     );
@@ -85,6 +106,6 @@ describe('#track', () => {
     await track(event);
 
     expect(mockLogEvent).toHaveBeenCalledTimes(1);
-    expect(mockLogEvent).toHaveBeenCalledWith('refund', {});
+    expect(mockLogEvent).toHaveBeenCalledWith(mockAnalytics, 'refund', {});
   });
 });
