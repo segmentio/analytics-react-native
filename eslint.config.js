@@ -13,6 +13,7 @@ module.exports = tseslint.config(
       '**/*.config.js',
       '**/*.config.base.js',
       '**/constants-generator.js',
+      '**/release-stamp-version.js',
       '.prettierrc.js',
     ],
   },
