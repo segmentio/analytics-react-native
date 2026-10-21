@@ -28,7 +28,6 @@ describe('bridge', () => {
     const expectedState = {
       events: [sampleEvent],
     };
-    ``;
 
     await onStoreAction('ADD_EVENT', sampleEvent);
 
