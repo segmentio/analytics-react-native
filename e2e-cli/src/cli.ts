@@ -88,6 +88,12 @@ function buildConfig(input: CLIInput): Config {
     autoAddSegmentDestination: true,
     storePersistor: MemoryPersistor,
     storePersistorSaveDelay: 0,
+    // The e2e harness points proxy/cdnProxy at a local http:// mock server.
+    // Since #1300 the SDK rejects insecure proxy URLs and falls back to the
+    // production Segment endpoints, which silently sends test events to the
+    // real API and leaves the mock server with nothing to assert on. This is
+    // a test driver talking to localhost, so opt in explicitly.
+    allowInsecureProxy: true,
     ...(input.apiHost && { proxy: input.apiHost, useSegmentEndpoints: true }),
     ...(input.cdnHost && {
       cdnProxy: input.cdnHost,
