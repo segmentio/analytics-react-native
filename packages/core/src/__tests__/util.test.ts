@@ -42,6 +42,22 @@ describe('#chunk', () => {
       chunk([about500bString, about500bString, about500bString], 2, 1)
     ).toEqual([[about500bString, about500bString], [about500bString]]);
   });
+
+  it('returns a dense array when the first item alone exceeds max kb', () => {
+    const big = { blob: 'x'.repeat(2 * 1024) };
+    const result = chunk([big, { id: 'b' }, { id: 'c' }], 100, 1);
+
+    expect(Object.keys(result)).toHaveLength(result.length);
+    expect(result[0]).toEqual([big]);
+    result.forEach((batch) => expect(batch.length).toBeGreaterThan(0));
+  });
+
+  it('resets the rolling size per chunk so the count limit is reachable', () => {
+    const items = Array.from({ length: 12 }, (_, i) => ({ id: i }));
+    const result = chunk(items, 5, 500);
+
+    expect(result.map((batch) => batch.length)).toEqual([5, 5, 2]);
+  });
 });
 
 describe('allSettled', () => {
