@@ -22,6 +22,8 @@ Run `pod install` after the installation to autolink the AppsFlyer SDK.
 
 See [AppsFlyer React Native Plugin](https://github.com/AppsFlyerSDK/appsflyer-react-native-plugin) for more details of this dependency.
 
+This plugin requires `react-native-appsflyer` 7.x, which requires React Native 0.76 or later with the New Architecture enabled. For `react-native-appsflyer` 6.x, use an earlier release of this plugin.
+
 ## Usage
 
 Follow the [instructions for adding plugins](https://github.com/segmentio/analytics-react-native#adding-plugins) on the main Analytics client:
@@ -43,6 +45,12 @@ const plugin = new AppsflyerPlugin();
 
 segmentClient.add({ plugin });
 ```
+
+The plugin registers the AppsFlyer conversion and deep link listeners. `react-native-appsflyer` keeps one callback per listener, so do not register your own. Pass `onInstallConversionData` and `onDeepLink` to the plugin instead.
+
+### App Tracking Transparency on iOS
+
+The plugin does not wait for ATT authorization, because `react-native-appsflyer` 7.x removed `timeToWaitForATTUserAuthorization`. Request ATT authorization before you add the plugin.
 
 ### Tracking Deep Links on iOS
 

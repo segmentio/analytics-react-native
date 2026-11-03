@@ -7,7 +7,7 @@ import {
 export default (event: IdentifyEventType) => {
   const userId = event.userId;
   if (userId !== undefined && userId !== null && userId.length > 0) {
-    appsFlyer.setCustomerUserId(userId);
+    void appsFlyer.setCustomerUserId({ customerId: userId });
   }
 
   const traits = event.traits;
@@ -33,10 +33,10 @@ export default (event: IdentifyEventType) => {
     if (traits.currencyCode !== undefined && traits.currencyCode !== null) {
       const codeString = unknownToString(traits.currencyCode);
       if (codeString !== undefined) {
-        appsFlyer.setCurrencyCode(codeString);
+        void appsFlyer.setCurrencyCode({ currencyCode: codeString });
       }
     }
 
-    appsFlyer.setAdditionalData(aFTraits);
+    void appsFlyer.setAdditionalData({ customData: aFTraits });
   }
 };
