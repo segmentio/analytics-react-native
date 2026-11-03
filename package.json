@@ -98,6 +98,8 @@
     "node-gyp@latest": "^13.0.1",
     "browserslist@^4.20.4": "^4.24.0",
     "browserslist@^4.22.2": "^4.24.0",
+    "tmp@^0.2.1": "^0.2.7",
+    "tmp@^0.0.33": "^0.2.7",
     "tar": "7.5.20",
     "baseline-browser-mapping": "2.10.43",
     "electron-to-chromium": "1.5.393"
