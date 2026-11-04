@@ -25,6 +25,9 @@
   "react-native": "src/index",
   "types": "lib/typescript/src/index.d.ts",
   "files": [
+    "Package.swift",
+    "spm-headers",
+    "spm-support",
     "src",
     "lib",
     "android",
@@ -83,6 +86,12 @@
       "commonjs",
       "module",
       "typescript"
+    ]
+  },
+  "swiftpmConfig": {
+    "name": "segment_analytics_react_native",
+    "dependencies": [
+      "@segment/sovran-react-native"
     ]
   }
 }

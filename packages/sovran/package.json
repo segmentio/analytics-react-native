@@ -8,6 +8,8 @@
   "react-native": "src/index",
   "source": "src/index",
   "files": [
+    "Package.swift",
+    "spm-headers",
     "src",
     "lib",
     "android",
@@ -86,5 +88,8 @@
   },
   "resolutions": {
     "ansi-regex": "5.0.1"
+  },
+  "swiftpmConfig": {
+    "name": "sovran_react_native"
   }
 }
